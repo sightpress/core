@@ -30,7 +30,7 @@
     "phpstan/phpstan-doctrine": "^2",
     "phpstan/phpstan-phpunit": "^2",
     "phpstan/phpstan-strict-rules": "^2",
-    "phpunit/phpunit": "^12",
+    "phpunit/phpunit": "^13",
     "rector/rector": "^2"
   },
   "autoload": {
