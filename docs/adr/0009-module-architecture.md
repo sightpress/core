@@ -31,12 +31,16 @@ core versions.
 
 - `ModuleInterface` has two methods: `manifest(): ModuleManifest` and `register(ModuleRegistrar $registrar): void`.
 - `ModuleManifest` holds the module id, its version, the ids and version constraints of the modules it requires,
-  and whether it is `required`. (A later minor release may add more fields, for example `enabledByDefault`.)
+  whether it is `required`, and `enabledByDefault` (whether new sites start with it on; ignored for required
+  modules).
 - `ModuleRegistrar` gives typed sub-registrars: `services()`, `routes()`, `blockTypes()`, `permissions()`,
   `migrations()` (each module has its own migration namespace), `adminMenu()`, `views()`, `subscribers()`,
   `commands()` and `settings()`.
 - Registrars are interfaces in the contract package. Core implements them with its container, router, ORM and
   console, so no library type appears in the contract.
+- Interfaces that modules implement (`ModuleInterface`, `BlockType`, `Command` …) change only in a major release.
+  Interfaces that only core implements (the registrars and the context objects passed to modules) may gain methods
+  in a minor release, so modules must not implement them.
 
 ### Discovery and dependency resolution
 
