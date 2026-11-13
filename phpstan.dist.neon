@@ -1,0 +1,10 @@
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+        - tools
+        - .php-cs-fixer.dist.php
+        - rector.php
+    tmpDir: var/cache/phpstan
+    treatPhpDocTypesAsCertain: false

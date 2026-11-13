@@ -20,10 +20,18 @@
   ],
   "require": {
     "php": ">=8.5",
+    "doctrine/dbal": "^4",
     "sightpress/module-interface": "^0.1@dev"
   },
   "require-dev": {
-    "phpunit/phpunit": "^12"
+    "friendsofphp/php-cs-fixer": "^3",
+    "phpstan/extension-installer": "^1",
+    "phpstan/phpstan": "^2",
+    "phpstan/phpstan-doctrine": "^2",
+    "phpstan/phpstan-phpunit": "^2",
+    "phpstan/phpstan-strict-rules": "^2",
+    "phpunit/phpunit": "^12",
+    "rector/rector": "^2"
   },
   "autoload": {
     "psr-4": {
@@ -41,17 +49,42 @@
     }
   },
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "phpstan/extension-installer": true
+    }
   },
   "scripts": {
+    "cs-check": "php-cs-fixer check --diff",
+    "cs-fix": "php-cs-fixer fix",
+    "phpstan": "phpstan analyse --no-progress",
+    "rector": "rector process",
     "test": "phpunit",
+    "test:unit": "phpunit --testsuite unit",
+    "test:integration": "phpunit --testsuite integration",
+    "test:coverage": "@php tools/coverage-check.php",
     "check": [
       "@composer validate --strict --no-check-lock",
-      "@test"
+      "@cs-check",
+      "@phpstan",
+      "@test:coverage",
+      "@test:integration"
+    ],
+    "fix": [
+      "@rector",
+      "@cs-fix"
     ]
   },
   "scripts-descriptions": {
-    "test": "Run the PHPUnit test suites.",
-    "check": "Run every check that must pass before a commit."
+    "cs-check": "Check the code style (PSR-12) without changing files.",
+    "cs-fix": "Fix the code style (PSR-12).",
+    "phpstan": "Run static analysis (PHPStan, level max).",
+    "rector": "Apply automated refactorings (PHP 8.5 set).",
+    "test": "Run the unit and integration test suites.",
+    "test:unit": "Run the unit test suite.",
+    "test:integration": "Run the integration test suite (SQLite in memory).",
+    "test:coverage": "Run the unit suite with coverage; fail below 100% lines or methods or on any coverage ignore annotation.",
+    "check": "Run every check that must pass before a commit.",
+    "fix": "Apply Rector refactorings, then fix the code style."
   }
 }

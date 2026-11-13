@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Minimal configuration from S-1. S-2 adds coverage metadata rules, the SQLite bootstrap and the coverage gate. -->
+<!--
+    Two suites: `unit` (counts towards the 100% coverage gate) and `integration` (SQLite in memory, never counts).
+    Run `composer test:coverage` for the gate; see tools/coverage-check.php.
+-->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          cacheDirectory=".phpunit.cache"
          colors="true"
+         executionOrder="random"
+         requireCoverageMetadata="true"
+         beStrictAboutCoverageMetadata="true"
+         beStrictAboutOutputDuringTests="true"
          failOnRisky="true"
-         failOnWarning="true">
+         failOnWarning="true"
+         failOnDeprecation="true"
+         failOnNotice="true"
+         failOnPhpunitDeprecation="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerNotices="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         displayDetailsOnPhpunitDeprecations="true">
     <testsuites>
         <testsuite name="unit">
             <directory>tests/Unit</directory>
@@ -16,6 +30,11 @@
         </testsuite>
     </testsuites>
 
+    <!--
+        Coverage is measured on src/ only. Code that can't be unit tested may be excluded here, one <file> or
+        <directory> per entry, each with a comment giving the reason and the integration test that covers it.
+        @codeCoverageIgnore is not allowed.
+    -->
     <source>
         <include>
             <directory>src</directory>
