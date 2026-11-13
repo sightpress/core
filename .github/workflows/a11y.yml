@@ -1,0 +1,105 @@
+# Accessibility: boots the skeleton with docker compose and scans its pages with Playwright and axe-core
+# (WCAG 2.2 AA). Core is mounted into the skeleton through its path repository, so this branch of core is tested.
+name: Accessibility
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  axe:
+    name: Playwright and axe
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: core
+
+      - uses: actions/checkout@v7
+        with:
+          repository: sightpress/module-interface
+          path: module-interface
+
+      - uses: actions/checkout@v7
+        with:
+          repository: sightpress/skeleton
+          path: skeleton
+
+      # A pull request checks out a detached merge commit, which Composer versions as dev-<sha>. Naming the
+      # checkout main gives it the 0.1.x-dev branch alias that the skeleton requires.
+      - name: Name the core checkout main
+        working-directory: core
+        run: git switch --force-create main
+
+      - name: Start the skeleton
+        working-directory: skeleton
+        run: |
+          echo "UID=$(id -u)" > .env
+          echo "GID=$(id -g)" >> .env
+          docker compose up --detach --build --wait
+
+      # On its first start the PHP container runs composer install before PHP-FPM listens.
+      - name: Wait for http://localhost:8080
+        working-directory: skeleton
+        run: |
+          for _ in $(seq 1 60); do
+            if [ -n "$(docker compose ps --all --status exited --quiet php)" ]; then
+              echo "The PHP container stopped." >&2
+              exit 1
+            fi
+            status=$(curl --silent --output /dev/null --write-out '%{http_code}' http://localhost:8080/ || true)
+            if [ "$status" = 404 ]; then
+              echo "Ready (HTTP $status)."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "The skeleton did not answer with the expected 404 page." >&2
+          exit 1
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: core/package-lock.json
+
+      - name: Install Playwright
+        working-directory: core
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Scan the pages
+        working-directory: core
+        env:
+          SIGHTPRESS_BASE_URL: http://localhost:8080
+        run: npx playwright test
+
+      - name: Upload the Playwright report
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            core/playwright-report/
+            core/test-results/
+          retention-days: 14
+
+      - name: Show the container logs
+        if: ${{ failure() }}
+        working-directory: skeleton
+        run: docker compose logs
+
+      - name: Stop the skeleton
+        if: ${{ always() }}
+        working-directory: skeleton
+        run: docker compose down --volumes

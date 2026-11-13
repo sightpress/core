@@ -1,0 +1,13 @@
+{
+  "name": "@sightpress/core-a11y",
+  "private": true,
+  "description": "Accessibility tests for SightPress (Playwright and axe-core). Run them with `composer a11y`.",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "a11y": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.0"
+  }
+}

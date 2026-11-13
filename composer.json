@@ -73,6 +73,10 @@
     "fix": [
       "@rector",
       "@cs-fix"
+    ],
+    "a11y": [
+      "Composer\\Config::disableProcessTimeout",
+      "npx --no-install playwright test"
     ]
   },
   "scripts-descriptions": {
@@ -85,6 +89,7 @@
     "test:integration": "Run the integration test suite (SQLite in memory).",
     "test:coverage": "Run the unit suite with coverage; fail below 100% lines or methods or on any coverage ignore annotation.",
     "check": "Run every check that must pass before a commit.",
-    "fix": "Apply Rector refactorings, then fix the code style."
+    "fix": "Apply Rector refactorings, then fix the code style.",
+    "a11y": "Scan the skeleton's pages with Playwright and axe-core (WCAG 2.2 AA); needs `docker compose up` in ../skeleton."
   }
 }

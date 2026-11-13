@@ -13,6 +13,11 @@
 clover.xml
 junit.xml
 
+# Accessibility tests (Playwright)
+/node_modules/
+/playwright-report/
+/test-results/
+
 # Tool caches
 /.phpunit.cache/
 .phpunit.result.cache

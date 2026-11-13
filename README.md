@@ -42,6 +42,31 @@ docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD/..:/workspace" 
 
 The parent folder is mounted so that the sibling repos are visible inside the container.
 
+### Accessibility tests
+
+Playwright and axe-core check the skeleton's pages against WCAG 2.2 AA. You need Node.js and a running skeleton
+(`docker compose up` in `../skeleton`), then:
+
+```sh
+npm ci
+npx playwright install chromium
+composer a11y
+```
+
+Set `SIGHTPRESS_BASE_URL` if the skeleton is not on `http://localhost:8080`. The tests live in `tests/A11y/`.
+
+### Continuous integration
+
+Every pull request and every push to `main` runs two GitHub Actions workflows:
+
+- `CI` (`composer check`): `composer validate`, code style, PHPStan, the unit suite with the 100% coverage gate,
+  the integration suite on SQLite in memory, and `composer audit`. The coverage report is uploaded as an artifact.
+- `Accessibility` (`Playwright and axe`): boots the skeleton with docker compose, using this branch of core, and
+  runs `composer a11y`.
+
+Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/); release-please uses them to
+keep a release pull request and `CHANGELOG.md` up to date.
+
 ## Licence
 
 GNU General Public License v3.0 or later. See [LICENSE](LICENSE).

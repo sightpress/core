@@ -1,0 +1,73 @@
+# Code style, static analysis, both test suites with the 100% unit coverage gate, and a dependency audit.
+# The integration suite runs on SQLite in memory, so no database service is needed.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: composer check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: core
+    steps:
+      # Composer finds module-interface through the path repository ../module-interface, so both repos are
+      # checked out side by side.
+      - uses: actions/checkout@v7
+        with:
+          path: core
+
+      - uses: actions/checkout@v7
+        with:
+          repository: sightpress/module-interface
+          path: module-interface
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: pcov
+          extensions: pdo_sqlite
+          ini-values: date.timezone=UTC, memory_limit=512M
+          tools: composer:v2
+
+      - name: Find the Composer cache folder
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('core/composer.json') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-lock
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Check (code style, PHPStan, unit tests with the coverage gate, integration tests on SQLite)
+        run: composer check
+
+      - name: Audit dependencies
+        run: composer audit
+
+      - name: Upload the coverage report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: core/build/coverage/
+          if-no-files-found: ignore
+          retention-days: 14
