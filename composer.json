@@ -1,0 +1,57 @@
+{
+  "name": "sightpress/core",
+  "description": "The core of SightPress, a powerful multi-site, multilingual CMS for everyone, designed with blind and low-vision creators and audiences in mind. Built on modern, object-oriented PHP.",
+  "type": "library",
+  "license": "GPL-3.0-or-later",
+  "keywords": ["cms", "accessibility", "a11y", "wcag", "multi-site", "multilingual"],
+  "homepage": "https://sightpress.org",
+  "support": {
+    "issues": "https://github.com/sightpress/core/issues",
+    "source": "https://github.com/sightpress/core"
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../module-interface",
+      "options": {
+        "symlink": true
+      }
+    }
+  ],
+  "require": {
+    "php": ">=8.5",
+    "sightpress/module-interface": "^0.1@dev"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^12"
+  },
+  "autoload": {
+    "psr-4": {
+      "SightPress\\Core\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SightPress\\Core\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-main": "0.1.x-dev"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "scripts": {
+    "test": "phpunit",
+    "check": [
+      "@composer validate --strict --no-check-lock",
+      "@test"
+    ]
+  },
+  "scripts-descriptions": {
+    "test": "Run the PHPUnit test suites.",
+    "check": "Run every check that must pass before a commit."
+  }
+}

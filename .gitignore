@@ -1,0 +1,30 @@
+# Dependencies (libraries and the project template don't ship a lock file)
+/vendor/
+/composer.lock
+
+# Local environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Coverage and test output
+/build/
+/coverage/
+clover.xml
+junit.xml
+
+# Tool caches
+/.phpunit.cache/
+.phpunit.result.cache
+.php-cs-fixer.cache
+/var/cache/
+/.rector-cache/
+
+# Private planning (never committed)
+/PLAN.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
