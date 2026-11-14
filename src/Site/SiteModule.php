@@ -6,12 +6,14 @@ namespace SightPress\Core\Site;
 
 use SightPress\Core\Site\Command\CheckRegistryCommand;
 use SightPress\Core\Site\Command\UpgradeRegistryCommand;
+use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
 
 /**
- * Sites of the tenant: the `site:*` console commands that look after the site registry (ADR-0002). Always on.
+ * Sites of the tenant: the `site:*` console commands that look after the site registry (ADR-0002), and each site's
+ * stored settings ({@see SiteSettings}, public). Always on.
  */
 final class SiteModule implements ModuleInterface
 {
@@ -26,5 +28,7 @@ final class SiteModule implements ModuleInterface
     {
         $registrar->commands()->add(CheckRegistryCommand::class);
         $registrar->commands()->add(UpgradeRegistryCommand::class);
+        $registrar->migrations()->add(new SiteMigrations());
+        $registrar->services()->autowire(DbalSiteSettings::class, SiteSettings::class, public: true);
     }
 }

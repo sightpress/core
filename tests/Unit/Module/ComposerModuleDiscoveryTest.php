@@ -22,6 +22,8 @@ use stdClass;
 #[CoversClass(CoreModules::class)]
 #[UsesClass(ModuleCandidate::class)]
 #[UsesClass(\SightPress\Core\Site\SiteModule::class)]
+#[UsesClass(\SightPress\Core\User\UserModule::class)]
+#[UsesClass(\SightPress\Core\Rbac\RbacModule::class)]
 final class ComposerModuleDiscoveryTest extends TestCase
 {
     private TemporaryDirectory $project;
@@ -40,8 +42,11 @@ final class ComposerModuleDiscoveryTest extends TestCase
     {
         $candidates = CoreModules::candidates();
 
-        self::assertSame(['site'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
+        self::assertSame(['site', 'user', 'rbac'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
         self::assertSame('sightpress/core', $candidates[0]->source);
+        foreach (CoreModules::entityPaths() as $path) {
+            self::assertDirectoryExists($path);
+        }
         self::assertNull($candidates[0]->contractConstraint);
     }
 

@@ -13,10 +13,13 @@ use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\Site\Command\CheckRegistryCommand;
 use SightPress\Core\Site\Command\UpgradeRegistryCommand;
+use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\DbalSiteSettings;
 use SightPress\Core\Site\SiteModule;
 
 #[CoversClass(SiteModule::class)]
 #[UsesNamespace('SightPress\Core\Module')]
+#[UsesNamespace('SightPress\Core\Site')]
 final class SiteModuleTest extends TestCase
 {
     public function testIsRequiredAndRegistersTheRegistryCommands(): void
@@ -32,5 +35,8 @@ final class SiteModuleTest extends TestCase
             [CheckRegistryCommand::class, UpgradeRegistryCommand::class],
             array_map(static fn ($registered) => $registered->item, $registry->commands()),
         );
+        self::assertSame('SightPress\Core\Site\Migrations', $registry->migrations()[0]->item->namespace());
+        self::assertTrue($registry->services()[SiteSettings::class]->item->public);
+        self::assertSame(DbalSiteSettings::class, $registry->services()[SiteSettings::class]->item->class);
     }
 }

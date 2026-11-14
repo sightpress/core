@@ -29,17 +29,31 @@ use function DI\get;
  */
 final class SiteContainerFactory
 {
+    /**
+     * Ids of the services every site container defines itself; no module may register one of them.
+     */
+    public const array SITE_SERVICES = [
+        Site::class,
+        Connection::class,
+        EntityManagerInterface::class,
+        EntityManager::class,
+    ];
+
+
     /** @var array<string, array{Site, ContainerInterface}> */
     private array $containers = [];
 
     /**
-     * @param list<string> $entityPaths folders with entity classes (attribute mapping)
+     * @param list<string>         $entityPaths    folders with entity classes (attribute mapping)
+     * @param array<string, mixed> $moduleServices PHP-DI definitions of the services modules registered; each site
+     *                                             gets its own instances, built against its own database
      */
     public function __construct(
         private readonly ContainerInterface $tenant,
         private readonly SecretBox $secretBox,
         private readonly TenantConfig $config,
         private readonly array $entityPaths = [],
+        private readonly array $moduleServices = [],
     ) {
     }
 
@@ -79,6 +93,7 @@ final class SiteContainerFactory
         $entityPaths = $this->entityPaths;
 
         return [
+            ...$this->moduleServices,
             Site::class => $site,
             Connection::class => factory(static fn (): Connection => DriverManager::getConnection(
                 DatabaseDsn::parse($secretBox->decrypt($site->databaseDsn))->connectionParams(),

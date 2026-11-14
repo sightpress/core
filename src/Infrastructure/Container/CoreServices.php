@@ -23,7 +23,10 @@ use SightPress\Core\Infrastructure\Event\EventDispatcher;
 use SightPress\Core\Infrastructure\Event\ListenerProvider;
 use SightPress\Core\Http\Error\ErrorResponder;
 use SightPress\Core\Infrastructure\Logging\LoggerFactory;
+use SightPress\Core\Access\PermissionCatalogue;
+use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Core\Module\ModuleServices;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Tenant\FileSiteRepository;
 use SightPress\Core\Tenant\SiteContainerFactory;
@@ -98,7 +101,15 @@ final class CoreServices
             SecretBox::class => autowire()->constructor($config->secret),
             SiteRegistryFile::class => autowire()->constructor($config->registryPath),
             SiteRepository::class => autowire(FileSiteRepository::class),
-            SiteContainerFactory::class => autowire(),
+            // Built by hand: PHP-DI would resolve the module service definitions if they were passed as a parameter.
+            SiteContainerFactory::class => factory(static fn (ContainerInterface $container): SiteContainerFactory => new SiteContainerFactory(
+                $container,
+                Services::get($container, SecretBox::class),
+                $config,
+                CoreModules::entityPaths(),
+                ModuleServices::definitions($modules, []),
+            )),
+            PermissionCatalogue::class => factory(static fn (): PermissionCatalogue => PermissionCatalogue::fromRegistry($modules)),
             ErrorResponder::class => autowire()
                 ->constructorParameter('debug', $config->debug)
                 ->constructorParameter('noindex', !$config->environment->isProduction()),

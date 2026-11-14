@@ -32,6 +32,7 @@ use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\Module\ModuleServices;
+use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tenant\TenantConfigLoader;
 use Slim\App;
@@ -91,7 +92,7 @@ final readonly class Kernel
             ->useAutowiring(true)
             ->useAttributes(false)
             ->addDefinitions($core)
-            ->addDefinitions(ModuleServices::definitions($registry, array_keys($core)))
+            ->addDefinitions(ModuleServices::definitions($registry, [...array_keys($core), ...SiteContainerFactory::SITE_SERVICES]))
             ->build();
 
         $responseFactory = Services::get($container, ResponseFactoryInterface::class);

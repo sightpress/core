@@ -117,6 +117,24 @@ final class SiteContainerFactoryTest extends TestCase
         self::assertNotSame($third, $factory->forSite($site));
     }
 
+    public function testModuleServicesAreBuiltPerSiteAgainstTheSiteDatabase(): void
+    {
+        $factory = new SiteContainerFactory(
+            new Container(),
+            SiteFixture::secretBox(),
+            TenantConfig::fromArray(['cache_dir' => $this->directory->path], '/srv/app', ['APP_DEBUG' => '1']),
+            [],
+            ['acme.service' => \DI\factory(static fn (Connection $connection): \ArrayObject => new \ArrayObject([$connection]))],
+        );
+        $demo = $factory->forSite(SiteFixture::site('demo'));
+        $blog = $factory->forSite(SiteFixture::site('blog'));
+
+        $service = Services::get($demo, \ArrayObject::class, 'acme.service');
+        self::assertSame(Services::get($demo, Connection::class), $service[0]);
+        self::assertNotSame($service, $blog->get('acme.service'));
+        self::assertContains(Connection::class, SiteContainerFactory::SITE_SERVICES);
+    }
+
     public function testTheContextTravelsOnTheRequest(): void
     {
         $context = new SiteContext(SiteFixture::site(), new Container());
