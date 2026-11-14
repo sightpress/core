@@ -16,6 +16,7 @@ final readonly class ErrorPage
      * @param list<non-empty-string> $paragraphs
      * @param array<string, string>  $headers    extra response headers, for example `Allow` or `Retry-After`
      * @param bool                   $homeLink   whether to link to the home page
+     * @param array<string, string>  $links      more links after the home page, path => link text
      */
     public function __construct(
         public int $status,
@@ -23,6 +24,7 @@ final readonly class ErrorPage
         public array $paragraphs,
         public array $headers = [],
         public bool $homeLink = true,
+        public array $links = [],
     ) {
     }
 }

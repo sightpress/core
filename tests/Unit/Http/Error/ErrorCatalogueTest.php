@@ -29,8 +29,17 @@ use Throwable;
 #[CoversClass(HttpServiceUnavailableException::class)]
 #[CoversClass(HttpTooManyRequestsException::class)]
 #[CoversClass(\SightPress\Core\Http\Csrf\CsrfTokenMismatchException::class)]
+#[CoversClass(\SightPress\Core\Http\Error\NoAdminAccessException::class)]
 final class ErrorCatalogueTest extends TestCase
 {
+    public function testThePageForPeopleWithoutAdminAccessLinksToTheirAccount(): void
+    {
+        $page = new ErrorCatalogue()->pageFor(new \SightPress\Core\Http\Error\NoAdminAccessException(new ServerRequest('GET', '/admin')));
+
+        self::assertTrue($page->homeLink);
+        self::assertSame(['/account' => 'Go to My account'], $page->links);
+    }
+
     /**
      * @return iterable<string, array{Throwable, int, string, string}>
      */
@@ -46,6 +55,12 @@ final class ErrorCatalogueTest extends TestCase
             403,
             'This form has expired',
             'reload the page and send the form again',
+        ];
+        yield 'no admin access' => [
+            new \SightPress\Core\Http\Error\NoAdminAccessException($request),
+            403,
+            'You can\'t use the admin panel',
+            'You can still read the site',
         ];
         yield '403' => [new HttpForbiddenException($request), 403, 'You do not have permission to see this page', 'ask the person'];
         yield '404' => [new HttpNotFoundException($request), 404, 'Page not found', 'check it is correct'];

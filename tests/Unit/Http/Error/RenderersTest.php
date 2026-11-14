@@ -45,6 +45,13 @@ final class RenderersTest extends TestCase
         self::assertStringContainsString('RuntimeException: &lt;boom&gt;', $html);
     }
 
+    public function testHtmlPageShowsExtraLinksEscaped(): void
+    {
+        $html = new HtmlErrorRenderer()->render(new ErrorPage(403, 'No', ['Text.'], links: ['/account?a=1&b=2' => 'My <account>']));
+
+        self::assertStringContainsString("<p><a href=\"/\">Go to the home page</a></p>\n<p><a href=\"/account?a=1&amp;b=2\">My &lt;account&gt;</a></p>", $html);
+    }
+
     public function testThePolicyAllowsOnlyThePageStyle(): void
     {
         $renderer = new HtmlErrorRenderer();

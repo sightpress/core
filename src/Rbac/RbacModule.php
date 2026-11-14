@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Rbac;
 
+use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\ModuleRequirement;
 
 /**
- * Roles and permissions: core's permission catalogue, the RBAC tables, the seeder and the guardrails (D9, D24,
- * ADR-0014). Always on.
+ * Roles and permissions: core's permission catalogue, the RBAC tables, the seeder, the guardrails (D9, D24,
+ * ADR-0014) and the {@see Authorizer} with its voters. Always on.
  */
 final class RbacModule implements ModuleInterface
 {
@@ -37,5 +38,10 @@ final class RbacModule implements ModuleInterface
         $registrar->services()->autowire(RegistrationRole::class, public: true);
         $registrar->services()->autowire(RoleManager::class, public: true);
         $registrar->services()->autowire(RbacSeeder::class, public: true);
+        $registrar->services()->factory(
+            Authorizer::class,
+            static fn (): Authorizer => new VoterAuthorizer([new PageVoter()]),
+            public: true,
+        );
     }
 }

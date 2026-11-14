@@ -42,6 +42,9 @@ final readonly class HtmlErrorRenderer
         if ($page->homeLink) {
             $paragraphs .= "<p><a href=\"/\">Go to the home page</a></p>\n";
         }
+        foreach ($page->links as $href => $text) {
+            $paragraphs .= sprintf("<p><a href=\"%s\">%s</a></p>\n", $this->escape($href), $this->escape($text));
+        }
         if ($details !== null && $details !== '') {
             $paragraphs .= "<details>\n<summary>Technical details</summary>\n<pre>"
                 . $this->escape($details) . "</pre>\n</details>\n";

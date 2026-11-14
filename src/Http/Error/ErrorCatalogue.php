@@ -26,6 +26,14 @@ final readonly class ErrorCatalogue
             ], homeLink: false);
         }
 
+        if ($exception instanceof NoAdminAccessException) {
+            return new ErrorPage(403, 'You can\'t use the admin panel', [
+                'Your account doesn\'t give you access to the admin panel. You can still read the site and change '
+                . 'your own details.',
+                'If you think you should have access, ask the person who looks after this website.',
+            ], links: ['/account' => 'Go to My account']);
+        }
+
         if ($exception instanceof CsrfTokenMismatchException) {
             return new ErrorPage(403, 'This form has expired', [
                 'For your security, a form only works for a while after you open it, and only on this website.',

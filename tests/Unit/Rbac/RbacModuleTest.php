@@ -11,7 +11,9 @@ use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
+use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\CorePermissions;
+use SightPress\Core\Rbac\VoterAuthorizer;
 use SightPress\Core\Rbac\RbacMigrations;
 use SightPress\Core\Rbac\RbacModule;
 use SightPress\Core\Rbac\RbacSeeder;
@@ -46,9 +48,12 @@ final class RbacModuleTest extends TestCase
         self::assertSame('SightPress\Core\Rbac\Migrations', $migrations->namespace());
         self::assertDirectoryExists($migrations->directory());
 
-        foreach ([RoleRepository::class, RegistrationRole::class, RoleManager::class, RbacSeeder::class] as $id) {
+        foreach ([RoleRepository::class, RegistrationRole::class, RoleManager::class, RbacSeeder::class, Authorizer::class] as $id) {
             self::assertTrue($registry->services()[$id]->item->public, $id);
         }
+        $factory = $registry->services()[Authorizer::class]->item->factory;
+        self::assertNotNull($factory);
+        self::assertInstanceOf(VoterAuthorizer::class, $factory(new \DI\Container()));
     }
 
     public function testOnlyFivePermissionsAreAllowedOnSignUp(): void
