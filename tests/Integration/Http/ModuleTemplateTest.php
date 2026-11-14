@@ -25,7 +25,7 @@ final class ModuleTemplateTest extends TestCase
 {
     public function testAModuleRendersItsTemplateWithTheResponsesNonce(): void
     {
-        $project = new TestProject(sites: ['demo' => SiteFixture::entry()]);
+        $project = new TestProject(sites: ['demo' => SiteFixture::entry('demo', ['domains' => ['example.org']])]);
         try {
             $module = new FakeModule('acme', register: static function (ModuleRegistrar $r): void {
                 $r->views()->add('acme', dirname(__DIR__, 2) . '/Support/Views');

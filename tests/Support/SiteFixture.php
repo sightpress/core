@@ -31,6 +31,7 @@ final class SiteFixture
         array $domains = ['demo.example'],
         SiteStatus $status = SiteStatus::Enabled,
         string $dsn = 'sqlite:///:memory:',
+        ?SecretBox $secretBox = null,
     ): Site {
         return new Site(
             id: self::id($slug),
@@ -39,7 +40,7 @@ final class SiteFixture
             status: $status,
             ownerType: OwnerType::Organization,
             domains: $domains,
-            databaseDsn: self::secretBox()->encrypt($dsn),
+            databaseDsn: ($secretBox ?? self::secretBox())->encrypt($dsn),
             storage: new SiteStorage(),
             defaultLocale: 'en-GB',
             locales: ['en-GB'],

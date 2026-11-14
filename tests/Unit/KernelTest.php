@@ -87,7 +87,7 @@ final class KernelTest extends TestCase
 
     public function testRoutesAnswerAndFailuresAreLogged(): void
     {
-        $project = $this->project();
+        $project = $this->project(sites: ['demo' => SiteFixture::entry()]);
         $kernel = Kernel::boot($project->path(), ['APP_ENV' => 'test']);
         $kernel->app()->get('/ok', function ($request, ResponseInterface $response): ResponseInterface {
             $response->getBody()->write('fine');
@@ -97,9 +97,9 @@ final class KernelTest extends TestCase
         $kernel->app()->get('/fail', fn () => throw new RuntimeException('broken'));
         $kernel->app()->get('/only-get', fn ($request, ResponseInterface $response) => $response);
 
-        $ok = $kernel->handle(new ServerRequest('GET', '/ok'));
-        $failed = $kernel->handle(new ServerRequest('GET', '/fail'));
-        $wrongMethod = $kernel->handle(new ServerRequest('DELETE', '/only-get'));
+        $ok = $kernel->handle(new ServerRequest('GET', 'http://demo.example/ok'));
+        $failed = $kernel->handle(new ServerRequest('GET', 'http://demo.example/fail'));
+        $wrongMethod = $kernel->handle(new ServerRequest('DELETE', 'http://demo.example/only-get'));
 
         self::assertSame('fine', (string) $ok->getBody());
         self::assertSame(500, $failed->getStatusCode());
@@ -164,7 +164,7 @@ final class KernelTest extends TestCase
         });
 
         $kernel = Kernel::fromConfig($config, [new ModuleCandidate($module, 'acme/hello', '*')]);
-        $response = $kernel->handle(new ServerRequest('GET', '/hello'));
+        $response = $kernel->handle(new ServerRequest('GET', 'http://demo.example/hello'));
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame(['acme.hello'], $kernel->modules()->modules());
@@ -185,7 +185,7 @@ final class KernelTest extends TestCase
             new ModuleSelection(['acme.hello' => false]),
         );
 
-        self::assertSame(404, $kernel->handle(new ServerRequest('GET', '/hello'))->getStatusCode());
+        self::assertSame(404, $kernel->handle(new ServerRequest('GET', 'http://demo.example/hello'))->getStatusCode());
         self::assertSame([], $kernel->modules()->modules());
     }
 

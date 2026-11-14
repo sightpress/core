@@ -21,6 +21,7 @@ use SightPress\Core\Http\Error\NoSiteConfiguredMiddleware;
 use SightPress\Core\Infrastructure\Container\CoreServices;
 use SightPress\Core\Http\RateLimit\RateLimitMiddleware;
 use SightPress\Core\Http\RouteInstaller;
+use SightPress\Core\Http\SiteResolverMiddleware;
 use SightPress\Core\Http\Security\SecurityHeadersMiddleware;
 use SightPress\Core\Http\Session\SessionMiddleware;
 use SightPress\Core\Infrastructure\Container\Services;
@@ -97,12 +98,14 @@ final readonly class Kernel
 
         /** @var App<ContainerInterface> $app */
         $app = new App($responseFactory, $container);
-        // Middleware added last runs first. Routing comes before the CSRF check, so an unknown address or method
-        // answers 404 or 405 rather than 403.
+        // Middleware added last runs first. The site is resolved from the host before anything else touches the
+        // request. Routing comes before the CSRF check, so an unknown address or method answers 404 or 405 rather
+        // than 403.
         $app->add(CsrfMiddleware::class);
         $app->addRoutingMiddleware();
         $app->add(SessionMiddleware::class);
         $app->add(RateLimitMiddleware::class);
+        $app->add(SiteResolverMiddleware::class);
         $app->add(NoSiteConfiguredMiddleware::class);
         $app->add(ErrorHandlingMiddleware::class);
         $app->add(SecurityHeadersMiddleware::class);

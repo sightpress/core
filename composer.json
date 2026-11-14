@@ -25,6 +25,7 @@
     "composer/semver": "^3",
     "doctrine/dbal": "^4",
     "doctrine/migrations": "^3",
+    "doctrine/orm": "^3",
     "monolog/monolog": "^3",
     "nyholm/psr7": "^1",
     "nyholm/psr7-server": "^1",

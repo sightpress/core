@@ -31,7 +31,7 @@ final class SecurityPipelineTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->project = new TestProject(sites: ['demo' => SiteFixture::entry()]);
+        $this->project = new TestProject(sites: ['demo' => SiteFixture::entry('demo', ['domains' => ['example.org']])]);
         $module = new FakeModule('acme.form', register: static function (ModuleRegistrar $r): void {
             $r->routes()->add(new Route('form.show', '/form', FormHandler::class, ['GET', 'POST']));
         });

@@ -26,6 +26,7 @@ use SightPress\Core\Infrastructure\Logging\LoggerFactory;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Tenant\FileSiteRepository;
+use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRegistryFile;
 use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Template\AssetUrls;
@@ -97,6 +98,7 @@ final class CoreServices
             SecretBox::class => autowire()->constructor($config->secret),
             SiteRegistryFile::class => autowire()->constructor($config->registryPath),
             SiteRepository::class => autowire(FileSiteRepository::class),
+            SiteContainerFactory::class => autowire(),
             ErrorResponder::class => autowire()
                 ->constructorParameter('debug', $config->debug)
                 ->constructorParameter('noindex', !$config->environment->isProduction()),
