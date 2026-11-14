@@ -1,6 +1,6 @@
 # 0012 — Analytics privacy model
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-13
 
 ## Context

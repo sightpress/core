@@ -1,6 +1,6 @@
 # 0006 — Page workflow states
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-13
 
 ## Context

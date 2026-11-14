@@ -1,6 +1,6 @@
 # 0009 — Module architecture
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-13
 
 ## Context

@@ -1,6 +1,6 @@
 # 0010 — AI assistant
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-13
 
 ## Context
