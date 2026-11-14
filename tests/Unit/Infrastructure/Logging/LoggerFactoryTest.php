@@ -9,12 +9,14 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Infrastructure\Logging\LoggerFactory;
 use SightPress\Core\Tenant\Environment;
+use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
 
 #[CoversClass(LoggerFactory::class)]
 #[UsesClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]
+#[UsesClass(LocaleCode::class)]
 final class LoggerFactoryTest extends TestCase
 {
     public function testItWritesToTheConfiguredFileAtTheConfiguredLevel(): void

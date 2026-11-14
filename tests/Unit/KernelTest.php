@@ -23,6 +23,7 @@ use SightPress\Core\Tests\Support\Modules\HelloHandler;
 use SightPress\Core\Tests\Support\FakeModule;
 use SightPress\Core\Tests\Support\Modules\ExampleCommand;
 use SightPress\Core\Tests\Support\Modules\ExampleModule;
+use SightPress\Core\Tests\Support\SiteFixture;
 use SightPress\Core\Tests\Support\TestProject;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\Routing\Route;
@@ -37,6 +38,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 #[UsesNamespace('SightPress\Core\Module')]
 #[UsesNamespace('SightPress\Core\Cli')]
 #[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Site')]
 final class KernelTest extends TestCase
 {
     private ?TestProject $project = null;
@@ -74,7 +76,7 @@ final class KernelTest extends TestCase
 
     public function testWithSitesAnUnknownPathIsPageNotFound(): void
     {
-        $kernel = Kernel::boot($this->project(sites: [['slug' => 'demo']])->path(), ['APP_ENV' => 'dev']);
+        $kernel = Kernel::boot($this->project(sites: ['demo' => SiteFixture::entry()])->path(), ['APP_ENV' => 'dev']);
 
         $response = $kernel->handle(new ServerRequest('GET', '/missing', ['Accept' => 'application/json']));
 
@@ -155,7 +157,7 @@ final class KernelTest extends TestCase
 
     public function testTheKernelBootsThroughTheModuleLoader(): void
     {
-        $config = new TenantConfigLoader()->load($this->project(sites: [['slug' => 'demo']])->path(), []);
+        $config = new TenantConfigLoader()->load($this->project(sites: ['demo' => SiteFixture::entry()])->path(), []);
         $module = new FakeModule('acme.hello', register: static function (ModuleRegistrar $r): void {
             $r->routes()->add(new Route('hello.show', '/hello', HelloHandler::class));
             $r->commands()->add(ExampleCommand::class);
@@ -172,7 +174,7 @@ final class KernelTest extends TestCase
 
     public function testModulesThatAreOffRegisterNothing(): void
     {
-        $config = new TenantConfigLoader()->load($this->project(sites: [['slug' => 'demo']])->path(), []);
+        $config = new TenantConfigLoader()->load($this->project(sites: ['demo' => SiteFixture::entry()])->path(), []);
         $module = new FakeModule('acme.hello', register: static function (ModuleRegistrar $r): void {
             $r->routes()->add(new Route('hello.show', '/hello', HelloHandler::class));
         });
@@ -198,7 +200,8 @@ final class KernelTest extends TestCase
 
         $kernel = Kernel::boot($project->path(), []);
 
-        self::assertSame(['acme.example'], $kernel->modules()->modules());
+        self::assertSame(['site', 'acme.example'], $kernel->modules()->modules());
+        self::assertTrue($kernel->console()->has('site:registry:check'));
         self::assertNotSame('', Kernel::contractVersion());
     }
 
@@ -214,7 +217,7 @@ final class KernelTest extends TestCase
 
     /**
      * @param array<string, mixed>       $tenant
-     * @param list<array<string, mixed>> $sites
+     * @param array<string, array<string, mixed>> $sites
      */
     private function project(array $tenant = [], array $sites = []): TestProject
     {

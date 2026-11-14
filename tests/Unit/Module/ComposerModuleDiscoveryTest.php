@@ -21,6 +21,7 @@ use stdClass;
 #[CoversClass(ComposerModuleDiscovery::class)]
 #[CoversClass(CoreModules::class)]
 #[UsesClass(ModuleCandidate::class)]
+#[UsesClass(\SightPress\Core\Site\SiteModule::class)]
 final class ComposerModuleDiscoveryTest extends TestCase
 {
     private TemporaryDirectory $project;
@@ -35,9 +36,13 @@ final class ComposerModuleDiscoveryTest extends TestCase
         $this->project->remove();
     }
 
-    public function testCoreHasNoFeatureModulesYet(): void
+    public function testCoreListsItsOwnModules(): void
     {
-        self::assertSame([], CoreModules::candidates());
+        $candidates = CoreModules::candidates();
+
+        self::assertSame(['site'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
+        self::assertSame('sightpress/core', $candidates[0]->source);
+        self::assertNull($candidates[0]->contractConstraint);
     }
 
     public function testAProjectWithoutInstalledPackagesHasNoExternalModules(): void

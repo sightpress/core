@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Tenant\Environment;
+use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tenant\TenantConfigException;
 use SightPress\Core\Tenant\TenantConfigLoader;
@@ -16,6 +17,7 @@ use SightPress\Core\Tests\Support\TemporaryDirectory;
 #[CoversClass(TenantConfigLoader::class)]
 #[UsesClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]
+#[UsesClass(LocaleCode::class)]
 final class TenantConfigLoaderTest extends TestCase
 {
     private TemporaryDirectory $directory;

@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use SightPress\Core\Tenant\SiteRegistryProbe;
+use SightPress\Core\Tenant\SiteRepository;
 use Slim\Exception\HttpNotFoundException;
 
 /**
@@ -17,7 +17,7 @@ use Slim\Exception\HttpNotFoundException;
  */
 final readonly class NoSiteConfiguredMiddleware implements MiddlewareInterface
 {
-    public function __construct(private SiteRegistryProbe $registry)
+    public function __construct(private SiteRepository $sites)
     {
     }
 
@@ -26,7 +26,7 @@ final readonly class NoSiteConfiguredMiddleware implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch (HttpNotFoundException $exception) {
-            if ($exception instanceof NoSiteConfiguredException || $this->registry->hasSites()) {
+            if ($exception instanceof NoSiteConfiguredException || $this->sites->all() !== []) {
                 throw $exception;
             }
 

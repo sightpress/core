@@ -10,11 +10,13 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Tenant\Environment;
+use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tenant\TenantConfigException;
 
 #[CoversClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]
+#[UsesClass(LocaleCode::class)]
 final class TenantConfigTest extends TestCase
 {
     public function testEmptyConfigGetsDefaults(): void
@@ -33,6 +35,23 @@ final class TenantConfigTest extends TestCase
         self::assertSame('UTC', $config->defaultTimezone);
         self::assertSame('/srv/app/var/sessions', $config->sessionPath);
         self::assertSame(7200, $config->sessionIdleTimeout);
+        self::assertNull($config->secret);
+    }
+
+    public function testReadsTheSecretFromTheEnvironment(): void
+    {
+        $secret = str_repeat('s', 32);
+
+        self::assertSame($secret, TenantConfig::fromArray([], '/srv/app', ['APP_SECRET' => $secret])->secret);
+        self::assertNull(TenantConfig::fromArray([], '/srv/app', ['APP_SECRET' => ' '])->secret);
+    }
+
+    public function testRefusesAShortSecret(): void
+    {
+        $this->expectException(TenantConfigException::class);
+        $this->expectExceptionMessage('APP_SECRET is too short: use at least 32 random characters');
+
+        TenantConfig::fromArray([], '/srv/app', ['APP_SECRET' => 'short']);
     }
 
     public function testItReadsEverySetting(): void

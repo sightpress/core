@@ -6,6 +6,7 @@ namespace SightPress\Core\Tenant;
 
 use DateTimeZone;
 use Monolog\Level;
+use SensitiveParameter;
 
 /**
  * The tenant's settings: one install of SightPress, read once per process from `config/tenant.php` and the
@@ -26,6 +27,7 @@ final readonly class TenantConfig
      * @param non-empty-string $defaultTimezone
      * @param non-empty-string $sessionPath        folder for session data
      * @param positive-int     $sessionIdleTimeout seconds without a request before a session ends
+     * @param non-empty-string|null $secret       `APP_SECRET`: derives the key that encrypts site DSNs; null when unset
      */
     public function __construct(
         public string $projectDir,
@@ -40,6 +42,7 @@ final readonly class TenantConfig
         public string $defaultTimezone = 'UTC',
         public string $sessionPath = '/tmp/sightpress-sessions',
         public int $sessionIdleTimeout = 7200,
+        #[SensitiveParameter] public ?string $secret = null,
     ) {
     }
 
@@ -73,6 +76,7 @@ final readonly class TenantConfig
             defaultTimezone: self::timezone($config),
             sessionPath: self::string($session, 'path', 'session.path', $projectDir . '/var/sessions'),
             sessionIdleTimeout: self::idleTimeout($session),
+            secret: self::secret($environment['APP_SECRET'] ?? null),
         );
     }
 
@@ -102,6 +106,25 @@ final readonly class TenantConfig
         $value = $config[$key] ?? $default;
         if (!is_string($value) || trim($value) === '') {
             throw new TenantConfigException(sprintf('Tenant setting "%s" must be a non-empty string.', $name));
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return non-empty-string|null
+     */
+    private static function secret(#[SensitiveParameter] ?string $value): ?string
+    {
+        if ($value === null || trim($value) === '') {
+            return null;
+        }
+
+        if (strlen($value) < 32) {
+            throw new TenantConfigException(
+                'APP_SECRET is too short: use at least 32 random characters, for example the output of '
+                . '`php -r "echo bin2hex(random_bytes(32));"`.',
+            );
         }
 
         return $value;
@@ -169,7 +192,7 @@ final readonly class TenantConfig
     private static function locale(array $admin): string
     {
         $locale = self::string($admin, 'default_locale', 'admin.default_locale', 'en-GB');
-        if (preg_match('/^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2})?$/', $locale) !== 1) {
+        if (!LocaleCode::isValid($locale)) {
             throw new TenantConfigException(sprintf(
                 'Tenant setting "admin.default_locale" is not valid ("%s"): use a locale such as en-GB.',
                 $locale,

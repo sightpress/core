@@ -21,6 +21,7 @@
   "require": {
     "php": ">=8.5",
     "ext-intl": "*",
+    "ext-sodium": "*",
     "composer/semver": "^3",
     "doctrine/dbal": "^4",
     "doctrine/migrations": "^3",

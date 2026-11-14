@@ -12,6 +12,7 @@ use SightPress\Core\Module\ModuleCandidate;
 use SightPress\Core\Tenant\TenantConfigLoader;
 use SightPress\Core\Tests\Support\FakeModule;
 use SightPress\Core\Tests\Support\Modules\TemplateHandler;
+use SightPress\Core\Tests\Support\SiteFixture;
 use SightPress\Core\Tests\Support\TestProject;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\Routing\Route;
@@ -24,7 +25,7 @@ final class ModuleTemplateTest extends TestCase
 {
     public function testAModuleRendersItsTemplateWithTheResponsesNonce(): void
     {
-        $project = new TestProject(sites: [['slug' => 'demo']]);
+        $project = new TestProject(sites: ['demo' => SiteFixture::entry()]);
         try {
             $module = new FakeModule('acme', register: static function (ModuleRegistrar $r): void {
                 $r->views()->add('acme', dirname(__DIR__, 2) . '/Support/Views');

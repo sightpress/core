@@ -14,6 +14,7 @@ use SightPress\Core\Module\ModuleCandidate;
 use SightPress\Core\Tenant\TenantConfigLoader;
 use SightPress\Core\Tests\Support\FakeModule;
 use SightPress\Core\Tests\Support\Modules\FormHandler;
+use SightPress\Core\Tests\Support\SiteFixture;
 use SightPress\Core\Tests\Support\TestProject;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\Routing\Route;
@@ -30,7 +31,7 @@ final class SecurityPipelineTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->project = new TestProject(sites: [['slug' => 'demo']]);
+        $this->project = new TestProject(sites: ['demo' => SiteFixture::entry()]);
         $module = new FakeModule('acme.form', register: static function (ModuleRegistrar $r): void {
             $r->routes()->add(new Route('form.show', '/form', FormHandler::class, ['GET', 'POST']));
         });

@@ -7,18 +7,21 @@ namespace SightPress\Core\Tests\Unit\Http\Error;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Http\Error\NoSiteConfiguredException;
 use SightPress\Core\Http\Error\NoSiteConfiguredMiddleware;
-use SightPress\Core\Tenant\SiteRegistryProbe;
+use SightPress\Core\Tenant\FileSiteRepository;
+use SightPress\Core\Tenant\SiteRegistryFile;
+use SightPress\Core\Tests\Support\SiteFixture;
 use SightPress\Core\Tests\Support\CallbackHandler;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
 use Slim\Exception\HttpNotFoundException;
 use Throwable;
 
 #[CoversClass(NoSiteConfiguredMiddleware::class)]
-#[UsesClass(SiteRegistryProbe::class)]
+#[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesNamespace('SightPress\Core\Infrastructure\Crypto')]
 final class NoSiteConfiguredMiddlewareTest extends TestCase
 {
     private TemporaryDirectory $directory;
@@ -81,11 +84,11 @@ final class NoSiteConfiguredMiddlewareTest extends TestCase
 
     private function middleware(bool $hasSites): NoSiteConfiguredMiddleware
     {
-        $file = $this->directory->write(
-            'sites.php',
-            '<?php return ["sites" => ' . ($hasSites ? '[["slug" => "demo"]]' : '[]') . '];',
-        );
+        $file = $this->directory->write('sites.php', '<?php return ' . var_export([
+            'version' => 1,
+            'sites' => $hasSites ? ['demo' => SiteFixture::entry()] : [],
+        ], true) . ';');
 
-        return new NoSiteConfiguredMiddleware(new SiteRegistryProbe($file));
+        return new NoSiteConfiguredMiddleware(new FileSiteRepository(new SiteRegistryFile($file)));
     }
 }

@@ -7,13 +7,13 @@ namespace SightPress\Core\Tests\Support;
 /**
  * A minimal tenant project (config/tenant.php + config/sites.php) in a temporary folder.
  */
-final class TestProject
+final readonly class TestProject
 {
-    public readonly TemporaryDirectory $directory;
+    public TemporaryDirectory $directory;
 
     /**
      * @param array<string, mixed> $tenant extra tenant settings
-     * @param list<array<string, mixed>> $sites
+     * @param array<string, array<string, mixed>> $sites registry entries keyed by slug (see {@see SiteFixture::entry()})
      */
     public function __construct(array $tenant = [], array $sites = [])
     {
