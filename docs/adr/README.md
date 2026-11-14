@@ -31,5 +31,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0011](0011-site-search.md) | Site search | Accepted |
 | [0012](0012-analytics-privacy-model.md) | Analytics privacy model | Accepted |
 | [0013](0013-framework-and-library-baseline.md) | Framework and library baseline | Accepted |
+| [0015](0015-m1-dependency-baseline.md) | Runtime dependencies for M1 (amends ADR-0013) | Proposed |
 
 When an ADR's status changes, update it here too.
