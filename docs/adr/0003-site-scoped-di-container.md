@@ -1,6 +1,6 @@
 # 0003 — Site-scoped DI container
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-13
 
 ## Context
@@ -15,7 +15,7 @@ tenant and services that belong to one site.
 ## Decision
 
 - Build two levels of container:
-  - The **tenant container**, built once per process from tenant config: kernel, logger, registry connection,
+  - The **tenant container**, built once per process from tenant config: kernel, logger, site registry (ADR-0002),
     module loader, console application, encryption service.
   - A **site container**, built per site by a `SiteContainerFactory` once the site is known. It holds the site's
     `SiteContext`, entity manager, filesystem, mailer, Twig environment (theme loader chain), translator, RBAC and

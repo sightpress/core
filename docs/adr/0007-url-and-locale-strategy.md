@@ -1,6 +1,6 @@
 # 0007 — URL and locale strategy
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-13
 
 ## Context

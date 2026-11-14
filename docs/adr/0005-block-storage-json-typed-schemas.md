@@ -1,6 +1,6 @@
 # 0005 — Block storage as JSON with typed schemas
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-13
 
 ## Context
