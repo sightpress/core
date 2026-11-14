@@ -1,0 +1,11 @@
+{% extends 'layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{% if form.errors is not empty %}Error: {% endif %}Your profile{% endblock %}
+{% block main %}
+<h1>Your profile</h1>
+{{ f.error_summary(form) }}
+{{ f.start(form, '/form') }}
+{% for field in form.fields %}{{ f.field(form, field.name) }}{% endfor %}
+{{ f.submit('Save profile') }}
+{{ f.end() }}
+{% endblock %}

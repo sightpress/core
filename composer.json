@@ -37,6 +37,7 @@
     "symfony/console": "^8",
     "symfony/rate-limiter": "^8",
     "symfony/translation": "^8",
+    "symfony/validator": "^8",
     "twig/twig": "^3"
   },
   "require-dev": {
@@ -108,6 +109,6 @@
     "test:coverage": "Run the unit suite with coverage; fail below 100% lines or methods or on any coverage ignore annotation.",
     "check": "Run every check that must pass before a commit.",
     "fix": "Apply Rector refactorings, then fix the code style.",
-    "a11y": "Scan the skeleton's pages with Playwright and axe-core (WCAG 2.2 AA); needs `docker compose up` in ../skeleton."
+    "a11y": "Scan the skeleton's pages and core's component gallery with Playwright and axe-core (WCAG 2.2 AA); needs `docker compose up` in ../skeleton and PHP on this machine."
   }
 }

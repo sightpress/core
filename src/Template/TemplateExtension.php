@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Template;
 
 use DateTimeInterface;
+use SightPress\Core\Http\Csrf\CsrfTokens;
 use SightPress\Core\Http\CurrentRequest;
 use SightPress\Core\Http\Security\CspNonce;
 use SightPress\Core\Http\Security\GrantedPermissions;
@@ -19,6 +20,7 @@ use Twig\TwigFunction;
  * - `t(message, parameters)`: the message in the viewer's language;
  * - `can(permission)`: whether the viewer holds a permission;
  * - `csp_nonce()`: the nonce every inline `<script>` and `<style>` needs;
+ * - `csrf_fields()`: the hidden CSRF fields every `POST` form needs;
  * - `value|user_datetime(style)` and `value|user_date(style)`: a UTC date in the viewer's time zone and language.
  */
 final class TemplateExtension extends AbstractExtension
@@ -39,6 +41,7 @@ final class TemplateExtension extends AbstractExtension
             new TwigFunction('t', $this->translate(...)),
             new TwigFunction('can', $this->can(...)),
             new TwigFunction('csp_nonce', $this->cspNonce(...)),
+            new TwigFunction('csrf_fields', $this->csrfFields(...), ['is_safe' => ['html']]),
         ];
     }
 
@@ -66,6 +69,21 @@ final class TemplateExtension extends AbstractExtension
     public function cspNonce(): string
     {
         return CspNonce::fromRequest($this->request->get())->value;
+    }
+
+    /**
+     * Two hidden inputs; every value is escaped here because the function's output is marked safe.
+     */
+    public function csrfFields(): string
+    {
+        $token = CsrfTokens::fromRequest($this->request->get())->token();
+        $input = static fn (string $name, string $value): string => sprintf(
+            '<input type="hidden" name="%s" value="%s">',
+            htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'),
+            htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'),
+        );
+
+        return $input($token->nameKey, $token->name) . $input($token->valueKey, $token->value);
     }
 
     public function userDateTime(?DateTimeInterface $value, string $style = 'medium'): string

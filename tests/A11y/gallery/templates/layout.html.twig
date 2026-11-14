@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{% endblock %} - Component gallery - SightPress</title>
+<style nonce="{{ csp_nonce() }}">
+    :root { color-scheme: light dark; }
+    body { margin: 0; font-family: system-ui, sans-serif; font-size: 1.125rem; line-height: 1.5; background: Canvas; color: CanvasText; }
+    main { max-width: 40rem; margin: 0 auto; padding: 2rem 1.5rem; }
+    .field { margin: 0 0 1.5rem; }
+    .field label, legend { display: block; font-weight: 700; }
+    .field-hint { margin: 0.25rem 0; }
+    .field-error { margin: 0.25rem 0; font-weight: 700; color: light-dark(#b00020, #ffb4ab); }
+    .field--error { border-inline-start: 0.3rem solid light-dark(#b00020, #ffb4ab); padding-inline-start: 0.75rem; }
+    input, select, textarea { font: inherit; border: 2px solid CanvasText; padding: 0.4rem; max-width: 100%; }
+    input[type=radio], input[type=checkbox] { width: 1.5rem; height: 1.5rem; vertical-align: middle; }
+    fieldset { border: 0; padding: 0; margin: 0; }
+    .field-option, .field--checkbox { display: flex; gap: 0.5rem; align-items: center; margin: 0.4rem 0; }
+    .field--checkbox label, .field-option label { font-weight: 400; }
+    .error-summary { border: 0.3rem solid light-dark(#b00020, #ffb4ab); padding: 1rem; margin: 0 0 2rem; }
+    .error-summary h2 { margin-top: 0; }
+    a { color: LinkText; }
+    button { font: inherit; padding: 0.5rem 1rem; }
+    :focus-visible { outline: 3px solid CanvasText; outline-offset: 3px; }
+    .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+{% block main %}{% endblock %}
+</main>
+</body>
+</html>

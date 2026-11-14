@@ -1,0 +1,113 @@
+{#
+    Accessible form building blocks (WCAG 2.2 AA). Use them for every form:
+
+        {% import 'form/macros.html.twig' as f %}
+        {{ f.error_summary(form) }}
+        {{ f.start(form, path) }}
+            {{ f.field(form, 'email') }}
+            {{ f.submit(t('Save')) }}
+        {{ f.end() }}
+
+    - Every control has a visible <label> (groups: <fieldset> + <legend>); optional fields say "(optional)".
+    - The hint and the error are linked with aria-describedby; a field with an error has aria-invalid="true".
+    - After a failed submit, the error summary at the top gets focus and links to each field.
+    - Browser validation is off (novalidate): the server checks everything and explains each error in words.
+#}
+
+{% macro error_summary(form) %}
+    {%- if form.errorSummary is not empty -%}
+        <section class="error-summary" id="{{ form.id }}-errors" aria-labelledby="{{ form.id }}-errors-title" tabindex="-1" autofocus>
+            <h2 id="{{ form.id }}-errors-title">{{ t('There is a problem') }}</h2>
+            <ul>
+                {%- for error in form.errorSummary %}
+                <li><a href="#{{ error.fieldId }}">{{ error.message }}</a></li>
+                {%- endfor %}
+            </ul>
+        </section>
+    {%- endif -%}
+{% endmacro %}
+
+{% macro start(form, action = '', method = 'post') %}
+    <form id="{{ form.id }}" action="{{ action }}" method="{{ method }}" novalidate>
+    {%- if method|lower == 'post' %}{{ csrf_fields() }}{% endif %}
+{% endmacro %}
+
+{% macro end() %}
+    </form>
+{% endmacro %}
+
+{% macro submit(text) %}
+    <button type="submit">{{ text }}</button>
+{% endmacro %}
+
+{% macro label_text(field) -%}
+    {{ field.label }}{% if not field.required %} {{ t('(optional)') }}{% endif %}
+{%- endmacro %}
+
+{% macro described_by(form, field) -%}
+    {%- set id = form.fieldId(field.name) -%}
+    {{- [field.hint ? id ~ '-hint' : null, form.error(field.name) is not null ? id ~ '-error' : null]|filter(v => v)|join(' ') -}}
+{%- endmacro %}
+
+{% macro hint_and_error(form, field) %}
+    {%- set id = form.fieldId(field.name) -%}
+    {%- if field.hint %}
+        <p class="field-hint" id="{{ id }}-hint">{{ field.hint }}</p>
+    {%- endif %}
+    {%- if form.error(field.name) is not null %}
+        <p class="field-error" id="{{ id }}-error"><span class="visually-hidden">{{ t('Error:') }}</span> {{ form.error(field.name) }}</p>
+    {%- endif %}
+{% endmacro %}
+
+{% macro field(form, name) %}
+    {%- import _self as m -%}
+    {%- set field = form.field(name) -%}
+    {%- set type = field.type.value -%}
+    {%- set id = form.fieldId(name) -%}
+    {%- set value = form.value(name) -%}
+    {%- set invalid = form.error(name) is not null -%}
+    {%- set describedBy = m.described_by(form, field)|trim -%}
+    {%- set common -%}
+        name="{{ name }}"{% if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}{% if invalid %} aria-invalid="true"{% endif %}{% if field.autocomplete %} autocomplete="{{ field.autocomplete }}"{% endif %}
+    {%- endset -%}
+
+    {%- if type == 'radios' or type == 'checkboxes' %}
+        <div class="field{% if invalid %} field--error{% endif %}">
+            <fieldset{% if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}>
+                <legend>{{ m.label_text(field) }}</legend>
+                {{ m.hint_and_error(form, field) }}
+                {%- for optionValue, optionLabel in field.choices %}
+                    {%- set optionId = form.optionId(name, loop.index0) %}
+                    {%- set checked = type == 'radios' ? value == optionValue ~ '' : (optionValue ~ '') in value %}
+                <div class="field-option">
+                    <input type="{{ type == 'radios' ? 'radio' : 'checkbox' }}" id="{{ optionId }}" name="{{ name }}{{ type == 'checkboxes' ? '[]' }}" value="{{ optionValue }}"{% if checked %} checked{% endif %}{% if invalid %} aria-invalid="true"{% endif %}>
+                    <label for="{{ optionId }}">{{ optionLabel }}</label>
+                </div>
+                {%- endfor %}
+            </fieldset>
+        </div>
+    {%- elseif type == 'checkbox' %}
+        <div class="field field--checkbox{% if invalid %} field--error{% endif %}">
+            {{ m.hint_and_error(form, field) }}
+            <input type="checkbox" id="{{ id }}" value="1"{% if value == '1' %} checked{% endif %} {{ common }}>
+            <label for="{{ id }}">{{ m.label_text(field) }}</label>
+        </div>
+    {%- else %}
+        <div class="field{% if invalid %} field--error{% endif %}">
+            <label for="{{ id }}">{{ m.label_text(field) }}</label>
+            {{ m.hint_and_error(form, field) }}
+            {%- if type == 'textarea' %}
+            <textarea id="{{ id }}" rows="5" {{ common }}>{{ value }}</textarea>
+            {%- elseif type == 'select' %}
+            <select id="{{ id }}" {{ common }}>
+                <option value="">{{ t('Choose an option') }}</option>
+                {%- for optionValue, optionLabel in field.choices %}
+                <option value="{{ optionValue }}"{% if value == optionValue ~ '' %} selected{% endif %}>{{ optionLabel }}</option>
+                {%- endfor %}
+            </select>
+            {%- else %}
+            <input type="{{ type }}" id="{{ id }}" value="{{ type == 'password' ? '' : value }}" {{ common }}>
+            {%- endif %}
+        </div>
+    {%- endif %}
+{% endmacro %}

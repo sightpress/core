@@ -32,6 +32,8 @@ use SightPress\Core\Template\Translations;
 use SightPress\Core\Template\TwigFactory;
 use SightPress\Core\Template\Viewer;
 use SightPress\Core\Tenant\TenantConfig;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Environment;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\RateLimiter\Storage\CacheStorage;
@@ -72,6 +74,7 @@ final class CoreServices
                 $config->cacheDir,
                 $config->debug,
             )),
+            ValidatorInterface::class => factory(static fn (): ValidatorInterface => Validation::createValidator()),
             RateLimiters::class => factory(static fn (): RateLimiters => new RateLimiters(
                 new CacheStorage(new FilesystemAdapter('rate_limits', 0, $config->cacheDir)),
             )),
