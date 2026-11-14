@@ -3,7 +3,14 @@
   "description": "The core of SightPress, a powerful multi-site, multilingual CMS for everyone, designed with blind and low-vision creators and audiences in mind. Built on modern, object-oriented PHP.",
   "type": "library",
   "license": "GPL-3.0-or-later",
-  "keywords": ["cms", "accessibility", "a11y", "wcag", "multi-site", "multilingual"],
+  "keywords": [
+    "cms",
+    "accessibility",
+    "a11y",
+    "wcag",
+    "multi-site",
+    "multilingual"
+  ],
   "homepage": "https://sightpress.org",
   "support": {
     "issues": "https://github.com/sightpress/core/issues",
