@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>{{ t('Hello, {name}', {name: name}) }}</title>
+<style nonce="{{ csp_nonce() }}">body { font-size: 1.125rem; }</style>
+</head>
+<body>
+<main><h1>{{ t('Hello, {name}', {name: name}) }}</h1><p>{{ when|user_date }}</p></main>
+</body>
+</html>

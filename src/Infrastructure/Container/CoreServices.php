@@ -25,7 +25,14 @@ use SightPress\Core\Http\Error\ErrorResponder;
 use SightPress\Core\Infrastructure\Logging\LoggerFactory;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Tenant\SiteRegistryProbe;
+use SightPress\Core\Template\AssetUrls;
+use SightPress\Core\Template\TemplateExtension;
+use SightPress\Core\Template\TemplatePaths;
+use SightPress\Core\Template\Translations;
+use SightPress\Core\Template\TwigFactory;
+use SightPress\Core\Template\Viewer;
 use SightPress\Core\Tenant\TenantConfig;
+use Twig\Environment;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\RateLimiter\Storage\CacheStorage;
 
@@ -50,6 +57,21 @@ final class CoreServices
             SessionStore::class => autowire(FileSessionStore::class)
                 ->constructorParameter('directory', $config->sessionPath)
                 ->constructorParameter('idleTimeout', $config->sessionIdleTimeout),
+            TemplatePaths::class => new TemplatePaths([], TemplatePaths::core()),
+            AssetUrls::class => autowire()->constructorParameter('version', \Composer\InstalledVersions::getReference('sightpress/core')),
+            Translations::class => factory(static fn (): Translations => Translations::fromDirectories(
+                [dirname(TemplatePaths::core()) . '/translations'],
+                $config->adminLocale,
+            )),
+            TemplateExtension::class => autowire()
+                ->constructorParameter('defaultViewer', new Viewer($config->adminLocale, $config->defaultTimezone)),
+            Environment::class => factory(static fn (ContainerInterface $container): Environment => new TwigFactory()->create(
+                Services::get($container, TemplatePaths::class),
+                $modules,
+                Services::get($container, TemplateExtension::class),
+                $config->cacheDir,
+                $config->debug,
+            )),
             RateLimiters::class => factory(static fn (): RateLimiters => new RateLimiters(
                 new CacheStorage(new FilesystemAdapter('rate_limits', 0, $config->cacheDir)),
             )),

@@ -36,6 +36,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 #[UsesNamespace('SightPress\Core\Infrastructure')]
 #[UsesNamespace('SightPress\Core\Module')]
 #[UsesNamespace('SightPress\Core\Cli')]
+#[UsesNamespace('SightPress\Core\Template')]
 final class KernelTest extends TestCase
 {
     private ?TestProject $project = null;

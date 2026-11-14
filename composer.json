@@ -20,6 +20,7 @@
   ],
   "require": {
     "php": ">=8.5",
+    "ext-intl": "*",
     "composer/semver": "^3",
     "doctrine/dbal": "^4",
     "doctrine/migrations": "^3",
@@ -34,7 +35,9 @@
     "slim/slim": "^4",
     "symfony/cache": "^8",
     "symfony/console": "^8",
-    "symfony/rate-limiter": "^8"
+    "symfony/rate-limiter": "^8",
+    "symfony/translation": "^8",
+    "twig/twig": "^3"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3",
