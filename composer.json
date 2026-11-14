@@ -30,7 +30,7 @@
     "php-di/php-di": "^7",
     "psr/clock": "^1",
     "psr/event-dispatcher": "^1",
-    "sightpress/module-interface": "^0.1",
+    "sightpress/module-interface": "^0.2",
     "slim/csrf": "^1",
     "slim/slim": "^4",
     "symfony/cache": "^8",
