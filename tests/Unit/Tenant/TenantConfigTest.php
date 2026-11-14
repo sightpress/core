@@ -31,6 +31,8 @@ final class TenantConfigTest extends TestCase
         self::assertSame(Level::Notice, $config->logLevel);
         self::assertSame('en-GB', $config->adminLocale);
         self::assertSame('UTC', $config->defaultTimezone);
+        self::assertSame('/srv/app/var/sessions', $config->sessionPath);
+        self::assertSame(7200, $config->sessionIdleTimeout);
     }
 
     public function testItReadsEverySetting(): void
@@ -42,6 +44,7 @@ final class TenantConfigTest extends TestCase
             'log' => ['path' => 'php://stderr', 'level' => 'WARNING'],
             'admin' => ['default_locale' => 'pt-BR'],
             'timezone' => 'Europe/London',
+            'session' => ['path' => '/var/lib/sessions', 'idle_timeout' => 900],
         ], '/srv/app', ['APP_ENV' => 'staging', 'APP_DEBUG' => '1']);
 
         self::assertSame(Environment::Staging, $config->environment);
@@ -53,6 +56,8 @@ final class TenantConfigTest extends TestCase
         self::assertSame(Level::Warning, $config->logLevel);
         self::assertSame('pt-BR', $config->adminLocale);
         self::assertSame('Europe/London', $config->defaultTimezone);
+        self::assertSame('/var/lib/sessions', $config->sessionPath);
+        self::assertSame(900, $config->sessionIdleTimeout);
     }
 
     /**
@@ -97,6 +102,12 @@ final class TenantConfigTest extends TestCase
             [],
             '/srv',
             'Tenant setting "admin.default_locale" is not valid ("english")',
+        ];
+        yield 'idle timeout' => [
+            ['session' => ['idle_timeout' => 30]],
+            [],
+            '/srv',
+            'Tenant setting "session.idle_timeout" must be a whole number of seconds, at least 60.',
         ];
         yield 'timezone' => [
             ['timezone' => 'Mars/Olympus'],

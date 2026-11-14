@@ -27,10 +27,14 @@
     "nyholm/psr7": "^1",
     "nyholm/psr7-server": "^1",
     "php-di/php-di": "^7",
+    "psr/clock": "^1",
     "psr/event-dispatcher": "^1",
     "sightpress/module-interface": "^0.1",
+    "slim/csrf": "^1",
     "slim/slim": "^4",
-    "symfony/console": "^8"
+    "symfony/cache": "^8",
+    "symfony/console": "^8",
+    "symfony/rate-limiter": "^8"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3",

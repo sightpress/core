@@ -24,6 +24,8 @@ final readonly class TenantConfig
      * @param non-empty-string $logPath
      * @param non-empty-string $adminLocale
      * @param non-empty-string $defaultTimezone
+     * @param non-empty-string $sessionPath        folder for session data
+     * @param positive-int     $sessionIdleTimeout seconds without a request before a session ends
      */
     public function __construct(
         public string $projectDir,
@@ -36,6 +38,8 @@ final readonly class TenantConfig
         public Level $logLevel,
         public string $adminLocale = 'en-GB',
         public string $defaultTimezone = 'UTC',
+        public string $sessionPath = '/tmp/sightpress-sessions',
+        public int $sessionIdleTimeout = 7200,
     ) {
     }
 
@@ -54,6 +58,7 @@ final readonly class TenantConfig
         $registry = self::section($config, 'registry');
         $admin = self::section($config, 'admin');
         $log = self::section($config, 'log');
+        $session = self::section($config, 'session');
 
         return new self(
             projectDir: $projectDir,
@@ -66,6 +71,8 @@ final readonly class TenantConfig
             logLevel: self::logLevel($log),
             adminLocale: self::locale($admin),
             defaultTimezone: self::timezone($config),
+            sessionPath: self::string($session, 'path', 'session.path', $projectDir . '/var/sessions'),
+            sessionIdleTimeout: self::idleTimeout($session),
         );
     }
 
@@ -135,6 +142,23 @@ final readonly class TenantConfig
                 $value,
             )),
         };
+    }
+
+    /**
+     * @param array<mixed> $session
+     *
+     * @return positive-int
+     */
+    private static function idleTimeout(array $session): int
+    {
+        $timeout = $session['idle_timeout'] ?? 7200;
+        if (!is_int($timeout) || $timeout < 60) {
+            throw new TenantConfigException(
+                'Tenant setting "session.idle_timeout" must be a whole number of seconds, at least 60.',
+            );
+        }
+
+        return $timeout;
     }
 
     /**

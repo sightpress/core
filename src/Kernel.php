@@ -13,12 +13,16 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Cli\ConsoleApplicationFactory;
+use SightPress\Core\Http\Csrf\CsrfMiddleware;
 use SightPress\Core\Http\Error\ErrorCatalogue;
 use SightPress\Core\Http\Error\ErrorHandlingMiddleware;
 use SightPress\Core\Http\Error\HtmlErrorRenderer;
 use SightPress\Core\Http\Error\NoSiteConfiguredMiddleware;
 use SightPress\Core\Infrastructure\Container\CoreServices;
+use SightPress\Core\Http\RateLimit\RateLimitMiddleware;
 use SightPress\Core\Http\RouteInstaller;
+use SightPress\Core\Http\Security\SecurityHeadersMiddleware;
+use SightPress\Core\Http\Session\SessionMiddleware;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Module\ComposerModuleDiscovery;
 use SightPress\Core\Module\CoreModules;
@@ -93,10 +97,15 @@ final readonly class Kernel
 
         /** @var App<ContainerInterface> $app */
         $app = new App($responseFactory, $container);
-        // Middleware added last runs first.
+        // Middleware added last runs first. Routing comes before the CSRF check, so an unknown address or method
+        // answers 404 or 405 rather than 403.
+        $app->add(CsrfMiddleware::class);
         $app->addRoutingMiddleware();
+        $app->add(SessionMiddleware::class);
+        $app->add(RateLimitMiddleware::class);
         $app->add(NoSiteConfiguredMiddleware::class);
         $app->add(ErrorHandlingMiddleware::class);
+        $app->add(SecurityHeadersMiddleware::class);
         new RouteInstaller()->install($app, $registry);
 
         return new self($config, $container, $app, $registry);

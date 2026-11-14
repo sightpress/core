@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Http\Error;
 
+use SightPress\Core\Http\Csrf\CsrfTokenMismatchException;
 use Slim\Exception\HttpException;
 use Slim\Exception\HttpMethodNotAllowedException;
 use Throwable;
@@ -23,6 +24,13 @@ final readonly class ErrorCatalogue
                 'SightPress is running, but no site is set up for this address yet.',
                 'If you look after this server, create a site and link this address to it.',
             ], homeLink: false);
+        }
+
+        if ($exception instanceof CsrfTokenMismatchException) {
+            return new ErrorPage(403, 'This form has expired', [
+                'For your security, a form only works for a while after you open it, and only on this website.',
+                'Go back, reload the page and send the form again.',
+            ]);
         }
 
         $status = $exception instanceof HttpException ? $exception->getCode() : 500;

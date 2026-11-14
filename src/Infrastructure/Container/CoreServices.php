@@ -11,9 +11,14 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
+use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
+use SightPress\Core\Http\RateLimit\RateLimiters;
+use SightPress\Core\Http\Session\FileSessionStore;
+use SightPress\Core\Http\Session\SessionStore;
+use SightPress\Core\Infrastructure\Clock\SystemClock;
 use SightPress\Core\Infrastructure\Event\EventDispatcher;
 use SightPress\Core\Infrastructure\Event\ListenerProvider;
 use SightPress\Core\Http\Error\ErrorResponder;
@@ -21,6 +26,8 @@ use SightPress\Core\Infrastructure\Logging\LoggerFactory;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Tenant\SiteRegistryProbe;
 use SightPress\Core\Tenant\TenantConfig;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\RateLimiter\Storage\CacheStorage;
 
 use function DI\autowire;
 use function DI\factory;
@@ -39,6 +46,13 @@ final class CoreServices
         return [
             TenantConfig::class => $config,
             ModuleRegistry::class => $modules,
+            ClockInterface::class => autowire(SystemClock::class),
+            SessionStore::class => autowire(FileSessionStore::class)
+                ->constructorParameter('directory', $config->sessionPath)
+                ->constructorParameter('idleTimeout', $config->sessionIdleTimeout),
+            RateLimiters::class => factory(static fn (): RateLimiters => new RateLimiters(
+                new CacheStorage(new FilesystemAdapter('rate_limits', 0, $config->cacheDir)),
+            )),
             ListenerProviderInterface::class => autowire(ListenerProvider::class),
             EventDispatcherInterface::class => autowire(EventDispatcher::class),
             Psr17Factory::class => autowire(),

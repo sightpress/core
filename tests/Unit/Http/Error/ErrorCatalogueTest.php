@@ -28,6 +28,7 @@ use Throwable;
 #[CoversClass(ErrorPage::class)]
 #[CoversClass(HttpServiceUnavailableException::class)]
 #[CoversClass(HttpTooManyRequestsException::class)]
+#[CoversClass(\SightPress\Core\Http\Csrf\CsrfTokenMismatchException::class)]
 final class ErrorCatalogueTest extends TestCase
 {
     /**
@@ -40,6 +41,12 @@ final class ErrorCatalogueTest extends TestCase
         yield 'any exception' => [new RuntimeException('secret'), 500, 'Sorry, there is a problem with the service', 'Try again later.'];
         yield '400' => [new HttpBadRequestException($request), 400, 'Sorry, something is wrong with this request', 'Go back'];
         yield '401' => [new HttpUnauthorizedException($request), 401, 'Sign in to see this page', 'sign in'];
+        yield 'expired form' => [
+            new \SightPress\Core\Http\Csrf\CsrfTokenMismatchException($request),
+            403,
+            'This form has expired',
+            'reload the page and send the form again',
+        ];
         yield '403' => [new HttpForbiddenException($request), 403, 'You do not have permission to see this page', 'ask the person'];
         yield '404' => [new HttpNotFoundException($request), 404, 'Page not found', 'check it is correct'];
         yield '405' => [new HttpMethodNotAllowedException($request), 405, 'This page cannot do that', 'Go back'];
