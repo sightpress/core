@@ -15,7 +15,18 @@ use SightPress\Core\Infrastructure\Container\CoreServices;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Kernel;
 use SightPress\Core\Tenant\Environment;
+use SightPress\Core\Module\ModuleCandidate;
+use SightPress\Core\Module\ModuleException;
+use SightPress\Core\Module\ModuleSelection;
+use SightPress\Core\Tenant\TenantConfigLoader;
+use SightPress\Core\Tests\Support\Modules\HelloHandler;
+use SightPress\Core\Tests\Support\FakeModule;
+use SightPress\Core\Tests\Support\Modules\ExampleCommand;
+use SightPress\Core\Tests\Support\Modules\ExampleModule;
 use SightPress\Core\Tests\Support\TestProject;
+use SightPress\Module\ModuleRegistrar;
+use SightPress\Module\Routing\Route;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 #[CoversClass(Kernel::class)]
 #[CoversClass(CoreServices::class)]
@@ -23,6 +34,8 @@ use SightPress\Core\Tests\Support\TestProject;
 #[UsesNamespace('SightPress\Core\Http')]
 #[UsesNamespace('SightPress\Core\Tenant')]
 #[UsesNamespace('SightPress\Core\Infrastructure')]
+#[UsesNamespace('SightPress\Core\Module')]
+#[UsesNamespace('SightPress\Core\Cli')]
 final class KernelTest extends TestCase
 {
     private ?TestProject $project = null;
@@ -137,6 +150,65 @@ final class KernelTest extends TestCase
         $kernel = Kernel::boot($this->project()->path());
 
         self::assertTrue($kernel->config()->debug);
+    }
+
+    public function testTheKernelBootsThroughTheModuleLoader(): void
+    {
+        $config = new TenantConfigLoader()->load($this->project(sites: [['slug' => 'demo']])->path(), []);
+        $module = new FakeModule('acme.hello', register: static function (ModuleRegistrar $r): void {
+            $r->routes()->add(new Route('hello.show', '/hello', HelloHandler::class));
+            $r->commands()->add(ExampleCommand::class);
+        });
+
+        $kernel = Kernel::fromConfig($config, [new ModuleCandidate($module, 'acme/hello', '*')]);
+        $response = $kernel->handle(new ServerRequest('GET', '/hello'));
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(['acme.hello'], $kernel->modules()->modules());
+        self::assertTrue($kernel->console()->has('example:echo'));
+        self::assertTrue($kernel->container()->has(EventDispatcherInterface::class));
+    }
+
+    public function testModulesThatAreOffRegisterNothing(): void
+    {
+        $config = new TenantConfigLoader()->load($this->project(sites: [['slug' => 'demo']])->path(), []);
+        $module = new FakeModule('acme.hello', register: static function (ModuleRegistrar $r): void {
+            $r->routes()->add(new Route('hello.show', '/hello', HelloHandler::class));
+        });
+
+        $kernel = Kernel::fromConfig(
+            $config,
+            [new ModuleCandidate($module, 'acme/hello')],
+            new ModuleSelection(['acme.hello' => false]),
+        );
+
+        self::assertSame(404, $kernel->handle(new ServerRequest('GET', '/hello'))->getStatusCode());
+        self::assertSame([], $kernel->modules()->modules());
+    }
+
+    public function testBootDiscoversModulesInstalledWithComposer(): void
+    {
+        $project = $this->project();
+        $project->directory->write('vendor/composer/installed.json', (string) json_encode(['packages' => [[
+            'name' => 'acme/example',
+            'require' => ['sightpress/module-interface' => '*'],
+            'extra' => ['sightpress' => ['module' => ExampleModule::class]],
+        ]]]));
+
+        $kernel = Kernel::boot($project->path(), []);
+
+        self::assertSame(['acme.example'], $kernel->modules()->modules());
+        self::assertNotSame('', Kernel::contractVersion());
+    }
+
+    public function testAModuleProblemStopsTheBoot(): void
+    {
+        $config = new TenantConfigLoader()->load($this->project()->path(), []);
+
+        $this->expectException(ModuleException::class);
+        $this->expectExceptionMessage('Module "acme.hello" requires module "calendar", which is not installed.');
+
+        Kernel::fromConfig($config, [new ModuleCandidate(new FakeModule('acme.hello', ['calendar' => '*']), 'acme/hello')]);
     }
 
     /**

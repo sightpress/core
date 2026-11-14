@@ -11,9 +11,14 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
+use SightPress\Core\Infrastructure\Event\EventDispatcher;
+use SightPress\Core\Infrastructure\Event\ListenerProvider;
 use SightPress\Core\Http\Error\ErrorResponder;
 use SightPress\Core\Infrastructure\Logging\LoggerFactory;
+use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Tenant\SiteRegistryProbe;
 use SightPress\Core\Tenant\TenantConfig;
 
@@ -29,10 +34,13 @@ final class CoreServices
     /**
      * @return array<string, mixed>
      */
-    public static function definitions(TenantConfig $config): array
+    public static function definitions(TenantConfig $config, ModuleRegistry $modules): array
     {
         return [
             TenantConfig::class => $config,
+            ModuleRegistry::class => $modules,
+            ListenerProviderInterface::class => autowire(ListenerProvider::class),
+            EventDispatcherInterface::class => autowire(EventDispatcher::class),
             Psr17Factory::class => autowire(),
             ResponseFactoryInterface::class => get(Psr17Factory::class),
             StreamFactoryInterface::class => get(Psr17Factory::class),
@@ -50,5 +58,4 @@ final class CoreServices
                 ->constructorParameter('noindex', !$config->environment->isProduction()),
         ];
     }
-
 }

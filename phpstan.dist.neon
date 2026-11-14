@@ -6,5 +6,11 @@ parameters:
         - tools
         - .php-cs-fixer.dist.php
         - rector.php
+    excludePaths:
+        - tests/PHPStan/Fixtures
     tmpDir: var/cache/phpstan
     treatPhpDocTypesAsCertain: false
+
+# Architecture test (ADR-0009): no module reaches into another module's internals or the module loader.
+rules:
+    - SightPress\Core\Tests\PHPStan\ModuleBoundaryRule

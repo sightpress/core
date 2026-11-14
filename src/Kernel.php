@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core;
 
+use Composer\InstalledVersions;
 use DI\ContainerBuilder;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
@@ -11,21 +12,32 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SightPress\Core\Cli\ConsoleApplicationFactory;
 use SightPress\Core\Http\Error\ErrorCatalogue;
 use SightPress\Core\Http\Error\ErrorHandlingMiddleware;
 use SightPress\Core\Http\Error\HtmlErrorRenderer;
 use SightPress\Core\Http\Error\NoSiteConfiguredMiddleware;
 use SightPress\Core\Infrastructure\Container\CoreServices;
+use SightPress\Core\Http\RouteInstaller;
 use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Module\ComposerModuleDiscovery;
+use SightPress\Core\Module\CoreModules;
+use SightPress\Core\Module\ModuleCandidate;
+use SightPress\Core\Module\ModuleLoader;
+use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Core\Module\ModuleSelection;
+use SightPress\Core\Module\ModuleServices;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tenant\TenantConfigLoader;
 use Slim\App;
 use Slim\ResponseEmitter;
+use Symfony\Component\Console\Application;
 use Throwable;
 
 /**
- * Boots SightPress for one tenant (one install): reads the tenant config, builds the tenant container and the HTTP
- * application, and answers requests.
+ * Boots SightPress for one tenant (one install): reads the tenant config, loads the modules (core's own and those
+ * installed with Composer), builds the container and the HTTP application from what they register, and answers
+ * requests. Everything beyond error handling comes from modules (ADR-0009).
  *
  * A project's `public/index.php` only needs `Kernel::serve(dirname(__DIR__));`.
  */
@@ -38,6 +50,7 @@ final readonly class Kernel
         private TenantConfig $config,
         private ContainerInterface $container,
         private App $app,
+        private ModuleRegistry $modules,
     ) {
     }
 
@@ -51,12 +64,29 @@ final readonly class Kernel
         return self::fromConfig(new TenantConfigLoader()->load($projectDir, $environment ?? self::environment()));
     }
 
-    public static function fromConfig(TenantConfig $config): self
-    {
+    /**
+     * @param list<ModuleCandidate>|null $modules   null discovers core's modules and those installed with Composer
+     * @param ModuleSelection            $selection which optional modules are on
+     */
+    public static function fromConfig(
+        TenantConfig $config,
+        ?array $modules = null,
+        ModuleSelection $selection = new ModuleSelection(),
+    ): self {
+        $modules ??= [
+            ...CoreModules::candidates(),
+            ...ComposerModuleDiscovery::forProject($config->projectDir)->candidates(),
+        ];
+        $registry = ModuleRegistry::register(
+            new ModuleLoader(self::contractVersion())->catalogue($modules)->resolve($selection),
+        );
+
+        $core = CoreServices::definitions($config, $registry);
         $container = new ContainerBuilder()
             ->useAutowiring(true)
             ->useAttributes(false)
-            ->addDefinitions(CoreServices::definitions($config))
+            ->addDefinitions($core)
+            ->addDefinitions(ModuleServices::definitions($registry, array_keys($core)))
             ->build();
 
         $responseFactory = Services::get($container, ResponseFactoryInterface::class);
@@ -67,8 +97,9 @@ final readonly class Kernel
         $app->addRoutingMiddleware();
         $app->add(NoSiteConfiguredMiddleware::class);
         $app->add(ErrorHandlingMiddleware::class);
+        new RouteInstaller()->install($app, $registry);
 
-        return new self($config, $container, $app);
+        return new self($config, $container, $app, $registry);
     }
 
     /**
@@ -123,6 +154,31 @@ final readonly class Kernel
     public function app(): App
     {
         return $this->app;
+    }
+
+    /**
+     * What the modules that are on registered.
+     */
+    public function modules(): ModuleRegistry
+    {
+        return $this->modules;
+    }
+
+    /**
+     * The `bin/sightpress` console with every module's commands.
+     */
+    public function console(): Application
+    {
+        return new ConsoleApplicationFactory($this->container, $this->modules)
+            ->create(InstalledVersions::getPrettyVersion('sightpress/core') ?? 'UNKNOWN');
+    }
+
+    /**
+     * The installed version of `sightpress/module-interface`, which external modules declare they work with.
+     */
+    public static function contractVersion(): string
+    {
+        return InstalledVersions::getPrettyVersion(ComposerModuleDiscovery::CONTRACT_PACKAGE) ?? 'dev-unknown';
     }
 
     private static function bootFailure(): ResponseInterface

@@ -23,6 +23,7 @@ Core uses these runtime dependencies for M1. Each is a caret constraint on the m
 | Container | `php-di/php-di` | `^7` | C-1.1 |
 | Logging | `monolog/monolog` | `^3` | C-1.1 |
 | Version constraints of modules (*new*) | `composer/semver` | `^3` | C-1.5 |
+| Event dispatching (*new*, interfaces only; core implements PSR-14 itself) | `psr/event-dispatcher` | `^1` | C-1.5 |
 | Console | `symfony/console` | `^8` | C-1.5 |
 | Migrations | `doctrine/migrations` | `^3` | C-1.5 |
 | CSRF tokens (*new*) | `slim/csrf` | `^1` | C-1.2 |

@@ -20,13 +20,17 @@
   ],
   "require": {
     "php": ">=8.5",
+    "composer/semver": "^3",
     "doctrine/dbal": "^4",
+    "doctrine/migrations": "^3",
     "monolog/monolog": "^3",
     "nyholm/psr7": "^1",
     "nyholm/psr7-server": "^1",
     "php-di/php-di": "^7",
+    "psr/event-dispatcher": "^1",
     "sightpress/module-interface": "^0.1",
-    "slim/slim": "^4"
+    "slim/slim": "^4",
+    "symfony/console": "^8"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3",
