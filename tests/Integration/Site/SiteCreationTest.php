@@ -1,0 +1,151 @@
+<?php
+
+declare(strict_types=1);
+
+namespace SightPress\Core\Tests\Integration\Site;
+
+use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
+use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Kernel;
+use SightPress\Core\Rbac\RoleRepository;
+use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Tenant\SiteContainerFactory;
+use SightPress\Core\Tenant\SiteRepository;
+use SightPress\Core\Tests\Support\Browser;
+use SightPress\Core\Tests\Support\SiteFixture;
+use SightPress\Core\Tests\Support\TestProject;
+use SightPress\Core\User\UserRepository;
+use Symfony\Component\Console\Tester\ApplicationTester;
+
+/**
+ * C-2.3 acceptance: two sites made with `site:create` have their own databases, users and roles, and each answers
+ * only for its own accounts.
+ */
+#[CoversNothing]
+final class SiteCreationTest extends TestCase
+{
+    private TestProject $project;
+
+    protected function setUp(): void
+    {
+        $this->project = new TestProject();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->project->remove();
+    }
+
+    public function testTwoNewSitesAreIsolatedFromEachOther(): void
+    {
+        $alphaLink = $this->create('alpha', 'ada@example.org', 'Ada');
+        $betaLink = $this->create('beta', 'grace@example.org', 'Grace');
+
+        $kernel = $this->kernel();
+        $sites = Services::get($kernel->container(), SiteRepository::class);
+        self::assertSame(['alpha', 'beta'], array_keys($sites->all()));
+        self::assertFileExists($this->database('alpha'));
+        self::assertFileExists($this->database('beta'));
+
+        $alpha = $this->services($kernel, 'alpha');
+        $beta = $this->services($kernel, 'beta');
+        self::assertNotSame(Services::get($alpha, Connection::class), Services::get($beta, Connection::class));
+        self::assertSame(1, Services::get($alpha, UserRepository::class)->count());
+        self::assertSame(1, Services::get($beta, UserRepository::class)->count());
+        self::assertNotNull(Services::get($alpha, UserRepository::class)->findByEmail('ada@example.org'));
+        self::assertNull(Services::get($alpha, UserRepository::class)->findByEmail('grace@example.org'));
+        self::assertNull(Services::get($beta, UserRepository::class)->findByEmail('ada@example.org'));
+        foreach ([$alpha, $beta] as $site) {
+            self::assertSame(['admin', 'contributor', 'editor', 'member'], $this->roleNames($site));
+            self::assertSame('member', Services::get($site, SiteSettings::class)->get('rbac.registration_role'));
+        }
+
+        // A change on one site leaves the other alone.
+        $alphaRoles = Services::get($alpha, RoleRepository::class);
+        $editor = $alphaRoles->findRole('editor');
+        self::assertNotNull($editor);
+        $alphaRoles->remove($editor);
+        self::assertSame(['admin', 'contributor', 'member'], $this->roleNames($alpha));
+        self::assertSame(['admin', 'contributor', 'editor', 'member'], $this->roleNames($beta));
+
+        // Each first admin chooses a password with their link and signs in to their own site only.
+        $this->choosePassword($kernel, 'https://alpha.example', $alphaLink, 'alpha admin long password');
+        $this->choosePassword($kernel, 'https://beta.example', $betaLink, 'beta admin long password');
+
+        $onAlpha = new Browser($kernel, 'https://alpha.example');
+        self::assertSame('/admin', $onAlpha->submit('/login', ['email' => 'ada@example.org', 'password' => 'alpha admin long password'])->getHeaderLine('Location'));
+        $onBeta = new Browser($kernel, 'https://beta.example');
+        self::assertSame(422, $onBeta->submit('/login', ['email' => 'ada@example.org', 'password' => 'alpha admin long password'])->getStatusCode());
+        self::assertSame('/admin', $onBeta->submit('/login', ['email' => 'grace@example.org', 'password' => 'beta admin long password'])->getHeaderLine('Location'));
+
+        // A session of one site doesn't sign anyone in on the other, even with the cookie copied over.
+        $copied = new Browser($kernel, 'https://beta.example');
+        $copied->cookies = $onAlpha->cookies;
+        self::assertSame(303, $copied->request('GET', '/logout')->getStatusCode(), 'not signed in on beta');
+    }
+
+    /**
+     * Runs `site:create` and returns the path of the first admin's password link.
+     */
+    private function create(string $slug, string $email, string $firstName): string
+    {
+        $application = $this->kernel()->console();
+        $application->setAutoExit(false);
+        $tester = new ApplicationTester($application);
+        $status = $tester->run([
+            'command' => 'site:create',
+            'slug' => $slug,
+            '--domain' => $slug . '.example',
+            '--db' => 'sqlite:///' . $this->database($slug),
+            '--owner-type' => 'organization',
+            '--locale' => 'en-GB',
+            '--admin-email' => $email,
+            '--admin-first-name' => $firstName,
+            '--admin-last-name' => 'Example',
+        ], ['interactive' => false, 'capture_stderr_separately' => true]);
+
+        self::assertSame(0, $status, $tester->getErrorOutput());
+        self::assertSame(1, preg_match('#https://' . $slug . '\.example(/password/reset/\S+)#', $tester->getDisplay(), $link));
+
+        return $link[1];
+    }
+
+    private function choosePassword(Kernel $kernel, string $origin, string $link, string $password): void
+    {
+        $response = new Browser($kernel, $origin)->submit($link, ['password' => $password]);
+
+        self::assertSame('/login', $response->getHeaderLine('Location'), (string) $response->getBody());
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function roleNames(ContainerInterface $site): array
+    {
+        $names = array_map(static fn ($role) => $role->name(), Services::get($site, RoleRepository::class)->roles());
+        sort($names);
+
+        return $names;
+    }
+
+    private function kernel(): Kernel
+    {
+        return Kernel::boot($this->project->path(), ['APP_ENV' => 'test', 'APP_SECRET' => SiteFixture::SECRET]);
+    }
+
+    private function services(Kernel $kernel, string $slug): ContainerInterface
+    {
+        $site = Services::get($kernel->container(), SiteRepository::class)->find($slug);
+        self::assertNotNull($site);
+
+        return Services::get($kernel->container(), SiteContainerFactory::class)->forSite($site);
+    }
+
+    private function database(string $slug): string
+    {
+        return $this->project->path() . '/sites/' . $slug . '.sqlite';
+    }
+}

@@ -6,6 +6,8 @@ namespace SightPress\Core\Rbac;
 
 use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\Contract\PermissionLookup;
+use SightPress\Core\Rbac\Provisioning\SeedRoles;
+use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
@@ -40,6 +42,7 @@ final class RbacModule implements ModuleInterface
         $registrar->services()->autowire(RegistrationRole::class, public: true);
         $registrar->services()->autowire(RoleManager::class, public: true);
         $registrar->services()->autowire(RbacSeeder::class, public: true);
+        $registrar->subscribers()->listen(SiteProvisioning::class, SeedRoles::class, SiteProvisioning::ROLES);
         $registrar->services()->factory(
             Authorizer::class,
             static fn (): Authorizer => new VoterAuthorizer([new PageVoter()]),

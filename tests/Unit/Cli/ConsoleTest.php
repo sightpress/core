@@ -72,6 +72,32 @@ final class ConsoleTest extends TestCase
         self::assertSame('', $tester->getDisplay());
     }
 
+    public function testAsksForWhatIsMissingWhenSomeoneIsAtTheTerminal(): void
+    {
+        $tester = $this->tester(static fn (ModuleRegistrar $r) => $r->commands()->add(ExampleCommand::class));
+        $tester->setInputs(['demo', ' en-GB ']);
+
+        $status = $tester->run(['command' => 'example:echo', '--owner' => 'org'], ['interactive' => true]);
+
+        self::assertSame(Command::SUCCESS, $status);
+        $display = $tester->getDisplay();
+        self::assertStringContainsString("The slug.\n> ", $display);
+        self::assertStringContainsString("The locale.\n> ", $display);
+        self::assertStringContainsString('slug=demo locale=en-GB owner=org', $display);
+        self::assertStringNotContainsString('The owner.', $display, 'optional parameters are not asked for');
+    }
+
+    public function testAnUnansweredRequiredOptionStillStopsTheCommand(): void
+    {
+        $tester = $this->tester(static fn (ModuleRegistrar $r) => $r->commands()->add(ExampleCommand::class));
+        $tester->setInputs(['']);
+
+        $status = $tester->run(['command' => 'example:echo', 'slug' => 'demo', '--locale' => ' '], ['interactive' => true, 'capture_stderr_separately' => true]);
+
+        self::assertSame(Command::INVALID, $status);
+        self::assertSame("The locale.\n> The --locale option is required.\n", $tester->getErrorOutput());
+    }
+
     public function testTheHelpListsTheParameters(): void
     {
         $tester = $this->tester(static fn (ModuleRegistrar $r) => $r->commands()->add(ExampleCommand::class));

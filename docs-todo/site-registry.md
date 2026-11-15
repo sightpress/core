@@ -53,6 +53,8 @@ names the file, the site and the key, never a value (so it never shows a passwor
 | `bin/sightpress site:registry:check` | Validates the file and checks every DSN can be decrypted with this `APP_SECRET`. |
 | `bin/sightpress site:registry:upgrade` | Moves the file to the format version this SightPress reads. |
 
+Creating sites and changing their status: see [Creating and managing sites](site-commands.md).
+
 Every change keeps the previous file as `config/sites.php.bak`. Writes are atomic: the web server never sees half
 a file. If PHP-FPM runs with `opcache.validate_timestamps=0`, reload it after a change.
 

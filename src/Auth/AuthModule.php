@@ -11,8 +11,10 @@ use SightPress\Core\Auth\Http\ForgotPasswordHandler;
 use SightPress\Core\Auth\Http\LoginHandler;
 use SightPress\Core\Auth\Http\LogoutHandler;
 use SightPress\Core\Auth\Http\ResetPasswordHandler;
+use SightPress\Core\Auth\Provisioning\FirstPasswordLink;
 use SightPress\Core\Http\Security\Authenticator;
 use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\User\Contract\Accounts;
@@ -64,6 +66,8 @@ final class AuthModule implements ModuleInterface
         foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetPasswordHandler::class] as $class) {
             $services->autowire($class);
         }
+
+        $registrar->subscribers()->listen(SiteProvisioning::class, FirstPasswordLink::class, SiteProvisioning::SIGN_IN);
 
         $routes = $registrar->routes();
         $routes->add(new Route('auth.login', '/login', LoginHandler::class, ['GET', 'POST']));

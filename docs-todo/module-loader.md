@@ -58,6 +58,10 @@ order is the order they were found (core's first).
 - A module can't be turned off while another module that is on requires it: turn that one off first.
 - A module can't be turned on until the modules it requires are on.
 - A module that is off registers nothing: its pages answer "Page not found" and its commands are not listed.
+- Console commands: when someone runs a command at a terminal and leaves out a required argument or option, the
+  console asks for it, using the parameter's description as the question (so write descriptions that read as a
+  question or a prompt, ending with ":" or "?"). With `--no-interaction`, or when input doesn't come from a
+  terminal (scripts, cron), it never asks and a missing required option stops the command.
 
 ## Services between modules
 

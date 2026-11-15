@@ -75,6 +75,28 @@ final class SiteTest extends TestCase
         $this->site($overrides);
     }
 
+    public function testAStatusChangeKeepsEverythingElse(): void
+    {
+        $site = SiteFixture::site();
+        $archived = $site->withStatus(SiteStatus::Archived);
+
+        self::assertSame(SiteStatus::Archived, $archived->status);
+        self::assertSame(SiteStatus::Enabled, $site->status);
+        foreach (['id', 'slug', 'name', 'domains', 'databaseDsn', 'defaultLocale', 'locales', 'defaultTimezone'] as $property) {
+            self::assertSame($site->{$property}, $archived->{$property}, $property);
+        }
+        self::assertEquals($site->createdAt, $archived->createdAt);
+    }
+
+    public function testNewIdsAreRandomVersion4Uuids(): void
+    {
+        $ids = [Site::newId(), Site::newId()];
+
+        self::assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $ids[0]);
+        self::assertMatchesRegularExpression(Site::ID_PATTERN, $ids[1]);
+        self::assertNotSame($ids[0], $ids[1]);
+    }
+
     public function testRejectsUnknownStorage(): void
     {
         $this->expectException(SiteRegistryException::class);

@@ -32,7 +32,18 @@ final class SiteModuleTest extends TestCase
         self::assertSame('site', $module->manifest()->id);
         self::assertTrue($module->manifest()->required);
         self::assertSame(
-            [CheckRegistryCommand::class, UpgradeRegistryCommand::class],
+            [
+                CheckRegistryCommand::class,
+                UpgradeRegistryCommand::class,
+                \SightPress\Core\Site\Command\CreateSiteCommand::class,
+                \SightPress\Core\Site\Command\ListSitesCommand::class,
+                \SightPress\Core\Site\Command\EnableSiteCommand::class,
+                \SightPress\Core\Site\Command\DisableSiteCommand::class,
+                \SightPress\Core\Site\Command\ArchiveSiteCommand::class,
+                \SightPress\Core\Site\Command\DeleteSiteCommand::class,
+                \SightPress\Core\Site\Command\PurgeSiteCommand::class,
+                \SightPress\Core\Site\Command\MigrateSitesCommand::class,
+            ],
             array_map(static fn ($registered) => $registered->item, $registry->commands()),
         );
         self::assertSame('SightPress\Core\Site\Migrations', $registry->migrations()[0]->item->namespace());

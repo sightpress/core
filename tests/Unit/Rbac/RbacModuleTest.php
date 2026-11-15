@@ -51,6 +51,9 @@ final class RbacModuleTest extends TestCase
         foreach ([RoleRepository::class, RegistrationRole::class, RoleManager::class, RbacSeeder::class, Authorizer::class] as $id) {
             self::assertTrue($registry->services()[$id]->item->public, $id);
         }
+        $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'rbac'));
+        self::assertSame(\SightPress\Core\Rbac\Provisioning\SeedRoles::class, $listeners[0]->item->listener);
+        self::assertSame(\SightPress\Core\Site\Contract\SiteProvisioning::ROLES, $listeners[0]->item->priority);
         $factory = $registry->services()[Authorizer::class]->item->factory;
         self::assertNotNull($factory);
         self::assertInstanceOf(VoterAuthorizer::class, $factory(new \DI\Container()));

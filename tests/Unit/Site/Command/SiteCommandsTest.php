@@ -1,0 +1,387 @@
+<?php
+
+declare(strict_types=1);
+
+namespace SightPress\Core\Tests\Unit\Site\Command;
+
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesNamespace;
+use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
+use SightPress\Core\Auth\PasswordResetTokens;
+use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Infrastructure\Crypto\SecretBox;
+use SightPress\Core\Kernel;
+use SightPress\Core\Rbac\RoleRepository;
+use SightPress\Core\Site\Command\ArchiveSiteCommand;
+use SightPress\Core\Site\Command\CreateSiteCommand;
+use SightPress\Core\Site\Command\DeleteSiteCommand;
+use SightPress\Core\Site\Command\DisableSiteCommand;
+use SightPress\Core\Site\Command\EnableSiteCommand;
+use SightPress\Core\Site\Command\ListSitesCommand;
+use SightPress\Core\Site\Command\MigrateSitesCommand;
+use SightPress\Core\Site\Command\PurgeSiteCommand;
+use SightPress\Core\Site\Command\SiteStatusCommand;
+use SightPress\Core\Tenant\Site;
+use SightPress\Core\Tenant\SiteContainerFactory;
+use SightPress\Core\Tenant\SiteMigrator;
+use SightPress\Core\Tenant\SiteRepository;
+use SightPress\Core\Tenant\SiteStatus;
+use SightPress\Core\Tests\Support\SiteFixture;
+use SightPress\Core\Tests\Support\TestProject;
+use SightPress\Core\User\UserRepository;
+use SightPress\Core\User\UserStatus;
+use SightPress\Module\Console\Command;
+use Symfony\Component\Console\Tester\ApplicationTester;
+
+#[CoversClass(CreateSiteCommand::class)]
+#[CoversClass(ListSitesCommand::class)]
+#[CoversClass(SiteStatusCommand::class)]
+#[CoversClass(EnableSiteCommand::class)]
+#[CoversClass(DisableSiteCommand::class)]
+#[CoversClass(ArchiveSiteCommand::class)]
+#[CoversClass(DeleteSiteCommand::class)]
+#[CoversClass(PurgeSiteCommand::class)]
+#[CoversClass(MigrateSitesCommand::class)]
+#[CoversClass(SiteMigrator::class)]
+#[UsesNamespace('SightPress\Core')]
+final class SiteCommandsTest extends TestCase
+{
+    private TestProject $project;
+
+    private string $stdout = '';
+
+    private string $stderr = '';
+
+    protected function setUp(): void
+    {
+        $this->project = new TestProject(['timezone' => 'Europe/Lisbon']);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->project->remove();
+    }
+
+    public function testCreatesASiteWithItsFirstAdminAndRoles(): void
+    {
+        $status = $this->create('demo', ['--domain' => 'Demo.Example, www.demo.example', '--name' => 'Riverside Library']);
+
+        self::assertSame(Command::SUCCESS, $status, $this->stderr);
+        $lines = explode("\n", trim($this->stdout));
+        self::assertSame('Getting the SQLite file ' . $this->database('demo') . ' ready…', $lines[0]);
+        self::assertMatchesRegularExpression('/^Ran \d+ database migrations\.$/', $lines[1]);
+        self::assertSame('Created the account of the first admin, Ada Lovelace (ada@example.org).', $lines[2]);
+        self::assertSame('Set up the roles admin, editor, contributor and member.', $lines[3]);
+        self::assertSame('Gave the first admin the admin role.', $lines[4]);
+        self::assertSame(1, preg_match('#^Give this link to the first admin to choose their password\. It works once, for 7 days: https://demo\.example/password/reset/(\S+)$#', $lines[5], $link));
+        self::assertSame('The site "demo" is ready at https://demo.example.', $lines[6]);
+        self::assertStringNotContainsString('sqlite:', $this->stdout, 'the DSN itself is never printed');
+
+        $site = $this->site('demo');
+        self::assertSame('Riverside Library', $site->name);
+        self::assertSame(SiteStatus::Enabled, $site->status);
+        self::assertSame(['demo.example', 'www.demo.example'], $site->domains);
+        self::assertSame('Europe/Lisbon', $site->defaultTimezone, 'the tenant\'s time zone by default');
+        self::assertSame(['en-GB'], $site->locales);
+        self::assertMatchesRegularExpression(Site::ID_PATTERN, $site->id);
+
+        $services = $this->services($site);
+        $admin = Services::get($services, UserRepository::class)->findByEmail('ada@example.org');
+        self::assertNotNull($admin);
+        self::assertSame(UserStatus::Pending, $admin->status());
+        self::assertSame('Europe/Lisbon', $admin->timezone());
+        self::assertSame(['admin'], array_map(static fn ($r) => $r->name(), Services::get($services, RoleRepository::class)->rolesOf((int) $admin->id())));
+        self::assertSame($admin->id(), Services::get($services, PasswordResetTokens::class)->verify($link[1])?->id());
+        self::assertSame(0, Services::get($this->kernel()->container(), SiteMigrator::class)->pending($site));
+        self::assertStringContainsString('sites.NOTICE: Site "demo" created (enabled).', $this->project->log());
+    }
+
+    public function testTheTimeZoneAndTheAddressOfTheLinksCanBeChosen(): void
+    {
+        $status = $this->create('demo', ['--timezone' => 'America/Sao_Paulo', '--url' => 'http://localhost:8080/', '--owner-type' => 'Person']);
+
+        self::assertSame(Command::SUCCESS, $status, $this->stderr);
+        self::assertStringContainsString(': http://localhost:8080/password/reset/', $this->stdout);
+        self::assertStringContainsString('The site "demo" is ready at http://localhost:8080.', $this->stdout);
+        self::assertSame('America/Sao_Paulo', $this->site('demo')->defaultTimezone);
+        self::assertSame('demo', $this->site('demo')->name, 'the name defaults to the slug');
+    }
+
+    /**
+     * @return iterable<string, array{array<string, string>, string}>
+     */
+    public static function invalidOptions(): iterable
+    {
+        yield 'slug' => [['slug' => 'Not A Slug'], '"slug" is not valid: use lower-case letters, digits and hyphens.'];
+        yield 'no domain' => [['--domain' => ' , '], 'Give the site at least one domain, for example example.org.'];
+        yield 'domain' => [['--domain' => 'exa_mple.org'], '"domains[0]" is not valid'];
+        yield 'owner type' => [['--owner-type' => 'company'], 'The owner type must be person or organization.'];
+        yield 'locale' => [['--locale' => 'english'], '"english" is not a locale: use one such as en-GB or pt-BR.'];
+        yield 'time zone' => [['--timezone' => 'Mars/Olympus'], '"Mars/Olympus" is not a time zone: use one such as Europe/London.'];
+        yield 'admin email' => [['--admin-email' => 'ada@'], '"ada@" is not an email address.'];
+        yield 'dsn' => [['--db' => 'oracle://db/demo'], 'The database DSN must start with sqlite://, mysql://, mariadb:// or postgresql://.'];
+        yield 'url' => [['--url' => 'localhost:8080'], '"localhost:8080" is not a web address: use one such as https://example.org.'];
+    }
+
+    /**
+     * @param array<string, string> $options
+     */
+    #[DataProvider('invalidOptions')]
+    public function testWrongOptionsAreExplainedBeforeAnythingIsCreated(array $options, string $message): void
+    {
+        self::assertSame(Command::INVALID, $this->create('demo', $options));
+        self::assertStringContainsString($message, $this->stderr);
+        self::assertSame('', $this->stdout);
+        self::assertFileDoesNotExist($this->database('demo'));
+    }
+
+    public function testASlugOrADomainCanOnlyBeUsedOnce(): void
+    {
+        $this->create('demo');
+
+        self::assertSame(Command::INVALID, $this->create('demo', ['--domain' => 'other.example']));
+        self::assertSame("There is already a site \"demo\". Choose another slug.\n", $this->stderr);
+        self::assertSame(Command::INVALID, $this->create('other', ['--domain' => 'other.example, DEMO.example.']));
+        self::assertSame("The domain demo.example already belongs to the site \"demo\".\n", $this->stderr);
+    }
+
+    public function testASiteNeedsTheSecretThatEncryptsItsDatabaseAddress(): void
+    {
+        self::assertSame(Command::INVALID, $this->create('demo', [], []));
+        self::assertSame("APP_SECRET is not set: set it in the environment before you create a site.\n", $this->stderr);
+    }
+
+    public function testADatabaseThatIsNotReadyStopsTheCommand(): void
+    {
+        self::assertSame(Command::FAILURE, $this->create('demo', ['--db' => 'sqlite:////proc/sightpress/demo.sqlite']));
+        self::assertSame("The folder of the SQLite file /proc/sightpress/demo.sqlite can't be created.\n", $this->stderr);
+        self::assertNull($this->sites()->find('demo'));
+    }
+
+    public function testAFailingSetUpStepKeepsTheSiteOutOfTheRegistry(): void
+    {
+        self::assertSame(Command::FAILURE, $this->create('demo', ['--admin-first-name' => str_repeat('A', 101)]));
+
+        self::assertStringStartsWith('Setting up the site failed: ', $this->stderr);
+        self::assertStringContainsString('The site was not added to the registry.', $this->stderr);
+        self::assertNull($this->sites()->find('demo'));
+    }
+
+    public function testListsTheSitesInSentences(): void
+    {
+        $this->console(['command' => 'site:list']);
+        self::assertSame("There are no sites yet. Create one with site:create.\n", $this->stdout);
+
+        $this->create('demo');
+        $this->create('other', ['--domain' => 'other.example']);
+        $this->console(['command' => 'site:list']);
+
+        self::assertSame(
+            "2 sites:\n"
+            . 'demo ("demo"): enabled. Domains: demo.example. Language: en-GB. Time zone: Europe/Lisbon. Database: SQLite file ' . $this->database('demo') . ".\n"
+            . 'other ("other"): enabled. Domains: other.example. Language: en-GB. Time zone: Europe/Lisbon. Database: SQLite file ' . $this->database('other') . ".\n",
+            $this->stdout,
+        );
+
+        $this->console(['command' => 'site:list'], []);
+        self::assertStringContainsString('Database: not shown, APP_SECRET is not set.', $this->stdout);
+        $this->console(['command' => 'site:list'], ['APP_SECRET' => 'another-secret-0123456789abcdef0123456789']);
+        self::assertStringContainsString('Database: can\'t be read with this APP_SECRET.', $this->stdout);
+    }
+
+    public function testChangesTheStatusOfASite(): void
+    {
+        $this->create('demo', ['--domain' => 'demo.example, www.demo.example']);
+
+        foreach ([
+            ['site:disable', 'The site "demo" is disabled: visitors get a "temporarily unavailable" page (503) until you run site:enable demo.', SiteStatus::Disabled],
+            ['site:archive', 'The site "demo" is archived: visitors are told the site is gone (410). Its data is kept.', SiteStatus::Archived],
+            ['site:delete', 'The site "demo" is deleted: it no longer answers (404) and its data is kept. Run site:enable demo to bring it back, or site:purge demo to remove it for good.', SiteStatus::Deleted],
+            ['site:enable', 'The site "demo" is enabled: it answers at demo.example, www.demo.example.', SiteStatus::Enabled],
+        ] as [$command, $message, $status]) {
+            self::assertSame(Command::SUCCESS, $this->console(['command' => $command, 'slug' => 'demo']));
+            self::assertSame($message . "\n", $this->stdout);
+            self::assertSame($status, $this->site('demo')->status);
+        }
+
+        self::assertStringContainsString('sites.NOTICE: Site "demo" status changed from archived to deleted.', $this->project->log());
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:enable', 'slug' => 'demo']));
+        self::assertSame("The site \"demo\" is already enabled.\n", $this->stdout);
+        self::assertSame(Command::FAILURE, $this->console(['command' => 'site:disable', 'slug' => 'ghost']));
+        self::assertSame("There is no site \"ghost\". See the sites with site:list.\n", $this->stderr);
+    }
+
+    public function testEveryStatusCommandDescribesItself(): void
+    {
+        $application = $this->kernel()->console();
+
+        self::assertStringStartsWith('Turns a site on', $application->find('site:enable')->getDescription());
+        self::assertStringStartsWith('Turns a site off for a while', $application->find('site:disable')->getDescription());
+        self::assertStringStartsWith('Archives a site', $application->find('site:archive')->getDescription());
+        self::assertStringStartsWith('Deletes a site, softly', $application->find('site:delete')->getDescription());
+        self::assertStringStartsWith('Removes a deleted site for good', $application->find('site:purge')->getDescription());
+        self::assertStringStartsWith('Lists the sites', $application->find('site:list')->getDescription());
+        self::assertStringStartsWith('Runs the database migrations', $application->find('site:migrate')->getDescription());
+        self::assertStringStartsWith('Creates a site', $application->find('site:create')->getDescription());
+    }
+
+    public function testOnlyADeletedSiteCanBePurgedAndItsDatabaseIsKeptUnlessAsked(): void
+    {
+        $this->create('demo');
+        $this->create('other', ['--domain' => 'other.example']);
+
+        self::assertSame(Command::FAILURE, $this->console(['command' => 'site:purge', 'slug' => 'demo']));
+        self::assertSame("The site \"demo\" is enabled. Only deleted sites can be purged: run site:delete demo first.\n", $this->stderr);
+        self::assertSame(Command::FAILURE, $this->console(['command' => 'site:purge', 'slug' => 'ghost']));
+
+        $this->console(['command' => 'site:delete', 'slug' => 'demo']);
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:purge', 'slug' => 'demo']));
+        self::assertSame(
+            "The site \"demo\" was removed from the registry.\nIts SQLite file " . $this->database('demo') . " was kept: delete it yourself when you no longer need it.\n",
+            $this->stdout,
+        );
+        self::assertNull($this->sites()->find('demo'));
+        self::assertFileExists($this->database('demo'));
+
+        $this->console(['command' => 'site:delete', 'slug' => 'other']);
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:purge', 'slug' => 'other', '--drop-database' => true]));
+        self::assertSame("The site \"other\" was removed from the registry.\nDeleted its SQLite file " . $this->database('other') . ".\n", $this->stdout);
+        self::assertFileDoesNotExist($this->database('other'));
+        self::assertStringContainsString('sites.NOTICE: Site "other" purged.', $this->project->log());
+    }
+
+    public function testADatabaseThatCantBeReadOrDeletedIsNeverLeftWithoutItsSite(): void
+    {
+        $other = new SecretBox('another-secret-0123456789abcdef0123456789');
+        $this->registerDeleted('locked', $other->encrypt('sqlite:///' . $this->database('locked')));
+        $this->registerDeleted('remote', SiteFixture::secretBox()->encrypt('postgresql://u:p@127.0.0.1:1/remote'));
+
+        self::assertSame(Command::FAILURE, $this->console(['command' => 'site:purge', 'slug' => 'locked', '--drop-database' => true]));
+        self::assertSame("The database address can't be read with this APP_SECRET, so the database can't be deleted. The site was not purged.\n", $this->stderr);
+        self::assertSame(Command::FAILURE, $this->console(['command' => 'site:purge', 'slug' => 'remote', '--drop-database' => true]));
+        self::assertStringEndsWith(" The site was not purged.\n", $this->stderr);
+        self::assertNotNull($this->sites()->find('remote'));
+
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:purge', 'slug' => 'locked']));
+        self::assertStringEndsWith("Its database was kept: delete it yourself when you no longer need it.\n", $this->stdout);
+    }
+
+    public function testMigratesOneSiteOrAllOfThem(): void
+    {
+        self::assertSame(Command::INVALID, $this->console(['command' => 'site:migrate']));
+        self::assertSame("Give the slug of one site, or --all, but not both.\n", $this->stderr);
+        self::assertSame(Command::INVALID, $this->console(['command' => 'site:migrate', 'slug' => 'demo', '--all' => true]));
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:migrate', '--all' => true]));
+        self::assertSame("There are no sites to migrate.\n", $this->stdout);
+
+        $this->create('demo');
+        $this->registerDeleted('gone', SiteFixture::secretBox()->encrypt('sqlite:///' . $this->database('gone')));
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:migrate', 'slug' => 'demo']));
+        self::assertSame("demo: already up to date.\n", $this->stdout);
+        self::assertSame(Command::FAILURE, $this->console(['command' => 'site:migrate', 'slug' => 'ghost']));
+
+        $this->registerDeleted('fresh', SiteFixture::secretBox()->encrypt('sqlite:///' . $this->database('fresh')), SiteStatus::Disabled);
+        touch($this->database('fresh'));
+        $this->registerDeleted('broken', new SecretBox('another-secret-0123456789abcdef0123456789')->encrypt('sqlite:///x'), SiteStatus::Enabled);
+        self::assertSame(Command::FAILURE, $this->console(['command' => 'site:migrate', '--all' => true]));
+        self::assertMatchesRegularExpression('/^demo: already up to date\.\nfresh: ran \d+ migrations\.\n$/', $this->stdout);
+        self::assertStringStartsWith('broken: the migrations failed: ', $this->stderr);
+        self::assertStringNotContainsString('gone', $this->stdout . $this->stderr, 'deleted sites are left alone');
+    }
+
+    public function testSaysWhenOneMigrationRan(): void
+    {
+        $this->create('demo');
+        $connection = Services::get($this->services($this->site('demo')), \Doctrine\DBAL\Connection::class);
+        $connection->delete('migration_versions', ['version' => 'SightPress\Core\Auth\Migrations\Version20261114130000']);
+        $connection->createSchemaManager()->dropTable('auth_remember_tokens');
+
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:migrate', 'slug' => 'demo']));
+        self::assertSame("demo: ran 1 migration.\n", $this->stdout);
+    }
+
+    /**
+     * @param array<string, string> $options
+     * @param array<string, string>|null $environment
+     */
+    private function create(string $slug, array $options = [], ?array $environment = null): int
+    {
+        return $this->console([
+            'command' => 'site:create',
+            'slug' => $slug,
+            '--domain' => $slug . '.example',
+            '--db' => 'sqlite:///' . $this->database($slug),
+            '--owner-type' => 'organization',
+            '--locale' => 'en-GB',
+            '--admin-email' => 'Ada@Example.org',
+            '--admin-first-name' => 'Ada',
+            '--admin-last-name' => 'Lovelace',
+            ...$options,
+        ], $environment);
+    }
+
+    /**
+     * @param array<string, mixed>       $input
+     * @param array<string, string>|null $environment
+     */
+    private function console(array $input, ?array $environment = null): int
+    {
+        $application = $this->kernel($environment)->console();
+        $application->setAutoExit(false);
+        $tester = new ApplicationTester($application);
+        $status = $tester->run($input, ['interactive' => false, 'capture_stderr_separately' => true]);
+        $this->stdout = $tester->getDisplay();
+        $this->stderr = $tester->getErrorOutput();
+
+        return $status;
+    }
+
+    /**
+     * @param array<string, string>|null $environment
+     */
+    private function kernel(?array $environment = null): Kernel
+    {
+        return Kernel::boot($this->project->path(), ['APP_ENV' => 'test', ...($environment ?? ['APP_SECRET' => SiteFixture::SECRET])]);
+    }
+
+    private function database(string $slug): string
+    {
+        return $this->project->path() . '/sites/' . $slug . '.sqlite';
+    }
+
+    private function sites(): SiteRepository
+    {
+        return Services::get($this->kernel()->container(), SiteRepository::class);
+    }
+
+    private function site(string $slug): Site
+    {
+        return $this->sites()->find($slug) ?? throw new \LogicException('No site ' . $slug);
+    }
+
+    private function services(Site $site): ContainerInterface
+    {
+        return Services::get($this->kernel()->container(), SiteContainerFactory::class)->forSite($site);
+    }
+
+    private function registerDeleted(string $slug, string $encryptedDsn, SiteStatus $status = SiteStatus::Deleted): void
+    {
+        $site = SiteFixture::site($slug, [$slug . '.example'], $status);
+        $this->sites()->save(new Site(
+            $site->id,
+            $site->slug,
+            $site->name,
+            $status,
+            $site->ownerType,
+            $site->domains,
+            $encryptedDsn,
+            $site->storage,
+            $site->defaultLocale,
+            $site->locales,
+            $site->defaultTimezone,
+            $site->createdAt,
+        ));
+    }
+}

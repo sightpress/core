@@ -55,6 +55,9 @@ final class AuthModuleTest extends TestCase
         self::assertSame('auth', $views[0]->item->namespace);
         self::assertFileExists($views[0]->item->directory . '/login.html.twig');
         self::assertSame(SessionAuthenticator::class, $registry->services()[Authenticator::class]->item->class);
+        $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'auth'));
+        self::assertSame(\SightPress\Core\Auth\Provisioning\FirstPasswordLink::class, $listeners[0]->item->listener);
+        self::assertSame(\SightPress\Core\Site\Contract\SiteProvisioning::SIGN_IN, $listeners[0]->item->priority);
     }
 
     public function testResetLinksAreSignedWithTheTenantSecret(): void
