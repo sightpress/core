@@ -112,6 +112,16 @@ final readonly class Form
     }
 
     /**
+     * The value of a single-value field as text ('' for a field with several values).
+     */
+    public function text(string $name): string
+    {
+        $value = $this->value($name);
+
+        return is_string($value) ? $value : '';
+    }
+
+    /**
      * @return array<string, string|list<string>>
      */
     public function values(): array

@@ -1,0 +1,14 @@
+{% extends '@auth/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Sign in') }}{% endblock %}
+{% block main %}
+<h1>{{ t('Sign in') }}</h1>
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    {{ f.field(form, 'email') }}
+    {{ f.field(form, 'password') }}
+    {{ f.field(form, 'remember') }}
+    {{ f.submit(t('Sign in')) }}
+{{ f.end() }}
+<p><a href="/password/forgot">{{ t('Forgot your password?') }}</a></p>
+{% endblock %}

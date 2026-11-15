@@ -28,6 +28,9 @@ final readonly class TenantConfig
      * @param non-empty-string $sessionPath        folder for session data
      * @param positive-int     $sessionIdleTimeout seconds without a request before a session ends
      * @param non-empty-string|null $secret       `APP_SECRET`: derives the key that encrypts site DSNs; null when unset
+     * @param non-empty-string $mailerDsn         `MAILER_DSN`: how email is sent; `null://null` (nothing is sent) when unset
+     * @param non-empty-string $mailFrom          sender address of every email
+     * @param non-empty-string $mailFromName      sender name of every email
      */
     public function __construct(
         public string $projectDir,
@@ -43,6 +46,9 @@ final readonly class TenantConfig
         public string $sessionPath = '/tmp/sightpress-sessions',
         public int $sessionIdleTimeout = 7200,
         #[SensitiveParameter] public ?string $secret = null,
+        #[SensitiveParameter] public string $mailerDsn = 'null://null',
+        public string $mailFrom = 'no-reply@localhost',
+        public string $mailFromName = 'SightPress',
     ) {
     }
 
@@ -62,6 +68,8 @@ final readonly class TenantConfig
         $admin = self::section($config, 'admin');
         $log = self::section($config, 'log');
         $session = self::section($config, 'session');
+        $mail = self::section($config, 'mail');
+        $dsn = trim($environment['MAILER_DSN'] ?? '');
 
         return new self(
             projectDir: $projectDir,
@@ -77,6 +85,9 @@ final readonly class TenantConfig
             sessionPath: self::string($session, 'path', 'session.path', $projectDir . '/var/sessions'),
             sessionIdleTimeout: self::idleTimeout($session),
             secret: self::secret($environment['APP_SECRET'] ?? null),
+            mailerDsn: $dsn === '' ? 'null://null' : $dsn,
+            mailFrom: self::email($mail),
+            mailFromName: self::string($mail, 'from_name', 'mail.from_name', 'SightPress'),
         );
     }
 
@@ -200,6 +211,24 @@ final readonly class TenantConfig
         }
 
         return $locale;
+    }
+
+    /**
+     * @param array<mixed> $mail
+     *
+     * @return non-empty-string
+     */
+    private static function email(array $mail): string
+    {
+        $from = self::string($mail, 'from', 'mail.from', 'no-reply@localhost');
+        if (filter_var($from, FILTER_VALIDATE_EMAIL) === false && preg_match('/^[^@\s]+@localhost$/', $from) !== 1) {
+            throw new TenantConfigException(sprintf(
+                'Tenant setting "mail.from" is not an email address ("%s").',
+                $from,
+            ));
+        }
+
+        return $from;
     }
 
     /**

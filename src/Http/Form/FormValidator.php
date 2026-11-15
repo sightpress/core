@@ -64,6 +64,10 @@ final readonly class FormValidator
         if (!is_string($raw)) {
             return '';
         }
+        if ($field->type === FieldType::Password) {
+            // Spaces are part of a password: keep it exactly as typed.
+            return $raw;
+        }
 
         return trim(str_replace(["\r\n", "\r"], "\n", $raw));
     }

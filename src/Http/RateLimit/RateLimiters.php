@@ -10,8 +10,9 @@ use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\RateLimiter\Storage\StorageInterface;
 
 /**
- * Named rate limits. `write` caps state-changing requests per client; `sign_in` caps sign-in attempts (used by the
- * sign-in form). Modules ask for a limiter by policy and key, for example the client's address or an email.
+ * Named rate limits. `write` caps state-changing requests per client; `sign_in` caps sign-in attempts and
+ * `password_reset` caps "forgot your password" emails. Modules ask for a limiter by policy and key, for example the
+ * client's address or an email.
  */
 final class RateLimiters
 {
@@ -19,6 +20,7 @@ final class RateLimiters
     public const array POLICIES = [
         'write' => ['policy' => 'sliding_window', 'limit' => 60, 'interval' => '1 minute'],
         'sign_in' => ['policy' => 'sliding_window', 'limit' => 5, 'interval' => '15 minutes'],
+        'password_reset' => ['policy' => 'sliding_window', 'limit' => 3, 'interval' => '1 hour'],
     ];
 
     /** @var array<string, RateLimiterFactory> */
@@ -43,5 +45,15 @@ final class RateLimiters
         $this->factories[$policy] ??= new RateLimiterFactory(['id' => $policy] + $config, $this->storage);
 
         return $this->factories[$policy]->create($key);
+    }
+
+    /**
+     * Seconds from now until a limiter's retry time, at least 1. The limiters keep time with the system clock.
+     *
+     * @return positive-int
+     */
+    public static function secondsUntil(\DateTimeImmutable $retryAfter): int
+    {
+        return max(1, $retryAfter->getTimestamp() - time());
     }
 }

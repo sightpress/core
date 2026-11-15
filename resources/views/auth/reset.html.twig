@@ -1,0 +1,12 @@
+{% extends '@auth/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ first ? t('Choose your password') : t('Choose a new password') }}{% endblock %}
+{% block main %}
+<h1>{{ first ? t('Choose your password') : t('Choose a new password') }}</h1>
+<p>{{ t('For the account {email}.', {'email': email}) }}</p>
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    {{ f.field(form, 'password') }}
+    {{ f.submit(first ? t('Set password') : t('Change password')) }}
+{{ f.end() }}
+{% endblock %}

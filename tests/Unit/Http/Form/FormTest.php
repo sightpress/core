@@ -28,6 +28,8 @@ final class FormTest extends TestCase
         self::assertSame('profile', $form->id);
         self::assertCount(2, $form->fields());
         self::assertSame('Ada', $form->value('display_name'));
+        self::assertSame('Ada', $form->text('display_name'));
+        self::assertSame('', $form->text('topics'));
         self::assertSame(['display_name' => 'Ada', 'topics' => []], $form->values());
         self::assertSame('profile-display-name', $form->fieldId('display_name'));
         self::assertSame('profile-topics', $form->optionId('topics', 0));

@@ -8,6 +8,7 @@ use DI\Container;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -26,6 +27,10 @@ use Slim\App;
 
 #[CoversClass(RouteInstaller::class)]
 #[UsesNamespace('SightPress\Core\Module')]
+#[UsesClass(\SightPress\Core\Http\SiteScopedHandler::class)]
+#[UsesClass(\SightPress\Core\Http\SiteScopedMiddleware::class)]
+#[UsesClass(\SightPress\Core\Infrastructure\Container\Services::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteContext::class)]
 final class RouteInstallerTest extends TestCase
 {
     public function testModuleRoutesAnswerThroughTheirMiddlewareInOrder(): void
@@ -45,7 +50,7 @@ final class RouteInstallerTest extends TestCase
         $app = new App($factory, new Container());
         $app->addRoutingMiddleware();
 
-        new RouteInstaller()->install($app, $registry);
+        new RouteInstaller(new Container())->install($app, $registry);
         $response = $app->handle(new ServerRequest('POST', '/hello/ada'));
 
         self::assertSame('first,second,hello ada', (string) $response->getBody());

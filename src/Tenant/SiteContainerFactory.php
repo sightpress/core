@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMSetup;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Database\DatabaseDsn;
@@ -22,8 +23,9 @@ use function DI\get;
 /**
  * Builds the site container (ADR-0003): the services that belong to one site, on top of the tenant container.
  *
- * Site services are lazy: the DSN is only decrypted, and the connection and entity manager only built, the first
- * time something asks for them, and the connection only opens on its first query. Containers are kept per site for
+ * Site services are lazy: the connection and the entity manager are lazy objects, so the DSN is only decrypted, and
+ * they are only built, when they are first used (for example by a query) — services that merely depend on them
+ * cost nothing on requests that don't touch the database. The connection only opens on its first query. Containers are kept per site for
  * the process and rebuilt when the registry hands out a new {@see Site} (it does after any change); {@see evict()}
  * drops one, {@see reset()} all (for long-running workers).
  */
@@ -95,19 +97,23 @@ final class SiteContainerFactory
         return [
             ...$this->moduleServices,
             Site::class => $site,
-            Connection::class => factory(static fn (): Connection => DriverManager::getConnection(
-                DatabaseDsn::parse($secretBox->decrypt($site->databaseDsn))->connectionParams(),
+            Connection::class => factory(static fn (): Connection => new ReflectionClass(Connection::class)->newLazyProxy(
+                static fn (): Connection => DriverManager::getConnection(
+                    DatabaseDsn::parse($secretBox->decrypt($site->databaseDsn))->connectionParams(),
+                ),
             )),
             EntityManagerInterface::class => factory(
-                static function (ContainerInterface $container) use ($site, $config, $entityPaths): EntityManagerInterface {
-                    $cache = $config->debug
-                        ? new ArrayAdapter()
-                        : new FilesystemAdapter('doctrine-' . $site->id, 0, $config->cacheDir);
-                    $orm = ORMSetup::createAttributeMetadataConfig($entityPaths, $config->debug, null, $cache);
-                    $orm->enableNativeLazyObjects(true);
+                static fn (ContainerInterface $container): EntityManagerInterface => new ReflectionClass(EntityManager::class)->newLazyProxy(
+                    static function () use ($container, $site, $config, $entityPaths): EntityManager {
+                        $cache = $config->debug
+                            ? new ArrayAdapter()
+                            : new FilesystemAdapter('doctrine-' . $site->id, 0, $config->cacheDir);
+                        $orm = ORMSetup::createAttributeMetadataConfig($entityPaths, $config->debug, null, $cache);
+                        $orm->enableNativeLazyObjects(true);
 
-                    return new EntityManager(Services::get($container, Connection::class), $orm);
-                },
+                        return new EntityManager(Services::get($container, Connection::class), $orm);
+                    },
+                ),
             ),
             EntityManager::class => get(EntityManagerInterface::class),
         ];

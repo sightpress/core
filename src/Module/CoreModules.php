@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Module;
 
+use SightPress\Core\Auth\AuthModule;
 use SightPress\Core\Rbac\RbacModule;
 use SightPress\Core\Site\SiteModule;
 use SightPress\Core\User\UserModule;
@@ -23,6 +24,7 @@ final class CoreModules
             new ModuleCandidate(new SiteModule(), 'sightpress/core'),
             new ModuleCandidate(new UserModule(), 'sightpress/core'),
             new ModuleCandidate(new RbacModule(), 'sightpress/core'),
+            new ModuleCandidate(new AuthModule(), 'sightpress/core'),
         ];
     }
 

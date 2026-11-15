@@ -1,0 +1,11 @@
+{% extends '@auth/layout.html.twig' %}
+{% block title %}{{ t('Sign out') }}{% endblock %}
+{% block main %}
+<h1>{{ t('Sign out') }}</h1>
+<p>{{ t('Do you want to sign out of {site}?', {'site': site_name}) }}</p>
+<form action="/logout" method="post">
+    {{ csrf_fields() }}
+    <button type="submit">{{ t('Sign out') }}</button>
+</form>
+<p><a href="/">{{ t('Stay signed in and go to the home page') }}</a></p>
+{% endblock %}

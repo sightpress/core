@@ -57,7 +57,8 @@ form again." Tokens stay valid for the whole session, so several open forms and 
 | Policy | Limit | Used for |
 | --- | --- | --- |
 | `write` | 60 requests a minute per address | Every state-changing request |
-| `sign_in` | 5 attempts in 15 minutes | The sign-in form (C-3.3) |
+| `sign_in` | 5 attempts in 15 minutes per email address and client address | The sign-in form (C-3.3) |
+| `password_reset` | 3 links an hour per email address and client address | "Forgot your password?" (C-3.3) |
 
 Over the limit the answer is **429 — Too many requests** with `Retry-After`, and the page says when to try again
 ("Try again in a minute.").

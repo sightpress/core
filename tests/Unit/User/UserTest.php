@@ -112,10 +112,15 @@ final class UserTest extends TestCase
     {
         $user = $this->user();
 
+        self::assertTrue($user->isPending());
+        self::assertFalse($user->isActive());
+
         $user->setPasswordHash('$argon2id$hash', $this->now);
 
         self::assertSame('$argon2id$hash', $user->passwordHash());
         self::assertSame(UserStatus::Active, $user->status());
+        self::assertTrue($user->isActive());
+        self::assertFalse($user->isPending());
     }
 
     public function testADeactivatedAccountStaysDeactivatedWhenThePasswordChanges(): void
@@ -125,6 +130,8 @@ final class UserTest extends TestCase
 
         $user->setPasswordHash('$argon2id$hash', $this->now);
         self::assertSame(UserStatus::Deactivated, $user->status());
+        self::assertFalse($user->isActive());
+        self::assertFalse($user->isPending());
 
         $user->activate($this->now);
         self::assertSame(UserStatus::Active, $user->status());

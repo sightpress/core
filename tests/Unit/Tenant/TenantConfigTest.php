@@ -36,6 +36,22 @@ final class TenantConfigTest extends TestCase
         self::assertSame('/srv/app/var/sessions', $config->sessionPath);
         self::assertSame(7200, $config->sessionIdleTimeout);
         self::assertNull($config->secret);
+        self::assertSame('null://null', $config->mailerDsn);
+        self::assertSame('no-reply@localhost', $config->mailFrom);
+        self::assertSame('SightPress', $config->mailFromName);
+    }
+
+    public function testReadsHowToSendEmail(): void
+    {
+        $config = TenantConfig::fromArray(
+            ['mail' => ['from' => 'hello@example.org', 'from_name' => 'Example Sites']],
+            '/srv/app',
+            ['MAILER_DSN' => ' smtp://mail.example.org:587 '],
+        );
+
+        self::assertSame('smtp://mail.example.org:587', $config->mailerDsn);
+        self::assertSame('hello@example.org', $config->mailFrom);
+        self::assertSame('Example Sites', $config->mailFromName);
     }
 
     public function testReadsTheSecretFromTheEnvironment(): void
@@ -127,6 +143,12 @@ final class TenantConfigTest extends TestCase
             [],
             '/srv',
             'Tenant setting "session.idle_timeout" must be a whole number of seconds, at least 60.',
+        ];
+        yield 'sender address' => [
+            ['mail' => ['from' => 'not an address']],
+            [],
+            '/srv',
+            'Tenant setting "mail.from" is not an email address ("not an address").',
         ];
         yield 'timezone' => [
             ['timezone' => 'Mars/Olympus'],

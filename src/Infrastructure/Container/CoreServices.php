@@ -23,6 +23,9 @@ use SightPress\Core\Infrastructure\Event\EventDispatcher;
 use SightPress\Core\Infrastructure\Event\ListenerProvider;
 use SightPress\Core\Http\Error\ErrorResponder;
 use SightPress\Core\Infrastructure\Logging\LoggerFactory;
+use SightPress\Core\Infrastructure\Mail\MailSender;
+use SightPress\Core\Infrastructure\Mail\TransportMailSender;
+use Symfony\Component\Mailer\Transport;
 use SightPress\Core\Access\PermissionCatalogue;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleRegistry;
@@ -80,6 +83,11 @@ final class CoreServices
                 Services::get($container, TemplateExtension::class),
                 $config->cacheDir,
                 $config->debug,
+            )),
+            MailSender::class => factory(static fn (): MailSender => new TransportMailSender(
+                Transport::fromDsn($config->mailerDsn),
+                $config->mailFrom,
+                $config->mailFromName,
             )),
             ValidatorInterface::class => factory(static fn (): ValidatorInterface => Validation::createValidator()),
             RateLimiters::class => factory(static fn (): RateLimiters => new RateLimiters(

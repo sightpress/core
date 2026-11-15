@@ -1,0 +1,52 @@
+{#
+    Page shell of the sign-in pages until the default theme exists (C-6.1): one banner with the site's name, one
+    <main> with one <h1>, flash messages in a polite live region, system colours for light and dark mode, and a
+    visible focus outline. The <title> starts with "Error: " when the form on the page has errors.
+#}
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>{% if form is defined and form.errors is not empty %}{{ t('Error:') }} {% endif %}{% block title %}{% endblock %} - {{ site_name }}</title>
+<style nonce="{{ csp_nonce() }}">
+    :root { color-scheme: light dark; }
+    body { margin: 0; font-family: system-ui, sans-serif; font-size: 1.125rem; line-height: 1.5; background: Canvas; color: CanvasText; }
+    header, main { max-width: 32rem; margin: 0 auto; padding: 1rem 1.5rem; }
+    header { border-bottom: 1px solid CanvasText; }
+    h1 { font-size: 2rem; line-height: 1.25; margin: 1rem 0; }
+    .field { margin: 0 0 1.5rem; }
+    .field label, legend { display: block; font-weight: 700; }
+    .field-hint { margin: 0.25rem 0; }
+    .field-error { margin: 0.25rem 0; font-weight: 700; color: light-dark(#b00020, #ffb4ab); }
+    .field--error { border-inline-start: 0.3rem solid light-dark(#b00020, #ffb4ab); padding-inline-start: 0.75rem; }
+    input { font: inherit; border: 2px solid CanvasText; padding: 0.4rem; width: 100%; max-width: 24rem; box-sizing: border-box; }
+    input[type=checkbox] { width: 1.5rem; height: 1.5rem; vertical-align: middle; }
+    .field--checkbox { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .field--checkbox .field-hint, .field--checkbox .field-error { flex-basis: 100%; order: 2; }
+    .field--checkbox label { font-weight: 400; }
+    .error-summary { border: 0.3rem solid light-dark(#b00020, #ffb4ab); padding: 1rem; margin: 0 0 2rem; }
+    .error-summary h2 { margin-top: 0; }
+    .messages { border-inline-start: 0.3rem solid CanvasText; padding: 0.25rem 1rem; margin: 1rem 0; }
+    .messages:empty { display: none; }
+    a { color: LinkText; text-underline-offset: 0.2em; }
+    button { font: inherit; padding: 0.5rem 1rem; }
+    :focus-visible { outline: 3px solid CanvasText; outline-offset: 3px; }
+    .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
+</head>
+<body>
+<header>
+    <a href="/">{{ site_name }}</a>
+</header>
+<main>
+<div class="messages" role="status">
+{%- for message in messages %}
+    <p>{{ message }}</p>
+{%- endfor %}
+</div>
+{% block main %}{% endblock %}
+</main>
+</body>
+</html>

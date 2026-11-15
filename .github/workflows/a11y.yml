@@ -75,7 +75,7 @@ jobs:
           extensions: pdo_sqlite, intl
           tools: composer:v2
 
-      - name: Install core's dependencies (for the component gallery)
+      - name: Install core's dependencies (for the component gallery and the sign-in test site)
         working-directory: core
         run: composer install --no-interaction --no-progress
 

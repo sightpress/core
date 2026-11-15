@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Rbac;
 
 use Doctrine\ORM\EntityManagerInterface;
+use SightPress\Core\Rbac\Contract\PermissionLookup;
 use SightPress\Core\Rbac\Entity\Permission;
 use SightPress\Core\Rbac\Entity\Role;
 use SightPress\Core\Rbac\Entity\RoleAssignment;
@@ -12,7 +13,7 @@ use SightPress\Core\Rbac\Entity\RoleAssignment;
 /**
  * The site's roles, stored permissions and role assignments.
  */
-final readonly class RoleRepository
+final readonly class RoleRepository implements PermissionLookup
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {

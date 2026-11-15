@@ -1,0 +1,13 @@
+{% extends '@auth/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Reset your password') }}{% endblock %}
+{% block main %}
+<h1>{{ t('Reset your password') }}</h1>
+<p>{{ t('Enter the email address you sign in with. We will send you a link to choose a new password.') }}</p>
+{{ f.error_summary(form) }}
+{{ f.start(form, '/password/forgot') }}
+    {{ f.field(form, 'email') }}
+    {{ f.submit(t('Send the link')) }}
+{{ f.end() }}
+<p><a href="/login">{{ t('Back to sign in') }}</a></p>
+{% endblock %}

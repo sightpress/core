@@ -42,6 +42,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 #[UsesNamespace('SightPress\Core\User')]
 #[UsesNamespace('SightPress\Core\Rbac')]
 #[UsesNamespace('SightPress\Core\Access')]
+#[UsesNamespace('SightPress\Core\Auth')]
 final class KernelTest extends TestCase
 {
     private ?TestProject $project = null;
@@ -152,10 +153,14 @@ final class KernelTest extends TestCase
     public function testBootReadsTheProcessEnvironmentByDefault(): void
     {
         $_SERVER['APP_DEBUG'] = '1';
+        $_SERVER['MAILER_DSN'] = 'smtp://mail.example.org:25';
+        $_SERVER['OTHER_SETTING'] = 'ignored';
 
         $kernel = Kernel::boot($this->project()->path());
 
         self::assertTrue($kernel->config()->debug);
+        self::assertSame('smtp://mail.example.org:25', $kernel->config()->mailerDsn);
+        self::assertInstanceOf(\SightPress\Core\Infrastructure\Mail\TransportMailSender::class, $kernel->container()->get(\SightPress\Core\Infrastructure\Mail\MailSender::class));
     }
 
     public function testTheKernelBootsThroughTheModuleLoader(): void
@@ -203,7 +208,7 @@ final class KernelTest extends TestCase
 
         $kernel = Kernel::boot($project->path(), []);
 
-        self::assertSame(['site', 'user', 'rbac', 'acme.example'], $kernel->modules()->modules());
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'acme.example'], $kernel->modules()->modules());
         self::assertTrue($kernel->console()->has('site:registry:check'));
         self::assertNotSame('', Kernel::contractVersion());
     }

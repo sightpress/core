@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace SightPress\Core\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use SightPress\Core\User\Contract\Account;
+use SightPress\Core\User\Contract\Accounts;
 use SightPress\Core\User\Entity\User;
 
 /**
  * The site's users, in the site's own database.
  */
-final readonly class UserRepository
+final readonly class UserRepository implements Accounts
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -44,6 +46,25 @@ final readonly class UserRepository
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+    }
+
+    public function findAccount(int $id): ?Account
+    {
+        return $this->find($id);
+    }
+
+    public function findAccountByEmail(string $email): ?Account
+    {
+        return $this->findByEmail($email);
+    }
+
+    public function saveAccount(Account $account): void
+    {
+        if (!$account instanceof User) {
+            throw new UserException(sprintf('Only accounts found here can be saved here, not a %s.', $account::class));
+        }
+
+        $this->save($account);
     }
 
     public function count(): int

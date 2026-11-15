@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\User;
 
+use SightPress\Core\User\Contract\Accounts;
 use SightPress\Module\Access\Permission;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
@@ -25,6 +26,7 @@ final class UserModule implements ModuleInterface
     {
         $registrar->migrations()->add(new UserMigrations());
         $registrar->services()->autowire(UserRepository::class, public: true);
+        $registrar->services()->autowire(UserRepository::class, Accounts::class, public: true);
         $registrar->permissions()->add(new Permission(
             'user.invite',
             'Invite people',

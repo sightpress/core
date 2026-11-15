@@ -26,7 +26,7 @@ final class MigrationsTest extends TestCase
         $database = new CoreSiteDatabase();
 
         self::assertSame(
-            ['migration_versions', 'permissions', 'role_permission', 'roles', 'site_settings', 'user_role', 'users'],
+            ['auth_remember_tokens', 'migration_versions', 'permissions', 'role_permission', 'roles', 'site_settings', 'user_role', 'users'],
             $database->tables(),
         );
         $descriptions = array_map(

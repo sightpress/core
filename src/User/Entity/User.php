@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\User\AvatarKind;
+use SightPress\Core\User\Contract\Account;
 use SightPress\Core\User\UserException;
 use SightPress\Core\User\UserStatus;
 
@@ -22,7 +23,7 @@ use SightPress\Core\User\UserStatus;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'users')]
-final class User
+final class User implements Account
 {
     public const int NAME_MAX_LENGTH = 100;
     public const int EMAIL_MAX_LENGTH = 254;
@@ -109,6 +110,16 @@ final class User
     public function status(): UserStatus
     {
         return $this->status;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === UserStatus::Active;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === UserStatus::Pending;
     }
 
     public function firstName(): string

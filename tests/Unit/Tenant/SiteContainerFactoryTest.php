@@ -93,10 +93,12 @@ final class SiteContainerFactoryTest extends TestCase
         $container = $this->factory()->forSite($site);
 
         self::assertSame($site, $container->get(Site::class));
+        $connection = Services::get($container, Connection::class);
+        Services::get($container, EntityManagerInterface::class);
 
         $this->expectException(SecretBoxException::class);
 
-        $container->get(Connection::class);
+        $connection->getDatabasePlatform();
     }
 
     public function testKeepsAContainerPerSiteUntilEvicted(): void

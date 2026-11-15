@@ -33,6 +33,7 @@ final class FormValidatorTest extends TestCase
             'role' => 'editor',
             'topics' => ['a11y', 42],
             'terms' => 'yes',
+            'secret' => '  correct horse  ',
         ]);
 
         self::assertTrue($form->isValid(), (string) json_encode($form->errors()));
@@ -40,6 +41,7 @@ final class FormValidatorTest extends TestCase
         self::assertSame("Line one\nLine two\nthree", $form->value('bio'));
         self::assertSame(['a11y'], $form->value('topics'));
         self::assertSame('1', $form->value('terms'));
+        self::assertSame('  correct horse  ', $form->value('secret'), 'passwords are kept exactly as typed');
     }
 
     public function testMissingRequiredFieldsSayWhatToDo(): void
@@ -92,6 +94,7 @@ final class FormValidatorTest extends TestCase
             new Field('role', 'Role', FieldType::Select, choices: ['editor' => 'Editor', 'admin' => 'Admin']),
             new Field('topics', 'Topics', FieldType::Checkboxes, required: false, choices: ['a11y' => 'Accessibility', 'seo' => 'Search']),
             new Field('terms', 'I agree to the terms', FieldType::Checkbox, requiredMessage: 'Agree to the terms to continue'),
+            new Field('secret', 'Password', FieldType::Password, required: false),
         );
 
         return new FormValidator(Validation::createValidator())->submit($form, $input);

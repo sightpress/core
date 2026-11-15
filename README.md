@@ -54,6 +54,9 @@ composer a11y
 ```
 
 Set `SIGHTPRESS_BASE_URL` if the skeleton is not on `http://localhost:8080`. The tests live in `tests/A11y/`.
+Playwright also starts two test servers with PHP's built-in web server: core's component gallery
+(`tests/A11y/gallery`, port 8099) and a small site with two accounts for the sign-in pages (`tests/A11y/sign-in`,
+port 8098, kept in the system's temporary folder).
 
 ### Continuous integration
 

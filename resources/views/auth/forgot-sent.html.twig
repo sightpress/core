@@ -1,0 +1,9 @@
+{% extends '@auth/layout.html.twig' %}
+{% block title %}{{ t('Check your email') }}{% endblock %}
+{% block main %}
+<h1>{{ t('Check your email') }}</h1>
+<p>{{ t('If {email} has an account here, we have sent it a link to choose a new password. The link works for 1 hour and only once.', {'email': email}) }}</p>
+<p>{{ t('No email after a few minutes? Check your spam folder, or ask for a new link.') }}</p>
+<p><a href="/password/forgot">{{ t('Ask for a new link') }}</a></p>
+<p><a href="/login">{{ t('Back to sign in') }}</a></p>
+{% endblock %}
