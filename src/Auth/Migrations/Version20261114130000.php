@@ -7,13 +7,13 @@ namespace SightPress\Core\Auth\Migrations;
 use Doctrine\DBAL\Schema\PrimaryKeyConstraint;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\Migrations\AbstractMigration;
+use SightPress\Core\Infrastructure\Migration\PortableMigration;
 
 /**
  * The `auth_remember_tokens` table: "keep me signed in" tokens (C-3.3). Only a hash of each token's secret part is
  * stored.
  */
-final class Version20261114130000 extends AbstractMigration
+final class Version20261114130000 extends PortableMigration
 {
     public function getDescription(): string
     {

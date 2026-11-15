@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Integration;
 
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Platforms\SQLitePlatform;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Types;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use SightPress\Core\Tests\Support\TestDatabases;
 
 #[CoversNothing]
-final class SqliteConnectionTest extends IntegrationTestCase
+final class DatabaseConnectionTest extends IntegrationTestCase
 {
-    public function testItOpensAnEmptySqliteDatabaseInMemory(): void
+    public function testItOpensAnEmptyDatabaseOnTheEngineUnderTest(): void
     {
         $connection = $this->connection();
 
-        self::assertInstanceOf(SQLitePlatform::class, $connection->getDatabasePlatform());
+        self::assertInstanceOf(match (TestDatabases::engine()) {
+            'postgresql' => PostgreSQLPlatform::class,
+            'mysql' => AbstractMySQLPlatform::class,
+            default => SQLitePlatform::class,
+        }, $connection->getDatabasePlatform());
         self::assertSame([], $connection->createSchemaManager()->listTableNames());
     }
 

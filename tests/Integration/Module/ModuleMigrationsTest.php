@@ -21,7 +21,7 @@ use SightPress\Module\ModuleRegistrar;
 
 /**
  * Each module's migrations live in their own namespace, so two modules can use the same version number; both run
- * on SQLite in memory through the configuration core builds from the registry.
+ * on the test database through the configuration core builds from the registry.
  */
 #[CoversNothing]
 final class ModuleMigrationsTest extends IntegrationTestCase

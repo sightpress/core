@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Support\Migrations\Events;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\Migrations\AbstractMigration;
+use SightPress\Core\Infrastructure\Migration\PortableMigration;
 
 /**
  * First migration of a test "events" module.
  */
-final class Version20261114000000 extends AbstractMigration
+final class Version20261114000000 extends PortableMigration
 {
     public function up(Schema $schema): void
     {

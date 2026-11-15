@@ -7,7 +7,7 @@ namespace SightPress\Core\Rbac\Migrations;
 use Doctrine\DBAL\Schema\PrimaryKeyConstraint;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\Migrations\AbstractMigration;
+use SightPress\Core\Infrastructure\Migration\PortableMigration;
 
 /**
  * The RBAC tables (C-3.1): `permissions`, `roles`, `role_permission` and `user_role`.
@@ -15,7 +15,7 @@ use Doctrine\Migrations\AbstractMigration;
  * `user_role.user_id` has no foreign key to `users`: that table belongs to the user module, whose migrations may
  * run after these. Users are deactivated, not deleted, in M1.
  */
-final class Version20261114120000 extends AbstractMigration
+final class Version20261114120000 extends PortableMigration
 {
     public function getDescription(): string
     {
@@ -36,7 +36,7 @@ final class Version20261114120000 extends AbstractMigration
         $roles->addColumn('id', Types::INTEGER, ['autoincrement' => true]);
         $roles->addColumn('name', Types::STRING, ['length' => 50]);
         $roles->addColumn('label', Types::STRING, ['length' => 100]);
-        $roles->addColumn('system', Types::BOOLEAN);
+        $roles->addColumn('is_system', Types::BOOLEAN);
         $roles->addPrimaryKeyConstraint(self::primaryKey('id'));
         $roles->addUniqueIndex(['name'], 'roles_name_unique');
 

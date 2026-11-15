@@ -67,6 +67,23 @@ Every pull request and every push to `main` runs two GitHub Actions workflows:
 - `Accessibility` (`Playwright and axe`): boots the skeleton with docker compose, using this branch of core, and
   runs `composer a11y`.
 
+A third workflow, `DB matrix`, runs the integration suite against MySQL, MariaDB and PostgreSQL (the skeleton's
+compose profiles). It runs nightly, from the Actions tab, and on pull requests with the `db-matrix` label; it is not
+a required check, but it must be green before a release. To run it locally, start a profile in `../skeleton` and
+point `SIGHTPRESS_TEST_DATABASE_URL` at it from a container on the same network (the skeleton's PHP image has the
+MySQL and PostgreSQL drivers):
+
+```sh
+(cd ../skeleton && docker compose --profile postgres up --detach --wait postgres && docker compose build php)
+docker run --rm --network skeleton_default --user "$(id -u):$(id -g)" -e HOME=/tmp \
+  -e SIGHTPRESS_TEST_DATABASE_URL='postgresql://sightpress:sightpress@postgres:5432/sightpress?serverVersion=18' \
+  -v "$PWD/..:/workspace" -w /workspace/core --entrypoint php skeleton-php vendor/bin/phpunit --testsuite integration
+```
+
+For MySQL and MariaDB use `mysql://root:sightpress-root@mysql:3306/sightpress?serverVersion=8.4.0` or
+`mariadb://root:sightpress-root@mariadb:3306/sightpress?serverVersion=11.8.0-MariaDB`: the user must be allowed to
+create databases, because every test gets its own `sp_test_*` database (dropped again afterwards).
+
 Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/); release-please uses them to
 keep a release pull request and `CHANGELOG.md` up to date.
 

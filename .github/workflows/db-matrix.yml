@@ -1,0 +1,98 @@
+# Database portability: the integration suite (which runs every module's migrations through site:create) against
+# MySQL, MariaDB and PostgreSQL, started from the skeleton's compose profiles. CI runs the suite on SQLite only;
+# this job catches what only shows on a real server (reserved words, implicit commits, …).
+#
+# Runs nightly, on demand, and on pull requests that carry the `db-matrix` label. It is not a required check, but
+# it must be green before a release.
+name: DB matrix
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  integration:
+    name: integration on ${{ matrix.engine }}
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'db-matrix')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # The user must be allowed to create and drop databases: every test gets its own sp_test_* database.
+          - engine: mysql
+            url: mysql://root:sightpress-root@HOST:3306/sightpress?serverVersion=8.4.0&charset=utf8mb4
+          - engine: mariadb
+            url: mariadb://root:sightpress-root@HOST:3306/sightpress?serverVersion=11.8.0-MariaDB&charset=utf8mb4
+          - engine: postgres
+            url: postgresql://sightpress:sightpress@HOST:5432/sightpress?serverVersion=18&charset=utf8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: core
+
+      - uses: actions/checkout@v7
+        with:
+          repository: sightpress/module-interface
+          path: module-interface
+
+      - uses: actions/checkout@v7
+        with:
+          repository: sightpress/skeleton
+          path: skeleton
+
+      - name: Start ${{ matrix.engine }} from the skeleton's compose profile
+        working-directory: skeleton
+        run: docker compose --profile ${{ matrix.engine }} up --detach --wait ${{ matrix.engine }}
+
+      # The compose databases publish no port; the runner reaches the container on its network address.
+      - name: Point the tests at the database
+        working-directory: skeleton
+        env:
+          URL: ${{ matrix.url }}
+        run: |
+          host=$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$(docker compose ps --quiet ${{ matrix.engine }})")
+          echo "SIGHTPRESS_TEST_DATABASE_URL=${URL/HOST/$host}" >> "$GITHUB_ENV"
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+          extensions: pdo_sqlite, pdo_mysql, pdo_pgsql, intl
+          ini-values: date.timezone=UTC, memory_limit=512M
+          tools: composer:v2
+
+      - name: Find the Composer cache folder
+        id: composer-cache
+        working-directory: core
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('core/composer.json') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Install dependencies
+        working-directory: core
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Integration suite on ${{ matrix.engine }}
+        working-directory: core
+        run: composer test:integration
+
+      - name: Database log
+        if: failure()
+        working-directory: skeleton
+        run: docker compose logs ${{ matrix.engine }}

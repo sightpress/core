@@ -7,12 +7,12 @@ namespace SightPress\Core\User\Migrations;
 use Doctrine\DBAL\Schema\PrimaryKeyConstraint;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\Migrations\AbstractMigration;
+use SightPress\Core\Infrastructure\Migration\PortableMigration;
 
 /**
  * The `users` table (C-3.1).
  */
-final class Version20261114120000 extends AbstractMigration
+final class Version20261114120000 extends PortableMigration
 {
     public function getDescription(): string
     {

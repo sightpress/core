@@ -16,6 +16,7 @@ use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Kernel;
 use SightPress\Core\Tenant\SiteContext;
 use SightPress\Core\Tests\Support\SiteFixture;
+use SightPress\Core\Tests\Support\TestDatabases;
 use SightPress\Core\Tests\Support\TestProject;
 
 /**
@@ -32,9 +33,12 @@ final class SiteResolutionTest extends TestCase
     protected function setUp(): void
     {
         $this->project = new TestProject(sites: [
-            'demo' => SiteFixture::entry('demo', ['domains' => ['demo.example', 'www.demo.example']]),
+            'demo' => SiteFixture::entry('demo', [
+                'domains' => ['demo.example', 'www.demo.example'],
+                'db_dsn' => SiteFixture::secretBox()->encrypt(self::dsn('demo')),
+            ]),
             'blog' => SiteFixture::entry('blog', [
-                'db_dsn' => SiteFixture::secretBox()->encrypt('sqlite:///:memory:'),
+                'db_dsn' => SiteFixture::secretBox()->encrypt(self::dsn('blog')),
             ]),
             'paused' => SiteFixture::entry('paused', ['status' => 'disabled']),
             'archive' => SiteFixture::entry('archive', ['status' => 'archived']),
@@ -94,6 +98,14 @@ final class SiteResolutionTest extends TestCase
         $unknown = $this->get('http://shop.example/whoami');
         self::assertSame(404, $unknown->getStatusCode());
         self::assertStringContainsString('<h1>Page not found</h1>', (string) $unknown->getBody());
+    }
+
+    /**
+     * SQLite in memory, or a new database on the DB matrix server.
+     */
+    private static function dsn(string $name): string
+    {
+        return TestDatabases::engine() === 'sqlite' ? 'sqlite:///:memory:' : TestDatabases::dsn($name, sys_get_temp_dir());
     }
 
     private function get(string $uri): ResponseInterface

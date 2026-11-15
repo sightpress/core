@@ -31,6 +31,7 @@ use SightPress\Core\Tenant\TenantConfigLoader;
 use SightPress\Core\Tests\Support\FakeModule;
 use SightPress\Core\Tests\Support\Modules\HelloHandler;
 use SightPress\Core\Tests\Support\SiteFixture;
+use SightPress\Core\Tests\Support\TestDatabases;
 use SightPress\Core\Tests\Support\TestProject;
 use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\UserRepository;
@@ -39,7 +40,7 @@ use SightPress\Module\Routing\Route;
 
 /**
  * Signing in and out, "keep me signed in" and choosing a new password, through the whole kernel: a site on a SQLite
- * file, real sessions, CSRF checks and cookies.
+ * file (or the DB matrix server), real sessions, CSRF checks and cookies.
  */
 #[CoversNothing]
 final class SignInFlowTest extends TestCase
@@ -56,7 +57,7 @@ final class SignInFlowTest extends TestCase
     protected function setUp(): void
     {
         $this->project = new TestProject();
-        $dsn = 'sqlite:///' . $this->project->path() . '/demo.sqlite';
+        $dsn = TestDatabases::dsn('signin', $this->project->path());
         $this->project->directory->write('config/sites.php', '<?php return ' . var_export([
             'version' => 1,
             'sites' => ['demo' => SiteFixture::entry('demo', [

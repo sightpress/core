@@ -39,8 +39,12 @@ final readonly class TestProject
         return is_file($file) ? (string) file_get_contents($file) : '';
     }
 
+    /**
+     * Deletes the folder and the server databases the test made ({@see TestDatabases}).
+     */
     public function remove(): void
     {
+        TestDatabases::dropAll();
         $this->directory->remove();
     }
 }

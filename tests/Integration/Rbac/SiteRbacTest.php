@@ -22,12 +22,13 @@ use SightPress\Core\Rbac\RoleRepository;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tests\Integration\IntegrationTestCase;
 use SightPress\Core\Tests\Support\SiteFixture;
+use SightPress\Core\Tests\Support\TestDatabases;
 use SightPress\Core\Tests\Support\TestProject;
 use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\UserRepository;
 
 /**
- * Users, roles and the sign-up guardrail on SQLite in memory, wired the way the kernel wires them: the module
+ * Users, roles and the sign-up guardrail on a real database (SQLite, or the DB matrix server), wired the way the kernel wires them: the module
  * services come from the site container and work on the site's own database.
  */
 #[CoversNothing]
@@ -38,9 +39,9 @@ final class SiteRbacTest extends IntegrationTestCase
         $project = new TestProject([], ['demo' => SiteFixture::entry()]);
         try {
             $kernel = Kernel::boot($project->path(), ['APP_ENV' => 'dev', 'APP_SECRET' => SiteFixture::SECRET]);
-            $site = Services::get($kernel->container(), SiteContainerFactory::class)->forSite(SiteFixture::site());
+            $site = Services::get($kernel->container(), SiteContainerFactory::class)->forSite(SiteFixture::site(dsn: TestDatabases::dsn('rbac', $project->path())));
 
-            // The site's database is SQLite in memory: run core's migrations on that same connection.
+            // Run core's migrations on the site's own connection.
             $connection = Services::get($site, Connection::class);
             $dependencies = DependencyFactory::fromConnection(
                 new ExistingConfiguration(

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Support\Migrations\Media;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\Migrations\AbstractMigration;
+use SightPress\Core\Infrastructure\Migration\PortableMigration;
 
 /**
  * First migration of a test "media" module: same version number as the events module's, in its own namespace.
  */
-final class Version20261114000000 extends AbstractMigration
+final class Version20261114000000 extends PortableMigration
 {
     public function up(Schema $schema): void
     {

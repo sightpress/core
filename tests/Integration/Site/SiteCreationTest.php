@@ -16,6 +16,7 @@ use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Tests\Support\Browser;
 use SightPress\Core\Tests\Support\SiteFixture;
+use SightPress\Core\Tests\Support\TestDatabases;
 use SightPress\Core\Tests\Support\TestProject;
 use SightPress\Core\User\UserRepository;
 use Symfony\Component\Console\Tester\ApplicationTester;
@@ -28,6 +29,9 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 final class SiteCreationTest extends TestCase
 {
     private TestProject $project;
+
+    /** @var array<string, string> DSN per slug */
+    private array $databases = [];
 
     protected function setUp(): void
     {
@@ -47,8 +51,6 @@ final class SiteCreationTest extends TestCase
         $kernel = $this->kernel();
         $sites = Services::get($kernel->container(), SiteRepository::class);
         self::assertSame(['alpha', 'beta'], array_keys($sites->all()));
-        self::assertFileExists($this->database('alpha'));
-        self::assertFileExists($this->database('beta'));
 
         $alpha = $this->services($kernel, 'alpha');
         $beta = $this->services($kernel, 'beta');
@@ -99,7 +101,8 @@ final class SiteCreationTest extends TestCase
             'command' => 'site:create',
             'slug' => $slug,
             '--domain' => $slug . '.example',
-            '--db' => 'sqlite:///' . $this->database($slug),
+            '--db' => $this->database($slug),
+            '--create-db' => true,
             '--owner-type' => 'organization',
             '--locale' => 'en-GB',
             '--admin-email' => $email,
@@ -146,6 +149,6 @@ final class SiteCreationTest extends TestCase
 
     private function database(string $slug): string
     {
-        return $this->project->path() . '/sites/' . $slug . '.sqlite';
+        return $this->databases[$slug] ??= TestDatabases::dsn($slug, $this->project->path() . '/sites', create: false);
     }
 }

@@ -30,6 +30,11 @@
         </testsuite>
     </testsuites>
 
+    <extensions>
+        <!-- Drops leftover test databases of the DB matrix job (SIGHTPRESS_TEST_DATABASE_URL) when the run ends. -->
+        <bootstrap class="SightPress\Core\Tests\Support\TestDatabaseCleanup"/>
+    </extensions>
+
     <!--
         Coverage is measured on src/ only. Code that can't be unit tested may be excluded here, one <file> or
         <directory> per entry, each with a comment giving the reason and the integration test that covers it.

@@ -33,7 +33,8 @@ final class Role
     #[ORM\Column(type: Types::STRING, length: 100)]
     private string $label;
 
-    #[ORM\Column(type: Types::BOOLEAN)]
+    /** Column `is_system`: `system` is a reserved word on MySQL. */
+    #[ORM\Column(name: 'is_system', type: Types::BOOLEAN)]
     private bool $system;
 
     /** @var Collection<int, Permission> */

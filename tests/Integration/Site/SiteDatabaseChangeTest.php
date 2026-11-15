@@ -15,6 +15,7 @@ use SightPress\Core\Tenant\SiteMigrator;
 use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Tests\Support\Browser;
 use SightPress\Core\Tests\Support\SiteFixture;
+use SightPress\Core\Tests\Support\TestDatabases;
 use SightPress\Core\Tests\Support\TestProject;
 use SightPress\Core\User\UserRepository;
 use Symfony\Component\Console\Tester\ApplicationTester;
@@ -30,6 +31,9 @@ final class SiteDatabaseChangeTest extends TestCase
     private TestProject $project;
 
     private Kernel $kernel;
+
+    /** @var array<string, string> DSN per name */
+    private array $databases = [];
 
     protected function setUp(): void
     {
@@ -48,7 +52,8 @@ final class SiteDatabaseChangeTest extends TestCase
             'command' => 'site:create',
             'slug' => 'demo',
             '--domain' => 'demo.example',
-            '--db' => $this->dsn('old'),
+            '--db' => $this->dsn('old', create: false),
+            '--create-db' => true,
             '--owner-type' => 'organization',
             '--locale' => 'en-GB',
             '--admin-email' => 'ada@example.org',
@@ -85,8 +90,12 @@ final class SiteDatabaseChangeTest extends TestCase
         self::assertSame(422, $login->getStatusCode(), 'the admin lives in the old database only');
 
         $log = $this->project->log();
-        self::assertStringContainsString('Site "demo" database changed from SQLite file ', $log);
-        self::assertStringNotContainsString('sqlite:', $log);
+        self::assertMatchesRegularExpression('/Site "demo" database changed from (SQLite file|\S+ database "\w+" on) /', $log);
+        self::assertStringNotContainsString('://', $log, 'the log never has the DSN itself');
+        $password = parse_url($this->dsn('new'), PHP_URL_PASS);
+        if (is_string($password) && $password !== '') {
+            self::assertStringNotContainsString($password, $log);
+        }
     }
 
     /**
@@ -115,8 +124,8 @@ final class SiteDatabaseChangeTest extends TestCase
         return Services::get($this->kernel->container(), SiteContainerFactory::class)->forSite($this->site());
     }
 
-    private function dsn(string $name): string
+    private function dsn(string $name, bool $create = true): string
     {
-        return 'sqlite:///' . $this->project->path() . '/sites/' . $name . '.sqlite';
+        return $this->databases[$name] ??= TestDatabases::dsn($name, $this->project->path() . '/sites', $create);
     }
 }
