@@ -119,6 +119,29 @@ final readonly class Site
     }
 
     /**
+     * The same site on another database.
+     *
+     * @param string $databaseDsn encrypted with {@see SecretBox}
+     */
+    public function withDatabaseDsn(string $databaseDsn): self
+    {
+        return new self(
+            $this->id,
+            $this->slug,
+            $this->name,
+            $this->status,
+            $this->ownerType,
+            $this->domains,
+            $databaseDsn,
+            $this->storage,
+            $this->defaultLocale,
+            $this->locales,
+            $this->defaultTimezone,
+            $this->createdAt,
+        );
+    }
+
+    /**
      * A new random site id (UUID version 4).
      */
     public static function newId(): string

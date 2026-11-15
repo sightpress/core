@@ -15,6 +15,7 @@ use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Kernel;
 use SightPress\Core\Rbac\RoleRepository;
 use SightPress\Core\Site\Command\ArchiveSiteCommand;
+use SightPress\Core\Site\Command\ChangeSiteDatabaseCommand;
 use SightPress\Core\Site\Command\CreateSiteCommand;
 use SightPress\Core\Site\Command\DeleteSiteCommand;
 use SightPress\Core\Site\Command\DisableSiteCommand;
@@ -44,6 +45,7 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 #[CoversClass(DeleteSiteCommand::class)]
 #[CoversClass(PurgeSiteCommand::class)]
 #[CoversClass(MigrateSitesCommand::class)]
+#[CoversClass(ChangeSiteDatabaseCommand::class)]
 #[CoversClass(SiteMigrator::class)]
 #[UsesNamespace('SightPress\Core')]
 final class SiteCommandsTest extends TestCase
@@ -225,6 +227,7 @@ final class SiteCommandsTest extends TestCase
         self::assertStringStartsWith('Lists the sites', $application->find('site:list')->getDescription());
         self::assertStringStartsWith('Runs the database migrations', $application->find('site:migrate')->getDescription());
         self::assertStringStartsWith('Creates a site', $application->find('site:create')->getDescription());
+        self::assertStringStartsWith('Points a disabled site at another database', $application->find('site:db:change')->getDescription());
     }
 
     public function testOnlyADeletedSiteCanBePurgedAndItsDatabaseIsKeptUnlessAsked(): void
@@ -300,6 +303,124 @@ final class SiteCommandsTest extends TestCase
 
         self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:migrate', 'slug' => 'demo']));
         self::assertSame("demo: ran 1 migration.\n", $this->stdout);
+    }
+
+    public function testOnlyADisabledSiteCanChangeItsDatabase(): void
+    {
+        $this->create('demo');
+        $before = $this->site('demo')->databaseDsn;
+
+        foreach (['enabled' => null, 'archived' => 'site:archive', 'deleted' => 'site:delete'] as $status => $command) {
+            if ($command !== null) {
+                $this->console(['command' => $command, 'slug' => 'demo']);
+            }
+            self::assertSame(Command::FAILURE, $this->changeDatabase('demo', 'moved', ['--migrate' => true]));
+            self::assertSame(
+                "The site \"demo\" is {$status}. Only a disabled site can change its database: run site:disable demo first.\n",
+                $this->stderr,
+            );
+        }
+        self::assertSame($before, $this->site('demo')->databaseDsn);
+        self::assertFileDoesNotExist($this->database('moved'));
+        self::assertSame(Command::FAILURE, $this->changeDatabase('ghost', 'moved'));
+        self::assertSame("There is no site \"ghost\". See the sites with site:list.\n", $this->stderr);
+    }
+
+    public function testADatabaseThatIsBehindNeedsMigrate(): void
+    {
+        $this->create('demo');
+        $this->console(['command' => 'site:disable', 'slug' => 'demo']);
+        $before = $this->site('demo')->databaseDsn;
+
+        self::assertSame(Command::FAILURE, $this->changeDatabase('demo', 'moved'));
+        self::assertMatchesRegularExpression(
+            '/^The SQLite file ' . preg_quote($this->database('moved'), '/') . ' is \d+ database migrations behind\. Run the command again with --migrate to run them, or use an up-to-date database\. The site still uses the SQLite file ' . preg_quote($this->database('demo'), '/') . "\\.\n$/",
+            $this->stderr,
+        );
+        self::assertSame($before, $this->site('demo')->databaseDsn, 'the registry is unchanged');
+
+        self::assertSame(Command::SUCCESS, $this->changeDatabase('demo', 'moved', ['--migrate' => true]), $this->stderr);
+        $lines = explode("\n", trim($this->stdout));
+        self::assertMatchesRegularExpression('/^Ran \d+ database migrations\.$/', $lines[0]);
+        self::assertSame(
+            'The site "demo" now uses the SQLite file ' . $this->database('moved') . '. Nothing was copied from the SQLite file ' . $this->database('demo') . '. Run site:enable demo when you are ready.',
+            $lines[1],
+        );
+
+        $site = $this->site('demo');
+        self::assertSame(SiteStatus::Disabled, $site->status);
+        self::assertTrue(SecretBox::looksEncrypted($site->databaseDsn));
+        self::assertStringNotContainsString('moved', $site->databaseDsn, 'stored encrypted');
+        self::assertSame('sqlite:///' . $this->database('moved'), SiteFixture::secretBox()->decrypt($site->databaseDsn));
+        self::assertSame(0, Services::get($this->kernel()->container(), SiteMigrator::class)->pending($site));
+        $log = $this->project->log();
+        self::assertStringContainsString('sites.NOTICE: Site "demo" database changed from SQLite file ' . $this->database('demo') . ' to SQLite file ' . $this->database('moved') . '.', $log);
+        self::assertStringNotContainsString('sqlite:', $log, 'the log never has the DSN itself');
+
+        self::assertSame(Command::SUCCESS, $this->changeDatabase('demo', 'moved'));
+        self::assertSame('The site "demo" already uses the SQLite file ' . $this->database('moved') . ".\n", $this->stdout);
+    }
+
+    public function testAnUpToDateCopyIsUsedAsItIs(): void
+    {
+        $this->create('demo');
+        $this->console(['command' => 'site:disable', 'slug' => 'demo']);
+        copy($this->database('demo'), $this->database('copy'));
+
+        self::assertSame(Command::SUCCESS, $this->changeDatabase('demo', 'copy'), $this->stderr);
+        self::assertStringStartsWith('The site "demo" now uses the SQLite file ' . $this->database('copy') . '.', $this->stdout);
+        self::assertNotNull(Services::get($this->services($this->site('demo')), UserRepository::class)->findByEmail('ada@example.org'));
+    }
+
+    public function testADatabaseFromANewerVersionIsRefused(): void
+    {
+        $this->create('demo');
+        $this->console(['command' => 'site:disable', 'slug' => 'demo']);
+        Services::get($this->services($this->site('demo')), \Doctrine\DBAL\Connection::class)
+            ->insert('migration_versions', ['version' => 'Acme\Migrations\Version20990101000000', 'executed_at' => '2099-01-01 00:00:00', 'execution_time' => 1]);
+        copy($this->database('demo'), $this->database('newer'));
+
+        self::assertSame(Command::FAILURE, $this->changeDatabase('demo', 'newer', ['--migrate' => true]));
+        self::assertSame(
+            'The SQLite file ' . $this->database('newer') . ' has 1 database migration that no installed module has: it belongs to a newer version of SightPress or to a module that isn\'t installed. The site still uses the SQLite file ' . $this->database('demo') . ".\n",
+            $this->stderr,
+        );
+    }
+
+    public function testADatabaseThatCantBeCheckedOrReachedIsRefused(): void
+    {
+        $this->registerDeleted('demo', new SecretBox('another-secret-0123456789abcdef0123456789')->encrypt('sqlite:///x'), SiteStatus::Disabled);
+        mkdir(dirname($this->database('broken')));
+        file_put_contents($this->database('broken'), str_repeat('not a database ', 100));
+
+        self::assertSame(Command::FAILURE, $this->changeDatabase('demo', 'broken'));
+        self::assertStringStartsWith('The migrations of the SQLite file ' . $this->database('broken') . ' could not be checked or run: ', $this->stderr);
+        self::assertStringEndsWith(" The site still uses the old database.\n", $this->stderr);
+
+        self::assertSame(Command::FAILURE, $this->console(['command' => 'site:db:change', 'slug' => 'demo', '--db' => 'sqlite:////proc/sightpress/demo.sqlite']));
+        self::assertSame("The folder of the SQLite file /proc/sightpress/demo.sqlite can't be created. The site still uses the old database.\n", $this->stderr);
+
+        self::assertSame(Command::FAILURE, $this->console(['command' => 'site:db:change', 'slug' => 'demo', '--db' => 'postgresql://ada:secretpw@127.0.0.1:1/demo']));
+        self::assertStringNotContainsString('secretpw', $this->stderr);
+        self::assertStringContainsString('PostgreSQL database "demo" on 127.0.0.1:1', $this->stderr);
+    }
+
+    public function testAWrongAddressOrAMissingSecretIsExplained(): void
+    {
+        $this->registerDeleted('demo', SiteFixture::secretBox()->encrypt('sqlite:///' . $this->database('demo')), SiteStatus::Disabled);
+
+        self::assertSame(Command::INVALID, $this->console(['command' => 'site:db:change', 'slug' => 'demo', '--db' => 'oracle://db/demo']));
+        self::assertSame("The database DSN must start with sqlite://, mysql://, mariadb:// or postgresql://.\n", $this->stderr);
+        self::assertSame(Command::INVALID, $this->console(['command' => 'site:db:change', 'slug' => 'demo', '--db' => 'sqlite:///' . $this->database('x')], []));
+        self::assertSame("APP_SECRET is not set: set it in the environment before you change a site's database.\n", $this->stderr);
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    private function changeDatabase(string $slug, string $database, array $options = []): int
+    {
+        return $this->console(['command' => 'site:db:change', 'slug' => $slug, '--db' => 'sqlite:///' . $this->database($database), ...$options]);
     }
 
     /**

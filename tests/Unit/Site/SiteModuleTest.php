@@ -43,6 +43,7 @@ final class SiteModuleTest extends TestCase
                 \SightPress\Core\Site\Command\DeleteSiteCommand::class,
                 \SightPress\Core\Site\Command\PurgeSiteCommand::class,
                 \SightPress\Core\Site\Command\MigrateSitesCommand::class,
+                \SightPress\Core\Site\Command\ChangeSiteDatabaseCommand::class,
             ],
             array_map(static fn ($registered) => $registered->item, $registry->commands()),
         );

@@ -88,6 +88,24 @@ final class SiteTest extends TestCase
         self::assertEquals($site->createdAt, $archived->createdAt);
     }
 
+    public function testMovesToAnotherDatabaseKeepingEverythingElse(): void
+    {
+        $site = SiteFixture::site('demo', ['demo.example'], SiteStatus::Disabled);
+        $encrypted = SiteFixture::secretBox()->encrypt('sqlite:////srv/sites/new.sqlite');
+
+        $moved = $site->withDatabaseDsn($encrypted);
+
+        self::assertSame($encrypted, $moved->databaseDsn);
+        self::assertNotSame($site->databaseDsn, $moved->databaseDsn);
+        foreach (['id', 'slug', 'name', 'status', 'ownerType', 'domains', 'storage', 'defaultLocale', 'locales', 'defaultTimezone'] as $property) {
+            self::assertSame($site->{$property}, $moved->{$property}, $property);
+        }
+        self::assertEquals($site->createdAt, $moved->createdAt);
+
+        $this->expectException(SiteRegistryException::class);
+        $site->withDatabaseDsn('sqlite:////srv/sites/plain.sqlite');
+    }
+
     public function testNewIdsAreRandomVersion4Uuids(): void
     {
         $ids = [Site::newId(), Site::newId()];

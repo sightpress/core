@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Site;
 
 use SightPress\Core\Site\Command\ArchiveSiteCommand;
+use SightPress\Core\Site\Command\ChangeSiteDatabaseCommand;
 use SightPress\Core\Site\Command\CheckRegistryCommand;
 use SightPress\Core\Site\Command\CreateSiteCommand;
 use SightPress\Core\Site\Command\DeleteSiteCommand;
@@ -46,6 +47,7 @@ final class SiteModule implements ModuleInterface
             DeleteSiteCommand::class,
             PurgeSiteCommand::class,
             MigrateSitesCommand::class,
+            ChangeSiteDatabaseCommand::class,
         ] as $command) {
             $registrar->commands()->add($command);
         }

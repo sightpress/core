@@ -1,4 +1,4 @@
-# Creating and managing sites (C-2.3)
+# Creating and managing sites (C-2.3, C-2.4)
 
 ## What it does
 
@@ -72,7 +72,31 @@ Any status can change to any other; `site:enable` brings back a deleted site. Ev
 | --- | --- |
 | `site:list` | One sentence per site: status, domains, language, time zone and database. |
 | `site:migrate <slug>` / `site:migrate --all` | Runs the migrations a site doesn't have yet (after an update). `--all` skips deleted sites, and one failure doesn't stop the others. |
+| `site:db:change <slug> --db= [--migrate]` | Points a **disabled** site at another database (see below). |
 | `site:purge <slug> [--drop-database]` | Removes a **deleted** site from the registry for good. Its database is kept unless you add `--drop-database`. |
+
+## Move a site to another database
+
+`site:db:change` changes only where the site's data is read from. **It copies nothing**: move the data yourself
+first (for example with your database's dump and restore tools), or start the site on an empty database.
+
+```sh
+bin/sightpress site:disable demo
+# copy the data to the new database
+bin/sightpress site:db:change demo --db=postgresql://user:password@db.internal:5432/demo
+bin/sightpress site:enable demo
+```
+
+- The site must be **disabled**. An enabled, archived or deleted site is refused, and the message says to run
+  `site:disable` first.
+- The new database must exist and be reachable (a SQLite file is created when missing).
+- The new database must be up to date with the installed modules. If it is behind, the command stops and says by
+  how many migrations; add `--migrate` to run them. A database with migrations no installed module has (from a newer
+  version, or a module that isn't installed) is always refused.
+- Only then is the new address stored, encrypted, in `config/sites.php`. The change is written to the `sites` log
+  channel with the engine, host and database name of both databases, never a user name or a password. A running
+  process stops using the old database at once.
+- If anything fails, the site keeps its old database, and the message says so.
 
 ## For developers: setting up a new site
 
@@ -87,4 +111,4 @@ highest priority down (`ACCOUNTS` 300, `ROLES` 200, `SIGN_IN` 100, `CONTENT` 0);
   `src/Tenant/SiteMigrator.php`, `src/Infrastructure/Database/DatabaseProvisioner.php`,
   `src/User/Provisioning/`, `src/Rbac/Provisioning/`, `src/Auth/Provisioning/`, `src/Cli/ModuleCommand.php`
 - `tests/Unit/Site/`, `tests/Unit/Infrastructure/Database/DatabaseProvisionerTest.php`,
-  `tests/Integration/Site/SiteCreationTest.php`
+  `tests/Integration/Site/SiteCreationTest.php`, `tests/Integration/Site/SiteDatabaseChangeTest.php`

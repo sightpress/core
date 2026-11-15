@@ -26,13 +26,15 @@ final readonly class SiteMigrator
     }
 
     /**
-     * Runs the migrations the site's database doesn't have yet.
+     * Runs the migrations the site's database doesn't have yet. Only this creates the table that records them:
+     * {@see pending()} and {@see unknown()} leave the database as it is.
      *
      * @return list<string> the versions that ran, oldest first
      */
     public function migrate(Site $site): array
     {
         $dependencies = $this->dependencies($site);
+        $dependencies->getMetadataStorage()->ensureInitialized();
         $plan = $dependencies->getMigrationPlanCalculator()->getPlanUntilVersion(
             $dependencies->getVersionAliasResolver()->resolveVersionAlias('latest'),
         );
@@ -54,14 +56,20 @@ final readonly class SiteMigrator
         return count($this->dependencies($site)->getMigrationStatusCalculator()->getNewMigrations());
     }
 
+    /**
+     * How many migrations the site's database ran that no module installed here has: the database belongs to a
+     * newer version, or to a module that isn't installed.
+     */
+    public function unknown(Site $site): int
+    {
+        return count($this->dependencies($site)->getMigrationStatusCalculator()->getExecutedUnavailableMigrations());
+    }
+
     private function dependencies(Site $site): DependencyFactory
     {
-        $dependencies = DependencyFactory::fromConnection(
+        return DependencyFactory::fromConnection(
             new ExistingConfiguration(new MigrationConfigurationFactory()->create($this->modules)),
             new ExistingConnection(Services::get($this->containers->forSite($site), Connection::class)),
         );
-        $dependencies->getMetadataStorage()->ensureInitialized();
-
-        return $dependencies;
     }
 }
