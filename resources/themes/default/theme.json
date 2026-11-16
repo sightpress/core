@@ -107,5 +107,44 @@
   "focus": {
     "width": "3px",
     "offset": "2px"
+  },
+  "contrast": {
+    "text": [
+      ["text", "background"],
+      ["text", "surface"],
+      ["text-muted", "background"],
+      ["text-muted", "surface"],
+      ["link", "background"],
+      ["link", "surface"],
+      ["link-visited", "background"],
+      ["link-visited", "surface"],
+      ["on-primary", "primary"],
+      ["background", "error"],
+      ["text", "mark"],
+      ["error", "background"],
+      ["error", "error-surface"],
+      ["text", "error-surface"],
+      ["success", "success-surface"],
+      ["text", "success-surface"],
+      ["warning", "warning-surface"],
+      ["text", "warning-surface"],
+      ["info", "info-surface"],
+      ["text", "info-surface"],
+      ["link", "info-surface"]
+    ],
+    "ui": [
+      ["border", "background"],
+      ["border", "surface"],
+      ["focus", "background"],
+      ["focus", "surface"],
+      ["primary", "background"],
+      ["primary", "surface"],
+      ["error", "background"],
+      ["error", "surface"],
+      ["success", "success-surface"],
+      ["warning", "warning-surface"],
+      ["info", "info-surface"],
+      ["error", "error-surface"]
+    ]
   }
 }

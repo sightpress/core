@@ -19,6 +19,18 @@ final class ColorTest extends TestCase
         self::assertSame('#ffaa00', Color::fromHex('#fa0')->hex);
     }
 
+    public function testLuminanceAndContrastFollowWcag(): void
+    {
+        self::assertSame(0.0, Color::fromHex('#000')->luminance());
+        self::assertEqualsWithDelta(1.0, Color::fromHex('#fff')->luminance(), 1e-9);
+        self::assertEqualsWithDelta(21.0, Color::fromHex('#000')->contrastWith(Color::fromHex('#fff')), 1e-9);
+        self::assertEqualsWithDelta(21.0, Color::fromHex('#fff')->contrastWith(Color::fromHex('#000')), 1e-9);
+        self::assertEqualsWithDelta(1.0, Color::fromHex('#777')->contrastWith(Color::fromHex('#777')), 1e-9);
+        // Reference values: #767676 on white is the classic 4.54:1; a channel below the 0.04045 knee is linear.
+        self::assertEqualsWithDelta(4.54, Color::fromHex('#767676')->contrastWith(Color::fromHex('#fff')), 0.005);
+        self::assertEqualsWithDelta(0.0006, Color::fromHex('#0a0000')->luminance(), 0.0001);
+    }
+
     /**
      * @return iterable<string, array{string}>
      */

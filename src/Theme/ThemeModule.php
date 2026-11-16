@@ -7,6 +7,7 @@ namespace SightPress\Core\Theme;
 use Psr\Container\ContainerInterface;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Template\TemplatePaths;
+use SightPress\Core\Theme\Command\ValidateThemeCommand;
 use SightPress\Core\Theme\Http\ThemeAssetHandler;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
@@ -15,7 +16,8 @@ use SightPress\Module\Routing\Route;
 
 /**
  * Themes: reads the active theme's `theme.json` (the default theme in this version), turns its tokens into CSS
- * custom properties and serves its files under `/assets/`. Always on.
+ * custom properties and serves its files under `/assets/`; the {@see ThemeValidator} (public, for the admin
+ * later) and `theme:validate` check a theme's contrast. Always on.
  */
 final class ThemeModule implements ModuleInterface
 {
@@ -36,6 +38,9 @@ final class ThemeModule implements ModuleInterface
         ));
         $services->autowire(ThemeAssets::class);
         $services->autowire(ThemeAssetHandler::class);
+        $services->autowire(ThemeValidator::class, public: true);
+
+        $registrar->commands()->add(ValidateThemeCommand::class);
 
         $registrar->routes()->add(new Route(
             'theme.asset',

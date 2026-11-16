@@ -8,7 +8,9 @@ use JsonException;
 
 /**
  * Reads a theme folder's `theme.json` and checks its shape: name, label, version, colours for light and dark mode
- * (the same names in both), optional "more contrast" overrides of known colours, and the other token groups.
+ * (the same names in both), optional "more contrast" overrides of known colours, the other token groups, and the
+ * colour pairs under `contrast` (`{"text": [["text", "background"], …], "ui": [["border", "background"], …]}`).
+ * Whether those pairs have enough contrast is the {@see ThemeValidator}'s job.
  * Token values must be plain CSS values, so a theme can't inject rules into the generated stylesheet.
  */
 final readonly class ThemeLoader
@@ -106,7 +108,53 @@ final readonly class ThemeLoader
             self::text($data, 'version'),
             $directory,
             new ThemeTokens($light, $dark, $lightMore, $darkMore, $values),
+            array_key_exists('contrast', $data) ? self::pairs(self::object($data, 'contrast'), $light) : [],
         );
+    }
+
+    /**
+     * @param array<mixed>                   $data
+     * @param array<non-empty-string, Color> $colors
+     * @return list<ContrastPair>
+     */
+    private static function pairs(array $data, array $colors): array
+    {
+        $pairs = [];
+        foreach ($data as $use => $list) {
+            $kind = ContrastUse::tryFrom((string) $use);
+            if ($kind === null) {
+                throw new ThemeException(sprintf('"contrast" can only hold "text" and "ui" lists, not "%s".', $use));
+            }
+            if (!is_array($list) || !array_is_list($list)) {
+                throw new ThemeException(sprintf('"contrast.%s" must be a list of [foreground, background] pairs.', $use));
+            }
+            foreach ($list as $index => $pair) {
+                if (!is_array($pair) || count($pair) !== 2 || !is_string($pair[0] ?? null) || !is_string($pair[1] ?? null)) {
+                    throw new ThemeException(sprintf(
+                        'Pair %d of "contrast.%s" must be two colour names, for example ["text", "background"].',
+                        $index + 1,
+                        $use,
+                    ));
+                }
+                $where = sprintf('Pair %d of "contrast.%s"', $index + 1, $use);
+                $pairs[] = new ContrastPair(self::known($pair[0], $colors, $where), self::known($pair[1], $colors, $where), $kind);
+            }
+        }
+
+        return $pairs;
+    }
+
+    /**
+     * @param array<non-empty-string, Color> $colors
+     * @return non-empty-string
+     */
+    private static function known(string $name, array $colors, string $where): string
+    {
+        if ($name === '' || !isset($colors[$name])) {
+            throw new ThemeException(sprintf('%s names the colour "%s", which "colors.light" doesn\'t define.', $where, $name));
+        }
+
+        return $name;
     }
 
     /**

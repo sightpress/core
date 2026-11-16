@@ -13,7 +13,8 @@ final readonly class Theme
      * @param non-empty-string $name      machine name, for example `default`
      * @param non-empty-string $label     name shown to people
      * @param non-empty-string $version
-     * @param non-empty-string $directory absolute path of the theme folder
+     * @param non-empty-string   $directory absolute path of the theme folder
+     * @param list<ContrastPair> $contrast  colour pairs the theme uses, for the {@see ThemeValidator}
      */
     public function __construct(
         public string $name,
@@ -21,6 +22,7 @@ final readonly class Theme
         public string $version,
         public string $directory,
         public ThemeTokens $tokens,
+        public array $contrast = [],
     ) {
     }
 }

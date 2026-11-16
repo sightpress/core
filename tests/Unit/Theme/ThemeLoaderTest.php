@@ -12,6 +12,8 @@ use SightPress\Core\Template\TemplatePaths;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
 use SightPress\Core\Theme\Color;
 use SightPress\Core\Theme\ColorMode;
+use SightPress\Core\Theme\ContrastPair;
+use SightPress\Core\Theme\ContrastUse;
 use SightPress\Core\Theme\Theme;
 use SightPress\Core\Theme\ThemeException;
 use SightPress\Core\Theme\ThemeLoader;
@@ -22,6 +24,8 @@ use SightPress\Core\Theme\ThemeTokens;
 #[CoversClass(ThemeException::class)]
 #[UsesClass(Color::class)]
 #[UsesClass(ColorMode::class)]
+#[UsesClass(ContrastPair::class)]
+#[UsesClass(ContrastUse::class)]
 #[UsesClass(ThemeTokens::class)]
 #[UsesClass(TemplatePaths::class)]
 final class ThemeLoaderTest extends TestCase
@@ -68,6 +72,19 @@ final class ThemeLoaderTest extends TestCase
         self::assertSame('#000000', $theme->tokens->color('text', ColorMode::LightMore)?->hex);
         self::assertSame('#ffffff', $theme->tokens->color('text', ColorMode::DarkMore)?->hex);
         self::assertSame([], $theme->tokens->values['radius']);
+        self::assertSame([], $theme->contrast);
+    }
+
+    public function testContrastPairsAreReadInOrder(): void
+    {
+        $data = self::minimal();
+        $data['contrast'] = ['text' => [['text', 'background']], 'ui' => [['border', 'background'], ['focus', 'background']]];
+        $theme = $this->load($data);
+
+        self::assertSame(
+            ['text on background (text)', 'border on background (ui)', 'focus on background (ui)'],
+            array_map(static fn (ContrastPair $p): string => sprintf('%s on %s (%s)', $p->foreground, $p->background, $p->use->value), $theme->contrast),
+        );
     }
 
     public function testAFolderWithoutThemeJsonIsRefused(): void
@@ -133,6 +150,17 @@ final class ThemeLoaderTest extends TestCase
         ];
         yield 'comment' => [['radius' => ['small' => '1px /* x */']], 'Token "radius.small" must be a plain CSS value'];
         yield 'value not text' => [['radius' => ['small' => ['1px']]], 'Token "radius.small" must be a plain CSS value'];
+        yield 'contrast a list' => [['contrast' => [['text', 'background']]], '"contrast" must be a JSON object.'];
+        yield 'unknown contrast use' => [['contrast' => ['large' => []]], '"contrast" can only hold "text" and "ui" lists, not "large".'];
+        yield 'contrast use not a list' => [['contrast' => ['text' => ['a' => 'b']]], '"contrast.text" must be a list of [foreground, background] pairs.'];
+        yield 'pair of one' => [['contrast' => ['ui' => [['border']]]], 'Pair 1 of "contrast.ui" must be two colour names, for example ["text", "background"].'];
+        yield 'pair not names' => [['contrast' => ['ui' => [['border', 1]]]], 'Pair 1 of "contrast.ui" must be two colour names'];
+        yield 'pair not a list' => [['contrast' => ['text' => ['text']]], 'Pair 1 of "contrast.text" must be two colour names'];
+        yield 'unknown pair colour' => [
+            ['contrast' => ['text' => [['text', 'background'], ['text', 'paper']]]],
+            'Pair 2 of "contrast.text" names the colour "paper", which "colors.light" doesn\'t define.',
+        ];
+        yield 'empty pair colour' => [['contrast' => ['text' => [['', 'background']]]], 'names the colour "", which'];
         yield 'bad value name' => [['spacing' => ['Big' => '1rem']], 'Token name "Big" in "spacing" must be lower-case words or numbers joined by "-".'];
     }
 

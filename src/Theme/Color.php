@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace SightPress\Core\Theme;
 
 /**
- * A colour token, written in `theme.json` as `#rgb` or `#rrggbb` (stored as lower-case `#rrggbb`).
+ * A colour token, written in `theme.json` as `#rgb` or `#rrggbb` (stored as lower-case `#rrggbb`), with the WCAG
+ * luminance and contrast maths.
  */
 final readonly class Color
 {
@@ -31,5 +32,30 @@ final readonly class Color
         }
 
         return new self('#' . $hex);
+    }
+
+    /**
+     * Relative luminance (WCAG 2.2): 0 for black, 1 for white.
+     */
+    public function luminance(): float
+    {
+        $channels = [];
+        foreach (str_split(substr($this->hex, 1), 2) as $pair) {
+            $value = hexdec($pair) / 255;
+            $channels[] = $value <= 0.04045 ? $value / 12.92 : (($value + 0.055) / 1.055) ** 2.4;
+        }
+
+        return 0.2126 * $channels[0] + 0.7152 * $channels[1] + 0.0722 * $channels[2];
+    }
+
+    /**
+     * Contrast ratio with another colour (WCAG 2.2), from 1 (the same) to 21 (black on white).
+     */
+    public function contrastWith(self $other): float
+    {
+        $lighter = max($this->luminance(), $other->luminance());
+        $darker = min($this->luminance(), $other->luminance());
+
+        return ($lighter + 0.05) / ($darker + 0.05);
     }
 }

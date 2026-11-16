@@ -13,11 +13,13 @@ use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\Template\TemplatePaths;
+use SightPress\Core\Theme\Command\ValidateThemeCommand;
 use SightPress\Core\Theme\Http\ThemeAssetHandler;
 use SightPress\Core\Theme\Theme;
 use SightPress\Core\Theme\ThemeAssets;
 use SightPress\Core\Theme\ThemeLoader;
 use SightPress\Core\Theme\ThemeModule;
+use SightPress\Core\Theme\ThemeValidator;
 use SightPress\Core\Theme\TokenStylesheet;
 
 #[CoversClass(ThemeModule::class)]
@@ -41,9 +43,12 @@ final class ThemeModuleTest extends TestCase
         self::assertSame(['GET', 'HEAD'], $routes[0]->item->methods);
         self::assertSame(ThemeAssetHandler::class, $routes[0]->item->handler);
 
-        foreach ([ThemeLoader::class, TokenStylesheet::class, ThemeAssets::class, ThemeAssetHandler::class] as $id) {
+        foreach ([ThemeLoader::class, TokenStylesheet::class, ThemeAssets::class, ThemeAssetHandler::class, ThemeValidator::class] as $id) {
             self::assertSame($id, $registry->services()[$id]->item->class);
         }
+        self::assertTrue($registry->services()[ThemeValidator::class]->item->public);
+        $commands = array_values(array_filter($registry->commands(), static fn ($c) => $c->module === 'theme'));
+        self::assertSame([ValidateThemeCommand::class], array_map(static fn ($c) => $c->item, $commands));
     }
 
     public function testTheActiveThemeIsTheFirstThemeFolderOrTheDefaultTheme(): void

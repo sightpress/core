@@ -40,6 +40,7 @@ browsers keep them for a year and fetch the new file after an update. Only `.css
 | `spacing` | `--space-<name>` | `"3": "1rem"` → `--space-3` |
 | `radius` | `--radius-<name>` | `"small": "0.25rem"` |
 | `focus` | `--focus-<name>` | `"width": "3px"` |
+| `contrast` | nothing (checked by `theme:validate`) | see `theme-validation.md` |
 
 Colours are `#rgb` or `#rrggbb`. Every theme must define `background`, `text`, `link`, `primary`, `on-primary`,
 `border` and `focus`, and `typography.size-base`. Other values must be plain CSS values (no `;`, `{`, `}` or
