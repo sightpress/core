@@ -18,6 +18,7 @@ use SightPress\Core\Rbac\Contract\RoleChoice;
 use SightPress\Core\Rbac\Contract\RoleGrants;
 use SightPress\Core\Rbac\RoleGrantPolicy;
 use SightPress\Core\Tests\Support\AdminFixture;
+use SightPress\Core\Tests\Support\RecordingEvents;
 use SightPress\Core\User\Entity\User;
 use Slim\Exception\HttpForbiddenException;
 
@@ -147,7 +148,7 @@ final class InviteHandlerTest extends TestCase
         $handler = new InviteHandler(
             $this->admin->shell(),
             $auth->validator(),
-            $grants ?? new RoleGrantPolicy($auth->database->roles()),
+            $grants ?? new RoleGrantPolicy($auth->database->roles(), new RecordingEvents()),
             $auth->users,
             $this->invitations(),
             new InvitationMailer($auth, $auth->templates, $auth->site),

@@ -43,14 +43,28 @@ final readonly class InviteHandler implements RequestHandlerInterface
     }
 
     /**
+     * Radio choices for roles: the name, then what the role can do.
+     *
      * @param list<RoleChoice> $roles
+     *
+     * @return array<string, string>
      */
-    public static function form(array $roles): Form
+    public static function choices(array $roles): array
     {
         $choices = [];
         foreach ($roles as $role) {
             $choices[$role->name] = $role->label . ': ' . $role->description;
         }
+
+        return $choices;
+    }
+
+    /**
+     * @param list<RoleChoice> $roles
+     */
+    public static function form(array $roles): Form
+    {
+        $choices = self::choices($roles);
         $length = static fn (string $label): Length => new Length(max: 100, maxMessage: sprintf('%s must be 100 characters or fewer', $label));
 
         $form = Form::create(

@@ -6,6 +6,9 @@ namespace SightPress\Core\People;
 
 use SightPress\Core\People\Http\AcceptInvitationHandler;
 use SightPress\Core\People\Http\InviteHandler;
+use SightPress\Core\People\Http\UserHandler;
+use SightPress\Core\People\Http\UsersHandler;
+use SightPress\Core\People\Http\UserStatusHandler;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\ModuleInterface;
@@ -45,11 +48,15 @@ final class PeopleModule implements ModuleInterface
 
         $services = $registrar->services();
         $services->autowire(AnyEmailPolicy::class, EmailPolicy::class);
-        foreach ([Invitations::class, InvitationMailer::class, InviteHandler::class, AcceptInvitationHandler::class] as $class) {
+        foreach ([Invitations::class, InvitationMailer::class, InviteHandler::class, AcceptInvitationHandler::class, UsersHandler::class, UserHandler::class, UserStatusHandler::class] as $class) {
             $services->autowire($class);
         }
 
         $routes = $registrar->routes();
+        $user = UsersHandler::PATH . '/{' . UserHandler::ID_ATTRIBUTE . ':[0-9]+}';
+        $routes->add(new Route('people.users', UsersHandler::PATH, UsersHandler::class, middleware: [AdminAccessMiddleware::class]));
+        $routes->add(new Route('people.user', $user, UserHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('people.user.status', $user . '/status', UserStatusHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('people.invite', InviteHandler::PATH, InviteHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route(
             'people.invitation',
@@ -57,6 +64,7 @@ final class PeopleModule implements ModuleInterface
             AcceptInvitationHandler::class,
             ['GET', 'POST'],
         ));
+        $registrar->adminMenu()->add(new AdminMenuItem('people.users', 'People', 'people.users', UsersHandler::PERMISSION, position: 40));
         $registrar->adminMenu()->add(new AdminMenuItem('people.invite', 'Invite someone', 'people.invite', InviteHandler::PERMISSION, position: 50));
     }
 }

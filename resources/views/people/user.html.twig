@@ -1,0 +1,41 @@
+{#
+    One person in the admin (/admin/users/{id}): their details, their role and whether they can sign in. On your
+    own account both are read-only. Context: `account`, `role`, `status`, `form`, `self`, `path`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ account.effectiveName }}{% endblock %}
+{% block content %}
+<p><a href="/admin/users">{{ t('Back to people') }}</a></p>
+<h1 class="people-heading">{% if account.avatarUrl %}<img class="avatar" src="{{ account.avatarUrl }}" alt="" width="48" height="48"> {% endif %}{{ account.effectiveName }}</h1>
+<dl class="people-details">
+    <dt>{{ t('Full name') }}</dt><dd>{{ account.fullName }}</dd>
+    <dt>{{ t('Email address') }}</dt><dd>{{ account.email }}</dd>
+    <dt>{{ t('Role') }}</dt><dd>{{ role ? t(role.label) : t('No role') }}</dd>
+    <dt>{{ t('Status') }}</dt><dd>{{ t(status) }}</dd>
+</dl>
+{%- if self %}
+<p>{{ t('This is your own account. You can’t change your own role or deactivate yourself; ask another admin.') }} <a href="/account">{{ t('Change your details in My account') }}</a></p>
+{%- else %}
+<section class="admin-panel" aria-labelledby="people-role-title">
+    <h2 id="people-role-title">{{ t('Change role') }}</h2>
+    {{ f.error_summary(form) }}
+    {{ f.start(form, path) }}
+        {{ f.field(form, 'role') }}
+        {{ f.submit(t('Change role')) }}
+    {{ f.end() }}
+</section>
+<section class="admin-panel" aria-labelledby="people-status-title">
+    <h2 id="people-status-title">{{ account.isDeactivated ? t('Reactivate account') : t('Deactivate account') }}</h2>
+    {%- if account.isDeactivated %}
+    <p>{{ t('{name} can’t sign in. Reactivating lets them sign in again with their old password.', {name: account.effectiveName}) }}</p>
+    {%- else %}
+    <p>{{ t('{name} won’t be able to sign in, and is signed out straight away. Their pages stay. You can reactivate the account later.', {name: account.effectiveName}) }}</p>
+    {%- endif %}
+    <form action="{{ path }}/status" method="post">
+        {{ csrf_fields() }}
+        <button type="submit" class="button{{ account.isDeactivated ? '' : ' button--secondary' }}">{{ account.isDeactivated ? t('Reactivate {name}', {name: account.effectiveName}) : t('Deactivate {name}', {name: account.effectiveName}) }}</button>
+    </form>
+</section>
+{%- endif %}
+{% endblock %}

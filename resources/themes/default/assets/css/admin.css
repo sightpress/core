@@ -52,3 +52,10 @@
 .admin-list { padding-inline-start: var(--space-4); }
 .admin-list li { margin-bottom: var(--space-2); }
 .admin-list__meta { display: block; color: var(--color-text-muted); font-size: var(--font-size-small); }
+
+.people-table__name { display: inline-flex; align-items: center; gap: var(--space-2); }
+.people-table th[aria-sort] a { font-weight: 700; }
+.people-heading { display: flex; align-items: center; gap: var(--space-3); }
+.people-details { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3); }
+.people-details dt { font-weight: 700; }
+.people-details dd { margin: 0; overflow-wrap: anywhere; }

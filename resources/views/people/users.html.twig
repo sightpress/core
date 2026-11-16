@@ -1,0 +1,81 @@
+{#
+    The admin's list of people (/admin/users). A data table with a caption that says how it is sorted; each column
+    header is a link that sorts by it (again: the other way), and the sorted one has aria-sort. Avatars are
+    decorative (the name is next to them). Then the invitations that haven't been accepted yet.
+    Context: `rows` ({account, role, status}), `columns`, `sort`, `order`, `invitations` ({invitation, role, by}),
+    `can_invite`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('People') }}{% endblock %}
+{% block content %}
+<h1>{{ t('People') }}</h1>
+{%- if can_invite %}
+<p><a class="button" href="/admin/users/invite">{{ t('Invite someone') }}</a></p>
+{%- endif %}
+<div class="table-wrap" role="region" aria-labelledby="people-caption" tabindex="0">
+    <table class="people-table">
+        <caption id="people-caption">
+            {{ order == 'ascending'
+                ? t('Everyone with an account, sorted by {column}, A to Z', {column: t(columns[sort])|lower})
+                : t('Everyone with an account, sorted by {column}, Z to A', {column: t(columns[sort])|lower}) }}
+        </caption>
+        <thead>
+            <tr>
+                {%- for key, label in columns %}
+                {%- set current = key == sort %}
+                {%- set next = current and order == 'ascending' ? 'descending' : 'ascending' %}
+                <th scope="col"{% if current %} aria-sort="{{ order }}"{% endif %}>
+                    <a href="?sort={{ key }}&amp;order={{ next }}">{{ t(label) }}{% if current %}<span aria-hidden="true">{{ order == 'ascending' ? ' ▲' : ' ▼' }}</span>{% endif %}</a>
+                </th>
+                {%- endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {%- for row in rows %}
+            <tr>
+                <th scope="row">
+                    <span class="people-table__name">
+                        {%- if row.account.avatarUrl %}<img class="avatar" src="{{ row.account.avatarUrl }}" alt="" width="32" height="32">{% endif %}
+                        <a href="/admin/users/{{ row.account.id }}">{{ row.account.effectiveName }}</a>
+                    </span>
+                </th>
+                <td>{{ row.account.fullName }}</td>
+                <td>{{ row.account.email }}</td>
+                <td>{{ t(row.role) }}</td>
+                <td>{{ t(row.status) }}</td>
+            </tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+</div>
+<section class="admin-panel" aria-labelledby="people-invitations">
+    <h2 id="people-invitations">{{ t('Invitations not yet accepted') }}</h2>
+    {%- if invitations is empty %}
+    <p>{{ t('There are no open invitations.') }}</p>
+    {%- else %}
+    <div class="table-wrap" role="region" aria-labelledby="people-invitations-caption" tabindex="0">
+        <table>
+            <caption id="people-invitations-caption">{{ t('Open invitations, newest first') }}</caption>
+            <thead>
+                <tr>
+                    <th scope="col">{{ t('Email address') }}</th>
+                    <th scope="col">{{ t('Role') }}</th>
+                    <th scope="col">{{ t('Invited by') }}</th>
+                    <th scope="col">{{ t('Link works until') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%- for item in invitations %}
+                <tr>
+                    <th scope="row">{{ item.invitation.email }}</th>
+                    <td>{{ t(item.role) }}</td>
+                    <td>{{ item.by ?? t('Someone') }}</td>
+                    <td><time datetime="{{ item.invitation.expiresAt|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ item.invitation.expiresAt|user_datetime }}</time></td>
+                </tr>
+                {%- endfor %}
+            </tbody>
+        </table>
+    </div>
+    {%- endif %}
+</section>
+{% endblock %}

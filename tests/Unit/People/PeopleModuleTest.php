@@ -24,7 +24,7 @@ use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 #[UsesNamespace('SightPress\Core')]
 final class PeopleModuleTest extends TestCase
 {
-    public function testIsRequiredAndRegistersInvitations(): void
+    public function testIsRequiredAndRegistersInvitationsAndTheUserScreens(): void
     {
         $module = new PeopleModule();
         $registry = ModuleRegistry::register(
@@ -44,11 +44,15 @@ final class PeopleModuleTest extends TestCase
             $routes[$route->item->name] = [$route->item->path, $route->item->handler, $route->item->middleware];
         }
         self::assertSame([
+            'people.users' => ['/admin/users', \SightPress\Core\People\Http\UsersHandler::class, [AdminAccessMiddleware::class]],
+            'people.user' => ['/admin/users/{id:[0-9]+}', \SightPress\Core\People\Http\UserHandler::class, [AdminAccessMiddleware::class]],
+            'people.user.status' => ['/admin/users/{id:[0-9]+}/status', \SightPress\Core\People\Http\UserStatusHandler::class, [AdminAccessMiddleware::class]],
             'people.invite' => ['/admin/users/invite', InviteHandler::class, [AdminAccessMiddleware::class]],
             'people.invitation' => ['/invite/{token}', AcceptInvitationHandler::class, []],
         ], $routes);
         $menu = array_values(array_filter($registry->adminMenu(), static fn ($m) => $m->module === 'people'));
-        self::assertSame(['people.invite', 'Invite someone', 'user.invite'], [$menu[0]->item->id, $menu[0]->item->label, $menu[0]->item->permission]);
+        self::assertSame(['people.users', 'People', 'user.manage'], [$menu[0]->item->id, $menu[0]->item->label, $menu[0]->item->permission]);
+        self::assertSame(['people.invite', 'Invite someone', 'user.invite'], [$menu[1]->item->id, $menu[1]->item->label, $menu[1]->item->permission]);
         $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'people'));
         self::assertFileExists($views[0]->item->directory . '/email/invitation.txt.twig');
     }

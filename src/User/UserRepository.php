@@ -80,6 +80,15 @@ final readonly class UserRepository implements Accounts, AccountDirectory, Accou
         $this->save($account);
     }
 
+    /**
+     * @return list<User> ordered by id
+     */
+    public function all(): array
+    {
+        /** @var list<User> */
+        return $this->entityManager->getRepository(User::class)->findBy([], ['id' => 'ASC']);
+    }
+
     public function count(): int
     {
         return $this->entityManager->getRepository(User::class)->count();

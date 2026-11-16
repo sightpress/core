@@ -43,6 +43,12 @@ final class RoleRepositoryTest extends TestCase
         $roles->assign(5, $editor);
         $database->entityManager->clear();
         self::assertSame(['editor'], array_map(static fn ($role) => $role->name(), $roles->rolesOf(5)));
+        $roles->assign(3, $roles->findRole('contributor') ?? self::fail('No contributor role.'));
+        self::assertSame([], $roles->rolesOfUsers([]));
+        self::assertSame(
+            [3 => ['contributor'], 5 => ['editor']],
+            array_map(static fn (array $list): array => array_map(static fn ($role) => $role->name(), $list), $roles->rolesOfUsers([5, 4, 3, 5])),
+        );
         self::assertContains('page.publish', $roles->permissionNamesOf(5));
         self::assertSame($roles->permissionNamesOf(5), array_values(array_unique($roles->permissionNamesOf(5))));
     }

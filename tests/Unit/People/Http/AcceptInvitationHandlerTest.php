@@ -17,6 +17,7 @@ use SightPress\Core\People\Http\AcceptInvitationHandler;
 use SightPress\Core\People\Invitations;
 use SightPress\Core\Rbac\RoleGrantPolicy;
 use SightPress\Core\Tests\Support\AuthFixture;
+use SightPress\Core\Tests\Support\RecordingEvents;
 use SightPress\Core\User\AccountRegistrar;
 use SightPress\Core\User\AvatarKind;
 
@@ -151,7 +152,7 @@ final class AcceptInvitationHandlerTest extends TestCase
             $auth->validator(),
             $this->invitations,
             new AccountRegistrar($auth->users, $auth->avatars(), $auth->clock),
-            new RoleGrantPolicy($auth->database->roles()),
+            new RoleGrantPolicy($auth->database->roles(), new RecordingEvents()),
             new PasswordRules($auth->hasher),
             $policy ?? new AnyEmailPolicy(),
             $auth->site,

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace SightPress\Core\Rbac;
 
 use InvalidArgumentException;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Core\Rbac\Contract\RoleChanged;
 use SightPress\Core\Rbac\Contract\RoleChoice;
 use SightPress\Core\Rbac\Contract\RoleGrants;
 use SightPress\Core\Rbac\Entity\Role;
@@ -26,8 +28,10 @@ final readonly class RoleGrantPolicy implements RoleGrants
         RoleName::MEMBER => 'Can sign in and read the site, but not use the admin panel.',
     ];
 
-    public function __construct(private RoleRepository $roles)
-    {
+    public function __construct(
+        private RoleRepository $roles,
+        private EventDispatcherInterface $events,
+    ) {
     }
 
     public function grantableBy(Actor $actor): array
@@ -60,6 +64,24 @@ final readonly class RoleGrantPolicy implements RoleGrants
         $roles = $this->roles->rolesOf($userId);
 
         return $roles === [] ? null : self::choice($roles[0]);
+    }
+
+    public function rolesOf(array $userIds): array
+    {
+        return array_map(static fn (array $roles): RoleChoice => self::choice($roles[0]), $this->roles->rolesOfUsers($userIds));
+    }
+
+    public function change(Actor $actor, int $userId, string $role): void
+    {
+        if ($actor->userId === $userId) {
+            throw new InvalidArgumentException('Nobody can change their own role.');
+        }
+        if (!$this->canGrant($actor, $role)) {
+            throw new InvalidArgumentException(sprintf('This person may not give the role "%s".', $role));
+        }
+        $from = $this->roleOf($userId)?->name;
+        $this->assign($userId, $role);
+        $this->events->dispatch(new RoleChanged($userId, $actor->userId, $from, $role));
     }
 
     private function may(Actor $actor, string $role): bool

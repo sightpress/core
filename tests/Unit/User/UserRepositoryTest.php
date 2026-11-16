@@ -49,6 +49,7 @@ final class UserRepositoryTest extends TestCase
 
         self::assertSame([$ada, $grace], $users->findAccounts([(int) $grace->id(), 999, (int) $ada->id(), (int) $grace->id()]));
         self::assertSame([], $users->findAccounts([]));
+        self::assertSame([$ada, $grace], $users->all());
     }
 
     public function testServesAccountsToSignIn(): void

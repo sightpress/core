@@ -1,6 +1,7 @@
-// Invitations (C-3.4) on the admin test site: admins and editors invite by keyboard (editors only contributors),
-// mistakes are explained in the focused error summary, and the invited person sets up their account with their
-// browser's time zone already chosen. No axe violations in light and dark mode.
+// Invitations (C-3.4) and the people screens (C-3.5) on the admin test site: admins and editors invite by keyboard
+// (editors only contributors), mistakes are explained in the focused error summary, the invited person sets up their
+// account with their browser's time zone already chosen, and admins sort the people table, change roles and
+// deactivate people with every result announced. No axe violations in light and dark mode.
 import { expect, test } from '@playwright/test';
 import { ADMIN_SITES, PASSWORD, expectNoViolations, signIn } from './support/admin-site';
 
@@ -86,4 +87,70 @@ test.describe('the invited person', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('This invitation no longer works');
     await expectNoViolations(page);
   });
+});
+
+test('an admin sorts the people table by keyboard and hears the new order in its caption', async ({ page }) => {
+  await signIn(page, ADMIN_SITE, 'ada@example.org');
+  await page.getByRole('navigation', { name: 'Admin' }).getByRole('link', { name: 'People' }).click();
+
+  await expect(page).toHaveTitle('People - Admin - Riverside Library');
+  const table = page.getByRole('table', { name: /^Everyone with an account/ });
+  await expect(table).toHaveAccessibleName('Everyone with an account, sorted by name, A to Z');
+  await expect(table.getByRole('columnheader', { name: /^Name/ })).toHaveAttribute('aria-sort', 'ascending');
+  await expect(table.getByRole('rowheader')).toHaveText(['Ada', 'Bea', 'Cleo', 'Max']);
+  await expect(table.getByRole('img')).toHaveCount(0); // avatars are decorative (alt="")
+  await expectNoViolations(page);
+
+  await table.getByRole('link', { name: 'Email address' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(table).toHaveAccessibleName('Everyone with an account, sorted by email address, A to Z');
+  await expect(table.getByRole('columnheader', { name: /^Email address/ })).toHaveAttribute('aria-sort', 'ascending');
+  await expect(table.getByRole('columnheader', { name: /^Name/ })).not.toHaveAttribute('aria-sort');
+  await table.getByRole('link', { name: 'Email address' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(table).toHaveAccessibleName('Everyone with an account, sorted by email address, Z to A');
+  await expect(table.getByRole('rowheader')).toHaveText(['Max', 'Cleo', 'Bea', 'Ada']);
+  await expectNoViolations(page);
+});
+
+test('an admin changes a role and deactivates someone, and each result is announced', async ({ page }) => {
+  await signIn(page, ADMIN_SITE, 'ada@example.org', '/admin/users');
+  await page.getByRole('link', { name: 'Cleo', exact: true }).click();
+
+  await expect(page).toHaveTitle('Cleo - Admin - Riverside Library');
+  await expect(page.getByRole('heading', { level: 1, name: 'Cleo' })).toBeVisible();
+  const roles = page.getByRole('group', { name: 'Role' });
+  await expect(roles.getByRole('radio', { name: /^Contributor/ })).toBeChecked();
+  await expectNoViolations(page);
+
+  await roles.getByRole('radio', { name: /^Contributor/ }).focus();
+  await page.keyboard.press('ArrowUp');
+  await expect(roles.getByRole('radio', { name: /^Editor/ })).toBeChecked();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Change role' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('status')).toHaveText('Cleo’s role is now Editor.');
+
+  await page.getByRole('button', { name: 'Deactivate Cleo' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('status')).toHaveText('Cleo has been deactivated and can no longer sign in. Their pages stay.');
+  await expect(page.getByRole('heading', { level: 2, name: 'Reactivate account' })).toBeVisible();
+  await expectNoViolations(page);
+
+  await page.getByRole('button', { name: 'Reactivate Cleo' }).click();
+  await expect(page.getByRole('status')).toHaveText('Cleo has been reactivated and can sign in again.');
+});
+
+test('your own account is read-only, and the people screens reflow at 320px', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await signIn(page, ADMIN_SITE, 'ada@example.org', '/admin/users');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  await expectNoViolations(page);
+
+  await page.getByRole('link', { name: 'Ada', exact: true }).click();
+  await expect(page.getByText('This is your own account.')).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Role' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Deactivate/ })).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  await expectNoViolations(page);
 });

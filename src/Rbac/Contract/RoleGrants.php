@@ -35,4 +35,20 @@ interface RoleGrants
      * The user's role, or null when they have none.
      */
     public function roleOf(int $userId): ?RoleChoice;
+
+    /**
+     * The roles of several users at once.
+     *
+     * @param list<int> $userIds
+     *
+     * @return array<int, RoleChoice> by user id; users without a role are left out
+     */
+    public function rolesOf(array $userIds): array;
+
+    /**
+     * The actor gives the user another role, and {@see RoleChanged} is dispatched. Nobody changes their own role.
+     *
+     * @throws \InvalidArgumentException when the actor may not give the role, or it is their own account
+     */
+    public function change(Actor $actor, int $userId, string $role): void;
 }

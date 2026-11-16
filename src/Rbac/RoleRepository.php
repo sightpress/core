@@ -67,6 +67,38 @@ final readonly class RoleRepository implements PermissionLookup, PermissionHolde
     }
 
     /**
+     * The roles of several users in one query.
+     *
+     * @param list<int> $userIds
+     *
+     * @return array<int, list<Role>> by user id, each list ordered by name; users without a role are left out
+     */
+    public function rolesOfUsers(array $userIds): array
+    {
+        if ($userIds === []) {
+            return [];
+        }
+        /** @var list<RoleAssignment> $assignments */
+        $assignments = $this->entityManager->createQueryBuilder()
+            ->select('a', 'r')
+            ->from(RoleAssignment::class, 'a')
+            ->join('a.role', 'r')
+            ->where('a.userId IN (:users)')
+            ->setParameter('users', array_values(array_unique($userIds)))
+            ->orderBy('a.userId')
+            ->addOrderBy('r.name')
+            ->getQuery()
+            ->getResult();
+
+        $roles = [];
+        foreach ($assignments as $assignment) {
+            $roles[$assignment->userId()][] = $assignment->role();
+        }
+
+        return $roles;
+    }
+
+    /**
      * Names of every permission the user holds through any of their roles, sorted.
      *
      * @return list<string>

@@ -267,6 +267,15 @@ final class User implements Account
     }
 
     /**
+     * Undoes {@see deactivate()}: the account can sign in again, or is pending when no password was ever set.
+     */
+    public function reactivate(DateTimeImmutable $now): void
+    {
+        $this->status = $this->passwordHash === null ? UserStatus::Pending : UserStatus::Active;
+        $this->updatedAt = $now;
+    }
+
+    /**
      * Trims and lower-cases an email address and checks it looks like one.
      */
     public static function normalizeEmail(string $email): string

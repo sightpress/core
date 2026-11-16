@@ -137,6 +137,20 @@ final class UserTest extends TestCase
         self::assertSame(UserStatus::Active, $user->status());
     }
 
+    public function testReactivatingGoesBackToActiveOrToPendingWithoutAPassword(): void
+    {
+        $user = $this->user();
+        $user->deactivate($this->now);
+        $user->reactivate($this->now->modify('+1 day'));
+        self::assertSame(UserStatus::Pending, $user->status());
+        self::assertEquals($this->now->modify('+1 day'), $user->updatedAt());
+
+        $user->setPasswordHash('$argon2id$hash', $this->now);
+        $user->deactivate($this->now);
+        $user->reactivate($this->now);
+        self::assertSame(UserStatus::Active, $user->status());
+    }
+
     public function testAnEmptyPasswordHashIsRefused(): void
     {
         $this->expectException(UserException::class);
