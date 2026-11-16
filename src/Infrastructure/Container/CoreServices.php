@@ -27,6 +27,7 @@ use SightPress\Core\Infrastructure\Mail\MailSender;
 use SightPress\Core\Infrastructure\Mail\TransportMailSender;
 use Symfony\Component\Mailer\Transport;
 use SightPress\Core\Access\PermissionCatalogue;
+use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleServices;
@@ -118,6 +119,9 @@ final class CoreServices
                 ModuleServices::definitions($modules, []),
             )),
             PermissionCatalogue::class => factory(static fn (): PermissionCatalogue => PermissionCatalogue::fromRegistry($modules)),
+            BlockTypeCatalogue::class => factory(
+                static fn (ContainerInterface $container): BlockTypeCatalogue => BlockTypeCatalogue::fromRegistry($modules, $container),
+            ),
             ErrorResponder::class => autowire()
                 ->constructorParameter('debug', $config->debug)
                 ->constructorParameter('noindex', !$config->environment->isProduction()),

@@ -6,6 +6,8 @@ namespace SightPress\Core\Page;
 
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use SightPress\Core\Block\Contract\BlockValidator;
+use SightPress\Core\Block\Contract\InvalidBlocks;
 use SightPress\Core\Page\Contract\PageCreated;
 use SightPress\Core\Page\Contract\PageMoved;
 use SightPress\Core\Page\Contract\PageSaved;
@@ -26,7 +28,9 @@ use SightPress\Core\Tenant\Site;
  *   {@see Slug::MAX_LENGTH} characters, an address is never longer than 609 characters);
  * - positions among siblings are 0, 1, 2 … with no gaps.
  *
- * Everything is checked before anything is written; the writes then happen in one transaction.
+ * Blocks are checked, upgraded and cleaned by the block module ({@see BlockValidator}); blocks that can't be saved
+ * throw {@see InvalidBlocks}. Everything is checked before anything is written; the writes then happen in one
+ * transaction.
  */
 final readonly class PageEditor
 {
@@ -35,6 +39,7 @@ final readonly class PageEditor
         private Site $site,
         private ClockInterface $clock,
         private EventDispatcherInterface $events,
+        private BlockValidator $blocks,
     ) {
     }
 
@@ -44,6 +49,7 @@ final readonly class PageEditor
     public function create(string $locale, PageContent $content, ?Page $parent = null, ?int $authorId = null): Page
     {
         $this->checkLocale($locale);
+        $content = $content->withBlocks($this->blocks->validate($content->blocks)->blocks);
         $path = $this->pathFor($parent, $locale, $content->slug);
         $this->checkAddressIsFree($locale, $path, null);
         $position = count($this->pages->children($parent));
@@ -73,6 +79,7 @@ final readonly class PageEditor
     public function save(Page $page, string $locale, PageContent $content, ?int $savedBy = null): PageRevision
     {
         $this->checkLocale($locale);
+        $content = $content->withBlocks($this->blocks->validate($content->blocks)->blocks);
         $path = $this->pathFor($page->parent(), $locale, $content->slug);
         $this->checkAddressIsFree($locale, $path, $page);
         $oldPath = $page->translation($locale)?->path();

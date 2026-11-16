@@ -8,8 +8,8 @@ namespace SightPress\Core\Page;
  * What an editor writes for one locale of a page: the title, the slug, the summary, the description for search
  * engines and the blocks. Checked and tidied when it is made, so a page never holds content that breaks these rules.
  *
- * Blocks are stored as `{ "type": "…", "version": n, "data": { … } }` (ADR-0005); the block module checks each
- * block's data against its type when the page is saved.
+ * Blocks are stored as `{ "type": "…", "version": n, "data": { … } }` (ADR-0005); the {@see PageEditor} has the
+ * block module check each block's data against its type when the page is saved.
  */
 final readonly class PageContent
 {
@@ -63,6 +63,16 @@ final readonly class PageContent
         $this->summary = self::optional($summary, self::SUMMARY_MAX_LENGTH, 'The summary');
         $this->description = self::optional($description, self::DESCRIPTION_MAX_LENGTH, 'The search engine description');
         $this->blocks = self::blocks($blocks);
+    }
+
+    /**
+     * The same content with other blocks, for example after the block module checked and cleaned them.
+     *
+     * @param list<mixed> $blocks
+     */
+    public function withBlocks(array $blocks): self
+    {
+        return new self($this->title, $this->slug, $this->summary, $this->description, $blocks);
     }
 
     /**

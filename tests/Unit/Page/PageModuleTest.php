@@ -30,7 +30,7 @@ final class PageModuleTest extends TestCase
 
         self::assertSame('page', $module->manifest()->id);
         self::assertTrue($module->manifest()->required);
-        self::assertSame(['site', 'rbac'], array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires));
+        self::assertSame(['site', 'rbac', 'block'], array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires));
         $migrations = array_values(array_filter(
             $registry->migrations(),
             static fn ($registered): bool => $registered->module === 'page',

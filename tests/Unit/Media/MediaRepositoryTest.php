@@ -42,4 +42,24 @@ final class MediaRepositoryTest extends TestCase
 
         self::assertNull($repository->find($id));
     }
+
+    public function testLooksFilesUpByIdForOtherModules(): void
+    {
+        $database = new CoreSiteDatabase();
+        $repository = new MediaRepository($database->entityManager);
+        $now = new DateTimeImmutable('2026-11-16 10:00:00 UTC');
+        $format = new MediaFormat('application/pdf', MediaKind::Document, 'pdf', 'PDF');
+        $one = new Media(str_repeat('a1', 16), str_repeat('1', 64), $format, 'a.pdf', 'A.pdf', 10, null, null, [], null, $now);
+        $two = new Media(str_repeat('b2', 16), str_repeat('2', 64), $format, 'b.pdf', 'B.pdf', 10, null, null, [], null, $now);
+        $repository->save($one);
+        $repository->save($two);
+        $ids = [(int) $one->id(), (int) $two->id()];
+
+        self::assertSame($one, $repository->file($ids[0]));
+        self::assertNull($repository->file(999));
+        self::assertSame([], $repository->files([]));
+        $files = $repository->files([$ids[1], $ids[0], $ids[1], 999]);
+        ksort($files);
+        self::assertSame([$ids[0] => $one, $ids[1] => $two], $files);
+    }
 }

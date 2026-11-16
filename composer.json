@@ -43,6 +43,7 @@
     "slim/slim": "^4",
     "symfony/cache": "^8",
     "symfony/console": "^8",
+    "symfony/html-sanitizer": "^8",
     "symfony/mailer": "^8",
     "symfony/rate-limiter": "^8",
     "symfony/translation": "^8",

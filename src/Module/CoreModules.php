@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Module;
 
 use SightPress\Core\Auth\AuthModule;
+use SightPress\Core\Block\BlockModule;
 use SightPress\Core\Media\MediaModule;
 use SightPress\Core\Page\PageModule;
 use SightPress\Core\Rbac\RbacModule;
@@ -30,6 +31,7 @@ final class CoreModules
             new ModuleCandidate(new AuthModule(), 'sightpress/core'),
             new ModuleCandidate(new ThemeModule(), 'sightpress/core'),
             new ModuleCandidate(new MediaModule(), 'sightpress/core'),
+            new ModuleCandidate(new BlockModule(), 'sightpress/core'),
             new ModuleCandidate(new PageModule(), 'sightpress/core'),
         ];
     }

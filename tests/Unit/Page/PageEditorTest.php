@@ -7,6 +7,7 @@ namespace SightPress\Core\Tests\Unit\Page;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
+use SightPress\Core\Block\Contract\InvalidBlocks;
 use SightPress\Core\Page\Contract\PageCreated;
 use SightPress\Core\Page\Contract\PageMoved;
 use SightPress\Core\Page\Contract\PageSaved;
@@ -88,6 +89,25 @@ final class PageEditorTest extends TestCase
         $this->expectException(PageException::class);
         $this->expectExceptionMessage('The address "pt" is used by the system. Choose another one for a top-level page.');
         $this->editor->create('en-GB', new PageContent('Portugal', 'pt'));
+    }
+
+    public function testChecksAndCleansBlocksBeforeSaving(): void
+    {
+        $page = $this->editor->create('en-GB', new PageContent('About', null, null, null, [
+            ['type' => 'rich_text', 'version' => 1, 'data' => ['html' => '<p>Hi<script>x</script></p>']],
+        ]));
+        self::assertSame([['type' => 'rich_text', 'version' => 1, 'data' => ['html' => '<p>Hi</p>']]], $page->translation('en-GB')?->blocks());
+
+        try {
+            $this->editor->save($page, 'en-GB', new PageContent('About', null, null, null, [['type' => 'heading', 'version' => 1, 'data' => ['text' => '']]]));
+            self::fail('Expected the blocks to be refused.');
+        } catch (InvalidBlocks $exception) {
+            self::assertSame(['/0/data/text', '/0/data/level'], array_map(static fn ($violation): string => $violation->pointer, $exception->violations));
+        }
+        self::assertCount(1, $this->pages->revisions($page));
+
+        $this->expectException(InvalidBlocks::class);
+        $this->editor->create('en-GB', new PageContent('Contact', null, null, null, [['type' => 'acme.missing', 'version' => 1, 'data' => []]]));
     }
 
     public function testOnlyWritesInTheSiteLocales(): void

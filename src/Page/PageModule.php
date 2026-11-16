@@ -23,7 +23,7 @@ final class PageModule implements ModuleInterface
         return new ModuleManifest(
             self::ID,
             '0.1.0',
-            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('rbac', '^0.1')],
+            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('rbac', '^0.1'), new ModuleRequirement('block', '^0.1')],
             required: true,
         );
     }

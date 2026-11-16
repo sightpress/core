@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace SightPress\Core\Media;
 
 use Doctrine\ORM\EntityManagerInterface;
+use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Entity\Media;
 
 /**
  * The site's media library, in the site's own database.
  */
-final readonly class MediaRepository
+final readonly class MediaRepository implements MediaLibrary
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -19,6 +20,31 @@ final readonly class MediaRepository
     public function find(int $id): ?Media
     {
         return $this->entityManager->find(Media::class, $id);
+    }
+
+    public function file(int $id): ?Media
+    {
+        return $this->find($id);
+    }
+
+    /**
+     * @param list<int> $ids
+     *
+     * @return array<int, Media>
+     */
+    public function files(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+        /** @var list<Media> $found */
+        $found = $this->entityManager->getRepository(Media::class)->findBy(['id' => array_values(array_unique($ids))]);
+        $files = [];
+        foreach ($found as $media) {
+            $files[(int) $media->id()] = $media;
+        }
+
+        return $files;
     }
 
     public function findByKey(string $key): ?Media

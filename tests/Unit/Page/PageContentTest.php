@@ -60,6 +60,17 @@ final class PageContentTest extends TestCase
         }
     }
 
+    public function testSwapsTheBlocks(): void
+    {
+        $content = new PageContent('About', 'about-us', 'Summary', 'Description', []);
+
+        $changed = $content->withBlocks([['type' => 'heading', 'version' => 1, 'data' => ['text' => 'A', 'level' => 2]]]);
+
+        self::assertSame(['About', 'about-us', 'Summary', 'Description'], [$changed->title, $changed->slug, $changed->summary, $changed->description]);
+        self::assertSame([['type' => 'heading', 'version' => 1, 'data' => ['text' => 'A', 'level' => 2]]], $changed->blocks);
+        self::assertSame([], $content->blocks);
+    }
+
     /**
      * @param callable(): PageContent $make
      */

@@ -70,6 +70,6 @@ final class PageFixture implements EventDispatcherInterface
 
     public function editor(): PageEditor
     {
-        return new PageEditor($this->repository(), $this->site, $this->clock, $this);
+        return new PageEditor($this->repository(), $this->site, $this->clock, $this, new BlockFixture([], $this->database)->validator());
     }
 }
