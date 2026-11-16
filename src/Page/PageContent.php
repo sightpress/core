@@ -1,0 +1,137 @@
+<?php
+
+declare(strict_types=1);
+
+namespace SightPress\Core\Page;
+
+/**
+ * What an editor writes for one locale of a page: the title, the slug, the summary, the description for search
+ * engines and the blocks. Checked and tidied when it is made, so a page never holds content that breaks these rules.
+ *
+ * Blocks are stored as `{ "type": "…", "version": n, "data": { … } }` (ADR-0005); the block module checks each
+ * block's data against its type when the page is saved.
+ */
+final readonly class PageContent
+{
+    public const int TITLE_MAX_LENGTH = 200;
+    public const int SUMMARY_MAX_LENGTH = 300;
+    public const int DESCRIPTION_MAX_LENGTH = 300;
+    public const int MAX_BLOCKS = 500;
+
+    private const string BLOCK_TYPE_PATTERN = '/^(?:[a-z][a-z0-9]*(?:_[a-z0-9]+)*\.)?[a-z][a-z0-9]*(?:_[a-z0-9]+)*$/';
+
+    public string $title;
+
+    public string $slug;
+
+    public ?string $summary;
+
+    public ?string $description;
+
+    /** @var list<array{type: string, version: int, data: array<string, mixed>}> */
+    public array $blocks;
+
+    /**
+     * @param string|null $slug   null makes one from the title ({@see Slug::fromText()})
+     * @param list<mixed> $blocks
+     */
+    public function __construct(
+        string $title,
+        ?string $slug = null,
+        ?string $summary = null,
+        ?string $description = null,
+        array $blocks = [],
+    ) {
+        $title = self::singleLine($title);
+        if ($title === '') {
+            throw new PageException('Give the page a title.');
+        }
+        if (mb_strlen($title) > self::TITLE_MAX_LENGTH) {
+            throw new PageException(sprintf('The title must be %d characters or fewer.', self::TITLE_MAX_LENGTH));
+        }
+        $slug = $slug === null || trim($slug) === '' ? Slug::fromText($title) : trim($slug);
+        if (!Slug::isValid($slug)) {
+            throw new PageException(sprintf(
+                'The address "%s" can only use lower-case letters a to z, digits and single hyphens between them, and be %d characters or fewer.',
+                $slug,
+                Slug::MAX_LENGTH,
+            ));
+        }
+
+        $this->title = $title;
+        $this->slug = $slug;
+        $this->summary = self::optional($summary, self::SUMMARY_MAX_LENGTH, 'The summary');
+        $this->description = self::optional($description, self::DESCRIPTION_MAX_LENGTH, 'The search engine description');
+        $this->blocks = self::blocks($blocks);
+    }
+
+    /**
+     * The content as stored in a revision snapshot.
+     *
+     * @return array{title: string, slug: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>}
+     */
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'summary' => $this->summary,
+            'description' => $this->description,
+            'blocks' => $this->blocks,
+        ];
+    }
+
+    private static function singleLine(string $text): string
+    {
+        return trim((string) preg_replace('/\s+/u', ' ', $text));
+    }
+
+    private static function optional(?string $text, int $max, string $what): ?string
+    {
+        $text = self::singleLine($text ?? '');
+        if ($text === '') {
+            return null;
+        }
+        if (mb_strlen($text) > $max) {
+            throw new PageException(sprintf('%s must be %d characters or fewer.', $what, $max));
+        }
+
+        return $text;
+    }
+
+    /**
+     * @param list<mixed> $blocks
+     *
+     * @return list<array{type: string, version: int, data: array<string, mixed>}>
+     */
+    private static function blocks(array $blocks): array
+    {
+        if (count($blocks) > self::MAX_BLOCKS) {
+            throw new PageException(sprintf('A page can have at most %d blocks.', self::MAX_BLOCKS));
+        }
+
+        $clean = [];
+        foreach (array_values($blocks) as $index => $block) {
+            if (
+                !is_array($block)
+                || !is_string($block['type'] ?? null)
+                || preg_match(self::BLOCK_TYPE_PATTERN, $block['type']) !== 1
+                || !is_int($block['version'] ?? null)
+                || $block['version'] < 1
+                || !is_array($block['data'] ?? null)
+                || ($block['data'] !== [] && array_is_list($block['data']))
+                || count($block) !== 3
+            ) {
+                throw new PageException(sprintf(
+                    'Block %d is not a block: it needs a type, a version from 1 up and its data, and nothing else.',
+                    $index + 1,
+                ));
+            }
+            /** @var array<string, mixed> $data */
+            $data = $block['data'];
+            $clean[] = ['type' => $block['type'], 'version' => $block['version'], 'data' => $data];
+        }
+
+        return $clean;
+    }
+}

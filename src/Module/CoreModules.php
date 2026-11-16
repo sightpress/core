@@ -6,6 +6,7 @@ namespace SightPress\Core\Module;
 
 use SightPress\Core\Auth\AuthModule;
 use SightPress\Core\Media\MediaModule;
+use SightPress\Core\Page\PageModule;
 use SightPress\Core\Rbac\RbacModule;
 use SightPress\Core\Site\SiteModule;
 use SightPress\Core\Theme\ThemeModule;
@@ -29,6 +30,7 @@ final class CoreModules
             new ModuleCandidate(new AuthModule(), 'sightpress/core'),
             new ModuleCandidate(new ThemeModule(), 'sightpress/core'),
             new ModuleCandidate(new MediaModule(), 'sightpress/core'),
+            new ModuleCandidate(new PageModule(), 'sightpress/core'),
         ];
     }
 
@@ -42,6 +44,6 @@ final class CoreModules
     {
         $src = dirname(__DIR__);
 
-        return [$src . '/User/Entity', $src . '/Rbac/Entity', $src . '/Media/Entity'];
+        return [$src . '/User/Entity', $src . '/Rbac/Entity', $src . '/Media/Entity', $src . '/Page/Entity'];
     }
 }
