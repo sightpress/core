@@ -1,0 +1,107 @@
+// The content blocks (C-4.2, C-4.3) on a real site (tests/A11y/blocks/index.php): a page with every core block type
+// has no axe violations in light and dark mode, reflows at 320 px, works by keyboard in reading order, and the contact
+// form announces its errors and its result.
+import { expect, test, type Page } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+const SITE = 'http://127.0.0.1:8097';
+const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+
+async function expectNoViolations(page: Page): Promise<void> {
+  for (const colorScheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme });
+    const results = await new AxeBuilder({ page }).withTags(WCAG_22_AA).analyze();
+    expect(results.violations, `${colorScheme} mode`).toEqual([]);
+  }
+}
+
+/** Presses Tab until `last` has focus and returns a short description of everything that got focus on the way. */
+async function tabUntil(page: Page, last: string, limit = 60): Promise<string[]> {
+  const seen: string[] = [];
+  for (let i = 0; i < limit; i++) {
+    await page.keyboard.press('Tab');
+    const name = await page.evaluate(() => {
+      const element = document.activeElement as HTMLElement | null;
+      if (element === null) {
+        return '';
+      }
+      const label = element.id ? document.querySelector(`label[for="${element.id}"]`)?.textContent : null;
+      return `${element.tagName.toLowerCase()}:${(label ?? element.textContent ?? '').replace(/\s+/g, ' ').trim()}`;
+    });
+    seen.push(name);
+    if (name === last) {
+      return seen;
+    }
+  }
+  throw new Error(`"${last}" never got focus; focus went through: ${seen.join(' | ')}`);
+}
+
+test.beforeEach(async ({ request }) => {
+  await request.get(`${SITE}/_test/reset`);
+});
+
+test('a page with every block type has no violations and reflows at 320 px', async ({ page }) => {
+  await page.goto(`${SITE}/visit`);
+
+  await expect(page).toHaveTitle('Visit the library - Riverside Library');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  await expect(page.getByRole('img', { name: 'The harbour seen from the reading room' })).toBeVisible();
+  await expect(page.getByRole('list').filter({ has: page.getByRole('img', { name: 'Boats in the harbour' }) })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Annual report 2025 (PDF, 77 B)' })).toBeVisible();
+  await expect(page.getByRole('form', { name: 'Contact form' })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Contact form' })).toBeVisible();
+  await expect(page.getByText('office@example.org')).toHaveCount(0);
+  await expectNoViolations(page);
+
+  await page.setViewportSize({ width: 320, height: 640 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  await expectNoViolations(page);
+});
+
+test('everything works by keyboard in reading order, and the hidden spam field never gets focus', async ({ page }) => {
+  await page.goto(`${SITE}/visit`);
+
+  const seen = await tabUntil(page, 'button:Send message');
+  const order = [
+    'a:who we are',
+    'a:Book a visit',
+    'summary:Transcript: A tour of the library',
+    'summary:Transcript: Opening talk',
+    'a:Annual report 2025 (PDF, 77 B)',
+    'input:Your name',
+    'input:Your email address',
+    'textarea:Your message',
+    'button:Send message',
+  ];
+  expect(seen.filter((name) => order.includes(name))).toEqual(order);
+  expect(seen.some((name) => name.includes('Leave this field empty'))).toBe(false);
+
+  await page.getByText('Transcript: Opening talk').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Good evening, and welcome.')).toBeVisible();
+});
+
+test('the contact form explains its errors, keeps what was typed and says when the message was sent', async ({ page }) => {
+  await page.goto(`${SITE}/visit`);
+
+  await page.getByLabel('Your message').fill('Do you have large-print books?');
+  await page.getByLabel('Your email address').fill('not an address');
+  await page.getByRole('button', { name: 'Send message' }).press('Enter');
+
+  const summary = page.getByRole('region', { name: 'There is a problem' });
+  await expect(summary).toBeFocused();
+  await expect(summary.getByRole('link')).toHaveText([/your name/, /email address/]);
+  await expect(page.getByLabel('Your message')).toHaveValue('Do you have large-print books?');
+  await expect(page.getByLabel('Your email address')).toHaveAttribute('aria-invalid', 'true');
+  await expectNoViolations(page);
+
+  await summary.getByRole('link').first().press('Enter');
+  await expect(page.getByLabel('Your name')).toBeFocused();
+  await page.keyboard.type('Ada');
+  await page.getByLabel('Your email address').fill('ada@example.org');
+  await page.getByRole('button', { name: 'Send message' }).press('Enter');
+
+  const status = page.getByRole('status').filter({ hasText: 'Thank you. Your message has been sent.' });
+  await expect(status).toBeFocused();
+  await expectNoViolations(page);
+});

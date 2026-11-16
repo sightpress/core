@@ -117,10 +117,13 @@ final class DefaultBlockValidatorTest extends TestCase
     {
         $picture = $this->fixture->addMedia();
         $validator = new BlockFixture([new MediaKindsBlockType()], $this->fixture->database)->validator();
+        $captions = $this->fixture->addCaptions();
+        $pdf = $this->fixture->addMedia(kind: MediaKind::Document);
+        self::assertSame([$captions, $pdf, $picture], $validator->validate([['type' => 'acme.media_kinds', 'version' => 1, 'data' => ['captions' => $captions, 'document' => $pdf, 'any' => $picture]]])->mediaIds);
 
         $this->expectException(InvalidBlocks::class);
-        $this->expectExceptionMessage('/0/data/video: Choose a video. /0/data/audio: Choose an audio file. /0/data/document: Choose a document, such as a PDF.');
+        $this->expectExceptionMessage('/0/data/video: Choose a video. /0/data/audio: Choose an audio file. /0/data/document: Choose a document, such as a PDF. /0/data/captions: Choose a captions file in WebVTT format (.vtt).');
 
-        $validator->validate([['type' => 'acme.media_kinds', 'version' => 1, 'data' => ['video' => $picture, 'audio' => $picture, 'document' => $picture]]]);
+        $validator->validate([['type' => 'acme.media_kinds', 'version' => 1, 'data' => ['video' => $picture, 'audio' => $picture, 'document' => $picture, 'captions' => $pdf]]]);
     }
 }

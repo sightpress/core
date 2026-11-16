@@ -26,6 +26,16 @@ final class HtmlTest extends TestCase
         self::assertSame('', Html::text([], 'a'));
     }
 
+    public function testTurnsPlainTextIntoParagraphs(): void
+    {
+        $text = "  First <line>\r\nsecond line\n \n\n Next   para \n\n\n";
+
+        self::assertSame('<p>First &lt;line&gt;<br>second line</p><p>Next   para</p>', Html::paragraphs($text));
+        self::assertSame("First \\<line\\> second line\n\nNext para", Html::markdownParagraphs($text));
+        self::assertSame('', Html::paragraphs(" \n "));
+        self::assertSame("<p>Bad\u{FFFD}</p>", Html::paragraphs("Bad\xff"), 'invalid UTF-8 can\'t be split, so it stays one paragraph');
+    }
+
     public function testEscapesMarkdown(): void
     {
         self::assertSame('\*Not\* \_bold\_ \# \[link\](x) \<b\> \`c\` a\\\\b', Html::markdown("  *Not* _bold_ #\n [link](x) <b> `c` a\\b "));

@@ -42,7 +42,7 @@ final class RbacModuleTest extends TestCase
             ['site', 'user'],
             array_map(static fn ($requirement) => $requirement->moduleId, $module->manifest()->requires),
         );
-        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page'], $registry->modules());
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact'], $registry->modules());
 
         $migrations = new RbacMigrations();
         self::assertSame('SightPress\Core\Rbac\Migrations', $migrations->namespace());

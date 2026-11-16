@@ -1,0 +1,9 @@
+{% autoescape false %}
+{{ t('{name} sent a message with the contact form on {page} ({url}).', {'name': name, 'page': page_title, 'url': page_url}) }}
+
+{{ t('Reply to this email to answer them at {email}.', {'email': email}) }}
+
+-----
+
+{{ message }}
+{% endautoescape %}

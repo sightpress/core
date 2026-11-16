@@ -247,6 +247,15 @@ final class Page implements PageSubject
         return $translation;
     }
 
+    /**
+     * Moves the page to another workflow state. Only the page workflow calls this; it checks the transition first.
+     */
+    public function changeState(PageState $state, DateTimeImmutable $now): void
+    {
+        $this->state = $state;
+        $this->updatedAt = $now;
+    }
+
     public function setPublic(bool $public, DateTimeImmutable $now): void
     {
         $this->public = $public;

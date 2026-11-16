@@ -300,6 +300,35 @@ thead th { border-bottom-width: 2px; }
 
 /* More contrast: thicker borders and underlines on top of the stronger colours from tokens.css. */
 
+/* Content blocks. Columns and gallery pictures wrap into fewer columns as space runs out and stack in reading order
+   on narrow screens and at high zoom, so nothing scrolls sideways. */
+
+.block-columns { display: grid; gap: var(--space-4); margin: 0 0 var(--space-4); }
+.block-column > :last-child { margin-bottom: 0; }
+@media (min-width: 40em) {
+  .block-columns--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .block-columns--3, .block-columns--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+}
+.block-image img, .block-gallery img, .block-video video { display: block; }
+figcaption { margin-top: var(--space-2); color: var(--color-text-muted); font-size: var(--font-size-small); }
+.block-gallery__items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: var(--space-3);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+.block-gallery__items figure { margin: 0; }
+.block-video video { width: 100%; background: var(--color-surface); }
+.block-audio figcaption { margin: 0 0 var(--space-2); color: var(--color-text); font-size: inherit; font-weight: 700; }
+.block-audio audio { display: block; width: 100%; }
+.block-video .block-transcript, .block-audio .block-transcript { margin-top: var(--space-3); }
+.block-file-download__details { white-space: nowrap; }
+.block-call-to-action { margin: 0 0 var(--space-4); }
+.block-contact-form { margin: 0 0 var(--space-5); }
+.block-contact-form textarea { min-height: 10rem; }
+
 @media (prefers-contrast: more) {
   .card, .disclosure, .dialog, th, td, .site-header, .site-footer, .hero { border-color: var(--color-text); }
   a { text-decoration-thickness: 0.12em; }

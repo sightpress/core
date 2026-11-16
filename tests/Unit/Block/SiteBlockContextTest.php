@@ -8,9 +8,13 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Block\BlockException;
+use SightPress\Core\Block\Contract\HttpBlockContext;
+use SightPress\Core\Media\Contract\MediaFile;
+use SightPress\Core\Media\MediaFormat;
 use SightPress\Core\Block\SiteBlockContext;
 use SightPress\Core\Block\SiteBlockContexts;
 use SightPress\Core\Media\Contract\MediaKind;
+use SightPress\Core\Media\MediaTypes;
 use SightPress\Core\Media\OriginMediaUrlGenerator;
 use SightPress\Core\Tests\Support\BlockFixture;
 use SightPress\Core\Tests\Support\CountingMediaLibrary;
@@ -73,13 +77,38 @@ final class SiteBlockContextTest extends TestCase
         self::assertNull($context->image($draft));
     }
 
+    public function testDescribesFilesInTheContentLocale(): void
+    {
+        $fixture = new BlockFixture();
+        $context = $fixture->context();
+
+        self::assertSame('PDF, 512 B', $context->fileDetails(self::file($fixture, 512)));
+        self::assertSame('PDF, 2.3 MB', $context->fileDetails(self::file($fixture, 2_411_725)));
+        self::assertSame('PDF, 2,3 MB', $fixture->context('pt-BR')->fileDetails(self::file($fixture, 2_411_725)));
+        self::assertSame('PDF, 840 KB', $context->fileDetails(self::file($fixture, 860_160)));
+        self::assertSame('PDF, 1.5 GB', $context->fileDetails(self::file($fixture, 1_610_612_736)));
+        self::assertSame('PDF, 12 KB', $context->fileDetails(self::file($fixture, 12_300)));
+        self::assertSame('KEY, 1 KB', $context->fileDetails(self::file($fixture, 1024, 'slides.key', 'application/x-keynote')));
+    }
+
+    public function testCarriesTheVisitorsRequest(): void
+    {
+        $fixture = new BlockFixture();
+        $request = new \Nyholm\Psr7\ServerRequest('GET', 'https://demo.example/about');
+
+        self::assertNull($fixture->context()->request());
+        $context = $fixture->contexts()->create('en-GB', 'https://demo.example', $request);
+        self::assertInstanceOf(HttpBlockContext::class, $context);
+        self::assertSame($request, $context->request());
+    }
+
     public function testLooksFilesUpOncePerPage(): void
     {
         $fixture = new BlockFixture();
         $one = $fixture->addMedia();
         $two = $fixture->addMedia();
         $library = new CountingMediaLibrary($fixture->media());
-        $context = new SiteBlockContext('en-GB', 'https://demo.example', '', $library, new OriginMediaUrlGenerator(), $fixture->renderer());
+        $context = new SiteBlockContext('en-GB', 'https://demo.example', '', $library, new OriginMediaUrlGenerator(), $fixture->renderer(), new MediaTypes());
 
         $context->preload([$one, $two, $one]);
         $context->preload([]);
@@ -94,5 +123,16 @@ final class SiteBlockContextTest extends TestCase
 
         self::assertStringContainsString('block-heading', $context->renderHtml([['type' => 'heading', 'version' => 1, 'data' => ['text' => 'A', 'level' => 2]]]));
         self::assertSame('## A', $context->renderMarkdown([['type' => 'heading', 'version' => 1, 'data' => ['text' => 'A', 'level' => 2]]]));
+    }
+
+    /**
+     * @param non-empty-string $mimeType
+     */
+    private static function file(BlockFixture $fixture, int $size, string $name = 'a.pdf', string $mimeType = 'application/pdf'): MediaFile
+    {
+        $file = $fixture->media()->find($fixture->addMedia(kind: MediaKind::Document, fileName: $name, format: new MediaFormat($mimeType, MediaKind::Document, 'pdf', 'X'), size: $size));
+        self::assertNotNull($file);
+
+        return $file;
     }
 }

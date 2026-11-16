@@ -1,7 +1,8 @@
 // Accessibility tests: Playwright drives the browser and axe-core checks every page against WCAG 2.2 AA.
 // They need a running skeleton: `docker compose up` in ../skeleton, then `composer a11y` here.
 // SIGHTPRESS_BASE_URL changes the address (default http://localhost:8080).
-// The component gallery (tests/A11y/gallery) and a real site for the sign-in pages (tests/A11y/sign-in) run on PHP's
+// The component gallery (tests/A11y/gallery) and real sites for the sign-in pages (tests/A11y/sign-in) and the content
+// blocks (tests/A11y/blocks) run on PHP's
 // built-in web server; Playwright starts them.
 import { defineConfig, devices } from '@playwright/test';
 
@@ -25,6 +26,13 @@ export default defineConfig({
     {
       command: 'php -S 127.0.0.1:8098 tests/A11y/sign-in/index.php',
       url: 'http://127.0.0.1:8098/login',
+      reuseExistingServer: !process.env.CI,
+      stdout: 'ignore',
+      stderr: 'ignore',
+    },
+    {
+      command: 'php -S 127.0.0.1:8097 tests/A11y/blocks/index.php',
+      url: 'http://127.0.0.1:8097/visit',
       reuseExistingServer: !process.env.CI,
       stdout: 'ignore',
       stderr: 'ignore',

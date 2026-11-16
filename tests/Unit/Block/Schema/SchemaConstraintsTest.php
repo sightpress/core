@@ -158,8 +158,7 @@ final class SchemaConstraintsTest extends TestCase
         self::assertTrue(SchemaConstraints::isMediaFormat('media-audio'));
         self::assertFalse(SchemaConstraints::isMediaFormat('media-font'));
         self::assertFalse(SchemaConstraints::isMediaFormat('link'));
-        self::assertSame(\SightPress\Core\Media\Contract\MediaKind::Image, SchemaConstraints::mediaKind('media-image'));
-        self::assertNull(SchemaConstraints::mediaKind('media'));
+        self::assertTrue(SchemaConstraints::isMediaFormat('media-captions'));
     }
 
     public function testAcceptsFloatsAsLimits(): void

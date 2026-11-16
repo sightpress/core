@@ -40,5 +40,6 @@ final class PageModuleTest extends TestCase
         self::assertDirectoryExists($migrations[0]->item->directory());
         self::assertTrue($registry->services()[PageRepository::class]->item->public);
         self::assertTrue($registry->services()[PageEditor::class]->item->public);
+        self::assertSame(\SightPress\Core\Page\PublishedPages::class, $registry->services()[\SightPress\Core\Page\Contract\PublicPages::class]->item->class);
     }
 }

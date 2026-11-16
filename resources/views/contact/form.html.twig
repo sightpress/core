@@ -1,0 +1,27 @@
+{#
+    The contact form block. After a submission the page shows either the result in a status message or the form with
+    an error summary that gets focus. The hidden "{{ honeypot }}" field catches bots: it is hidden from everyone
+    (also from screen readers) and people leave it empty.
+#}
+{% import 'form/macros.html.twig' as f %}
+<section class="block-contact-form" id="{{ form.id }}-block" aria-label="{{ t('Contact form') }}">
+    {%- if sent %}
+    <div class="alert alert--success" role="status" tabindex="-1" autofocus>
+        <p>{{ success_text ?? t('Thank you. Your message has been sent.') }}</p>
+    </div>
+    {%- else %}
+    {{ f.error_summary(form) }}
+    {{ f.start(form, action) }}
+        <input type="hidden" name="form" value="{{ form.id }}">
+        <input type="hidden" name="return" value="{{ return }}">
+        {{ f.field(form, 'name') }}
+        {{ f.field(form, 'email') }}
+        {{ f.field(form, 'message') }}
+        <div hidden>
+            <label for="{{ form.id }}-{{ honeypot }}">{{ t('Leave this field empty') }}</label>
+            <input type="text" id="{{ form.id }}-{{ honeypot }}" name="{{ honeypot }}" value="" tabindex="-1" autocomplete="off">
+        </div>
+        {{ f.submit(submit_text ?? t('Send message')) }}
+    {{ f.end() }}
+    {%- endif %}
+</section>

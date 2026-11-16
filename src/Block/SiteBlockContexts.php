@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace SightPress\Core\Block;
 
 use SightPress\Core\Block\Contract\BlockContexts;
+use Psr\Http\Message\ServerRequestInterface;
+use SightPress\Core\Media\Contract\MediaFormats;
 use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Contract\MediaUrlGenerator;
 use SightPress\Core\Tenant\Site;
@@ -21,10 +23,11 @@ final readonly class SiteBlockContexts implements BlockContexts
         private MediaLibrary $media,
         private MediaUrlGenerator $urls,
         private DefaultBlockRenderer $renderer,
+        private MediaFormats $formats,
     ) {
     }
 
-    public function create(string $locale, string $baseUrl): BlockContext
+    public function create(string $locale, string $baseUrl, ?ServerRequestInterface $request = null): BlockContext
     {
         if (!in_array($locale, $this->site->locales, true)) {
             throw new BlockException(sprintf('The site isn\'t written in "%s".', $locale));
@@ -37,6 +40,8 @@ final readonly class SiteBlockContexts implements BlockContexts
             $this->media,
             $this->urls,
             $this->renderer,
+            $this->formats,
+            $request,
         );
     }
 }

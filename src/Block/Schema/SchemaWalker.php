@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SightPress\Core\Block\Schema;
 
 use Closure;
-use SightPress\Core\Media\Contract\MediaKind;
 
 /**
  * Visits every value in block data together with the part of the schema that describes it, so core can find rich
@@ -54,11 +53,11 @@ final class SchemaWalker
     }
 
     /**
-     * Media library files in the data, with where they are and the kind of file the field needs (null: any).
+     * Media library files in the data, with where they are and the field's format (which kind of file it needs).
      *
      * @param array<mixed> $schema
      *
-     * @return list<array{id: int, path: string, kind: MediaKind|null}>
+     * @return list<array{id: int, path: string, format: string}>
      */
     public static function mediaReferences(array $schema, mixed $value): array
     {
@@ -66,7 +65,7 @@ final class SchemaWalker
         self::walk($schema, $value, static function (array $schema, mixed $value, string $path) use (&$references): mixed {
             $format = $schema['format'] ?? null;
             if (is_string($format) && SchemaConstraints::isMediaFormat($format) && is_int($value)) {
-                $references[] = ['id' => $value, 'path' => $path, 'kind' => SchemaConstraints::mediaKind($format)];
+                $references[] = ['id' => $value, 'path' => $path, 'format' => $format];
             }
 
             return $value;

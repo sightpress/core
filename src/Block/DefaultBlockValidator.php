@@ -24,11 +24,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 final readonly class DefaultBlockValidator implements BlockValidator
 {
-    private const array KIND_MESSAGES = [
-        'image' => 'Choose a picture.',
-        'video' => 'Choose a video.',
-        'audio' => 'Choose an audio file.',
-        'document' => 'Choose a document, such as a PDF.',
+    /** Media formats that need one kind of file (and maybe one type): kind, MIME types or null, message. */
+    private const array MEDIA_FORMATS = [
+        SchemaConstraints::FORMAT_IMAGE => [MediaKind::Image, null, 'Choose a picture.'],
+        SchemaConstraints::FORMAT_VIDEO => [MediaKind::Video, null, 'Choose a video.'],
+        SchemaConstraints::FORMAT_AUDIO => [MediaKind::Audio, null, 'Choose an audio file.'],
+        SchemaConstraints::FORMAT_DOCUMENT => [MediaKind::Document, null, 'Choose a document, such as a PDF.'],
+        SchemaConstraints::FORMAT_CAPTIONS => [MediaKind::Document, ['text/vtt'], 'Choose a captions file in WebVTT format (.vtt).'],
     ];
 
     public function __construct(
@@ -52,8 +54,11 @@ final readonly class DefaultBlockValidator implements BlockValidator
             $file = $found[$reference['id']] ?? null;
             if ($file === null) {
                 $violations[] = new BlockViolation($reference['pointer'], 'This file isn\'t in the media library any more. Choose another one.');
-            } elseif ($reference['kind'] !== null && $file->kind() !== $reference['kind']) {
-                $violations[] = new BlockViolation($reference['pointer'], self::KIND_MESSAGES[$reference['kind']->value]);
+            } elseif (isset(self::MEDIA_FORMATS[$reference['format']])) {
+                [$kind, $mimeTypes, $message] = self::MEDIA_FORMATS[$reference['format']];
+                if ($file->kind() !== $kind || ($mimeTypes !== null && !in_array($file->mimeType(), $mimeTypes, true))) {
+                    $violations[] = new BlockViolation($reference['pointer'], $message);
+                }
             }
         }
         if ($violations !== []) {
@@ -67,7 +72,7 @@ final readonly class DefaultBlockValidator implements BlockValidator
      * @param list<mixed>                              $blocks
      * @param list<BlockViolation>                     $violations
      * @param list<BlockIssue>                         $issues
-     * @param list<array{id: int, pointer: string, kind: MediaKind|null}>    $media
+     * @param list<array{id: int, pointer: string, format: string}>    $media
      *
      * @return list<array{type: string, version: int, data: array<string, mixed>}>
      */
@@ -88,7 +93,7 @@ final readonly class DefaultBlockValidator implements BlockValidator
     /**
      * @param list<BlockViolation>                  $violations
      * @param list<BlockIssue>                      $issues
-     * @param list<array{id: int, pointer: string, kind: MediaKind|null}> $media
+     * @param list<array{id: int, pointer: string, format: string}> $media
      *
      * @return array{type: string, version: int, data: array<string, mixed>}|null
      */
@@ -137,7 +142,7 @@ final readonly class DefaultBlockValidator implements BlockValidator
             ? $this->sanitizer->sanitize($value)
             : $value);
         foreach (SchemaWalker::mediaReferences($schema, $data) as $reference) {
-            $media[] = ['id' => $reference['id'], 'pointer' => $pointer . '/data' . $reference['path'], 'kind' => $reference['kind']];
+            $media[] = ['id' => $reference['id'], 'pointer' => $pointer . '/data' . $reference['path'], 'format' => $reference['format']];
         }
 
         if ($type instanceof ParentBlockType) {

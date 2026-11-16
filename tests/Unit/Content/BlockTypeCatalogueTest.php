@@ -9,6 +9,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Block\Type\HeadingBlock;
+use SightPress\Core\Contact\ContactFormBlock;
+use SightPress\Core\Tests\Support\AuthFixture;
 use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleLoader;
@@ -26,12 +28,13 @@ final class BlockTypeCatalogueTest extends TestCase
     {
         $registry = ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue(CoreModules::candidates())->resolve(new ModuleSelection()));
 
-        $catalogue = BlockTypeCatalogue::fromRegistry($registry, new ContainerBuilder()->build());
+        $catalogue = BlockTypeCatalogue::fromRegistry($registry, new ContainerBuilder()->addDefinitions([ContactFormBlock::class => new ContactFormBlock(new AuthFixture()->templates)])->build());
 
-        self::assertSame(['call_to_action', 'columns', 'heading', 'image', 'rich_text'], array_keys($catalogue->all()));
+        self::assertSame(['audio', 'call_to_action', 'columns', 'contact_form', 'file_download', 'gallery', 'heading', 'image', 'rich_text', 'video'], array_keys($catalogue->all()));
         self::assertInstanceOf(HeadingBlock::class, $catalogue->get('heading'));
         self::assertNull($catalogue->get('missing'));
         self::assertSame('block', $catalogue->moduleOf('heading'));
+        self::assertSame('contact', $catalogue->moduleOf('contact_form'));
         self::assertNull($catalogue->moduleOf('missing'));
     }
 

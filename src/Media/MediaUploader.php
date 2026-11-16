@@ -88,6 +88,9 @@ final readonly class MediaUploader
         if ($format === null) {
             throw new MediaException('This type of file can\'t be uploaded. ' . $this->types->summary());
         }
+        if ($format->mimeType === 'text/vtt' && !self::isWebVtt($localFile)) {
+            throw new MediaException('This captions file isn\'t in WebVTT format: its first line must be "WEBVTT".');
+        }
         $max = $this->limits->maxBytes($format->kind);
         if ($size > $max) {
             throw new MediaException(sprintf(
@@ -153,6 +156,13 @@ final readonly class MediaUploader
         $this->events->dispatch(new MediaUploaded((int) $media->id(), $key, $format->kind, $uploadedBy));
 
         return new UploadResult($media, false);
+    }
+
+    private static function isWebVtt(string $localFile): bool
+    {
+        $start = (string) file_get_contents($localFile, length: 16);
+
+        return preg_match('/^(?:\xEF\xBB\xBF)?WEBVTT(?:[ \t\r\n]|$)/', $start) === 1;
     }
 
     private static function plural(MediaKind $kind): string

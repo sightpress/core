@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SightPress\Core\Block\Schema;
 
 use SightPress\Core\Block\BlockException;
-use SightPress\Core\Media\Contract\MediaKind;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Callback;
@@ -28,7 +27,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * Supported: `type` (one or a list), `properties`, `required`, `additionalProperties` (`false` refuses fields that
  * aren't listed), `enum`, `minLength`, `maxLength`, `pattern`, `minimum`, `maximum`, `items`, `minItems`,
  * `maxItems`, `format` (`link`, `email`, and `media` for the id of any file in the media library or `media-image`,
- * `media-video`, `media-audio`, `media-document` for one kind of file) and `contentMediaType: text/html` (rich
+ * `media-video`, `media-audio`, `media-document`, `media-captions` (a WebVTT file) for one kind of file) and `contentMediaType: text/html` (rich
  * text, sanitised on save). `title`, `description`, `default`, `examples` and `$comment` are notes and ignored.
  * Any other keyword is a mistake in the block type and throws, so a rule is never skipped silently.
  */
@@ -40,6 +39,13 @@ final class SchemaConstraints
     public const string FORMAT_VIDEO = 'media-video';
     public const string FORMAT_AUDIO = 'media-audio';
     public const string FORMAT_DOCUMENT = 'media-document';
+    public const string FORMAT_CAPTIONS = 'media-captions';
+
+    /** Formats of media library ids. */
+    public const array MEDIA_FORMATS = [
+        self::FORMAT_MEDIA, self::FORMAT_IMAGE, self::FORMAT_VIDEO, self::FORMAT_AUDIO, self::FORMAT_DOCUMENT,
+        self::FORMAT_CAPTIONS,
+    ];
     public const string FORMAT_EMAIL = 'email';
     public const string HTML = 'text/html';
 
@@ -72,15 +78,7 @@ final class SchemaConstraints
 
     public static function isMediaFormat(string $format): bool
     {
-        return $format === self::FORMAT_MEDIA || self::mediaKind($format) !== null;
-    }
-
-    /**
-     * The kind of file a `media-<kind>` format asks for; null for `media` (any file) and other formats.
-     */
-    public static function mediaKind(string $format): ?MediaKind
-    {
-        return str_starts_with($format, 'media-') ? MediaKind::tryFrom(substr($format, 6)) : null;
+        return in_array($format, self::MEDIA_FORMATS, true);
     }
 
     public static function isLink(string $value): bool
@@ -200,7 +198,7 @@ final class SchemaConstraints
                 }
             })],
             self::FORMAT_EMAIL => [new Email(message: 'Enter an email address such as name@example.org.')],
-            self::FORMAT_MEDIA, self::FORMAT_IMAGE, self::FORMAT_VIDEO, self::FORMAT_AUDIO, self::FORMAT_DOCUMENT => [
+            self::FORMAT_MEDIA, self::FORMAT_IMAGE, self::FORMAT_VIDEO, self::FORMAT_AUDIO, self::FORMAT_DOCUMENT, self::FORMAT_CAPTIONS => [
                 new GreaterThanOrEqual(value: 1, message: 'Choose a file from the media library.'),
             ],
             default => throw self::unsupported($blockType, $at, sprintf('the format %s', json_encode($format))),

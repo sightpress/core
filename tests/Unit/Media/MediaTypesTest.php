@@ -29,6 +29,8 @@ final class MediaTypesTest extends TestCase
         yield 'pdf' => ['application/pdf', 'report.pdf', 'application/pdf', MediaKind::Document, 'pdf'];
         yield 'csv detected as text' => ['text/plain', 'figures.CSV', 'text/csv', MediaKind::Document, 'csv'];
         yield 'text' => ['text/plain', 'notes.md', 'text/plain', MediaKind::Document, 'txt'];
+        yield 'captions detected as text' => ['text/plain', 'captions.VTT', 'text/vtt', MediaKind::Document, 'vtt'];
+        yield 'captions' => ['text/vtt', 'captions.vtt', 'text/vtt', MediaKind::Document, 'vtt'];
         yield 'upper-case type' => ['Application/ZIP', 'files.zip', 'application/zip', MediaKind::Document, 'zip'];
     }
 
@@ -54,9 +56,18 @@ final class MediaTypesTest extends TestCase
     {
         self::assertSame(
             'You can upload pictures (JPEG, PNG, WebP, GIF), video (MP4, WebM), audio (MP3, M4A, Ogg, WAV) and documents '
-            . '(PDF, Word, Excel, PowerPoint, OpenDocument text, OpenDocument spreadsheet, OpenDocument presentation, plain text, CSV, ZIP).',
+            . '(PDF, Word, Excel, PowerPoint, OpenDocument text, OpenDocument spreadsheet, OpenDocument presentation, plain text, CSV, WebVTT captions, ZIP).',
             new MediaTypes()->summary(),
         );
+    }
+
+    public function testNamesTheTypesForPeople(): void
+    {
+        $types = new MediaTypes();
+
+        self::assertSame('PDF', $types->label('application/pdf'));
+        self::assertSame('WebVTT captions', $types->label('text/vtt'));
+        self::assertNull($types->label('image/svg+xml'));
     }
 
     public function testKindsKnowWhetherTheyAreInlineAndSpoken(): void

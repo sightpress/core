@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media;
 
+use SightPress\Core\Media\Contract\MediaFormats;
 use SightPress\Core\Media\Contract\MediaKind;
 
 /**
  * The allow-list of file types the media library accepts, matched on the type finfo detects from the content,
  * never on the name or the type the browser sent. SVG is not accepted: it can carry scripts.
  */
-final readonly class MediaTypes
+final readonly class MediaTypes implements MediaFormats
 {
     /**
      * Detected types that stand for more than their own format, or that finfo spells differently: CSV files are
      * usually detected as plain text.
      */
     private const array DETECTED = [
-        'text/plain' => ['text/plain', 'text/csv'],
+        'text/plain' => ['text/plain', 'text/csv', 'text/vtt'],
         'audio/x-m4a' => ['audio/mp4'],
         'audio/x-wav' => ['audio/wav'],
         'audio/wave' => ['audio/wav'],
@@ -59,6 +60,17 @@ final readonly class MediaTypes
         }
 
         return $candidates[0] ?? null;
+    }
+
+    public function label(string $mimeType): ?string
+    {
+        foreach (self::all() as $format) {
+            if ($format->mimeType === $mimeType) {
+                return $format->label;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -107,6 +119,7 @@ final readonly class MediaTypes
             new MediaFormat('application/vnd.oasis.opendocument.presentation', $document, 'odp', 'OpenDocument presentation'),
             new MediaFormat('text/plain', $document, 'txt', 'plain text'),
             new MediaFormat('text/csv', $document, 'csv', 'CSV'),
+            new MediaFormat('text/vtt', $document, 'vtt', 'WebVTT captions'),
             new MediaFormat('application/zip', $document, 'zip', 'ZIP'),
         ];
     }

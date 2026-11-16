@@ -6,10 +6,14 @@ namespace SightPress\Core\Tests\Support;
 
 use DateTimeImmutable;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use SightPress\Core\Page\Entity\Page;
+use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
+use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Page\PageRepository;
 use SightPress\Core\Tenant\OwnerType;
 use SightPress\Core\Tenant\Site;
+use SightPress\Module\Block\BlockType;
 use SightPress\Core\Tenant\SiteStatus;
 use SightPress\Core\Tenant\SiteStorage;
 
@@ -28,9 +32,12 @@ final class PageFixture implements EventDispatcherInterface
     /** @var list<object> */
     public array $events = [];
 
-    public function __construct()
+    /**
+     * @param list<BlockType> $blockTypes block types next to core's
+     */
+    public function __construct(?CoreSiteDatabase $database = null, private readonly array $blockTypes = [])
     {
-        $this->database = new CoreSiteDatabase();
+        $this->database = $database ?? new CoreSiteDatabase();
         $this->clock = new FixedClock();
         $this->site = self::site(['en-GB', 'pt-PT']);
     }
@@ -68,8 +75,22 @@ final class PageFixture implements EventDispatcherInterface
         return new PageRepository($this->database->entityManager);
     }
 
+    /**
+     * Creates a page and publishes it (the workflow does this in the app).
+     *
+     * @param list<mixed> $blocks
+     */
+    public function published(string $title, array $blocks = [], ?Page $parent = null, string $locale = 'en-GB'): Page
+    {
+        $page = $this->editor()->create($locale, new PageContent($title, null, null, null, $blocks), $parent);
+        $page->changeState(PageState::Published, $this->clock->now());
+        $this->repository()->flush();
+
+        return $page;
+    }
+
     public function editor(): PageEditor
     {
-        return new PageEditor($this->repository(), $this->site, $this->clock, $this, new BlockFixture([], $this->database)->validator());
+        return new PageEditor($this->repository(), $this->site, $this->clock, $this, new BlockFixture($this->blockTypes, $this->database)->validator());
     }
 }

@@ -73,6 +73,20 @@ final class MediaUploaderTest extends TestCase
         self::assertSame($csv, $this->fixture->storage->read(MediaFiles::path($media->key(), 'csv')));
     }
 
+    public function testAcceptsOnlyRealWebVttCaptions(): void
+    {
+        $uploader = $this->fixture->uploader();
+
+        $captions = $uploader->upload($this->fixture->file('a.vtt', "WEBVTT\n\n00:00.000 --> 00:02.000\nHello\n"), 'Captions EN.vtt', 1)->media;
+        self::assertSame(['text/vtt', 'captions-en.vtt'], [$captions->mimeType(), $captions->fileName()]);
+        self::assertSame('text/vtt', $uploader->upload($this->fixture->file('b.vtt', "\xEF\xBB\xBFWEBVTT - With a title\n"), 'b.vtt', 1)->media->mimeType());
+        self::assertSame('text/vtt', $uploader->upload($this->fixture->file('c.vtt', 'WEBVTT'), 'c.vtt', 1)->media->mimeType());
+
+        $this->expectException(MediaException::class);
+        $this->expectExceptionMessage('This captions file isn\'t in WebVTT format: its first line must be "WEBVTT".');
+        $uploader->upload($this->fixture->file('d.vtt', "Hello, these are my notes.\n"), 'subtitles.vtt', 1);
+    }
+
     public function testTheSameFileIsStoredOnce(): void
     {
         $uploader = $this->fixture->uploader();

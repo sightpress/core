@@ -33,6 +33,8 @@ final class MediaKindsBlockType implements BlockType
             'video' => ['type' => 'integer', 'format' => 'media-video'],
             'audio' => ['type' => 'integer', 'format' => 'media-audio'],
             'document' => ['type' => 'integer', 'format' => 'media-document'],
+            'captions' => ['type' => 'integer', 'format' => 'media-captions'],
+            'any' => ['type' => 'integer', 'format' => 'media'],
         ]];
     }
 

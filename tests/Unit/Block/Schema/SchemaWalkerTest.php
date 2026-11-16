@@ -9,7 +9,6 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Block\Schema\SchemaConstraints;
 use SightPress\Core\Block\Schema\SchemaWalker;
-use SightPress\Core\Media\Contract\MediaKind;
 
 #[CoversClass(SchemaWalker::class)]
 #[UsesClass(SchemaConstraints::class)]
@@ -42,10 +41,10 @@ final class SchemaWalkerTest extends TestCase
 
         self::assertSame(
             [
-                ['id' => 4, 'path' => '/cover', 'kind' => null],
-                ['id' => 7, 'path' => '/items/0/file', 'kind' => MediaKind::Video],
-                ['id' => 8, 'path' => '/items/1/file', 'kind' => MediaKind::Video],
-                ['id' => 9, 'path' => '/a~1b~0', 'kind' => MediaKind::Document],
+                ['id' => 4, 'path' => '/cover', 'format' => 'media'],
+                ['id' => 7, 'path' => '/items/0/file', 'format' => 'media-video'],
+                ['id' => 8, 'path' => '/items/1/file', 'format' => 'media-video'],
+                ['id' => 9, 'path' => '/a~1b~0', 'format' => 'media-document'],
             ],
             SchemaWalker::mediaReferences(self::SCHEMA, $data),
         );

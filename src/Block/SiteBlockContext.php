@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Block;
 
+use NumberFormatter;
+use Psr\Http\Message\ServerRequestInterface;
+use SightPress\Core\Block\Contract\HttpBlockContext;
 use SightPress\Core\Media\Contract\MediaFile;
+use SightPress\Core\Media\Contract\MediaFormats;
 use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Contract\MediaUrlGenerator;
-use SightPress\Module\Block\BlockContext;
 
 /**
  * Where blocks are rendered on a site: the locale, the site's address and its media library. Core's own block
- * types also use it to render the blocks inside columns and to get a picture's sizes; files are looked up once
- * for the whole page ({@see preload()}).
+ * types also use it to render the blocks inside columns, to get a picture's sizes and a file's type and size; files
+ * are looked up once for the whole page ({@see preload()}). When the page is rendered for a visitor it carries the
+ * request, for blocks with forms.
  */
-final class SiteBlockContext implements BlockContext
+final class SiteBlockContext implements HttpBlockContext
 {
     /** @var array<int, MediaFile|null> */
     private array $files = [];
@@ -32,7 +36,14 @@ final class SiteBlockContext implements BlockContext
         private readonly MediaLibrary $media,
         private readonly MediaUrlGenerator $urls,
         private readonly DefaultBlockRenderer $renderer,
+        private readonly MediaFormats $formats,
+        private readonly ?ServerRequestInterface $request = null,
     ) {
+    }
+
+    public function request(): ?ServerRequestInterface
+    {
+        return $this->request;
     }
 
     public function locale(): string
@@ -88,6 +99,26 @@ final class SiteBlockContext implements BlockContext
     }
 
     /**
+     * Type and size of a file for people, in the content's locale: "PDF, 2.3 MB", "Word, 840 KB".
+     */
+    public function fileDetails(MediaFile $file): string
+    {
+        $label = $this->formats->label($file->mimeType()) ?? strtoupper(pathinfo($file->fileName(), PATHINFO_EXTENSION));
+        [$value, $unit] = [(float) $file->size(), 'B'];
+        foreach (['KB', 'MB', 'GB'] as $next) {
+            if ($value < 1024) {
+                break;
+            }
+            $value /= 1024;
+            $unit = $next;
+        }
+        $number = new NumberFormatter($this->locale, NumberFormatter::DECIMAL);
+        $number->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $unit !== 'B' && $value < 10 ? 1 : 0);
+
+        return $label . ', ' . $number->format($value) . ' ' . $unit;
+    }
+
+    /**
      * Looks up the published files with these ids in one go.
      *
      * @param list<int> $ids
@@ -120,7 +151,10 @@ final class SiteBlockContext implements BlockContext
         return $this->renderer->markdown($blocks, $this);
     }
 
-    private function file(int $id): ?MediaFile
+    /**
+     * A published file of the media library, or null.
+     */
+    public function file(int $id): ?MediaFile
     {
         $this->preload([$id]);
 

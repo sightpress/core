@@ -54,32 +54,62 @@ final class ImageBlock implements BlockType
 
     public function render(array $data, BlockContext $context): string
     {
-        $id = $data['media'] ?? null;
-        if (!is_int($id)) {
+        $img = self::img($data, $context, '(max-width: 60rem) 100vw, 60rem');
+        if ($img === null) {
             return '';
         }
-        $image = $context instanceof SiteBlockContext ? $context->image($id) : null;
-        $src = $context instanceof SiteBlockContext ? ($image['src'] ?? null) : $context->mediaUrl((string) $id);
-        if ($src === null) {
-            return '';
-        }
-
-        $attributes = ' src="' . Html::e($src) . '"';
-        if (($image['srcset'] ?? '') !== '') {
-            $attributes .= ' srcset="' . Html::e($image['srcset'] ?? '') . '" sizes="(max-width: 60rem) 100vw, 60rem"';
-        }
-        if (isset($image['width'], $image['height'])) {
-            $attributes .= sprintf(' width="%d" height="%d"', $image['width'], $image['height']);
-        }
-        $attributes .= ' alt="' . Html::e(self::alt($data)) . '" loading="lazy" decoding="async"';
         $caption = trim(Html::text($data, 'caption'));
 
-        return '<figure class="block-image"><img' . $attributes . '>'
+        return '<figure class="block-image">' . $img
             . ($caption === '' ? '' : '<figcaption>' . Html::e($caption) . '</figcaption>')
             . '</figure>';
     }
 
+    /**
+     * The `<img>` for picture data (`media`, `alt`, `decorative`), or null when the file can't be shown. On a site,
+     * only published pictures are shown, with every smaller copy and their size.
+     *
+     * @param array<string, mixed> $data
+     */
+    public static function img(array $data, BlockContext $context, string $sizes): ?string
+    {
+        $id = $data['media'] ?? null;
+        if (!is_int($id)) {
+            return null;
+        }
+        $image = $context instanceof SiteBlockContext ? $context->image($id) : null;
+        $src = $context instanceof SiteBlockContext ? ($image['src'] ?? null) : $context->mediaUrl((string) $id);
+        if ($src === null) {
+            return null;
+        }
+
+        $attributes = ' src="' . Html::e($src) . '"';
+        if (($image['srcset'] ?? '') !== '') {
+            $attributes .= ' srcset="' . Html::e($image['srcset'] ?? '') . '" sizes="' . Html::e($sizes) . '"';
+        }
+        if (isset($image['width'], $image['height'])) {
+            $attributes .= sprintf(' width="%d" height="%d"', $image['width'], $image['height']);
+        }
+
+        return '<img' . $attributes . ' alt="' . Html::e(self::alt($data)) . '" loading="lazy" decoding="async">';
+    }
+
     public function renderMarkdown(array $data, BlockContext $context): string
+    {
+        return self::markdown($data, $context);
+    }
+
+    public function structuredData(array $data, BlockContext $context): ?array
+    {
+        return self::imageObject($data, $context);
+    }
+
+    /**
+     * Markdown for picture data: the image with its alt text, and the caption.
+     *
+     * @param array<string, mixed> $data
+     */
+    public static function markdown(array $data, BlockContext $context): string
     {
         $id = $data['media'] ?? null;
         $url = is_int($id) ? $context->mediaUrl((string) $id) : null;
@@ -88,15 +118,19 @@ final class ImageBlock implements BlockType
         }
         $caption = trim(Html::text($data, 'caption'));
         $alt = self::alt($data);
-        if ($alt === '' && $caption === '') {
-            return '';
-        }
         $image = $alt === '' ? '' : '![' . Html::markdown($alt) . '](' . $url . ')';
 
         return trim($image . ($caption === '' ? '' : "\n\n_" . Html::markdown($caption) . '_'));
     }
 
-    public function structuredData(array $data, BlockContext $context): ?array
+    /**
+     * A schema.org `ImageObject` for picture data with alt text, or null.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function imageObject(array $data, BlockContext $context): ?array
     {
         $id = $data['media'] ?? null;
         $url = is_int($id) ? $context->mediaUrl((string) $id) : null;

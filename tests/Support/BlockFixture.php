@@ -20,6 +20,7 @@ use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\Entity\Media;
 use SightPress\Core\Media\MediaFormat;
 use SightPress\Core\Media\MediaRepository;
+use SightPress\Core\Media\MediaTypes;
 use SightPress\Core\Media\OriginMediaUrlGenerator;
 use SightPress\Core\Tenant\Site;
 use SightPress\Module\Block\BlockType;
@@ -64,7 +65,7 @@ final class BlockFixture
 
     public function contexts(?Site $site = null): SiteBlockContexts
     {
-        return new SiteBlockContexts($site ?? PageFixture::site(['en-GB', 'pt-BR']), $this->media(), new OriginMediaUrlGenerator(), $this->renderer());
+        return new SiteBlockContexts($site ?? PageFixture::site(['en-GB', 'pt-BR']), $this->media(), new OriginMediaUrlGenerator(), $this->renderer(), new MediaTypes());
     }
 
     public function context(string $locale = 'en-GB'): SiteBlockContext
@@ -80,19 +81,22 @@ final class BlockFixture
      *
      * @param list<int> $variants
      */
-    public function addMedia(bool $published = true, MediaKind $kind = MediaKind::Image, array $variants = [320, 640], string $fileName = 'lighthouse.jpg'): int
+    public function addMedia(bool $published = true, MediaKind $kind = MediaKind::Image, array $variants = [320, 640], string $fileName = 'lighthouse.jpg', ?MediaFormat $format = null, int $size = 2048): int
     {
         $now = new DateTimeImmutable('2026-11-16 10:00:00 UTC');
-        $format = $kind === MediaKind::Image
-            ? new MediaFormat('image/jpeg', MediaKind::Image, 'jpg', 'JPEG')
-            : new MediaFormat('application/pdf', MediaKind::Document, 'pdf', 'PDF');
+        $format ??= match ($kind) {
+            MediaKind::Image => new MediaFormat('image/jpeg', MediaKind::Image, 'jpg', 'JPEG'),
+            MediaKind::Video => new MediaFormat('video/mp4', MediaKind::Video, 'mp4', 'MP4'),
+            MediaKind::Audio => new MediaFormat('audio/mpeg', MediaKind::Audio, 'mp3', 'MP3'),
+            MediaKind::Document => new MediaFormat('application/pdf', MediaKind::Document, 'pdf', 'PDF'),
+        };
         $media = new Media(
             bin2hex(random_bytes(16)),
             hash('sha256', random_bytes(16)),
             $format,
             $fileName,
             $fileName,
-            2048,
+            $size,
             $kind === MediaKind::Image ? 1280 : null,
             $kind === MediaKind::Image ? 640 : null,
             $kind === MediaKind::Image ? $variants : [],
@@ -105,5 +109,18 @@ final class BlockFixture
         $this->media()->save($media);
 
         return (int) $media->id();
+    }
+
+    /**
+     * A published WebVTT captions file.
+     */
+    public function addCaptions(): int
+    {
+        return $this->addMedia(kind: MediaKind::Document, fileName: 'captions.vtt', format: new MediaFormat('text/vtt', MediaKind::Document, 'vtt', 'WebVTT captions'));
+    }
+
+    public function key(int $id): string
+    {
+        return (string) $this->media()->find($id)?->key();
     }
 }

@@ -7,6 +7,7 @@ namespace SightPress\Core\Media;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageManagerInterface;
+use SightPress\Core\Media\Contract\MediaFormats;
 use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Contract\MediaUrlGenerator;
 use SightPress\Core\Media\Http\MediaFileHandler;
@@ -45,6 +46,7 @@ final class MediaModule implements ModuleInterface
         }
         $services->autowire(MediaRepository::class, public: true);
         $services->autowire(MediaRepository::class, MediaLibrary::class, public: true);
+        $services->autowire(MediaTypes::class, MediaFormats::class, public: true);
         $services->autowire(MediaUploader::class, public: true);
         $services->autowire(OriginMediaUrlGenerator::class, MediaUrlGenerator::class, public: true);
         $services->autowire(MediaAccess::class);

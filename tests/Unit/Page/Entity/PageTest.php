@@ -130,6 +130,16 @@ final class PageTest extends TestCase
         $page->setLayout('Home Page', $later);
     }
 
+    public function testChangesState(): void
+    {
+        $page = new Page(null, 0, null, $this->now);
+        $later = $this->now->modify('+1 hour');
+
+        $page->changeState(\SightPress\Core\Rbac\Contract\PageState::InReview, $later);
+
+        self::assertSame([\SightPress\Core\Rbac\Contract\PageState::InReview, $later], [$page->state(), $page->updatedAt()]);
+    }
+
     public function testSnapshotsEverythingARevisionKeeps(): void
     {
         $parent = self::withId(new Page(null, 0, null, $this->now), 3);

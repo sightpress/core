@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page;
 
+use SightPress\Core\Page\Contract\PublicPages;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
@@ -35,5 +36,6 @@ final class PageModule implements ModuleInterface
         $services = $registrar->services();
         $services->autowire(PageRepository::class, public: true);
         $services->autowire(PageEditor::class, public: true);
+        $services->autowire(PublishedPages::class, PublicPages::class, public: true);
     }
 }

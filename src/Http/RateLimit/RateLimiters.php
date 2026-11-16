@@ -11,7 +11,7 @@ use Symfony\Component\RateLimiter\Storage\StorageInterface;
 
 /**
  * Named rate limits. `write` caps state-changing requests per client; `sign_in` caps sign-in attempts and
- * `password_reset` caps "forgot your password" emails. Modules ask for a limiter by policy and key, for example the
+ * `password_reset` caps "forgot your password" emails, `contact_form` caps contact form messages per client. Modules ask for a limiter by policy and key, for example the
  * client's address or an email.
  */
 final class RateLimiters
@@ -21,6 +21,7 @@ final class RateLimiters
         'write' => ['policy' => 'sliding_window', 'limit' => 60, 'interval' => '1 minute'],
         'sign_in' => ['policy' => 'sliding_window', 'limit' => 5, 'interval' => '15 minutes'],
         'password_reset' => ['policy' => 'sliding_window', 'limit' => 3, 'interval' => '1 hour'],
+        'contact_form' => ['policy' => 'sliding_window', 'limit' => 5, 'interval' => '10 minutes'],
     ];
 
     /** @var array<string, RateLimiterFactory> */
