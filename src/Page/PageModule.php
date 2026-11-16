@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page;
 
+use SightPress\Core\Page\Contract\PageOverview;
 use SightPress\Core\Page\Contract\PageTransitioned;
 use SightPress\Core\Page\Contract\PublicPages;
 use SightPress\Core\Page\Publish\PublishChecker;
@@ -48,6 +49,7 @@ final class PageModule implements ModuleInterface
         $services->autowire(PageRepository::class, public: true);
         $services->autowire(PageEditor::class, public: true);
         $services->autowire(PublishedPages::class, PublicPages::class, public: true);
+        $services->autowire(PageOverviewQuery::class, PageOverview::class, public: true);
         $services->autowire(PublishChecker::class, public: true);
         $services->autowire(PageWorkflow::class, public: true);
         $services->autowire(ReviewRequestMailer::class);

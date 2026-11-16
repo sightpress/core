@@ -1,0 +1,54 @@
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Dashboard') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Dashboard') }}</h1>
+{%- if drafts is not null %}
+<section class="admin-panel" aria-labelledby="dashboard-drafts">
+    <h2 id="dashboard-drafts">{{ t('Your drafts') }}</h2>
+    {%- if drafts is empty %}
+    <p>{{ t('You have no drafts.') }}</p>
+    {%- else %}
+    {{ _self.pages(drafts) }}
+    {%- endif %}
+</section>
+{%- endif %}
+{%- if reviews is not null %}
+<section class="admin-panel" aria-labelledby="dashboard-reviews">
+    <h2 id="dashboard-reviews">{{ t('Waiting for review') }}</h2>
+    {%- if reviews is empty %}
+    <p>{{ t('No pages are waiting for review.') }}</p>
+    {%- else %}
+    {{ _self.pages(reviews) }}
+    {%- endif %}
+</section>
+{%- endif %}
+<section class="admin-panel" aria-labelledby="dashboard-activity">
+    <h2 id="dashboard-activity">{{ t('Recent activity') }}</h2>
+    {%- if activity is empty %}
+    <p>{{ t('Nothing has changed yet.') }}</p>
+    {%- else %}
+    <ul class="admin-list">
+        {%- for item in activity %}
+        <li>
+            {%- if item.by %}
+            {{ t('{name} saved “{title}”', {name: item.by, title: item.change.page.title}) }}
+            {%- else %}
+            {{ t('“{title}” was saved', {title: item.change.page.title}) }}
+            {%- endif %}
+            <span class="admin-list__meta"><time datetime="{{ item.change.savedAt|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ item.change.savedAt|user_datetime }}</time></span>
+        </li>
+        {%- endfor %}
+    </ul>
+    {%- endif %}
+</section>
+{% endblock %}
+{% macro pages(pages) %}
+    <ul class="admin-list">
+        {%- for page in pages %}
+        <li>
+            <span lang="{{ page.locale }}">{{ page.title }}</span>
+            <span class="admin-list__meta">{{ t('Changed') }} <time datetime="{{ page.updatedAt|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ page.updatedAt|user_datetime }}</time></span>
+        </li>
+        {%- endfor %}
+    </ul>
+{% endmacro %}

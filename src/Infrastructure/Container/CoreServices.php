@@ -31,6 +31,7 @@ use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleServices;
+use SightPress\Core\Navigation\AdminNavigation;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Tenant\FileSiteRepository;
 use SightPress\Core\Tenant\SiteContainerFactory;
@@ -119,6 +120,7 @@ final class CoreServices
                 ModuleServices::definitions($modules, []),
             )),
             PermissionCatalogue::class => factory(static fn (): PermissionCatalogue => PermissionCatalogue::fromRegistry($modules)),
+            AdminNavigation::class => factory(static fn (): AdminNavigation => AdminNavigation::fromRegistry($modules)),
             BlockTypeCatalogue::class => factory(
                 static fn (ContainerInterface $container): BlockTypeCatalogue => BlockTypeCatalogue::fromRegistry($modules, $container),
             ),

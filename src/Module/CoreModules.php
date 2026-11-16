@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Module;
 
+use SightPress\Core\Admin\AdminModule;
 use SightPress\Core\Auth\AuthModule;
 use SightPress\Core\Block\BlockModule;
 use SightPress\Core\Contact\ContactModule;
@@ -35,6 +36,7 @@ final class CoreModules
             new ModuleCandidate(new BlockModule(), 'sightpress/core'),
             new ModuleCandidate(new PageModule(), 'sightpress/core'),
             new ModuleCandidate(new ContactModule(), 'sightpress/core'),
+            new ModuleCandidate(new AdminModule(), 'sightpress/core'),
         ];
     }
 

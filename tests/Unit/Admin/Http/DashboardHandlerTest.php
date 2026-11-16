@@ -1,0 +1,95 @@
+<?php
+
+declare(strict_types=1);
+
+namespace SightPress\Core\Tests\Unit\Admin\Http;
+
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
+use PHPUnit\Framework\TestCase;
+use SightPress\Core\Admin\Http\DashboardHandler;
+use SightPress\Core\Page\Entity\Page;
+use SightPress\Core\Page\PageContent;
+use SightPress\Core\Page\PageOverviewQuery;
+use SightPress\Core\Rbac\Contract\PageState;
+use SightPress\Core\Tests\Support\AdminFixture;
+use SightPress\Core\Tests\Support\PageFixture;
+use SightPress\Core\User\Entity\User;
+
+#[CoversClass(DashboardHandler::class)]
+#[UsesNamespace('SightPress\Core')]
+final class DashboardHandlerTest extends TestCase
+{
+    private AdminFixture $admin;
+
+    private PageFixture $pages;
+
+    protected function setUp(): void
+    {
+        $this->admin = new AdminFixture();
+        $this->pages = new PageFixture($this->admin->auth->database);
+    }
+
+    public function testContributorsSeeTheirDraftsAndTheLatestChanges(): void
+    {
+        $cleo = $this->admin->auth->user('cleo@example.org', 'contributor');
+        $this->page('Opening hours', $cleo);
+        $this->page('Summer reading', $cleo, PageState::InReview);
+        $this->pages->editor()->create('en-GB', new PageContent('Made by the console'));
+
+        $html = $this->dashboard($cleo);
+
+        self::assertStringContainsString('<h2 id="dashboard-drafts">Your drafts</h2>', $html);
+        self::assertStringContainsString('<span lang="en-GB">Opening hours</span>', $html);
+        self::assertStringNotContainsString('<span lang="en-GB">Summer reading</span>', $html);
+        self::assertStringNotContainsString('Waiting for review', $html);
+        self::assertStringContainsString('Ada saved “Opening hours”', $html);
+        self::assertStringContainsString('“Made by the console” was saved', $html);
+        self::assertMatchesRegularExpression('#<time datetime="2026-11-14T12:00:00Z">[^<]+</time>#', $html);
+    }
+
+    public function testEditorsSeeThePagesWaitingForReview(): void
+    {
+        $ada = $this->admin->auth->user();
+        $cleo = $this->admin->auth->user('cleo@example.org', 'contributor');
+        $this->page('Summer reading', $cleo, PageState::InReview);
+
+        $html = $this->dashboard($ada);
+
+        self::assertStringContainsString('You have no drafts.', $html);
+        self::assertStringContainsString('<h2 id="dashboard-reviews">Waiting for review</h2>', $html);
+        self::assertStringContainsString('<span lang="en-GB">Summer reading</span>', $html);
+    }
+
+    public function testPeopleWhoDoNotWritePagesSeeOnlyTheActivity(): void
+    {
+        $max = $this->admin->auth->user('max@example.org', null);
+
+        $html = $this->dashboard($max);
+
+        self::assertStringNotContainsString('Your drafts', $html);
+        self::assertStringNotContainsString('Waiting for review', $html);
+        self::assertStringContainsString('Nothing has changed yet.', $html);
+        self::assertStringNotContainsString('No pages are waiting for review.', $html);
+    }
+
+    private function dashboard(User $user): string
+    {
+        $handler = new DashboardHandler(
+            $this->admin->shell(),
+            new PageOverviewQuery($this->admin->auth->database->entityManager, $this->pages->site),
+            $this->admin->auth->users,
+        );
+
+        return (string) $handler->handle($this->admin->request($user))->getBody();
+    }
+
+    private function page(string $title, User $author, PageState $state = PageState::Draft): Page
+    {
+        $page = $this->pages->editor()->create('en-GB', new PageContent($title), authorId: $author->id());
+        $page->changeState($state, $this->pages->clock->now());
+        $this->pages->repository()->flush();
+
+        return $page;
+    }
+}
