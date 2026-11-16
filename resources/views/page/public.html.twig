@@ -1,0 +1,8 @@
+{#
+    A page of the public site in the theme layout it uses (`layout_template`). The blocks are rendered by their
+    types, which escape everything they print, so `content` is printed as it is.
+    Context: `layout_template`, `title`, `lead` (the summary, optional), `locale`, `site_name`, `content`,
+    `updated_at` (UTC).
+#}
+{% extends layout_template %}
+{% block content %}{{ content|raw }}{% endblock %}

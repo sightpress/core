@@ -14,13 +14,14 @@ use SightPress\Core\Tests\Support\PageFixture;
 
 #[CoversClass(PublishedPages::class)]
 #[CoversClass(PublicPage::class)]
+#[CoversClass(\SightPress\Core\Page\PageAddresses::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PublishedPagesTest extends TestCase
 {
     public function testFindsPublishedPublicPagesByTheirAddress(): void
     {
         $fixture = new PageFixture();
-        $pages = new PublishedPages($fixture->repository(), $fixture->site);
+        $pages = new PublishedPages($fixture->addresses());
         $blocks = [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Hi', 'level' => 2]]];
         $about = $fixture->published('About', $blocks);
         $team = $fixture->published('Team', [], $about);
@@ -31,12 +32,11 @@ final class PublishedPagesTest extends TestCase
         $fixture->repository()->flush();
 
         $found = $pages->findByUrl('/about');
-        self::assertEquals(new PublicPage((int) $about->id(), 'en-GB', '/about', 'About', $blocks), $found);
+        self::assertEquals(new PublicPage((int) $about->id(), 'en-GB', '/', 'About', $blocks), $found, 'the home page is always at /');
         self::assertSame('/about/team', $pages->findByUrl('about/team/?x=1#top')?->url);
         self::assertSame((int) $team->id(), $pages->findByUrl('/about/team')?->id);
-        self::assertEquals(new PublicPage((int) $about->id(), 'pt-PT', '/pt-pt/sobre', 'Sobre', $blocks), $pages->findByUrl('/pt-pt/sobre'));
-        self::assertNull($pages->findByUrl('/pt-pt'));
-        self::assertNull($pages->findByUrl('/'));
+        self::assertSame('/', $pages->findByUrl('/')?->url, 'the first page at the top is the home page');
+        self::assertEquals(new PublicPage((int) $about->id(), 'pt-PT', '/pt-pt', 'Sobre', $blocks), $pages->findByUrl('/pt-pt'));
         self::assertNull($pages->findByUrl('/sobre'));
         self::assertNull($pages->findByUrl('/draft'));
         self::assertNull($pages->findByUrl('/hidden'));

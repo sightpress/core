@@ -101,7 +101,8 @@ final class KernelTest extends TestCase
     public function testRoutesAnswerAndFailuresAreLogged(): void
     {
         $project = $this->project(sites: ['demo' => SiteFixture::entry()]);
-        $kernel = Kernel::boot($project->path(), ['APP_ENV' => 'test']);
+        // Without modules: routes added after booting would come after the public pages' catch-all route.
+        $kernel = Kernel::fromConfig(new \SightPress\Core\Tenant\TenantConfigLoader()->load($project->path(), ['APP_ENV' => 'test']), []);
         $kernel->app()->get('/ok', function ($request, ResponseInterface $response): ResponseInterface {
             $response->getBody()->write('fine');
 

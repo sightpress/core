@@ -1,6 +1,6 @@
-// The content blocks (C-4.2, C-4.3) on a real site (tests/A11y/blocks/index.php): a page with every core block type
-// has no axe violations in light and dark mode, reflows at 320 px, works by keyboard in reading order, and the contact
-// form announces its errors and its result.
+// The content blocks (C-4.2, C-4.3) on a real site (tests/A11y/blocks/index.php), served by the public page router
+// (C-6.2): the home page and a page with every core block type have no axe violations in light and dark mode, reflow
+// at 320 px, work by keyboard in reading order, and the contact form announces its errors and its result.
 import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
@@ -38,6 +38,23 @@ async function tabUntil(page: Page, last: string, limit = 60): Promise<string[]>
 
 test.beforeEach(async ({ request }) => {
   await request.get(`${SITE}/_test/reset`);
+});
+
+test('the home page is at / in the home layout, and a missing page is a 404', async ({ page }) => {
+  const response = await page.goto(`${SITE}/`);
+
+  expect(response?.status()).toBe(200);
+  await expect(page).toHaveTitle('Welcome to Riverside Library - Riverside Library');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Welcome to Riverside Library');
+  await expect(page.getByText('Books, music and a view of the harbour.')).toBeVisible();
+  await expectNoViolations(page);
+
+  await page.getByRole('link', { name: 'visit to the library' }).click();
+  await expect(page).toHaveURL(`${SITE}/visit`);
+
+  expect((await page.goto(`${SITE}/home`))?.url()).toBe(`${SITE}/`);
+  expect((await page.goto(`${SITE}/nowhere`))?.status()).toBe(404);
+  await expectNoViolations(page);
 });
 
 test('a page with every block type has no violations and reflows at 320 px', async ({ page }) => {

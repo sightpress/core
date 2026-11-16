@@ -44,7 +44,11 @@ final class SiteResolutionTest extends TestCase
             'archive' => SiteFixture::entry('archive', ['status' => 'archived']),
             'old' => SiteFixture::entry('old', ['status' => 'deleted']),
         ]);
-        $this->kernel = Kernel::boot($this->project->path(), ['APP_ENV' => 'test', 'APP_SECRET' => SiteFixture::SECRET]);
+        // Without modules: a route added after booting would come after the public pages' catch-all route.
+        $this->kernel = Kernel::fromConfig(
+            new \SightPress\Core\Tenant\TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => 'test', 'APP_SECRET' => SiteFixture::SECRET]),
+            [],
+        );
 
         // Each request writes a row to its site's database and answers with the site, the rows it can see and
         // whether the entity manager shares the site's connection.

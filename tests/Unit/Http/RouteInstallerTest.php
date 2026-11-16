@@ -56,6 +56,23 @@ final class RouteInstallerTest extends TestCase
         self::assertSame('first,second,hello ada', (string) $response->getBody());
         self::assertSame('/hello/grace', $app->getRouteCollector()->getRouteParser()->urlFor('acme.hello', ['name' => 'grace']));
     }
+
+    public function testRoutesThatCatchEveryAddressComeLastWhateverTheModuleOrder(): void
+    {
+        $registry = ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue([
+            new ModuleCandidate(new FakeModule('acme', register: static function (ModuleRegistrar $r): void {
+                $r->routes()->add(new Route('acme.pages', '/{name:.+}', HelloHandler::class));
+                $r->routes()->add(new Route('acme.hello', '/hello/{name}', HelloHandler::class, middleware: [FirstMiddleware::class]));
+            }), 'sightpress/core'),
+        ])->resolve(new ModuleSelection()));
+        $app = new App(new Psr17Factory(), new Container());
+        $app->addRoutingMiddleware();
+
+        new RouteInstaller(new Container())->install($app, $registry);
+
+        self::assertSame('first,hello ada', (string) $app->handle(new ServerRequest('GET', '/hello/ada'))->getBody());
+        self::assertSame('hello about/team', (string) $app->handle(new ServerRequest('GET', '/about/team'))->getBody());
+    }
 }
 
 final class HelloHandler implements RequestHandlerInterface

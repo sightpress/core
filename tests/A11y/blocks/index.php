@@ -2,8 +2,8 @@
 
 /**
  * A real site for the accessibility tests of the content blocks: the whole kernel with core's modules, one site on a
- * SQLite file (domain 127.0.0.1) and a published page, `/visit`, with every core block type, rendered in the default
- * theme's layout (a stand-in for the public page router, C-6.2). The picture, captions and document are uploaded
+ * SQLite file (domain 127.0.0.1), a home page and a published page, `/visit`, with every core block type, served by
+ * core's public page router (C-6.2) in the default theme's layout. The picture, captions and document are uploaded
  * through the media library; the video and audio entries have no file behind them, which doesn't matter to axe.
  * Started by playwright.config.ts with PHP's built-in web server; never deployed.
  *
@@ -23,8 +23,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use SightPress\Core\Block\Contract\BlockContexts;
-use SightPress\Core\Block\Contract\BlockRenderer;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Migration\MigrationConfigurationFactory;
@@ -36,7 +34,6 @@ use SightPress\Core\Media\MediaRepository;
 use SightPress\Core\Media\MediaUploader;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleCandidate;
-use SightPress\Core\Page\Contract\PublicPages;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
 use SightPress\Core\Page\PageRepository;
@@ -54,32 +51,6 @@ use SightPress\Module\Routing\Route;
 require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
 const SECRET = 'a11y-secret-0123456789abcdef0123456789abcdef';
-
-/**
- * Renders the published page at the request's path in the default layout.
- */
-final readonly class A11yBlockPage implements RequestHandlerInterface
-{
-    public function __construct(
-        private PublicPages $pages,
-        private BlockContexts $contexts,
-        private BlockRenderer $renderer,
-        private TemplateRenderer $templates,
-    ) {
-    }
-
-    public function handle(ServerRequestInterface $request): ResponseInterface
-    {
-        $page = $this->pages->findByUrl($request->getUri()->getPath()) ?? throw new LogicException('No page.');
-        $context = $this->contexts->create($page->locale, 'http://' . $request->getUri()->getAuthority(), $request);
-
-        return $this->templates->response($request, '@a11yblocks/page.html.twig', [
-            'title' => $page->title,
-            'site_name' => 'Riverside Library',
-            'content' => $this->renderer->html($page->blocks, $context),
-        ])->withHeader('Cache-Control', 'no-store');
-    }
-}
 
 /**
  * Renders what the publish checks found in the page at `/problems` (C-4.5), with stand-ins for the fields the
@@ -120,8 +91,6 @@ if ($path === '/_test/reset') {
 
 $module = new FakeModule('acme.a11y_blocks', register: static function (ModuleRegistrar $r): void {
     $r->views()->add('a11yblocks', __DIR__ . '/templates');
-    $r->services()->autowire(A11yBlockPage::class);
-    $r->routes()->add(new Route('acme.visit', '/visit', A11yBlockPage::class));
     $r->services()->autowire(A11yPublishReport::class);
     $r->routes()->add(new Route('acme.report', '/report', A11yPublishReport::class));
 });
@@ -202,6 +171,11 @@ function seed(ContainerInterface $site, string $project): void
     $audio = $entry(new MediaFormat('audio/mpeg', MediaKind::Audio, 'mp3', 'MP3'), 'talk.mp3');
 
     $editor = Services::get($site, PageEditor::class);
+    $home = $editor->create('en-GB', new PageContent('Welcome to Riverside Library', 'home', 'Books, music and a view of the harbour.', null, [
+        ['type' => 'rich_text', 'version' => 1, 'data' => ['html' => '<p>Plan your <a href="/visit">visit to the library</a>.</p>']],
+    ]));
+    $home->setLayout('home', $now);
+    $home->changeState(PageState::Published, $now);
     $page = $editor->create('en-GB', new PageContent('Visit the library', 'visit', null, null, [
         ['type' => 'rich_text', 'version' => 1, 'data' => ['html' => '<p>We are open every day. Find out <a href="/about">who we are</a> and <strong>what we do</strong>.</p><ul><li>Books</li><li>Music</li></ul>']],
         ['type' => 'call_to_action', 'version' => 1, 'data' => ['text' => 'Book a visit', 'url' => '/book']],

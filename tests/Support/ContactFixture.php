@@ -39,12 +39,17 @@ final class ContactFixture
     }
 
     /**
-     * A published page with a heading and, in a column, a contact form with {@see FORM}.
+     * A published page with a heading and, in a column, a contact form with {@see FORM}. On an empty site a home
+     * page comes first, so the form's page has an address of its own.
      *
      * @param array<string, mixed> $form
      */
     public function page(string $title = 'Contact', array $form = self::FORM): Page
     {
+        if ($this->pages->repository()->children(null) === []) {
+            $this->pages->published('Home');
+        }
+
         return $this->pages->published($title, [
             ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Write to us', 'level' => 2]],
             ['type' => 'columns', 'version' => 1, 'data' => ['columns' => [
@@ -57,7 +62,7 @@ final class ContactFixture
     public function handler(): ContactFormHandler
     {
         return new ContactFormHandler(
-            new PublishedPages($this->pages->repository(), $this->pages->site),
+            new PublishedPages($this->pages->addresses()),
             new DefaultBlockFinder($this->blocks->types),
             $this->auth->validator(),
             $this->auth->limiters,

@@ -84,6 +84,7 @@ final class ContactFormFlowTest extends TestCase
 
         $editor = Services::get($site, PageEditor::class);
         $form = [['type' => 'contact_form', 'version' => 1, 'data' => ['recipient' => 'office@example.org']]];
+        $editor->create('en-GB', new PageContent('Home'));
         $contact = $editor->create('en-GB', new PageContent('Contact', null, null, null, $form));
         $contact->changeState(PageState::Published, new \DateTimeImmutable());
         Services::get($site, PageRepository::class)->flush();

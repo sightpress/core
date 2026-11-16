@@ -6,12 +6,16 @@ namespace SightPress\Core\Http;
 
 use Psr\Container\ContainerInterface;
 use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Core\Module\Registered;
 use Slim\Interfaces\RouteCollectorProxyInterface;
 
 /**
  * Adds the routes modules registered to the router. Handlers and middleware are built when a request needs them,
  * from the site's container (or the tenant's when there is no site); a route's middleware runs in the order the
  * module listed it.
+ *
+ * Routes whose path starts with a placeholder (`/{path:.+}`, the public pages) catch almost any address, so they are
+ * added after all the others, whatever order the modules registered in: `/media/…` or `/admin/…` always win.
  */
 final readonly class RouteInstaller
 {
@@ -26,7 +30,9 @@ final readonly class RouteInstaller
      */
     public function install(RouteCollectorProxyInterface $router, ModuleRegistry $registry): void
     {
-        foreach ($registry->routes() as $registered) {
+        $routes = $registry->routes();
+        usort($routes, static fn (Registered $a, Registered $b): int => self::catchesAll($a->item->path) <=> self::catchesAll($b->item->path));
+        foreach ($routes as $registered) {
             $route = $registered->item;
             $slimRoute = $router
                 ->map($route->methods, $route->path, new SiteScopedHandler($route->handler, $this->tenant))
@@ -36,5 +42,10 @@ final readonly class RouteInstaller
                 $slimRoute->add(new SiteScopedMiddleware($middleware, $this->tenant));
             }
         }
+    }
+
+    private static function catchesAll(string $path): bool
+    {
+        return str_starts_with($path, '/{');
     }
 }

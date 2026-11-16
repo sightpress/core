@@ -7,6 +7,7 @@ namespace SightPress\Core\Tests\Support;
 use DateTimeImmutable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Page\Entity\Page;
+use SightPress\Core\Page\PageAddresses;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
 use SightPress\Core\Rbac\Contract\PageState;
@@ -87,6 +88,11 @@ final class PageFixture implements EventDispatcherInterface
         $this->repository()->flush();
 
         return $page;
+    }
+
+    public function addresses(): PageAddresses
+    {
+        return new PageAddresses($this->site, $this->repository(), $this->database->settings());
     }
 
     public function editor(): PageEditor

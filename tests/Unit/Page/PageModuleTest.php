@@ -49,5 +49,11 @@ final class PageModuleTest extends TestCase
         self::assertSame([\SightPress\Core\Page\Contract\PageTransitioned::class, \SightPress\Core\Page\Workflow\ReviewRequestMailer::class], [$listeners[0]->item->event, $listeners[0]->item->listener]);
         $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'page'));
         self::assertDirectoryExists($views[0]->item->directory . '/email');
+        $routes = array_values(array_filter($registry->routes(), static fn ($r) => $r->module === 'page'));
+        self::assertSame(['page.home' => '/', 'page.show' => '/{path:.+}'], array_combine(
+            array_map(static fn ($r) => $r->item->name, $routes),
+            array_map(static fn ($r) => $r->item->path, $routes),
+        ));
+        self::assertSame(['GET', 'HEAD'], $routes[1]->item->methods);
     }
 }
