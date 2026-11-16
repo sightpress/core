@@ -57,6 +57,46 @@ test('the home page is at / in the home layout, and a missing page is a 404', as
   await expectNoViolations(page);
 });
 
+test('the main menu opens its submenu with a disclosure button, and the breadcrumbs lead back', async ({ page }) => {
+  await page.goto(`${SITE}/`);
+
+  const menu = page.getByRole('navigation', { name: 'Main' });
+  const toggle = menu.getByRole('button', { name: 'Show the pages under Visit the library' });
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(menu.getByRole('link', { name: 'Opening times' })).toBeHidden();
+  await expectNoViolations(page);
+
+  await page.getByRole('link', { name: 'Skip to main content' }).focus();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await expect(menu.getByRole('link', { name: 'Visit the library' })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(toggle).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Tab');
+  await expect(menu.getByRole('link', { name: 'Opening times' })).toBeFocused();
+  await expectNoViolations(page);
+  await page.keyboard.press('Escape');
+  await expect(toggle).toBeFocused();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+  await page.keyboard.press('Enter');
+  await menu.getByRole('link', { name: 'Opening times' }).click();
+  await expect(page).toHaveURL(`${SITE}/visit/opening-times`);
+  await expect(menu.getByRole('link', { name: 'Opening times' })).toHaveAttribute('aria-current', 'page');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  const crumbs = page.getByRole('navigation', { name: 'Breadcrumb' });
+  await expect(crumbs.getByRole('link')).toHaveText(['Home', 'Visit the library', 'Opening times']);
+  await expect(crumbs.getByRole('link', { name: 'Opening times' })).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByRole('navigation', { name: 'Footer' }).getByRole('link', { name: 'Contact us' })).toBeVisible();
+  await expectNoViolations(page);
+
+  await page.setViewportSize({ width: 320, height: 640 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  await expectNoViolations(page);
+});
+
 test('a page with every block type has no violations and reflows at 320 px', async ({ page }) => {
   await page.goto(`${SITE}/visit`);
 

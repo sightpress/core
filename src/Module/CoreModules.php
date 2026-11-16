@@ -10,6 +10,7 @@ use SightPress\Core\Block\BlockModule;
 use SightPress\Core\Contact\ContactModule;
 use SightPress\Core\Media\Admin\MediaAdminModule;
 use SightPress\Core\Media\MediaModule;
+use SightPress\Core\Menu\MenuModule;
 use SightPress\Core\Page\PageModule;
 use SightPress\Core\People\PeopleModule;
 use SightPress\Core\Rbac\RbacModule;
@@ -41,6 +42,7 @@ final class CoreModules
             new ModuleCandidate(new AdminModule(), 'sightpress/core'),
             new ModuleCandidate(new MediaAdminModule(), 'sightpress/core'),
             new ModuleCandidate(new PeopleModule(), 'sightpress/core'),
+            new ModuleCandidate(new MenuModule(), 'sightpress/core'),
         ];
     }
 
@@ -54,6 +56,6 @@ final class CoreModules
     {
         $src = dirname(__DIR__);
 
-        return [$src . '/User/Entity', $src . '/Rbac/Entity', $src . '/Media/Entity', $src . '/Page/Entity'];
+        return [$src . '/User/Entity', $src . '/Rbac/Entity', $src . '/Media/Entity', $src . '/Page/Entity', $src . '/Menu/Entity'];
     }
 }

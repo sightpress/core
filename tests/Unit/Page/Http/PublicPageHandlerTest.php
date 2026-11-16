@@ -18,6 +18,7 @@ use SightPress\Core\Tests\Support\ContactFixture;
 use Slim\Exception\HttpNotFoundException;
 
 #[CoversClass(PublicPageHandler::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\PublicPageRendering::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PublicPageHandlerTest extends TestCase
 {
@@ -64,13 +65,41 @@ final class PublicPageHandlerTest extends TestCase
         $team = $this->fixture->pages->published('Team', [], $about);
 
         $html = (string) $this->get('https://demo.example/about-us')->getBody();
+        $event = end($this->fixture->pages->events);
+        self::assertInstanceOf(\SightPress\Core\Page\Contract\PublicPageRendering::class, $event);
+        self::assertSame([(int) $about->id(), 'en-GB', '/about-us', 'https://demo.example', 'About us', false, true], [$event->pageId, $event->locale, $event->url, $event->baseUrl, $event->title, $event->home, $event->public]);
+        self::assertSame([], $event->ancestorIds);
         self::assertStringContainsString('<title>About us - Demo</title>', $html);
         self::assertStringContainsString('<div class="container container--narrow">', $html, 'the default layout');
         self::assertStringContainsString('<title>Team - Demo</title>', (string) $this->get('https://demo.example/about-us/team')->getBody());
+        $event = end($this->fixture->pages->events);
+        self::assertInstanceOf(\SightPress\Core\Page\Contract\PublicPageRendering::class, $event);
+        self::assertSame([(int) $about->id()], $event->ancestorIds);
         $portuguese = $this->get('https://demo.example/pt-pt/sobre');
         self::assertSame('pt-PT', $portuguese->getHeaderLine('Content-Language'));
         self::assertStringContainsString('<html lang="pt-PT" dir="ltr">', (string) $portuguese->getBody());
         self::assertNotNull($team->id());
+    }
+
+    public function testModulesAddVariablesAndHeadTagsWhileThePageIsRendered(): void
+    {
+        $this->fixture->pages->published('Welcome');
+        $events = new class () implements \Psr\EventDispatcher\EventDispatcherInterface {
+            public function dispatch(object $event): object
+            {
+                \assert($event instanceof \SightPress\Core\Page\Contract\PublicPageRendering);
+                $event->set('main_menu', [['label' => 'Visit us', 'url' => '/visit', 'current' => false, 'children' => []]]);
+                $event->addHead('<meta name="test" content="1">');
+                $event->addHead('<meta name="test" content="2">');
+
+                return $event;
+            }
+        };
+
+        $html = (string) $this->handler($events)->handle($this->fixture->auth->request('GET', 'https://demo.example/'))->getBody();
+
+        self::assertStringContainsString("<meta name=\"test\" content=\"1\">\n<meta name=\"test\" content=\"2\">", $html);
+        self::assertStringContainsString('<li><a href="/visit">Visit us</a></li>', $html);
     }
 
     public function testAddressesThatAreNotThePagesOwnMovePermanently(): void
@@ -138,7 +167,7 @@ final class PublicPageHandlerTest extends TestCase
         return $this->handler()->handle($request);
     }
 
-    private function handler(): PublicPageHandler
+    private function handler(?\Psr\EventDispatcher\EventDispatcherInterface $events = null): PublicPageHandler
     {
         $pages = $this->fixture->pages;
 
@@ -151,6 +180,7 @@ final class PublicPageHandlerTest extends TestCase
             $this->fixture->auth->twig,
             $pages->site,
             $this->fixture->auth->http,
+            $events ?? $pages,
         );
     }
 }

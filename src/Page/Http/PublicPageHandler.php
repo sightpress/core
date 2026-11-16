@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Http;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -11,6 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Block\Contract\BlockContexts;
 use SightPress\Core\Block\Contract\BlockRenderer;
 use SightPress\Core\Http\Session\Session;
+use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Page\PageAddresses;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\Contract\Authorizer;
@@ -24,7 +26,8 @@ use Twig\Environment;
  * The public site: `/` is the home page, `/{path}` the page at that address (`/pt-pt/…` for other locales), in the
  * theme layout the page uses. Only pages the visitor may view are shown (published, and public or the visitor is
  * signed in); anything else is a 404, so nothing is given away about drafts. Addresses that aren't the page's own
- * are moved permanently: `/about/` → `/about`, the home page's own path → `/`.
+ * are moved permanently: `/about/` → `/about`, the home page's own path → `/`. Other modules add menus, `<head>` tags
+ * and more through the {@see PublicPageRendering} event.
  *
  * Caching: a page that holds nothing personal (the visitor isn't signed in and the page left nothing in the session,
  * as a form does) may be kept by browsers and shared caches for {@see MAX_AGE} seconds; everything else is private.
@@ -43,6 +46,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         private Environment $twig,
         private Site $site,
         private ResponseFactoryInterface $responses,
+        private EventDispatcherInterface $events,
     ) {
     }
 
@@ -65,9 +69,27 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         }
 
         $page = $translation->page();
-        $context = $this->contexts->create($translation->locale(), $uri->getScheme() . '://' . $uri->getAuthority(), $request);
+        $baseUrl = $uri->getScheme() . '://' . $uri->getAuthority();
+        $context = $this->contexts->create($translation->locale(), $baseUrl, $request);
+        $rendering = new PublicPageRendering(
+            $request,
+            (int) $page->id(),
+            $translation->locale(),
+            $url,
+            $baseUrl,
+            $translation->title(),
+            $translation->summary(),
+            $translation->description(),
+            array_values(array_diff(array_map(intval(...), array_filter(explode('/', $page->treePath()), static fn (string $id): bool => $id !== '')), [$page->id()])),
+            $this->addresses->isHome($page),
+            $page->isPublic(),
+            $translation->updatedAt(),
+        );
+        $this->events->dispatch($rendering);
         $layout = 'layouts/' . $page->layout() . '.html.twig';
         $body = $this->templates->render($request, '@page/public.html.twig', [
+            ...$rendering->variables(),
+            'head' => $rendering->head(),
             'layout_template' => $this->twig->getLoader()->exists($layout) ? $layout : 'layouts/default.html.twig',
             'title' => $translation->title(),
             'lead' => $translation->summary(),

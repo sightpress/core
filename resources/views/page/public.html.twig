@@ -1,8 +1,10 @@
 {#
     A page of the public site in the theme layout it uses (`layout_template`). The blocks are rendered by their
-    types, which escape everything they print, so `content` is printed as it is.
-    Context: `layout_template`, `title`, `lead` (the summary, optional), `locale`, `site_name`, `content`,
-    `updated_at` (UTC).
+    types, which escape everything they print, and `head` is HTML the modules listening to PublicPageRendering
+    escaped, so both are printed as they are.
+    Context: `layout_template`, `title`, `lead` (the summary, optional), `locale`, `site_name`, `content`, `head`,
+    `updated_at` (UTC), and whatever the modules added (`main_menu`, `footer_menu`, `breadcrumbs` …).
 #}
 {% extends layout_template %}
+{% block head %}{{ head|raw }}{% endblock %}
 {% block content %}{{ content|raw }}{% endblock %}

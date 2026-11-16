@@ -1,0 +1,84 @@
+{#
+    The menu editor (/admin/menus): each menu as a nested ordered list. Every entry has its own small form whose
+    buttons move it up, down, in (under the entry before it) or out, or remove it; each button's name ends with the
+    entry, so a list of buttons still makes sense ("Move About up"). After a change the page comes back with the
+    message in the live region and `autofocus` on the same button (`focus`); when that button is gone (the entry is
+    now first, last, or as deep as it can go), on the opposite one, else on the entry; after a removal, on the menu's
+    heading. Then two forms add a page or a link.
+    Context: `menus`, `trees` (menu => nodes {id, label, link, page, hidden, moves, children}), `page_form` (null
+    without pages), `link_form`, `focus`, `action`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Menus') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Menus') }}</h1>
+<p>{{ t('The main menu is at the top of every page of the site, the footer menu at the bottom. Menus can be three levels deep; visitors open the levels below with a button.') }}</p>
+{%- for menu in menus %}
+<section class="admin-panel" aria-labelledby="menu-{{ menu.value }}">
+    <h2 id="menu-{{ menu.value }}" tabindex="-1"{% if focus == 'menu-' ~ menu.value %} autofocus{% endif %}>{{ t(menu.label) }}</h2>
+    {%- if trees[menu.value] is empty %}
+    <p>{{ t('This menu is empty. Add a page or a link below.') }}</p>
+    {%- else %}
+    {{ _self.entries(trees[menu.value], action, focus) }}
+    {%- endif %}
+</section>
+{%- endfor %}
+<section class="admin-panel" aria-labelledby="add-page-title">
+    <h2 id="add-page-title">{{ t('Add a page') }}</h2>
+    {%- if page_form is null %}
+    <p>{{ t('There are no pages yet.') }}</p>
+    {%- else %}
+    {{ f.error_summary(page_form) }}
+    {{ f.start(page_form, action) }}
+        <input type="hidden" name="action" value="add-page">
+        {{ f.field(page_form, 'menu') }}
+        {{ f.field(page_form, 'page') }}
+        {{ f.submit(t('Add page')) }}
+    {{ f.end() }}
+    {%- endif %}
+</section>
+<section class="admin-panel" aria-labelledby="add-link-title">
+    <h2 id="add-link-title">{{ t('Add a link') }}</h2>
+    {{ f.error_summary(link_form) }}
+    {{ f.start(link_form, action) }}
+        <input type="hidden" name="action" value="add-link">
+        {{ f.field(link_form, 'menu') }}
+        {{ f.field(link_form, 'label') }}
+        {{ f.field(link_form, 'url') }}
+        {{ f.submit(t('Add link')) }}
+    {{ f.end() }}
+</section>
+{% endblock %}
+{% macro entries(nodes, action, focus) %}
+    <ol class="menu-editor">
+        {%- for node in nodes %}
+        <li>
+            <div class="menu-editor__entry">
+                {%- set prefix = 'item-' ~ node.id ~ '-' %}
+                {%- set wanted = focus starts with prefix ? focus[prefix|length:] : null %}
+                {%- set opposite = {up: 'down', down: 'up', in: 'out', out: 'in'}[wanted] ?? null %}
+                {%- set focus_move = wanted in node.moves ? wanted : (opposite in node.moves ? opposite : null) %}
+                {%- set entry_focus = focus == 'item-' ~ node.id or (wanted is not null and focus_move is null) %}
+                <p class="menu-editor__label"><span id="item-{{ node.id }}" tabindex="-1"{% if entry_focus %} autofocus{% endif %}>{{ node.label }}</span>
+                    <span class="menu-editor__details">
+                        {%- if node.page %}{{ t('Page') }}{% else %}{{ t('Link') }}{% endif %}{% if node.link %}: {{ node.link }}{% endif %}
+                        {%- if node.hidden %} – {{ t('not shown until the page is published') }}{% endif -%}
+                    </span>
+                </p>
+                <form action="{{ action }}" method="post" class="menu-editor__actions">
+                    {{ csrf_fields() }}
+                    <input type="hidden" name="item" value="{{ node.id }}">
+                    {%- for move in node.moves %}
+                    {%- set text = {up: t('Move up'), down: t('Move down'), in: t('Move in'), out: t('Move out'), remove: t('Remove')}[move] %}
+                    <button type="submit" name="action" value="{{ move }}" id="item-{{ node.id }}-{{ move }}" class="button {{ move == 'remove' ? 'button--danger' : 'button--secondary' }}" aria-label="{{ text }}, {{ node.label }}"{% if focus_move == move %} autofocus{% endif %}>{{ text }}</button>
+                    {%- endfor %}
+                </form>
+            </div>
+            {%- if node.children is not empty %}
+            {{ _self.entries(node.children, action, focus) }}
+            {%- endif %}
+        </li>
+        {%- endfor %}
+    </ol>
+{% endmacro %}

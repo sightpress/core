@@ -3,7 +3,8 @@
 /**
  * A real site for the accessibility tests of the content blocks: the whole kernel with core's modules, one site on a
  * SQLite file (domain 127.0.0.1), a home page and a published page, `/visit`, with every core block type, served by
- * core's public page router (C-6.2) in the default theme's layout. The picture, captions and document are uploaded
+ * core's public page router (C-6.2) in the default theme's layout, with a main menu (Visit the library, with Opening
+ * times under it, and a link) and a footer menu (C-6.3). The picture, captions and document are uploaded
  * through the media library; the video and audio entries have no file behind them, which doesn't matter to axe.
  * Started by playwright.config.ts with PHP's built-in web server; never deployed.
  *
@@ -32,6 +33,8 @@ use SightPress\Core\Media\Entity\Media;
 use SightPress\Core\Media\MediaFormat;
 use SightPress\Core\Media\MediaRepository;
 use SightPress\Core\Media\MediaUploader;
+use SightPress\Core\Menu\Contract\MenuName;
+use SightPress\Core\Menu\MenuEditor;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleCandidate;
 use SightPress\Core\Page\PageContent;
@@ -194,7 +197,16 @@ function seed(ContainerInterface $site, string $project): void
         ['type' => 'contact_form', 'version' => 1, 'data' => ['recipient' => 'office@example.org']],
     ]));
     $page->changeState(PageState::Published, $now);
+    $hours = $editor->create('en-GB', new PageContent('Opening times', 'opening-times', null, null, [
+        ['type' => 'rich_text', 'version' => 1, 'data' => ['html' => '<p>Every day from 9 am to 8 pm.</p>']],
+    ]), $page);
+    $hours->changeState(PageState::Published, $now);
     Services::get($site, PageRepository::class)->flush();
+    $menus = Services::get($site, MenuEditor::class);
+    $visit = $menus->add(MenuName::Main, (int) $page->id());
+    $menus->add(MenuName::Main, (int) $hours->id(), parent: $visit);
+    $menus->add(MenuName::Main, null, 'Catalogue', 'https://catalogue.example.org');
+    $menus->add(MenuName::Footer, null, 'Contact us', '/visit');
     $editor->create('en-GB', new PageContent('Visit US', 'problems', null, null, [
         ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Too deep', 'level' => 4]],
         ['type' => 'image', 'version' => 1, 'data' => ['media' => $picture]],

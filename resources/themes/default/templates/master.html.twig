@@ -6,8 +6,12 @@
     - landmarks: <header> (banner), <nav aria-label> for each menu, <main id="content">, <footer> (content info);
     - flash `messages` sit at the top of <main> in a polite live region.
 
-    Context (all optional): `site_name`, `locale`, `main_menu` and `footer_menu` (lists of {label, url, current}),
+    Context (all optional): `site_name`, `locale`, `main_menu` and `footer_menu` (lists of {label, url, current,
+    children}; up to three levels), `breadcrumbs` (list of {label, url}, the last one the current page; a null label is the home page, "Home"),
     `messages` (list of texts), `form` (its errors put "Error: " in front of the <title>).
+
+    Submenus of the main menu are nested lists, all shown without JavaScript; js/site.js turns them into disclosure
+    buttons ("Show the pages under About", `aria-expanded`), which Escape closes.
     Blocks: `title`, `head`, `brand`, `breadcrumbs`, `main`, `footer`, `scripts`.
 #}
 {%- set lang = locale|default(current_locale()) -%}
@@ -29,13 +33,25 @@
     <div class="container site-header__inner">
         {% block brand %}<a class="site-name" href="/">{{ site_name }}</a>{% endblock %}
         {%- if main_menu is defined and main_menu is not empty %}
-        <nav class="menu menu--main" aria-label="{{ t('Main') }}">
-            {{ _self.menu(main_menu) }}
+        <nav class="menu menu--main" aria-label="{{ t('Main') }}" data-submenu-label="{{ t('Show the pages under') }}">
+            {{ _self.menu(main_menu, 'main-menu') }}
         </nav>
         {%- endif %}
     </div>
 </header>
-{% block breadcrumbs %}{% endblock %}
+{% block breadcrumbs %}
+{%- if breadcrumbs is defined and breadcrumbs|length > 1 %}
+<nav class="breadcrumbs" aria-label="{{ t('Breadcrumb') }}">
+    <div class="container">
+        <ol>
+            {%- for crumb in breadcrumbs %}
+            <li><a href="{{ crumb.url }}"{% if loop.last %} aria-current="page"{% endif %}>{{ crumb.label ?? t('Home') }}</a></li>
+            {%- endfor %}
+        </ol>
+    </div>
+</nav>
+{%- endif %}
+{% endblock %}
 <main id="content" class="site-main" tabindex="-1">
     {% include 'partials/messages.html.twig' with {messages: messages|default([])} only %}
     {% block main %}{% endblock %}
@@ -44,7 +60,7 @@
     <div class="container">
         {%- if footer_menu is defined and footer_menu is not empty %}
         <nav class="menu menu--footer" aria-label="{{ t('Footer') }}">
-            {{ _self.menu(footer_menu) }}
+            {{ _self.menu(footer_menu, 'footer-menu') }}
         </nav>
         {%- endif %}
         {% block footer %}<p>{{ site_name }}</p>{% endblock %}
@@ -53,10 +69,13 @@
 {% block scripts %}<script src="{{ asset('js/site.js') }}" defer></script>{% endblock %}
 </body>
 </html>
-{% macro menu(items) %}
-    <ul>
+{% macro menu(items, id) %}
+    <ul{% if id is not empty %} id="{{ id }}"{% endif %}>
         {%- for item in items %}
-        <li><a href="{{ item.url }}"{% if item.current|default(false) %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
+        <li><a href="{{ item.url }}"{% if item.current|default(false) %} aria-current="page"{% endif %}>{{ item.label }}</a>
+            {%- if item.children|default([]) is not empty %}
+            {{ _self.menu(item.children, id ~ '-' ~ loop.index) }}
+            {%- endif %}</li>
         {%- endfor %}
     </ul>
 {% endmacro %}

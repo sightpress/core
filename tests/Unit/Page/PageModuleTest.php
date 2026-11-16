@@ -43,6 +43,7 @@ final class PageModuleTest extends TestCase
         self::assertSame(\SightPress\Core\Page\PublishedPages::class, $registry->services()[\SightPress\Core\Page\Contract\PublicPages::class]->item->class);
         self::assertSame(\SightPress\Core\Page\PageOverviewQuery::class, $registry->services()[\SightPress\Core\Page\Contract\PageOverview::class]->item->class);
         self::assertTrue($registry->services()[\SightPress\Core\Page\Workflow\PageWorkflow::class]->item->public);
+        self::assertSame(\SightPress\Core\Page\PageLinkQuery::class, $registry->services()[\SightPress\Core\Page\Contract\PageLinks::class]->item->class);
         self::assertTrue($registry->services()[\SightPress\Core\Page\Publish\PublishChecker::class]->item->public);
         self::assertArrayHasKey(\SightPress\Core\Page\Workflow\ReviewRequestMailer::class, $registry->services());
         $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'page'));
