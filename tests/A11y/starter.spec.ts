@@ -41,6 +41,26 @@ test('every starter page has no violations and reflows at 320 px', async ({ page
   }
 });
 
+test('the icons, manifest and share image in the head all load (C-6.6)', async ({ page, request }) => {
+  await page.goto(`${SITE}/about`);
+
+  const hrefs = await page.locator('head link[rel~="icon"], head link[rel="apple-touch-icon"]').evaluateAll((links) => links.map((link) => (link as HTMLLinkElement).href));
+  expect(hrefs.length).toBe(3);
+  for (const href of hrefs) {
+    expect((await request.get(href)).status(), href).toBe(200);
+  }
+  const manifest = await (await request.get(`${SITE}/site.webmanifest`)).json();
+  expect(manifest.name).toBe('Riverside Library');
+  for (const icon of manifest.icons) {
+    expect((await request.get(`${SITE}${icon.src}`)).headers()['content-type']).toBe(icon.type);
+  }
+  const image = await page.locator('meta[property="og:image"]').getAttribute('content');
+  expect(image).toMatch(/^http:\/\/127\.0\.0\.1:8091\/branding\/share\.png\?v=[0-9a-f]{12}$/);
+  expect((await request.get(image ?? '')).headers()['cache-control']).toBe('public, max-age=31536000, immutable');
+  const svg = await request.get(`${SITE}/icon.svg`);
+  expect(svg.headers()['content-security-policy']).toBe("default-src 'none'; style-src 'unsafe-inline'; sandbox");
+});
+
 test('the menus lead to the starter pages by keyboard', async ({ page }) => {
   await page.goto(`${SITE}/`);
 

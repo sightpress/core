@@ -24,7 +24,8 @@ final class PublicPageRendering
     /**
      * @param string    $url         the page's address on the site, for example `/about/team` or `/` (home)
      * @param string    $baseUrl     scheme and host of the site, for example `https://example.org`
-     * @param list<int> $ancestorIds the pages above this one, from the top of the tree down
+     * @param list<int> $ancestorIds   the pages above this one, from the top of the tree down
+     * @param ?int      $socialImageId media id of the page's own share image, if it has one
      */
     public function __construct(
         public readonly ServerRequestInterface $request,
@@ -39,6 +40,7 @@ final class PublicPageRendering
         public readonly bool $home,
         public readonly bool $public,
         public readonly DateTimeImmutable $updatedAt,
+        public readonly ?int $socialImageId = null,
     ) {
     }
 

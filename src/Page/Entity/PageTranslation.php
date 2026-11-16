@@ -48,6 +48,9 @@ final class PageTranslation
     #[ORM\Column(type: Types::JSON)]
     private array $blocks;
 
+    #[ORM\Column(name: 'social_image_id', type: Types::INTEGER, nullable: true)]
+    private ?int $socialImage = null;
+
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $updatedAt;
 
@@ -118,6 +121,14 @@ final class PageTranslation
         return $this->blocks;
     }
 
+    /**
+     * Media id of the page's own share image (`og:image`), if it has one.
+     */
+    public function socialImage(): ?int
+    {
+        return $this->socialImage;
+    }
+
     public function updatedAt(): DateTimeImmutable
     {
         return $this->updatedAt;
@@ -125,7 +136,7 @@ final class PageTranslation
 
     public function content(): PageContent
     {
-        return new PageContent($this->title, $this->slug, $this->summary, $this->description, $this->blocks);
+        return new PageContent($this->title, $this->slug, $this->summary, $this->description, $this->blocks, $this->socialImage);
     }
 
     /**
@@ -140,6 +151,7 @@ final class PageTranslation
         $this->summary = $content->summary;
         $this->description = $content->description;
         $this->blocks = $content->blocks;
+        $this->socialImage = $content->socialImage;
         $this->updatedAt = $now;
     }
 
@@ -159,7 +171,7 @@ final class PageTranslation
     }
 
     /**
-     * @return array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>}
+     * @return array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int}
      */
     public function snapshot(): array
     {
@@ -170,6 +182,7 @@ final class PageTranslation
             'summary' => $this->summary,
             'description' => $this->description,
             'blocks' => $this->blocks,
+            'social_image' => $this->socialImage,
         ];
     }
 

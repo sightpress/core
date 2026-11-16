@@ -84,6 +84,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
             $this->addresses->isHome($page),
             $page->isPublic(),
             $translation->updatedAt(),
+            $translation->socialImage(),
         );
         $this->events->dispatch($rendering);
         $layout = 'layouts/' . $page->layout() . '.html.twig';

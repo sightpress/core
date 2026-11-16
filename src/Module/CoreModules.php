@@ -7,6 +7,7 @@ namespace SightPress\Core\Module;
 use SightPress\Core\Admin\AdminModule;
 use SightPress\Core\Auth\AuthModule;
 use SightPress\Core\Block\BlockModule;
+use SightPress\Core\Branding\BrandingModule;
 use SightPress\Core\Contact\ContactModule;
 use SightPress\Core\Media\Admin\MediaAdminModule;
 use SightPress\Core\Media\MediaModule;
@@ -43,6 +44,7 @@ final class CoreModules
             new ModuleCandidate(new MediaAdminModule(), 'sightpress/core'),
             new ModuleCandidate(new PeopleModule(), 'sightpress/core'),
             new ModuleCandidate(new MenuModule(), 'sightpress/core'),
+            new ModuleCandidate(new BrandingModule(), 'sightpress/core'),
         ];
     }
 

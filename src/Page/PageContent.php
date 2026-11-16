@@ -31,9 +31,13 @@ final readonly class PageContent
     /** @var list<array{type: string, version: int, data: array<string, mixed>}> */
     public array $blocks;
 
+    /** Media id of the picture shared with links to this page (`og:image`), instead of the site's share image. */
+    public ?int $socialImage;
+
     /**
-     * @param string|null $slug   null makes one from the title ({@see Slug::fromText()})
+     * @param string|null $slug        null makes one from the title ({@see Slug::fromText()})
      * @param list<mixed> $blocks
+     * @param int|null    $socialImage media id of the page's own share image
      */
     public function __construct(
         string $title,
@@ -41,6 +45,7 @@ final readonly class PageContent
         ?string $summary = null,
         ?string $description = null,
         array $blocks = [],
+        ?int $socialImage = null,
     ) {
         $title = self::singleLine($title);
         if ($title === '') {
@@ -63,6 +68,10 @@ final readonly class PageContent
         $this->summary = self::optional($summary, self::SUMMARY_MAX_LENGTH, 'The summary');
         $this->description = self::optional($description, self::DESCRIPTION_MAX_LENGTH, 'The search engine description');
         $this->blocks = self::blocks($blocks);
+        if ($socialImage !== null && $socialImage < 1) {
+            throw new PageException('The share image must be a file of the media library.');
+        }
+        $this->socialImage = $socialImage;
     }
 
     /**
@@ -72,13 +81,13 @@ final readonly class PageContent
      */
     public function withBlocks(array $blocks): self
     {
-        return new self($this->title, $this->slug, $this->summary, $this->description, $blocks);
+        return new self($this->title, $this->slug, $this->summary, $this->description, $blocks, $this->socialImage);
     }
 
     /**
      * The content as stored in a revision snapshot.
      *
-     * @return array{title: string, slug: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>}
+     * @return array{title: string, slug: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int}
      */
     public function toArray(): array
     {
@@ -88,6 +97,7 @@ final readonly class PageContent
             'summary' => $this->summary,
             'description' => $this->description,
             'blocks' => $this->blocks,
+            'social_image' => $this->socialImage,
         ];
     }
 

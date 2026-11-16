@@ -37,6 +37,7 @@ use SightPress\Core\Module\ModuleSelection;
 #[UsesNamespace('SightPress\Core\Navigation')]
 #[UsesNamespace('SightPress\Core\People')]
 #[UsesNamespace('SightPress\Core\Menu')]
+#[UsesNamespace('SightPress\Core\Branding')]
 final class BlockModuleTest extends TestCase
 {
     public function testIsRequiredAndRegistersItsTypesAndServices(): void

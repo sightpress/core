@@ -33,6 +33,7 @@ use stdClass;
 #[UsesClass(\SightPress\Core\Admin\AdminModule::class)]
 #[UsesClass(\SightPress\Core\People\PeopleModule::class)]
 #[UsesClass(\SightPress\Core\Menu\MenuModule::class)]
+#[UsesClass(\SightPress\Core\Branding\BrandingModule::class)]
 #[UsesClass(\SightPress\Core\Media\Admin\MediaAdminModule::class)]
 final class ComposerModuleDiscoveryTest extends TestCase
 {
@@ -52,7 +53,7 @@ final class ComposerModuleDiscoveryTest extends TestCase
     {
         $candidates = CoreModules::candidates();
 
-        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'people', 'menu'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'people', 'menu', 'branding'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
         self::assertSame('sightpress/core', $candidates[0]->source);
         foreach (CoreModules::entityPaths() as $path) {
             self::assertDirectoryExists($path);

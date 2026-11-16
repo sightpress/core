@@ -51,9 +51,13 @@ final class PageTranslationTest extends TestCase
         ]);
         self::assertEquals(new PageContent('Team', 'team', 'Who', 'Desc', $blocks), $translation->content());
         self::assertSame(
-            ['title' => 'Team', 'slug' => 'team', 'path' => 'about/team', 'summary' => 'Who', 'description' => 'Desc', 'blocks' => $blocks],
+            ['title' => 'Team', 'slug' => 'team', 'path' => 'about/team', 'summary' => 'Who', 'description' => 'Desc', 'blocks' => $blocks, 'social_image' => null],
             $translation->snapshot(),
         );
+        self::assertNull($translation->socialImage());
+        $translation->rewrite(new PageContent('Team', 'team', null, null, [], 9), 'about/team', $this->now);
+        self::assertSame(9, $translation->socialImage());
+        self::assertSame(9, $translation->content()->socialImage);
     }
 
     public function testRefusesALocaleThatIsNotACode(): void

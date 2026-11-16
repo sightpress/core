@@ -29,6 +29,7 @@
     "doctrine/dbal": "^4",
     "doctrine/migrations": "^3",
     "doctrine/orm": "^3",
+    "enshrined/svg-sanitize": "^1",
     "intervention/image": "^4",
     "league/flysystem": "^3",
     "league/flysystem-local": "^3",

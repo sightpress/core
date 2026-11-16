@@ -6,7 +6,8 @@
     - landmarks: <header> (banner), <nav aria-label> for each menu, <main id="content">, <footer> (content info);
     - flash `messages` sit at the top of <main> in a polite live region.
 
-    Context (all optional): `site_name`, `locale`, `main_menu` and `footer_menu` (lists of {label, url, current,
+    Context (all optional): `site_name`, `branding_logo` ({url, alt, width, height}: an uploaded logo shown instead
+    of the name), `locale`, `main_menu` and `footer_menu` (lists of {label, url, current,
     children}; up to three levels), `breadcrumbs` (list of {label, url}, the last one the current page; a null label is the home page, "Home"),
     `messages` (list of texts), `form` (its errors put "Error: " in front of the <title>).
 
@@ -31,7 +32,13 @@
 <a class="skip-link" href="#content">{{ t('Skip to main content') }}</a>
 <header class="site-header">
     <div class="container site-header__inner">
-        {% block brand %}<a class="site-name" href="/">{{ site_name }}</a>{% endblock %}
+        {% block brand %}
+        {%- if branding_logo is defined and branding_logo %}
+        <a class="site-name site-name--logo" href="/"><img src="{{ branding_logo.url }}" alt="{{ branding_logo.alt }}" width="{{ branding_logo.width }}" height="{{ branding_logo.height }}"></a>
+        {%- else %}
+        <a class="site-name" href="/">{{ site_name }}</a>
+        {%- endif %}
+        {% endblock %}
         {%- if main_menu is defined and main_menu is not empty %}
         <nav class="menu menu--main" aria-label="{{ t('Main') }}" data-submenu-label="{{ t('Show the pages under') }}">
             {{ _self.menu(main_menu, 'main-menu') }}

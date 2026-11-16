@@ -28,6 +28,7 @@ final class PageContentTest extends TestCase
                 'summary' => 'Who we are',
                 'description' => null,
                 'blocks' => [$block, ['type' => 'acme.event_card', 'version' => 2, 'data' => []]],
+                'social_image' => null,
             ],
             $content->toArray(),
         );
@@ -60,15 +61,24 @@ final class PageContentTest extends TestCase
         }
     }
 
+    public function testTheShareImageMustBeAMediaId(): void
+    {
+        $this->expectExceptionMessage('The share image must be a file of the media library.');
+
+        new PageContent('About', socialImage: 0);
+    }
+
     public function testSwapsTheBlocks(): void
     {
-        $content = new PageContent('About', 'about-us', 'Summary', 'Description', []);
+        $content = new PageContent('About', 'about-us', 'Summary', 'Description', [], 12);
 
         $changed = $content->withBlocks([['type' => 'heading', 'version' => 1, 'data' => ['text' => 'A', 'level' => 2]]]);
 
         self::assertSame(['About', 'about-us', 'Summary', 'Description'], [$changed->title, $changed->slug, $changed->summary, $changed->description]);
         self::assertSame([['type' => 'heading', 'version' => 1, 'data' => ['text' => 'A', 'level' => 2]]], $changed->blocks);
         self::assertSame([], $content->blocks);
+        self::assertSame(12, $changed->socialImage, 'the share image stays');
+        self::assertSame(12, $changed->toArray()['social_image']);
     }
 
     /**
