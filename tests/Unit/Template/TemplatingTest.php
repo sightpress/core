@@ -24,6 +24,7 @@ use SightPress\Core\Template\DateFormatter;
 use SightPress\Core\Template\TemplateExtension;
 use SightPress\Core\Template\TemplatePaths;
 use SightPress\Core\Template\TemplateRenderer;
+use SightPress\Core\Template\TextDirection;
 use SightPress\Core\Template\Translations;
 use SightPress\Core\Template\TwigFactory;
 use SightPress\Core\Template\Viewer;
@@ -43,6 +44,7 @@ use Twig\Error\RuntimeError;
 #[UsesClass(DateFormatter::class)]
 #[UsesClass(Translations::class)]
 #[UsesClass(Viewer::class)]
+#[UsesClass(TextDirection::class)]
 #[UsesNamespace('SightPress\Core\Module')]
 final class TemplatingTest extends TestCase
 {
@@ -69,6 +71,7 @@ final class TemplatingTest extends TestCase
             {{ t('Hello, {name}', {name: name}) }}
             {% if can('page.publish') %}publish{% else %}no publish{% endif %}
             {{ when|user_date }} / {{ when|user_datetime('short') }}
+            <html lang="{{ current_locale() }}" dir="{{ text_direction(current_locale()) }}"> {{ text_direction('ar') }}
             {% macro nonce() %}{{ csp_nonce() }}{% endmacro %}{{ _self.nonce() }}
             TWIG);
 
@@ -107,6 +110,7 @@ final class TemplatingTest extends TestCase
         self::assertStringContainsString('Hello, Ada &amp; Grace', $html);
         self::assertStringContainsString('publish', $html);
         self::assertStringContainsString('2 July 2026 / 02/07/2026, 00:30', $html);
+        self::assertStringContainsString('<html lang="en-GB" dir="ltr"> rtl', $html);
         self::assertStringEndsWith('abc+/=', trim($html), 'csp_nonce() works inside macros');
     }
 
@@ -149,6 +153,7 @@ final class TemplatingTest extends TestCase
 
         self::assertDirectoryExists($this->directory->path . '/cache/twig');
         self::assertSame(dirname(__DIR__, 3) . '/resources/views', TemplatePaths::core());
+        self::assertSame(dirname(__DIR__, 3) . '/resources/themes/default', TemplatePaths::defaultTheme());
     }
 
     private function renderer(bool $debug = false, bool $withFunctions = false): TemplateRenderer

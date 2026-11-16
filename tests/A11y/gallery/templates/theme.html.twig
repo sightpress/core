@@ -1,0 +1,60 @@
+{#
+    Style guide of the default theme: every layout and partial on one page, for the axe scan and keyboard tests.
+#}
+{% extends 'layouts/' ~ layout ~ '.html.twig' %}
+{% import 'partials/buttons.html.twig' as buttons %}
+{% import 'partials/alerts.html.twig' as alerts %}
+{% import 'partials/cards.html.twig' as cards %}
+{% import 'partials/tables.html.twig' as tables %}
+{% import 'partials/pagination.html.twig' as pagination %}
+{% import 'partials/disclosure.html.twig' as disclosure %}
+{% import 'partials/dialog.html.twig' as dialog %}
+{% import 'partials/icons.html.twig' as icons %}
+{% block content %}
+<h2>Text</h2>
+<p>Body text at the base size, with a <a href="/theme/default">link that is always underlined</a> and a word
+    that is <mark>highlighted</mark>. A very long word must wrap at 320 pixels:
+    Pneumonoultramicroscopicsilicovolcanoconiosis.</p>
+<blockquote><p>A quotation, set off by a border.</p></blockquote>
+<p><a href="https://example.org/">Example site {{ icons.icon('external', 'opens in a new tab') }}</a></p>
+
+<h2>Buttons</h2>
+<p>
+    {{ buttons.button('Save draft') }}
+    {{ buttons.button('Preview', {variant: 'secondary'}) }}
+    {{ buttons.button('Delete page', {variant: 'danger'}) }}
+    {{ buttons.link('Read the guide', '/theme/home', {variant: 'secondary'}) }}
+</p>
+
+<h2>Alerts</h2>
+{{ alerts.alert('info', 'Drafts are saved for 30 days', 'After that they move to the bin.') }}
+{{ alerts.alert('success', 'Page published', 'Visitors can see it now.') }}
+{{ alerts.alert('warning', 'This page has no summary', 'Add one so search engines can describe it.') }}
+{{ alerts.alert('error', 'The page could not be saved', 'Check your connection and try again.') }}
+
+<h2>Cards</h2>
+<ul class="cards">
+    <li>{{ cards.card({title: 'Opening hours', href: '/theme/default', text: 'When the library is open.', level: 3}) }}</li>
+    <li>{{ cards.card({title: 'Events', href: '/theme/default', text: 'Talks, workshops and reading groups.', level: 3}) }}</li>
+    <li>{{ cards.card({title: 'Contact us', href: '/theme/default', text: 'Phone, email and address.', level: 3}) }}</li>
+</ul>
+
+<h2>Table</h2>
+{{ tables.table('Opening hours this week', ['Day', 'Opens', 'Closes', 'Notes'], [
+    ['Monday', '9:00', '17:00', 'Children\'s story time at 10:30'],
+    ['Tuesday', '9:00', '20:00', 'Late opening'],
+    ['Saturday', '10:00', '16:00', 'Volunteers on the help desk'],
+], {row_headers: true, id: 'hours-caption'}) }}
+
+<h2>Pagination</h2>
+{{ pagination.nav(5, 12, '/theme/default?page=%d', 'News pages') }}
+
+<h2>Disclosure</h2>
+{% set answer %}<p>We keep the messages you send us for 30 days, then delete them.</p>{% endset %}
+{{ disclosure.details('What happens to my message?', answer) }}
+
+<h2>Dialog</h2>
+{% set help %}<p>The default layout suits most pages. The home layout has a wide introduction band.</p>{% endset %}
+<p>{{ dialog.opener('layout-help', 'How do I choose a layout?') }}</p>
+{{ dialog.dialog('layout-help', 'Choosing a layout', help) }}
+{% endblock %}

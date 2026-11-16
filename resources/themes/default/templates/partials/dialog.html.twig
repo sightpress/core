@@ -1,0 +1,26 @@
+{#
+    A modal dialog with the native <dialog> element, opened and closed by invoker buttons (`commandfor`), so it
+    needs no script in current browsers (site.js fills in for older ones). Focus moves into the dialog when it
+    opens, Escape closes it, and focus goes back to the button that opened it.
+
+        {% import 'partials/dialog.html.twig' as dialog %}
+        {{ dialog.opener('help-dialog', t('How do I choose a layout?')) }}
+        {{ dialog.dialog('help-dialog', t('Choosing a layout'), content) }}
+
+    `content` is HTML the caller has already escaped, such as a `{% set %}…{% endset %}` capture.
+#}
+{% macro opener(id, text) %}
+    <button type="button" class="button button--secondary" commandfor="{{ id }}" command="show-modal">{{ text }}</button>
+{%- endmacro %}
+
+{% macro dialog(id, title, content) %}
+    <dialog class="dialog" id="{{ id }}" aria-labelledby="{{ id }}-title">
+        <div class="dialog__header">
+            <h2 id="{{ id }}-title">{{ title }}</h2>
+        </div>
+        <div class="dialog__body">{{ content }}</div>
+        <div class="dialog__footer">
+            <button type="button" class="button button--primary" commandfor="{{ id }}" command="close" autofocus>{{ t('Close') }}</button>
+        </div>
+    </dialog>
+{%- endmacro %}

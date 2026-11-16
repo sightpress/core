@@ -24,4 +24,12 @@ final readonly class TemplatePaths
     {
         return dirname(__DIR__, 2) . '/resources/views';
     }
+
+    /**
+     * Folder of the default theme, which ships with core.
+     */
+    public static function defaultTheme(): string
+    {
+        return dirname(__DIR__, 2) . '/resources/themes/default';
+    }
 }

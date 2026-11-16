@@ -1,6 +1,6 @@
 {% extends '@auth/layout.html.twig' %}
 {% block title %}{{ t('Sign out') }}{% endblock %}
-{% block main %}
+{% block content %}
 <h1>{{ t('Sign out') }}</h1>
 <p>{{ t('Do you want to sign out of {site}?', {'site': site_name}) }}</p>
 <form action="/logout" method="post">

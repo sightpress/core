@@ -1,7 +1,7 @@
 {% extends '@auth/layout.html.twig' %}
 {% import 'form/macros.html.twig' as f %}
 {% block title %}{{ t('Reset your password') }}{% endblock %}
-{% block main %}
+{% block content %}
 <h1>{{ t('Reset your password') }}</h1>
 <p>{{ t('Enter the email address you sign in with. We will send you a link to choose a new password.') }}</p>
 {{ f.error_summary(form) }}

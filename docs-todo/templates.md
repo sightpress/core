@@ -31,6 +31,8 @@ module's own folder.
 | `t(text, values)` | The text in the viewer's language; ICU plurals and `{placeholders}` | `{{ t('{count, plural, one {# page} other {# pages}}', {count: n}) }}` |
 | `can(permission)` | Whether the viewer holds a permission | `{% if can('page.publish') %}` |
 | `csp_nonce()` | The nonce every inline `<script>` or `<style>` needs | `<script nonce="{{ csp_nonce() }}">` |
+| `current_locale()` | The viewer's language | `en-GB` |
+| `text_direction(locale)` | `rtl` for right-to-left languages, otherwise `ltr` | `<html dir="{{ text_direction('ar') }}">` → `rtl` |
 | `\|user_datetime(style)` | A date and time in the viewer's time zone and language | `{{ page.updatedAt\|user_datetime }}` → 14 Nov 2026, 17:05:00 |
 | `\|user_date(style)` | A date in the viewer's time zone and language | `{{ page.publishedAt\|user_date }}` → 14 November 2026 |
 

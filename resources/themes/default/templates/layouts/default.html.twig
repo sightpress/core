@@ -1,0 +1,15 @@
+{#
+    Default layout: one column at a comfortable reading width, the page title as the only <h1>, then `content`.
+    Context: `title` (required), `lead` (optional summary under the title).
+#}
+{% extends 'master.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block main %}
+<div class="container container--narrow">
+    <h1>{{ title }}</h1>
+    {%- if lead is defined and lead is not empty %}
+    <p class="lead">{{ lead }}</p>
+    {%- endif %}
+    {% block content %}{% endblock %}
+</div>
+{% endblock %}

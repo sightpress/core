@@ -14,7 +14,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  *
  * The cookie is `HttpOnly`, `SameSite=Lax` and, over HTTPS, `Secure` with the `__Host-` prefix (so it is bound to
  * this host and path). It lasts until the browser closes; the store ends idle sessions. A session is only saved
- * — and a cookie only sent — once it holds data.
+ * — and a cookie only sent — once it holds data. Responses for a visitor with a session are `private, no-store`,
+ * except those marked `public` that set no cookie.
  */
 final readonly class SessionMiddleware implements MiddlewareInterface
 {
@@ -57,7 +58,11 @@ final readonly class SessionMiddleware implements MiddlewareInterface
 
         $id = $session->idOrNew();
         $this->store->write($id, $session->all());
-        $response = $response->withHeader('Cache-Control', 'private, no-store');
+        // A response that holds no personal data says so with `Cache-Control: public` (theme files, for example);
+        // it keeps that header unless a new cookie is being set with it.
+        if ($id !== $cookie || !str_contains($response->getHeaderLine('Cache-Control'), 'public')) {
+            $response = $response->withHeader('Cache-Control', 'private, no-store');
+        }
 
         return $id === $cookie ? $response : $response->withAddedHeader('Set-Cookie', sprintf(
             '%s=%s; Path=/; HttpOnly; SameSite=Lax%s',

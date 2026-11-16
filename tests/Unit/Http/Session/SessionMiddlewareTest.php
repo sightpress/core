@@ -71,6 +71,28 @@ final class SessionMiddlewareTest extends TestCase
         self::assertFalse($response->hasHeader('Set-Cookie'));
     }
 
+    public function testAPublicResponseKeepsItsCachingWhenNoCookieIsSet(): void
+    {
+        $id = str_repeat('a', 43);
+        $this->stored[$id] = ['user' => 7];
+        $request = $this->withCookie(new ServerRequest('GET', 'http://example.org/assets/css/site.css'), $id);
+
+        $response = $this->send($request, static fn (Session $s) => null, 'public, max-age=300');
+
+        self::assertSame('public, max-age=300', $response->getHeaderLine('Cache-Control'));
+    }
+
+    public function testAPublicResponseThatSetsANewCookieIsNotCached(): void
+    {
+        $response = $this->send(
+            new ServerRequest('GET', 'http://example.org/'),
+            static fn (Session $s) => $s->set('user', 7),
+            'public, max-age=300',
+        );
+
+        self::assertSame('private, no-store', $response->getHeaderLine('Cache-Control'));
+    }
+
     public function testSigningInGivesANewIdAndDeletesTheOldOne(): void
     {
         $old = str_repeat('a', 43);
@@ -144,7 +166,7 @@ final class SessionMiddlewareTest extends TestCase
     /**
      * @param \Closure(Session): mixed $use
      */
-    private function send(ServerRequestInterface $request, \Closure $use): ResponseInterface
+    private function send(ServerRequestInterface $request, \Closure $use, ?string $cacheControl = null): ResponseInterface
     {
         $stored = &$this->stored;
         $store = new class ($stored) implements SessionStore {
@@ -172,10 +194,10 @@ final class SessionMiddlewareTest extends TestCase
         };
 
         return new SessionMiddleware($store)->process($request, new CallbackHandler(
-            static function (ServerRequestInterface $request) use ($use): ResponseInterface {
+            static function (ServerRequestInterface $request) use ($use, $cacheControl): ResponseInterface {
                 $use(Session::fromRequest($request));
 
-                return new Response();
+                return $cacheControl === null ? new Response() : new Response(200, ['Cache-Control' => $cacheControl]);
             },
         ));
     }

@@ -1,0 +1,62 @@
+{#
+    Page shell of every page the theme renders (WCAG 2.2 AA):
+
+    - `lang` and `dir` come from `locale` (the page's language) or else the viewer's language;
+    - a "Skip to main content" link is the first thing to tab to;
+    - landmarks: <header> (banner), <nav aria-label> for each menu, <main id="content">, <footer> (content info);
+    - flash `messages` sit at the top of <main> in a polite live region.
+
+    Context (all optional): `site_name`, `locale`, `main_menu` and `footer_menu` (lists of {label, url, current}),
+    `messages` (list of texts), `form` (its errors put "Error: " in front of the <title>).
+    Blocks: `title`, `head`, `brand`, `breadcrumbs`, `main`, `footer`, `scripts`.
+#}
+{%- set lang = locale|default(current_locale()) -%}
+{%- set site_name = site_name|default('SightPress') -%}
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ text_direction(lang) }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>{% if form is defined and form.errors is not empty %}{{ t('Error:') }} {% endif %}{% block title %}{% endblock %} - {{ site_name }}</title>
+<link rel="stylesheet" href="{{ asset('tokens.css') }}">
+<link rel="stylesheet" href="{{ asset('css/site.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<a class="skip-link" href="#content">{{ t('Skip to main content') }}</a>
+<header class="site-header">
+    <div class="container site-header__inner">
+        {% block brand %}<a class="site-name" href="/">{{ site_name }}</a>{% endblock %}
+        {%- if main_menu is defined and main_menu is not empty %}
+        <nav class="menu menu--main" aria-label="{{ t('Main') }}">
+            {{ _self.menu(main_menu) }}
+        </nav>
+        {%- endif %}
+    </div>
+</header>
+{% block breadcrumbs %}{% endblock %}
+<main id="content" class="site-main" tabindex="-1">
+    {% include 'partials/messages.html.twig' with {messages: messages|default([])} only %}
+    {% block main %}{% endblock %}
+</main>
+<footer class="site-footer">
+    <div class="container">
+        {%- if footer_menu is defined and footer_menu is not empty %}
+        <nav class="menu menu--footer" aria-label="{{ t('Footer') }}">
+            {{ _self.menu(footer_menu) }}
+        </nav>
+        {%- endif %}
+        {% block footer %}<p>{{ site_name }}</p>{% endblock %}
+    </div>
+</footer>
+{% block scripts %}<script src="{{ asset('js/site.js') }}" defer></script>{% endblock %}
+</body>
+</html>
+{% macro menu(items) %}
+    <ul>
+        {%- for item in items %}
+        <li><a href="{{ item.url }}"{% if item.current|default(false) %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
+        {%- endfor %}
+    </ul>
+{% endmacro %}

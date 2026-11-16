@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Component gallery for the accessibility tests: serves core's form building blocks through the real middleware
+ * Component gallery for the accessibility tests: serves core's form building blocks and the default theme's style
+ * guide (`/theme/home`, `/theme/default`) through the real middleware
  * (security headers, sessions, CSRF) so Playwright and axe can check them in a browser before any admin screen
  * exists. Started by playwright.config.ts with PHP's built-in web server; never deployed.
  */
@@ -31,6 +32,10 @@ use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Template\Translations;
 use SightPress\Core\Template\TwigFactory;
 use SightPress\Core\Template\Viewer;
+use SightPress\Core\Theme\Http\ThemeAssetHandler;
+use SightPress\Core\Theme\ThemeAssets;
+use SightPress\Core\Theme\ThemeLoader;
+use SightPress\Core\Theme\TokenStylesheet;
 use Slim\Factory\AppFactory;
 use Slim\ResponseEmitter;
 use Symfony\Component\Validator\Validation;
@@ -41,8 +46,14 @@ date_default_timezone_set('UTC');
 
 $factory = new Psr17Factory();
 $current = new CurrentRequest();
+$paths = new TemplatePaths([__DIR__, TemplatePaths::defaultTheme()], TemplatePaths::core());
+$assets = new ThemeAssetHandler(
+    new ThemeAssets(new ThemeLoader()->load(TemplatePaths::defaultTheme()), $paths, new TokenStylesheet()),
+    $factory,
+    $factory,
+);
 $twig = new TwigFactory()->create(
-    new TemplatePaths([__DIR__], TemplatePaths::core()),
+    $paths,
     ModuleRegistry::register([]),
     new TemplateExtension($current, new AssetUrls(), Translations::fromDirectories([]), new DateFormatter(), new Viewer('en-GB', 'UTC')),
     sys_get_temp_dir(),
@@ -67,19 +78,38 @@ $app->addRoutingMiddleware();
 $app->add(new SessionMiddleware(new FileSessionStore(sys_get_temp_dir() . '/sightpress-gallery-sessions', new SystemClock(), 3600)));
 $app->add(new SecurityHeadersMiddleware());
 
-$app->map(['GET', 'POST'], '/form', static function (ServerRequestInterface $request) use ($form, $templates): ResponseInterface {
+$menu = [['label' => 'Home layout', 'url' => '/theme/home'], ['label' => 'Default layout', 'url' => '/theme/default'], ['label' => 'Form', 'url' => '/form']];
+$menuAt = static fn (string $path): array => array_map(static fn (array $item): array => $item + ['current' => $item['url'] === $path], $menu);
+
+$app->map(['GET', 'POST'], '/form', static function (ServerRequestInterface $request) use ($form, $templates, $menuAt): ResponseInterface {
     if ($request->getMethod() === 'POST') {
         $body = $request->getParsedBody();
         $form = new FormValidator(Validation::createValidator())->submit($form, is_array($body) ? $body : []);
         if ($form->isValid()) {
-            return $templates->response($request, 'saved.html.twig', ['form' => $form]);
+            return $templates->response($request, 'saved.html.twig', ['form' => $form, 'title' => 'Profile saved', 'main_menu' => $menuAt('/form')]);
         }
 
-        return $templates->response($request, 'form.html.twig', ['form' => $form], 422);
+        return $templates->response($request, 'form.html.twig', ['form' => $form, 'title' => 'Your profile', 'main_menu' => $menuAt('/form')], 422);
     }
 
-    return $templates->response($request, 'form.html.twig', ['form' => $form]);
+    return $templates->response($request, 'form.html.twig', ['form' => $form, 'title' => 'Your profile', 'main_menu' => $menuAt('/form')]);
 });
+
+$app->get('/theme/{layout:home|default}', static function (ServerRequestInterface $request, ResponseInterface $response, array $args) use ($templates, $menuAt): ResponseInterface {
+    $layout = $args['layout'] === 'home' ? 'home' : 'default';
+
+    return $templates->response($request, 'theme.html.twig', [
+        'layout' => $layout,
+        'site_name' => 'Riverside Library',
+        'title' => $layout === 'home' ? 'Welcome to Riverside Library' : 'Style guide',
+        'lead' => 'Every part of the default theme on one page.',
+        'main_menu' => $menuAt('/theme/' . $layout),
+        'footer_menu' => [['label' => 'Accessibility statement', 'url' => '/theme/default'], ['label' => 'Privacy', 'url' => '/theme/default']],
+        'messages' => isset($request->getQueryParams()['saved']) ? ['Your changes have been saved.'] : [],
+    ]);
+});
+$app->get('/assets/{path:.+}', static fn (ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    => $assets->handle($request->withAttribute(ThemeAssetHandler::PATH_ATTRIBUTE, $args['path'])));
 
 $factoryForRequest = new ServerRequestCreator($factory, $factory, $factory, $factory);
 new ResponseEmitter()->emit($app->handle($factoryForRequest->fromGlobals()));

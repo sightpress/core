@@ -46,6 +46,8 @@ test('the sign-in form is labelled, "keep me signed in" is off, and the tab orde
   await expectNoViolations(page);
 
   await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: 'Skip to main content' })).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Riverside Library' })).toBeFocused();
   for (const target of [
     page.getByLabel('Email address'),

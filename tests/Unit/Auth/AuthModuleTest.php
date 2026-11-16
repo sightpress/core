@@ -43,6 +43,9 @@ final class AuthModuleTest extends TestCase
 
         $routes = [];
         foreach ($registry->routes() as $registered) {
+            if ($registered->module !== 'auth') {
+                continue;
+            }
             $routes[$registered->item->name] = $registered->item->path . ' ' . implode(',', $registered->item->methods);
         }
         self::assertSame([

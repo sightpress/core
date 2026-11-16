@@ -69,7 +69,7 @@ final class CoreServices
             SessionStore::class => autowire(FileSessionStore::class)
                 ->constructorParameter('directory', $config->sessionPath)
                 ->constructorParameter('idleTimeout', $config->sessionIdleTimeout),
-            TemplatePaths::class => new TemplatePaths([], TemplatePaths::core()),
+            TemplatePaths::class => new TemplatePaths([TemplatePaths::defaultTheme()], TemplatePaths::core()),
             AssetUrls::class => autowire()->constructorParameter('version', \Composer\InstalledVersions::getReference('sightpress/core')),
             Translations::class => factory(static fn (): Translations => Translations::fromDirectories(
                 [dirname(TemplatePaths::core()) . '/translations'],

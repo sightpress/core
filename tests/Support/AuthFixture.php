@@ -78,7 +78,7 @@ final class AuthFixture implements MailSender
 
         $current = new CurrentRequest();
         $twig = new TwigFactory()->create(
-            new TemplatePaths([], TemplatePaths::core()),
+            new TemplatePaths([TemplatePaths::defaultTheme()], TemplatePaths::core()),
             $this->database->registry,
             new TemplateExtension($current, new AssetUrls(), Translations::fromDirectories([]), new DateFormatter(), new Viewer('en-GB', 'UTC')),
             sys_get_temp_dir(),

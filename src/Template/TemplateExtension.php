@@ -21,6 +21,8 @@ use Twig\TwigFunction;
  * - `can(permission)`: whether the viewer holds a permission;
  * - `csp_nonce()`: the nonce every inline `<script>` and `<style>` needs;
  * - `csrf_fields()`: the hidden CSRF fields every `POST` form needs;
+ * - `current_locale()`: the viewer's language, for example `en-GB`;
+ * - `text_direction(locale)`: `rtl` for right-to-left scripts, otherwise `ltr`;
  * - `value|user_datetime(style)` and `value|user_date(style)`: a UTC date in the viewer's time zone and language.
  */
 final class TemplateExtension extends AbstractExtension
@@ -42,6 +44,8 @@ final class TemplateExtension extends AbstractExtension
             new TwigFunction('can', $this->can(...)),
             new TwigFunction('csp_nonce', $this->cspNonce(...)),
             new TwigFunction('csrf_fields', $this->csrfFields(...), ['is_safe' => ['html']]),
+            new TwigFunction('current_locale', $this->currentLocale(...)),
+            new TwigFunction('text_direction', TextDirection::of(...)),
         ];
     }
 
@@ -84,6 +88,11 @@ final class TemplateExtension extends AbstractExtension
         );
 
         return $input($token->nameKey, $token->name) . $input($token->valueKey, $token->value);
+    }
+
+    public function currentLocale(): string
+    {
+        return $this->viewer()->locale;
     }
 
     public function userDateTime(?DateTimeInterface $value, string $style = 'medium'): string

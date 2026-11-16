@@ -1,7 +1,7 @@
 {% extends '@auth/layout.html.twig' %}
 {% import 'form/macros.html.twig' as f %}
 {% block title %}{{ t('Sign in') }}{% endblock %}
-{% block main %}
+{% block content %}
 <h1>{{ t('Sign in') }}</h1>
 {{ f.error_summary(form) }}
 {{ f.start(form, action) }}

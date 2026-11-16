@@ -1,0 +1,21 @@
+{#
+    Home layout: an introduction band with the page title as the only <h1> and an optional `lead`, then `content`
+    at full page width (for cards and other wide blocks).
+    Context: `title` (required), `lead` (optional).
+#}
+{% extends 'master.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block main %}
+<div class="hero">
+    <div class="container">
+        <h1>{{ title }}</h1>
+        {%- if lead is defined and lead is not empty %}
+        <p class="lead">{{ lead }}</p>
+        {%- endif %}
+        {% block hero %}{% endblock %}
+    </div>
+</div>
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+{% endblock %}
