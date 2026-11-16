@@ -37,6 +37,13 @@ export default defineConfig({
       stdout: 'ignore',
       stderr: 'ignore',
     },
+    {
+      command: 'php -S 127.0.0.1:8091 tests/A11y/starter/index.php',
+      url: 'http://127.0.0.1:8091/',
+      reuseExistingServer: !process.env.CI,
+      stdout: 'ignore',
+      stderr: 'ignore',
+    },
     // One copy of the admin test site per spec file (tests/A11y/support/admin-site.ts), so specs never reset each
     // other's site.
     ...Object.entries({ admin: 8096, account: 8095, people: 8094, media: 8093, menus: 8092 }).map(([copy, port]) => ({

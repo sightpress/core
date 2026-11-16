@@ -48,6 +48,7 @@ final class PageModuleTest extends TestCase
         self::assertArrayHasKey(\SightPress\Core\Page\Workflow\ReviewRequestMailer::class, $registry->services());
         $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'page'));
         self::assertSame([\SightPress\Core\Page\Contract\PageTransitioned::class, \SightPress\Core\Page\Workflow\ReviewRequestMailer::class], [$listeners[0]->item->event, $listeners[0]->item->listener]);
+        self::assertSame([\SightPress\Core\Site\Contract\SiteProvisioning::class, \SightPress\Core\Page\Provisioning\StarterPages::class, 0], [$listeners[1]->item->event, $listeners[1]->item->listener, $listeners[1]->item->priority]);
         $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'page'));
         self::assertDirectoryExists($views[0]->item->directory . '/email');
         $routes = array_values(array_filter($registry->routes(), static fn ($r) => $r->module === 'page'));

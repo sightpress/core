@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace SightPress\Core\Menu;
 
 use SightPress\Core\Menu\Http\MenuAdminHandler;
+use SightPress\Core\Menu\Provisioning\StarterMenus;
 use SightPress\Core\Page\Contract\PublicPageRendering;
+use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\ModuleInterface;
@@ -17,7 +19,8 @@ use SightPress\Module\Routing\Route;
 /**
  * Menus: the `menu_items` table with the site's main and footer menus, the {@see MenuEditor} that changes them, the
  * menu editor in the admin (`/admin/menus`, permission `menu.manage`), and {@see PublicMenus}, which puts the menus
- * and the breadcrumbs on every page of the public site. Always on.
+ * and the breadcrumbs on every page of the public site; new sites get the {@see StarterMenus}.
+ * Always on.
  */
 final class MenuModule implements ModuleInterface
 {
@@ -47,8 +50,10 @@ final class MenuModule implements ModuleInterface
         $services->autowire(MenuEditor::class, public: true);
         $services->autowire(PublicMenus::class);
         $services->autowire(MenuAdminHandler::class);
+        $services->autowire(StarterMenus::class);
 
         $registrar->subscribers()->listen(PublicPageRendering::class, PublicMenus::class);
+        $registrar->subscribers()->listen(SiteProvisioning::class, StarterMenus::class, StarterMenus::PRIORITY);
         $registrar->routes()->add(new Route('menu.admin', MenuAdminHandler::PATH, MenuAdminHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('menu.admin', 'Menus', 'menu.admin', MenuAdminHandler::PERMISSION, position: 35));
     }

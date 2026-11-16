@@ -78,7 +78,9 @@ final class SiteCommandsTest extends TestCase
         self::assertSame('Set up the roles admin, editor, contributor and member.', $lines[3]);
         self::assertSame('Gave the first admin the admin role.', $lines[4]);
         self::assertSame(1, preg_match('#^Give this link to the first admin to choose their password\. It works once, for 7 days: https://demo\.example/password/reset/(\S+)$#', $lines[5], $link));
-        self::assertSame('The site "demo" is ready at https://demo.example.', $lines[6]);
+        self::assertSame('Published the starter pages: Welcome to Riverside Library, About us, Contact us, Privacy notice, Terms of use, Accessibility statement.', $lines[6]);
+        self::assertSame('Added 5 starter pages to the main and footer menus.', $lines[7]);
+        self::assertSame('The site "demo" is ready at https://demo.example.', $lines[8]);
         self::assertStringNotContainsString('sqlite:', $this->stdout, 'the DSN itself is never printed');
 
         $site = $this->site('demo');
