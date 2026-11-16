@@ -44,7 +44,7 @@ test('the home page is at / in the home layout, and a missing page is a 404', as
   const response = await page.goto(`${SITE}/`);
 
   expect(response?.status()).toBe(200);
-  await expect(page).toHaveTitle('Welcome to Riverside Library - Riverside Library');
+  await expect(page).toHaveTitle('Welcome to Riverside Library');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Welcome to Riverside Library');
   await expect(page.getByText('Books, music and a view of the harbour.')).toBeVisible();
   await expectNoViolations(page);

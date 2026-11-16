@@ -1,7 +1,9 @@
 // The starter content (C-6.4) of a site made with site:create (tests/A11y/starter/index.php): every starter page has
-// no axe violations in light and dark mode, reflows at 320 px, and can be reached from the menus by keyboard.
-import { expect, test, type Page } from '@playwright/test';
+// no axe violations in light and dark mode, reflows at 320 px, can be reached from the menus by keyboard, and scores
+// 100 in Lighthouse's SEO category (C-6.7).
+import { chromium, expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import lighthouse from 'lighthouse';
 
 const SITE = 'http://127.0.0.1:8091';
 const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
@@ -32,7 +34,8 @@ test('every starter page has no violations and reflows at 320 px', async ({ page
   for (const [path, title] of PAGES) {
     await page.setViewportSize({ width: 1280, height: 800 });
     expect((await page.goto(`${SITE}${path}`))?.status()).toBe(200);
-    await expect(page).toHaveTitle(`${title} - Riverside Library`);
+    // The home page's title already names the site, so it isn't repeated (C-6.7).
+    await expect(page).toHaveTitle(path === '/' ? title : `${title} - Riverside Library`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
     await expectNoViolations(page);
 
@@ -73,4 +76,22 @@ test('the menus lead to the starter pages by keyboard', async ({ page }) => {
   await page.getByRole('main').getByRole('link', { name: 'contact us' }).press('Enter');
   await expect(page).toHaveURL(`${SITE}/contact`);
   await expect(page.getByLabel('Your message')).toBeVisible();
+});
+
+test('every starter page scores 100 for search engines in Lighthouse', async () => {
+  test.setTimeout(240_000);
+  const port = 9300 + test.info().workerIndex;
+  const browser = await chromium.launch({ args: [`--remote-debugging-port=${port}`] });
+  try {
+    for (const [path] of PAGES) {
+      const result = await lighthouse(`${SITE}${path}`, { port, onlyCategories: ['seo'], logLevel: 'error', output: 'json' });
+      const lhr = result?.lhr;
+      const failed = Object.values(lhr?.audits ?? {})
+        .filter((audit) => audit.scoreDisplayMode === 'binary' && audit.score !== 1)
+        .map((audit) => `${audit.id}: ${audit.title}`);
+      expect(lhr?.categories.seo.score, `${path}: ${failed.join('; ')}`).toBe(1);
+    }
+  } finally {
+    await browser.close();
+  }
 });

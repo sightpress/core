@@ -61,9 +61,10 @@ final class BrandingTest extends TestCase
         self::assertStringContainsString('<meta property="og:description" content="All about About us.">', $html);
         self::assertStringContainsString('<meta name="twitter:card" content="summary_large_image">', $html);
         self::assertStringContainsString('<a class="site-name" href="/">Demo</a>', $html, 'no uploaded logo: the name stays text');
-        self::assertSame(1, preg_match('#<script type="application/ld\+json">(.+?)</script>#', $html, $script));
-        self::assertStringContainsString('"@type":"Organization"', $script[1]);
-        self::assertStringContainsString('"logo":{"@type":"ImageObject","url":"https://example.org/branding/wordmark.svg?v=' . $version . '"', $script[1]);
+        self::assertSame(2, preg_match_all('#<script type="application/ld\+json">(.+?)</script>#', $html, $scripts), 'the owner and website here, the page from the SEO module');
+        $json = implode("\n", $scripts[1]);
+        self::assertStringContainsString('"@type":"Organization"', $json);
+        self::assertStringContainsString('"logo":{"@type":"ImageObject","url":"https://example.org/branding/wordmark.svg?v=' . $version . '"', $json);
 
         $share = $browser->request('GET', '/branding/share.png?v=' . $version);
         self::assertSame('image/png', $share->getHeaderLine('Content-Type'));

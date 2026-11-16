@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The sitemaps.org schema (sitemap.xsd, downloaded from https://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd)
+     with the xhtml:link alternates, for SitemapTest. -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:import namespace="http://www.sitemaps.org/schemas/sitemap/0.9" schemaLocation="sitemap.xsd"/>
+  <xsd:import namespace="http://www.w3.org/1999/xhtml" schemaLocation="xhtml-link.xsd"/>
+</xsd:schema>

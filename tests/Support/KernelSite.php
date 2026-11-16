@@ -30,19 +30,25 @@ final class KernelSite
 
     public readonly Kernel $kernel;
 
-    public function __construct(string $name)
+    /**
+     * @param list<string> $domains
+     * @param list<string> $locales the first one is the default
+     */
+    public function __construct(string $name, array $domains = ['example.org'], string $environment = 'test', array $locales = ['en-GB'])
     {
         $this->project = new TestProject();
         $dsn = TestDatabases::dsn($name, $this->project->path());
         $this->project->directory->write('config/sites.php', '<?php return ' . var_export([
             'version' => 1,
             'sites' => ['demo' => SiteFixture::entry('demo', [
-                'domains' => ['example.org'],
+                'domains' => $domains,
+                'default_locale' => $locales[0],
+                'locales' => $locales,
                 'db_dsn' => SiteFixture::secretBox()->encrypt($dsn),
             ])],
         ], true) . ';');
         $this->kernel = Kernel::fromConfig(
-            new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => 'test', 'APP_SECRET' => SiteFixture::SECRET]),
+            new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment, 'APP_SECRET' => SiteFixture::SECRET]),
             CoreModules::candidates(),
         );
 

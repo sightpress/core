@@ -274,7 +274,7 @@ final class Page implements PageSubject
     /**
      * Everything about the page that a revision keeps.
      *
-     * @return array{parent: ?int, position: int, layout: string, public: bool, state: string, translations: array<string, array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int}>}
+     * @return array{parent: ?int, position: int, layout: string, public: bool, state: string, translations: array<string, array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string}>}
      */
     public function snapshot(): array
     {

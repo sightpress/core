@@ -15,6 +15,7 @@ use SightPress\Core\Menu\MenuModule;
 use SightPress\Core\Page\PageModule;
 use SightPress\Core\People\PeopleModule;
 use SightPress\Core\Rbac\RbacModule;
+use SightPress\Core\Seo\SeoModule;
 use SightPress\Core\Site\SiteModule;
 use SightPress\Core\Theme\ThemeModule;
 use SightPress\Core\User\UserModule;
@@ -45,6 +46,7 @@ final class CoreModules
             new ModuleCandidate(new PeopleModule(), 'sightpress/core'),
             new ModuleCandidate(new MenuModule(), 'sightpress/core'),
             new ModuleCandidate(new BrandingModule(), 'sightpress/core'),
+            new ModuleCandidate(new SeoModule(), 'sightpress/core'),
         ];
     }
 

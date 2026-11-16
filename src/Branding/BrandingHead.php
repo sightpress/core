@@ -37,7 +37,7 @@ final readonly class BrandingHead
         $base = rtrim($event->baseUrl, '/');
         $file = static fn (string $path): string => $base . $path . '?v=' . rawurlencode($state->version);
         $name = $this->site->name;
-        $description = $event->description ?? $event->summary;
+        $description = $event->metaDescription();
 
         $tags = [
             ['link', ['rel' => 'icon', 'href' => $file('/favicon.ico'), 'sizes' => '32x32']],
@@ -55,7 +55,7 @@ final readonly class BrandingHead
             'og:site_name' => $name,
             'og:title' => $event->title,
             'og:description' => $description,
-            'og:url' => $base . $event->url,
+            'og:url' => $event->canonicalUrl(),
             'og:locale' => str_replace('-', '_', $event->locale),
             'og:image' => $image,
             'og:image:width' => $width,

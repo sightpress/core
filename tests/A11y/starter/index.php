@@ -3,7 +3,7 @@
 /**
  * A real site for the accessibility tests of the starter content (C-6.4): the whole kernel with core's modules, and a
  * site made with `site:create` (an organization, domain 127.0.0.1, SQLite file), so it has the starter pages and
- * menus every new site gets. Started by playwright.config.ts with PHP's built-in web server; never deployed.
+ * menus every new site gets, in production mode (search engines welcome). Started by playwright.config.ts with PHP's built-in web server; never deployed.
  *
  * `/_test/reset` starts again from a fresh site.
  */
@@ -21,7 +21,8 @@ const SECRET = 'a11y-secret-0123456789abcdef0123456789abcdef';
 $project = sys_get_temp_dir() . '/sightpress-a11y-starter';
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
 $path = (string) parse_url(is_string($uri) ? $uri : '/', PHP_URL_PATH);
-$environment = ['APP_ENV' => 'test', 'APP_SECRET' => SECRET];
+// Production, as a real site: pages may be indexed, so Lighthouse can check them for search engines.
+$environment = ['APP_ENV' => 'production', 'APP_SECRET' => SECRET];
 
 if ($path === '/_test/reset') {
     exec('rm -rf ' . escapeshellarg($project));

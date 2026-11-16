@@ -68,6 +68,7 @@ final class PublicPageHandlerTest extends TestCase
         $event = end($this->fixture->pages->events);
         self::assertInstanceOf(\SightPress\Core\Page\Contract\PublicPageRendering::class, $event);
         self::assertSame([(int) $about->id(), 'en-GB', '/about-us', 'https://demo.example', 'About us', false, true], [$event->pageId, $event->locale, $event->url, $event->baseUrl, $event->title, $event->home, $event->public]);
+        self::assertSame(['https://demo.example/about-us', null, null], [$event->canonicalUrl(), $event->metaDescription(), $event->robots()]);
         self::assertSame([], $event->ancestorIds);
         self::assertStringContainsString('<title>About us - Demo</title>', $html);
         self::assertStringContainsString('<div class="container container--narrow">', $html, 'the default layout');
@@ -91,12 +92,18 @@ final class PublicPageHandlerTest extends TestCase
                 $event->set('main_menu', [['label' => 'Visit us', 'url' => '/visit', 'current' => false, 'children' => []]]);
                 $event->addHead('<meta name="test" content="1">');
                 $event->addHead('<meta name="test" content="2">');
+                $event->setRobots('noindex');
+                $event->setCanonicalUrl('https://demo.example/elsewhere');
+                $event->setMetaDescription('Changed.');
 
                 return $event;
             }
         };
 
-        $html = (string) $this->handler($events)->handle($this->fixture->auth->request('GET', 'https://demo.example/'))->getBody();
+        $response = $this->handler($events)->handle($this->fixture->auth->request('GET', 'https://demo.example/'));
+        $html = (string) $response->getBody();
+        self::assertSame('noindex', $response->getHeaderLine('X-Robots-Tag'));
+        self::assertSame('<https://demo.example/elsewhere>; rel="canonical"', $response->getHeaderLine('Link'));
 
         self::assertStringContainsString("<meta name=\"test\" content=\"1\">\n<meta name=\"test\" content=\"2\">", $html);
         self::assertStringContainsString('<li><a href="/visit">Visit us</a></li>', $html);
@@ -111,6 +118,8 @@ final class PublicPageHandlerTest extends TestCase
             'https://demo.example/about/?x=1' => 'https://demo.example/about?x=1',
             'https://demo.example/welcome' => 'https://demo.example/',
             'https://demo.example/about//' => 'https://demo.example/about',
+            'https://WWW.Demo.example/about?x=1' => 'https://demo.example/about?x=1',
+            'http://www.demo.example:8080/' => 'http://demo.example:8080/',
         ] as $from => $to) {
             $response = $this->get($from);
             self::assertSame(301, $response->getStatusCode(), $from);

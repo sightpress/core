@@ -21,11 +21,22 @@ final class PublicPageRendering
     /** @var list<string> */
     private array $head = [];
 
+    private ?string $metaDescription;
+
+    private string $canonicalUrl;
+
+    private ?string $robots = null;
+
     /**
      * @param string    $url         the page's address on the site, for example `/about/team` or `/` (home)
      * @param string    $baseUrl     scheme and host of the site, for example `https://example.org`
      * @param list<int> $ancestorIds   the pages above this one, from the top of the tree down
      * @param ?int      $socialImageId media id of the page's own share image, if it has one
+     * @param ?string   $seoTitle      the title for search engines, when it differs from the page title
+     * @param bool      $noindex       whether search engines are asked to leave the page out
+     * @param ?string   $canonicalOverride the original's address, when the page copies another one
+     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param string    $contentHtml   the page's blocks rendered as HTML
      */
     public function __construct(
         public readonly ServerRequestInterface $request,
@@ -41,7 +52,55 @@ final class PublicPageRendering
         public readonly bool $public,
         public readonly DateTimeImmutable $updatedAt,
         public readonly ?int $socialImageId = null,
+        public readonly ?string $seoTitle = null,
+        public readonly bool $noindex = false,
+        public readonly ?string $canonicalOverride = null,
+        public readonly array $blocks = [],
+        public readonly string $contentHtml = '',
     ) {
+        $this->metaDescription = $description ?? $summary;
+        $this->canonicalUrl = $canonicalOverride ?? rtrim($baseUrl, '/') . $url;
+    }
+
+    /**
+     * The description search engines and social networks get: the page's, else its summary, unless a module (SEO)
+     * gives a better one.
+     */
+    public function metaDescription(): ?string
+    {
+        return $this->metaDescription;
+    }
+
+    public function setMetaDescription(?string $description): void
+    {
+        $this->metaDescription = $description;
+    }
+
+    /**
+     * The page's one address for search engines and social networks (absolute).
+     */
+    public function canonicalUrl(): string
+    {
+        return $this->canonicalUrl;
+    }
+
+    public function setCanonicalUrl(string $url): void
+    {
+        $this->canonicalUrl = $url;
+    }
+
+    /**
+     * What search engines are asked to do with the page (`noindex, nofollow` …), sent as `X-Robots-Tag` and in a
+     * `<meta name="robots">`; null asks nothing.
+     */
+    public function robots(): ?string
+    {
+        return $this->robots;
+    }
+
+    public function setRobots(?string $robots): void
+    {
+        $this->robots = $robots;
     }
 
     public function set(string $name, mixed $value): void

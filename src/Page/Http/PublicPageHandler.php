@@ -26,7 +26,8 @@ use Twig\Environment;
  * The public site: `/` is the home page, `/{path}` the page at that address (`/pt-pt/…` for other locales), in the
  * theme layout the page uses. Only pages the visitor may view are shown (published, and public or the visitor is
  * signed in); anything else is a 404, so nothing is given away about drafts. Addresses that aren't the page's own
- * are moved permanently: `/about/` → `/about`, the home page's own path → `/`. Other modules add menus, `<head>` tags
+ * are moved permanently: `/about/` → `/about`, the home page's own path → `/`, any of the site's other domains → its
+ * first one. Other modules add menus, `<head>` tags
  * and more through the {@see PublicPageRendering} event.
  *
  * Caching: a page that holds nothing personal (the visitor isn't signed in and the page left nothing in the session,
@@ -54,8 +55,9 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
     {
         $uri = $request->getUri();
         $path = $uri->getPath();
-        if ($path !== '/' && str_ends_with($path, '/')) {
-            return $this->moved($uri->withPath('/' . trim($path, '/'))->__toString());
+        $host = $this->site->domains[0] ?? $uri->getHost();
+        if ($path !== '/' && str_ends_with($path, '/') || strtolower($uri->getHost()) !== $host) {
+            return $this->moved($uri->withHost($host)->withPath($path === '/' ? '/' : '/' . trim($path, '/'))->__toString());
         }
 
         $translation = $this->addresses->find($path);
@@ -71,6 +73,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         $page = $translation->page();
         $baseUrl = $uri->getScheme() . '://' . $uri->getAuthority();
         $context = $this->contexts->create($translation->locale(), $baseUrl, $request);
+        $content = $this->renderer->html($translation->blocks(), $context);
         $rendering = new PublicPageRendering(
             $request,
             (int) $page->id(),
@@ -85,6 +88,11 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
             $page->isPublic(),
             $translation->updatedAt(),
             $translation->socialImage(),
+            $translation->seoTitle(),
+            $translation->isNoindex(),
+            $translation->canonicalUrl(),
+            $translation->blocks(),
+            $content,
         );
         $this->events->dispatch($rendering);
         $layout = 'layouts/' . $page->layout() . '.html.twig';
@@ -96,7 +104,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
             'lead' => $translation->summary(),
             'locale' => $translation->locale(),
             'site_name' => $this->site->name,
-            'content' => $this->renderer->html($translation->blocks(), $context),
+            'content' => $content,
             'updated_at' => $translation->updatedAt(),
         ]);
 
@@ -104,8 +112,12 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         $etag = '"' . hash('xxh128', $body) . '"';
         $response = $this->responses->createResponse()
             ->withHeader('Content-Language', $translation->locale())
+            ->withHeader('Link', sprintf('<%s>; rel="canonical"', $rendering->canonicalUrl()))
             ->withHeader('ETag', $etag)
             ->withHeader('Cache-Control', $personal ? 'private, no-cache' : 'public, max-age=' . self::MAX_AGE);
+        if ($rendering->robots() !== null) {
+            $response = $response->withHeader('X-Robots-Tag', $rendering->robots());
+        }
         if (in_array($etag, array_map(trim(...), explode(',', $request->getHeaderLine('If-None-Match'))), true)) {
             return $response->withStatus(304);
         }

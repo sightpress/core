@@ -51,6 +51,15 @@ final class PageTranslation
     #[ORM\Column(name: 'social_image_id', type: Types::INTEGER, nullable: true)]
     private ?int $socialImage = null;
 
+    #[ORM\Column(name: 'seo_title', type: Types::STRING, length: 200, nullable: true)]
+    private ?string $seoTitle = null;
+
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private bool $noindex = false;
+
+    #[ORM\Column(name: 'canonical_url', type: Types::STRING, length: 2000, nullable: true)]
+    private ?string $canonicalUrl = null;
+
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $updatedAt;
 
@@ -129,6 +138,21 @@ final class PageTranslation
         return $this->socialImage;
     }
 
+    public function seoTitle(): ?string
+    {
+        return $this->seoTitle;
+    }
+
+    public function isNoindex(): bool
+    {
+        return $this->noindex;
+    }
+
+    public function canonicalUrl(): ?string
+    {
+        return $this->canonicalUrl;
+    }
+
     public function updatedAt(): DateTimeImmutable
     {
         return $this->updatedAt;
@@ -136,7 +160,7 @@ final class PageTranslation
 
     public function content(): PageContent
     {
-        return new PageContent($this->title, $this->slug, $this->summary, $this->description, $this->blocks, $this->socialImage);
+        return new PageContent($this->title, $this->slug, $this->summary, $this->description, $this->blocks, $this->socialImage, $this->seoTitle, $this->noindex, $this->canonicalUrl);
     }
 
     /**
@@ -152,6 +176,9 @@ final class PageTranslation
         $this->description = $content->description;
         $this->blocks = $content->blocks;
         $this->socialImage = $content->socialImage;
+        $this->seoTitle = $content->seoTitle;
+        $this->noindex = $content->noindex;
+        $this->canonicalUrl = $content->canonicalUrl;
         $this->updatedAt = $now;
     }
 
@@ -171,7 +198,7 @@ final class PageTranslation
     }
 
     /**
-     * @return array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int}
+     * @return array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string}
      */
     public function snapshot(): array
     {
@@ -183,6 +210,9 @@ final class PageTranslation
             'description' => $this->description,
             'blocks' => $this->blocks,
             'social_image' => $this->socialImage,
+            'seo_title' => $this->seoTitle,
+            'noindex' => $this->noindex,
+            'canonical_url' => $this->canonicalUrl,
         ];
     }
 

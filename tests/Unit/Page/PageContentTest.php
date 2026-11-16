@@ -29,6 +29,9 @@ final class PageContentTest extends TestCase
                 'description' => null,
                 'blocks' => [$block, ['type' => 'acme.event_card', 'version' => 2, 'data' => []]],
                 'social_image' => null,
+                'seo_title' => null,
+                'noindex' => false,
+                'canonical_url' => null,
             ],
             $content->toArray(),
         );
@@ -58,6 +61,24 @@ final class PageContentTest extends TestCase
             'extra key' => ['type' => 'heading', 'version' => 1, 'data' => [], 'html' => '<p>'],
         ] as $name => $block) {
             yield 'block ' . $name => [static fn () => new PageContent('About', null, null, null, [['type' => 'a', 'version' => 1, 'data' => []], $block]), 'Block 2 is not a block'];
+        }
+    }
+
+    public function testKeepsWhatSearchEnginesGet(): void
+    {
+        $content = new PageContent('About', null, null, null, [], null, '  Meet  us ', true, ' https://example.org/original?a=1 ');
+
+        self::assertSame(['Meet us', true, 'https://example.org/original?a=1'], [$content->seoTitle, $content->noindex, $content->canonicalUrl]);
+        $copy = $content->withBlocks([]);
+        self::assertSame(['Meet us', true, 'https://example.org/original?a=1'], [$copy->seoTitle, $copy->noindex, $copy->canonicalUrl]);
+        self::assertNull(new PageContent('About', canonicalUrl: ' ')->canonicalUrl);
+        foreach (['/about', 'ftp://example.org/x', 'https://', 'https://exa mple.org', 'https://example.org/' . str_repeat('a', 2000)] as $url) {
+            try {
+                new PageContent('About', canonicalUrl: $url);
+                self::fail('Accepted ' . $url);
+            } catch (PageException $exception) {
+                self::assertSame('The original address must be a full web address starting with https:// or http://.', $exception->getMessage());
+            }
         }
     }
 

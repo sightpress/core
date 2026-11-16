@@ -51,13 +51,16 @@ final class PageTranslationTest extends TestCase
         ]);
         self::assertEquals(new PageContent('Team', 'team', 'Who', 'Desc', $blocks), $translation->content());
         self::assertSame(
-            ['title' => 'Team', 'slug' => 'team', 'path' => 'about/team', 'summary' => 'Who', 'description' => 'Desc', 'blocks' => $blocks, 'social_image' => null],
+            ['title' => 'Team', 'slug' => 'team', 'path' => 'about/team', 'summary' => 'Who', 'description' => 'Desc', 'blocks' => $blocks, 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null],
             $translation->snapshot(),
         );
         self::assertNull($translation->socialImage());
         $translation->rewrite(new PageContent('Team', 'team', null, null, [], 9), 'about/team', $this->now);
         self::assertSame(9, $translation->socialImage());
         self::assertSame(9, $translation->content()->socialImage);
+        $translation->rewrite(new PageContent('Team', 'team', null, null, [], null, 'Our team', true, 'https://example.org/team'), 'about/team', $this->now);
+        self::assertSame(['Our team', true, 'https://example.org/team'], [$translation->seoTitle(), $translation->isNoindex(), $translation->canonicalUrl()]);
+        self::assertEquals(new PageContent('Team', 'team', null, null, [], null, 'Our team', true, 'https://example.org/team'), $translation->content());
     }
 
     public function testRefusesALocaleThatIsNotACode(): void

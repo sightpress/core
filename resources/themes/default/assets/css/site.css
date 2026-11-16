@@ -383,3 +383,7 @@ figcaption { margin-top: var(--space-2); color: var(--color-text-muted); font-si
 .account-section { margin-bottom: var(--space-6); }
 .account-section form + form { margin-top: var(--space-3); }
 input[type=file] { max-width: 100%; }
+
+/* "Last updated" under the content of a page */
+
+.page-updated { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--color-border); color: var(--color-text-muted); font-size: 0.9375rem; }

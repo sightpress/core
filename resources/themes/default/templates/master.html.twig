@@ -9,7 +9,8 @@
     Context (all optional): `site_name`, `branding_logo` ({url, alt, width, height}: an uploaded logo shown instead
     of the name), `locale`, `main_menu` and `footer_menu` (lists of {label, url, current,
     children}; up to three levels), `breadcrumbs` (list of {label, url}, the last one the current page; a null label is the home page, "Home"),
-    `messages` (list of texts), `form` (its errors put "Error: " in front of the <title>).
+    `messages` (list of texts), `form` (its errors put "Error: " in front of the <title>), `document_title` (the
+    whole <title>, set by the SEO module; otherwise the page's title and the site name).
 
     Submenus of the main menu are nested lists, all shown without JavaScript; js/site.js turns them into disclosure
     buttons ("Show the pages under About", `aria-expanded`), which Escape closes.
@@ -23,7 +24,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>{% if form is defined and form.errors is not empty %}{{ t('Error:') }} {% endif %}{% block title %}{% endblock %} - {{ site_name }}</title>
+<title>{% if form is defined and form.errors is not empty %}{{ t('Error:') }} {% endif %}{% if document_title is defined and document_title %}{{ document_title }}{% else %}{% block title %}{% endblock %} - {{ site_name }}{% endif %}</title>
 <link rel="stylesheet" href="{{ asset('tokens.css') }}">
 <link rel="stylesheet" href="{{ asset('css/site.css') }}">
 {% block head %}{% endblock %}

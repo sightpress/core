@@ -1,5 +1,6 @@
 # Accessibility: boots the skeleton with docker compose and scans its pages with Playwright and axe-core
-# (WCAG 2.2 AA). Core is mounted into the skeleton through its path repository, so this branch of core is tested.
+# (WCAG 2.2 AA). The same run checks search engine readiness: Lighthouse's SEO category must score 100 on every
+# starter page of a site made with site:create (tests/A11y/starter.spec.ts). Core is mounted into the skeleton through its path repository, so this branch of core is tested.
 # Playwright also starts core's component gallery (tests/A11y/gallery) on PHP's built-in web server, which needs
 # PHP and core's Composer dependencies on the runner.
 name: Accessibility
@@ -91,7 +92,7 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium
 
-      - name: Scan the pages
+      - name: Scan the pages (axe, and Lighthouse SEO on the starter site)
         working-directory: core
         env:
           SIGHTPRESS_BASE_URL: http://localhost:8080
