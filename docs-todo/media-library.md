@@ -1,4 +1,4 @@
-# Media library: storage and uploads (C-5.1)
+# Media library: storage, uploads and delivery (C-5.1, C-5.2)
 
 ## What it does
 
@@ -21,6 +21,28 @@ its files in its own folder, and the library checks every upload before it is st
 - **Not published yet.** New files are private until someone with the "Publish media" permission publishes them.
 
 Alt text and captions are kept per language; video and audio can have a transcript.
+
+### Addresses and delivery (C-5.2)
+
+Each site serves its own files:
+
+- **Addresses** look like `/media/<key>/lighthouse.jpg`; the smaller copies of a picture are at
+  `/media/<key>/640w/lighthouse.jpg`. Pages list all widths in `srcset` so browsers pick the smallest that fits.
+  An old or mistyped file name after the key redirects to the right address.
+- **Who can open a file.** Published files are open to everyone. Unpublished files are only shown to signed-in
+  people who can upload media (to preview them); anyone else gets "page not found", so nobody learns the file
+  exists.
+- **Shown or downloaded.** Pictures, video and audio open in the browser; documents are downloaded under the name
+  they had when uploaded (accents kept).
+- **Fast and light.** A file's address never changes its content, so browsers and caches keep published files for
+  a year and ask again only with a check (`ETag`, `Last-Modified` → "not modified"). Video and audio players can
+  jump to any point without downloading the whole file (byte ranges). Unpublished files are never cached.
+- **Safe when opened directly.** Files are sent with a policy that lets them run and load nothing, and the browser
+  is told not to guess their type.
+
+Unpublishing a file stops it being served, but a visitor's browser (or a cache in between) may keep a copy it
+already downloaded until it expires. To withdraw something sensitive, delete it (C-5.3) rather than only
+unpublish it.
 
 | Kind | Types |
 | --- | --- |
@@ -47,8 +69,15 @@ Alt text and captions are kept per language; video and audio can have a transcri
 - Other modules see files through `Media\Contract\MediaFile`.
 - Each site's container has a `League\Flysystem\FilesystemOperator` for the site's storage; the folder is created
   when the first file is written.
+- `Media\Contract\MediaUrlGenerator` (public service) gives `url($file, ?$width)` and `srcset($file)`. In origin
+  mode (`OriginMediaUrlGenerator`) addresses are root-relative; prefix them with the site's base URL where an
+  absolute URL is needed (Open Graph). A CDN mode can replace it later without changing callers.
+- Routes `media.file` (`/media/{key}/{name}`) and `media.variant` (`/media/{key}/{width}w/{name}`), GET and HEAD,
+  handled by `Media\Http\MediaFileHandler`. Access rule: `MediaAccess` (published, or the actor has
+  `media.upload`). Only single byte ranges are served; a list of ranges gets the whole file (RFC 9110 allows it).
+- A row whose stored file is missing answers 404 and logs an error with the key and width.
 
 ## Code and tests
 
-- `src/Media/`, `src/Tenant/SiteStorage.php`, `src/Tenant/SiteContainerFactory.php`
-- `tests/Unit/Media/`, `tests/Integration/Media/MediaUploadTest.php`
+- `src/Media/` (delivery in `src/Media/Http/`), `src/Tenant/SiteStorage.php`, `src/Tenant/SiteContainerFactory.php`
+- `tests/Unit/Media/`, `tests/Integration/Media/MediaUploadTest.php`, `tests/Integration/Media/MediaDeliveryTest.php`

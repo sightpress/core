@@ -26,11 +26,12 @@ final class Browser
 
     /**
      * @param array<string, string> $body
+     * @param array<string, string> $headers
      */
-    public function request(string $method, string $path, array $body = []): ResponseInterface
+    public function request(string $method, string $path, array $body = [], array $headers = []): ResponseInterface
     {
         parse_str((string) parse_url($path, PHP_URL_QUERY), $query);
-        $request = new ServerRequest($method, $this->origin . $path, [], null, '1.1', ['REMOTE_ADDR' => '192.0.2.30'])
+        $request = new ServerRequest($method, $this->origin . $path, $headers, null, '1.1', ['REMOTE_ADDR' => '192.0.2.30'])
             ->withCookieParams($this->cookies)
             ->withQueryParams($query);
         if ($body !== []) {
