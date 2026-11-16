@@ -6,7 +6,9 @@
  * "correct horse battery staple". Started by playwright.config.ts with PHP's built-in web server; never deployed.
  *
  * People: Ada (admin), Bea (editor), Cleo (contributor) and Max (member).
- * Test-only address: `/_test/reset` starts again from a fresh site (forgets sessions and rate limits).
+ * Test-only addresses: `/_test/reset` starts again from a fresh site (forgets sessions and rate limits);
+ * `/_test/invitation?email=…&role=…&first_name=…` invites someone from Ada and answers with the link's path (the
+ * test site sends no email).
  *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
@@ -28,6 +30,8 @@ use SightPress\Core\Page\Contract\PageTransition;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
 use SightPress\Core\Page\Workflow\PageWorkflow;
+use SightPress\Core\People\InvitationMailer;
+use SightPress\Core\People\Invitations;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\RbacSeeder;
 use SightPress\Core\Rbac\RoleRepository;
@@ -117,6 +121,23 @@ if (!is_file($project . '/config/sites.php')) {
         new Actor($contributor, $roles->permissionNamesOf($contributor)),
     );
     $editor->create('en-GB', new PageContent('Volunteer with us'), authorId: $people['editor'] ?? null);
+}
+
+if ($path === '/_test/invitation') {
+    $kernel = Kernel::boot($project, $environment);
+    $query = static fn (string $name): ?string => is_string($_GET[$name] ?? null) && $_GET[$name] !== '' ? $_GET[$name] : null;
+    $ada = Services::get(site($kernel), UserRepository::class)->findByEmail('ada@example.org');
+    [, $token] = Services::get(site($kernel), Invitations::class)->create(
+        $query('email') ?? 'zoe@example.org',
+        $query('role') ?? 'editor',
+        $query('first_name'),
+        null,
+        $ada?->id(),
+    );
+    header('Content-Type: text/plain');
+    echo InvitationMailer::PATH . $token;
+
+    return;
 }
 
 Kernel::boot($project, $environment)->run();

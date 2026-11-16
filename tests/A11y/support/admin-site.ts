@@ -10,6 +10,7 @@ const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 export const ADMIN_SITES = {
   admin: 'http://127.0.0.1:8096',
   account: 'http://127.0.0.1:8095',
+  people: 'http://127.0.0.1:8094',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

@@ -6,6 +6,7 @@ namespace SightPress\Core\Auth;
 
 use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
+use SightPress\Core\Auth\Contract\Passwords;
 use SightPress\Core\Auth\Http\AuthPages;
 use SightPress\Core\Auth\Http\ForgotPasswordHandler;
 use SightPress\Core\Auth\Http\LoginHandler;
@@ -63,6 +64,7 @@ final class AuthModule implements ModuleInterface
                 ?? throw new \LogicException('Password links need APP_SECRET: set it in the environment.'),
         ));
         $services->autowire(SessionAuthenticator::class, Authenticator::class);
+        $services->autowire(PasswordRules::class, Passwords::class, public: true);
         foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetPasswordHandler::class] as $class) {
             $services->autowire($class);
         }

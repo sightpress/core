@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace SightPress\Core\Tests\Unit\User;
+namespace SightPress\Core\Tests\Unit\Http\Form;
 
 use DateTimeZone;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\User\TimezoneChoices;
+use SightPress\Core\Http\Form\TimezoneChoices;
 
 #[CoversClass(TimezoneChoices::class)]
 final class TimezoneChoicesTest extends TestCase

@@ -51,6 +51,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 #[UsesNamespace('SightPress\Core\Contact')]
 #[UsesNamespace('SightPress\Core\Admin')]
 #[UsesNamespace('SightPress\Core\Navigation')]
+#[UsesNamespace('SightPress\Core\People')]
 final class KernelTest extends TestCase
 {
     private ?TestProject $project = null;
@@ -216,7 +217,7 @@ final class KernelTest extends TestCase
 
         $kernel = Kernel::boot($project->path(), []);
 
-        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'acme.example'], $kernel->modules()->modules());
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'people', 'acme.example'], $kernel->modules()->modules());
         self::assertTrue($kernel->console()->has('site:registry:check'));
         self::assertNotSame('', Kernel::contractVersion());
     }

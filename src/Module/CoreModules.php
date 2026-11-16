@@ -10,6 +10,7 @@ use SightPress\Core\Block\BlockModule;
 use SightPress\Core\Contact\ContactModule;
 use SightPress\Core\Media\MediaModule;
 use SightPress\Core\Page\PageModule;
+use SightPress\Core\People\PeopleModule;
 use SightPress\Core\Rbac\RbacModule;
 use SightPress\Core\Site\SiteModule;
 use SightPress\Core\Theme\ThemeModule;
@@ -37,6 +38,7 @@ final class CoreModules
             new ModuleCandidate(new PageModule(), 'sightpress/core'),
             new ModuleCandidate(new ContactModule(), 'sightpress/core'),
             new ModuleCandidate(new AdminModule(), 'sightpress/core'),
+            new ModuleCandidate(new PeopleModule(), 'sightpress/core'),
         ];
     }
 

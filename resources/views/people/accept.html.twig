@@ -1,0 +1,26 @@
+{#
+    Set up an account from an invitation, in the site's theme. Never indexed. On a fresh form the time zone is
+    prefilled from the browser (js/timezone.js); without JavaScript the site's time zone stays selected.
+    Context: `title`, `form`, `invitation`, `role`, `action`.
+#}
+{% extends 'layouts/default.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% set lead = t('You have been invited to join as {role}. Your account will use {email}.', {role: role|lower, email: invitation.email}) %}
+{% block content %}
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    {{ f.field(form, 'first_name') }}
+    {{ f.field(form, 'last_name') }}
+    {{ f.field(form, 'display_name') }}
+    {{ f.field(form, 'timezone') }}
+    {{ f.field(form, 'password') }}
+    {{ f.submit(t('Create my account')) }}
+{{ f.end() }}
+{% endblock %}
+{% block scripts %}
+{{ parent() }}
+{%- if not form.submitted %}
+<script src="{{ asset('js/timezone.js') }}" data-select="{{ form.fieldId('timezone') }}" defer></script>
+{%- endif %}
+{% endblock %}

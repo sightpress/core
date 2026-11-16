@@ -1,0 +1,12 @@
+{% autoescape false %}
+{{ name ? t('Hello {name},', {name: name}) : t('Hello,') }}
+
+{{ t('{inviter} has invited you to join {site} as {role}.', {inviter: inviter, site: site_name, role: role|lower}) }}
+
+{{ t('Set up your account with this link:') }}
+{{ link }}
+
+{{ t('The link works once, until {expires}.', {expires: expires}) }}
+
+{{ t('If you weren’t expecting this, you can ignore this email: no account is made until the link is used.') }}
+{% endautoescape %}

@@ -1,0 +1,15 @@
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Invite someone') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Invite someone') }}</h1>
+<p>{{ t('We email them a link to set up their account. The link works for 7 days and only once.') }}</p>
+{{ f.error_summary(form) }}
+{{ f.start(form, '/admin/users/invite') }}
+    {{ f.field(form, 'email') }}
+    {{ f.field(form, 'role') }}
+    {{ f.field(form, 'first_name') }}
+    {{ f.field(form, 'last_name') }}
+    {{ f.submit(t('Send invitation')) }}
+{{ f.end() }}
+{% endblock %}

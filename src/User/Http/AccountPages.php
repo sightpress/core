@@ -19,7 +19,7 @@ use SightPress\Core\Tenant\Site;
 use SightPress\Core\User\Avatar\AvatarService;
 use SightPress\Core\User\AvatarKind;
 use SightPress\Core\User\Entity\User;
-use SightPress\Core\User\TimezoneChoices;
+use SightPress\Core\Http\Form\TimezoneChoices;
 use SightPress\Core\User\UserRepository;
 use Symfony\Component\Validator\Constraints\Length;
 

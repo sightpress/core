@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="{{ current_locale() }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ t('{inviter} invited you to {site}', {inviter: inviter, site: site_name}) }}</title>
+</head>
+<body style="margin:0;padding:24px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:18px;line-height:1.5;color:#1a1a1f;background:#ffffff;">
+<p>{{ name ? t('Hello {name},', {name: name}) : t('Hello,') }}</p>
+<p>{{ t('{inviter} has invited you to join {site} as {role}.', {inviter: inviter, site: site_name, role: role|lower}) }}</p>
+<p><a href="{{ link }}" style="color:#1d4ed8;">{{ t('Set up your account on {site}', {site: site_name}) }}</a></p>
+<p>{{ t('The link works once, until {expires}.', {expires: expires}) }}</p>
+<p>{{ t('If you weren’t expecting this, you can ignore this email: no account is made until the link is used.') }}</p>
+</body>
+</html>

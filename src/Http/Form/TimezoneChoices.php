@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SightPress\Core\User;
+namespace SightPress\Core\Http\Form;
 
 use DateTimeZone;
 
