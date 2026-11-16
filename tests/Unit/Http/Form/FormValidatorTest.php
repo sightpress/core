@@ -100,6 +100,23 @@ final class FormValidatorTest extends TestCase
         return new FormValidator(Validation::createValidator())->submit($form, $input);
     }
 
+    public function testFileFieldsAreLeftToTheHandlerAndGroupedChoicesAreChecked(): void
+    {
+        $form = Form::create(
+            'profile',
+            new Field('picture', 'Picture', FieldType::File),
+            new Field('timezone', 'Time zone', FieldType::Select, choices: ['Europe' => ['Europe/Lisbon' => 'Lisbon']]),
+        );
+        $validator = new FormValidator(Validation::createValidator());
+
+        $valid = $validator->submit($form, ['timezone' => 'Europe/Lisbon']);
+        $wrong = $validator->submit($form, ['timezone' => 'Europe']);
+
+        self::assertTrue($valid->isValid());
+        self::assertSame('', $valid->value('picture'));
+        self::assertSame(['timezone' => 'Select one of the options for “Time zone”'], $wrong->errors());
+    }
+
     /**
      * @return array<string, string>
      */

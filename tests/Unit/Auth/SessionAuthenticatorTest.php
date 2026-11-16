@@ -48,6 +48,22 @@ final class SessionAuthenticatorTest extends TestCase
         self::assertSame($user->id(), $actor->userId);
         self::assertTrue($actor->has('page.publish'));
         self::assertTrue(GrantedPermissions::fromRequest($request)->has('admin.access'));
+        self::assertEquals(new \SightPress\Core\Template\ViewerPreferences(null, 'UTC'), $request->getAttribute(\SightPress\Core\Template\ViewerPreferences::class));
+    }
+
+    public function testWithoutPreferencesTheDefaultsStay(): void
+    {
+        $user = $this->auth->user();
+        $request = $this->auth->request();
+        $this->auth->signIn()->start($request, $user);
+        $none = self::createStub(\SightPress\Core\User\Contract\AccountPreferences::class);
+        $none->method('preferencesOf')->willReturn(null);
+        $authenticator = new \SightPress\Core\Auth\SessionAuthenticator($this->auth->users, $this->auth->database->roles(), $this->auth->rememberTokens(), $this->auth->signIn(), $none);
+
+        $request = $authenticator->authenticate($request);
+
+        self::assertTrue(Actor::fromRequest($request)->isSignedIn());
+        self::assertNull($request->getAttribute(\SightPress\Core\Template\ViewerPreferences::class));
     }
 
     public function testADeactivatedAccountOrAChangedPasswordSignsTheSessionOut(): void

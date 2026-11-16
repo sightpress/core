@@ -356,3 +356,11 @@ figcaption { margin-top: var(--space-2); color: var(--color-text-muted); font-si
   .skip-link, .site-header nav, .pagination, .dialog { display: none !important; }
   a[href^="http"]::after { content: " (" attr(href) ")"; }
 }
+
+/* Avatars and the My account page */
+
+.avatar { border-radius: 50%; vertical-align: middle; }
+.avatar--large { width: 8rem; height: 8rem; }
+.account-section { margin-bottom: var(--space-6); }
+.account-section form + form { margin-top: var(--space-3); }
+input[type=file] { max-width: 100%; }

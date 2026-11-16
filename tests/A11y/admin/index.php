@@ -7,6 +7,9 @@
  *
  * People: Ada (admin), Bea (editor), Cleo (contributor) and Max (member).
  * Test-only address: `/_test/reset` starts again from a fresh site (forgets sessions and rate limits).
+ *
+ * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
+ * specs running side by side never reset each other's site.
  */
 
 declare(strict_types=1);
@@ -30,6 +33,7 @@ use SightPress\Core\Rbac\RbacSeeder;
 use SightPress\Core\Rbac\RoleRepository;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
+use SightPress\Core\User\Avatar\AvatarService;
 use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\UserRepository;
 
@@ -38,7 +42,8 @@ require dirname(__DIR__, 3) . '/vendor/autoload.php';
 const SECRET = 'a11y-secret-0123456789abcdef0123456789abcdef';
 const PASSWORD = 'correct horse battery staple';
 
-$project = sys_get_temp_dir() . '/sightpress-a11y-admin';
+$copy = getenv('SIGHTPRESS_A11Y_SITE');
+$project = sys_get_temp_dir() . '/sightpress-a11y-' . (is_string($copy) && preg_match('/^[a-z]+$/', $copy) === 1 ? $copy : 'admin');
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
 $path = (string) parse_url(is_string($uri) ? $uri : '/', PHP_URL_PATH);
 $environment = ['APP_ENV' => 'test', 'APP_SECRET' => SECRET];
@@ -95,6 +100,8 @@ if (!is_file($project . '/config/sites.php')) {
     ] as $email => [$first, $last, $role]) {
         $user = new User($email, $first, $last, 'Europe/London', new DateTimeImmutable());
         $user->setPasswordHash($hash, new DateTimeImmutable());
+        Services::get($site, UserRepository::class)->save($user);
+        Services::get($site, AvatarService::class)->generate($user);
         Services::get($site, UserRepository::class)->save($user);
         $roles->assign((int) $user->id(), $roles->findRole($role) ?? throw new LogicException($role));
         $people[$role] = (int) $user->id();

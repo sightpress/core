@@ -1,0 +1,29 @@
+// Helpers for the specs that use the admin test site (tests/A11y/admin/index.php). Each spec file has its own copy
+// of the site on its own port (see playwright.config.ts), so specs running side by side never reset each other.
+import { expect, type Page } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+export const PASSWORD = 'correct horse battery staple';
+const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+
+/** Ports of the copies of the admin test site, by spec. */
+export const ADMIN_SITES = {
+  admin: 'http://127.0.0.1:8096',
+  account: 'http://127.0.0.1:8095',
+} as const;
+
+export async function expectNoViolations(page: Page): Promise<void> {
+  for (const colorScheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme });
+    const results = await new AxeBuilder({ page }).withTags(WCAG_22_AA).analyze();
+    expect(results.violations, `${colorScheme} mode`).toEqual([]);
+  }
+}
+
+export async function signIn(page: Page, site: string, email: string, path = '/admin'): Promise<void> {
+  await page.goto(`${site}/login?return=${encodeURIComponent(path)}`);
+  await page.getByLabel('Email address').fill(email);
+  await page.getByLabel('Password', { exact: true }).fill(PASSWORD);
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await expect(page).toHaveURL(`${site}${path}`);
+}

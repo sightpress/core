@@ -12,7 +12,9 @@ use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\Contract\PermissionLookup;
 use SightPress\Core\User\Contract\Account;
+use SightPress\Core\User\Contract\AccountPreferences;
 use SightPress\Core\User\Contract\Accounts;
+use SightPress\Core\Template\ViewerPreferences;
 
 /**
  * Finds the signed-in user from the session, or from a "keep me signed in" cookie, and puts the {@see Actor} and
@@ -29,6 +31,7 @@ final readonly class SessionAuthenticator implements Authenticator
         private PermissionLookup $permissions,
         private RememberTokens $rememberTokens,
         private SignIn $signIn,
+        private AccountPreferences $preferences,
     ) {
     }
 
@@ -46,9 +49,12 @@ final readonly class SessionAuthenticator implements Authenticator
         $id = (int) $account->id();
         $permissions = $this->permissions->permissionNamesOf($id);
 
-        return $request
+        $request = $request
             ->withAttribute(Actor::class, new Actor($id, $permissions))
             ->withAttribute(GrantedPermissions::class, new GrantedPermissions($permissions));
+        $preferences = $this->preferences->preferencesOf($id);
+
+        return $preferences === null ? $request : $request->withAttribute(ViewerPreferences::class, $preferences);
     }
 
     public function respond(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface

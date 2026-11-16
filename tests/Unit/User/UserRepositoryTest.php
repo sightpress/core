@@ -100,6 +100,17 @@ final class UserRepositoryTest extends TestCase
         });
     }
 
+    public function testKnowsEachPersonsDisplayPreferences(): void
+    {
+        $database = new \SightPress\Core\Tests\Support\CoreSiteDatabase();
+        $users = new UserRepository($database->entityManager);
+        $user = new User('ana@example.org', 'Ana', 'Silva', 'America/Sao_Paulo', new \DateTimeImmutable(), locale: 'pt-BR');
+        $users->save($user);
+
+        self::assertEquals(new \SightPress\Core\Template\ViewerPreferences('pt-BR', 'America/Sao_Paulo'), $users->preferencesOf((int) $user->id()));
+        self::assertNull($users->preferencesOf(999));
+    }
+
     public function testAnEmailAddressBelongsToOneAccount(): void
     {
         $database = new CoreSiteDatabase();

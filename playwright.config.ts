@@ -37,13 +37,15 @@ export default defineConfig({
       stdout: 'ignore',
       stderr: 'ignore',
     },
-    {
-      command: 'php -S 127.0.0.1:8096 tests/A11y/admin/index.php',
-      url: 'http://127.0.0.1:8096/login',
+    // One copy of the admin test site per spec file (tests/A11y/support/admin-site.ts), so specs never reset each
+    // other's site.
+    ...Object.entries({ admin: 8096, account: 8095 }).map(([copy, port]) => ({
+      command: `SIGHTPRESS_A11Y_SITE=${copy} php -S 127.0.0.1:${port} tests/A11y/admin/index.php`,
+      url: `http://127.0.0.1:${port}/login`,
       reuseExistingServer: !process.env.CI,
-      stdout: 'ignore',
-      stderr: 'ignore',
-    },
+      stdout: 'ignore' as const,
+      stderr: 'ignore' as const,
+    })),
   ],
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

@@ -64,6 +64,8 @@ final class ProvisioningTest extends TestCase
         self::assertSame($admin->id(), $event->adminId());
         self::assertTrue($admin->isPending());
         self::assertSame('Europe/London', $admin->timezone(), 'the site\'s time zone');
+        self::assertSame(\SightPress\Core\User\AvatarKind::Generated, $admin->avatarKind(), 'the first admin gets an avatar');
+        self::assertStringContainsString('>GH</text>', $auth->storage()->read((string) $admin->avatarPath()));
         self::assertSame(['admin'], array_map(static fn ($r) => $r->name(), $auth->database->roles()->rolesOf((int) $admin->id())));
         self::assertSame('Created the account of the first admin, Grace Hopper (grace@example.org).', $event->lines()[0]);
         self::assertSame('The roles were already set up.', $event->lines()[1]);
@@ -105,6 +107,7 @@ final class ProvisioningTest extends TestCase
             RbacSeeder::class => $auth->database->seeder(),
             RoleRepository::class => $auth->database->roles(),
             PasswordResetTokens::class => $auth->resetTokens(),
+            \SightPress\Core\User\Avatar\AvatarService::class => $auth->avatars(),
         ]), new FirstAdmin('grace@example.org', 'Grace', 'Hopper'), 'http://localhost:8080/');
     }
 }

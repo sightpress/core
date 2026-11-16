@@ -31,6 +31,10 @@ final readonly class FormValidator
         $values = [];
         $errors = [];
         foreach ($form->fields() as $field) {
+            if ($field->type === FieldType::File) {
+                // Files come with the uploaded files, not the body: the handler checks them.
+                continue;
+            }
             $value = $this->normalise($field, $input[$field->name] ?? null);
             $values[$field->name] = $value;
 
@@ -88,11 +92,11 @@ final readonly class FormValidator
             FieldType::Number => [new Type('numeric', message: sprintf('Enter a number for “%s”', $label))],
             FieldType::Date => [new Date(message: sprintf('Enter a real date for “%s”', $label))],
             FieldType::Select, FieldType::Radios => [new Choice(
-                choices: array_map(strval(...), array_keys($field->choices)),
+                choices: $field->choiceValues(),
                 message: sprintf('Select one of the options for “%s”', $label),
             )],
             FieldType::Checkboxes => [new Choice(
-                choices: array_map(strval(...), array_keys($field->choices)),
+                choices: $field->choiceValues(),
                 multiple: true,
                 multipleMessage: sprintf('Select only the options shown for “%s”', $label),
             )],

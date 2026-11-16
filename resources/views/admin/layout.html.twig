@@ -3,7 +3,7 @@
 
     - the <title> names the screen, then "Admin" and the site; with form errors it starts with their number;
     - "Skip to main content" is the first thing to tab to;
-    - landmarks: <header> (banner) with the site, the person's name and "Sign out"; <nav aria-label="Admin"> with
+    - landmarks: <header> (banner) with the site, the person's name, "My account" and "Sign out"; <nav aria-label="Admin"> with
       nested lists and aria-current="page" on the current screen; <main id="content">;
     - flash `messages` sit at the top of <main> in a polite live region.
 
@@ -33,6 +33,7 @@
             {%- if admin_user_name %}
             <p class="admin-header__user">{{ t('Signed in as {name}', {name: admin_user_name}) }}</p>
             {%- endif %}
+            <a href="/account">{{ t('My account') }}</a>
             <form action="/logout" method="post">
                 {{ csrf_fields() }}
                 <button type="submit" class="button button--secondary">{{ t('Sign out') }}</button>

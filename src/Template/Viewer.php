@@ -22,10 +22,23 @@ final readonly class Viewer
     ) {
     }
 
+    /**
+     * The viewer set on the request, or the default with the signed-in person's {@see ViewerPreferences} applied.
+     */
     public static function fromRequest(ServerRequestInterface $request, self $default): self
     {
         $viewer = $request->getAttribute(self::class);
+        if ($viewer instanceof self) {
+            return $viewer;
+        }
+        $preferences = $request->getAttribute(ViewerPreferences::class);
+        if (!$preferences instanceof ViewerPreferences) {
+            return $default;
+        }
 
-        return $viewer instanceof self ? $viewer : $default;
+        $locale = $preferences->locale ?? '';
+        $timezone = $preferences->timezone ?? '';
+
+        return new self($locale === '' ? $default->locale : $locale, $timezone === '' ? $default->timezone : $timezone);
     }
 }

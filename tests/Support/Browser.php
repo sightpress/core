@@ -53,21 +53,22 @@ final class Browser
     }
 
     /**
-     * Opens a page and sends its form back with the CSRF token and the given fields.
+     * Opens a page and sends a form back to `$path` (or `$action`) with the CSRF token and the given fields.
      *
      * @param array<string, string> $fields
      */
-    public function submit(string $path, array $fields): ResponseInterface
+    public function submit(string $path, array $fields, ?string $action = null): ResponseInterface
     {
         $page = (string) $this->request('GET', $path)->getBody();
         preg_match_all('/<input type="hidden" name="(csrf_[a-z]+)" value="([^"]+)">/', $page, $hidden, PREG_SET_ORDER);
-        if (count($hidden) !== 2) {
+        if (count($hidden) < 2) {
             throw new LogicException(sprintf('The page %s has no form with a CSRF token.', $path));
         }
-        foreach ($hidden as [, $name, $value]) {
+        // Every form of a page carries the same token: take the first pair.
+        foreach (array_slice($hidden, 0, 2) as [, $name, $value]) {
             $fields[$name] = html_entity_decode($value);
         }
 
-        return $this->request('POST', $path, $fields);
+        return $this->request('POST', $action ?? $path, $fields);
     }
 }

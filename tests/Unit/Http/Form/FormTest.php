@@ -91,5 +91,17 @@ final class FormTest extends TestCase
         self::assertTrue(FieldType::Checkboxes->hasChoices());
         self::assertFalse(FieldType::Text->hasChoices());
         self::assertSame('Select', FieldType::Checkbox->requiredVerb());
+        self::assertSame('Choose picture', new Field('picture', 'Picture', FieldType::File, accept: 'image/png')->requiredMessage());
+    }
+
+    public function testGroupedChoicesListEveryValue(): void
+    {
+        $field = new Field('timezone', 'Time zone', FieldType::Select, choices: [
+            'UTC' => ['UTC' => 'UTC'],
+            'Europe' => ['Europe/Lisbon' => 'Lisbon', 'Europe/London' => 'London'],
+            'none' => 'None',
+        ]);
+
+        self::assertSame(['UTC', 'Europe/Lisbon', 'Europe/London', 'none'], $field->choiceValues());
     }
 }

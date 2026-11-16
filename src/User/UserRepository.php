@@ -6,14 +6,16 @@ namespace SightPress\Core\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SightPress\Core\User\Contract\Account;
+use SightPress\Core\Template\ViewerPreferences;
 use SightPress\Core\User\Contract\AccountDirectory;
+use SightPress\Core\User\Contract\AccountPreferences;
 use SightPress\Core\User\Contract\Accounts;
 use SightPress\Core\User\Entity\User;
 
 /**
  * The site's users, in the site's own database.
  */
-final readonly class UserRepository implements Accounts, AccountDirectory
+final readonly class UserRepository implements Accounts, AccountDirectory, AccountPreferences
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -81,5 +83,12 @@ final readonly class UserRepository implements Accounts, AccountDirectory
     public function count(): int
     {
         return $this->entityManager->getRepository(User::class)->count();
+    }
+
+    public function preferencesOf(int $userId): ?ViewerPreferences
+    {
+        $user = $this->find($userId);
+
+        return $user === null ? null : new ViewerPreferences($user->locale(), $user->timezone());
     }
 }

@@ -27,8 +27,8 @@
     {%- endif -%}
 {% endmacro %}
 
-{% macro start(form, action = '', method = 'post') %}
-    <form id="{{ form.id }}" action="{{ action }}" method="{{ method }}" novalidate>
+{% macro start(form, action = '', method = 'post', enctype = null) %}
+    <form id="{{ form.id }}" action="{{ action }}" method="{{ method }}"{% if enctype %} enctype="{{ enctype }}"{% endif %} novalidate>
     {%- if method|lower == 'post' %}{{ csrf_fields() }}{% endif %}
 {% endmacro %}
 
@@ -102,9 +102,19 @@
             <select id="{{ id }}" {{ common }}>
                 <option value="">{{ t('Choose an option') }}</option>
                 {%- for optionValue, optionLabel in field.choices %}
+                {%- if optionLabel is iterable %}
+                <optgroup label="{{ optionValue }}">
+                    {%- for groupedValue, groupedLabel in optionLabel %}
+                    <option value="{{ groupedValue }}"{% if value == groupedValue ~ '' %} selected{% endif %}>{{ groupedLabel }}</option>
+                    {%- endfor %}
+                </optgroup>
+                {%- else %}
                 <option value="{{ optionValue }}"{% if value == optionValue ~ '' %} selected{% endif %}>{{ optionLabel }}</option>
+                {%- endif %}
                 {%- endfor %}
             </select>
+            {%- elseif type == 'file' %}
+            <input type="file" id="{{ id }}"{% if field.accept %} accept="{{ field.accept }}"{% endif %} {{ common }}>
             {%- else %}
             <input type="{{ type }}" id="{{ id }}" value="{{ type == 'password' ? '' : value }}" {{ common }}>
             {%- endif %}

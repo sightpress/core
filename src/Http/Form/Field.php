@@ -19,10 +19,14 @@ final readonly class Field
      * @param string                $label           visible label, in plain words
      * @param string|null           $hint            short help shown under the label and read with the field
      * @param list<Constraint>      $constraints     extra checks after the built-in ones for the type
-     * @param array<string, string> $choices         value => label, for select, radios and checkboxes
+     * @param array<string, string|array<string, string>> $choices value => label, for select, radios and
+     *                                               checkboxes; a select can group them: group label => [value =>
+     *                                               label] becomes an `<optgroup>`
      * @param string|null           $autocomplete    `autocomplete` token, for example `email` or `new-password`
      * @param string|null           $requiredMessage message when a required field is empty; by default
      *                                               "Enter …" or "Select …" followed by the label
+     * @param string|null           $accept          for a file field: the `accept` list, for example
+     *                                               `image/jpeg,image/png`
      */
     public function __construct(
         public string $name,
@@ -34,6 +38,7 @@ final readonly class Field
         public array $choices = [],
         public ?string $autocomplete = null,
         public ?string $requiredMessage = null,
+        public ?string $accept = null,
     ) {
         if (preg_match('/^[a-z][a-z0-9_]*$/', $name) !== 1) {
             throw new InvalidArgumentException(sprintf(
@@ -47,6 +52,27 @@ final readonly class Field
         if ($type->hasChoices() && $choices === []) {
             throw new InvalidArgumentException(sprintf('Field "%s" needs choices.', $name));
         }
+    }
+
+    /**
+     * Every value that can be chosen, groups included.
+     *
+     * @return list<string>
+     */
+    public function choiceValues(): array
+    {
+        $values = [];
+        foreach ($this->choices as $value => $label) {
+            if (is_array($label)) {
+                foreach (array_keys($label) as $grouped) {
+                    $values[] = (string) $grouped;
+                }
+            } else {
+                $values[] = (string) $value;
+            }
+        }
+
+        return $values;
     }
 
     public function requiredMessage(): string

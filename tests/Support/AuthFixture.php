@@ -31,7 +31,13 @@ use SightPress\Core\Template\Translations;
 use SightPress\Core\Template\TwigFactory;
 use SightPress\Core\Template\Viewer;
 use SightPress\Core\Tenant\Site;
+use SightPress\Core\User\Avatar\AvatarGenerator;
+use SightPress\Core\User\Avatar\AvatarService;
 use SightPress\Core\User\Entity\User;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use SightPress\Core\User\UserRepository;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\RateLimiter\Storage\InMemoryStorage;
@@ -63,6 +69,11 @@ final class AuthFixture implements MailSender
 
     /** @var list<Email> */
     public array $sent = [];
+
+    /** The site's storage (avatars …), in a temporary folder made when first used. */
+    private ?Filesystem $storage = null;
+
+    private ?TemporaryDirectory $directory = null;
 
     public function __construct()
     {
@@ -173,7 +184,7 @@ final class AuthFixture implements MailSender
 
     public function authenticator(): SessionAuthenticator
     {
-        return new SessionAuthenticator($this->users, $this->database->roles(), $this->rememberTokens(), $this->signIn());
+        return new SessionAuthenticator($this->users, $this->database->roles(), $this->rememberTokens(), $this->signIn(), $this->users);
     }
 
     public function pages(): AuthPages
@@ -184,5 +195,45 @@ final class AuthFixture implements MailSender
     public function validator(): FormValidator
     {
         return new FormValidator(Validation::createValidator());
+    }
+
+    public function storage(): Filesystem
+    {
+        $this->directory ??= new TemporaryDirectory();
+
+        return $this->storage ??= new Filesystem(new LocalFilesystemAdapter($this->directory->path . '/site', lazyRootCreation: true));
+    }
+
+    public function avatars(): AvatarService
+    {
+        return new AvatarService(
+            new AvatarGenerator(),
+            new ImageManager(Driver::class, autoOrientation: true, decodeAnimation: false, strip: true),
+            $this->storage(),
+            $this->clock,
+        );
+    }
+
+    /**
+     * Paths of everything in the site's storage, sorted.
+     *
+     * @return list<string>
+     */
+    public function stored(): array
+    {
+        $paths = [];
+        foreach ($this->storage()->listContents('', true) as $item) {
+            if ($item->isFile()) {
+                $paths[] = $item->path();
+            }
+        }
+        sort($paths);
+
+        return $paths;
+    }
+
+    public function __destruct()
+    {
+        $this->directory?->remove();
     }
 }

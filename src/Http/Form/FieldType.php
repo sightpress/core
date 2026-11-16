@@ -22,6 +22,9 @@ enum FieldType: string
     case Checkbox = 'checkbox';
     case Checkboxes = 'checkboxes';
 
+    /** A file upload; the handler reads and checks the uploaded file itself. */
+    case File = 'file';
+
     /**
      * Whether the person picks from {@see Field::$choices}.
      */
@@ -45,6 +48,7 @@ enum FieldType: string
     {
         return match ($this) {
             self::Select, self::Radios, self::Checkboxes, self::Checkbox => 'Select',
+            self::File => 'Choose',
             default => 'Enter',
         };
     }

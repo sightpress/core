@@ -1,0 +1,47 @@
+{#
+    My account (/account): the signed-in person's details and profile picture, in the site's theme. Two forms; after
+    a refused one, the error summary at the top gets focus and the <title> starts with "Error:".
+    Context: `user`, `avatar_url`, `avatar_uploaded`, `details`, `picture`, `failed` (the form that was refused).
+#}
+{% extends 'layouts/default.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block title %}{{ t('My account') }}{% endblock %}
+{% block content %}
+{%- if failed %}{{ f.error_summary(failed) }}{% endif %}
+<section class="account-section" aria-labelledby="account-details-title">
+    <h2 id="account-details-title">{{ t('Your details') }}</h2>
+    <p>{{ t('Email address:') }} {{ user.email }}</p>
+    {{ f.start(details, '/account') }}
+        {{ f.field(details, 'first_name') }}
+        {{ f.field(details, 'last_name') }}
+        {{ f.field(details, 'display_name') }}
+        {{ f.field(details, 'timezone') }}
+        {%- if 'locale' in details.fields|map(field => field.name) %}
+        {{ f.field(details, 'locale') }}
+        {%- endif %}
+        {{ f.submit(t('Save details')) }}
+    {{ f.end() }}
+</section>
+<section class="account-section" aria-labelledby="account-picture-title">
+    <h2 id="account-picture-title">{{ t('Profile picture') }}</h2>
+    {%- if avatar_url %}
+    <p><img class="avatar avatar--large" src="{{ avatar_url }}" alt="{{ user.effectiveName }}" width="128" height="128"></p>
+    {%- endif %}
+    <p>{{ avatar_uploaded ? t('This is the picture you uploaded.') : t('Until you upload a picture, your initials are shown.') }}</p>
+    {{ f.start(picture, '/account/picture', 'post', 'multipart/form-data') }}
+        {{ f.field(picture, 'picture') }}
+        {{ f.submit(t('Upload picture')) }}
+    {{ f.end() }}
+    {%- if avatar_uploaded %}
+    <form action="/account/picture/remove" method="post">
+        {{ csrf_fields() }}
+        <button type="submit" class="button button--secondary">{{ t('Remove picture') }}</button>
+    </form>
+    {%- endif %}
+</section>
+<p>
+    {%- if can('admin.access') %}<a href="/admin">{{ t('Go to the admin panel') }}</a> · {% endif -%}
+    <a href="/logout">{{ t('Sign out') }}</a>
+</p>
+{% endblock %}
