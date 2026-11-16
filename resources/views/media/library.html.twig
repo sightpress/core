@@ -1,0 +1,83 @@
+{#
+    The admin's media library (/admin/media): the upload form, then the files as a grid of cards or a data table.
+    Upload progress is shown in a <progress> and announced in a polite live region by js/media-upload.js; without
+    JavaScript the form is sent the usual way. Context: `form`, `items` ({media, path, thumbnail, type, size, alt}),
+    `view` (grid | list), `page`, `pages`, `total`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% import 'partials/pagination.html.twig' as pagination %}
+{% block title %}{{ t('Media') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Media') }}</h1>
+<section class="admin-panel" aria-labelledby="media-upload-title">
+    <h2 id="media-upload-title">{{ t('Upload a file') }}</h2>
+    {{ f.error_summary(form) }}
+    {{ f.start(form, '/admin/media/upload', 'post', 'multipart/form-data') }}
+        {{ f.field(form, 'file') }}
+        <div class="media-upload__progress" hidden>
+            <progress id="media-upload-bar" max="100" value="0" aria-labelledby="media-upload-status"></progress>
+        </div>
+        <p id="media-upload-status" class="media-upload__status" aria-live="polite"></p>
+        {{ f.submit(t('Upload')) }}
+    {{ f.end() }}
+</section>
+<section aria-labelledby="media-files-title">
+    <h2 id="media-files-title">{{ t('Files') }}</h2>
+    <ul class="media-views" aria-label="{{ t('Show files as') }}">
+        <li><a href="?view=grid"{% if view == 'grid' %} aria-current="true"{% endif %}>{{ t('Grid') }}</a></li>
+        <li><a href="?view=list"{% if view == 'list' %} aria-current="true"{% endif %}>{{ t('List') }}</a></li>
+    </ul>
+    {%- if items is empty %}
+    <p>{{ t('There are no files yet. Upload one above.') }}</p>
+    {%- elseif view == 'list' %}
+    <div class="table-wrap" role="region" aria-labelledby="media-caption" tabindex="0">
+        <table>
+            <caption id="media-caption">{{ t('Files, newest first ({count} in all)', {count: total}) }}</caption>
+            <thead>
+                <tr>
+                    <th scope="col">{{ t('Name') }}</th>
+                    <th scope="col">{{ t('Type') }}</th>
+                    <th scope="col">{{ t('Size') }}</th>
+                    <th scope="col">{{ t('Alt text') }}</th>
+                    <th scope="col">{{ t('Status') }}</th>
+                    <th scope="col">{{ t('Uploaded') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%- for item in items %}
+                <tr>
+                    <th scope="row"><a href="{{ item.path }}">{{ item.media.originalName }}</a></th>
+                    <td>{{ item.type }}</td>
+                    <td>{{ item.size }}</td>
+                    <td>{% if item.media.kind.value != 'image' %}{{ t('Not needed') }}{% elseif item.alt %}{{ item.alt }}{% else %}<strong>{{ t('Missing') }}</strong>{% endif %}</td>
+                    <td>{{ item.media.published ? t('Published') : t('Not published') }}</td>
+                    <td><time datetime="{{ item.media.createdAt|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ item.media.createdAt|user_datetime }}</time></td>
+                </tr>
+                {%- endfor %}
+            </tbody>
+        </table>
+    </div>
+    {%- else %}
+    <ul class="media-grid">
+        {%- for item in items %}
+        <li class="media-card">
+            {%- if item.thumbnail %}
+            <img class="media-card__thumb" src="{{ item.thumbnail }}" alt="" loading="lazy">
+            {%- else %}
+            <span class="media-card__thumb media-card__thumb--file" aria-hidden="true">{{ item.type }}</span>
+            {%- endif %}
+            <a class="media-card__name" href="{{ item.path }}">{{ item.media.originalName }}</a>
+            <span class="media-card__meta">{{ item.type }}, {{ item.size }}</span>
+            <span class="media-card__meta">{{ item.media.published ? t('Published') : t('Not published') }}{% if item.media.kind.value == 'image' and not item.alt %}, <strong>{{ t('alt text missing') }}</strong>{% endif %}</span>
+        </li>
+        {%- endfor %}
+    </ul>
+    {%- endif %}
+    {{ pagination.nav(page, pages, '/admin/media?page=%d', t('Pages of files')) }}
+</section>
+{% endblock %}
+{% block scripts %}
+{{ parent() }}
+<script src="{{ asset('js/media-upload.js') }}" data-form="{{ form.id }}" defer></script>
+{% endblock %}

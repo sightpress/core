@@ -59,3 +59,32 @@
 .people-details { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3); }
 .people-details dt { font-weight: 700; }
 .people-details dd { margin: 0; overflow-wrap: anywhere; }
+
+.media-upload__progress progress { width: 100%; max-width: 30rem; height: 1.25rem; }
+.media-upload__status:empty { display: none; }
+.media-views { display: flex; gap: var(--space-3); padding: 0; list-style: none; }
+.media-views a[aria-current="true"] { font-weight: 700; text-decoration-thickness: 0.2em; }
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+.media-card { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.media-card__thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.media-card__thumb--file { font-weight: 700; }
+.media-card__name { overflow-wrap: anywhere; }
+.media-card__meta { color: var(--color-text-muted); font-size: var(--font-size-small); }
+.media-item__title { overflow-wrap: anywhere; }
+.media-item__preview img, .media-item__preview video { max-width: 100%; height: auto; }
+.media-item__preview audio { width: 100%; max-width: 30rem; }

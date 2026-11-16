@@ -8,6 +8,7 @@ use SightPress\Core\Admin\AdminModule;
 use SightPress\Core\Auth\AuthModule;
 use SightPress\Core\Block\BlockModule;
 use SightPress\Core\Contact\ContactModule;
+use SightPress\Core\Media\Admin\MediaAdminModule;
 use SightPress\Core\Media\MediaModule;
 use SightPress\Core\Page\PageModule;
 use SightPress\Core\People\PeopleModule;
@@ -38,6 +39,7 @@ final class CoreModules
             new ModuleCandidate(new PageModule(), 'sightpress/core'),
             new ModuleCandidate(new ContactModule(), 'sightpress/core'),
             new ModuleCandidate(new AdminModule(), 'sightpress/core'),
+            new ModuleCandidate(new MediaAdminModule(), 'sightpress/core'),
             new ModuleCandidate(new PeopleModule(), 'sightpress/core'),
         ];
     }

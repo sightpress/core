@@ -43,6 +43,20 @@ final class MediaRepositoryTest extends TestCase
         self::assertNull($repository->find($id));
     }
 
+    public function testListsTheNewestFilesAPageAtATime(): void
+    {
+        $database = new CoreSiteDatabase();
+        $repository = new MediaRepository($database->entityManager);
+        $format = new MediaFormat('application/pdf', MediaKind::Document, 'pdf', 'PDF');
+        foreach (['09:00', '11:00', '10:00', '11:00'] as $index => $time) {
+            $repository->save(new Media(str_repeat(dechex($index + 1), 32), str_repeat(dechex($index + 1), 64), $format, 'f.pdf', "F{$index}.pdf", 1, null, null, [], null, new DateTimeImmutable("2026-11-16 {$time}:00 UTC")));
+        }
+
+        self::assertSame(4, $repository->count());
+        self::assertSame(['F3.pdf', 'F1.pdf'], array_map(static fn (Media $media): string => $media->originalName(), $repository->newest(2)));
+        self::assertSame(['F2.pdf', 'F0.pdf'], array_map(static fn (Media $media): string => $media->originalName(), $repository->newest(2, 2)));
+    }
+
     public function testLooksFilesUpByIdForOtherModules(): void
     {
         $database = new CoreSiteDatabase();

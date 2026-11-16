@@ -61,6 +61,16 @@ final class MediaTypesTest extends TestCase
         );
     }
 
+    public function testListsEveryExtensionForFilePickers(): void
+    {
+        $accept = new MediaTypes()->accept();
+
+        self::assertStringStartsWith('.jpg,.png,.webp,.gif,.mp4,', $accept);
+        self::assertStringContainsString(',.pdf,', $accept);
+        self::assertStringNotContainsString('.svg', $accept);
+        self::assertSame(array_unique(explode(',', $accept)), explode(',', $accept));
+    }
+
     public function testNamesTheTypesForPeople(): void
     {
         $types = new MediaTypes();

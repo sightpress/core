@@ -1,0 +1,48 @@
+{#
+    One file of the media library (/admin/media/{id}): a preview (pictures with their alt text, video and audio with
+    native controls), what it is, its address, and the details form. Context: `media`, `form`, `url`, `preview`,
+    `type`, `size`, `alt`, `can_delete`, `can_publish`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ media.originalName }}{% endblock %}
+{% block content %}
+<p><a href="/admin/media">{{ t('Back to media') }}</a></p>
+<h1 class="media-item__title">{{ media.originalName }}</h1>
+<div class="media-item__preview">
+    {%- if preview %}
+    <img src="{{ preview }}" alt="{{ alt ?? '' }}"{% if media.width %} width="{{ media.width }}" height="{{ media.height }}"{% endif %}>
+    {%- if not alt %}<p>{{ t('This picture has no alt text yet.') }}</p>{% endif %}
+    {%- elseif media.kind.value == 'video' %}
+    <video src="{{ url }}" controls preload="metadata"></video>
+    {%- elseif media.kind.value == 'audio' %}
+    <audio src="{{ url }}" controls preload="metadata"></audio>
+    {%- endif %}
+</div>
+<dl class="people-details">
+    <dt>{{ t('Type') }}</dt><dd>{{ type }}</dd>
+    <dt>{{ t('Size') }}</dt><dd>{{ size }}</dd>
+    {%- if media.width %}
+    <dt>{{ t('Dimensions') }}</dt><dd>{{ t('{width} × {height} pixels', {width: media.width, height: media.height}) }}</dd>
+    {%- endif %}
+    <dt>{{ t('Status') }}</dt><dd>{{ media.published ? t('Published') : t('Not published') }}</dd>
+    <dt>{{ t('Uploaded') }}</dt><dd><time datetime="{{ media.createdAt|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ media.createdAt|user_datetime }}</time></dd>
+    <dt>{{ t('Address') }}</dt><dd><a href="{{ url }}">{{ url }}</a></dd>
+</dl>
+<section class="admin-panel" aria-labelledby="media-details-title">
+    <h2 id="media-details-title">{{ t('Details') }}</h2>
+    {%- if not can_publish %}
+    <p>{{ t('Only editors and admins can publish or unpublish files.') }}</p>
+    {%- endif %}
+    {{ f.error_summary(form) }}
+    {{ f.start(form, '/admin/media/' ~ media.id) }}
+        {%- for field in form.fields %}
+        {{ f.field(form, field.name) }}
+        {%- endfor %}
+        {{ f.submit(t('Save details')) }}
+    {{ f.end() }}
+</section>
+{%- if can_delete %}
+<p><a href="/admin/media/{{ media.id }}/delete">{{ t('Delete this file') }}</a></p>
+{%- endif %}
+{% endblock %}

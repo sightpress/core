@@ -25,10 +25,11 @@ final class Browser
     }
 
     /**
-     * @param array<string, string> $body
-     * @param array<string, string> $headers
+     * @param array<string, string>                              $body
+     * @param array<string, string>                              $headers
+     * @param array<string, \Psr\Http\Message\UploadedFileInterface> $files
      */
-    public function request(string $method, string $path, array $body = [], array $headers = []): ResponseInterface
+    public function request(string $method, string $path, array $body = [], array $headers = [], array $files = []): ResponseInterface
     {
         parse_str((string) parse_url($path, PHP_URL_QUERY), $query);
         $request = new ServerRequest($method, $this->origin . $path, $headers, null, '1.1', ['REMOTE_ADDR' => '192.0.2.30'])
@@ -36,6 +37,9 @@ final class Browser
             ->withQueryParams($query);
         if ($body !== []) {
             $request = $request->withParsedBody($body);
+        }
+        if ($files !== []) {
+            $request = $request->withUploadedFiles($files);
         }
 
         $response = $this->kernel->handle($request);
@@ -55,9 +59,11 @@ final class Browser
     /**
      * Opens a page and sends a form back to `$path` (or `$action`) with the CSRF token and the given fields.
      *
-     * @param array<string, string> $fields
+     * @param array<string, string>                              $fields
+     * @param array<string, \Psr\Http\Message\UploadedFileInterface> $files
+     * @param array<string, string>                              $headers
      */
-    public function submit(string $path, array $fields, ?string $action = null): ResponseInterface
+    public function submit(string $path, array $fields, ?string $action = null, array $files = [], array $headers = []): ResponseInterface
     {
         $page = (string) $this->request('GET', $path)->getBody();
         preg_match_all('/<input type="hidden" name="(csrf_[a-z]+)" value="([^"]+)">/', $page, $hidden, PREG_SET_ORDER);
@@ -69,6 +75,6 @@ final class Browser
             $fields[$name] = html_entity_decode($value);
         }
 
-        return $this->request('POST', $action ?? $path, $fields);
+        return $this->request('POST', $action ?? $path, $fields, $headers, $files);
     }
 }

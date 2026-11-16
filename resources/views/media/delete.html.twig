@@ -1,0 +1,14 @@
+{#
+    Asks whether to delete a file of the media library. Context: `media`, `back`, `action`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Delete {name}?', {name: media.originalName}) }}{% endblock %}
+{% block content %}
+<h1>{{ t('Delete {name}?', {name: media.originalName}) }}</h1>
+<p>{{ t('The file and its smaller copies are deleted for good. Pages that use it will show it as missing until someone chooses another file.') }}</p>
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <button type="submit" class="button button--danger">{{ t('Delete {name}', {name: media.originalName}) }}</button>
+</form>
+<p><a href="{{ back }}">{{ t('Keep the file and go back') }}</a></p>
+{% endblock %}

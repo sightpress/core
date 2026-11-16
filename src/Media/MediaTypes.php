@@ -90,6 +90,14 @@ final readonly class MediaTypes implements MediaFormats
     }
 
     /**
+     * The `accept` attribute of a file input: every accepted extension, so file pickers show what can be uploaded.
+     */
+    public function accept(): string
+    {
+        return implode(',', array_values(array_unique(array_map(static fn (MediaFormat $format): string => '.' . $format->extension, self::all()))));
+    }
+
+    /**
      * @return list<MediaFormat>
      */
     public static function all(): array

@@ -11,9 +11,12 @@ export const ADMIN_SITES = {
   admin: 'http://127.0.0.1:8096',
   account: 'http://127.0.0.1:8095',
   people: 'http://127.0.0.1:8094',
+  media: 'http://127.0.0.1:8093',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {
+  // After a keyboard submit Playwright doesn't wait for the next page's stylesheets; check the page as people see it.
+  await page.waitForLoadState('load');
   for (const colorScheme of ['light', 'dark'] as const) {
     await page.emulateMedia({ colorScheme });
     const results = await new AxeBuilder({ page }).withTags(WCAG_22_AA).analyze();

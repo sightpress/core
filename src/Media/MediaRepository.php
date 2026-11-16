@@ -62,6 +62,22 @@ final readonly class MediaRepository implements MediaLibrary
     }
 
     /**
+     * A page of the library, newest first.
+     *
+     * @return list<Media>
+     */
+    public function newest(int $limit, int $offset = 0): array
+    {
+        /** @var list<Media> */
+        return $this->entityManager->getRepository(Media::class)->findBy([], ['createdAt' => 'DESC', 'id' => 'DESC'], $limit, $offset);
+    }
+
+    public function count(): int
+    {
+        return $this->entityManager->getRepository(Media::class)->count();
+    }
+
+    /**
      * Saves a new file (which gets its id) or the changes to an existing one.
      */
     public function save(Media $media): void
