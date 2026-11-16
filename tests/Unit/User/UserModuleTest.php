@@ -42,6 +42,7 @@ final class UserModuleTest extends TestCase
         $listener = $registry->listeners()[0]->item;
         self::assertSame([SiteProvisioning::class, CreateFirstAdmin::class, SiteProvisioning::ACCOUNTS], [$listener->event, $listener->listener, $listener->priority]);
         self::assertTrue($registry->services()[UserRepository::class]->item->public);
+        self::assertSame(UserRepository::class, $registry->services()[\SightPress\Core\User\Contract\AccountDirectory::class]->item->class);
         self::assertSame(
             ['user.invite', 'user.manage'],
             array_map(static fn ($registered) => $registered->item->name, $registry->permissions()),

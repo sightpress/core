@@ -35,6 +35,8 @@ use stdClass;
 #[UsesClass(DatabaseDsn::class)]
 #[UsesClass(SecretBox::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesNamespace('SightPress\Core\Module')]
+#[UsesNamespace('SightPress\Core\Infrastructure\Event')]
 final class SiteContainerFactoryTest extends TestCase
 {
     private TemporaryDirectory $directory;
@@ -136,6 +138,28 @@ final class SiteContainerFactoryTest extends TestCase
         self::assertSame(Services::get($demo, Connection::class), $service[0]);
         self::assertNotSame($service, $blog->get('acme.service'));
         self::assertContains(Connection::class, SiteContainerFactory::SITE_SERVICES);
+    }
+
+    public function testEachSiteDispatchesEventsToListenersBuiltWithItsOwnServices(): void
+    {
+        $module = new \SightPress\Core\Tests\Support\FakeModule('acme.listen', register: static function (\SightPress\Module\ModuleRegistrar $r): void {
+            $r->subscribers()->listen(\ArrayObject::class, \SightPress\Core\Tests\Support\Modules\SiteNameListener::class);
+        });
+        $registry = \SightPress\Core\Module\ModuleRegistry::register(
+            new \SightPress\Core\Module\ModuleLoader('0.2.0')->catalogue([new \SightPress\Core\Module\ModuleCandidate($module, 'acme/listen')])->resolve(new \SightPress\Core\Module\ModuleSelection()),
+        );
+        $tenant = new Container();
+        $tenant->set(\SightPress\Core\Module\ModuleRegistry::class, $registry);
+        $factory = new SiteContainerFactory($tenant, SiteFixture::secretBox(), TenantConfig::fromArray([], '/srv/app'), [], [
+            \SightPress\Core\Tests\Support\Modules\SiteNameListener::class => \DI\autowire(),
+        ]);
+
+        $event = new \ArrayObject();
+        Services::get($factory->forSite(SiteFixture::site('demo')), \Psr\EventDispatcher\EventDispatcherInterface::class)->dispatch($event);
+        Services::get($factory->forSite(SiteFixture::site('blog')), \Psr\EventDispatcher\EventDispatcherInterface::class)->dispatch($event);
+
+        self::assertSame(['demo', 'blog'], $event->getArrayCopy());
+        self::assertContains(\Psr\EventDispatcher\EventDispatcherInterface::class, SiteContainerFactory::SITE_SERVICES);
     }
 
     public function testEachSiteKeepsItsFilesInItsOwnFolderCreatedOnFirstWrite(): void

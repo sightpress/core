@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Rbac;
 
 use Doctrine\ORM\EntityManagerInterface;
+use SightPress\Core\Rbac\Contract\PermissionHolders;
 use SightPress\Core\Rbac\Contract\PermissionLookup;
 use SightPress\Core\Rbac\Entity\Permission;
 use SightPress\Core\Rbac\Entity\Role;
@@ -13,7 +14,7 @@ use SightPress\Core\Rbac\Entity\RoleAssignment;
 /**
  * The site's roles, stored permissions and role assignments.
  */
-final readonly class RoleRepository implements PermissionLookup
+final readonly class RoleRepository implements PermissionLookup, PermissionHolders
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -80,6 +81,23 @@ final readonly class RoleRepository implements PermissionLookup
         sort($names);
 
         return $names;
+    }
+
+    public function userIdsWith(string $permission): array
+    {
+        /** @var list<array{userId: int|string}> $rows */
+        $rows = $this->entityManager->createQueryBuilder()
+            ->select('DISTINCT a.userId')
+            ->from(RoleAssignment::class, 'a')
+            ->join('a.role', 'r')
+            ->join('r.permissions', 'p')
+            ->where('p.name = :permission')
+            ->setParameter('permission', $permission)
+            ->orderBy('a.userId')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_map(static fn (array $row): int => (int) $row['userId'], $rows);
     }
 
     /**

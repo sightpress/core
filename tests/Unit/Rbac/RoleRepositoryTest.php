@@ -47,6 +47,20 @@ final class RoleRepositoryTest extends TestCase
         self::assertSame($roles->permissionNamesOf(5), array_values(array_unique($roles->permissionNamesOf(5))));
     }
 
+    public function testFindsWhoHoldsAPermission(): void
+    {
+        $database = new CoreSiteDatabase();
+        $database->seeder()->seed();
+        $roles = $database->roles();
+        foreach ([9 => 'editor', 4 => 'admin', 5 => 'contributor', 6 => 'member'] as $user => $role) {
+            $roles->assign($user, $roles->findRole($role) ?? self::fail($role));
+        }
+
+        self::assertSame([4, 9], $roles->userIdsWith('page.publish'));
+        self::assertSame([4, 5, 9], $roles->userIdsWith('page.submit'));
+        self::assertSame([], $roles->userIdsWith('acme.missing'));
+    }
+
     public function testRemovesARole(): void
     {
         $database = new CoreSiteDatabase();

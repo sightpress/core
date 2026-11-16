@@ -48,7 +48,7 @@ final class RbacModuleTest extends TestCase
         self::assertSame('SightPress\Core\Rbac\Migrations', $migrations->namespace());
         self::assertDirectoryExists($migrations->directory());
 
-        foreach ([RoleRepository::class, RegistrationRole::class, RoleManager::class, RbacSeeder::class, Authorizer::class] as $id) {
+        foreach ([RoleRepository::class, RegistrationRole::class, RoleManager::class, RbacSeeder::class, Authorizer::class, \SightPress\Core\Rbac\Contract\PermissionHolders::class] as $id) {
             self::assertTrue($registry->services()[$id]->item->public, $id);
         }
         $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'rbac'));

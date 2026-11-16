@@ -48,6 +48,7 @@
     "symfony/rate-limiter": "^8",
     "symfony/translation": "^8",
     "symfony/validator": "^8",
+    "symfony/workflow": "^8",
     "twig/twig": "^3"
   },
   "require-dev": {

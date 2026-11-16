@@ -21,6 +21,10 @@ gaps showed up:
   its own database. The tenant container keeps them too (for console commands that don't touch a site). A module
   may not register a service with the id of a site service (`Site`, `Connection`, `EntityManagerInterface`,
   `EntityManager`), just as it may not replace a core service.
+- Every site container also has its own event dispatcher and listener provider. Events that site services dispatch
+  (for example a page moving through the workflow) reach listeners built from the site container, so a listener
+  can use the site's database. Events dispatched in the tenant container (site provisioning) keep passing the site
+  container in the event, as before.
 - Core's own modules map their entities with Doctrine attributes. Their entity folders are listed by
   `CoreModules::entityPaths()`, next to the list of core modules.
 - External modules use the site's `Connection` (DBAL query builder and schema API) for their own tables. If one

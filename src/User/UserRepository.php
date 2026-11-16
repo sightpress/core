@@ -6,13 +6,14 @@ namespace SightPress\Core\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SightPress\Core\User\Contract\Account;
+use SightPress\Core\User\Contract\AccountDirectory;
 use SightPress\Core\User\Contract\Accounts;
 use SightPress\Core\User\Entity\User;
 
 /**
  * The site's users, in the site's own database.
  */
-final readonly class UserRepository implements Accounts
+final readonly class UserRepository implements Accounts, AccountDirectory
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -26,6 +27,16 @@ final readonly class UserRepository implements Accounts
     /**
      * Finds a user by email address, whatever its case or surrounding spaces.
      */
+    public function findAccounts(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        /** @var list<User> */
+        return $this->entityManager->getRepository(User::class)->findBy(['id' => array_values(array_unique($ids))], ['id' => 'ASC']);
+    }
+
     public function findByEmail(string $email): ?User
     {
         return $this->entityManager->getRepository(User::class)

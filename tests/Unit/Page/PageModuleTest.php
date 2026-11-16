@@ -41,5 +41,11 @@ final class PageModuleTest extends TestCase
         self::assertTrue($registry->services()[PageRepository::class]->item->public);
         self::assertTrue($registry->services()[PageEditor::class]->item->public);
         self::assertSame(\SightPress\Core\Page\PublishedPages::class, $registry->services()[\SightPress\Core\Page\Contract\PublicPages::class]->item->class);
+        self::assertTrue($registry->services()[\SightPress\Core\Page\Workflow\PageWorkflow::class]->item->public);
+        self::assertArrayHasKey(\SightPress\Core\Page\Workflow\ReviewRequestMailer::class, $registry->services());
+        $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'page'));
+        self::assertSame([\SightPress\Core\Page\Contract\PageTransitioned::class, \SightPress\Core\Page\Workflow\ReviewRequestMailer::class], [$listeners[0]->item->event, $listeners[0]->item->listener]);
+        $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'page'));
+        self::assertDirectoryExists($views[0]->item->directory . '/email');
     }
 }

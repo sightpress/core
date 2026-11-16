@@ -38,6 +38,19 @@ final class UserRepositoryTest extends TestCase
         self::assertNull($users->find(999));
     }
 
+    public function testFindsSeveralAccountsAtOnce(): void
+    {
+        $database = new CoreSiteDatabase();
+        $users = new UserRepository($database->entityManager);
+        $ada = new User('ada@example.org', 'Ada', 'Lovelace', 'UTC', new DateTimeImmutable());
+        $grace = new User('grace@example.org', 'Grace', 'Hopper', 'UTC', new DateTimeImmutable());
+        $users->save($ada);
+        $users->save($grace);
+
+        self::assertSame([$ada, $grace], $users->findAccounts([(int) $grace->id(), 999, (int) $ada->id(), (int) $grace->id()]));
+        self::assertSame([], $users->findAccounts([]));
+    }
+
     public function testServesAccountsToSignIn(): void
     {
         $users = new UserRepository(new CoreSiteDatabase()->entityManager);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\User;
 
 use SightPress\Core\Site\Contract\SiteProvisioning;
+use SightPress\Core\User\Contract\AccountDirectory;
 use SightPress\Core\User\Contract\Accounts;
 use SightPress\Core\User\Provisioning\CreateFirstAdmin;
 use SightPress\Module\Access\Permission;
@@ -31,6 +32,7 @@ final class UserModule implements ModuleInterface
         $registrar->migrations()->add(new UserMigrations());
         $registrar->services()->autowire(UserRepository::class, public: true);
         $registrar->services()->autowire(UserRepository::class, Accounts::class, public: true);
+        $registrar->services()->autowire(UserRepository::class, AccountDirectory::class, public: true);
         $registrar->subscribers()->listen(SiteProvisioning::class, CreateFirstAdmin::class, SiteProvisioning::ACCOUNTS);
         $registrar->permissions()->add(new Permission(
             'user.invite',

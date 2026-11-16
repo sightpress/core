@@ -13,10 +13,15 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
 use ReflectionClass;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Database\DatabaseDsn;
+use SightPress\Core\Infrastructure\Event\EventDispatcher;
+use SightPress\Core\Infrastructure\Event\ListenerProvider;
+use SightPress\Core\Module\ModuleRegistry;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
@@ -29,7 +34,8 @@ use function DI\get;
  * Site services are lazy: the connection and the entity manager are lazy objects, so the DSN is only decrypted, and
  * they are only built, when they are first used (for example by a query) — services that merely depend on them
  * cost nothing on requests that don't touch the database. The connection only opens on its first query. The site's
- * file storage ({@see FilesystemOperator}) creates its folder only when the first file is written. Containers are kept per site for
+ * file storage ({@see FilesystemOperator}) creates its folder only when the first file is written. Each site has its
+ * own event dispatcher, so listeners of events dispatched by site services are built with the site's services. Containers are kept per site for
  * the process and rebuilt when the registry hands out a new {@see Site} (it does after any change); {@see evict()}
  * drops one, {@see reset()} all (for long-running workers).
  */
@@ -44,6 +50,8 @@ final class SiteContainerFactory
         EntityManagerInterface::class,
         EntityManager::class,
         FilesystemOperator::class,
+        ListenerProviderInterface::class,
+        EventDispatcherInterface::class,
     ];
 
 
@@ -123,6 +131,13 @@ final class SiteContainerFactory
             EntityManager::class => get(EntityManagerInterface::class),
             FilesystemOperator::class => factory(static fn (): FilesystemOperator => new Filesystem(
                 new LocalFilesystemAdapter($site->storage->root($config->sitesDir, $site->id), lazyRootCreation: true),
+            )),
+            ListenerProviderInterface::class => factory(static fn (ContainerInterface $container): ListenerProviderInterface => new ListenerProvider(
+                $container,
+                Services::get($container, ModuleRegistry::class),
+            )),
+            EventDispatcherInterface::class => factory(static fn (ContainerInterface $container): EventDispatcherInterface => new EventDispatcher(
+                Services::get($container, ListenerProviderInterface::class),
             )),
         ];
     }
