@@ -37,14 +37,16 @@ Core uses these runtime dependencies for M1. Each is a caret constraint on the m
 | Mail | `symfony/mailer` | `^8` | C-3.4 |
 | Workflow | `symfony/workflow` | `^8` | C-4.4 |
 | HTML sanitising | `symfony/html-sanitizer` | `^8` | C-4.2 |
-| File storage | `league/flysystem` | `^3` | C-5.1 |
+| File storage (+ its local adapter, a separate package in this major) | `league/flysystem`, `league/flysystem-local` | `^3` | C-5.1 |
 | Image processing (*new*) | `intervention/image` | `^4` | C-5.1 |
 | SVG sanitising (*new*) | `enshrined/svg-sanitize` | `^1` | C-6.6 |
 
 - Symfony components share one major (`^8`), as ADR-0013 requires, and are upgraded together.
 - PSR-7 comes from `nyholm/psr7` (ADR-0013), not `slim/psr7`.
 - Core needs the PHP extensions `intl` (dates, numbers and plural rules in the visitor's locale), `sodium`,
-  `fileinfo` and `pdo` with at least `pdo_sqlite`. The skeleton's images and CI install them.
+  `fileinfo` (the real type of uploads), `gd` with JPEG, PNG and WebP (re-encoding pictures), `exif` (turning
+  photos the right way up before their metadata is removed) and `pdo` with at least `pdo_sqlite`. The skeleton's
+  images and CI install them.
 - A dependency is added in the task that first uses it, not before.
 - Anything not listed here (for example a Markdown or search library) needs a new ADR or a row added to this one
   before it is required.

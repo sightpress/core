@@ -38,6 +38,8 @@ final class SiteTest extends TestCase
         self::assertSame('local', $site->storage->adapter);
         self::assertNull($site->storage->path);
         self::assertSame('/srv/files', new SiteStorage('local', '/srv/files')->path);
+        self::assertSame('/srv/sites/' . $site->id, $site->storage->root('/srv/sites/', $site->id));
+        self::assertSame('/srv/files', new SiteStorage('local', '/srv/files')->root('/srv/sites', $site->id));
     }
 
     /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Tenant;
 
 use DI\Container;
+use League\Flysystem\FilesystemOperator;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -135,6 +136,24 @@ final class SiteContainerFactoryTest extends TestCase
         self::assertSame(Services::get($demo, Connection::class), $service[0]);
         self::assertNotSame($service, $blog->get('acme.service'));
         self::assertContains(Connection::class, SiteContainerFactory::SITE_SERVICES);
+    }
+
+    public function testEachSiteKeepsItsFilesInItsOwnFolderCreatedOnFirstWrite(): void
+    {
+        $factory = new SiteContainerFactory(
+            new Container(),
+            SiteFixture::secretBox(),
+            TenantConfig::fromArray(['cache_dir' => $this->directory->path, 'sites_dir' => $this->directory->path . '/sites'], '/srv/app'),
+        );
+        $demo = SiteFixture::site('demo');
+        $files = Services::get($factory->forSite($demo), FilesystemOperator::class);
+
+        self::assertDirectoryDoesNotExist($this->directory->path . '/sites');
+        $files->write('media/hello.txt', 'hello');
+
+        self::assertStringEqualsFile($this->directory->path . '/sites/' . $demo->id . '/media/hello.txt', 'hello');
+        self::assertFalse(Services::get($factory->forSite(SiteFixture::site('blog')), FilesystemOperator::class)->fileExists('media/hello.txt'));
+        self::assertContains(FilesystemOperator::class, SiteContainerFactory::SITE_SERVICES);
     }
 
     public function testTheContextTravelsOnTheRequest(): void

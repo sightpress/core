@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace SightPress\Core\Tenant;
 
 /**
- * Where a site keeps its files. This version has the `local` adapter only; without a path, files go to the site's
- * folder under the tenant's `sites_dir`.
+ * Where a site keeps its files (media, and later avatars and branding). This version has the `local` adapter only;
+ * without a path, files go to the site's folder under the tenant's `sites_dir`, named after the site id so it stays
+ * the same if the slug changes.
  */
 final readonly class SiteStorage
 {
@@ -31,5 +32,15 @@ final readonly class SiteStorage
         }
         $this->adapter = $adapter;
         $this->path = $path;
+    }
+
+    /**
+     * The folder the site's files live in: the configured path, or `<sites_dir>/<site id>`.
+     *
+     * @return non-empty-string
+     */
+    public function root(string $sitesDir, string $siteId): string
+    {
+        return $this->path ?? rtrim($sitesDir, '/') . '/' . $siteId;
     }
 }

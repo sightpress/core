@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+namespace SightPress\Core\Media;
+
+use Doctrine\ORM\EntityManagerInterface;
+use SightPress\Core\Media\Entity\Media;
+
+/**
+ * The site's media library, in the site's own database.
+ */
+final readonly class MediaRepository
+{
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
+
+    public function find(int $id): ?Media
+    {
+        return $this->entityManager->find(Media::class, $id);
+    }
+
+    public function findByKey(string $key): ?Media
+    {
+        if (preg_match(Media::KEY_PATTERN, $key) !== 1) {
+            return null;
+        }
+
+        return $this->entityManager->getRepository(Media::class)->findOneBy(['key' => $key]);
+    }
+
+    public function findByChecksum(string $checksum): ?Media
+    {
+        return $this->entityManager->getRepository(Media::class)->findOneBy(['checksum' => $checksum]);
+    }
+
+    /**
+     * Saves a new file (which gets its id) or the changes to an existing one.
+     */
+    public function save(Media $media): void
+    {
+        $this->entityManager->persist($media);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Removes the row; the stored files are removed with {@see MediaFiles::delete()}.
+     */
+    public function remove(Media $media): void
+    {
+        $this->entityManager->remove($media);
+        $this->entityManager->flush();
+    }
+}

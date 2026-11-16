@@ -32,7 +32,7 @@ Composer commands:
 - `composer fix`: applies Rector refactorings, then fixes the code style.
 
 Coverage needs the PCOV extension, or Xdebug in coverage mode. If your PHP has neither, use the
-development image in `docker/dev-php/`, which has PHP 8.5, PCOV, SQLite and Composer. Run it from this folder:
+development image in `docker/dev-php/`, which has PHP 8.5, PCOV, SQLite, the image extensions (gd, exif) and Composer. Run it from this folder:
 
 ```sh
 docker build -t sightpress/dev-php:8.5 docker/dev-php

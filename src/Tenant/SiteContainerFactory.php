@@ -9,6 +9,9 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMSetup;
+use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use SightPress\Core\Infrastructure\Container\Services;
@@ -25,7 +28,8 @@ use function DI\get;
  *
  * Site services are lazy: the connection and the entity manager are lazy objects, so the DSN is only decrypted, and
  * they are only built, when they are first used (for example by a query) — services that merely depend on them
- * cost nothing on requests that don't touch the database. The connection only opens on its first query. Containers are kept per site for
+ * cost nothing on requests that don't touch the database. The connection only opens on its first query. The site's
+ * file storage ({@see FilesystemOperator}) creates its folder only when the first file is written. Containers are kept per site for
  * the process and rebuilt when the registry hands out a new {@see Site} (it does after any change); {@see evict()}
  * drops one, {@see reset()} all (for long-running workers).
  */
@@ -39,6 +43,7 @@ final class SiteContainerFactory
         Connection::class,
         EntityManagerInterface::class,
         EntityManager::class,
+        FilesystemOperator::class,
     ];
 
 
@@ -116,6 +121,9 @@ final class SiteContainerFactory
                 ),
             ),
             EntityManager::class => get(EntityManagerInterface::class),
+            FilesystemOperator::class => factory(static fn (): FilesystemOperator => new Filesystem(
+                new LocalFilesystemAdapter($site->storage->root($config->sitesDir, $site->id), lazyRootCreation: true),
+            )),
         ];
     }
 }

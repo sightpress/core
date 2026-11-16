@@ -26,6 +26,7 @@ use stdClass;
 #[UsesClass(\SightPress\Core\Rbac\RbacModule::class)]
 #[UsesClass(\SightPress\Core\Auth\AuthModule::class)]
 #[UsesClass(\SightPress\Core\Theme\ThemeModule::class)]
+#[UsesClass(\SightPress\Core\Media\MediaModule::class)]
 final class ComposerModuleDiscoveryTest extends TestCase
 {
     private TemporaryDirectory $project;
@@ -44,7 +45,7 @@ final class ComposerModuleDiscoveryTest extends TestCase
     {
         $candidates = CoreModules::candidates();
 
-        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
         self::assertSame('sightpress/core', $candidates[0]->source);
         foreach (CoreModules::entityPaths() as $path) {
             self::assertDirectoryExists($path);

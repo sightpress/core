@@ -1,4 +1,5 @@
-# Development PHP image for SightPress: PHP 8.5 CLI with PCOV for code coverage, intl, SQLite and Composer.
+# Development PHP image for SightPress: PHP 8.5 CLI with PCOV for code coverage, intl, gd (JPEG, PNG, WebP,
+# FreeType), exif, SQLite and Composer.
 #
 # Build:  docker build -t sightpress/dev-php:8.5 docker/dev-php
 # Use:    docker run --rm -it --user "$(id -u):$(id -g)" -e HOME=/tmp \
@@ -7,8 +8,10 @@
 FROM php:8.5-cli
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git unzip libsqlite3-dev libicu-dev $PHPIZE_DEPS \
-    && docker-php-ext-install -j"$(nproc)" intl \
+    && apt-get install -y --no-install-recommends git unzip libsqlite3-dev libicu-dev \
+        libfreetype-dev libjpeg62-turbo-dev libpng-dev libwebp-dev $PHPIZE_DEPS \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j"$(nproc)" intl gd exif \
     && pecl install pcov \
     && docker-php-ext-enable pcov \
     && apt-get purge -y --auto-remove $PHPIZE_DEPS \
