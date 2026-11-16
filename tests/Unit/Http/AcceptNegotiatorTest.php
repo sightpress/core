@@ -36,4 +36,16 @@ final class AcceptNegotiatorTest extends TestCase
 
         self::assertSame($expected, new AcceptNegotiator()->prefersJson($request));
     }
+
+    public function testItPrefersMarkdownOnlyWhenAskedForIt(): void
+    {
+        $negotiator = new AcceptNegotiator();
+        $prefers = static fn (string $accept): bool => $negotiator->prefersMarkdown(new ServerRequest('GET', '/', ['Accept' => $accept]));
+
+        self::assertTrue($prefers('text/markdown'));
+        self::assertTrue($prefers('text/x-markdown, text/html;q=0.8'));
+        self::assertFalse($prefers('text/html, text/markdown'), 'a tie goes to HTML');
+        self::assertFalse($prefers('text/html,*/*;q=0.8'));
+        self::assertFalse($prefers('application/json'));
+    }
 }

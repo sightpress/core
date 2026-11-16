@@ -35,7 +35,10 @@ final class SeoModuleTest extends TestCase
         self::assertContains([PageSaved::class, SeoCachePurger::class], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $listeners));
         self::assertCount(5, $listeners);
         $routes = array_values(array_filter($registry->routes(), static fn ($r) => $r->module === 'seo'));
-        self::assertSame(['/sitemap.xml', '/robots.txt'], array_map(static fn ($r) => $r->item->path, $routes));
+        self::assertSame(['/sitemap.xml', '/robots.txt', '/llms.txt', '/llms-full.txt'], array_map(static fn ($r) => $r->item->path, $routes));
+        $settings = array_values(array_filter($registry->settings(), static fn ($s) => $s->module === 'seo'));
+        self::assertSame(['seo.ai_crawlers', 'allow_all'], [$settings[0]->item->key, $settings[0]->item->default]);
+        self::assertSame(['allow_all', 'search_only', 'block_all'], array_keys($settings[0]->item->choices));
         self::assertCount(1, array_filter($registry->commands(), static fn ($c) => $c->module === 'seo'));
     }
 }

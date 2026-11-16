@@ -6,13 +6,15 @@ namespace SightPress\Core\Seo;
 
 use SightPress\Core\Block\Contract\BlockContexts;
 use SightPress\Core\Block\Contract\BlockRenderer;
+use SightPress\Core\Page\Contract\MarkdownAddress;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Tenant\Site;
 
 /**
  * What search engines read in the `<head>` of every public page: the `<title>` ({@see SeoMeta::title()}), the meta
- * description ({@see SeoMeta::description()}; the social tags use it too), the canonical address, `hreflang`
+ * description ({@see SeoMeta::description()}; the social tags use it too), the canonical address, the Markdown
+ * version (for pages search engines may index), `hreflang`
  * alternates when the site has more than one language, the robots rules ({@see RobotsPolicy}, also sent as
  * `X-Robots-Tag`), and the page's schema.org nodes: a `WebPage` that is part of the site's `WebSite`, its
  * `BreadcrumbList`, and the nodes the blocks give (videos, for example). Runs before the branding module's tags.
@@ -49,6 +51,9 @@ final readonly class SeoHead
             $tags[] = self::tag('meta', ['name' => 'robots', 'content' => $robots]);
         }
         $tags[] = self::tag('link', ['rel' => 'canonical', 'href' => $canonical]);
+        if ($event->public && !$event->noindex && $event->canonicalOverride === null) {
+            $tags[] = self::tag('link', ['rel' => 'alternate', 'type' => 'text/markdown', 'href' => $base . MarkdownAddress::of($event->url, $event->home)]);
+        }
         if (count($this->site->locales) > 1 && $event->canonicalOverride === null) {
             $alternates = [];
             foreach ($this->site->locales as $locale) {

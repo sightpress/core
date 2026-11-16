@@ -11,7 +11,11 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Page\Contract\IndexedPage;
+use SightPress\Core\Page\Contract\MarkdownPages;
 use SightPress\Core\Page\PageContent;
+use SightPress\Core\Page\PageMarkdown;
+use SightPress\Core\Seo\AiCrawlerPolicy;
+use SightPress\Core\Tests\Support\BlockFixture;
 use SightPress\Core\Page\PageIndexQuery;
 use SightPress\Core\Seo\Http\SeoFileHandler;
 use SightPress\Core\Seo\RobotsPolicy;
@@ -27,6 +31,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 #[CoversClass(SeoCachePurger::class)]
 #[CoversClass(PageIndexQuery::class)]
 #[CoversClass(IndexedPage::class)]
+#[CoversClass(AiCrawlerPolicy::class)]
 #[UsesNamespace('SightPress\Core')]
 final class SeoFilesTest extends TestCase
 {
@@ -96,6 +101,67 @@ final class SeoFilesTest extends TestCase
         self::assertStringContainsString('Disallow: /', $this->files('staging', new ArrayAdapter())->robots('https://demo.example'));
     }
 
+    public function testListsThePagesForAiReadersInLlmsTxt(): void
+    {
+        $home = $this->pages->published('Home');
+        $this->pages->editor()->save($home, 'en-GB', new PageContent('Home', 'home', null, "The library\n by the river."));
+        $about = $this->pages->published('About [us]');
+        $this->pages->editor()->save($about, 'pt-PT', new PageContent('Sobre', 'sobre', 'Quem somos.'));
+        $files = $this->files('production', new ArrayAdapter());
+
+        self::assertSame(
+            "# Demo\n\n> The library by the river.\n\nEvery page of this website is also available as Markdown: add `.md` to its address (`/index.md` for the home page).\n\n"
+            . "## Pages (en-GB)\n\n- [Home](https://demo.example/index.md): The library by the river.\n- [About \\[us\\]](https://demo.example/about-us.md)\n\n"
+            . "## Pages (pt-PT)\n\n- [Sobre](https://demo.example/pt-pt/sobre.md): Quem somos.\n\n"
+            . "## Optional\n\n- [Full text of every page](https://demo.example/llms-full.txt): all the pages above in one Markdown file\n",
+            $files->llms('https://demo.example'),
+        );
+        $full = $files->llmsFull('https://demo.example');
+        self::assertStringStartsWith("# Demo\n\n> The library by the river.\n\n# Home\n", $full);
+        self::assertSame(3, substr_count($full, 'Source: <'));
+    }
+
+    public function testTheFullTextStopsBeforeItGetsTooLarge(): void
+    {
+        foreach (['One', 'Two', 'Three'] as $title) {
+            $this->pages->published($title);
+        }
+        $large = new class () implements MarkdownPages {
+            public function document(string $locale, string $title, ?string $summary, array $blocks, string $canonicalUrl, DateTimeImmutable $updatedAt, string $baseUrl): string
+            {
+                return '# ' . $title . "\n\n" . str_repeat('x', 200_000) . "\n";
+            }
+        };
+
+        $full = $this->files('production', new ArrayAdapter(), $large)->llmsFull('https://demo.example');
+
+        self::assertStringStartsWith("# Demo\n\n> The website of Demo.\n\n# One\n", $full);
+        self::assertStringContainsString("\n# Two\n", $full);
+        self::assertStringNotContainsString('# Three', $full);
+        self::assertStringEndsWith("\n---\n\n> 1 more page was left out to keep this file under 500 KB. Every page is listed in https://demo.example/llms.txt and has a Markdown version.\n", $full);
+        self::assertLessThan(SeoFiles::FULL_TEXT_MAX_BYTES, strlen($full));
+        $this->pages->published('Four');
+        self::assertStringContainsString('2 more pages were left out', $this->files('production', new ArrayAdapter(), $large)->llmsFull('https://demo.example'));
+    }
+
+    public function testTheAiCrawlerPolicyKeepsCrawlersOut(): void
+    {
+        $settings = $this->pages->database->settings();
+        $policy = $this->aiCrawlers();
+        self::assertSame([AiCrawlerPolicy::ALLOW_ALL, []], [$policy->current(), $policy->blocked()]);
+        $settings->set(AiCrawlerPolicy::SETTING, 'nonsense');
+        self::assertSame(AiCrawlerPolicy::ALLOW_ALL, $this->aiCrawlers()->current());
+        $settings->set(AiCrawlerPolicy::SETTING, AiCrawlerPolicy::SEARCH_ONLY);
+        self::assertSame(AiCrawlerPolicy::crawlers()['training'], $this->aiCrawlers()->blocked());
+        self::assertContains('GPTBot', AiCrawlerPolicy::crawlers()['training']);
+        self::assertContains('OAI-SearchBot', AiCrawlerPolicy::crawlers()['search']);
+        $cache = new ArrayAdapter();
+        self::assertStringContainsString("User-agent: ClaudeBot\n", $this->files('production', $cache)->robots('https://demo.example'));
+        $settings->set(AiCrawlerPolicy::SETTING, AiCrawlerPolicy::BLOCK_ALL);
+        self::assertCount(count(AiCrawlerPolicy::crawlers()['training']) + count(AiCrawlerPolicy::crawlers()['search']), $this->aiCrawlers()->blocked());
+        self::assertStringContainsString("User-agent: Claude-SearchBot\n", $this->files('production', $cache)->robots('https://demo.example'), 'a new policy is not served from the cache');
+    }
+
     public function testServesThemForTheFirstDomain(): void
     {
         $this->pages->published('Home');
@@ -108,13 +174,17 @@ final class SeoFilesTest extends TestCase
         $robots = $handler->handle(new ServerRequest('GET', 'https://demo.example/robots.txt'));
         self::assertSame('text/plain; charset=utf-8', $robots->getHeaderLine('Content-Type'));
         self::assertStringEndsWith("Sitemap: https://demo.example/sitemap.xml\n", (string) $robots->getBody());
+        self::assertStringStartsWith('# Demo', (string) $handler->handle(new ServerRequest('GET', 'https://demo.example/llms.txt'))->getBody());
+        $full = $handler->handle(new ServerRequest('GET', 'https://demo.example/llms-full.txt'));
+        self::assertSame('text/plain; charset=utf-8', $full->getHeaderLine('Content-Type'));
+        self::assertStringContainsString('Source: <https://demo.example/>', (string) $full->getBody());
     }
 
     public function testKeepsItsCacheInTheTenantsCacheFolderByDefault(): void
     {
         $this->pages->published('Home');
         $config = new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => 'production']);
-        $files = new SeoFiles($this->index(), $this->policy('production'), $this->pages->site, $config);
+        $files = new SeoFiles($this->index(), $this->policy('production'), $this->pages->site, $config, $this->aiCrawlers(), $this->documents());
 
         self::assertStringContainsString('<loc>https://demo.example/</loc>', $files->sitemap('https://demo.example'));
         self::assertDirectoryExists($config->cacheDir . '/seo-' . $this->pages->site->id);
@@ -131,8 +201,20 @@ final class SeoFilesTest extends TestCase
         return new RobotsPolicy(new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]));
     }
 
-    private function files(string $environment, ArrayAdapter $cache): SeoFiles
+    private function files(string $environment, ArrayAdapter $cache, ?MarkdownPages $documents = null): SeoFiles
     {
-        return new SeoFiles($this->index(), $this->policy($environment), $this->pages->site, new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]), $cache);
+        return new SeoFiles($this->index(), $this->policy($environment), $this->pages->site, new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]), $this->aiCrawlers(), $documents ?? $this->documents(), $cache);
+    }
+
+    private function aiCrawlers(): AiCrawlerPolicy
+    {
+        return new AiCrawlerPolicy($this->pages->database->settings());
+    }
+
+    private function documents(): PageMarkdown
+    {
+        $blocks = new BlockFixture([], $this->pages->database);
+
+        return new PageMarkdown($blocks->contexts($this->pages->site), $blocks->renderer());
     }
 }

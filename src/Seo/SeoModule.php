@@ -16,11 +16,14 @@ use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\ModuleRequirement;
 use SightPress\Module\Routing\Route;
+use SightPress\Module\Setting\Setting;
+use SightPress\Module\Setting\SettingType;
 
 /**
  * Search engines: the `<title>`, meta description, canonical address, `hreflang`, robots rules and schema.org nodes
  * of every public page ({@see SeoHead}), `sitemap.xml` and `robots.txt` ({@see SeoFiles}, cached until a page
- * changes), and `site:seo:check`. Always on.
+ * changes), `llms.txt` and `llms-full.txt` for AI readers, the AI crawler policy (setting `seo.ai_crawlers`, D11)
+ * and `site:seo:check`. Always on.
  */
 final class SeoModule implements ModuleInterface
 {
@@ -39,7 +42,7 @@ final class SeoModule implements ModuleInterface
     public function register(ModuleRegistrar $registrar): void
     {
         $services = $registrar->services();
-        foreach ([RobotsPolicy::class, SeoHead::class, SeoFileHandler::class, SeoCachePurger::class] as $class) {
+        foreach ([RobotsPolicy::class, SeoHead::class, SeoFileHandler::class, SeoCachePurger::class, AiCrawlerPolicy::class] as $class) {
             $services->autowire($class);
         }
         $services->autowire(SeoFiles::class, public: true);
@@ -52,5 +55,15 @@ final class SeoModule implements ModuleInterface
         $registrar->commands()->add(CheckSeoCommand::class);
         $registrar->routes()->add(new Route('seo.sitemap', SeoFileHandler::SITEMAP, SeoFileHandler::class, ['GET', 'HEAD']));
         $registrar->routes()->add(new Route('seo.robots', SeoFileHandler::ROBOTS, SeoFileHandler::class, ['GET', 'HEAD']));
+        $registrar->routes()->add(new Route('seo.llms', SeoFileHandler::LLMS, SeoFileHandler::class, ['GET', 'HEAD']));
+        $registrar->routes()->add(new Route('seo.llms_full', SeoFileHandler::LLMS_FULL, SeoFileHandler::class, ['GET', 'HEAD']));
+        $registrar->settings()->add(new Setting(
+            AiCrawlerPolicy::SETTING,
+            'AI crawlers',
+            SettingType::Choice,
+            AiCrawlerPolicy::ALLOW_ALL,
+            'Whether AI services may read the public pages of this site: to answer people\'s questions with a link back (AI search and assistants), and to train their models.',
+            AiCrawlerPolicy::CHOICES,
+        ));
     }
 }

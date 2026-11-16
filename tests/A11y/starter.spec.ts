@@ -1,6 +1,6 @@
 // The starter content (C-6.4) of a site made with site:create (tests/A11y/starter/index.php): every starter page has
 // no axe violations in light and dark mode, reflows at 320 px, can be reached from the menus by keyboard, and scores
-// 100 in Lighthouse's SEO category (C-6.7).
+// 100 in Lighthouse's SEO category (C-6.7), and is offered to AI readers as Markdown and in llms.txt (C-6.8).
 import { chromium, expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import lighthouse from 'lighthouse';
@@ -76,6 +76,24 @@ test('the menus lead to the starter pages by keyboard', async ({ page }) => {
   await page.getByRole('main').getByRole('link', { name: 'contact us' }).press('Enter');
   await expect(page).toHaveURL(`${SITE}/contact`);
   await expect(page.getByLabel('Your message')).toBeVisible();
+});
+
+test('AI readers find every starter page as Markdown and in llms.txt (C-6.8)', async ({ page, request }) => {
+  await page.goto(`${SITE}/privacy`);
+  const alternate = await page.locator('head link[rel="alternate"][type="text/markdown"]').getAttribute('href');
+  expect(alternate).toBe(`${SITE}/privacy.md`);
+
+  const markdown = await request.get(alternate ?? '');
+  expect(markdown.headers()['content-type']).toBe('text/markdown; charset=utf-8');
+  expect(markdown.headers()['vary']).toBe('Accept');
+  expect(await markdown.text()).toMatch(/^# Privacy notice\n\nThis notice explains/);
+
+  const llms = await (await request.get(`${SITE}/llms.txt`)).text();
+  expect(llms).toMatch(/^# Riverside Library\n\n> /);
+  for (const [path, title] of PAGES) {
+    expect(llms).toContain(`- [${title}](${SITE}${path === '/' ? '/index' : path}.md)`);
+  }
+  expect(await (await request.get(`${SITE}/llms-full.txt`)).text()).toContain('# Accessibility statement');
 });
 
 test('every starter page scores 100 for search engines in Lighthouse', async () => {

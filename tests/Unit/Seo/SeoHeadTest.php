@@ -57,6 +57,7 @@ final class SeoHeadTest extends TestCase
         $head = $event->head();
         self::assertStringContainsString('<meta name="description" content="The people behind the library.">', $head);
         self::assertStringContainsString('<link rel="canonical" href="https://demo.example/about/team">', $head);
+        self::assertStringContainsString('<link rel="alternate" type="text/markdown" href="https://demo.example/about/team.md">', $head);
         self::assertStringNotContainsString('hreflang', $head, 'only written in one language');
         self::assertSame(1, preg_match('#<script type="application/ld\+json">(.+)</script>#', $head, $json));
         $graph = json_decode($json[1], true, flags: JSON_THROW_ON_ERROR);
@@ -109,6 +110,8 @@ final class SeoHeadTest extends TestCase
         self::assertSame('noindex', $copy->robots());
         self::assertStringContainsString('<link rel="canonical" href="https://elsewhere.example/page">', $copy->head());
         self::assertStringNotContainsString('hreflang', $copy->head(), 'a copy has no alternates of its own');
+        self::assertStringNotContainsString('text/markdown', $copy->head());
+        self::assertStringContainsString('<link rel="alternate" type="text/markdown" href="https://demo.example/index.md">', $front->head());
     }
 
     /**

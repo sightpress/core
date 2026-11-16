@@ -18,7 +18,7 @@ final class Slug
     /**
      * First-level addresses that belong to the system, not to pages.
      */
-    public const array RESERVED = ['account', 'admin', 'api', 'assets', 'branding', 'login', 'logout', 'media', 'password', 'register', 'search'];
+    public const array RESERVED = ['account', 'admin', 'api', 'assets', 'branding', 'index', 'login', 'logout', 'media', 'password', 'register', 'search'];
 
     public static function isValid(string $slug): bool
     {

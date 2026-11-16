@@ -24,9 +24,17 @@ final class PublicPageHandlerTest extends TestCase
 {
     private ContactFixture $fixture;
 
+    private \SightPress\Core\Tests\Support\TestProject $project;
+
     protected function setUp(): void
     {
         $this->fixture = new ContactFixture();
+        $this->project = new \SightPress\Core\Tests\Support\TestProject();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->project->remove();
     }
 
     public function testTheHomePageIsAtTheTopOfTheSiteInItsLayoutAndMayBeShared(): void
@@ -109,6 +117,40 @@ final class PublicPageHandlerTest extends TestCase
         self::assertStringContainsString('<li><a href="/visit">Visit us</a></li>', $html);
     }
 
+    public function testEveryPageIsThereAsMarkdown(): void
+    {
+        $home = $this->fixture->pages->published('Welcome', [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'News', 'level' => 2]]]);
+        $this->fixture->pages->editor()->save($home, 'pt-PT', new PageContent('Bem-vindo', 'inicio'));
+        $hidden = $this->fixture->pages->published('Hidden');
+        $this->fixture->pages->editor()->save($hidden, 'en-GB', new PageContent('Hidden', 'hidden', null, null, [], null, null, true, 'https://elsewhere.example/hidden'));
+
+        $markdown = $this->get('https://demo.example/index.md');
+        self::assertSame('text/markdown; charset=utf-8', $markdown->getHeaderLine('Content-Type'));
+        self::assertSame("# Welcome\n\n## News\n\n---\n\nSource: <https://demo.example/>  \nLast updated: 2026-11-14\n", (string) $markdown->getBody());
+        self::assertSame(['Accept', '<https://demo.example/>; rel="canonical"', 'public, max-age=300'], [$markdown->getHeaderLine('Vary'), $markdown->getHeaderLine('Link'), $markdown->getHeaderLine('Cache-Control')]);
+        self::assertFalse($markdown->hasHeader('X-Robots-Tag'));
+        self::assertSame(304, $this->get('https://demo.example/index.md', ['If-None-Match' => $markdown->getHeaderLine('ETag')])->getStatusCode());
+        self::assertStringStartsWith('# Bem-vindo', (string) $this->get('https://demo.example/pt-pt/index.md')->getBody());
+        self::assertStringStartsWith('# Welcome', (string) $this->get('https://demo.example/', ['Accept' => 'text/markdown'])->getBody());
+        self::assertSame('private, no-cache', $this->get('https://demo.example/index.md', [], new Actor(3))->getHeaderLine('Cache-Control'));
+
+        $copy = $this->get('https://demo.example/hidden.md');
+        self::assertSame('noindex', $copy->getHeaderLine('X-Robots-Tag'));
+        self::assertSame('<https://elsewhere.example/hidden>; rel="canonical"', $copy->getHeaderLine('Link'));
+        foreach (['https://demo.example/welcome.md' => 'https://demo.example/index.md', 'https://demo.example/pt-pt.md' => 'https://demo.example/pt-pt/index.md', 'https://demo.example/hidden/index.md' => 'https://demo.example/hidden.md'] as $from => $to) {
+            self::assertSame($to, $this->get($from)->getHeaderLine('Location'), $from);
+        }
+    }
+
+    public function testMarkdownOutsideProductionAsksSearchEnginesToStayAway(): void
+    {
+        $this->fixture->pages->published('Welcome');
+
+        $response = $this->handler(config: 'staging')->handle($this->fixture->auth->request('GET', 'https://demo.example/index.md'));
+
+        self::assertSame('noindex, nofollow', $response->getHeaderLine('X-Robots-Tag'));
+    }
+
     public function testAddressesThatAreNotThePagesOwnMovePermanently(): void
     {
         $this->fixture->pages->published('Welcome');
@@ -176,7 +218,7 @@ final class PublicPageHandlerTest extends TestCase
         return $this->handler()->handle($request);
     }
 
-    private function handler(?\Psr\EventDispatcher\EventDispatcherInterface $events = null): PublicPageHandler
+    private function handler(?\Psr\EventDispatcher\EventDispatcherInterface $events = null, string $config = 'production'): PublicPageHandler
     {
         $pages = $this->fixture->pages;
 
@@ -190,6 +232,9 @@ final class PublicPageHandlerTest extends TestCase
             $pages->site,
             $this->fixture->auth->http,
             $events ?? $pages,
+            new \SightPress\Core\Page\PageMarkdown($this->fixture->blocks->contexts($pages->site), $this->fixture->blocks->renderer()),
+            new \SightPress\Core\Http\AcceptNegotiator(),
+            new \SightPress\Core\Tenant\TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $config]),
         );
     }
 }

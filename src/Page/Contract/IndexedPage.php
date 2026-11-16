@@ -18,6 +18,8 @@ final readonly class IndexedPage
      * @param bool                                                                $public     whether everyone may read
      *                                                                                        it (else members only)
      * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param bool                                                                $home       whether it is the
+     *                                                                                        home page
      */
     public function __construct(
         public int $id,
@@ -33,7 +35,16 @@ final readonly class IndexedPage
         public int $depth,
         public DateTimeImmutable $updatedAt,
         public array $blocks,
+        public bool $home = false,
     ) {
+    }
+
+    /**
+     * Where its Markdown version is.
+     */
+    public function markdownUrl(): string
+    {
+        return MarkdownAddress::of($this->url, $this->home);
     }
 
     /**

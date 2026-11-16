@@ -81,6 +81,7 @@ final readonly class PageIndexQuery implements PageIndex
             $page->depth(),
             $translation->updatedAt(),
             $translation->blocks(),
+            $this->addresses->isHome($page),
         );
     }
 }

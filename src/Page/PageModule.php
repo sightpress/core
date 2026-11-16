@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page;
 
+use SightPress\Core\Page\Contract\MarkdownPages;
 use SightPress\Core\Page\Contract\PageIndex;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Contract\PageOverview;
@@ -59,6 +60,7 @@ final class PageModule implements ModuleInterface
         $services->autowire(PageAddresses::class);
         $services->autowire(PageLinkQuery::class, PageLinks::class, public: true);
         $services->autowire(PageIndexQuery::class, PageIndex::class, public: true);
+        $services->autowire(PageMarkdown::class, MarkdownPages::class, public: true);
         $services->autowire(PublicPageHandler::class);
         $services->autowire(PageEditor::class, public: true);
         $services->autowire(PublishedPages::class, PublicPages::class, public: true);

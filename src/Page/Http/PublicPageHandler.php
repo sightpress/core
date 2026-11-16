@@ -11,7 +11,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Block\Contract\BlockContexts;
 use SightPress\Core\Block\Contract\BlockRenderer;
+use SightPress\Core\Http\AcceptNegotiator;
 use SightPress\Core\Http\Session\Session;
+use SightPress\Core\Page\Contract\MarkdownAddress;
+use SightPress\Core\Page\Contract\MarkdownPages;
+use SightPress\Core\Page\Entity\PageTranslation;
 use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Page\PageAddresses;
 use SightPress\Core\Rbac\Contract\Actor;
@@ -19,6 +23,7 @@ use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\Contract\PageAction;
 use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Tenant\Site;
+use SightPress\Core\Tenant\TenantConfig;
 use Slim\Exception\HttpNotFoundException;
 use Twig\Environment;
 
@@ -29,6 +34,9 @@ use Twig\Environment;
  * are moved permanently: `/about/` → `/about`, the home page's own path → `/`, any of the site's other domains → its
  * first one. Other modules add menus, `<head>` tags
  * and more through the {@see PublicPageRendering} event.
+ *
+ * Every page is also there as Markdown, at `/{path}.md` (`/index.md` for the home page) or for requests that prefer
+ * `text/markdown`; responses say `Vary: Accept` and carry the canonical address in a `Link` header.
  *
  * Caching: a page that holds nothing personal (the visitor isn't signed in and the page left nothing in the session,
  * as a form does) may be kept by browsers and shared caches for {@see MAX_AGE} seconds; everything else is private.
@@ -48,6 +56,9 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         private Site $site,
         private ResponseFactoryInterface $responses,
         private EventDispatcherInterface $events,
+        private MarkdownPages $documents,
+        private AcceptNegotiator $negotiator,
+        private TenantConfig $config,
     ) {
     }
 
@@ -60,18 +71,24 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
             return $this->moved($uri->withHost($host)->withPath($path === '/' ? '/' : '/' . trim($path, '/'))->__toString());
         }
 
-        $translation = $this->addresses->find($path);
+        $markdownPath = str_ends_with($path, '.md');
+        $pagePath = $markdownPath ? (string) preg_replace('#(^|/)index$#', '', substr($path, 0, -3)) : $path;
+        $translation = $this->addresses->find($pagePath === '' ? '/' : $pagePath);
         $actor = Actor::fromRequest($request);
         if ($translation === null || !$this->authorizer->can($actor, PageAction::View->value, $translation->page())) {
             throw new HttpNotFoundException($request);
         }
         $url = $this->addresses->url($translation);
-        if (rawurldecode($path) !== $url) {
-            return $this->moved($uri->withPath($url)->__toString());
+        $own = $markdownPath ? MarkdownAddress::of($url, $this->addresses->isHome($translation->page())) : $url;
+        if (rawurldecode($path) !== $own) {
+            return $this->moved($uri->withPath($own)->__toString());
         }
 
         $page = $translation->page();
         $baseUrl = $uri->getScheme() . '://' . $uri->getAuthority();
+        if ($markdownPath || $this->negotiator->prefersMarkdown($request)) {
+            return $this->markdown($request, $translation, $baseUrl . $url, $baseUrl, $actor);
+        }
         $context = $this->contexts->create($translation->locale(), $baseUrl, $request);
         $content = $this->renderer->html($translation->blocks(), $context);
         $rendering = new PublicPageRendering(
@@ -109,21 +126,46 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         ]);
 
         $personal = $actor->isSignedIn() || Session::fromRequest($request)->all() !== [];
-        $etag = '"' . hash('xxh128', $body) . '"';
+
+        return $this->respond($request, $body, 'text/html; charset=utf-8', $translation->locale(), $rendering->canonicalUrl(), $rendering->robots(), $personal);
+    }
+
+    /**
+     * The page as Markdown (`/{path}.md`, or `Accept: text/markdown`), for readers that prefer text. Its canonical
+     * address is the HTML page's; a page search engines shouldn't list says so in `X-Robots-Tag`.
+     */
+    private function markdown(ServerRequestInterface $request, PageTranslation $translation, string $address, string $baseUrl, Actor $actor): ResponseInterface
+    {
+        $canonical = $translation->canonicalUrl() ?? $address;
+        $body = $this->documents->document($translation->locale(), $translation->title(), $translation->summary(), $translation->blocks(), $canonical, $translation->updatedAt(), $baseUrl);
+        $indexable = $translation->page()->isPublic() && !$translation->isNoindex();
+        $robots = match (true) {
+            !$this->config->environment->isProduction() => 'noindex, nofollow',
+            !$indexable => 'noindex',
+            default => null,
+        };
+
+        return $this->respond($request, $body, 'text/markdown; charset=utf-8', $translation->locale(), $canonical, $robots, $actor->isSignedIn());
+    }
+
+    private function respond(ServerRequestInterface $request, string $body, string $type, string $locale, string $canonical, ?string $robots, bool $personal): ResponseInterface
+    {
+        $etag = '"' . hash('xxh128', $type . $body) . '"';
         $response = $this->responses->createResponse()
-            ->withHeader('Content-Language', $translation->locale())
-            ->withHeader('Link', sprintf('<%s>; rel="canonical"', $rendering->canonicalUrl()))
+            ->withHeader('Content-Language', $locale)
+            ->withHeader('Vary', 'Accept')
+            ->withHeader('Link', sprintf('<%s>; rel="canonical"', $canonical))
             ->withHeader('ETag', $etag)
             ->withHeader('Cache-Control', $personal ? 'private, no-cache' : 'public, max-age=' . self::MAX_AGE);
-        if ($rendering->robots() !== null) {
-            $response = $response->withHeader('X-Robots-Tag', $rendering->robots());
+        if ($robots !== null) {
+            $response = $response->withHeader('X-Robots-Tag', $robots);
         }
         if (in_array($etag, array_map(trim(...), explode(',', $request->getHeaderLine('If-None-Match'))), true)) {
             return $response->withStatus(304);
         }
         $response->getBody()->write($body);
 
-        return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+        return $response->withHeader('Content-Type', $type);
     }
 
     private function moved(string $location): ResponseInterface
