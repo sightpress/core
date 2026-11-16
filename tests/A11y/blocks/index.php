@@ -7,6 +7,8 @@
  * through the media library; the video and audio entries have no file behind them, which doesn't matter to axe.
  * Started by playwright.config.ts with PHP's built-in web server; never deployed.
  *
+ * `/report` shows what the publish checks find in a draft with problems (C-4.5).
+ *
  * `/_test/reset` starts again from an empty site (forgets sessions and rate limits).
  */
 
@@ -38,6 +40,7 @@ use SightPress\Core\Page\Contract\PublicPages;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
 use SightPress\Core\Page\PageRepository;
+use SightPress\Core\Page\Publish\PublishChecker;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Tenant\SiteContainerFactory;
@@ -78,6 +81,31 @@ final readonly class A11yBlockPage implements RequestHandlerInterface
     }
 }
 
+/**
+ * Renders what the publish checks found in the page at `/problems` (C-4.5), with stand-ins for the fields the
+ * report links to.
+ */
+final readonly class A11yPublishReport implements RequestHandlerInterface
+{
+    public function __construct(
+        private PageRepository $pages,
+        private PublishChecker $checks,
+        private TemplateRenderer $templates,
+    ) {
+    }
+
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $page = $this->pages->findByPath('en-GB', 'problems') ?? throw new LogicException('No page.');
+
+        return $this->templates->response($request, '@a11yblocks/report.html.twig', [
+            'title' => 'Edit "Visit US"',
+            'site_name' => 'Riverside Library',
+            'report' => $this->checks->check($page->page()),
+        ])->withHeader('Cache-Control', 'no-store');
+    }
+}
+
 $project = sys_get_temp_dir() . '/sightpress-a11y-blocks';
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
 $path = (string) parse_url(is_string($uri) ? $uri : '/', PHP_URL_PATH);
@@ -94,6 +122,8 @@ $module = new FakeModule('acme.a11y_blocks', register: static function (ModuleRe
     $r->views()->add('a11yblocks', __DIR__ . '/templates');
     $r->services()->autowire(A11yBlockPage::class);
     $r->routes()->add(new Route('acme.visit', '/visit', A11yBlockPage::class));
+    $r->services()->autowire(A11yPublishReport::class);
+    $r->routes()->add(new Route('acme.report', '/report', A11yPublishReport::class));
 });
 $kernel = static fn (): Kernel => Kernel::fromConfig(
     new TenantConfigLoader()->load($project, $environment),
@@ -191,4 +221,8 @@ function seed(ContainerInterface $site, string $project): void
     ]));
     $page->changeState(PageState::Published, $now);
     Services::get($site, PageRepository::class)->flush();
+    $editor->create('en-GB', new PageContent('Visit US', 'problems', null, null, [
+        ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Too deep', 'level' => 4]],
+        ['type' => 'image', 'version' => 1, 'data' => ['media' => $picture]],
+    ]));
 }

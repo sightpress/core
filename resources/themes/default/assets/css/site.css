@@ -329,6 +329,14 @@ figcaption { margin-top: var(--space-2); color: var(--color-text-muted); font-si
 .block-contact-form { margin: 0 0 var(--space-5); }
 .block-contact-form textarea { min-height: 10rem; }
 
+/* What the publish checks found (page editor): errors stop publishing. */
+.publish-report { margin: 0 0 var(--space-4); padding: var(--space-3) var(--space-4); border: 0.25rem solid var(--color-border); border-radius: var(--radius-small); }
+.publish-report--blocked { border-color: var(--color-error); }
+.publish-report h2 { margin-top: 0; font-size: var(--font-size-h3); }
+.publish-report h3 { font-size: var(--font-size-h4); margin-top: var(--space-4); }
+.publish-report ul { margin-bottom: 0; }
+.publish-report__where { color: var(--color-text-muted); font-size: var(--font-size-small); }
+
 @media (prefers-contrast: more) {
   .card, .disclosure, .dialog, th, td, .site-header, .site-footer, .hero { border-color: var(--color-text); }
   a { text-decoration-thickness: 0.12em; }

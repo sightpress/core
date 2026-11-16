@@ -65,7 +65,12 @@ final readonly class DefaultBlockValidator implements BlockValidator
             throw new InvalidBlocks($violations);
         }
 
-        return new ValidatedBlocks($clean, $issues, $ids);
+        return new ValidatedBlocks(
+            $clean,
+            $issues,
+            $ids,
+            array_map(static fn (array $reference): array => ['id' => $reference['id'], 'pointer' => $reference['pointer']], $media),
+        );
     }
 
     /**

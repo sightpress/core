@@ -30,7 +30,7 @@ final class PageModuleTest extends TestCase
 
         self::assertSame('page', $module->manifest()->id);
         self::assertTrue($module->manifest()->required);
-        self::assertSame(['site', 'rbac', 'block'], array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires));
+        self::assertSame(['site', 'rbac', 'block', 'theme'], array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires));
         $migrations = array_values(array_filter(
             $registry->migrations(),
             static fn ($registered): bool => $registered->module === 'page',
@@ -42,6 +42,7 @@ final class PageModuleTest extends TestCase
         self::assertTrue($registry->services()[PageEditor::class]->item->public);
         self::assertSame(\SightPress\Core\Page\PublishedPages::class, $registry->services()[\SightPress\Core\Page\Contract\PublicPages::class]->item->class);
         self::assertTrue($registry->services()[\SightPress\Core\Page\Workflow\PageWorkflow::class]->item->public);
+        self::assertTrue($registry->services()[\SightPress\Core\Page\Publish\PublishChecker::class]->item->public);
         self::assertArrayHasKey(\SightPress\Core\Page\Workflow\ReviewRequestMailer::class, $registry->services());
         $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'page'));
         self::assertSame([\SightPress\Core\Page\Contract\PageTransitioned::class, \SightPress\Core\Page\Workflow\ReviewRequestMailer::class], [$listeners[0]->item->event, $listeners[0]->item->listener]);

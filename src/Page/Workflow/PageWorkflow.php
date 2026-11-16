@@ -10,6 +10,7 @@ use SightPress\Core\Page\Contract\PageTransition;
 use SightPress\Core\Page\Contract\PageTransitioned;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\PageRepository;
+use SightPress\Core\Page\Publish\PublishChecker;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\Contract\PageState;
@@ -19,7 +20,8 @@ use Symfony\Component\Workflow\Transition;
 
 /**
  * Moves pages through the workflow (ADR-0006): the state machine decides which steps exist from each state, the
- * authorizer (page voter) decides who may take them. After a step is stored, {@see PageTransitioned} is dispatched.
+ * authorizer (page voter) decides who may take them, and publishing needs the publish checks to find no errors
+ * ({@see PublishChecker}). After a step is stored, {@see PageTransitioned} is dispatched.
  *
  * Domain code and the admin use this service only, never the workflow library.
  */
@@ -34,6 +36,7 @@ final readonly class PageWorkflow
         private Authorizer $authorizer,
         private ClockInterface $clock,
         private EventDispatcherInterface $events,
+        private PublishChecker $checks,
     ) {
         $transitions = array_map(
             static fn (PageTransition $transition): Transition => new Transition($transition->value, $transition->fromState()->value, $transition->toState()->value),
@@ -64,6 +67,7 @@ final readonly class PageWorkflow
 
     /**
      * @throws WorkflowException when the step doesn't start from the page's state, or the person may not take it
+     * @throws PublishBlocked    when publishing and the publish checks found errors
      */
     public function apply(Page $page, PageTransition $transition, Actor $actor, ?string $comment = null): void
     {
@@ -77,6 +81,12 @@ final readonly class PageWorkflow
         }
         if (!$this->authorizer->can($actor, $transition->action()->value, $page)) {
             throw new WorkflowException(sprintf('You don\'t have permission to do "%s" on this page.', $transition->label()), true);
+        }
+        if ($transition === PageTransition::Publish) {
+            $report = $this->checks->check($page);
+            if (!$report->canPublish()) {
+                throw new PublishBlocked($report);
+            }
         }
         $comment = $comment === null ? null : trim($comment);
         if ($comment !== null && mb_strlen($comment) > self::COMMENT_MAX_LENGTH) {

@@ -45,6 +45,26 @@ final readonly class PageRepository
     }
 
     /**
+     * Whether another page has this title (ignoring case) in the locale.
+     */
+    public function titleTaken(string $locale, string $title, int $exceptPageId): bool
+    {
+        $count = $this->entityManager->createQueryBuilder()
+            ->select('COUNT(t.id)')
+            ->from(PageTranslation::class, 't')
+            ->where('t.locale = :locale')
+            ->andWhere('LOWER(t.title) = :title')
+            ->andWhere('IDENTITY(t.page) <> :page')
+            ->setParameter('locale', $locale)
+            ->setParameter('title', mb_strtolower($title))
+            ->setParameter('page', $exceptPageId)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int) $count > 0;
+    }
+
+    /**
      * The children of a page, or the top-level pages, in their order.
      *
      * @return list<Page>

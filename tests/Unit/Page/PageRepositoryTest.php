@@ -113,4 +113,16 @@ final class PageRepositoryTest extends TestCase
 
         return $page;
     }
+
+    public function testKnowsWhetherAnotherPageHasATitle(): void
+    {
+        $fixture = new \SightPress\Core\Tests\Support\PageFixture();
+        $about = $fixture->editor()->create('en-GB', new \SightPress\Core\Page\PageContent('About us'));
+        $other = $fixture->editor()->create('en-GB', new \SightPress\Core\Page\PageContent('Contact'));
+        $repository = $fixture->repository();
+
+        self::assertTrue($repository->titleTaken('en-GB', 'ABOUT US', (int) $other->id()));
+        self::assertFalse($repository->titleTaken('en-GB', 'About us', (int) $about->id()));
+        self::assertFalse($repository->titleTaken('pt-PT', 'About us', (int) $other->id()));
+    }
 }

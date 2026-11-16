@@ -6,6 +6,7 @@ namespace SightPress\Core\Page;
 
 use SightPress\Core\Page\Contract\PageTransitioned;
 use SightPress\Core\Page\Contract\PublicPages;
+use SightPress\Core\Page\Publish\PublishChecker;
 use SightPress\Core\Page\Workflow\PageWorkflow;
 use SightPress\Core\Page\Workflow\ReviewRequestMailer;
 use SightPress\Module\ModuleInterface;
@@ -16,8 +17,9 @@ use SightPress\Module\ModuleRequirement;
 /**
  * Pages: the `pages` tree, a translation per locale with its blocks, and a revision for every save. The
  * {@see PageEditor} creates, writes and moves pages; the {@see PageRepository} finds them; the {@see PageWorkflow}
- * moves them from draft to review to published, and asks editors for a review by email. Always on. Its
- * permissions (`page.*`) are in core's catalogue, and the RBAC module's page voter decides who may do what.
+ * moves them from draft to review to published (once the {@see PublishChecker} finds no errors), and asks editors
+ * for a review by email. Always on. Its permissions (`page.*`) are in core's catalogue, and the RBAC module's page
+ * voter decides who may do what.
  */
 final class PageModule implements ModuleInterface
 {
@@ -28,7 +30,12 @@ final class PageModule implements ModuleInterface
         return new ModuleManifest(
             self::ID,
             '0.1.0',
-            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('rbac', '^0.1'), new ModuleRequirement('block', '^0.1')],
+            [
+                new ModuleRequirement('site', '^0.1'),
+                new ModuleRequirement('rbac', '^0.1'),
+                new ModuleRequirement('block', '^0.1'),
+                new ModuleRequirement('theme', '^0.1'),
+            ],
             required: true,
         );
     }
@@ -41,6 +48,7 @@ final class PageModule implements ModuleInterface
         $services->autowire(PageRepository::class, public: true);
         $services->autowire(PageEditor::class, public: true);
         $services->autowire(PublishedPages::class, PublicPages::class, public: true);
+        $services->autowire(PublishChecker::class, public: true);
         $services->autowire(PageWorkflow::class, public: true);
         $services->autowire(ReviewRequestMailer::class);
 

@@ -1,0 +1,29 @@
+{#
+    What the publish checks found, as lists of links to the fields and blocks they are about (ids from
+    PublishIssue::anchor()). Errors stop publishing; warnings don't. Context: `report` (PublishReport), optional
+    `focus` (true right after a refused "Publish": the report gets focus, like an error summary).
+#}
+{%- set errors = report.errors -%}
+{%- set warnings = report.warnings -%}
+<section class="publish-report{{ errors is empty ? '' : ' publish-report--blocked' }}" id="publish-report" aria-labelledby="publish-report-title" tabindex="-1"{% if focus|default(false) %} autofocus{% endif %}>
+    <h2 id="publish-report-title">
+        {%- if errors is not empty -%}
+            {{ errors|length == 1 ? t('1 problem stops this page being published') : t('{count} problems stop this page being published', {'count': errors|length}) }}
+        {%- elseif warnings is not empty -%}
+            {{ t('Ready to publish, with suggestions') }}
+        {%- else -%}
+            {{ t('Ready to publish') }}
+        {%- endif -%}
+    </h2>
+    {%- for group in [{'title': t('Fix before publishing'), 'issues': errors, 'label': t('Error:')}, {'title': t('Suggestions'), 'issues': warnings, 'label': t('Suggestion:')}] %}
+    {%- if group.issues is not empty %}
+    <h3>{{ group.title }}</h3>
+    <ul>
+        {%- for issue in group.issues %}
+        <li><a href="#{{ issue.anchor }}"><span class="visually-hidden">{{ group.label }} </span>{{ issue.message }}</a>
+            <span class="publish-report__where">({{ issue.languageName(current_locale()) }}{% if issue.wcag is not empty %}, WCAG {{ issue.wcag|join(', ') }}{% endif %})</span></li>
+        {%- endfor %}
+    </ul>
+    {%- endif %}
+    {%- endfor %}
+</section>

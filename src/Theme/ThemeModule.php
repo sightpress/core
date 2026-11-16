@@ -9,6 +9,7 @@ use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Template\TemplatePaths;
 use SightPress\Core\Theme\Command\ValidateThemeCommand;
 use SightPress\Core\Theme\Http\ThemeAssetHandler;
+use SightPress\Core\Theme\Contract\PageColours;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
@@ -39,6 +40,7 @@ final class ThemeModule implements ModuleInterface
         $services->autowire(ThemeAssets::class);
         $services->autowire(ThemeAssetHandler::class);
         $services->autowire(ThemeValidator::class, public: true);
+        $services->autowire(ThemePageColours::class, PageColours::class, public: true);
 
         $registrar->commands()->add(ValidateThemeCommand::class);
 

@@ -18,13 +18,20 @@ use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Rbac\PageVoter;
 use SightPress\Core\Rbac\VoterAuthorizer;
+use SightPress\Core\Page\Publish\PublishChecker;
+use SightPress\Core\Page\Workflow\PublishBlocked;
+use SightPress\Core\Template\TemplatePaths;
+use SightPress\Core\Tests\Support\BlockFixture;
 use SightPress\Core\Tests\Support\PageFixture;
+use SightPress\Core\Theme\ThemeLoader;
+use SightPress\Core\Theme\ThemePageColours;
 
 #[CoversClass(PageWorkflow::class)]
 #[CoversClass(PageMarkingStore::class)]
 #[CoversClass(WorkflowException::class)]
 #[CoversClass(PageTransition::class)]
 #[CoversClass(PageTransitioned::class)]
+#[CoversClass(PublishBlocked::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PageWorkflowTest extends TestCase
 {
@@ -39,7 +46,17 @@ final class PageWorkflowTest extends TestCase
     protected function setUp(): void
     {
         $this->fixture = new PageFixture();
-        $this->workflow = new PageWorkflow($this->fixture->repository(), new VoterAuthorizer([new PageVoter()]), $this->fixture->clock, $this->fixture);
+        $blocks = new BlockFixture([], $this->fixture->database);
+        $checks = new PublishChecker(
+            $blocks->validator(),
+            $blocks->renderer(),
+            $blocks->contexts($this->fixture->site),
+            $blocks->media(),
+            $this->fixture->repository(),
+            new ThemePageColours(new ThemeLoader()->load(TemplatePaths::defaultTheme())),
+            $this->fixture->site,
+        );
+        $this->workflow = new PageWorkflow($this->fixture->repository(), new VoterAuthorizer([new PageVoter()]), $this->fixture->clock, $this->fixture, $checks);
     }
 
     public function testAContributorSubmitsAndAnEditorApprovesPublishesAndUnpublishes(): void
@@ -84,6 +101,38 @@ final class PageWorkflowTest extends TestCase
         $last = end($this->fixture->events);
         self::assertInstanceOf(PageTransitioned::class, $last);
         self::assertSame('Add the opening times.', $last->comment);
+    }
+
+    public function testPublishingNeedsThePublishChecksToFindNoErrors(): void
+    {
+        $editor = new Actor(3, self::EDITOR);
+        $page = $this->fixture->editor()->create('en-GB', new PageContent('Gallery', null, null, null, [
+            ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Deep', 'level' => 4]],
+            ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Deeper', 'level' => 6]],
+        ]), null, 3);
+        $this->workflow->apply($page, PageTransition::Submit, $editor);
+        $this->workflow->apply($page, PageTransition::Approve, $editor);
+
+        try {
+            $this->workflow->apply($page, PageTransition::Publish, $editor);
+            self::fail('Expected publishing to be blocked.');
+        } catch (PublishBlocked $blocked) {
+            self::assertSame('2 problems stop this page being published. Fix them and publish again.', $blocked->getMessage());
+            self::assertCount(2, $blocked->report->errors());
+        }
+        self::assertSame(PageState::Approved, $page->state());
+
+        $this->fixture->editor()->save($page, 'en-GB', new PageContent('Gallery', null, null, null, [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Deep', 'level' => 4]]]));
+        try {
+            $this->workflow->apply($page, PageTransition::Publish, $editor);
+            self::fail('Expected publishing to be blocked.');
+        } catch (PublishBlocked $blocked) {
+            self::assertSame('1 problem stops this page being published. Fix it and publish again.', $blocked->getMessage());
+        }
+
+        $this->fixture->editor()->save($page, 'en-GB', new PageContent('Gallery'));
+        $this->workflow->apply($page, PageTransition::Publish, $editor);
+        self::assertSame(PageState::Published, $page->state(), 'warnings don\'t stop publishing');
     }
 
     public function testRefusesStepsThatDontStartFromThePagesState(): void

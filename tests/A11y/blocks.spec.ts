@@ -105,3 +105,21 @@ test('the contact form explains its errors, keeps what was typed and says when t
   await expect(status).toBeFocused();
   await expectNoViolations(page);
 });
+
+test('the publish report lists errors and suggestions as links to the fields, and gets focus', async ({ page }) => {
+  await page.goto(`${SITE}/report`);
+
+  const report = page.getByRole('region', { name: '2 problems stop this page being published' });
+  await expect(report).toBeFocused();
+  await expect(report.getByRole('heading', { level: 3 })).toHaveText(['Fix before publishing', 'Suggestions']);
+  const alt = report.getByRole('link', { name: 'Error: Describe the image, or mark it as decorative.' });
+  await expect(alt).toHaveAttribute('href', '#en-gb-blocks-1-data-alt');
+  await expect(report.getByRole('link', { name: /^Suggestion: Add a description for search engines/ })).toHaveAttribute('href', '#en-gb-description');
+  await expect(report.getByText('(English (United Kingdom), WCAG 1.1.1)')).toBeVisible();
+  await expect(report.getByRole('listitem')).toHaveCount(4);
+  await expectNoViolations(page);
+
+  await alt.focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/#en-gb-blocks-1-data-alt$/);
+});

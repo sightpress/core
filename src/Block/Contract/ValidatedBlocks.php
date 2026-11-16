@@ -17,11 +17,14 @@ final readonly class ValidatedBlocks
      * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
      * @param list<BlockIssue>                                                    $issues
      * @param list<int>                                                           $mediaIds files the blocks use
+     * @param list<array{id: int, pointer: string}>                               $media    each use of a file, with
+     *                                                                                      the JSON Pointer of its field
      */
     public function __construct(
         public array $blocks,
         public array $issues = [],
         public array $mediaIds = [],
+        public array $media = [],
     ) {
     }
 

@@ -1,0 +1,12 @@
+{# The publish report of a page with problems, as the page editor (C-7.2) will show it after a refused "Publish". #}
+{% extends 'layouts/default.html.twig' %}
+{% block content %}
+{% include '@page/publish-report.html.twig' with {report: report, focus: true} only %}
+<form>
+    <div class="field" id="en-gb-title"><label for="title">Title</label><input type="text" id="title" value="Visit US"></div>
+    <div class="field" id="en-gb-summary"><label for="summary">Summary</label><input type="text" id="summary" value=""></div>
+    <div class="field" id="en-gb-description"><label for="description">Description for search engines</label><textarea id="description"></textarea></div>
+    <fieldset id="en-gb-blocks-0"><legend>Block 1: Heading</legend><p>Level 4: Too deep</p></fieldset>
+    <fieldset id="en-gb-blocks-1"><legend>Block 2: Image</legend><label for="en-gb-blocks-1-data-alt">Alt text</label><input type="text" id="en-gb-blocks-1-data-alt" value=""></fieldset>
+</form>
+{% endblock %}
