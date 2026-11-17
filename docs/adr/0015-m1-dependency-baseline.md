@@ -1,6 +1,6 @@
 # 0015 — Runtime dependencies for M1 (amends ADR-0013)
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-14
 
 ## Context

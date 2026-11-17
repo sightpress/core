@@ -1,6 +1,6 @@
 # 0022 — Every site has a password policy, and the Passwords contract describes it
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-17
 
 ## Context

@@ -1,6 +1,6 @@
 # 0019 — Site settings live in the site, and some of them win over the registry
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-17
 
 ## Context

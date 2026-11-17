@@ -1,6 +1,6 @@
 # 0017 — Verification messages carry a six-digit code, never a link
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-17
 
 ## Context

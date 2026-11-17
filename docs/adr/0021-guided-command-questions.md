@@ -1,6 +1,6 @@
 # 0021 — Commands ask guided questions, described by their parameters
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-17
 
 ## Context

@@ -1,6 +1,6 @@
 # 0016 — Module services live in the site container; core modules map entities from a core list
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-14
 
 ## Context

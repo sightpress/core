@@ -1,6 +1,6 @@
 # 0018 — The page editor builds its fields from block schemas
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-17
 
 ## Context

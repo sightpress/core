@@ -1,6 +1,6 @@
 # 0020 — Demo content is a flag on site provisioning, and steps can share ids
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-17
 
 ## Context

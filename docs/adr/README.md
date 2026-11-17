@@ -32,13 +32,13 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0012](0012-analytics-privacy-model.md) | Analytics privacy model | Accepted |
 | [0013](0013-framework-and-library-baseline.md) | Framework and library baseline | Accepted |
 | [0014](0014-permission-allowed-on-sign-up.md) | Permissions say whether sign-up roles may hold them | Accepted |
-| [0015](0015-m1-dependency-baseline.md) | Runtime dependencies for M1 (amends ADR-0013) | Proposed |
-| [0016](0016-module-entities-and-site-services.md) | Module services live in the site container; core modules map entities from a core list | Proposed |
-| [0017](0017-verification-codes-not-links.md) | Verification messages carry a six-digit code, never a link | Proposed |
-| [0018](0018-page-editor-from-block-schemas.md) | The page editor builds its fields from block schemas | Proposed |
-| [0019](0019-site-settings-in-the-site.md) | Site settings live in the site, and some of them win over the registry | Proposed |
-| [0020](0020-demo-content-in-site-provisioning.md) | Demo content is a flag on site provisioning, and steps can share ids | Proposed |
-| [0021](0021-guided-command-questions.md) | Commands ask guided questions, described by their parameters | Proposed |
-| [0022](0022-site-password-policy.md) | Every site has a password policy, and the Passwords contract describes it | Proposed |
+| [0015](0015-m1-dependency-baseline.md) | Runtime dependencies for M1 (amends ADR-0013) | Accepted |
+| [0016](0016-module-entities-and-site-services.md) | Module services live in the site container; core modules map entities from a core list | Accepted |
+| [0017](0017-verification-codes-not-links.md) | Verification messages carry a six-digit code, never a link | Accepted |
+| [0018](0018-page-editor-from-block-schemas.md) | The page editor builds its fields from block schemas | Accepted |
+| [0019](0019-site-settings-in-the-site.md) | Site settings live in the site, and some of them win over the registry | Accepted |
+| [0020](0020-demo-content-in-site-provisioning.md) | Demo content is a flag on site provisioning, and steps can share ids | Accepted |
+| [0021](0021-guided-command-questions.md) | Commands ask guided questions, described by their parameters | Accepted |
+| [0022](0022-site-password-policy.md) | Every site has a password policy, and the Passwords contract describes it | Accepted |
 
 When an ADR's status changes, update it here too.
