@@ -3,7 +3,7 @@
 {% block title %}{{ t('Invite someone') }}{% endblock %}
 {% block content %}
 <h1>{{ t('Invite someone') }}</h1>
-<p>{{ t('We email them a link to set up their account. The link works for 7 days and only once.') }}</p>
+<p>{{ t('We email them a 6-digit invitation code, never a link. They type it on this site’s sign-in page, under “Accept an invitation”. The code works for 7 days and only once.') }}</p>
 {{ f.error_summary(form) }}
 {{ f.start(form, '/admin/users/invite') }}
     {{ f.field(form, 'email') }}

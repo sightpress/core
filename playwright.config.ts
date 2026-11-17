@@ -3,7 +3,8 @@
 // SIGHTPRESS_BASE_URL changes the address (default http://localhost:8080).
 // The component gallery (tests/A11y/gallery) and real sites for the sign-in pages (tests/A11y/sign-in), the content
 // blocks (tests/A11y/blocks), the admin panel (tests/A11y/admin) and the demo site the crawl checks (tests/A11y/demo,
-// made with site:create --with-demo-content) run on PHP's built-in web server; Playwright starts them.
+// made with site:create --with-demo-content; a second copy runs the journeys of journeys.spec.ts) run on PHP's
+// built-in web server; Playwright starts them.
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
@@ -40,6 +41,14 @@ export default defineConfig({
     {
       command: 'php -S 127.0.0.1:8087 tests/A11y/demo/index.php',
       url: 'http://127.0.0.1:8087/',
+      reuseExistingServer: !process.env.CI,
+      stdout: 'ignore',
+      stderr: 'ignore',
+    },
+    // A second copy of the demo site, with its test mailbox, for the journeys from start to finish (journeys.spec.ts).
+    {
+      command: 'SIGHTPRESS_A11Y_SITE=journeys php -S 127.0.0.1:8086 tests/A11y/demo/index.php',
+      url: 'http://127.0.0.1:8086/',
       reuseExistingServer: !process.env.CI,
       stdout: 'ignore',
       stderr: 'ignore',
