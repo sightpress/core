@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tenant;
 
+use InvalidArgumentException;
+use Locale;
+use ResourceBundle;
+
 /**
  * A locale code as SightPress writes it: language, optional script, optional region, for example `en-GB`, `cy`,
  * `pt-BR` or `zh-Hant-TW`.
@@ -15,5 +19,50 @@ final class LocaleCode
     public static function isValid(string $locale): bool
     {
         return preg_match(self::PATTERN, $locale) === 1;
+    }
+
+    /**
+     * Writes a locale the way SightPress does, whatever the case and with `-` or `_`: `PT_br` becomes `pt-BR`.
+     *
+     * @throws InvalidArgumentException when it is not a locale of a language (and region) that exists
+     */
+    public static function normalise(string $locale): string
+    {
+        $parts = preg_split('/[-_]/', trim($locale));
+        $parts = $parts === false ? [] : $parts;
+        $code = implode('-', array_map(
+            static fn (string $part, int $index): string => match (true) {
+                $index === 0 => mb_strtolower($part),
+                strlen($part) === 4 => ucfirst(mb_strtolower($part)),
+                default => mb_strtoupper($part),
+            },
+            $parts,
+            array_keys($parts),
+        ));
+
+        $parsed = Locale::parseLocale($code) ?? [];
+        $known = self::isValid($code)
+            && Locale::getDisplayLanguage($code, 'en') !== ($parsed['language'] ?? '')
+            && (!isset($parsed['script']) || Locale::getDisplayScript($code, 'en') !== $parsed['script'])
+            && (!isset($parsed['region']) || Locale::getDisplayRegion($code, 'en') !== $parsed['region']);
+        if (!$known) {
+            throw new InvalidArgumentException(sprintf('"%s" is not a locale: use one such as en-GB or pt-BR.', trim($locale)));
+        }
+
+        return $code;
+    }
+
+    /**
+     * The locale's name in plain British English, as people say it: `en-GB` is "British English", `pt-BR`
+     * "Brazilian Portuguese", `de-CH` "Swiss High German", `cy` "Welsh".
+     */
+    public static function describe(string $locale): string
+    {
+        $icu = str_replace('-', '_', $locale);
+        $names = ResourceBundle::create('en', 'ICUDATA-lang');
+        $languages = $names?->get('Languages');
+        $name = $languages instanceof ResourceBundle ? $languages->get($icu) : null;
+
+        return is_string($name) ? $name : (string) Locale::getDisplayName($icu, 'en');
     }
 }

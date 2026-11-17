@@ -14,6 +14,7 @@ use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteMigrator;
 use SightPress\Core\Tenant\SiteRepository;
+use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tenant\SiteStatus;
 use SightPress\Module\Console\Command;
 use SightPress\Module\Console\CommandInput;
@@ -23,7 +24,7 @@ use SightPress\Module\Console\CommandParameterType;
 use Throwable;
 
 /**
- * `site:db:change <slug> --db= [--migrate]`: points a disabled site at another database, for example after the
+ * `site:db:change <slug> [--db= | --db-engine= …] [--migrate]`: asks for the new database piece by piece (or takes `--db`), points a disabled site at another database, for example after the
  * operator copied its data to a new server. Nothing is copied. The new database must exist and be up to date with
  * the installed modules (or brought up to date with `--migrate`); only then is its address stored, encrypted, and
  * the change written to the `sites` log, naming engine, host and database only.
@@ -37,6 +38,7 @@ final readonly class ChangeSiteDatabaseCommand implements Command
         private SiteMigrator $migrator,
         private SiteContainerFactory $containers,
         private LoggerFactory $loggers,
+        private TenantConfig $config,
     ) {
     }
 
@@ -54,7 +56,7 @@ final readonly class ChangeSiteDatabaseCommand implements Command
     {
         return [
             new CommandParameter('slug', 'Slug of the disabled site:', required: true),
-            new CommandParameter('db', 'Address (DSN) of the new database, for example postgresql://user:password@db:5432/demo:', CommandParameterType::Option, true),
+            ...new DatabaseQuestions($this->config->sitesDir)->parameters(static fn (CommandInput $answers): string => $answers->argument('slug') ?? ''),
             new CommandParameter('migrate', 'Run the migrations the new database doesn\'t have yet.', CommandParameterType::Flag),
         ];
     }
@@ -84,7 +86,7 @@ final readonly class ChangeSiteDatabaseCommand implements Command
             return self::INVALID;
         }
 
-        $plainDsn = trim($input->option('db') ?? '');
+        $plainDsn = DatabaseQuestions::dsn($input);
         try {
             $dsn = DatabaseDsn::parse($plainDsn);
         } catch (DatabaseDsnException $exception) {

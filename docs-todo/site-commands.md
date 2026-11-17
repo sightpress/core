@@ -25,22 +25,50 @@ bin/sightpress site:create demo \
   --name="Riverside Library"
 ```
 
-Leave out any required option and the command asks for it. `APP_SECRET` must be set: it encrypts the database
-address in `config/sites.php`.
+`APP_SECRET` must be set: it encrypts the database address in `config/sites.php`.
+
+### Guided questions
+
+Type just `bin/sightpress site:create` at a terminal and the command asks for everything, one question at a time:
+
+- each question says what to type, the choices (such as `sqlite, mysql, mariadb or postgresql`) and the default
+  that Enter takes;
+- the database is asked piece by piece: engine (default SQLite), then the SQLite file (default
+  `sites/<slug>.sqlite`), or the server (`localhost`), port (3306 or 5432), database (`sightpress_<slug>`), user
+  (`sightpress`) and password (not shown as you type, and typed twice to check you typed what you meant);
+- the main language can be typed in any case, with `-` or `_` (`pt_br`, `EN-gb`), and is read back in plain words
+  for you to confirm: "That is Brazilian Portuguese (pt-BR). Is that right?";
+- an answer that is not accepted (such as an email address without a domain) is explained and asked again, up to 3
+  times; then the command stops and creates nothing;
+- at the end, every answer is listed (the password is not shown) and you confirm it. Answer `no` to start again
+  from the first question: your answers so far are the defaults, so Enter keeps them.
+
+When the command line already has every required value and they are all right, nothing is asked, so scripts keep
+working. With `--no-interaction`, or without a terminal, nothing is ever asked: defaults apply and a wrong value
+stops the command with the same explanation.
+
+Every command asks this way: a module declares its questions with `CommandParameter` (`label`, `default`,
+`choices`, `normalise`, `describe`, `when`, `secret`, `ask`; see ADR-0021).
 
 | Option | Required | What it is |
 | --- | --- | --- |
 | `slug` (argument) | yes | Short name: lower-case letters, digits and hyphens. |
 | `--domain` | yes | Web addresses without `https://`, separated by commas. Each belongs to one site only. |
-| `--db` | yes | Database DSN: `sqlite:////path/file.sqlite`, `mysql://…`, `mariadb://…` or `postgresql://user:password@host:5432/name`. |
-| `--owner-type` | yes | `person` or `organization`. |
-| `--locale` | yes | Main language, for example `en-GB`. |
+| `--db` | no | Whole database DSN: `sqlite:////path/file.sqlite`, `mysql://…`, `mariadb://…` or `postgresql://user:password@host:5432/name`. Given, it replaces the pieces below. |
+| `--db-engine` | without `--db` | `sqlite` (default), `mysql`, `mariadb` or `postgresql`. |
+| `--db-path` | for SQLite | The file (default: `<sites folder>/<slug>.sqlite`); a relative path is inside the sites folder. |
+| `--db-host`, `--db-port`, `--db-name`, `--db-user` | for a server | Defaults: `localhost`, 3306 or 5432, `sightpress_<slug>`, `sightpress`. |
+| `--db-password` | no | Password of the database user. |
+| `--owner-type` | yes | `person` or `organization`, in any case. |
+| `--locale` | yes | Main language, for example `en-GB` (the default when asked); any case, `-` or `_`. |
 | `--admin-email`, `--admin-first-name`, `--admin-last-name` | yes | The first admin. |
 | `--name` | no | Name shown to visitors (default: the slug). |
-| `--timezone` | no | IANA time zone (default: the tenant's `timezone`). |
+| `--timezone` | no | IANA time zone, in any case (default: the tenant's `timezone`). |
 | `--url` | no | Address of the site, for the printed setup page, for example `http://localhost:8080` in development (default: `https://` and the first domain). |
-| `--create-db` | no | Create the database if it doesn't exist. The database user must be allowed to. |
+| `--create-db` | no | Create the database if it doesn't exist. The database user must be allowed to. Asked for server engines (default yes). |
 | `--with-demo-content` | no | Add demo content for trying SightPress out (see below). Don't use it for a real site. |
+
+`site:db:change <slug>` takes the same `--db` or database pieces.
 
 What happens, in order:
 

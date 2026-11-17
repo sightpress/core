@@ -8,24 +8,24 @@ use SightPress\Module\Console\Command;
 use SightPress\Module\Console\CommandParameter;
 use SightPress\Module\Console\CommandParameterType;
 use Symfony\Component\Console\Command\Command as ConsoleCommand;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 /**
- * Runs a module's {@see Command} in the `bin/sightpress` console: declares its parameters, asks for the required ones
- * that are missing when someone is at the terminal (the question is the parameter's description), and refuses to
- * run when a required option is still missing. With `--no-interaction`, or when the input is not a terminal, it
- * never asks.
+ * Runs a module's {@see Command} in the `bin/sightpress` console: declares its parameters, asks its questions when
+ * someone is at the terminal ({@see Questions}), then checks every value ({@see ParameterValues}) and refuses to run
+ * when one is missing or not accepted. With `--no-interaction`, or when the input is not a terminal, it never asks.
  */
 final class ModuleCommand extends ConsoleCommand
 {
     /** @var list<CommandParameter> */
     private readonly array $parameters;
+
+    /** Whether the questions stopped the command (an answer was refused too often). */
+    private bool $stopped = false;
 
     public function __construct(private readonly Command $command)
     {
@@ -58,52 +58,26 @@ final class ModuleCommand extends ConsoleCommand
 
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        if (!self::atTerminal($input)) {
-            return;
-        }
-
-        $questions = new QuestionHelper();
-        foreach ($this->parameters as $parameter) {
-            if (!$parameter->required || $parameter->type === CommandParameterType::Flag) {
-                continue;
-            }
-            $argument = $parameter->type === CommandParameterType::Argument;
-            $current = $argument ? $input->getArgument($parameter->name) : $input->getOption($parameter->name);
-            if (is_string($current) && trim($current) !== '') {
-                continue;
-            }
-
-            $answer = $questions->ask($input, $output, new Question($parameter->description . "\n> "));
-            $answer = is_string($answer) ? trim($answer) : '';
-            if ($answer === '') {
-                continue;
-            }
-            if ($argument) {
-                $input->setArgument($parameter->name, $answer);
-            } else {
-                $input->setOption($parameter->name, $answer);
-            }
-        }
+        $this->stopped = self::atTerminal($input) && !new Questions($this->parameters, $input, $output)->ask();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $commandOutput = new ConsoleCommandOutput($output);
-        $commandInput = new ConsoleCommandInput($input);
+        if ($this->stopped) {
+            $this->stopped = false;
 
-        foreach ($this->parameters as $parameter) {
-            if (
-                $parameter->type === CommandParameterType::Option
-                && $parameter->required
-                && trim($commandInput->option($parameter->name) ?? '') === ''
-            ) {
-                $commandOutput->error(sprintf('The --%s option is required.', $parameter->name));
-
-                return Command::INVALID;
-            }
+            return Command::INVALID;
         }
 
-        return $this->command->run($commandInput, $commandOutput);
+        $problem = new ParameterValues($input)->settle($this->parameters);
+        if ($problem !== null) {
+            $commandOutput->error($problem);
+
+            return Command::INVALID;
+        }
+
+        return $this->command->run(new ConsoleCommandInput($input), $commandOutput);
     }
 
     /**

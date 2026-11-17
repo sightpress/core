@@ -13,6 +13,8 @@ use SightPress\Core\Cli\ConsoleApplicationFactory;
 use SightPress\Core\Cli\ConsoleCommandInput;
 use SightPress\Core\Cli\ConsoleCommandOutput;
 use SightPress\Core\Cli\ModuleCommand;
+use SightPress\Core\Cli\ParameterValues;
+use SightPress\Core\Cli\Questions;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Module\ModuleCandidate;
 use SightPress\Core\Module\ModuleException;
@@ -34,6 +36,8 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 #[CoversClass(ConsoleCommandInput::class)]
 #[CoversClass(ConsoleCommandOutput::class)]
 #[UsesClass(Services::class)]
+#[UsesClass(ParameterValues::class)]
+#[UsesClass(Questions::class)]
 #[UsesNamespace('SightPress\Core\Module')]
 final class ConsoleTest extends TestCase
 {
@@ -75,7 +79,7 @@ final class ConsoleTest extends TestCase
     public function testAsksForWhatIsMissingWhenSomeoneIsAtTheTerminal(): void
     {
         $tester = $this->tester(static fn (ModuleRegistrar $r) => $r->commands()->add(ExampleCommand::class));
-        $tester->setInputs(['demo', ' en-GB ']);
+        $tester->setInputs(['demo', ' en-GB ', 'yes']);
 
         $status = $tester->run(['command' => 'example:echo', '--owner' => 'org'], ['interactive' => true]);
 
@@ -84,18 +88,24 @@ final class ConsoleTest extends TestCase
         self::assertStringContainsString("The slug.\n> ", $display);
         self::assertStringContainsString("The locale.\n> ", $display);
         self::assertStringContainsString('slug=demo locale=en-GB owner=org', $display);
-        self::assertStringNotContainsString('The owner.', $display, 'optional parameters are not asked for');
+        self::assertStringNotContainsString("The owner.\n> ", $display, 'optional parameters are not asked for');
+        self::assertStringContainsString("Here are your answers:\nThe slug: demo\nThe locale: en-GB\nThe owner: org\n", $display);
     }
 
     public function testAnUnansweredRequiredOptionStillStopsTheCommand(): void
     {
         $tester = $this->tester(static fn (ModuleRegistrar $r) => $r->commands()->add(ExampleCommand::class));
-        $tester->setInputs(['']);
+        $tester->setInputs(['', ' ', '']);
 
         $status = $tester->run(['command' => 'example:echo', 'slug' => 'demo', '--locale' => ' '], ['interactive' => true, 'capture_stderr_separately' => true]);
 
         self::assertSame(Command::INVALID, $status);
-        self::assertSame("The locale.\n> The --locale option is required.\n", $tester->getErrorOutput());
+        self::assertSame(
+            str_repeat("The locale.\n> The --locale option is required.\n", 3)
+            . "That answer was not accepted 3 times, so the command stopped without changing anything. Run it again when you have the details.\n",
+            $tester->getErrorOutput(),
+        );
+        self::assertSame('', $tester->getDisplay(), 'the command did not run');
     }
 
     public function testTheHelpListsTheParameters(): void

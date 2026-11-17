@@ -117,18 +117,105 @@ final class SiteCommandsTest extends TestCase
         self::assertSame('demo', $this->site('demo')->name, 'the name defaults to the slug');
     }
 
+    public function testTheDatabaseCanBeGivenInPiecesAndTheLocaleAndTimeZoneInAnyCase(): void
+    {
+        $status = $this->create('demo', ['--db' => '', '--db-path' => 'pieces/demo.sqlite', '--locale' => 'PT_br', '--timezone' => 'america/sao_paulo', '--domain' => 'https://Demo.Example/home']);
+
+        self::assertSame(Command::SUCCESS, $status, $this->stderr);
+        self::assertFileExists($this->project->path() . '/sites/pieces/demo.sqlite');
+        $site = $this->site('demo');
+        self::assertSame('pt-BR', $site->defaultLocale);
+        self::assertSame('America/Sao_Paulo', $site->defaultTimezone);
+        self::assertSame(['demo.example'], $site->domains);
+        self::assertStringContainsString('The site "demo" is ready at https://demo.example.', $this->stdout);
+    }
+
+    public function testADatabaseServerIsAskedForInPiecesWithItsCredentialsEncoded(): void
+    {
+        $status = $this->create('demo', [
+            '--db' => '',
+            '--db-engine' => 'PostgreSQL',
+            '--db-host' => '127.0.0.1',
+            '--db-port' => '1',
+            '--db-user' => 'ada lovelace',
+            '--db-password' => 'p@ss:/word',
+        ]);
+
+        self::assertSame(Command::FAILURE, $status);
+        self::assertStringContainsString('PostgreSQL database "sightpress_demo" on 127.0.0.1:1', $this->stderr);
+        self::assertStringNotContainsString('p@ss', $this->stdout . $this->stderr);
+    }
+
+    public function testAsksForEverythingAtTheTerminalAndChecksTheAnswersBeforeCreatingTheSite(): void
+    {
+        $status = $this->console(['command' => 'site:create'], inputs: [
+            'Demo',               // short name
+            'Riverside Library',  // name
+            'https://Demo.Example/',
+            '',                   // address of the links: https://demo.example
+            'Person',
+            'pt_br', 'no',        // Brazilian Portuguese? no
+            'en_gb', '',          // British English? yes
+            '',                   // time zone: the tenant's
+            '',                   // engine: sqlite
+            '',                   // file: the sites folder
+            'ada@', 'ada at example.org', 'Ada@Example.org',
+            'Ada', 'Lovelace',
+            '',                   // no demo content
+            'no',                 // start again
+            '', 'Riverside Library and Archive', '', '', '', '', '', '', '', '', '', '', '', '', '',
+            'yes',
+        ]);
+
+        self::assertSame(Command::SUCCESS, $status, $this->stderr);
+        self::assertStringContainsString("That is Brazilian Portuguese (pt-BR). Is that right?", $this->stderr);
+        self::assertStringContainsString("That is British English (en-GB). Is that right?", $this->stderr);
+        self::assertStringContainsString("Which database engine does the site use? SQLite keeps everything in one file and needs no database server. Type sqlite, mysql, mariadb or postgresql. Press Enter for sqlite.\n", $this->stderr);
+        self::assertStringContainsString("\"ada@\" is not an email address: type one such as ada@example.org.\nEmail address of the first admin:\n> \"ada at example.org\" is not an email address", $this->stderr);
+        self::assertStringNotContainsString('Create the database', $this->stderr, 'SQLite needs no server to create it on');
+        self::assertStringContainsString(
+            "Here are your answers:\nShort name: demo\nName: Riverside Library and Archive\nDomains: demo.example\nAddress of the links: https://demo.example\n"
+            . "Run by: person\nMain language: British English (en-GB)\nTime zone: Europe/Lisbon\nDatabase engine: sqlite\nSQLite file: " . $this->database('demo') . "\n"
+            . "First admin's email: ada@example.org\nFirst admin's first name: Ada\nFirst admin's last name: Lovelace\nDemo content: no\n",
+            $this->stdout,
+        );
+        $site = $this->site('demo');
+        self::assertSame('Riverside Library and Archive', $site->name);
+        self::assertSame('en-GB', $site->defaultLocale);
+        self::assertSame('person', $site->ownerType->value);
+    }
+
+    public function testStopsAfterThreeWrongAnswersWithoutCreatingAnything(): void
+    {
+        $status = $this->console(['command' => 'site:create', 'slug' => 'demo', '--domain' => 'demo.example', '--owner-type' => 'person', '--locale' => 'cy', '--db' => 'sqlite:///' . $this->database('demo')], inputs: [
+            '', '', '', // name, address, time zone
+            'no', 'ada@', 'ada', '@',
+        ]);
+
+        self::assertSame(Command::INVALID, $status);
+        self::assertStringContainsString('That answer was not accepted 3 times, so the command stopped without changing anything.', $this->stderr);
+        self::assertNull($this->sites()->find('demo'));
+        self::assertFileDoesNotExist($this->database('demo'));
+    }
+
     /**
      * @return iterable<string, array{array<string, string>, string}>
      */
     public static function invalidOptions(): iterable
     {
-        yield 'slug' => [['slug' => 'Not A Slug'], '"slug" is not valid: use lower-case letters, digits and hyphens.'];
+        yield 'slug' => [['slug' => 'Not A Slug'], '"not a slug" is not a short name: use lower-case letters, digits and hyphens, for example demo.'];
         yield 'no domain' => [['--domain' => ' , '], 'Give the site at least one domain, for example example.org.'];
-        yield 'domain' => [['--domain' => 'exa_mple.org'], '"domains[0]" is not valid'];
-        yield 'owner type' => [['--owner-type' => 'company'], 'The owner type must be person or organization.'];
+        yield 'domain' => [['--domain' => 'exa_mple.org'], '"exa_mple.org" is not a domain: use one such as example.org or localhost.'];
+        yield 'owner type' => [['--owner-type' => 'company'], '"company" is not one of the choices: type person or organization.'];
         yield 'locale' => [['--locale' => 'english'], '"english" is not a locale: use one such as en-GB or pt-BR.'];
+        yield 'unknown locale' => [['--locale' => 'xx_YY'], '"xx_YY" is not a locale: use one such as en-GB or pt-BR.'];
         yield 'time zone' => [['--timezone' => 'Mars/Olympus'], '"Mars/Olympus" is not a time zone: use one such as Europe/London.'];
-        yield 'admin email' => [['--admin-email' => 'ada@'], '"ada@" is not an email address.'];
+        yield 'admin email' => [['--admin-email' => 'ada@'], '"ada@" is not an email address: type one such as ada@example.org.'];
+        yield 'database engine' => [['--db' => '', '--db-engine' => 'oracle'], '"oracle" is not one of the choices: type sqlite, mysql, mariadb or postgresql.'];
+        yield 'database file' => [['--db' => '', '--db-path' => 'demo/'], 'Give the path of a file, not of a folder, for example /srv/sites/demo.sqlite.'];
+        yield 'database server' => [['--db' => '', '--db-engine' => 'postgresql', '--db-host' => 'db server'], '"db server" is not a server name or address: use one such as localhost, db or 10.0.0.5.'];
+        yield 'database port' => [['--db' => '', '--db-engine' => 'mysql', '--db-port' => '70000'], '"70000" is not a port: use a whole number from 1 to 65535, such as 5432.'];
+        yield 'database name' => [['--db' => '', '--db-engine' => 'mariadb', '--db-name' => 'demo;drop'], '"demo;drop" is not a database name: use letters, digits and _, such as sightpress_demo.'];
         yield 'dsn' => [['--db' => 'oracle://db/demo'], 'The database DSN must start with sqlite://, mysql://, mariadb:// or postgresql://.'];
         yield 'url' => [['--url' => 'localhost:8080'], '"localhost:8080" is not a web address: use one such as https://example.org.'];
     }
@@ -150,7 +237,7 @@ final class SiteCommandsTest extends TestCase
         $this->create('demo');
 
         self::assertSame(Command::INVALID, $this->create('demo', ['--domain' => 'other.example']));
-        self::assertSame("There is already a site \"demo\". Choose another slug.\n", $this->stderr);
+        self::assertSame("There is already a site \"demo\". Choose another short name.\n", $this->stderr);
         self::assertSame(Command::INVALID, $this->create('other', ['--domain' => 'other.example, DEMO.example.']));
         self::assertSame("The domain demo.example already belongs to the site \"demo\".\n", $this->stderr);
     }
@@ -452,13 +539,17 @@ final class SiteCommandsTest extends TestCase
     /**
      * @param array<string, mixed>       $input
      * @param array<string, string>|null $environment
+     * @param list<string>|null          $inputs      answers typed at the terminal; null for no terminal
      */
-    private function console(array $input, ?array $environment = null): int
+    private function console(array $input, ?array $environment = null, ?array $inputs = null): int
     {
         $application = $this->kernel($environment)->console();
         $application->setAutoExit(false);
         $tester = new ApplicationTester($application);
-        $status = $tester->run($input, ['interactive' => false, 'capture_stderr_separately' => true]);
+        if ($inputs !== null) {
+            $tester->setInputs($inputs);
+        }
+        $status = $tester->run($input, ['interactive' => $inputs !== null, 'capture_stderr_separately' => true]);
         $this->stdout = $tester->getDisplay();
         $this->stderr = $tester->getErrorOutput();
 
