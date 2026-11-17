@@ -29,7 +29,7 @@ final class SeoFiles
     public const int FULL_TEXT_MAX_BYTES = 500_000;
 
     /** Paths crawlers have no business in. */
-    public const array PRIVATE_PATHS = ['/admin', '/account', '/login', '/logout', '/password/', '/invite/', '/contact-form'];
+    public const array PRIVATE_PATHS = ['/admin', '/account', '/login', '/logout', '/contact-form'];
 
     private ?CacheItemPoolInterface $cache;
 

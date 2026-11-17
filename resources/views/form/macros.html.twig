@@ -68,7 +68,7 @@
     {%- set invalid = form.error(name) is not null -%}
     {%- set describedBy = m.described_by(form, field)|trim -%}
     {%- set common -%}
-        name="{{ name }}"{% if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}{% if invalid %} aria-invalid="true"{% endif %}{% if field.autocomplete %} autocomplete="{{ field.autocomplete }}"{% endif %}
+        name="{{ name }}"{% if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}{% if invalid %} aria-invalid="true"{% endif %}{% if field.autocomplete %} autocomplete="{{ field.autocomplete }}"{% endif %}{% if field.inputmode %} inputmode="{{ field.inputmode }}"{% endif %}
     {%- endset -%}
 
     {%- if type == 'radios' or type == 'checkboxes' %}

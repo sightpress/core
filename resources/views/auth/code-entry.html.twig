@@ -1,0 +1,24 @@
+{#
+    The shared "enter your code" form (plan §1.2, Verification codes). One text field for the six digits — never six
+    boxes — with a numeric keyboard and autocomplete="one-time-code"; spaces and dashes are fine. The form never
+    sends itself (WCAG 3.2.2): the person presses the button. Errors go to the error summary, which gets focus.
+
+    Context: `form` (with the `code` field), `action`, `submit` (button text), `before` (names of fields shown
+    above the code, optional) and `resend` (true to offer "Send a new code" as its own form, optional).
+#}
+{% import 'form/macros.html.twig' as f %}
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    {%- for name in before|default([]) %}
+    {{ f.field(form, name) }}
+    {%- endfor %}
+    {{ f.field(form, 'code') }}
+    {{ f.submit(submit) }}
+{{ f.end() }}
+{%- if resend|default(false) %}
+<form action="{{ action }}" method="post" class="code-resend">
+    {{ csrf_fields() }}
+    <p>{{ t('No email after a few minutes? Check your spam folder. You can ask for a new code once a minute.') }}</p>
+    <button type="submit" name="resend" value="1" class="button button--secondary">{{ t('Send a new code') }}</button>
+</form>
+{%- endif %}

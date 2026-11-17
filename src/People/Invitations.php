@@ -6,13 +6,21 @@ namespace SightPress\Core\People;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Types\Types;
 use Psr\Clock\ClockInterface;
+use SightPress\Core\Auth\Contract\CodeStatus;
+use SightPress\Core\Auth\Contract\IssuedCode;
+use SightPress\Core\Auth\Contract\TooManyCodes;
+use SightPress\Core\Auth\Contract\VerificationChannel;
+use SightPress\Core\Auth\Contract\VerificationCodes;
+use SightPress\Core\Auth\Contract\VerificationPurpose;
 
 /**
- * The site's invitations. A link token is 32 random bytes; only its SHA-256 is stored. A link works once, for
- * {@see TTL} seconds; inviting the same address again replaces the invitation that is still open, so the older link
- * stops working.
+ * The site's invitations. Each comes with a six-digit invitation code ({@see VerificationCodes}, purpose
+ * `invitation`) that the person types with their email address on the "Accept an invitation" page — never a link.
+ * An invitation works once, for {@see TTL} seconds; inviting the same address again replaces the invitation that is
+ * still open and its code, so the older code stops working.
  */
 final readonly class Invitations
 {
@@ -24,6 +32,7 @@ final readonly class Invitations
     public function __construct(
         private Connection $connection,
         private ClockInterface $clock,
+        private VerificationCodes $codes,
     ) {
     }
 
@@ -33,15 +42,13 @@ final readonly class Invitations
     }
 
     /**
-     * @return array{Invitation, string} the invitation and the token for its link
+     * @return array{Invitation, IssuedCode} the invitation and its code, to send by email
      */
     public function create(string $email, string $role, ?string $firstName, ?string $lastName, ?int $invitedBy): array
     {
         $email = self::normalizeEmail($email);
         $now = $this->clock->now();
-        $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
         $row = [
-            'token_hash' => hash('sha256', $token),
             'email' => $email,
             'role' => $role,
             'first_name' => $firstName,
@@ -63,25 +70,44 @@ final readonly class Invitations
             return (int) $connection->lastInsertId();
         });
 
-        return [new Invitation($id, $email, $role, $firstName, $lastName, $invitedBy, $row['created_at'], $row['expires_at']), $token];
+        $code = $this->codes->issue(VerificationPurpose::Invitation, VerificationChannel::Email, $email);
+
+        return [new Invitation($id, $email, $role, $firstName, $lastName, $invitedBy, $row['created_at'], $row['expires_at']), $code];
     }
 
     /**
-     * The open invitation the token is for, or null when it was never made, was used or has expired.
+     * The open invitation for the address, when the code is its invitation code; null when the code is wrong, used
+     * or dead, or there is no open invitation. A right code is used up.
+     *
+     * @throws TooManyCodes when this client tried too many codes
      */
-    public function find(string $token): ?Invitation
+    public function verify(string $email, string $code, string $client): ?Invitation
     {
-        if (preg_match('/^[A-Za-z0-9_-]{43}$/', $token) !== 1) {
+        $email = self::normalizeEmail($email);
+        $check = $this->codes->check(VerificationPurpose::Invitation, VerificationChannel::Email, $email, $code, $client);
+        if ($check->status === CodeStatus::Limited) {
+            throw new TooManyCodes($check->retryAfter ?? 1);
+        }
+        if (!$check->isValid()) {
             return null;
         }
-        $row = $this->connection->createQueryBuilder()
-            ->select('*')
-            ->from(self::TABLE)
-            ->where('token_hash = :hash')
-            ->andWhere('accepted_at IS NULL')
-            ->andWhere('expires_at > :now')
-            ->setParameter('hash', hash('sha256', $token))
-            ->setParameter('now', $this->clock->now(), Types::DATETIME_IMMUTABLE)
+        $row = $this->openQuery()
+            ->andWhere('email = :email')
+            ->setParameter('email', $email)
+            ->executeQuery()
+            ->fetchAssociative();
+
+        return $row === false ? null : $this->fromRow($row);
+    }
+
+    /**
+     * The invitation with this id, while it is open.
+     */
+    public function findOpen(int $id): ?Invitation
+    {
+        $row = $this->openQuery()
+            ->andWhere('id = :id')
+            ->setParameter('id', $id)
             ->executeQuery()
             ->fetchAssociative();
 
@@ -105,18 +131,23 @@ final readonly class Invitations
      */
     public function open(): array
     {
-        $rows = $this->connection->createQueryBuilder()
-            ->select('*')
-            ->from(self::TABLE)
-            ->where('accepted_at IS NULL')
-            ->andWhere('expires_at > :now')
-            ->setParameter('now', $this->clock->now(), Types::DATETIME_IMMUTABLE)
+        $rows = $this->openQuery()
             ->orderBy('created_at', 'DESC')
             ->addOrderBy('id', 'DESC')
             ->executeQuery()
             ->fetchAllAssociative();
 
         return array_map($this->fromRow(...), $rows);
+    }
+
+    private function openQuery(): QueryBuilder
+    {
+        return $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from(self::TABLE)
+            ->where('accepted_at IS NULL')
+            ->andWhere('expires_at > :now')
+            ->setParameter('now', $this->clock->now(), Types::DATETIME_IMMUTABLE);
     }
 
     /**

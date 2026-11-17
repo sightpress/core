@@ -45,8 +45,8 @@ final class SiteCreationTest extends TestCase
 
     public function testTwoNewSitesAreIsolatedFromEachOther(): void
     {
-        $alphaLink = $this->create('alpha', 'ada@example.org', 'Ada');
-        $betaLink = $this->create('beta', 'grace@example.org', 'Grace');
+        $alphaCode = $this->create('alpha', 'ada@example.org', 'Ada');
+        $betaCode = $this->create('beta', 'grace@example.org', 'Grace');
 
         $kernel = $this->kernel();
         $sites = Services::get($kernel->container(), SiteRepository::class);
@@ -73,9 +73,9 @@ final class SiteCreationTest extends TestCase
         self::assertSame(['admin', 'contributor', 'member'], $this->roleNames($alpha));
         self::assertSame(['admin', 'contributor', 'editor', 'member'], $this->roleNames($beta));
 
-        // Each first admin chooses a password with their link and signs in to their own site only.
-        $this->choosePassword($kernel, 'https://alpha.example', $alphaLink, 'alpha admin long password');
-        $this->choosePassword($kernel, 'https://beta.example', $betaLink, 'beta admin long password');
+        // Each first admin types their setup code, chooses a password and signs in to their own site only.
+        $this->choosePassword($kernel, 'https://alpha.example', 'ada@example.org', $alphaCode, 'alpha admin long password');
+        $this->choosePassword($kernel, 'https://beta.example', 'grace@example.org', $betaCode, 'beta admin long password');
 
         $onAlpha = new Browser($kernel, 'https://alpha.example');
         self::assertSame('/admin', $onAlpha->submit('/login', ['email' => 'ada@example.org', 'password' => 'alpha admin long password'])->getHeaderLine('Location'));
@@ -90,7 +90,7 @@ final class SiteCreationTest extends TestCase
     }
 
     /**
-     * Runs `site:create` and returns the path of the first admin's password link.
+     * Runs `site:create` and returns the first admin's setup code, as printed for the operator.
      */
     private function create(string $slug, string $email, string $firstName): string
     {
@@ -111,14 +111,19 @@ final class SiteCreationTest extends TestCase
         ], ['interactive' => false, 'capture_stderr_separately' => true]);
 
         self::assertSame(0, $status, $tester->getErrorOutput());
-        self::assertSame(1, preg_match('#https://' . $slug . '\.example(/password/reset/\S+)#', $tester->getDisplay(), $link));
+        $display = $tester->getDisplay();
+        self::assertSame(1, preg_match('#Give the setup code (\d{3} \d{3}) to \S+\. They go to https://' . $slug . '\.example/login/setup,#', $display, $code), $display);
+        self::assertStringNotContainsString('/password/reset', $display, 'no link-based route is left');
 
-        return $link[1];
+        return $code[1];
     }
 
-    private function choosePassword(Kernel $kernel, string $origin, string $link, string $password): void
+    private function choosePassword(Kernel $kernel, string $origin, string $email, string $code, string $password): void
     {
-        $response = new Browser($kernel, $origin)->submit($link, ['password' => $password]);
+        $browser = new Browser($kernel, $origin);
+        $setup = $browser->submit('/login/setup', ['email' => $email, 'code' => $code]);
+        self::assertSame('/login/password', $setup->getHeaderLine('Location'), (string) $setup->getBody());
+        $response = $browser->submit('/login/password', ['password' => $password]);
 
         self::assertSame('/login', $response->getHeaderLine('Location'), (string) $response->getBody());
     }

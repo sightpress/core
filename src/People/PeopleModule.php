@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace SightPress\Core\People;
 
 use SightPress\Core\People\Http\AcceptInvitationHandler;
+use SightPress\Core\People\Http\InvitationCodeHandler;
+use SightPress\Core\People\Http\InvitationPages;
 use SightPress\Core\People\Http\InviteHandler;
 use SightPress\Core\People\Http\UserHandler;
 use SightPress\Core\People\Http\UsersHandler;
@@ -18,8 +20,9 @@ use SightPress\Module\ModuleRequirement;
 use SightPress\Module\Routing\Route;
 
 /**
- * The people who run a site: invitations (admins invite with any role, editors invite contributors — D3), the
- * page where invited people set up their account, and the admin screens for users. Always on.
+ * The people who run a site: invitations (admins invite with any role, editors invite contributors — D3) with an
+ * invitation code, the "Accept an invitation" pages where invited people type it and set up their account, and
+ * the admin screens for users. Always on.
  */
 final class PeopleModule implements ModuleInterface
 {
@@ -48,7 +51,7 @@ final class PeopleModule implements ModuleInterface
 
         $services = $registrar->services();
         $services->autowire(AnyEmailPolicy::class, EmailPolicy::class);
-        foreach ([Invitations::class, InvitationMailer::class, InviteHandler::class, AcceptInvitationHandler::class, UsersHandler::class, UserHandler::class, UserStatusHandler::class] as $class) {
+        foreach ([Invitations::class, InvitationMailer::class, InviteHandler::class, InvitationPages::class, InvitationCodeHandler::class, AcceptInvitationHandler::class, UsersHandler::class, UserHandler::class, UserStatusHandler::class] as $class) {
             $services->autowire($class);
         }
 
@@ -58,12 +61,8 @@ final class PeopleModule implements ModuleInterface
         $routes->add(new Route('people.user', $user, UserHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('people.user.status', $user . '/status', UserStatusHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('people.invite', InviteHandler::PATH, InviteHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
-        $routes->add(new Route(
-            'people.invitation',
-            InvitationMailer::PATH . '{' . AcceptInvitationHandler::TOKEN_ATTRIBUTE . '}',
-            AcceptInvitationHandler::class,
-            ['GET', 'POST'],
-        ));
+        $routes->add(new Route('people.invitation', InvitationCodeHandler::PATH, InvitationCodeHandler::class, ['GET', 'POST']));
+        $routes->add(new Route('people.invitation.account', AcceptInvitationHandler::PATH, AcceptInvitationHandler::class, ['GET', 'POST']));
         $registrar->adminMenu()->add(new AdminMenuItem('people.users', 'People', 'people.users', UsersHandler::PERMISSION, position: 40));
         $registrar->adminMenu()->add(new AdminMenuItem('people.invite', 'Invite someone', 'people.invite', InviteHandler::PERMISSION, position: 50));
     }

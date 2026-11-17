@@ -30,15 +30,14 @@ final class ReturnTarget
 
     /**
      * The value when it is a path on this site (`/…`, but not `//host` or a backslash trick), otherwise null. The
-     * sign-in pages themselves are never a place to go back to: a password link would leak its token and no longer
-     * work.
+     * sign-in pages themselves (`/login/…`, `/logout`) are never a place to go back to.
      */
     public static function localPath(?string $return): ?string
     {
         if (
             $return === null
             || preg_match('#^/(?![/\\\\])[^\\\\\s]*$#', $return) !== 1
-            || preg_match('#^/(?:login|logout|password)(?:[/?\#]|$)#', $return) === 1
+            || preg_match('#^/(?:login|logout)(?:[/?\#]|$)#', $return) === 1
         ) {
             return null;
         }

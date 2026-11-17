@@ -92,7 +92,7 @@ final class SeoFilesTest extends TestCase
         self::assertStringContainsString('<xhtml:link rel="alternate" hreflang="pt-PT" href="https://demo.example/pt-pt/sobre"/>', $sitemap);
         self::assertSame(2, substr_count($sitemap, 'hreflang="en-GB"'), 'both languages of About list both; Home has none');
         $robots = $files->robots('https://demo.example');
-        self::assertSame("User-agent: *\nDisallow: /admin\nDisallow: /account\nDisallow: /login\nDisallow: /logout\nDisallow: /password/\nDisallow: /invite/\nDisallow: /contact-form\nAllow: /\n\nSitemap: https://demo.example/sitemap.xml\n", $robots);
+        self::assertSame("User-agent: *\nDisallow: /admin\nDisallow: /account\nDisallow: /login\nDisallow: /logout\nDisallow: /contact-form\nAllow: /\n\nSitemap: https://demo.example/sitemap.xml\n", $robots);
 
         $this->pages->published('Later');
         self::assertSame($sitemap, $files->sitemap('https://demo.example'), 'cached');

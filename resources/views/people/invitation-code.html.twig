@@ -1,0 +1,13 @@
+{#
+    "Accept an invitation", in the site's theme: the invited person types their email address and the invitation
+    code from the email (the shared @auth/code-entry.html.twig form). Never indexed.
+    Context: `title`, `form`, `action`.
+#}
+{% extends 'layouts/default.html.twig' %}
+{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% set lead = t('Type the email address the invitation was sent to and the 6-digit invitation code from the email. Then you set up your account.') %}
+{% block content %}
+{% include '@auth/code-entry.html.twig' with {'submit': t('Continue'), 'before': ['email']} %}
+<p>{{ t('We never send links. Invitation codes work for 7 days, and only once. If yours no longer works, ask the person who invited you to invite you again.') }}</p>
+<p><a href="/login">{{ t('Back to sign in') }}</a></p>
+{% endblock %}

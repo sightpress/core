@@ -70,7 +70,9 @@ final class RateLimitTest extends TestCase
 
         self::assertSame(5, $limiters->limiter('sign_in', 'ada@example.org')->consume(0)->getLimit());
         self::assertSame(60, $limiters->limiter('write', '192.0.2.1')->consume(0)->getLimit());
-        self::assertSame(3, $limiters->limiter('password_reset', 'ada@example.org')->consume(0)->getLimit());
+        self::assertSame(5, $limiters->limiter('verification_target', 'ada@example.org')->consume(0)->getLimit());
+        self::assertSame(20, $limiters->limiter('verification_client', '192.0.2.1')->consume(0)->getLimit());
+        self::assertSame(10, $limiters->limiter('verification_check', '192.0.2.1')->consume(0)->getLimit());
         self::assertSame(1, RateLimiters::secondsUntil(new \DateTimeImmutable('-1 hour')));
         self::assertGreaterThanOrEqual(599, RateLimiters::secondsUntil(new \DateTimeImmutable('+10 minutes')));
 

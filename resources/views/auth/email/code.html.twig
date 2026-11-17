@@ -1,0 +1,7 @@
+{#
+    The code block of every verification email (HTML): the code, how long it works and the line that we never send
+    links. No link, no web address and no image here or anywhere in the email. Context: `code`, `valid_for`.
+#}
+<p style="margin: 1.5rem 0; font-size: 32px; font-weight: 700; letter-spacing: 0.15em;">{{ code }}</p>
+<p>{{ t('The code works for {duration}, and only once.', {'duration': valid_for}) }}</p>
+<p><strong>{{ t('We will never send you a link. Type this code on the page where you asked for it. Never share it with anyone.') }}</strong></p>

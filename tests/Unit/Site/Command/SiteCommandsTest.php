@@ -9,7 +9,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use SightPress\Core\Auth\PasswordResetTokens;
+use SightPress\Core\Auth\Contract\VerificationChannel;
+use SightPress\Core\Auth\Contract\VerificationCodes;
+use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Kernel;
@@ -77,7 +79,7 @@ final class SiteCommandsTest extends TestCase
         self::assertSame('Created the account of the first admin, Ada Lovelace (ada@example.org).', $lines[2]);
         self::assertSame('Set up the roles admin, editor, contributor and member.', $lines[3]);
         self::assertSame('Gave the first admin the admin role.', $lines[4]);
-        self::assertSame(1, preg_match('#^Give this link to the first admin to choose their password\. It works once, for 7 days: https://demo\.example/password/reset/(\S+)$#', $lines[5], $link));
+        self::assertSame(1, preg_match('#^Give the setup code (\d{3}) (\d{3}) to ada@example\.org\. They go to https://demo\.example/login/setup, type their email address and the code, and choose their password\. The code works once, for 7 days\.$#', $lines[5], $code));
         self::assertSame('Made the site\'s icons, wordmark and share image from its name; replace them with site:branding:set.', $lines[6]);
         self::assertSame('Published the starter pages: Welcome to Riverside Library, About us, Contact us, Privacy notice, Terms of use, Accessibility statement.', $lines[7]);
         self::assertSame('Added 5 starter pages to the main and footer menus.', $lines[8]);
@@ -98,7 +100,8 @@ final class SiteCommandsTest extends TestCase
         self::assertSame(UserStatus::Pending, $admin->status());
         self::assertSame('Europe/Lisbon', $admin->timezone());
         self::assertSame(['admin'], array_map(static fn ($r) => $r->name(), Services::get($services, RoleRepository::class)->rolesOf((int) $admin->id())));
-        self::assertSame($admin->id(), Services::get($services, PasswordResetTokens::class)->verify($link[1])?->id());
+        $check = Services::get($services, VerificationCodes::class)->check(VerificationPurpose::AccountSetup, VerificationChannel::Email, 'ada@example.org', $code[1] . $code[2], '192.0.2.1');
+        self::assertSame($admin->id(), $check->accountId);
         self::assertSame(0, Services::get($this->kernel()->container(), SiteMigrator::class)->pending($site));
         self::assertStringContainsString('sites.NOTICE: Site "demo" created (enabled).', $this->project->log());
     }
@@ -108,7 +111,7 @@ final class SiteCommandsTest extends TestCase
         $status = $this->create('demo', ['--timezone' => 'America/Sao_Paulo', '--url' => 'http://localhost:8080/', '--owner-type' => 'Person']);
 
         self::assertSame(Command::SUCCESS, $status, $this->stderr);
-        self::assertStringContainsString(': http://localhost:8080/password/reset/', $this->stdout);
+        self::assertStringContainsString('They go to http://localhost:8080/login/setup,', $this->stdout);
         self::assertStringContainsString('The site "demo" is ready at http://localhost:8080.', $this->stdout);
         self::assertSame('America/Sao_Paulo', $this->site('demo')->defaultTimezone);
         self::assertSame('demo', $this->site('demo')->name, 'the name defaults to the slug');

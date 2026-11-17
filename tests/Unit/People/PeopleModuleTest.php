@@ -14,6 +14,7 @@ use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\People\AnyEmailPolicy;
 use SightPress\Core\People\EmailPolicy;
 use SightPress\Core\People\Http\AcceptInvitationHandler;
+use SightPress\Core\People\Http\InvitationCodeHandler;
 use SightPress\Core\People\Http\InviteHandler;
 use SightPress\Core\People\PeopleMigrations;
 use SightPress\Core\People\PeopleModule;
@@ -48,7 +49,8 @@ final class PeopleModuleTest extends TestCase
             'people.user' => ['/admin/users/{id:[0-9]+}', \SightPress\Core\People\Http\UserHandler::class, [AdminAccessMiddleware::class]],
             'people.user.status' => ['/admin/users/{id:[0-9]+}/status', \SightPress\Core\People\Http\UserStatusHandler::class, [AdminAccessMiddleware::class]],
             'people.invite' => ['/admin/users/invite', InviteHandler::class, [AdminAccessMiddleware::class]],
-            'people.invitation' => ['/invite/{token}', AcceptInvitationHandler::class, []],
+            'people.invitation' => ['/login/invitation', InvitationCodeHandler::class, []],
+            'people.invitation.account' => ['/login/invitation/account', AcceptInvitationHandler::class, []],
         ], $routes);
         $menu = array_values(array_filter($registry->adminMenu(), static fn ($m) => $m->module === 'people'));
         self::assertSame(['people.users', 'People', 'user.manage'], [$menu[0]->item->id, $menu[0]->item->label, $menu[0]->item->permission]);

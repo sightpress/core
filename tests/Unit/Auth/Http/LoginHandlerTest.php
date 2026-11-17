@@ -47,7 +47,7 @@ final class LoginHandlerTest extends TestCase
         self::assertStringContainsString('autocomplete="current-password"', $html);
         self::assertStringContainsString('<input type="checkbox" id="sign-in-remember" value="1" name="remember"', $html, 'unticked');
         self::assertStringContainsString('Keep me signed in on this device for 30 days (optional)', $html);
-        self::assertStringContainsString('<a href="/password/forgot">Forgot your password?</a>', $html);
+        self::assertStringContainsString('<a href="/login/forgot">Forgot your password?</a>', $html);
         self::assertStringContainsString('<div class="messages" role="status">    <p>You have signed out.</p></div>', $html);
         self::assertSame([], Flash::take($session), 'a flash message is shown once');
     }

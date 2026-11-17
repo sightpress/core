@@ -27,6 +27,7 @@ final readonly class Field
      *                                               "Enter …" or "Select …" followed by the label
      * @param string|null           $accept          for a file field: the `accept` list, for example
      *                                               `image/jpeg,image/png`
+     * @param string|null           $inputmode       `inputmode` hint for on-screen keyboards, for example `numeric`
      */
     public function __construct(
         public string $name,
@@ -39,6 +40,7 @@ final readonly class Field
         public ?string $autocomplete = null,
         public ?string $requiredMessage = null,
         public ?string $accept = null,
+        public ?string $inputmode = null,
     ) {
         if (preg_match('/^[a-z][a-z0-9_]*$/', $name) !== 1) {
             throw new InvalidArgumentException(sprintf(

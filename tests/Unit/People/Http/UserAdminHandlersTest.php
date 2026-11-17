@@ -107,7 +107,7 @@ final class UserAdminHandlersTest extends TestCase
 
     public function testOpenInvitationsAreListedWithWhoSentThem(): void
     {
-        $invitations = new Invitations($this->admin->auth->database->connection, $this->admin->auth->clock);
+        $invitations = new Invitations($this->admin->auth->database->connection, $this->admin->auth->clock, $this->admin->auth->codes());
         $invitations->create('nia@example.org', 'editor', null, null, $this->ada->id());
         $invitations->create('olu@example.org', 'retired', null, null, null);
         $invitations->create('pat@example.org', 'member', null, null, 999);
@@ -228,7 +228,7 @@ final class UserAdminHandlersTest extends TestCase
             $this->roster(),
             $auth->users,
             $this->roles(),
-            new Invitations($auth->database->connection, $auth->clock),
+            new Invitations($auth->database->connection, $auth->clock, $auth->codes()),
             $auth->site,
         )->handle($this->request($actor, 'GET', UsersHandler::PATH . $query));
     }

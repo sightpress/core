@@ -31,7 +31,7 @@ test('an admin invites someone by keyboard and hears that it was sent', async ({
   await page.getByRole('button', { name: 'Send invitation' }).focus();
   await page.keyboard.press('Enter');
 
-  await expect(page.getByRole('status')).toHaveText('We have sent an invitation to zoe@example.org to join as editor. The link works for 7 days.');
+  await expect(page.getByRole('status')).toHaveText('We have sent an invitation to zoe@example.org to join as editor. Its code works for 7 days.');
   await expectNoViolations(page);
 });
 
@@ -62,9 +62,19 @@ test('editors may only invite contributors', async ({ page }) => {
 test.describe('the invited person', () => {
   test.use({ timezoneId: 'Asia/Tokyo' });
 
-  test('sets up their account with their own time zone and is asked to sign in', async ({ page, request }) => {
-    const link = await (await request.get(`${ADMIN_SITE}/_test/invitation?email=zoe@example.org&role=editor&first_name=Zo%C3%AB`)).text();
-    await page.goto(`${ADMIN_SITE}${link}`);
+  test('types their invitation code, sets up their account with their own time zone and is asked to sign in', async ({ page, request }) => {
+    const code = await (await request.get(`${ADMIN_SITE}/_test/invitation?email=zoe@example.org&role=editor&first_name=Zo%C3%AB`)).text();
+    await page.goto(`${ADMIN_SITE}/login`);
+    await page.getByRole('link', { name: 'Accept an invitation' }).click();
+    await expect(page.getByRole('heading', { level: 1, name: 'Accept an invitation' })).toBeVisible();
+    await expectNoViolations(page);
+    await page.getByLabel('Email address').fill('zoe@example.org');
+    await page.getByLabel('6-digit code').fill(code === '000000' ? '111111' : '000000');
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await expect(page.locator('#invitation-code-errors')).toBeFocused();
+    await expectNoViolations(page);
+    await page.getByLabel('6-digit code').fill(code);
+    await page.getByRole('button', { name: 'Continue' }).click();
 
     await expect(page).toHaveTitle('Join Riverside Library - Riverside Library');
     await expect(page.getByLabel('First name')).toHaveValue('Zoë');
@@ -83,8 +93,11 @@ test.describe('the invited person', () => {
     await expect(page).toHaveURL(`${ADMIN_SITE}/login`);
     await expect(page.getByRole('status')).toHaveText('Your account is ready. Sign in with zoe@example.org and your new password.');
 
-    await page.goto(`${ADMIN_SITE}${link}`);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('This invitation no longer works');
+    await page.goto(`${ADMIN_SITE}/login/invitation`);
+    await page.getByLabel('Email address').fill('zoe@example.org');
+    await page.getByLabel('6-digit code').fill(code);
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await expect(page.locator('#invitation-code-errors')).toContainText('no longer works');
     await expectNoViolations(page);
   });
 });

@@ -11,7 +11,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Auth\Http\AuthPages;
 use SightPress\Core\Auth\PasswordHasher;
 use SightPress\Core\Auth\PasswordReset;
-use SightPress\Core\Auth\PasswordResetTokens;
+use SightPress\Core\Auth\EvenTiming;
+use SightPress\Core\Auth\VerificationCodeStore;
 use SightPress\Core\Auth\RememberTokens;
 use SightPress\Core\Auth\SessionAuthenticator;
 use SightPress\Core\Auth\SignIn;
@@ -164,24 +165,43 @@ final class AuthFixture implements MailSender
         return new RememberTokens($this->database->connection, $this->clock);
     }
 
-    public function resetTokens(): PasswordResetTokens
+    public function codes(): VerificationCodeStore
     {
-        return new PasswordResetTokens($this->users, $this->site, $this->clock, SiteFixture::SECRET);
+        return new VerificationCodeStore($this->database->connection, $this->clock, $this->limiters, SiteFixture::SECRET);
+    }
+
+    /**
+     * Even timing that waits only a millisecond, so tests stay fast.
+     */
+    public function timing(): EvenTiming
+    {
+        return new EvenTiming(1000);
     }
 
     public function passwordReset(): PasswordReset
     {
         return new PasswordReset(
             $this->users,
-            $this->resetTokens(),
+            $this->codes(),
             $this->hasher,
             $this->rememberTokens(),
-            $this->limiters,
             $this,
             $this->templates,
             $this->clock,
             $this->site,
         );
+    }
+
+    /**
+     * The six digits of the code in an email this fixture sent.
+     */
+    public static function codeIn(Email $email): string
+    {
+        if (preg_match('/^(\d{3}) (\d{3})$/m', (string) $email->getTextBody(), $code) !== 1) {
+            throw new \LogicException('The email has no code.');
+        }
+
+        return $code[1] . $code[2];
     }
 
     public function authenticator(): SessionAuthenticator

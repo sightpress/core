@@ -7,6 +7,9 @@ namespace SightPress\Core\Tests\Unit\Auth;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
+use SightPress\Core\Auth\Contract\TooManyCodes;
+use SightPress\Core\Auth\Contract\VerificationChannel;
+use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Auth\PasswordReset;
 use SightPress\Core\Auth\RememberTokens;
 use SightPress\Core\Tests\Support\AuthFixture;
@@ -23,74 +26,103 @@ final class PasswordResetTest extends TestCase
         $this->auth = new AuthFixture();
     }
 
-    public function testEmailsALinkThatWorksForAnHour(): void
+    public function testEmailsACodeAndNeverALink(): void
     {
         $user = $this->auth->user();
 
-        self::assertNull($this->auth->passwordReset()->request($this->auth->request('POST'), ' Ada@Example.org'));
+        $this->auth->passwordReset()->request($this->auth->request('POST'), ' Ada@Example.org');
 
         self::assertCount(1, $this->auth->sent);
         $email = $this->auth->sent[0];
-        self::assertSame('Reset your password for Demo', $email->getSubject());
+        self::assertSame('Your code to reset your password for Demo', $email->getSubject());
         self::assertSame('"Ada" <ada@example.org>', $email->getTo()[0]->toString());
         $text = (string) $email->getTextBody();
         $html = (string) $email->getHtmlBody();
-        self::assertSame(1, preg_match('#https://demo\.example/password/reset/([A-Za-z0-9_.-]+)#', $text, $link));
-        self::assertSame($user, $this->auth->resetTokens()->verify($link[1]));
+        $code = AuthFixture::codeIn($email);
+        self::assertStringNotContainsString($code, $email->getSubject());
+        self::assertStringContainsString(substr($code, 0, 3) . ' ' . substr($code, 3), $html);
         self::assertStringContainsString('Hello Ada,', $text);
-        self::assertStringContainsString('The link works for 1 hour and only once.', $text);
+        self::assertStringContainsString('The code works for 15 minutes, and only once.', $text);
+        self::assertStringContainsString('We will never send you a link. Type this code on the page where you asked for it. Never share it with anyone.', $text);
         self::assertStringContainsString('you can ignore this email', $text);
-        self::assertStringContainsString('<a href="' . $link[0] . '"', $html);
         self::assertStringContainsString('<html lang="en-GB">', $html);
+        foreach ([$text, $html] as $body) {
+            self::assertDoesNotMatchRegularExpression('#https?://|<a\b|www\.|demo\.example|<img\b#i', $body);
+        }
+        self::assertSame($user, $this->auth->passwordReset()->verify($this->auth->request('POST'), VerificationPurpose::PasswordReset, 'ada@example.org', $code));
     }
 
-    public function testAPendingAccountGetsALinkToChooseItsFirstPassword(): void
+    public function testAPendingAccountGetsACodeToChooseItsFirstPassword(): void
     {
         $this->auth->user(pending: true);
 
         $this->auth->passwordReset()->request($this->auth->request('POST'), 'ada@example.org');
 
         $email = $this->auth->sent[0];
-        self::assertSame('Choose your password for Demo', $email->getSubject());
-        self::assertStringContainsString('The link works for 7 days and only once.', (string) $email->getTextBody());
-        self::assertStringNotContainsString('ignore this email', (string) $email->getTextBody());
-        self::assertStringContainsString('>Choose your password</a>', (string) $email->getHtmlBody());
+        self::assertSame('Your code to choose your password for Demo', $email->getSubject());
+        self::assertStringContainsString('your new account on Demo', (string) $email->getTextBody());
+        self::assertStringContainsString('your new account on Demo', (string) $email->getHtmlBody());
     }
 
-    public function testUnknownAndDeactivatedAddressesGetNoEmail(): void
+    public function testUnknownAndDeactivatedAddressesGetNoEmailButTheSameLimits(): void
     {
         $this->auth->user(deactivated: true);
         $reset = $this->auth->passwordReset();
 
-        self::assertNull($reset->request($this->auth->request('POST'), 'ada@example.org'));
-        self::assertNull($reset->request($this->auth->request('POST'), 'grace@example.org'));
+        $reset->request($this->auth->request('POST'), 'ada@example.org');
+        $reset->request($this->auth->request('POST'), 'grace@example.org');
         self::assertSame([], $this->auth->sent);
+
+        $this->expectException(TooManyCodes::class);
+        $reset->request($this->auth->request('POST'), 'grace@example.org');
     }
 
-    public function testOnlyThreeLinksAnHourPerAddress(): void
+    public function testACodeProvesOnlyTheAccountItWasMadeFor(): void
     {
-        $this->auth->user();
+        $ada = $this->auth->user();
+        $max = $this->auth->user('max@example.org', pending: true);
+        $codes = $this->auth->codes();
         $reset = $this->auth->passwordReset();
-        $request = new \Nyholm\Psr7\ServerRequest('POST', 'https://demo.example/password/forgot');
-        for ($i = 0; $i < 3; ++$i) {
-            self::assertNull($reset->request($request, 'ada@example.org'));
+        $request = $this->auth->request('POST');
+
+        $code = $codes->issue(VerificationPurpose::PasswordReset, VerificationChannel::Email, 'ada@example.org', (int) $max->id());
+        self::assertNull($reset->verify($request, VerificationPurpose::PasswordReset, 'ada@example.org', $code->code), 'the code names another account');
+
+        $code = $codes->issue(VerificationPurpose::PasswordReset, VerificationChannel::Email, 'nobody@example.org');
+        self::assertNull($reset->verify($request, VerificationPurpose::PasswordReset, 'nobody@example.org', $code->code), 'no account');
+
+        $code = $codes->issue(VerificationPurpose::AccountSetup, VerificationChannel::Email, 'ada@example.org', (int) $ada->id());
+        self::assertNull($reset->verify($request, VerificationPurpose::AccountSetup, 'ada@example.org', $code->code), 'setup codes only work for pending accounts');
+
+        $code = $codes->issue(VerificationPurpose::AccountSetup, VerificationChannel::Email, 'max@example.org', (int) $max->id());
+        self::assertSame($max, $reset->verify($request, VerificationPurpose::AccountSetup, 'Max@example.org', $code->code));
+
+        self::assertNull($reset->verify($request, VerificationPurpose::PasswordReset, 'ada@example.org', '123456'));
+    }
+
+    public function testADeactivatedAccountCantUseAResetCode(): void
+    {
+        $user = $this->auth->user(deactivated: true);
+        $code = $this->auth->codes()->issue(VerificationPurpose::PasswordReset, VerificationChannel::Email, 'ada@example.org', (int) $user->id());
+
+        self::assertNull($this->auth->passwordReset()->verify($this->auth->request('POST'), VerificationPurpose::PasswordReset, 'ada@example.org', $code->code));
+    }
+
+    public function testTooManyTriesFromOneClientAreRefused(): void
+    {
+        $reset = $this->auth->passwordReset();
+        for ($i = 0; $i < 10; ++$i) {
+            $reset->verify($this->auth->request('POST'), VerificationPurpose::PasswordReset, 'ada@example.org', '123456');
         }
 
-        $wait = $reset->request($request, 'ada@example.org');
-
-        self::assertNotNull($wait);
-        self::assertGreaterThan(60, $wait);
-        self::assertCount(3, $this->auth->sent);
+        $this->expectException(TooManyCodes::class);
+        $reset->verify($this->auth->request('POST'), VerificationPurpose::PasswordReset, 'ada@example.org', '123456');
     }
 
-    public function testTheLinkKeepsAPortThatIsNotTheDefault(): void
+    public function testTheClientAddress(): void
     {
-        $user = $this->auth->user();
-
-        self::assertStringStartsWith(
-            'http://localhost:8080/password/reset/',
-            $this->auth->passwordReset()->link($this->auth->request(uri: 'http://localhost:8080/password/forgot'), $user),
-        );
+        self::assertSame('192.0.2.10', PasswordReset::client($this->auth->request()));
+        self::assertSame('unknown', PasswordReset::client(new \Nyholm\Psr7\ServerRequest('GET', '/')));
     }
 
     public function testSettingThePasswordActivatesTheAccountAndForgetsItsDevices(): void
@@ -106,15 +138,5 @@ final class PasswordResetTest extends TestCase
         $this->auth->database->entityManager->clear();
         self::assertSame($user->passwordHash(), $this->auth->users->find((int) $user->id())?->passwordHash());
         self::assertNull($tokens->consume($this->auth->request(cookies: [RememberTokens::SECURE_COOKIE => $cookie])));
-    }
-
-    public function testDescribesHowLongALinkWorks(): void
-    {
-        self::assertSame('1 hour', PasswordReset::duration(3600));
-        self::assertSame('2 hours', PasswordReset::duration(7200));
-        self::assertSame('1 hour', PasswordReset::duration(60));
-        self::assertSame('1 day', PasswordReset::duration(86400));
-        self::assertSame('7 days', PasswordReset::duration(604800));
-        self::assertSame('36 hours', PasswordReset::duration(129600));
     }
 }

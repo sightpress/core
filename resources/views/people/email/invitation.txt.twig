@@ -3,10 +3,11 @@
 
 {{ t('{inviter} has invited you to join {site} as {role}.', {inviter: inviter, site: site_name, role: role|lower}) }}
 
-{{ t('Set up your account with this link:') }}
-{{ link }}
+{{ t('To accept, go to the sign-in page of {site}, choose “Accept an invitation”, and type your email address and this invitation code:', {site: site_name}) }}
 
-{{ t('The link works once, until {expires}.', {expires: expires}) }}
+{% include '@auth/email/code.txt.twig' %}
 
-{{ t('If you weren’t expecting this, you can ignore this email: no account is made until the link is used.') }}
+{{ t('The invitation works until {expires}.', {expires: expires}) }}
+
+{{ t('If you weren’t expecting this, you can ignore this email: no account is made until the code is used.') }}
 {% endautoescape %}

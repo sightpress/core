@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Auth;
 
-use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Clock\ClockInterface;
 use SensitiveParameter;
-use SightPress\Core\Http\RateLimit\RateLimiters;
+use SightPress\Core\Auth\Contract\CodeEntry;
+use SightPress\Core\Auth\Contract\CodeStatus;
+use SightPress\Core\Auth\Contract\IssuedCode;
+use SightPress\Core\Auth\Contract\TooManyCodes;
+use SightPress\Core\Auth\Contract\VerificationChannel;
+use SightPress\Core\Auth\Contract\VerificationCodes;
+use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Infrastructure\Mail\MailSender;
 use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Tenant\Site;
@@ -17,23 +23,20 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
 /**
- * "Forgot your password?": emails a link for choosing a new password, and sets it.
+ * "Forgot your password?" and the first admin's setup: a six-digit code by email (or printed by `site:create`),
+ * typed on a page of the site, and then the new password. Never a link.
  *
- * Asking always gives the same answer, so nobody can find out which addresses have an account. Requests are
- * limited per email address and client address (`password_reset` rate limit). Setting a password activates a
- * pending account, makes every earlier link stop working, signs out other sessions and forgets every
- * "keep me signed in" device.
+ * Asking for a code does the same work and gives the same answer whether or not the address has an account, so
+ * nobody can find out which addresses have one. Setting a password activates a pending account, signs out other
+ * sessions and forgets every "keep me signed in" device.
  */
 final readonly class PasswordReset
 {
-    public const string PATH = '/password/reset/';
-
     public function __construct(
         private Accounts $accounts,
-        private PasswordResetTokens $tokens,
+        private VerificationCodes $codes,
         private PasswordHasher $hasher,
         private RememberTokens $rememberTokens,
-        private RateLimiters $limiters,
         private MailSender $mail,
         private TemplateRenderer $templates,
         private ClockInterface $clock,
@@ -41,43 +44,56 @@ final readonly class PasswordReset
     ) {
     }
 
-    /**
-     * Sends a link to the address if it has an account that can sign in, or is waiting for its first password.
-     *
-     * @return positive-int|null seconds to wait when there were too many requests, otherwise null
-     */
-    public function request(ServerRequestInterface $request, string $email): ?int
+    public static function client(ServerRequestInterface $request): string
     {
         $address = $request->getServerParams()['REMOTE_ADDR'] ?? null;
-        $limit = $this->limiters->limiter(
-            'password_reset',
-            mb_strtolower(trim($email)) . '|' . (is_string($address) ? $address : 'unknown'),
-        )->consume();
-        if (!$limit->isAccepted()) {
-            return RateLimiters::secondsUntil($limit->getRetryAfter());
-        }
 
-        $account = $this->accounts->findAccountByEmail($email);
-        if ($account === null || (!$account->isActive() && !$account->isPending())) {
-            return null;
-        }
-
-        $this->send($request, $account);
-
-        return null;
+        return is_string($address) ? $address : 'unknown';
     }
 
     /**
-     * The link for choosing a password, on the host of the request.
+     * Makes a code for the address and emails it if the address has an account that can sign in, or is waiting
+     * for its first password.
      *
-     * @param positive-int $ttl seconds until the link stops working
+     * @throws TooManyCodes
      */
-    public function link(ServerRequestInterface $request, Account $account, int $ttl = PasswordResetTokens::RESET_TTL): string
+    public function request(ServerRequestInterface $request, string $email): void
     {
-        $uri = $request->getUri();
-        $port = $uri->getPort() === null ? '' : ':' . $uri->getPort();
+        $account = $this->accounts->findAccountByEmail($email);
+        $eligible = $account !== null && ($account->isActive() || $account->isPending()) ? $account : null;
+        $code = $this->codes->request(
+            VerificationPurpose::PasswordReset,
+            VerificationChannel::Email,
+            $email,
+            $eligible?->id(),
+            self::client($request),
+        );
+        if ($eligible !== null) {
+            $this->send($request, $eligible, $code);
+        }
+    }
 
-        return sprintf('%s://%s%s%s%s', $uri->getScheme(), $uri->getHost(), $port, self::PATH, $this->tokens->create($account, $ttl));
+    /**
+     * The account a code proves, or null when the code is wrong, used, expired or dead, or the account can no
+     * longer use it: a reset code needs an account that can sign in or is pending, a setup code a pending one.
+     *
+     * @throws TooManyCodes when this client tried too many codes
+     */
+    public function verify(ServerRequestInterface $request, VerificationPurpose $purpose, string $email, string $code): ?Account
+    {
+        $check = $this->codes->check($purpose, VerificationChannel::Email, $email, $code, self::client($request));
+        if ($check->status === CodeStatus::Limited) {
+            throw new TooManyCodes($check->retryAfter ?? 1);
+        }
+        $account = $check->isValid() && $check->accountId !== null ? $this->accounts->findAccount($check->accountId) : null;
+        if ($account === null || mb_strtolower($account->email()) !== mb_strtolower(trim($email))) {
+            return null;
+        }
+        $usable = $purpose === VerificationPurpose::AccountSetup
+            ? $account->isPending()
+            : $account->isActive() || $account->isPending();
+
+        return $usable ? $account : null;
     }
 
     /**
@@ -90,37 +106,24 @@ final readonly class PasswordReset
         $this->rememberTokens->forgetUser((int) $account->id());
     }
 
-    private function send(ServerRequestInterface $request, Account $account): void
+    private function send(ServerRequestInterface $request, Account $account, IssuedCode $code): void
     {
         $pending = $account->isPending();
-        $ttl = $pending ? PasswordResetTokens::SETUP_TTL : PasswordResetTokens::RESET_TTL;
         $context = [
             'site_name' => $this->site->name,
             'name' => $account->effectiveName(),
-            'link' => $this->link($request, $account, $ttl),
+            'code' => $code->readable(),
             'pending' => $pending,
-            'valid_for' => self::duration($ttl),
+            'valid_for' => CodeEntry::duration(VerificationPurpose::PasswordReset->lifetime(VerificationChannel::Email)),
         ];
 
         $this->mail->send(new Email()
             ->to(new Address($account->email(), $account->effectiveName()))
             ->subject(sprintf(
-                $pending ? 'Choose your password for %s' : 'Reset your password for %s',
+                $pending ? 'Your code to choose your password for %s' : 'Your code to reset your password for %s',
                 $this->site->name,
             ))
             ->text($this->templates->render($request, '@auth/email/password.txt.twig', $context))
             ->html($this->templates->render($request, '@auth/email/password.html.twig', $context)));
-    }
-
-    /**
-     * "1 hour", "7 days": how long a link works, in words.
-     */
-    public static function duration(int $seconds): string
-    {
-        [$amount, $unit] = $seconds >= 86400 && $seconds % 86400 === 0
-            ? [intdiv($seconds, 86400), 'day']
-            : [max(1, intdiv($seconds, 3600)), 'hour'];
-
-        return sprintf('%d %s%s', $amount, $unit, $amount === 1 ? '' : 's');
     }
 }

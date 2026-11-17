@@ -35,10 +35,10 @@ final class ReturnTargetTest extends TestCase
         yield 'spaces' => [[], '/a b', '/'];
         yield 'back to sign-in' => [$staff, '/login?return=/x', '/admin'];
         yield 'back to sign-out' => [[], '/logout', '/'];
-        yield 'back to a password link' => [[], '/password/reset/abc.def', '/'];
-        yield 'back to forgot password' => [$staff, '/password/forgot', '/admin'];
+        yield 'back to choosing a password' => [[], '/login/password', '/'];
+        yield 'back to forgot password' => [$staff, '/login/forgot', '/admin'];
         yield 'a page that only starts like sign-in' => [[], '/login-help', '/login-help'];
-        yield 'a page that only starts like the password pages' => [[], '/passwords-explained', '/passwords-explained'];
+        yield 'a page about passwords' => [[], '/password/help', '/password/help'];
     }
 
     /**

@@ -1,8 +1,0 @@
-{% extends '@auth/layout.html.twig' %}
-{% block title %}{{ t('This link no longer works') }}{% endblock %}
-{% block content %}
-<h1>{{ t('This link no longer works') }}</h1>
-<p>{{ t('Links for choosing a password work only once, and only for a limited time. This one has expired, has already been used, or was not copied in full.') }}</p>
-<p><a href="/password/forgot">{{ t('Ask for a new link') }}</a></p>
-<p><a href="/login">{{ t('Back to sign in') }}</a></p>
-{% endblock %}

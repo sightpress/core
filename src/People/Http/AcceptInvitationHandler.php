@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\People\Http;
 
+use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,23 +21,28 @@ use SightPress\Core\People\EmailPolicy;
 use SightPress\Core\People\Invitation;
 use SightPress\Core\People\Invitations;
 use SightPress\Core\Rbac\Contract\RoleGrants;
-use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\User\Contract\AccountException;
 use SightPress\Core\User\Contract\AccountRegistration;
 use Symfony\Component\Validator\Constraints\Length;
 
 /**
- * `/invite/{token}`: the person who was invited sets up their account. They give their names (prefilled with what
+ * `/login/invitation/account`: once {@see InvitationCodeHandler} checked the invitation code, the person who was
+ * invited sets up their account (for {@see self::VERIFIED_FOR} seconds, while the invitation is still open). They give their names (prefilled with what
  * the inviter knew), an optional display name, their time zone (prefilled from the browser when it can say) and a
  * password; the account gets its avatar and the role of the invitation, and they are asked to sign in.
  */
 final readonly class AcceptInvitationHandler implements RequestHandlerInterface
 {
-    public const string TOKEN_ATTRIBUTE = 'token';
+    public const string PATH = '/login/invitation/account';
+
+    /** How long a checked code lets someone set up their account, in seconds. */
+    public const int VERIFIED_FOR = 3600;
+
+    private const string SESSION = 'people.invitation';
 
     public function __construct(
-        private TemplateRenderer $templates,
+        private InvitationPages $pages,
         private ResponseFactoryInterface $responses,
         private FormValidator $validator,
         private Invitations $invitations,
@@ -45,7 +51,17 @@ final readonly class AcceptInvitationHandler implements RequestHandlerInterface
         private Passwords $passwords,
         private EmailPolicy $emailPolicy,
         private Site $site,
+        private ClockInterface $clock,
     ) {
+    }
+
+    /**
+     * The invitation code was right: this session may set up the account.
+     */
+    public static function remember(Session $session, Invitation $invitation, int $now): void
+    {
+        $session->set(self::SESSION, ['id' => $invitation->id, 'until' => $now + self::VERIFIED_FOR]);
+        $session->regenerate();
     }
 
     public static function form(Invitation $invitation, string $timezone): Form
@@ -68,14 +84,20 @@ final readonly class AcceptInvitationHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $token = $request->getAttribute(self::TOKEN_ATTRIBUTE);
-        $invitation = is_string($token) ? $this->invitations->find($token) : null;
+        $session = Session::fromRequest($request);
+        $remembered = $session->get(self::SESSION);
+        $invitation = is_array($remembered) && is_int($remembered['id'] ?? null) && is_int($remembered['until'] ?? null)
+            && $remembered['until'] >= $this->clock->now()->getTimestamp()
+            ? $this->invitations->findOpen($remembered['id'])
+            : null;
         if ($invitation === null) {
-            return $this->page($request, '@people/accept-invalid.html.twig', ['title' => 'This invitation no longer works'], 410);
+            $session->remove(self::SESSION);
+
+            return $this->redirect(InvitationCodeHandler::PATH);
         }
         $problem = $this->emailPolicy->problem($invitation->email);
         if ($problem !== null) {
-            return $this->page($request, '@people/accept-invalid.html.twig', ['title' => 'This invitation can’t be used', 'reason' => $problem], 403);
+            return $this->pages->page($request, '@people/accept-invalid.html.twig', ['title' => 'This invitation can’t be used', 'reason' => $problem], 403);
         }
         if ($request->getMethod() !== 'POST') {
             return $this->show($request, $invitation, self::form($invitation, $this->site->defaultTimezone));
@@ -102,40 +124,32 @@ final readonly class AcceptInvitationHandler implements RequestHandlerInterface
                 $this->passwords->hash($form->text('password')),
             );
         } catch (AccountException $exception) {
-            return $this->page($request, '@people/accept-invalid.html.twig', ['title' => 'This invitation can’t be used', 'reason' => $exception->getMessage()], 409);
+            return $this->pages->page($request, '@people/accept-invalid.html.twig', ['title' => 'This invitation can’t be used', 'reason' => $exception->getMessage()], 409);
         }
         $this->roles->assign((int) $account->id(), $invitation->role);
         $this->invitations->accept($invitation);
-        Flash::add(Session::fromRequest($request), sprintf('Your account is ready. Sign in with %s and your new password.', $invitation->email));
+        $session->remove(self::SESSION);
+        Flash::add($session, sprintf('Your account is ready. Sign in with %s and your new password.', $invitation->email));
 
+        return $this->redirect('/login');
+    }
+
+    private function redirect(string $path): ResponseInterface
+    {
         return $this->responses->createResponse(303)
-            ->withHeader('Location', '/login')
+            ->withHeader('Location', $path)
             ->withHeader('Cache-Control', 'no-store');
     }
 
     private function show(ServerRequestInterface $request, Invitation $invitation, Form $form, int $status = 200): ResponseInterface
     {
-        return $this->page($request, '@people/accept.html.twig', [
+        return $this->pages->page($request, '@people/accept.html.twig', [
             'title' => sprintf('Join %s', $this->site->name),
             'form' => $form,
             'invitation' => $invitation,
             'role' => $this->roles->find($invitation->role)->label ?? $invitation->role,
-            'action' => $request->getUri()->getPath(),
+            'action' => self::PATH,
         ], $status);
     }
 
-    /**
-     * @param array<string, mixed> $context
-     */
-    private function page(ServerRequestInterface $request, string $template, array $context, int $status): ResponseInterface
-    {
-        return $this->templates
-            ->response($request, $template, $context + [
-                'site_name' => $this->site->name,
-                'messages' => Flash::take(Session::fromRequest($request)),
-            ], $status)
-            ->withHeader('Cache-Control', 'no-store')
-            ->withHeader('X-Robots-Tag', 'noindex, nofollow')
-            ->withHeader('Referrer-Policy', 'no-referrer');
-    }
 }

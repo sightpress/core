@@ -3,10 +3,12 @@
 /**
  * A real site for the accessibility tests of the sign-in pages: the whole kernel with core's modules, one site on a
  * SQLite file (domain 127.0.0.1) and two people, Ada (editor) and Max (member), whose password is
- * "correct horse battery staple". Started by playwright.config.ts with PHP's built-in web server; never deployed.
+ * "correct horse battery staple", plus Nia (admin), who has no password yet and waits for a setup code. Started by
+ * playwright.config.ts with PHP's built-in web server; never deployed.
  *
  * Two test-only addresses: `/_test/reset` starts again from an empty site (forgets sessions and rate limits);
- * `/_test/password-link` answers with a fresh "choose a new password" link for Ada.
+ * `/_test/code?purpose=…&email=…` answers with a fresh six-digit code for that purpose and address (it replaces the
+ * one the site emailed, which goes nowhere here).
  */
 
 declare(strict_types=1);
@@ -17,7 +19,9 @@ use Doctrine\Migrations\Configuration\Migration\ExistingConfiguration;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\MigratorConfiguration;
 use SightPress\Core\Auth\PasswordHasher;
-use SightPress\Core\Auth\PasswordResetTokens;
+use SightPress\Core\Auth\Contract\VerificationChannel;
+use SightPress\Core\Auth\Contract\VerificationCodes;
+use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Migration\MigrationConfigurationFactory;
@@ -26,6 +30,7 @@ use SightPress\Core\Rbac\RbacSeeder;
 use SightPress\Core\Rbac\RoleRepository;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
+use SightPress\Core\User\Contract\PendingAccounts;
 use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\UserRepository;
 
@@ -87,15 +92,21 @@ if (!is_file($project . '/config/sites.php')) {
         $roles = Services::get($site, RoleRepository::class);
         $roles->assign((int) $user->id(), $roles->findRole($role) ?? throw new LogicException($role));
     }
+    // Nia was made with `site:user:create-admin` and waits for her setup code.
+    $nia = Services::get($site, PendingAccounts::class)->createPending('nia@example.org', 'Nia', 'Example', 'Europe/London');
+    $roles = Services::get($site, RoleRepository::class);
+    $roles->assign((int) $nia->id(), $roles->findRole('admin') ?? throw new LogicException('admin'));
 }
 
 $kernel = Kernel::boot($project, $environment);
 
-if ($path === '/_test/password-link') {
+if ($path === '/_test/code') {
     $site = site($kernel);
-    $ada = Services::get($site, UserRepository::class)->findByEmail('ada@example.org') ?? throw new LogicException('Ada is missing.');
+    $email = is_string($_GET['email'] ?? null) ? $_GET['email'] : 'ada@example.org';
+    $purpose = VerificationPurpose::from(is_string($_GET['purpose'] ?? null) ? $_GET['purpose'] : 'password_reset');
+    $account = Services::get($site, UserRepository::class)->findByEmail($email);
     header('Content-Type: text/plain');
-    echo '/password/reset/' . Services::get($site, PasswordResetTokens::class)->create($ada);
+    echo Services::get($site, VerificationCodes::class)->issue($purpose, VerificationChannel::Email, $email, $account?->id())->code;
 
     return;
 }

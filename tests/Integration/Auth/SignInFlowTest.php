@@ -16,8 +16,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use SightPress\Core\Auth\PasswordHasher;
-use SightPress\Core\Auth\PasswordResetTokens;
 use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Infrastructure\Mail\MailSender;
 use SightPress\Core\Infrastructure\Migration\MigrationConfigurationFactory;
 use SightPress\Core\Kernel;
 use SightPress\Core\Module\CoreModules;
@@ -28,6 +28,7 @@ use SightPress\Core\Rbac\RoleRepository;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Tenant\TenantConfigLoader;
+use SightPress\Core\Tests\Support\AuthFixture;
 use SightPress\Core\Tests\Support\FakeModule;
 use SightPress\Core\Tests\Support\Modules\HelloHandler;
 use SightPress\Core\Tests\Support\SiteFixture;
@@ -37,6 +38,7 @@ use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\UserRepository;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\Routing\Route;
+use Symfony\Component\Mime\Email;
 
 /**
  * Signing in and out, "keep me signed in" and choosing a new password, through the whole kernel: a site on a SQLite
@@ -170,19 +172,47 @@ final class SignInFlowTest extends TestCase
         $otherDevice = $this->cookies;
 
         $this->cookies = [];
-        $forgot = $this->request('GET', '/password/forgot');
-        self::assertStringContainsString('<h1>Check your email</h1>', (string) $this->submit($forgot, '/password/forgot', ['email' => 'ada@example.org'])->getBody());
+        /** @var \ArrayObject<int, Email> $sent */
+        $sent = new \ArrayObject();
+        $kernel = $this->kernel->container();
+        self::assertInstanceOf(\DI\Container::class, $kernel);
+        $kernel->set(MailSender::class, new class ($sent) implements MailSender {
+            /** @param \ArrayObject<int, Email> $sent */
+            public function __construct(private readonly \ArrayObject $sent)
+            {
+            }
 
-        $user = Services::get($this->site(), UserRepository::class)->findByEmail('ada@example.org');
-        self::assertNotNull($user);
-        $link = '/password/reset/' . Services::get($this->site(), PasswordResetTokens::class)->create($user);
-        $reset = $this->request('GET', $link);
+            public function send(Email $email): void
+            {
+                $this->sent->append($email);
+            }
+        });
+        self::assertSame(404, $this->request('GET', '/password/forgot')->getStatusCode(), 'the link-based pages are gone');
+        $forgot = $this->request('GET', '/login/forgot');
+        $asked = $this->submit($forgot, '/login/forgot', ['email' => 'ada@example.org']);
+        self::assertSame('/login/forgot/code', $asked->getHeaderLine('Location'));
+        self::assertCount(1, $sent);
+        $email = $sent[0] ?? self::fail('No email was sent.');
+        $code = AuthFixture::codeIn($email);
+        foreach ([(string) $email->getTextBody(), (string) $email->getHtmlBody()] as $body) {
+            self::assertStringNotContainsString('http', $body, 'no address in the email');
+            self::assertStringNotContainsString('<a ', $body, 'no link in the email');
+            self::assertStringNotContainsString('example.org/', $body);
+        }
+        self::assertStringNotContainsString($code, (string) $email->getSubject());
+
+        $codePage = $this->request('GET', '/login/forgot/code');
+        $wrong = $this->submit($codePage, '/login/forgot/code', ['code' => $code === '000000' ? '111111' : '000000']);
+        self::assertSame(422, $wrong->getStatusCode());
+        $right = $this->submit($wrong, '/login/forgot/code', ['code' => substr($code, 0, 3) . ' ' . substr($code, 3)]);
+        self::assertSame('/login/password', $right->getHeaderLine('Location'));
+        $reset = $this->request('GET', '/login/password');
         self::assertStringContainsString('<h1>Choose a new password</h1>', (string) $reset->getBody());
-        $changed = $this->submit($reset, $link, ['password' => 'a completely new password']);
+        $changed = $this->submit($reset, '/login/password', ['password' => 'a completely new password']);
         self::assertSame('/login', $changed->getHeaderLine('Location'));
         $signIn = $this->request('GET', '/login');
         self::assertStringContainsString('Your password has been changed.', (string) $signIn->getBody());
-        self::assertSame(410, $this->request('GET', $link)->getStatusCode(), 'the link works once');
+        self::assertSame(303, $this->request('GET', '/login/password')->getStatusCode(), 'the code works once');
         self::assertSame(422, $this->submit($signIn, '/login', ['email' => 'ada@example.org', 'password' => self::PASSWORD])->getStatusCode());
         self::assertSame(303, $this->submit($this->request('GET', '/login'), '/login', ['email' => 'ada@example.org', 'password' => 'a completely new password'])->getStatusCode());
 
@@ -216,8 +246,8 @@ final class SignInFlowTest extends TestCase
     private function submit(ResponseInterface $page, string $path, array $fields): ResponseInterface
     {
         preg_match_all('/<input type="hidden" name="(csrf_[a-z]+)" value="([^"]+)">/', (string) $page->getBody(), $hidden, PREG_SET_ORDER);
-        self::assertCount(2, $hidden, 'the form has its CSRF token');
-        foreach ($hidden as [, $name, $value]) {
+        self::assertGreaterThanOrEqual(2, count($hidden), 'the form has its CSRF token');
+        foreach (array_slice($hidden, 0, 2) as [, $name, $value]) {
             $fields[$name] = html_entity_decode($value);
         }
 

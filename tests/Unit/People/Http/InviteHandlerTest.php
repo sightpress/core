@@ -18,6 +18,7 @@ use SightPress\Core\Rbac\Contract\RoleChoice;
 use SightPress\Core\Rbac\Contract\RoleGrants;
 use SightPress\Core\Rbac\RoleGrantPolicy;
 use SightPress\Core\Tests\Support\AdminFixture;
+use SightPress\Core\Tests\Support\AuthFixture;
 use SightPress\Core\Tests\Support\RecordingEvents;
 use SightPress\Core\User\Entity\User;
 use Slim\Exception\HttpForbiddenException;
@@ -84,7 +85,7 @@ final class InviteHandlerTest extends TestCase
 
         self::assertSame(303, $response->getStatusCode());
         self::assertSame('/admin/users/invite', $response->getHeaderLine('Location'));
-        self::assertSame(['We have sent an invitation to nia@example.org to join as contributor. The link works for 7 days.'], Flash::take($this->session));
+        self::assertSame(['We have sent an invitation to nia@example.org to join as contributor. Its code works for 7 days.'], Flash::take($this->session));
         $open = $this->invitations()->open();
         self::assertCount(1, $open);
         self::assertSame(['nia@example.org', 'contributor', 'Nia', null, $bea->id()], [$open[0]->email, $open[0]->role, $open[0]->firstName, $open[0]->lastName, $open[0]->invitedBy]);
@@ -96,11 +97,19 @@ final class InviteHandlerTest extends TestCase
         $text = (string) $email->getTextBody();
         self::assertStringContainsString('Hello Nia,', $text);
         self::assertStringContainsString('Ada has invited you to join Demo as contributor.', $text);
-        self::assertMatchesRegularExpression('#https://demo\.example/invite/[A-Za-z0-9_-]{43}\n#', $text);
-        self::assertStringContainsString('The link works once, until 21 November 2026, 12:00 (Europe/London time).', $text);
+        self::assertStringContainsString('To accept, go to the sign-in page of Demo, choose “Accept an invitation”, and type your email address and this invitation code:', $text);
+        self::assertStringContainsString('The invitation works until 21 November 2026, 12:00 (Europe/London time).', $text);
+        self::assertStringContainsString('The code works for 7 days, and only once.', $text);
+        self::assertStringContainsString('We will never send you a link.', $text);
+        $code = AuthFixture::codeIn($email);
+        self::assertStringNotContainsString($code, $email->getSubject());
         $html = (string) $email->getHtmlBody();
-        self::assertMatchesRegularExpression('#<a href="https://demo\.example/invite/[A-Za-z0-9_-]{43}"[^>]*>Set up your account on Demo</a>#', $html);
+        self::assertStringContainsString(substr($code, 0, 3) . ' ' . substr($code, 3), $html);
         self::assertStringContainsString('<html lang="en-GB">', $html);
+        foreach ([$text, $html] as $body) {
+            self::assertDoesNotMatchRegularExpression('#https?://|<a\b|www\.|demo\.example|<img\b#i', $body, 'no link, no web address, no image');
+        }
+        self::assertSame('nia@example.org', $this->invitations()->verify('nia@example.org', $code, '192.0.2.1')?->email);
     }
 
     public function testAnAddressWithAnAccountOrRefusedByThePolicyIsExplained(): void
@@ -164,6 +173,6 @@ final class InviteHandlerTest extends TestCase
 
     private function invitations(): Invitations
     {
-        return new Invitations($this->admin->auth->database->connection, $this->admin->auth->clock);
+        return new Invitations($this->admin->auth->database->connection, $this->admin->auth->clock, $this->admin->auth->codes());
     }
 }

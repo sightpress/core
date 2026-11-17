@@ -52,4 +52,21 @@ final class AccountRegistrarTest extends TestCase
         }
         self::assertSame(1, $auth->users->count());
     }
+
+    public function testCreatesAPendingAccountThatWaitsForItsPassword(): void
+    {
+        $auth = new AuthFixture();
+        $registrar = new AccountRegistrar($auth->users, $auth->avatars(), $auth->clock);
+
+        $account = $registrar->createPending('Grace@Example.org', 'Grace', 'Hopper', 'Europe/London');
+
+        self::assertTrue($account->isPending());
+        self::assertNull($account->passwordHash());
+        self::assertSame('grace@example.org', $account->email());
+        $user = $auth->users->find((int) $account->id());
+        self::assertSame(AvatarKind::Generated, $user?->avatarKind());
+
+        $this->expectException(AccountException::class);
+        $registrar->createPending('grace@example.org', 'Grace', 'Hopper', 'Europe/London');
+    }
 }

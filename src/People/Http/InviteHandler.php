@@ -107,16 +107,16 @@ final readonly class InviteHandler implements RequestHandlerInterface
 
         $first = $form->text('first_name');
         $last = $form->text('last_name');
-        [$invitation, $token] = $this->invitations->create($email, $role, $first === '' ? null : $first, $last === '' ? null : $last, $actor->userId);
+        [$invitation, $code] = $this->invitations->create($email, $role, $first === '' ? null : $first, $last === '' ? null : $last, $actor->userId);
         $inviter = $actor->userId === null ? null : $this->accounts->findAccount($actor->userId);
         $label = '';
         foreach ($roles as $choice) {
             $label = $choice->name === $role ? $choice->label : $label;
         }
-        $this->mailer->send($request, $invitation, $token, $inviter?->effectiveName() ?? 'Someone', $label);
+        $this->mailer->send($request, $invitation, $code, $inviter?->effectiveName() ?? 'Someone', $label);
 
         return $this->screens->redirect($request, self::PATH, sprintf(
-            'We have sent an invitation to %s to join as %s. The link works for 7 days.',
+            'We have sent an invitation to %s to join as %s. Its code works for 7 days.',
             $email,
             mb_strtolower($label),
         ));

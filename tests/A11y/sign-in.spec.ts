@@ -1,4 +1,4 @@
-// The sign-in pages (C-3.3) on a real site (tests/A11y/sign-in/index.php): no axe violations in light and dark
+// The sign-in pages (C-3.3) and their six-digit codes (C-3.7) on a real site (tests/A11y/sign-in/index.php): no axe violations in light and dark
 // mode, everything works by keyboard, errors are announced, and people go back where they came from.
 import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -55,6 +55,8 @@ test('the sign-in form is labelled, "keep me signed in" is off, and the tab orde
     remember,
     page.getByRole('button', { name: 'Sign in' }),
     page.getByRole('link', { name: 'Forgot your password?' }),
+    page.getByRole('link', { name: 'Accept an invitation' }),
+    page.getByRole('link', { name: 'Set up your account with a setup code' }),
   ]) {
     await page.keyboard.press('Tab');
     await expect(target).toBeFocused();
@@ -109,7 +111,11 @@ test('signing out asks to confirm with a button, then says so in a status messag
   expect((await page.context().cookies()).map((cookie) => cookie.name)).not.toContain('sightpress_remember');
 });
 
-test('forgot password: ask for a link, then choose a new password with it', async ({ page, request }) => {
+async function codeFor(request: import('@playwright/test').APIRequestContext, purpose: string, email = 'ada@example.org'): Promise<string> {
+  return (await request.get(`${SITE}/_test/code?purpose=${purpose}&email=${encodeURIComponent(email)}`)).text();
+}
+
+test('forgot password: ask for a code, type it, then choose a new password', async ({ page, request }) => {
   await page.goto(`${SITE}/login`);
   await page.getByRole('link', { name: 'Forgot your password?' }).focus();
   await page.keyboard.press('Enter');
@@ -120,11 +126,29 @@ test('forgot password: ask for a link, then choose a new password with it', asyn
   await page.getByLabel('Email address').focus();
   await page.keyboard.type('ada@example.org');
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('heading', { level: 1, name: 'Check your email' })).toBeVisible();
+
+  await expect(page).toHaveURL(`${SITE}/login/forgot/code`);
+  await expect(page.getByRole('heading', { level: 1, name: 'Enter your code' })).toBeVisible();
+  const field = page.getByLabel('6-digit code');
+  await expect(field).toHaveAttribute('inputmode', 'numeric');
+  await expect(field).toHaveAttribute('autocomplete', 'one-time-code');
+  await expect(field).toHaveAccessibleDescription(/We sent it by email to a\S*@example\.org\./);
   await expectNoViolations(page);
 
-  const link = await (await request.get(`${SITE}/_test/password-link`)).text();
-  await page.goto(`${SITE}${link}`);
+  // A wrong code is explained in the error summary, which gets focus. Nothing sends itself while typing.
+  const code = await codeFor(request, 'password_reset');
+  await field.focus();
+  await page.keyboard.type(code === '000000' ? '111111' : '000000');
+  await expect(page).toHaveURL(`${SITE}/login/forgot/code`);
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#reset-code-errors')).toBeFocused();
+  await expect(page.getByLabel('6-digit code')).toHaveAttribute('aria-invalid', 'true');
+  await expectNoViolations(page);
+
+  await page.getByLabel('6-digit code').fill(`${code.slice(0, 3)} ${code.slice(3)}`);
+  await page.getByRole('button', { name: 'Continue' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(`${SITE}/login/password`);
   await expect(page.getByRole('heading', { level: 1, name: 'Choose a new password' })).toBeVisible();
   await expect(page.getByLabel('New password')).toHaveAttribute('autocomplete', 'new-password');
   await expectNoViolations(page);
@@ -132,7 +156,7 @@ test('forgot password: ask for a link, then choose a new password with it', asyn
   await page.getByLabel('New password').focus();
   await page.keyboard.type('short');
   await page.keyboard.press('Enter');
-  await expect(page.locator('#reset-password-errors')).toBeFocused();
+  await expect(page.locator('#choose-password-errors')).toBeFocused();
   await expect(page.getByLabel('New password')).toHaveAccessibleDescription(/Error: Your password must be at least 12 characters long\./);
   await expectNoViolations(page);
 
@@ -145,11 +169,56 @@ test('forgot password: ask for a link, then choose a new password with it', asyn
   await expect(page).toHaveURL(`${SITE}/admin`);
 });
 
-test('a link that no longer works says what to do next', async ({ page }) => {
-  const response = await page.goto(`${SITE}/password/reset/not-a-real-link`);
+test('"Send a new code" says in words how long to wait, and is never silently disabled', async ({ page }) => {
+  await page.goto(`${SITE}/login/forgot`);
+  await page.getByLabel('Email address').fill('ada@example.org');
+  await page.getByRole('button', { name: 'Send me a code' }).click();
+  await expect(page).toHaveURL(`${SITE}/login/forgot/code`);
 
-  expect(response?.status()).toBe(410);
-  await expect(page.getByRole('heading', { level: 1, name: 'This link no longer works' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Ask for a new link' })).toHaveAttribute('href', '/password/forgot');
+  const resend = page.getByRole('button', { name: 'Send a new code' });
+  await expect(resend).toBeEnabled();
+  await resend.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#reset-code-errors')).toBeFocused();
+  await expect(page.locator('#reset-code-errors')).toContainText(/Wait \d+ seconds?, then send a new code\./);
   await expectNoViolations(page);
+});
+
+test('an address without an account gets the same code page', async ({ page }) => {
+  await page.goto(`${SITE}/login/forgot`);
+  await page.getByLabel('Email address').fill('nobody@example.org');
+  await page.getByRole('button', { name: 'Send me a code' }).click();
+
+  await expect(page).toHaveURL(`${SITE}/login/forgot/code`);
+  await expect(page.getByRole('heading', { level: 1, name: 'Enter your code' })).toBeVisible();
+});
+
+test('a setup code lets a new admin choose their first password', async ({ page, request }) => {
+  await page.goto(`${SITE}/login`);
+  await page.getByRole('link', { name: 'Set up your account with a setup code' }).click();
+
+  await expect(page).toHaveTitle('Set up your account - Riverside Library');
+  await expectNoViolations(page);
+  // Ada already has a password: a setup code is no use to her.
+  await page.getByLabel('Email address').fill('ada@example.org');
+  await page.getByLabel('6-digit code').fill(await codeFor(request, 'account_setup'));
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await expect(page.locator('#setup-account-errors')).toBeFocused();
+  await expectNoViolations(page);
+
+  const code = await codeFor(request, 'account_setup', 'nia@example.org');
+  await page.getByLabel('Email address').fill('nia@example.org');
+  await page.getByLabel('6-digit code').fill(code);
+  await page.getByRole('button', { name: 'Continue' }).click();
+
+  await expect(page).toHaveURL(`${SITE}/login/password`);
+  await expect(page.getByRole('heading', { level: 1, name: 'Choose your password' })).toBeVisible();
+  await expectNoViolations(page);
+});
+
+test('the old link-based pages are gone', async ({ page }) => {
+  for (const path of ['/password/forgot', '/password/reset/not-a-real-link']) {
+    const response = await page.goto(`${SITE}${path}`);
+    expect(response?.status(), path).toBe(404);
+  }
 });

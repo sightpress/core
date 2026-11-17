@@ -1,11 +1,6 @@
 {% extends 'layouts/default.html.twig' %}
 {% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% block content %}
-{%- if reason is defined %}
 <p>{{ reason }}</p>
-{%- else %}
-<p>{{ t('Invitations work only once, and only for 7 days. This one has expired, has already been used, was replaced by a newer invitation, or was not copied in full.') }}</p>
-<p>{{ t('Ask the person who invited you to send a new invitation.') }}</p>
-{%- endif %}
 <p><a href="/login">{{ t('Go to sign in') }}</a></p>
 {% endblock %}

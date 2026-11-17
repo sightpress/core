@@ -1,0 +1,9 @@
+{% extends '@auth/layout.html.twig' %}
+{% block title %}{{ t('Set up your account') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Set up your account') }}</h1>
+<p>{{ t('Type the email address of your account and the setup code you were given. Then you choose your password.') }}</p>
+{% include '@auth/code-entry.html.twig' with {'submit': t('Continue'), 'before': ['email']} %}
+<p>{{ t('Setup codes work for 7 days, and only once. If yours no longer works, ask the person who set up the site for a new one.') }}</p>
+<p><a href="/login">{{ t('Back to sign in') }}</a></p>
+{% endblock %}

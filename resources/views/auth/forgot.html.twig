@@ -3,11 +3,11 @@
 {% block title %}{{ t('Reset your password') }}{% endblock %}
 {% block content %}
 <h1>{{ t('Reset your password') }}</h1>
-<p>{{ t('Enter the email address you sign in with. We will send you a link to choose a new password.') }}</p>
+<p>{{ t('Enter the email address you sign in with. We will email you a 6-digit code to type on the next page.') }}</p>
 {{ f.error_summary(form) }}
-{{ f.start(form, '/password/forgot') }}
+{{ f.start(form, '/login/forgot') }}
     {{ f.field(form, 'email') }}
-    {{ f.submit(t('Send the link')) }}
+    {{ f.submit(t('Send me a code')) }}
 {{ f.end() }}
 <p><a href="/login">{{ t('Back to sign in') }}</a></p>
 {% endblock %}

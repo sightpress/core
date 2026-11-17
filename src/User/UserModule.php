@@ -16,6 +16,7 @@ use SightPress\Core\User\Avatar\AvatarService;
 use SightPress\Core\User\Contract\AccountDirectory;
 use SightPress\Core\User\Contract\AccountPreferences;
 use SightPress\Core\User\Contract\AccountRegistration;
+use SightPress\Core\User\Contract\PendingAccounts;
 use SightPress\Core\User\Contract\AccountRoster;
 use SightPress\Core\User\Contract\Accounts;
 use SightPress\Core\User\Http\AccountHandler;
@@ -52,6 +53,7 @@ final class UserModule implements ModuleInterface
         $registrar->services()->autowire(UserRepository::class, AccountDirectory::class, public: true);
         $registrar->services()->autowire(UserRepository::class, AccountPreferences::class, public: true);
         $registrar->services()->autowire(AccountRegistrar::class, AccountRegistration::class, public: true);
+        $registrar->services()->autowire(AccountRegistrar::class, PendingAccounts::class, public: true);
         $registrar->services()->autowire(AccountAdministration::class, AccountRoster::class, public: true);
         $registrar->services()->autowire(AvatarGenerator::class);
         $registrar->services()->factory(AvatarService::class, static fn (ContainerInterface $c): AvatarService => new AvatarService(

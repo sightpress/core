@@ -12,6 +12,7 @@ use SightPress\Core\Auth\PasswordHasher;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Mail\MailSender;
 use SightPress\Core\Rbac\RoleRepository;
+use SightPress\Core\Tests\Support\AuthFixture;
 use SightPress\Core\Tests\Support\Browser;
 use SightPress\Core\Tests\Support\KernelSite;
 use SightPress\Core\User\Avatar\AvatarService;
@@ -20,9 +21,9 @@ use SightPress\Core\User\UserRepository;
 use Symfony\Component\Mime\Email;
 
 /**
- * Invitations through the whole kernel (C-3.4): an admin invites an editor, the email has the link, the person sets
- * up their account with the role and an avatar, and the link then stops working. Editors may only invite
- * contributors, whatever they send.
+ * Invitations through the whole kernel (C-3.4, C-3.7): an admin invites an editor, the email has a six-digit code
+ * and no link, the person types it with their email address on "Accept an invitation", sets up their account with
+ * the role and an avatar, and the code then stops working. Editors may only invite contributors, whatever they send.
  */
 #[CoversNothing]
 final class InvitationFlowTest extends TestCase
@@ -85,20 +86,33 @@ final class InvitationFlowTest extends TestCase
         self::assertSame('zoe@example.org', $email->getTo()[0]->getAddress());
         self::assertSame('Ada invited you to ' . $this->site->site()->name, $email->getSubject());
         $text = (string) $email->getTextBody();
-        self::assertSame(1, preg_match('#http://example\.org/invite/([A-Za-z0-9_-]{43})#', $text, $link));
-        self::assertStringContainsString($link[0], (string) $email->getHtmlBody());
+        $html = (string) $email->getHtmlBody();
+        foreach ([$text, $html] as $body) {
+            self::assertStringNotContainsString('http', $body, 'no address in the email');
+            self::assertStringNotContainsString('<a ', $body, 'no link in the email');
+            self::assertStringNotContainsString('example.org/', $body);
+        }
         self::assertStringContainsString('Hello Zoë,', $text);
+        $code = AuthFixture::codeIn($email);
+        self::assertStringNotContainsString($code, $email->getSubject());
 
         $guest = new Browser($this->site->kernel, 'http://example.org');
-        $page = $guest->request('GET', '/invite/' . $link[1]);
+        self::assertSame(404, $guest->request('GET', '/invite/abc')->getStatusCode(), 'the link-based page is gone');
+        self::assertSame('/login/invitation', $guest->request('GET', '/login/invitation/account')->getHeaderLine('Location'));
+        self::assertStringContainsString('Accept an invitation', (string) $guest->request('GET', '/login')->getBody());
+        $wrong = $guest->submit('/login/invitation', ['email' => 'zoe@example.org', 'code' => $code === '000000' ? '111111' : '000000']);
+        self::assertSame(422, $wrong->getStatusCode());
+        $right = $guest->submit('/login/invitation', ['email' => 'ZOE@example.org', 'code' => substr($code, 0, 3) . '-' . substr($code, 3)]);
+        self::assertSame('/login/invitation/account', $right->getHeaderLine('Location'));
+        $page = $guest->request('GET', '/login/invitation/account');
         self::assertSame(200, $page->getStatusCode());
         self::assertSame('noindex, nofollow', $page->getHeaderLine('X-Robots-Tag'));
         self::assertStringContainsString('value="Zoë"', (string) $page->getBody());
 
-        $weak = $guest->submit('/invite/' . $link[1], $this->acceptance('short'));
+        $weak = $guest->submit('/login/invitation/account', $this->acceptance('short'));
         self::assertSame(422, $weak->getStatusCode());
 
-        $done = $guest->submit('/invite/' . $link[1], $this->acceptance(self::PASSWORD));
+        $done = $guest->submit('/login/invitation/account', $this->acceptance(self::PASSWORD));
         self::assertSame(303, $done->getStatusCode());
         self::assertSame('/login', $done->getHeaderLine('Location'));
 
@@ -111,12 +125,13 @@ final class InvitationFlowTest extends TestCase
         $roles = Services::get($this->site->container(), RoleRepository::class);
         self::assertSame(['editor'], array_map(static fn ($role) => $role->name(), $roles->rolesOf((int) $zoe->id())));
 
-        self::assertSame(410, $guest->request('GET', '/invite/' . $link[1])->getStatusCode(), 'a link works once');
+        $again = new Browser($this->site->kernel, 'http://example.org');
+        self::assertSame(422, $again->submit('/login/invitation', ['email' => 'zoe@example.org', 'code' => $code])->getStatusCode(), 'a code works once');
         $signIn = $guest->submit('/login', ['email' => 'zoe@example.org', 'password' => self::PASSWORD]);
         self::assertSame('/admin', $signIn->getHeaderLine('Location'));
     }
 
-    public function testInvitingAgainReplacesTheOlderLink(): void
+    public function testInvitingAgainReplacesTheOlderCode(): void
     {
         $admin = $this->signedIn('ada@example.org');
         foreach ([1, 2] as $ignored) {
@@ -125,8 +140,12 @@ final class InvitationFlowTest extends TestCase
 
         self::assertCount(2, $this->sent);
         $guest = new Browser($this->site->kernel, 'http://example.org');
-        self::assertSame(410, $guest->request('GET', $this->path($this->email(0)))->getStatusCode());
-        self::assertSame(200, $guest->request('GET', $this->path($this->email(1)))->getStatusCode());
+        $older = AuthFixture::codeIn($this->email(0));
+        $newer = AuthFixture::codeIn($this->email(1));
+        if ($older !== $newer) {
+            self::assertSame(422, $guest->submit('/login/invitation', ['email' => 'zoe@example.org', 'code' => $older])->getStatusCode());
+        }
+        self::assertSame('/login/invitation/account', $guest->submit('/login/invitation', ['email' => 'zoe@example.org', 'code' => $newer])->getHeaderLine('Location'));
     }
 
     public function testEditorsInviteOnlyContributorsWhateverTheySend(): void
@@ -173,13 +192,6 @@ final class InvitationFlowTest extends TestCase
     private function email(int $index): Email
     {
         return $this->sent[$index] ?? self::fail(sprintf('Email %d was not sent.', $index + 1));
-    }
-
-    private function path(Email $email): string
-    {
-        preg_match('#/invite/[A-Za-z0-9_-]{43}#', (string) $email->getTextBody(), $path);
-
-        return $path[0] ?? self::fail('The email has no invitation link.');
     }
 
     private function signedIn(string $email): Browser

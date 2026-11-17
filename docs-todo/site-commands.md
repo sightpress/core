@@ -3,7 +3,7 @@
 ## What it does
 
 One install can run many sites. `bin/sightpress site:create` makes a new one: it gets its database ready, creates
-the tables, sets up the roles, creates the first admin and prints the link they use to choose their password. The
+the tables, sets up the roles, creates the first admin and prints the setup code they use to choose their password. The
 other `site:*` commands list sites, change their status, update their databases and remove them.
 
 Commands write plain sentences, with no tables or colours, so they read well with a screen reader. A database
@@ -38,7 +38,7 @@ address in `config/sites.php`.
 | `--admin-email`, `--admin-first-name`, `--admin-last-name` | yes | The first admin. |
 | `--name` | no | Name shown to visitors (default: the slug). |
 | `--timezone` | no | IANA time zone (default: the tenant's `timezone`). |
-| `--url` | no | Where the printed links start, for example `http://localhost:8080` in development (default: `https://` and the first domain). |
+| `--url` | no | Address of the site, for the printed setup page, for example `http://localhost:8080` in development (default: `https://` and the first domain). |
 | `--create-db` | no | Create the database if it doesn't exist. The database user must be allowed to. |
 
 What happens, in order:
@@ -48,11 +48,24 @@ What happens, in order:
    database must exist, unless you add `--create-db`.
 3. The tables of every module are created (migrations).
 4. Each module sets up its part: the first admin's account (300), the roles admin, editor, contributor and member
-   with the admin role for the first admin (200), the password link (100). Starter pages and branding come later.
+   with the admin role for the first admin (200), the setup code (100). Starter pages and branding come later.
 5. Only then is the site added to `config/sites.php`, enabled. If a step fails, the site is not added; the message
    says its database may already have tables.
 
-The first admin's link works once, for 7 days. Their account is pending until they choose a password.
+The command prints, for example: "Give the setup code 123 456 to ada@example.org. They go to
+https://demo.example.org/login/setup, type their email address and the code, and choose their password. The code
+works once, for 7 days." Pass it on by a channel you trust (in person, by phone). The account is pending until they
+choose a password. Nothing is emailed: SightPress never sends links.
+
+## Another admin, or a new setup code
+
+```sh
+bin/sightpress site:user:create-admin demo --email=grace@example.org --first-name=Grace --last-name=Hopper
+```
+
+Creates a pending admin and prints their setup code. Run it again for an admin who hasn't chosen a password yet to
+get a new code (the old one stops working). An account that can already sign in is refused: that person uses
+"Forgot your password?" instead.
 
 ## Change a site's status
 

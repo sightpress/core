@@ -10,5 +10,7 @@
     {{ f.field(form, 'remember') }}
     {{ f.submit(t('Sign in')) }}
 {{ f.end() }}
-<p><a href="/password/forgot">{{ t('Forgot your password?') }}</a></p>
+<p><a href="/login/forgot">{{ t('Forgot your password?') }}</a></p>
+<p><a href="/login/invitation">{{ t('Accept an invitation') }}</a></p>
+<p><a href="/login/setup">{{ t('Set up your account with a setup code') }}</a></p>
 {% endblock %}

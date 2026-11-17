@@ -34,8 +34,8 @@ use Throwable;
 
 /**
  * `site:create <slug>`: checks everything it was given, gets the database ready (creating it with `--create-db`),
- * runs the migrations, lets every module set the site up ({@see SiteProvisioning}: first admin, roles, password
- * link, and later starter pages and branding), and only then adds the site to the registry, enabled. A database
+ * runs the migrations, lets every module set the site up ({@see SiteProvisioning}: first admin, roles, setup
+ * code, and later starter pages and branding), and only then adds the site to the registry, enabled. A database
  * address is never printed with its user name or password.
  */
 final readonly class CreateSiteCommand implements Command
@@ -78,7 +78,7 @@ final readonly class CreateSiteCommand implements Command
             new CommandParameter('admin-last-name', 'Last name of the first admin:', $option, true),
             new CommandParameter('name', 'Name of the site, shown to visitors (default: the slug).', $option),
             new CommandParameter('timezone', 'Time zone of the site, for example Europe/London (default: the tenant\'s).', $option),
-            new CommandParameter('url', 'Address the printed links start with (default: https:// and the first domain).', $option),
+            new CommandParameter('url', 'Address of the site, for the printed setup page (default: https:// and the first domain).', $option),
             new CommandParameter('create-db', 'Create the database if it does not exist (the database user must be allowed to).', CommandParameterType::Flag),
         ];
     }

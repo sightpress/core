@@ -9,8 +9,10 @@ use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\Auth\PasswordResetTokens;
-use SightPress\Core\Auth\Provisioning\FirstPasswordLink;
+use SightPress\Core\Auth\Contract\VerificationChannel;
+use SightPress\Core\Auth\Contract\VerificationCodes;
+use SightPress\Core\Auth\Contract\VerificationPurpose;
+use SightPress\Core\Auth\Provisioning\FirstSetupCode;
 use SightPress\Core\Rbac\Provisioning\SeedRoles;
 use SightPress\Core\Rbac\RbacSeeder;
 use SightPress\Core\Rbac\RoleRepository;
@@ -27,7 +29,7 @@ use SightPress\Core\User\UserRepository;
 #[CoversClass(SiteProvisioning::class)]
 #[CoversClass(CreateFirstAdmin::class)]
 #[CoversClass(SeedRoles::class)]
-#[CoversClass(FirstPasswordLink::class)]
+#[CoversClass(FirstSetupCode::class)]
 #[UsesNamespace('SightPress\Core')]
 final class ProvisioningTest extends TestCase
 {
@@ -57,7 +59,7 @@ final class ProvisioningTest extends TestCase
 
         new CreateFirstAdmin($auth->clock)($event);
         new SeedRoles()($event);
-        new FirstPasswordLink()($event);
+        new FirstSetupCode()($event);
 
         $admin = $auth->users->findByEmail('grace@example.org');
         self::assertNotNull($admin);
@@ -70,8 +72,14 @@ final class ProvisioningTest extends TestCase
         self::assertSame('Created the account of the first admin, Grace Hopper (grace@example.org).', $event->lines()[0]);
         self::assertSame('The roles were already set up.', $event->lines()[1]);
         self::assertSame('Gave the first admin the admin role.', $event->lines()[2]);
-        self::assertSame(1, preg_match('#works once, for 7 days: http://localhost:8080/password/reset/(\S+)$#', $event->lines()[3], $link));
-        self::assertSame($admin, $auth->resetTokens()->verify($link[1]));
+        self::assertSame(1, preg_match(
+            '#^Give the setup code (\d{3}) (\d{3}) to grace@example\.org\. They go to http://localhost:8080/login/setup, type their email address and the code, and choose their password\. The code works once, for 7 days\.$#',
+            $event->lines()[3],
+            $code,
+        ));
+        $check = $auth->codes()->check(VerificationPurpose::AccountSetup, VerificationChannel::Email, 'grace@example.org', $code[1] . $code[2], '192.0.2.1');
+        self::assertTrue($check->isValid());
+        self::assertSame($admin->id(), $check->accountId);
     }
 
     public function testTheRolesAreNamedInASentence(): void
@@ -87,14 +95,14 @@ final class ProvisioningTest extends TestCase
         self::assertSame(['Set up the roles admin, editor, contributor and member.'], $event->lines(), 'no admin yet, so no role given');
     }
 
-    public function testWithoutAnAdminThereIsNoLink(): void
+    public function testWithoutAnAdminThereIsNoCode(): void
     {
         $auth = new AuthFixture();
         $event = $this->event($auth);
 
-        new FirstPasswordLink()($event);
+        new FirstSetupCode()($event);
         $event->setAdminId(999);
-        new FirstPasswordLink()($event);
+        new FirstSetupCode()($event);
 
         self::assertSame([], $event->lines());
     }
@@ -106,7 +114,7 @@ final class ProvisioningTest extends TestCase
             Accounts::class => $auth->users,
             RbacSeeder::class => $auth->database->seeder(),
             RoleRepository::class => $auth->database->roles(),
-            PasswordResetTokens::class => $auth->resetTokens(),
+            VerificationCodes::class => $auth->codes(),
             \SightPress\Core\User\Avatar\AvatarService::class => $auth->avatars(),
         ]), new FirstAdmin('grace@example.org', 'Grace', 'Hopper'), 'http://localhost:8080/');
     }
