@@ -52,6 +52,7 @@ jobs:
         run: |
           echo "UID=$(id -u)" > .env
           echo "GID=$(id -g)" >> .env
+          echo "COMPOSE_FILE=docker-compose.yml:docker-compose.siblings.yml" >> .env
           docker compose up --detach --build --wait
 
       # On its first start the PHP container runs composer install before PHP-FPM listens.
