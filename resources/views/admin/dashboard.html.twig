@@ -46,7 +46,7 @@
     <ul class="admin-list">
         {%- for page in pages %}
         <li>
-            <span lang="{{ page.locale }}">{{ page.title }}</span>
+            <a href="/admin/pages/{{ page.id }}" lang="{{ page.locale }}">{{ page.title }}</a>
             <span class="admin-list__meta">{{ t('Changed') }} <time datetime="{{ page.updatedAt|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ page.updatedAt|user_datetime }}</time></span>
         </li>
         {%- endfor %}

@@ -39,15 +39,17 @@ final class ColumnsBlock implements ParentBlockType
             'required' => ['columns'],
             'properties' => [
                 'columns' => [
+                    'title' => 'Columns', 'description' => '2 to 4 columns side by side on wide screens, one after another on narrow ones.',
                     'type' => 'array',
                     'minItems' => 2,
                     'maxItems' => 4,
                     'items' => [
+                        'title' => 'Column',
                         'type' => 'object',
                         'additionalProperties' => false,
                         'required' => ['blocks'],
                         'properties' => [
-                            'blocks' => ['type' => 'array', 'maxItems' => self::MAX_BLOCKS_PER_COLUMN, 'items' => ['type' => 'object']],
+                            'blocks' => ['title' => 'Blocks', 'type' => 'array', 'maxItems' => self::MAX_BLOCKS_PER_COLUMN, 'items' => ['type' => 'object']],
                         ],
                     ],
                 ],

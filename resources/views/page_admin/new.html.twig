@@ -1,0 +1,18 @@
+{#
+    Starting a page (/admin/pages/new): title, where it goes and its layout. Context: `form`, `action`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Start a new page') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Start a new page') }}</h1>
+<p>{{ t('The page starts as a draft: nobody else sees it until it is published.') }}</p>
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    {{ f.field(form, 'title') }}
+    {{ f.field(form, 'parent') }}
+    {{ f.field(form, 'layout') }}
+    {{ f.submit(t('Start the page')) }}
+{{ f.end() }}
+<p><a href="/admin/pages">{{ t('Back to the pages') }}</a></p>
+{% endblock %}

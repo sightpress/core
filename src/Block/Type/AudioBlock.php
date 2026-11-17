@@ -39,9 +39,9 @@ final class AudioBlock implements BlockType
             'additionalProperties' => false,
             'required' => ['media', 'title'],
             'properties' => [
-                'media' => ['type' => 'integer', 'format' => SchemaConstraints::FORMAT_AUDIO],
-                'title' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 200],
-                'transcript' => ['type' => 'string', 'maxLength' => VideoBlock::TRANSCRIPT_MAX_LENGTH],
+                'media' => ['title' => 'Audio', 'description' => 'A sound file from the media library.', 'type' => 'integer', 'format' => SchemaConstraints::FORMAT_AUDIO],
+                'title' => ['title' => 'Title', 'description' => 'Names the recording for screen readers and search engines.', 'type' => 'string', 'minLength' => 1, 'maxLength' => 200],
+                'transcript' => ['title' => 'Transcript', 'description' => 'Everything said, as text, for people who can\'t hear the recording.', 'type' => 'string', 'maxLength' => VideoBlock::TRANSCRIPT_MAX_LENGTH],
             ],
         ];
     }

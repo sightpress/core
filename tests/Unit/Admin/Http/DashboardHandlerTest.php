@@ -40,8 +40,8 @@ final class DashboardHandlerTest extends TestCase
         $html = $this->dashboard($cleo);
 
         self::assertStringContainsString('<h2 id="dashboard-drafts">Your drafts</h2>', $html);
-        self::assertStringContainsString('<span lang="en-GB">Opening hours</span>', $html);
-        self::assertStringNotContainsString('<span lang="en-GB">Summer reading</span>', $html);
+        self::assertStringContainsString('lang="en-GB">Opening hours</a>', $html);
+        self::assertStringNotContainsString('lang="en-GB">Summer reading</a>', $html);
         self::assertStringNotContainsString('Waiting for review', $html);
         self::assertStringContainsString('Ada saved “Opening hours”', $html);
         self::assertStringContainsString('“Made by the console” was saved', $html);
@@ -58,7 +58,7 @@ final class DashboardHandlerTest extends TestCase
 
         self::assertStringContainsString('You have no drafts.', $html);
         self::assertStringContainsString('<h2 id="dashboard-reviews">Waiting for review</h2>', $html);
-        self::assertStringContainsString('<span lang="en-GB">Summer reading</span>', $html);
+        self::assertStringContainsString('lang="en-GB">Summer reading</a>', $html);
     }
 
     public function testPeopleWhoDoNotWritePagesSeeOnlyTheActivity(): void

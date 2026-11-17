@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Block\Schema;
 
+use SightPress\Core\Block\Contract\BlockSchema;
 use SightPress\Core\Block\BlockException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\All;
@@ -33,21 +34,18 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 final class SchemaConstraints
 {
-    public const string FORMAT_LINK = 'link';
-    public const string FORMAT_MEDIA = 'media';
-    public const string FORMAT_IMAGE = 'media-image';
-    public const string FORMAT_VIDEO = 'media-video';
-    public const string FORMAT_AUDIO = 'media-audio';
-    public const string FORMAT_DOCUMENT = 'media-document';
-    public const string FORMAT_CAPTIONS = 'media-captions';
+    public const string FORMAT_LINK = BlockSchema::FORMAT_LINK;
+    public const string FORMAT_MEDIA = BlockSchema::FORMAT_MEDIA;
+    public const string FORMAT_IMAGE = BlockSchema::FORMAT_IMAGE;
+    public const string FORMAT_VIDEO = BlockSchema::FORMAT_VIDEO;
+    public const string FORMAT_AUDIO = BlockSchema::FORMAT_AUDIO;
+    public const string FORMAT_DOCUMENT = BlockSchema::FORMAT_DOCUMENT;
+    public const string FORMAT_CAPTIONS = BlockSchema::FORMAT_CAPTIONS;
 
     /** Formats of media library ids. */
-    public const array MEDIA_FORMATS = [
-        self::FORMAT_MEDIA, self::FORMAT_IMAGE, self::FORMAT_VIDEO, self::FORMAT_AUDIO, self::FORMAT_DOCUMENT,
-        self::FORMAT_CAPTIONS,
-    ];
-    public const string FORMAT_EMAIL = 'email';
-    public const string HTML = 'text/html';
+    public const array MEDIA_FORMATS = BlockSchema::MEDIA_FORMATS;
+    public const string FORMAT_EMAIL = BlockSchema::FORMAT_EMAIL;
+    public const string HTML = BlockSchema::HTML;
 
     private const array NOTES = ['title', 'description', 'default', 'examples', '$comment'];
 

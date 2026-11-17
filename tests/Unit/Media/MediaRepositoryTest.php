@@ -57,6 +57,28 @@ final class MediaRepositoryTest extends TestCase
         self::assertSame(['F2.pdf', 'F0.pdf'], array_map(static fn (Media $media): string => $media->originalName(), $repository->newest(2, 2)));
     }
 
+    public function testOffersFilesToChooseFromByKindAndType(): void
+    {
+        $database = new CoreSiteDatabase();
+        $repository = new MediaRepository($database->entityManager);
+        $formats = [
+            'P.pdf' => new MediaFormat('application/pdf', MediaKind::Document, 'pdf', 'PDF'),
+            'C.vtt' => new MediaFormat('text/vtt', MediaKind::Document, 'vtt', 'WebVTT captions'),
+            'I.png' => new MediaFormat('image/png', MediaKind::Image, 'png', 'PNG image'),
+        ];
+        $index = 0;
+        foreach ($formats as $name => $format) {
+            ++$index;
+            $repository->save(new Media(str_repeat(dechex($index), 32), str_repeat(dechex($index), 64), $format, 'f', $name, 1, null, null, [], null, new DateTimeImmutable("2026-11-16 1{$index}:00:00 UTC")));
+        }
+        $names = static fn (array $files): array => array_map(static fn (mixed $media): string => $media instanceof Media ? $media->originalName() : '', $files);
+
+        self::assertSame(['I.png', 'C.vtt', 'P.pdf'], $names($repository->choices()));
+        self::assertSame(['C.vtt', 'P.pdf'], $names($repository->choices(MediaKind::Document)));
+        self::assertSame(['C.vtt'], $names($repository->choices(MediaKind::Document, 'text/vtt')));
+        self::assertSame(['I.png'], $names($repository->choices(limit: 1)));
+    }
+
     public function testLooksFilesUpByIdForOtherModules(): void
     {
         $database = new CoreSiteDatabase();

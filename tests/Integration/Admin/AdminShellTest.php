@@ -75,7 +75,7 @@ final class AdminShellTest extends TestCase
         $html = (string) $contributor->request('GET', '/admin')->getBody();
         self::assertStringContainsString('<title>Dashboard - Admin - Demo</title>', $html);
         self::assertStringContainsString('<a href="/admin" aria-current="page">Dashboard</a>', $html);
-        self::assertStringContainsString('<span lang="en-GB">Opening hours</span>', $html);
+        self::assertMatchesRegularExpression('#<a href="/admin/pages/\d+" lang="en-GB">Opening hours</a>#', $html);
         self::assertStringNotContainsString('Waiting for review', $html);
         self::assertStringContainsString('Cleo saved “Summer reading”', $html);
 
@@ -84,7 +84,7 @@ final class AdminShellTest extends TestCase
         $response = $editorBrowser->request('GET', '/admin');
         $html = (string) $response->getBody();
         self::assertSame('noindex, nofollow', $response->getHeaderLine('X-Robots-Tag'));
-        self::assertMatchesRegularExpression('#Waiting for review</h2>\s*<ul class="admin-list">\s*<li>\s*<span lang="en-GB">Summer reading</span>#', $html);
+        self::assertMatchesRegularExpression('#Waiting for review</h2>\s*<ul class="admin-list">\s*<li>\s*<a href="/admin/pages/\d+" lang="en-GB">Summer reading</a>#', $html);
 
         $response = $editorBrowser->submit('/admin', []);
         self::assertSame(405, $response->getStatusCode());

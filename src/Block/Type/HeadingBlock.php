@@ -36,8 +36,8 @@ final class HeadingBlock implements BlockType
             'additionalProperties' => false,
             'required' => ['text', 'level'],
             'properties' => [
-                'text' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 200],
-                'level' => ['type' => 'integer', 'minimum' => 2, 'maximum' => 6],
+                'text' => ['title' => 'Heading text', 'type' => 'string', 'minLength' => 1, 'maxLength' => 200],
+                'level' => ['title' => 'Level', 'description' => '2 starts a main part of the page, 3 a part of that, and so on. The page title is the only level 1.', 'type' => 'integer', 'minimum' => 2, 'maximum' => 6],
             ],
         ];
     }

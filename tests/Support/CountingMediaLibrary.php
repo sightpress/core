@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Support;
 
 use SightPress\Core\Media\Contract\MediaFile;
+use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\Contract\MediaLibrary;
 
 /**
@@ -31,5 +32,10 @@ final class CountingMediaLibrary implements MediaLibrary
         $this->calls[] = $ids;
 
         return $this->library->files($ids);
+    }
+
+    public function choices(?MediaKind $kind = null, ?string $mimeType = null, int $limit = 200): array
+    {
+        return $this->library->choices($kind, $mimeType, $limit);
     }
 }

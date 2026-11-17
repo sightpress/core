@@ -13,6 +13,7 @@ export const ADMIN_SITES = {
   people: 'http://127.0.0.1:8094',
   media: 'http://127.0.0.1:8093',
   menus: 'http://127.0.0.1:8092',
+  pages: 'http://127.0.0.1:8089',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

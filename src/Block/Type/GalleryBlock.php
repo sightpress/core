@@ -41,22 +41,24 @@ final class GalleryBlock implements BlockType
             'required' => ['images'],
             'properties' => [
                 'images' => [
+                    'title' => 'Pictures',
                     'type' => 'array',
                     'minItems' => 1,
                     'maxItems' => self::MAX_IMAGES,
                     'items' => [
+                        'title' => 'Picture',
                         'type' => 'object',
                         'additionalProperties' => false,
                         'required' => ['media'],
                         'properties' => [
-                            'media' => ['type' => 'integer', 'format' => SchemaConstraints::FORMAT_IMAGE],
-                            'alt' => ['type' => 'string', 'maxLength' => 1000],
-                            'decorative' => ['type' => 'boolean'],
-                            'caption' => ['type' => 'string', 'maxLength' => 2000],
+                            'media' => ['title' => 'Picture', 'description' => 'A picture from the media library.', 'type' => 'integer', 'format' => SchemaConstraints::FORMAT_IMAGE],
+                            'alt' => ['title' => 'Alternative text', 'description' => 'What the picture shows, for people who can\'t see it. Leave it empty only for a decorative picture.', 'type' => 'string', 'maxLength' => 1000],
+                            'decorative' => ['title' => 'The picture is only decoration: screen readers skip it', 'type' => 'boolean'],
+                            'caption' => ['title' => 'Caption', 'description' => 'Shown under the picture.', 'type' => 'string', 'maxLength' => 2000],
                         ],
                     ],
                 ],
-                'caption' => ['type' => 'string', 'maxLength' => 2000],
+                'caption' => ['title' => 'Caption of the gallery', 'description' => 'Shown under all the pictures.', 'type' => 'string', 'maxLength' => 2000],
             ],
         ];
     }

@@ -92,6 +92,17 @@ final readonly class Form
         return $this->fields;
     }
 
+    public function has(string $name): bool
+    {
+        foreach ($this->fields as $field) {
+            if ($field->name === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function field(string $name): Field
     {
         foreach ($this->fields as $field) {

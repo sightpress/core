@@ -46,10 +46,10 @@ final readonly class ContactFormBlock implements BlockType
             'additionalProperties' => false,
             'required' => ['recipient'],
             'properties' => [
-                'recipient' => ['type' => 'string', 'maxLength' => 254, 'format' => 'email'],
-                'subject' => ['type' => 'string', 'maxLength' => 100],
-                'submit_text' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 40],
-                'success_text' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 300],
+                'recipient' => ['title' => 'Send messages to', 'description' => 'The email address that gets the messages. It is never shown on the page.', 'type' => 'string', 'maxLength' => 254, 'format' => 'email'],
+                'subject' => ['title' => 'Email subject', 'description' => 'The subject of the emails you get.', 'type' => 'string', 'maxLength' => 100],
+                'submit_text' => ['title' => 'Button text', 'type' => 'string', 'minLength' => 1, 'maxLength' => 40],
+                'success_text' => ['title' => 'Message after sending', 'type' => 'string', 'minLength' => 1, 'maxLength' => 300],
             ],
         ];
     }

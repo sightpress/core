@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Media;
 
 use Doctrine\ORM\EntityManagerInterface;
+use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Entity\Media;
 
@@ -70,6 +71,17 @@ final readonly class MediaRepository implements MediaLibrary
     {
         /** @var list<Media> */
         return $this->entityManager->getRepository(Media::class)->findBy([], ['createdAt' => 'DESC', 'id' => 'DESC'], $limit, $offset);
+    }
+
+    /**
+     * @return list<Media>
+     */
+    public function choices(?MediaKind $kind = null, ?string $mimeType = null, int $limit = 200): array
+    {
+        $criteria = array_filter(['kind' => $kind, 'mimeType' => $mimeType], static fn (mixed $value): bool => $value !== null);
+
+        /** @var list<Media> */
+        return $this->entityManager->getRepository(Media::class)->findBy($criteria, ['createdAt' => 'DESC', 'id' => 'DESC'], $limit);
     }
 
     public function count(): int

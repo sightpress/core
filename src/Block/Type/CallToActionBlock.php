@@ -38,9 +38,9 @@ final class CallToActionBlock implements BlockType
             'additionalProperties' => false,
             'required' => ['text', 'url'],
             'properties' => [
-                'text' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 80],
-                'url' => ['type' => 'string', 'maxLength' => 2000, 'format' => SchemaConstraints::FORMAT_LINK],
-                'style' => ['enum' => ['primary', 'secondary']],
+                'text' => ['title' => 'Button text', 'description' => 'Say what happens, for example "Book a visit".', 'type' => 'string', 'minLength' => 1, 'maxLength' => 80],
+                'url' => ['title' => 'Link address', 'description' => 'A page of this site, such as /contact, or a full address such as https://example.org.', 'type' => 'string', 'maxLength' => 2000, 'format' => SchemaConstraints::FORMAT_LINK],
+                'style' => ['title' => 'Style', 'description' => 'Primary for the main action of the page, secondary for others.', 'enum' => ['primary', 'secondary']],
             ],
         ];
     }

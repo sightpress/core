@@ -58,6 +58,10 @@ final class PageRepositoryTest extends TestCase
             array_map(static fn (Page $p) => $p->id(), $this->pages->descendants($found)),
         );
         self::assertSame([], $this->pages->descendants(new Page(null, 0, null, $this->now)));
+        self::assertSame(
+            [$about->id(), $contact->id(), $history->id(), $team->id(), $people->id()],
+            array_map(static fn (Page $p) => $p->id(), $this->pages->all()),
+        );
     }
 
     public function testKeepsRevisionsNewestFirst(): void

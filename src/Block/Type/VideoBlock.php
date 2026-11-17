@@ -44,13 +44,13 @@ final class VideoBlock implements BlockType
             'additionalProperties' => false,
             'required' => ['media', 'title'],
             'properties' => [
-                'media' => ['type' => 'integer', 'format' => SchemaConstraints::FORMAT_VIDEO],
-                'title' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 200],
-                'captions' => ['type' => 'integer', 'format' => SchemaConstraints::FORMAT_CAPTIONS],
-                'captions_language' => ['type' => 'string', 'maxLength' => 35, 'pattern' => self::LANGUAGE_PATTERN],
-                'no_speech' => ['type' => 'boolean'],
-                'poster' => ['type' => 'integer', 'format' => SchemaConstraints::FORMAT_IMAGE],
-                'transcript' => ['type' => 'string', 'maxLength' => self::TRANSCRIPT_MAX_LENGTH],
+                'media' => ['title' => 'Video', 'description' => 'A video from the media library.', 'type' => 'integer', 'format' => SchemaConstraints::FORMAT_VIDEO],
+                'title' => ['title' => 'Title', 'description' => 'Names the video for screen readers and search engines.', 'type' => 'string', 'minLength' => 1, 'maxLength' => 200],
+                'captions' => ['title' => 'Captions', 'description' => 'A WebVTT captions file (.vtt) from the media library.', 'type' => 'integer', 'format' => SchemaConstraints::FORMAT_CAPTIONS],
+                'captions_language' => ['title' => 'Language of the captions', 'description' => 'A language tag such as en-GB. Leave it empty for the page\'s language.', 'type' => 'string', 'maxLength' => 35, 'pattern' => self::LANGUAGE_PATTERN],
+                'no_speech' => ['title' => 'The video has no speech or important sounds, so it needs no captions', 'type' => 'boolean'],
+                'poster' => ['title' => 'Poster picture', 'description' => 'Shown before the video plays.', 'type' => 'integer', 'format' => SchemaConstraints::FORMAT_IMAGE],
+                'transcript' => ['title' => 'Transcript', 'description' => 'Everything said and shown, as text, for people who can\'t watch or hear the video.', 'type' => 'string', 'maxLength' => self::TRANSCRIPT_MAX_LENGTH],
             ],
         ];
     }

@@ -42,6 +42,7 @@ final class RichTextBlock implements BlockType
             'required' => ['html'],
             'properties' => [
                 'html' => [
+                    'title' => 'Text', 'description' => 'Written as HTML: paragraphs <p>, headings <h2> to <h6>, lists <ul>, <ol> and <li>, links <a href="…">, <strong> and <em>. Anything else is removed when you save.',
                     'type' => 'string',
                     'minLength' => 1,
                     'maxLength' => RichTextSanitizer::MAX_LENGTH,

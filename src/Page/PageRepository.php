@@ -88,6 +88,25 @@ final readonly class PageRepository
     }
 
     /**
+     * Every page with its translations, top-down (parents before their children, siblings in their order).
+     *
+     * @return list<Page>
+     */
+    public function all(): array
+    {
+        /** @var list<Page> */
+        return $this->entityManager->createQueryBuilder()
+            ->select('p', 't')
+            ->from(Page::class, 'p')
+            ->leftJoin('p.translations', 't')
+            ->orderBy('p.depth', 'ASC')
+            ->addOrderBy('p.position', 'ASC')
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * Every page below a page, top-down (parents before their children).
      *
      * @return list<Page>

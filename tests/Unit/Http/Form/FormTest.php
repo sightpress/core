@@ -27,6 +27,8 @@ final class FormTest extends TestCase
 
         self::assertSame('profile', $form->id);
         self::assertCount(2, $form->fields());
+        self::assertTrue($form->has('topics'));
+        self::assertFalse($form->has('email'));
         self::assertSame('Ada', $form->value('display_name'));
         self::assertSame('Ada', $form->text('display_name'));
         self::assertSame('', $form->text('topics'));

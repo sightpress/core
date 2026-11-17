@@ -35,5 +35,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0015](0015-m1-dependency-baseline.md) | Runtime dependencies for M1 (amends ADR-0013) | Proposed |
 | [0016](0016-module-entities-and-site-services.md) | Module services live in the site container; core modules map entities from a core list | Proposed |
 | [0017](0017-verification-codes-not-links.md) | Verification messages carry a six-digit code, never a link | Proposed |
+| [0018](0018-page-editor-from-block-schemas.md) | The page editor builds its fields from block schemas | Proposed |
 
 When an ADR's status changes, update it here too.

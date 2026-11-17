@@ -39,10 +39,10 @@ final class ImageBlock implements BlockType
             'additionalProperties' => false,
             'required' => ['media'],
             'properties' => [
-                'media' => ['type' => 'integer', 'format' => SchemaConstraints::FORMAT_IMAGE],
-                'alt' => ['type' => 'string', 'maxLength' => 1000],
-                'decorative' => ['type' => 'boolean'],
-                'caption' => ['type' => 'string', 'maxLength' => 2000],
+                'media' => ['title' => 'Image', 'description' => 'A picture from the media library.', 'type' => 'integer', 'format' => SchemaConstraints::FORMAT_IMAGE],
+                'alt' => ['title' => 'Alternative text', 'description' => 'What the picture shows, for people who can\'t see it. Leave it empty only for a decorative picture.', 'type' => 'string', 'maxLength' => 1000],
+                'decorative' => ['title' => 'The picture is only decoration: screen readers skip it', 'type' => 'boolean'],
+                'caption' => ['title' => 'Caption', 'description' => 'Shown under the picture, for everyone.', 'type' => 'string', 'maxLength' => 2000],
             ],
         ];
     }

@@ -15,6 +15,11 @@ use DateTimeImmutable;
 interface MediaFile
 {
     /**
+     * The file's id in the media library, which blocks store (null only before the file is saved).
+     */
+    public function id(): ?int;
+
+    /**
      * The random public name of the file: 32 lower-case hex characters.
      */
     public function key(): string;

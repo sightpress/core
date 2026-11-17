@@ -39,8 +39,8 @@ final class FileDownloadBlock implements BlockType
             'additionalProperties' => false,
             'required' => ['media', 'text'],
             'properties' => [
-                'media' => ['type' => 'integer', 'format' => SchemaConstraints::FORMAT_MEDIA],
-                'text' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 200],
+                'media' => ['title' => 'File', 'description' => 'A file from the media library.', 'type' => 'integer', 'format' => SchemaConstraints::FORMAT_MEDIA],
+                'text' => ['title' => 'Link text', 'description' => 'What the file is, for example "Annual report 2026". Its type and size are added for you.', 'type' => 'string', 'minLength' => 1, 'maxLength' => 200],
             ],
         ];
     }

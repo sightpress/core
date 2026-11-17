@@ -25,7 +25,7 @@ final class Browser
     }
 
     /**
-     * @param array<string, string>                              $body
+     * @param array<string, mixed>                               $body
      * @param array<string, string>                              $headers
      * @param array<string, \Psr\Http\Message\UploadedFileInterface> $files
      */
@@ -59,7 +59,7 @@ final class Browser
     /**
      * Opens a page and sends a form back to `$path` (or `$action`) with the CSRF token and the given fields.
      *
-     * @param array<string, string>                              $fields
+     * @param array<string, mixed>                               $fields form fields; nested arrays for names such as `blocks[0][type]`
      * @param array<string, \Psr\Http\Message\UploadedFileInterface> $files
      * @param array<string, string>                              $headers
      */

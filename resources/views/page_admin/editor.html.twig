@@ -1,0 +1,243 @@
+{#
+    The page editor (/admin/pages/{id}), all server-rendered (ADR-0004, D4):
+
+    - one form with the fields about the page, a "Search & AI" fieldset (with a character count of the
+      description in a polite live region, kept up to date by js/page-admin.js, and a text-only preview of the
+      search result) and the blocks; "Save page" is the first and the last button, so Enter in a field saves;
+    - each block is a fieldset whose legend says where it is ("Block 2 of 5: Image"), with a control per field of
+      its schema and buttons that move it up or down or remove it; the buttons' names end with the block
+      ("Move up: block 2, Image"). They send the form without saving it; the page comes back with what changed in
+      the live region and `autofocus` on the block, or on the same button where it moved (`focus`);
+    - rich text is a textarea of HTML with a preview below it (a <details>), as it will be saved;
+    - errors of the fields and of the blocks are in the error summary at the top, which gets focus;
+    - then the publish checks of the saved page (linking to the fields) and the workflow buttons.
+
+    Context: see PageEditorScreen::render().
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% import _self as e %}
+{% block title %}{{ t('Edit “{title}”', {title: page_title}) }}{% endblock %}
+{% block content %}
+<h1>{{ t('Edit “{title}”', {title: page_title}) }}</h1>
+<p class="page-editor__status">
+    {{ t('State: {state}', {state: t(state)}) }}
+    {%- if url %} · {{ t('Address: {url}', {url: url}) }} · <a href="{{ url }}">{{ t('View the saved page') }}</a>{% endif %}
+    · <a href="/admin/pages">{{ t('All pages') }}</a>
+</p>
+{%- set summary = [] %}
+{%- for error in form.errorSummary %}{% set summary = summary|merge([{id: error.fieldId, message: error.message}]) %}{% endfor %}
+{%- set summary = summary|merge(block_errors) %}
+{%- if summary is not empty %}
+<section class="error-summary" id="page-editor-errors" aria-labelledby="page-editor-errors-title" tabindex="-1" autofocus>
+    <h2 id="page-editor-errors-title">{{ t('There is a problem') }}</h2>
+    <p>{{ t('The page has not been saved.') }}</p>
+    <ul>
+        {%- for error in summary %}
+        <li><a href="#{{ error.id }}">{{ error.message }}</a></li>
+        {%- endfor %}
+    </ul>
+</section>
+{%- endif %}
+{%- if editable %}
+{{ f.start(form, action) }}
+    <div class="page-editor__save">
+        <button type="submit" name="op" value="save">{{ t('Save page') }}</button>
+        <p class="field-hint">{{ t('Nothing is kept until you save. The buttons that add, move or remove blocks don’t save.') }}</p>
+    </div>
+    <fieldset class="admin-panel">
+        <legend>{{ t('About the page') }}</legend>
+        {{ f.field(form, 'title') }}
+        {{ f.field(form, 'slug') }}
+        {{ f.field(form, 'layout') }}
+    </fieldset>
+    <fieldset class="admin-panel">
+        <legend>{{ t('Search & AI') }}</legend>
+        {{ f.field(form, 'summary') }}
+        {{ f.field(form, 'seo_title') }}
+        {{ f.field(form, 'description') }}
+        <p class="character-count" id="{{ form.fieldId('description') }}-count" data-count-for="{{ form.fieldId('description') }}" data-count-max="{{ description_max }}" aria-live="polite">{{ t('{count} characters. Search engines show about {max}.', {count: description_length, max: description_max}) }}</p>
+        {%- if form.has('social_image') %}
+        {{ f.field(form, 'social_image') }}
+        {%- endif %}
+        {{ f.field(form, 'noindex') }}
+        {{ f.field(form, 'canonical_url') }}
+        <section class="search-preview" id="search-preview" aria-labelledby="search-preview-title" tabindex="-1"{% if focus == 'search-preview' %} autofocus{% endif %}>
+            <h2 id="search-preview-title">{{ t('How a search result could look') }}</h2>
+            <p class="search-preview__title">{{ search.title }}</p>
+            <p class="search-preview__url">{{ search.url }}</p>
+            <p class="search-preview__description">{{ search.description ?? t('No description or summary yet: search engines pick some text from the page.') }}</p>
+            <button type="submit" name="op" value="preview" class="button button--secondary">{{ t('Update the previews') }}</button>
+        </section>
+    </fieldset>
+    <section class="admin-panel page-editor__blocks" aria-labelledby="blocks-title">
+        <h2 id="blocks-title">{{ t('Content') }}</h2>
+        <p>{{ t('The page is made of blocks, shown one after another. Each block below is a group of fields with buttons to move or remove it.') }}</p>
+        {{ e.block_list(blocks, focus) }}
+    </section>
+    <div class="page-editor__save">
+        <button type="submit" name="op" value="save">{{ t('Save page') }}</button>
+    </div>
+{{ f.end() }}
+{%- else %}
+<p>{{ t('You can’t change this page now: it is {state}. You can still view it and use the buttons below.', {state: t(state)|lower}) }}</p>
+{%- endif %}
+{%- if report %}
+{% include '@page/publish-report.html.twig' with {report: report, focus: report_focus} %}
+{%- endif %}
+{%- if transitions is not empty %}
+<section class="admin-panel" aria-labelledby="workflow-title">
+    <h2 id="workflow-title">{{ t('Review and publishing') }}</h2>
+    <form action="{{ workflow_action }}" method="post">
+        {{ csrf_fields() }}
+        <p>{{ t('These buttons use the saved page. Save your changes first.') }}</p>
+        <div class="field">
+            <label for="workflow-comment">{{ t('Note for the next person') }} {{ t('(optional)') }}</label>
+            <p class="field-hint" id="workflow-comment-hint">{{ t('For example what you changed, or what needs fixing. At most 1000 characters.') }}</p>
+            <textarea id="workflow-comment" name="comment" rows="3" maxlength="1000" aria-describedby="workflow-comment-hint"></textarea>
+        </div>
+        <div class="page-editor__workflow">
+            {%- for transition in transitions %}
+            <button type="submit" name="transition" value="{{ transition.value }}"{% if transition.value == 'reject' or transition.value == 'unpublish' %} class="button button--secondary"{% endif %}>{{ t(transition.label) }}</button>
+            {%- endfor %}
+        </div>
+    </form>
+</section>
+{%- endif %}
+{% endblock %}
+{% block scripts %}{{ parent() }}<script src="{{ asset('js/page-admin.js') }}" defer></script>{% endblock %}
+
+{% macro block_list(list, focus) %}
+    {%- import _self as e %}
+    <div class="block-list" id="{{ list.id }}" tabindex="-1"{% if focus == list.id %} autofocus{% endif %}>
+        {{ e.errors(list) }}
+        {%- if list.blocks is empty %}
+        <p>{{ list.top_level ? t('There are no blocks yet. Add the first one below.') : t('No blocks here yet.') }}</p>
+        {%- endif %}
+        {%- for block in list.blocks %}
+        {{ e.block(block, focus) }}
+        {%- endfor %}
+        {%- if list.can_add %}
+        <div class="block-list__add">
+            <label for="{{ list.id }}-add-type">{{ list.top_level ? t('Type of block to add') : t('Type of block to add here') }}</label>
+            <select id="{{ list.id }}-add-type" name="add_type[{{ list.pointer }}]">
+                {%- for value, label in list.add_choices %}
+                <option value="{{ value }}">{{ t(label) }}</option>
+                {%- endfor %}
+            </select>
+            <button type="submit" name="op" value="add:{{ list.pointer }}" class="button button--secondary">{{ t('Add block') }}</button>
+        </div>
+        {%- endif %}
+    </div>
+{% endmacro %}
+
+{% macro block(block, focus) %}
+    {%- import _self as e %}
+    <fieldset class="block-editor" id="{{ block.id }}" tabindex="-1"{% if focus == block.id %} autofocus{% endif %}>
+        <legend>{{ block.legend }}</legend>
+        <input type="hidden" name="{{ block.name }}[type]" value="{{ block.type }}">
+        <input type="hidden" name="{{ block.name }}[version]" value="{{ block.version }}">
+        {%- if block.kept is not null %}
+        <input type="hidden" name="{{ block.name }}[kept]" value="{{ block.kept }}">
+        <p>{{ t('This kind of block isn’t installed on the site, so it can’t be changed here. Saving the page keeps it as it is; remove it if it is no longer needed.') }}</p>
+        {%- endif %}
+        {{ e.errors(block) }}
+        {%- for control in block.controls %}
+        {{ e.control(control, focus) }}
+        {%- endfor %}
+        {%- if block.preview is not null %}
+        <details class="block-editor__preview">
+            <summary>{{ t('Preview of {block}', {block: block.short}) }}</summary>
+            <div class="block-editor__preview-content">{{ block.preview|raw }}</div>
+        </details>
+        {%- endif %}
+        {{ e.moves(block, focus) }}
+    </fieldset>
+{% endmacro %}
+
+{% macro moves(node, focus) %}
+    {%- if node.moves is not empty %}
+    <div class="block-editor__actions">
+        {%- for move in node.moves %}
+        {%- set text = {up: t('Move up'), down: t('Move down'), remove: t('Remove')}[move] %}
+        {%- set id = node.id ~ '-' ~ move %}
+        <button type="submit" name="op" value="{{ move }}:{{ node.pointer }}" id="{{ id }}" class="button {{ move == 'remove' ? 'button--danger' : 'button--secondary' }}" aria-label="{{ text }}: {{ node.short }}"{% if focus == id %} autofocus{% endif %}>{{ text }}</button>
+        {%- endfor %}
+    </div>
+    {%- endif %}
+{% endmacro %}
+
+{% macro errors(node) %}
+    {%- for message in node.errors %}
+    <p class="field-error"><span class="visually-hidden">{{ t('Error:') }}</span> {{ message }}</p>
+    {%- endfor %}
+{% endmacro %}
+
+{% macro control(c, focus) %}
+    {%- import _self as e %}
+    {%- if c.kind == 'blocks' %}
+    <fieldset class="block-editor__group">
+        <legend>{{ t(c.label) }}</legend>
+        {{ e.block_list(c, focus) }}
+    </fieldset>
+    {%- elseif c.kind == 'items' %}
+    <fieldset class="block-editor__group" id="{{ c.id }}" tabindex="-1"{% if focus == c.id %} autofocus{% endif %}>
+        <legend>{{ t(c.label) }}</legend>
+        {%- if c.hint %}<p class="field-hint">{{ t(c.hint) }}</p>{% endif %}
+        {{ e.errors(c) }}
+        {%- for item in c.items %}
+        <fieldset class="block-editor__item" id="{{ item.id }}" tabindex="-1"{% if focus == item.id %} autofocus{% endif %}>
+            <legend>{{ item.legend }}</legend>
+            {#- Keeps an item that has no fields of its own yet (an empty column) when the form is sent. #}
+            <input type="hidden" name="{{ item.name }}[item]" value="1">
+            {{ e.errors(item) }}
+            {%- for child in item.controls %}
+            {{ e.control(child, focus) }}
+            {%- endfor %}
+            {{ e.moves(item, focus) }}
+        </fieldset>
+        {%- endfor %}
+        {%- if c.can_add %}
+        <button type="submit" name="op" value="add:{{ c.pointer }}" class="button button--secondary">{{ t('Add a {thing}', {thing: c.noun|lower}) }}</button>
+        {%- endif %}
+    </fieldset>
+    {%- else %}
+    {%- set error = c.errors|first %}
+    {%- set described = [c.hint ? c.id ~ '-hint' : null, error ? c.id ~ '-error' : null]|filter(v => v)|join(' ') %}
+    {%- set common %} name="{{ c.name }}"{% if described %} aria-describedby="{{ described }}"{% endif %}{% if error %} aria-invalid="true"{% endif %}{% endset %}
+    {%- set label %}{{ t(c.label) }}{% if not c.required and c.kind != 'checkbox' %} {{ t('(optional)') }}{% endif %}{% endset %}
+    {%- set notes %}
+        {%- if c.hint %}<p class="field-hint" id="{{ c.id }}-hint">{{ t(c.hint) }}</p>{% endif %}
+        {%- if error %}<p class="field-error" id="{{ c.id }}-error"><span class="visually-hidden">{{ t('Error:') }}</span> {{ error }}</p>{% endif %}
+    {%- endset %}
+    {%- if c.kind == 'checkbox' %}
+    <div class="field field--checkbox{% if error %} field--error{% endif %}">
+        {{ notes }}
+        <input type="checkbox" id="{{ c.id }}" value="1"{% if c.checked %} checked{% endif %}{{ common }}>
+        <label for="{{ c.id }}">{{ label }}</label>
+    </div>
+    {%- else %}
+    <div class="field{% if error %} field--error{% endif %}">
+        <label for="{{ c.id }}">{{ label }}</label>
+        {{ notes }}
+        {%- if c.kind == 'textarea' or c.kind == 'html' %}
+        <textarea id="{{ c.id }}" rows="{{ c.kind == 'html' ? 10 : 5 }}"{% if c.kind == 'html' %} spellcheck="true"{% endif %}{{ common }}>{{ c.value }}</textarea>
+        {%- elseif c.kind == 'select' or c.kind == 'media' %}
+        <select id="{{ c.id }}"{{ common }}>
+            {%- if c.kind == 'media' or not c.required %}
+            <option value="">{{ c.kind == 'media' ? t('No file chosen') : t('None') }}</option>
+            {%- endif %}
+            {%- for value, text in c.choices %}
+            <option value="{{ value }}"{% if c.value == value ~ '' %} selected{% endif %}>{{ text }}</option>
+            {%- endfor %}
+        </select>
+        {%- if c.kind == 'media' and c.choices is empty %}
+        <p class="field-hint">{{ t('There are no files of this kind yet.') }} <a href="/admin/media">{{ t('Upload them in the media library') }}</a></p>
+        {%- endif %}
+        {%- else %}
+        <input type="{{ c.kind == 'email' ? 'email' : (c.kind == 'number' ? 'number' : 'text') }}" id="{{ c.id }}" value="{{ c.value }}"{{ common }}>
+        {%- endif %}
+    </div>
+    {%- endif %}
+    {%- endif %}
+{% endmacro %}

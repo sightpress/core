@@ -1,0 +1,87 @@
+{#
+    The pages (/admin/pages): without filters, a tree of nested lists in the site's order. js/page-admin.js adds a
+    button before each list of subpages that shows and hides it ("Show the pages under About", aria-expanded);
+    without the script every level is shown. With filters, a flat list of the pages that match, each saying which
+    pages it is under. Each page links to its editor and says its state, address and who wrote it.
+    Context: `tree`, `matches`, `filtered`, `filters` {state, q, mine}, `states`, `can_create`, `total`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Pages') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Pages') }}</h1>
+{%- if can_create %}
+<p><a class="button" href="/admin/pages/new">{{ t('Start a new page') }}</a></p>
+{%- endif %}
+<form class="admin-filters" action="/admin/pages" method="get" role="search" aria-labelledby="page-filters-title">
+    <h2 id="page-filters-title">{{ t('Find pages') }}</h2>
+    <div class="field">
+        <label for="page-filter-q">{{ t('Title contains') }} {{ t('(optional)') }}</label>
+        <input type="search" id="page-filter-q" name="q" value="{{ filters.q }}">
+    </div>
+    <div class="field">
+        <label for="page-filter-state">{{ t('State') }}</label>
+        <select id="page-filter-state" name="state">
+            <option value="">{{ t('Any state') }}</option>
+            {%- for value, label in states %}
+            <option value="{{ value }}"{% if filters.state == value %} selected{% endif %}>{{ t(label) }}</option>
+            {%- endfor %}
+        </select>
+    </div>
+    <div class="field field--checkbox">
+        <input type="checkbox" id="page-filter-mine" name="mine" value="1"{% if filters.mine %} checked{% endif %}>
+        <label for="page-filter-mine">{{ t('Only pages I wrote') }}</label>
+    </div>
+    <button type="submit">{{ t('Show pages') }}</button>
+    {%- if filtered %} <a href="/admin/pages">{{ t('Show all pages') }}</a>{% endif %}
+</form>
+{%- if filtered %}
+<section class="admin-panel" aria-labelledby="page-results-title">
+    <h2 id="page-results-title">{{ matches|length == 1 ? t('1 page matches') : t('{count} pages match', {count: matches|length}) }}</h2>
+    {%- if matches is not empty %}
+    <ul class="page-list">
+        {%- for page in matches %}
+        <li>{{ _self.entry(page) }}
+            {%- if page.above is not empty %}
+            <span class="page-list__meta">{{ t('Under: {pages}', {pages: page.above|join(' › ')}) }}</span>
+            {%- endif %}
+        </li>
+        {%- endfor %}
+    </ul>
+    {%- endif %}
+</section>
+{%- else %}
+<section class="admin-panel" aria-labelledby="page-tree-title">
+    <h2 id="page-tree-title">{{ total == 1 ? t('All pages (1)') : t('All pages ({count})', {count: total}) }}</h2>
+    {%- if tree is empty %}
+    <p>{{ t('There are no pages yet.') }}</p>
+    {%- else %}
+    <div data-show-label="{{ t('Show the pages under') }}" data-hide-label="{{ t('Hide the pages under') }}">
+    {{ _self.tree(tree, 'page-tree') }}
+    </div>
+    {%- endif %}
+</section>
+{%- endif %}
+{% endblock %}
+{% block scripts %}{{ parent() }}<script src="{{ asset('js/page-admin.js') }}" defer></script>{% endblock %}
+{% macro tree(nodes, id) %}
+    <ul class="page-tree" id="{{ id }}">
+        {%- for node in nodes %}
+        <li>
+            {%- if node.open %}{{ _self.entry(node) }}{% else %}<span class="page-list__hidden">{{ t('A page you can’t open') }}</span>{% endif %}
+            {%- if node.children is not empty %}
+            {{ _self.tree(node.children, 'page-tree-' ~ node.id) }}
+            {%- endif %}
+        </li>
+        {%- endfor %}
+    </ul>
+{% endmacro %}
+{% macro entry(page) %}
+    <a href="/admin/pages/{{ page.id }}" lang="{{ page.locale }}" data-page-title>{{ page.title }}</a>
+    <span class="page-list__meta">
+        {{- t(page.state_label) }}
+        {%- if page.home %} · {{ t('Home page') }}{% endif %}
+        {%- if page.url %} · <span class="page-list__url">{{ page.url }}</span>{% endif %}
+        {%- if page.author %} · {{ page.mine ? t('Written by you') : t('Written by {name}', {name: page.author}) }}{% endif %}
+        · {{ t('Changed') }} <time datetime="{{ page.updated|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ page.updated|user_datetime }}</time>
+    </span>
+{% endmacro %}
