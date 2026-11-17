@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Menu;
 
 use SightPress\Core\Menu\Http\MenuAdminHandler;
+use SightPress\Core\Menu\Provisioning\DemoMenu;
 use SightPress\Core\Menu\Provisioning\StarterMenus;
 use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Site\Contract\SiteProvisioning;
@@ -51,9 +52,11 @@ final class MenuModule implements ModuleInterface
         $services->autowire(PublicMenus::class);
         $services->autowire(MenuAdminHandler::class);
         $services->autowire(StarterMenus::class);
+        $services->autowire(DemoMenu::class);
 
         $registrar->subscribers()->listen(PublicPageRendering::class, PublicMenus::class);
         $registrar->subscribers()->listen(SiteProvisioning::class, StarterMenus::class, StarterMenus::PRIORITY);
+        $registrar->subscribers()->listen(SiteProvisioning::class, DemoMenu::class, DemoMenu::PRIORITY);
         $registrar->routes()->add(new Route('menu.admin', MenuAdminHandler::PATH, MenuAdminHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('menu.admin', 'Menus', 'menu.admin', MenuAdminHandler::PERMISSION, position: 35));
     }

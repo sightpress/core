@@ -40,6 +40,7 @@ final class LoginHandlerTest extends TestCase
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('no-store', $response->getHeaderLine('Cache-Control'));
+        self::assertSame('noindex, nofollow', $response->getHeaderLine('X-Robots-Tag'));
         self::assertStringContainsString('<title>Sign in - Demo</title>', $html);
         self::assertStringContainsString('<h1>Sign in</h1>', $html);
         self::assertStringContainsString('<form id="sign-in" action="/login" method="post" novalidate>', $html);
@@ -78,6 +79,7 @@ final class LoginHandlerTest extends TestCase
 
         self::assertSame(303, $response->getStatusCode());
         self::assertSame('/admin/pages', $response->getHeaderLine('Location'));
+        self::assertSame('noindex, nofollow', $response->getHeaderLine('X-Robots-Tag'), 'redirects say it too');
         self::assertSame($user->id(), $session->get(SignIn::SESSION_USER));
         self::assertFalse($response->hasHeader('Set-Cookie'), 'keep me signed in is off unless ticked');
     }

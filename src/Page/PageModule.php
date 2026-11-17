@@ -9,6 +9,7 @@ use SightPress\Core\Page\Contract\PageIndex;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Contract\PageOverview;
 use SightPress\Core\Page\Http\PublicPageHandler;
+use SightPress\Core\Page\Provisioning\DemoPages;
 use SightPress\Core\Page\Provisioning\StarterPages;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\Page\Contract\PageTransitioned;
@@ -69,10 +70,12 @@ final class PageModule implements ModuleInterface
         $services->autowire(PageWorkflow::class, public: true);
         $services->autowire(ReviewRequestMailer::class);
         $services->autowire(StarterPages::class);
+        $services->autowire(DemoPages::class);
 
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/page');
         $registrar->subscribers()->listen(PageTransitioned::class, ReviewRequestMailer::class);
         $registrar->subscribers()->listen(SiteProvisioning::class, StarterPages::class, SiteProvisioning::CONTENT);
+        $registrar->subscribers()->listen(SiteProvisioning::class, DemoPages::class, DemoPages::PRIORITY);
 
         $routes = $registrar->routes();
         $routes->add(new Route('page.home', '/', PublicPageHandler::class, ['GET', 'HEAD']));

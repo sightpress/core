@@ -2,8 +2,8 @@
 // They need a running skeleton: `docker compose up` in ../skeleton, then `composer a11y` here.
 // SIGHTPRESS_BASE_URL changes the address (default http://localhost:8080).
 // The component gallery (tests/A11y/gallery) and real sites for the sign-in pages (tests/A11y/sign-in), the content
-// blocks (tests/A11y/blocks) and the admin panel (tests/A11y/admin) run on PHP's built-in web server; Playwright
-// starts them.
+// blocks (tests/A11y/blocks), the admin panel (tests/A11y/admin) and the demo site the crawl checks (tests/A11y/demo,
+// made with site:create --with-demo-content) run on PHP's built-in web server; Playwright starts them.
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
@@ -33,6 +33,13 @@ export default defineConfig({
     {
       command: 'php -S 127.0.0.1:8097 tests/A11y/blocks/index.php',
       url: 'http://127.0.0.1:8097/visit',
+      reuseExistingServer: !process.env.CI,
+      stdout: 'ignore',
+      stderr: 'ignore',
+    },
+    {
+      command: 'php -S 127.0.0.1:8087 tests/A11y/demo/index.php',
+      url: 'http://127.0.0.1:8087/',
       reuseExistingServer: !process.env.CI,
       stdout: 'ignore',
       stderr: 'ignore',

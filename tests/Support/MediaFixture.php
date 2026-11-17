@@ -33,10 +33,10 @@ final class MediaFixture implements EventDispatcherInterface
     /** @var list<object> */
     public array $events = [];
 
-    public function __construct(public readonly MediaLimits $limits = new MediaLimits())
+    public function __construct(public readonly MediaLimits $limits = new MediaLimits(), ?CoreSiteDatabase $database = null)
     {
         $this->directory = new TemporaryDirectory();
-        $this->database = new CoreSiteDatabase();
+        $this->database = $database ?? new CoreSiteDatabase();
         $this->storage = new Filesystem(new LocalFilesystemAdapter($this->directory->path . '/site', lazyRootCreation: true));
         $this->clock = new FixedClock();
     }

@@ -17,6 +17,7 @@ use SightPress\Core\Auth\Http\LoginHandler;
 use SightPress\Core\Auth\Http\LogoutHandler;
 use SightPress\Core\Auth\Http\ResetCodeHandler;
 use SightPress\Core\Auth\Http\SetupAccountHandler;
+use SightPress\Core\Auth\Provisioning\DemoAccounts;
 use SightPress\Core\Auth\Provisioning\FirstSetupCode;
 use SightPress\Core\Http\RateLimit\RateLimiters;
 use SightPress\Core\Http\Security\Authenticator;
@@ -77,6 +78,7 @@ final class AuthModule implements ModuleInterface
         }
 
         $registrar->subscribers()->listen(SiteProvisioning::class, FirstSetupCode::class, SiteProvisioning::SIGN_IN);
+        $registrar->subscribers()->listen(SiteProvisioning::class, DemoAccounts::class, DemoAccounts::PRIORITY);
         $registrar->commands()->add(CreateAdminCommand::class);
 
         $routes = $registrar->routes();

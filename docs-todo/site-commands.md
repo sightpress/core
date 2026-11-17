@@ -1,4 +1,4 @@
-# Creating and managing sites (C-2.3, C-2.4)
+# Creating and managing sites (C-2.3, C-2.4, C-8.1)
 
 ## What it does
 
@@ -40,6 +40,7 @@ address in `config/sites.php`.
 | `--timezone` | no | IANA time zone (default: the tenant's `timezone`). |
 | `--url` | no | Address of the site, for the printed setup page, for example `http://localhost:8080` in development (default: `https://` and the first domain). |
 | `--create-db` | no | Create the database if it doesn't exist. The database user must be allowed to. |
+| `--with-demo-content` | no | Add demo content for trying SightPress out (see below). Don't use it for a real site. |
 
 What happens, in order:
 
@@ -56,6 +57,23 @@ The command prints, for example: "Give the setup code 123 456 to ada@example.org
 https://demo.example.org/login/setup, type their email address and the code, and choose their password. The code
 works once, for 7 days." Pass it on by a channel you trust (in person, by phone). The account is pending until they
 choose a password. Nothing is emailed: SightPress never sends links.
+
+## Demo content
+
+`--with-demo-content` fills the new site so you can try everything out (and so the accessibility tests have something
+to check). After the starter pages and menus it adds:
+
+1. Five files in the media library, described and published: a picture with alt text, a short video with captions and
+   a transcript, a recording with a transcript, and a one-page PDF. They are made for SightPress, with no
+   third-party material (`resources/demo/`).
+2. One account for each other role: Bea Okafor (editor, `bea@example.org`), Cleo Martins (contributor,
+   `cleo@example.org`) and Max Müller (member, `max@example.org`). Each waits for its setup code, which the command
+   prints like the first admin's.
+3. A published page "Every kind of block" at `/every-block`, with one block of every kind core has, and a published
+   page under it (`/every-block/under`) written by Cleo.
+4. Both pages in the main menu, the second one level down.
+
+The `example.org` addresses can't receive email; give the printed codes to whoever tries the site out.
 
 ## Another admin, or a new setup code
 
@@ -115,13 +133,21 @@ bin/sightpress site:enable demo
 
 `site:create` dispatches `SightPress\Core\Site\Contract\SiteProvisioning` after the migrations ran. Listen to it with
 `$registrar->subscribers()->listen(SiteProvisioning::class, MyStep::class, $priority)`. Listeners run from the
-highest priority down (`ACCOUNTS` 300, `ROLES` 200, `SIGN_IN` 100, `CONTENT` 0); take services from
-`$event->services` (the new site's container) and tell the operator what you did with `$event->report()`.
+highest priority down (`ACCOUNTS` 300, `ROLES` 200, `SIGN_IN` 100, `CONTENT` 0, `DEMO` -100 and below); take
+services from `$event->services` (the new site's container) and tell the operator what you did with `$event->report()`.
+
+Demo steps only act when `$event->demo` is true (`--with-demo-content`). A step can pass the id of something it made to
+later steps with `$event->share('demo.picture', $id)`; they read it with `$event->shared('demo.picture')` (`null` when
+nothing was shared under that name).
 
 ## Code and tests
 
 - `src/Site/Command/`, `src/Site/Contract/SiteProvisioning.php`, `src/Site/Contract/FirstAdmin.php`,
   `src/Tenant/SiteMigrator.php`, `src/Infrastructure/Database/DatabaseProvisioner.php`,
   `src/User/Provisioning/`, `src/Rbac/Provisioning/`, `src/Auth/Provisioning/`, `src/Cli/ModuleCommand.php`
+- Demo content: `src/Media/Admin/Provisioning/DemoMedia.php`, `src/Auth/Provisioning/DemoAccounts.php`,
+  `src/Page/Provisioning/DemoPages.php`, `src/Menu/Provisioning/DemoMenu.php`, `resources/demo/`
 - `tests/Unit/Site/`, `tests/Unit/Infrastructure/Database/DatabaseProvisionerTest.php`,
-  `tests/Integration/Site/SiteCreationTest.php`, `tests/Integration/Site/SiteDatabaseChangeTest.php`
+  `tests/Integration/Site/SiteCreationTest.php`, `tests/Integration/Site/SiteDatabaseChangeTest.php`,
+  `tests/Unit/Site/DemoContentTest.php`; the accessibility crawl `tests/A11y/crawl.spec.ts` runs on a demo site
+  (`tests/A11y/demo/`)

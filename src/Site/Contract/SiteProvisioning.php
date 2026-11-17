@@ -28,10 +28,19 @@ final class SiteProvisioning
     public const int SIGN_IN = 100;
     public const int CONTENT = 0;
 
+    /**
+     * Demo content (`site:create --with-demo-content`), after everything else, in this order: media files (-100),
+     * accounts for each role (-110), a page with every block type (-120), menu entries (-130).
+     */
+    public const int DEMO = -100;
+
     private ?int $adminId = null;
 
     /** @var list<string> */
     private array $lines = [];
+
+    /** @var array<string, int> */
+    private array $shared = [];
 
     /**
      * @param string $baseUrl where the site answers, for links, for example `https://example.org`
@@ -41,6 +50,7 @@ final class SiteProvisioning
         public readonly ContainerInterface $services,
         public readonly FirstAdmin $admin,
         public readonly string $baseUrl,
+        public readonly bool $demo = false,
     ) {
     }
 
@@ -55,6 +65,19 @@ final class SiteProvisioning
     public function setAdminId(int $id): void
     {
         $this->adminId = $id;
+    }
+
+    /**
+     * Tells later steps the id of something a step made, for example `demo.picture`.
+     */
+    public function share(string $name, int $id): void
+    {
+        $this->shared[$name] = $id;
+    }
+
+    public function shared(string $name): ?int
+    {
+        return $this->shared[$name] ?? null;
     }
 
     /**

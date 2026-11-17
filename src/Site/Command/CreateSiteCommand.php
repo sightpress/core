@@ -80,6 +80,7 @@ final readonly class CreateSiteCommand implements Command
             new CommandParameter('timezone', 'Time zone of the site, for example Europe/London (default: the tenant\'s).', $option),
             new CommandParameter('url', 'Address of the site, for the printed setup page (default: https:// and the first domain).', $option),
             new CommandParameter('create-db', 'Create the database if it does not exist (the database user must be allowed to).', CommandParameterType::Flag),
+            new CommandParameter('with-demo-content', 'Add demo content for trying SightPress out: a page with every kind of block, its media files and an account for each role.', CommandParameterType::Flag),
         ];
     }
 
@@ -106,7 +107,7 @@ final readonly class CreateSiteCommand implements Command
             $versions = $this->migrator->migrate($site);
             $output->line(sprintf('Ran %s.', self::migrations(count($versions))));
 
-            $provisioning = new SiteProvisioning($site, $this->containers->forSite($site), $admin, $url);
+            $provisioning = new SiteProvisioning($site, $this->containers->forSite($site), $admin, $url, $input->flag('with-demo-content'));
             $this->events->dispatch($provisioning);
             $this->sites->save($site);
         } catch (Throwable $exception) {

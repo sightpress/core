@@ -9,6 +9,8 @@ use SightPress\Core\Media\Admin\Http\MediaItemHandler;
 use SightPress\Core\Media\Admin\Http\MediaLibraryHandler;
 use SightPress\Core\Media\Admin\Http\MediaUploadHandler;
 use SightPress\Core\Media\MediaEditor;
+use SightPress\Core\Media\Admin\Provisioning\DemoMedia;
+use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\ModuleInterface;
@@ -46,11 +48,12 @@ final class MediaAdminModule implements ModuleInterface
         $registrar->views()->add(self::ID, dirname(__DIR__, 3) . '/resources/views/media');
 
         $services = $registrar->services();
-        foreach ([MediaAdmin::class, MediaEditor::class, MediaLibraryHandler::class, MediaUploadHandler::class, MediaItemHandler::class, MediaDeleteHandler::class] as $class) {
+        foreach ([MediaAdmin::class, MediaEditor::class, MediaLibraryHandler::class, MediaUploadHandler::class, MediaItemHandler::class, MediaDeleteHandler::class, DemoMedia::class] as $class) {
             $services->autowire($class);
         }
 
         $item = MediaAdmin::PATH . '/{' . MediaAdmin::ID_ATTRIBUTE . ':[0-9]+}';
+        $registrar->subscribers()->listen(SiteProvisioning::class, DemoMedia::class, DemoMedia::PRIORITY);
         $routes = $registrar->routes();
         $routes->add(new Route('media_admin.library', MediaAdmin::PATH, MediaLibraryHandler::class, middleware: [AdminAccessMiddleware::class]));
         $routes->add(new Route('media_admin.upload', MediaUploadHandler::PATH, MediaUploadHandler::class, ['POST'], [AdminAccessMiddleware::class]));

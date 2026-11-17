@@ -35,7 +35,8 @@ final readonly class AuthPages
                 'site_name' => $this->site->name,
                 'messages' => Flash::take(Session::fromRequest($request)),
             ] + $context, $status)
-            ->withHeader('Cache-Control', 'no-store');
+            ->withHeader('Cache-Control', 'no-store')
+            ->withHeader('X-Robots-Tag', 'noindex, nofollow');
     }
 
     /**
@@ -45,7 +46,8 @@ final readonly class AuthPages
     {
         return $this->responses->createResponse(303)
             ->withHeader('Location', $path)
-            ->withHeader('Cache-Control', 'no-store');
+            ->withHeader('Cache-Control', 'no-store')
+            ->withHeader('X-Robots-Tag', 'noindex, nofollow');
     }
 
     /**
