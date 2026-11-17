@@ -7,11 +7,14 @@ namespace SightPress\Core\Module\Registrar;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\Registrar\AdminMenuRegistrar;
+use SightPress\Module\Registrar\AssistantRegistrar;
 use SightPress\Module\Registrar\BlockTypeRegistrar;
 use SightPress\Module\Registrar\CommandRegistrar;
+use SightPress\Module\Registrar\DashboardRegistrar;
 use SightPress\Module\Registrar\MigrationRegistrar;
 use SightPress\Module\Registrar\PermissionRegistrar;
 use SightPress\Module\Registrar\RouteRegistrar;
+use SightPress\Module\Registrar\SearchRegistrar;
 use SightPress\Module\Registrar\ServiceRegistrar;
 use SightPress\Module\Registrar\SettingRegistrar;
 use SightPress\Module\Registrar\SubscriberRegistrar;
@@ -80,5 +83,20 @@ final readonly class ModuleScopedRegistrar implements ModuleRegistrar
     public function settings(): SettingRegistrar
     {
         return new SettingCollector($this->module, $this->registry);
+    }
+
+    public function search(): SearchRegistrar
+    {
+        return new SearchCollector($this->module, $this->registry);
+    }
+
+    public function dashboard(): DashboardRegistrar
+    {
+        return new DashboardCollector($this->module, $this->registry);
+    }
+
+    public function assistant(): AssistantRegistrar
+    {
+        return new AssistantCollector($this->module, $this->registry);
     }
 }

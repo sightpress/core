@@ -7,11 +7,16 @@ namespace SightPress\Core\Module;
 use SightPress\Core\Module\Registrar\ModuleScopedRegistrar;
 use SightPress\Module\Access\Permission;
 use SightPress\Module\Admin\AdminMenuItem;
+use SightPress\Module\Assistant\AssistantProvider;
+use SightPress\Module\Assistant\AssistantTask;
 use SightPress\Module\Block\BlockType;
 use SightPress\Module\Console\Command;
+use SightPress\Module\Dashboard\DashboardWidget;
 use SightPress\Module\Exception\InvalidValueException;
 use SightPress\Module\Migration\MigrationProvider;
 use SightPress\Module\Routing\Route;
+use SightPress\Module\Search\SearchBackend;
+use SightPress\Module\Search\SearchDocumentProvider;
 use SightPress\Module\Setting\Setting;
 
 /**
@@ -19,7 +24,8 @@ use SightPress\Module\Setting\Setting;
  * {@see self::register()}; the kernel turns it into services, routes, views, migrations, listeners and commands.
  *
  * Two modules can't register the same service id, route name, method and path, permission, setting, admin menu
- * entry, view namespace or migration namespace: the error names both modules.
+ * entry, view namespace, migration namespace, search provider, dashboard widget, assistant provider or task, and
+ * only one module may replace the search back-end: the error names both modules.
  */
 final class ModuleRegistry
 {
@@ -58,6 +64,21 @@ final class ModuleRegistry
 
     /** @var array<string, Registered<Setting>> */
     private array $settings = [];
+
+    /** @var array<class-string<SearchDocumentProvider>, Registered<class-string<SearchDocumentProvider>>> */
+    private array $searchProviders = [];
+
+    /** @var Registered<class-string<SearchBackend>>|null */
+    private ?Registered $searchBackend = null;
+
+    /** @var array<class-string<DashboardWidget>, Registered<class-string<DashboardWidget>>> */
+    private array $dashboardWidgets = [];
+
+    /** @var array<class-string<AssistantProvider>, Registered<class-string<AssistantProvider>>> */
+    private array $assistantProviders = [];
+
+    /** @var array<class-string<AssistantTask>, Registered<class-string<AssistantTask>>> */
+    private array $assistantTasks = [];
 
     /**
      * Lets every module register, in the given (dependency) order.
@@ -201,6 +222,65 @@ final class ModuleRegistry
     }
 
     /**
+     * @param non-empty-string                     $module
+     * @param class-string<SearchDocumentProvider> $provider
+     */
+    public function addSearchProvider(string $module, string $provider): void
+    {
+        $this->unique($this->searchProviders, $provider, 'Search document provider', $module);
+        $this->searchProviders[$provider] = new Registered($module, $provider);
+    }
+
+    /**
+     * @param non-empty-string            $module
+     * @param class-string<SearchBackend> $backend
+     */
+    public function useSearchBackend(string $module, string $backend): void
+    {
+        if ($this->searchBackend !== null) {
+            throw new ModuleException(sprintf(
+                'Module "%s" replaces the search back-end with %s, but module "%s" already replaced it with %s. '
+                . 'Turn one of them off.',
+                $module,
+                $backend,
+                $this->searchBackend->module,
+                $this->searchBackend->item,
+            ));
+        }
+        $this->searchBackend = new Registered($module, $backend);
+    }
+
+    /**
+     * @param non-empty-string              $module
+     * @param class-string<DashboardWidget> $widget
+     */
+    public function addDashboardWidget(string $module, string $widget): void
+    {
+        $this->unique($this->dashboardWidgets, $widget, 'Dashboard widget', $module);
+        $this->dashboardWidgets[$widget] = new Registered($module, $widget);
+    }
+
+    /**
+     * @param non-empty-string                $module
+     * @param class-string<AssistantProvider> $provider
+     */
+    public function addAssistantProvider(string $module, string $provider): void
+    {
+        $this->unique($this->assistantProviders, $provider, 'Assistant provider', $module);
+        $this->assistantProviders[$provider] = new Registered($module, $provider);
+    }
+
+    /**
+     * @param non-empty-string            $module
+     * @param class-string<AssistantTask> $task
+     */
+    public function addAssistantTask(string $module, string $task): void
+    {
+        $this->unique($this->assistantTasks, $task, 'Assistant task', $module);
+        $this->assistantTasks[$task] = new Registered($module, $task);
+    }
+
+    /**
      * @return array<string, Registered<ServiceDefinition>>
      */
     public function services(): array
@@ -278,6 +358,48 @@ final class ModuleRegistry
     public function settings(): array
     {
         return array_values($this->settings);
+    }
+
+    /**
+     * @return list<Registered<class-string<SearchDocumentProvider>>>
+     */
+    public function searchProviders(): array
+    {
+        return array_values($this->searchProviders);
+    }
+
+    /**
+     * The back-end a module put in place of core's built-in one, or null.
+     *
+     * @return Registered<class-string<SearchBackend>>|null
+     */
+    public function searchBackend(): ?Registered
+    {
+        return $this->searchBackend;
+    }
+
+    /**
+     * @return list<Registered<class-string<DashboardWidget>>>
+     */
+    public function dashboardWidgets(): array
+    {
+        return array_values($this->dashboardWidgets);
+    }
+
+    /**
+     * @return list<Registered<class-string<AssistantProvider>>>
+     */
+    public function assistantProviders(): array
+    {
+        return array_values($this->assistantProviders);
+    }
+
+    /**
+     * @return list<Registered<class-string<AssistantTask>>>
+     */
+    public function assistantTasks(): array
+    {
+        return array_values($this->assistantTasks);
     }
 
     /**

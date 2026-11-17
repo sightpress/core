@@ -6,7 +6,8 @@ Everything SightPress does beyond starting up and showing error pages comes from
 (users, roles, pages, blocks, media …) and modules installed by the site owner. When SightPress starts, the module
 loader finds every module, checks it, decides which ones are on, puts them in order and lets each one register what
 it adds: services, web addresses (routes), templates, database migrations, event listeners, console commands,
-permissions, settings, block types and admin menu entries.
+permissions, settings, block types, admin menu entries and, since `module-interface` 0.4, site search content (or
+a replacement search back-end), dashboard widgets and AI assistant providers and tasks.
 
 ## Who uses it
 
@@ -22,7 +23,7 @@ A module is a Composer package that requires `sightpress/module-interface` and n
 ```json
 {
     "require": {
-        "sightpress/module-interface": "^0.2"
+        "sightpress/module-interface": "^0.4"
     },
     "extra": {
         "sightpress": {
@@ -48,6 +49,7 @@ Each problem stops SightPress from starting, with a message that names the modul
 | A required module is off | Module "gallery" requires module "media", which is off. |
 | Modules require each other in a loop | These modules require each other in a loop, so none of them can start: a → b → c → a. |
 | Two modules register the same thing | Route "events.list" is registered twice: by module "acme.events" and by module "other.events". |
+| Two modules replace the search back-end | Module "b" replaces the search back-end with B\Backend, but module "a" already replaced it with A\Backend. Turn one of them off. |
 
 Modules start in dependency order: a module always registers after the modules it requires. Otherwise the
 order is the order they were found (core's first).

@@ -23,10 +23,15 @@ use SightPress\Core\Module\ServiceDefinition;
 use SightPress\Core\Module\ViewPath;
 use SightPress\Core\Tests\Support\CallbackHandler;
 use SightPress\Core\Tests\Support\FakeModule;
+use SightPress\Core\Tests\Support\Modules\ExampleAssistantProvider;
+use SightPress\Core\Tests\Support\Modules\ExampleAssistantTask;
 use SightPress\Core\Tests\Support\Modules\ExampleBlockType;
 use SightPress\Core\Tests\Support\Modules\ExampleCommand;
+use SightPress\Core\Tests\Support\Modules\ExampleDashboardWidget;
 use SightPress\Core\Tests\Support\Modules\ExampleEvent;
 use SightPress\Core\Tests\Support\Modules\ExampleMigrations;
+use SightPress\Core\Tests\Support\Modules\ExampleSearchBackend;
+use SightPress\Core\Tests\Support\Modules\ExampleSearchProvider;
 use SightPress\Core\Tests\Support\Modules\RecordingListener;
 use SightPress\Module\Access\Permission;
 use SightPress\Module\Admin\AdminMenuItem;
@@ -67,6 +72,11 @@ final class ModuleRegistryTest extends TestCase
                 $r->subscribers()->listen(ExampleEvent::class, RecordingListener::class, 10);
                 $r->commands()->add(ExampleCommand::class);
                 $r->settings()->add(new Setting('events.per_page', 'Events per page', SettingType::Integer, 10));
+                $r->search()->addProvider(ExampleSearchProvider::class);
+                $r->search()->useBackend(ExampleSearchBackend::class);
+                $r->dashboard()->add(ExampleDashboardWidget::class);
+                $r->assistant()->addProvider(ExampleAssistantProvider::class);
+                $r->assistant()->addTask(ExampleAssistantTask::class);
             }),
         );
 
@@ -92,6 +102,17 @@ final class ModuleRegistryTest extends TestCase
         self::assertSame(ExampleCommand::class, $registry->commands()[0]->item);
         self::assertSame('events.per_page', $registry->settings()[0]->item->key);
         self::assertSame('acme.events', $registry->settings()[0]->module);
+        self::assertSame(ExampleSearchProvider::class, $registry->searchProviders()[0]->item);
+        self::assertSame(ExampleSearchBackend::class, $registry->searchBackend()?->item);
+        self::assertSame('acme.events', $registry->searchBackend()->module);
+        self::assertSame(ExampleDashboardWidget::class, $registry->dashboardWidgets()[0]->item);
+        self::assertSame(ExampleAssistantProvider::class, $registry->assistantProviders()[0]->item);
+        self::assertSame([ExampleAssistantTask::class], array_map(static fn (Registered $r) => $r->item, $registry->assistantTasks()));
+    }
+
+    public function testCoreKeepsItsSearchBackEndUnlessAModuleReplacesIt(): void
+    {
+        self::assertNull($this->registry(new FakeModule('user'))->searchBackend());
     }
 
     /**
@@ -134,6 +155,27 @@ final class ModuleRegistryTest extends TestCase
         yield 'setting' => [
             static fn (ModuleRegistrar $r) => $r->settings()->add(new Setting('x.size', 'Size', SettingType::Integer, 1)),
             'Setting "x.size" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'search provider' => [
+            static fn (ModuleRegistrar $r) => $r->search()->addProvider(ExampleSearchProvider::class),
+            'Search document provider "' . ExampleSearchProvider::class . '" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'search back-end' => [
+            static fn (ModuleRegistrar $r) => $r->search()->useBackend(ExampleSearchBackend::class),
+            'Module "second" replaces the search back-end with ' . ExampleSearchBackend::class . ', but module "first" already replaced it with '
+            . ExampleSearchBackend::class . '. Turn one of them off.',
+        ];
+        yield 'dashboard widget' => [
+            static fn (ModuleRegistrar $r) => $r->dashboard()->add(ExampleDashboardWidget::class),
+            'Dashboard widget "' . ExampleDashboardWidget::class . '" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'assistant provider' => [
+            static fn (ModuleRegistrar $r) => $r->assistant()->addProvider(ExampleAssistantProvider::class),
+            'Assistant provider "' . ExampleAssistantProvider::class . '" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'assistant task' => [
+            static fn (ModuleRegistrar $r) => $r->assistant()->addTask(ExampleAssistantTask::class),
+            'Assistant task "' . ExampleAssistantTask::class . '" is registered twice: by module "first" and by module "second".',
         ];
     }
 
@@ -233,6 +275,26 @@ final class ModuleRegistryTest extends TestCase
         yield 'command is not a command' => [
             static fn (ModuleRegistrar $r) => $r->commands()->add(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
             'Module "acme" registers command stdClass, which is not a class that implements SightPress\Module\Console\Command.',
+        ];
+        yield 'search provider is not a provider' => [
+            static fn (ModuleRegistrar $r) => $r->search()->addProvider(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers search document provider stdClass, which is not a class that implements SightPress\Module\Search\SearchDocumentProvider.',
+        ];
+        yield 'search back-end is not a back-end' => [
+            static fn (ModuleRegistrar $r) => $r->search()->useBackend(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers search back-end stdClass, which is not a class that implements SightPress\Module\Search\SearchBackend.',
+        ];
+        yield 'dashboard widget is not a widget' => [
+            static fn (ModuleRegistrar $r) => $r->dashboard()->add(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers dashboard widget stdClass, which is not a class that implements SightPress\Module\Dashboard\DashboardWidget.',
+        ];
+        yield 'assistant provider is not a provider' => [
+            static fn (ModuleRegistrar $r) => $r->assistant()->addProvider(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers assistant provider stdClass, which is not a class that implements SightPress\Module\Assistant\AssistantProvider.',
+        ];
+        yield 'assistant task is not a task' => [
+            static fn (ModuleRegistrar $r) => $r->assistant()->addTask(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers assistant task stdClass, which is not a class that implements SightPress\Module\Assistant\AssistantTask.',
         ];
     }
 

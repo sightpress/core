@@ -40,5 +40,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0020](0020-demo-content-in-site-provisioning.md) | Demo content is a flag on site provisioning, and steps can share ids | Accepted |
 | [0021](0021-guided-command-questions.md) | Commands ask guided questions, described by their parameters | Accepted |
 | [0022](0022-site-password-policy.md) | Every site has a password policy, and the Passwords contract describes it | Accepted |
+| [0023](0023-search-dashboard-and-assistant-contracts.md) | Search, dashboard and AI assistant contracts (`module-interface` 0.4) | Proposed |
 
 When an ADR's status changes, update it here too.
