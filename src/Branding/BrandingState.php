@@ -18,6 +18,10 @@ final readonly class BrandingState
      *                                                                                             {@see BrandAsset}
      *                                                                                             value
      * @param array<string, string>                                                        $alt      by asset value
+     *                                                                                             (`logo`), or
+     *                                                                                             asset and
+     *                                                                                             locale
+     *                                                                                             (`logo@pt-PT`)
      */
     public function __construct(
         public array $assets = [],
@@ -64,9 +68,28 @@ final readonly class BrandingState
         return ($this->assets[$asset->value]['uploaded'] ?? false) === true;
     }
 
-    public function alt(BrandAsset $asset): ?string
+    /**
+     * What the picture shows, in the locale when it has its own text, else in the site's default locale.
+     */
+    public function alt(BrandAsset $asset, ?string $locale = null): ?string
     {
-        return $this->alt[$asset->value] ?? null;
+        return ($locale === null ? null : $this->alt[$asset->value . '@' . $locale] ?? null) ?? $this->alt[$asset->value] ?? null;
+    }
+
+    /**
+     * The same state with the asset's text in one locale (null: the default text); null or empty text removes it.
+     */
+    public function withAlt(BrandAsset $asset, ?string $locale, ?string $alt): self
+    {
+        $alts = $this->alt;
+        $key = $locale === null ? $asset->value : $asset->value . '@' . $locale;
+        if ($alt === null || $alt === '') {
+            unset($alts[$key]);
+        } else {
+            $alts[$key] = $alt;
+        }
+
+        return new self($this->assets, $alts, $this->version);
     }
 
     /**
@@ -80,6 +103,7 @@ final readonly class BrandingState
         $alts = $this->alt;
         if ($entry === null) {
             unset($assets[$asset->value]);
+            $alts = array_filter($alts, static fn (string $key): bool => !str_starts_with($key, $asset->value . '@'), ARRAY_FILTER_USE_KEY);
         } else {
             $assets[$asset->value] = $entry;
         }

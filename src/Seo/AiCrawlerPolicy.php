@@ -28,9 +28,9 @@ final readonly class AiCrawlerPolicy
     public const string BLOCK_ALL = 'block_all';
 
     public const array CHOICES = [
-        self::ALLOW_ALL => 'Allow all AI crawlers',
-        self::SEARCH_ONLY => 'Allow AI search and assistants, block AI training',
-        self::BLOCK_ALL => 'Block all AI crawlers',
+        self::ALLOW_ALL => 'Allow all: AI search, AI assistants and AI training may read the public pages',
+        self::SEARCH_ONLY => 'AI search only: AI search and assistants may read the public pages and link to them, but AI training may not',
+        self::BLOCK_ALL => 'Block all: no AI service may read the pages, and llms.txt and the Markdown versions of the pages are switched off',
     ];
 
     public function __construct(private SiteSettings $settings)

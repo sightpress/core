@@ -90,6 +90,21 @@ final class SiteTest extends TestCase
         self::assertEquals($site->createdAt, $archived->createdAt);
     }
 
+    public function testTakesTheNameLanguageAndTimeZoneTheAdminsChoseWhenTheyFit(): void
+    {
+        $site = \SightPress\Core\Tests\Support\PageFixture::site(['en-GB', 'pt-PT']);
+
+        $chosen = $site->withDisplay(' Riverside ', 'pt-PT', 'Asia/Tokyo');
+        self::assertSame(['Riverside', 'pt-PT', 'Asia/Tokyo'], [$chosen->name, $chosen->defaultLocale, $chosen->defaultTimezone]);
+        foreach (['id', 'slug', 'status', 'domains', 'databaseDsn', 'locales'] as $property) {
+            self::assertSame($site->{$property}, $chosen->{$property}, $property);
+        }
+
+        $kept = $site->withDisplay('  ', 'fr-FR', 'Mars/Olympus');
+        self::assertSame([$site->name, 'en-GB', $site->defaultTimezone], [$kept->name, $kept->defaultLocale, $kept->defaultTimezone]);
+        self::assertSame($site->name, $site->withDisplay(null, null, null)->name);
+    }
+
     public function testMovesToAnotherDatabaseKeepingEverythingElse(): void
     {
         $site = SiteFixture::site('demo', ['demo.example'], SiteStatus::Disabled);

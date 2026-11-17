@@ -1,0 +1,56 @@
+{#
+    Branding (/admin/settings/branding): one section per picture (logo, icon, share picture) with a preview whose
+    alt text says what it is, an upload field (native <input type=file> with `accept`), what the picture shows in
+    each of the site's languages, and "Reset to generated" once a picture was uploaded. An upload that is refused is
+    explained in an error summary that gets focus; every result is said in the live region.
+    Context: `assets` (see BrandingAdminHandler::view()), `error` ({asset, message} or null), `action`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Branding') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Branding') }}</h1>
+<p>{{ t('Every site always has a logo, an icon and a share picture: until you upload your own, they are made from the site name.') }} <a href="/admin/settings">{{ t('Back to the site settings') }}</a></p>
+{%- if error %}
+<section class="error-summary" id="branding-errors" aria-labelledby="branding-errors-title" tabindex="-1" autofocus>
+    <h2 id="branding-errors-title">{{ t('There is a problem') }}</h2>
+    <ul><li><a href="#{{ error.asset }}-file">{{ error.message }}</a></li></ul>
+</section>
+{%- endif %}
+{%- for a in assets %}
+<section class="admin-panel branding-asset" id="{{ a.asset }}" aria-labelledby="{{ a.asset }}-title" tabindex="-1">
+    <h2 id="{{ a.asset }}-title">{{ t(a.title) }}</h2>
+    <p>{{ t(a.intro) }}</p>
+    {%- if a.preview %}
+    <figure class="branding-asset__preview">
+        <img src="{{ a.preview }}" alt="{{ a.preview_alt }}"{% if a.width %} width="{{ a.width }}" height="{{ a.height }}"{% endif %}>
+        <figcaption>{{ a.uploaded ? t('Uploaded.') : t('Made from the site name.') }}{% if a.asset == 'share_image' %} {{ t('This is how it is cropped: {width} × {height} pixels.', {width: a.width, height: a.height}) }}{% endif %}</figcaption>
+    </figure>
+    {%- endif %}
+    {%- set invalid = error and error.asset == a.asset %}
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" novalidate>
+        {{ csrf_fields() }}
+        <input type="hidden" name="asset" value="{{ a.asset }}">
+        <div class="field{% if invalid %} field--error{% endif %}">
+            <label for="{{ a.asset }}-file">{{ t('New picture') }} {{ t('(optional)') }}</label>
+            {%- if invalid %}<p class="field-error" id="{{ a.asset }}-file-error"><span class="visually-hidden">{{ t('Error:') }}</span> {{ error.message }}</p>{% endif %}
+            <input type="file" id="{{ a.asset }}-file" name="file" accept="{{ a.accept }}"{% if invalid %} aria-invalid="true" aria-describedby="{{ a.asset }}-file-error"{% endif %}>
+        </div>
+        {%- for language in a.languages %}
+        <div class="field">
+            <label for="{{ a.asset }}-alt-{{ language.locale|lower }}">{{ a.languages|length > 1 ? t('What it shows, in {language}', {language: language.name}) : t('What it shows') }} {{ t('(optional)') }}</label>
+            {%- if loop.first %}<p class="field-hint" id="{{ a.asset }}-alt-hint">{{ t(a.alt_hint) }}</p>{% endif %}
+            <input type="text" id="{{ a.asset }}-alt-{{ language.locale|lower }}" name="alt[{{ language.locale }}]" value="{{ language.value }}" lang="{{ language.locale }}" maxlength="250" aria-describedby="{{ a.asset }}-alt-hint">
+        </div>
+        {%- endfor %}
+        <button type="submit" name="action" value="save">{{ t('Save the {thing}', {thing: t(a.title)|lower}) }}</button>
+    </form>
+    {%- if a.uploaded %}
+    <form action="{{ action }}" method="post">
+        {{ csrf_fields() }}
+        <input type="hidden" name="asset" value="{{ a.asset }}">
+        <button type="submit" name="action" value="reset" class="button button--secondary">{{ t('Reset the {thing} to the generated one', {thing: t(a.title)|lower}) }}</button>
+    </form>
+    {%- endif %}
+</section>
+{%- endfor %}
+{% endblock %}

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tenant;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,6 +18,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use ReflectionClass;
 use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Site\Contract\SiteProfile;
+use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Database\DatabaseDsn;
 use SightPress\Core\Infrastructure\Event\EventDispatcher;
@@ -109,7 +112,18 @@ final class SiteContainerFactory
 
         return [
             ...$this->moduleServices,
-            Site::class => $site,
+            // The name, default language and time zone the site's admins chose win over the registry. A site whose
+            // database isn't ready yet (while it is being created) keeps the registry's values.
+            Site::class => factory(static function (ContainerInterface $container) use ($site): Site {
+                if (!$container->has(SiteSettings::class)) {
+                    return $site;
+                }
+                try {
+                    return SiteProfile::display($site, Services::get($container, SiteSettings::class));
+                } catch (DbalException) {
+                    return $site;
+                }
+            }),
             Connection::class => factory(static fn (): Connection => new ReflectionClass(Connection::class)->newLazyProxy(
                 static fn (): Connection => DriverManager::getConnection(
                     DatabaseDsn::parse($secretBox->decrypt($site->databaseDsn))->connectionParams(),

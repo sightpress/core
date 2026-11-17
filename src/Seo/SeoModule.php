@@ -10,6 +10,8 @@ use SightPress\Core\Page\Contract\PageSaved;
 use SightPress\Core\Page\Contract\PageTransitioned;
 use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Seo\Command\CheckSeoCommand;
+use SightPress\Core\Seo\Contract\SiteVerification;
+use SightPress\Core\Seo\Http\IndexNowKeyHandler;
 use SightPress\Core\Seo\Http\SeoFileHandler;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
@@ -42,7 +44,7 @@ final class SeoModule implements ModuleInterface
     public function register(ModuleRegistrar $registrar): void
     {
         $services = $registrar->services();
-        foreach ([RobotsPolicy::class, SeoHead::class, SeoFileHandler::class, SeoCachePurger::class, AiCrawlerPolicy::class] as $class) {
+        foreach ([RobotsPolicy::class, SeoHead::class, SeoFileHandler::class, SeoCachePurger::class, AiCrawlerPolicy::class, SearchConsoles::class, IndexNow::class, IndexNowKeyHandler::class] as $class) {
             $services->autowire($class);
         }
         $services->autowire(SeoFiles::class, public: true);
@@ -52,11 +54,13 @@ final class SeoModule implements ModuleInterface
         foreach ([PageCreated::class, PageSaved::class, PageMoved::class, PageTransitioned::class] as $event) {
             $subscribers->listen($event, SeoCachePurger::class);
         }
+        $subscribers->listen(PageTransitioned::class, IndexNow::class);
         $registrar->commands()->add(CheckSeoCommand::class);
         $registrar->routes()->add(new Route('seo.sitemap', SeoFileHandler::SITEMAP, SeoFileHandler::class, ['GET', 'HEAD']));
         $registrar->routes()->add(new Route('seo.robots', SeoFileHandler::ROBOTS, SeoFileHandler::class, ['GET', 'HEAD']));
         $registrar->routes()->add(new Route('seo.llms', SeoFileHandler::LLMS, SeoFileHandler::class, ['GET', 'HEAD']));
         $registrar->routes()->add(new Route('seo.llms_full', SeoFileHandler::LLMS_FULL, SeoFileHandler::class, ['GET', 'HEAD']));
+        $registrar->routes()->add(new Route('seo.indexnow_key', IndexNow::PATH, IndexNowKeyHandler::class, ['GET', 'HEAD']));
         $registrar->settings()->add(new Setting(
             AiCrawlerPolicy::SETTING,
             'AI crawlers',
@@ -65,5 +69,10 @@ final class SeoModule implements ModuleInterface
             'Whether AI services may read the public pages of this site: to answer people\'s questions with a link back (AI search and assistants), and to train their models.',
             AiCrawlerPolicy::CHOICES,
         ));
+        $settings = $registrar->settings();
+        $settings->add(new Setting(array_keys(SiteVerification::CODES)[0], 'Google Search Console verification code', SettingType::Text, help: 'From Google Search Console, when you add the site there with the "HTML tag" method: only the code in content="…".'));
+        $settings->add(new Setting(array_keys(SiteVerification::CODES)[1], 'Bing Webmaster Tools verification code', SettingType::Text, help: 'From Bing Webmaster Tools, with the "meta tag" method: only the code in content="…".'));
+        $settings->add(new Setting(array_keys(SiteVerification::CODES)[2], 'Yandex Webmaster verification code', SettingType::Text, help: 'From Yandex Webmaster, with the "meta tag" method: only the code in content="…".'));
+        $settings->add(new Setting(IndexNow::SETTING, 'Tell search engines at once when a page is published or unpublished (IndexNow)', SettingType::Boolean, false, 'Off by default. When it is on, the site contacts the search engines that use IndexNow (such as Bing and Yandex) each time a page is published or unpublished.'));
     }
 }

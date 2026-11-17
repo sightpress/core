@@ -6,6 +6,7 @@ namespace SightPress\Core\Admin;
 
 use SightPress\Core\Admin\Contract\AdminScreens;
 use SightPress\Core\Admin\Http\DashboardHandler;
+use SightPress\Core\Admin\Http\SettingsHandler;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\ModuleInterface;
@@ -42,7 +43,10 @@ final class AdminModule implements ModuleInterface
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/admin');
         $registrar->services()->autowire(AdminShell::class, AdminScreens::class, public: true);
         $registrar->services()->autowire(DashboardHandler::class);
+        $registrar->services()->autowire(SettingsHandler::class);
         $registrar->routes()->add(new Route('admin.dashboard', '/admin', DashboardHandler::class, middleware: [AdminAccessMiddleware::class]));
+        $registrar->routes()->add(new Route('admin.settings', SettingsHandler::PATH, SettingsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('dashboard', 'Dashboard', 'admin.dashboard', position: -100));
+        $registrar->adminMenu()->add(new AdminMenuItem('admin.settings', 'Site settings', 'admin.settings', SettingsHandler::PERMISSION, position: 60));
     }
 }

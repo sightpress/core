@@ -13,6 +13,7 @@ use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageLinkQuery;
 use SightPress\Core\Seo\RobotsPolicy;
+use SightPress\Core\Seo\SearchConsoles;
 use SightPress\Core\Seo\SeoHead;
 use SightPress\Core\Tenant\TenantConfigLoader;
 use SightPress\Core\Tests\Support\BlockFixture;
@@ -20,6 +21,7 @@ use SightPress\Core\Tests\Support\PageFixture;
 use SightPress\Core\Tests\Support\TestProject;
 
 #[CoversClass(SeoHead::class)]
+#[CoversClass(SearchConsoles::class)]
 #[UsesNamespace('SightPress\Core')]
 final class SeoHeadTest extends TestCase
 {
@@ -95,8 +97,13 @@ final class SeoHeadTest extends TestCase
         $home = $this->pages->published('Welcome to Demo');
         $this->pages->editor()->save($home, 'pt-PT', new PageContent('Bem-vindo', 'inicio'));
 
+        $settings = $this->pages->database->settings();
+        $settings->set('seo.verify_google', 'abc-123_XYZ');
+        $settings->set('seo.verify_bing', 'not a code!');
         $front = $this->event((int) $home->id(), '/', 'Welcome to Demo', [], home: true);
         $this->head('test')($front);
+        self::assertStringContainsString('<meta name="google-site-verification" content="abc-123_XYZ">', $front->head());
+        self::assertStringNotContainsString('msvalidate.01', $front->head(), 'a code that doesn’t look right is left out');
         self::assertSame('Welcome to Demo', $front->variables()['document_title']);
         self::assertSame('noindex, nofollow', $front->robots());
         self::assertStringContainsString('<meta name="robots" content="noindex, nofollow">', $front->head());
@@ -143,6 +150,7 @@ final class SeoHeadTest extends TestCase
             new PageLinkQuery($this->pages->database->entityManager, $this->pages->addresses()),
             $blocks->renderer(),
             $blocks->contexts($this->pages->site),
+            new SearchConsoles($this->pages->database->settings()),
         );
     }
 }

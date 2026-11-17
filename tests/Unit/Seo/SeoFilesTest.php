@@ -119,6 +119,9 @@ final class SeoFilesTest extends TestCase
         $full = $files->llmsFull('https://demo.example');
         self::assertStringStartsWith("# Demo\n\n> The library by the river.\n\n# Home\n", $full);
         self::assertSame(3, substr_count($full, 'Source: <'));
+
+        $this->pages->database->settings()->set(\SightPress\Core\Site\Contract\SiteProfile::DESCRIPTION, "A library\nfor everyone.");
+        self::assertStringStartsWith("# Demo\n\n> A library for everyone.\n", $this->files('production', new ArrayAdapter())->llms('https://demo.example'), 'the site’s own description comes first');
     }
 
     public function testTheFullTextStopsBeforeItGetsTooLarge(): void
@@ -184,7 +187,7 @@ final class SeoFilesTest extends TestCase
     {
         $this->pages->published('Home');
         $config = new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => 'production']);
-        $files = new SeoFiles($this->index(), $this->policy('production'), $this->pages->site, $config, $this->aiCrawlers(), $this->documents());
+        $files = new SeoFiles($this->index(), $this->policy('production'), $this->pages->site, $config, $this->aiCrawlers(), $this->documents(), $this->pages->database->settings());
 
         self::assertStringContainsString('<loc>https://demo.example/</loc>', $files->sitemap('https://demo.example'));
         self::assertDirectoryExists($config->cacheDir . '/seo-' . $this->pages->site->id);
@@ -203,7 +206,7 @@ final class SeoFilesTest extends TestCase
 
     private function files(string $environment, ArrayAdapter $cache, ?MarkdownPages $documents = null): SeoFiles
     {
-        return new SeoFiles($this->index(), $this->policy($environment), $this->pages->site, new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]), $this->aiCrawlers(), $documents ?? $this->documents(), $cache);
+        return new SeoFiles($this->index(), $this->policy($environment), $this->pages->site, new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]), $this->aiCrawlers(), $documents ?? $this->documents(), $this->pages->database->settings(), $cache);
     }
 
     private function aiCrawlers(): AiCrawlerPolicy

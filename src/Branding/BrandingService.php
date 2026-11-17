@@ -45,7 +45,7 @@ final readonly class BrandingService
      */
     public function set(BrandAsset $asset, string $bytes, ?string $alt = null): BrandingState
     {
-        $alt = $alt === null || trim($alt) === '' ? null : mb_substr(trim((string) preg_replace('/\s+/u', ' ', $alt)), 0, 250);
+        $alt = self::clean($alt);
         [$files, $entry] = match ($asset) {
             BrandAsset::Logo => $this->logo($bytes),
             BrandAsset::Icon => [$this->images->iconSet($bytes), ['file' => 'icon-512.png', 'width' => 512, 'height' => 512, 'uploaded' => true]],
@@ -57,6 +57,24 @@ final readonly class BrandingService
         $this->replace($asset, $files);
 
         return $this->save($this->state()->with($asset, $entry, $asset === BrandAsset::Icon ? null : $alt));
+    }
+
+    /**
+     * Says what the logo or share image shows, in each of the site's locales (an empty text removes it; the logo
+     * then falls back to the site's name).
+     *
+     * @param array<string, string> $alts locale => text
+     */
+    public function describe(BrandAsset $asset, array $alts): BrandingState
+    {
+        $state = $this->state();
+        foreach ($this->site->locales as $locale) {
+            if (array_key_exists($locale, $alts)) {
+                $state = $state->withAlt($asset, $locale === $this->site->defaultLocale ? null : $locale, self::clean($alts[$locale]));
+            }
+        }
+
+        return $this->save($state);
     }
 
     /**
@@ -72,14 +90,15 @@ final readonly class BrandingService
     }
 
     /**
-     * Makes every picture that wasn't uploaded again, from the site's current name.
+     * Makes every picture that wasn't uploaded again, from the site's current name (or the new one, while the
+     * request that changed it still sees the old one).
      */
-    public function regenerate(): BrandingState
+    public function regenerate(?string $name = null): BrandingState
     {
         $state = $this->state();
         foreach (BrandAsset::cases() as $asset) {
             if (!$state->isUploaded($asset)) {
-                [$files, $entry] = $this->generated($asset);
+                [$files, $entry] = $this->generated($asset, $name);
                 $this->replace($asset, $files);
                 $state = $state->with($asset, $entry, $state->alt($asset));
             }
@@ -122,13 +141,15 @@ final readonly class BrandingService
     /**
      * @return array{array<string, string>, array{file: string, width: int, height: int, uploaded: bool}}
      */
-    private function generated(BrandAsset $asset): array
+    private function generated(BrandAsset $asset, ?string $name = null): array
     {
+        $name ??= $this->site->name;
+
         return match ($asset) {
-            BrandAsset::Logo => $this->wordmark(),
-            BrandAsset::Icon => [$this->images->initialsIconSet($this->site->name), ['file' => 'icon-512.png', 'width' => 512, 'height' => 512, 'uploaded' => false]],
+            BrandAsset::Logo => self::wordmark($name),
+            BrandAsset::Icon => [$this->images->initialsIconSet($name), ['file' => 'icon-512.png', 'width' => 512, 'height' => 512, 'uploaded' => false]],
             BrandAsset::ShareImage => [
-                ['share.png' => $this->images->generatedShareImage($this->site->name)],
+                ['share.png' => $this->images->generatedShareImage($name)],
                 ['file' => 'share.png', 'width' => BrandImages::SHARE_WIDTH, 'height' => BrandImages::SHARE_HEIGHT, 'uploaded' => false],
             ],
         };
@@ -137,9 +158,9 @@ final readonly class BrandingService
     /**
      * @return array{array<string, string>, array{file: string, width: int, height: int, uploaded: bool}}
      */
-    private function wordmark(): array
+    private static function wordmark(string $name): array
     {
-        [$svg, $width, $height] = BrandImages::wordmark($this->site->name);
+        [$svg, $width, $height] = BrandImages::wordmark($name);
 
         return [['wordmark.svg' => $svg], ['file' => 'wordmark.svg', 'width' => $width, 'height' => $height, 'uploaded' => false]];
     }
@@ -165,5 +186,10 @@ final readonly class BrandingService
         $this->settings->set(BrandingState::SETTING, $state->toJson());
 
         return $state;
+    }
+
+    private static function clean(?string $alt): ?string
+    {
+        return $alt === null || trim($alt) === '' ? null : mb_substr(trim((string) preg_replace('/\s+/u', ' ', $alt)), 0, 250);
     }
 }

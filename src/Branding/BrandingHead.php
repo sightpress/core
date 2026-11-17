@@ -9,6 +9,8 @@ use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Contract\MediaUrlGenerator;
 use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Tenant\OwnerType;
+use SightPress\Core\Site\Contract\SiteProfile;
+use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Tenant\Site;
 
 /**
@@ -25,6 +27,7 @@ final readonly class BrandingHead
         private Site $site,
         private MediaLibrary $media,
         private MediaUrlGenerator $urls,
+        private SiteSettings $settings,
     ) {
     }
 
@@ -85,7 +88,7 @@ final readonly class BrandingHead
         if ($logo !== null && $state->isUploaded(BrandAsset::Logo)) {
             $event->set('branding_logo', [
                 'url' => $file('/branding/' . $logo['file']),
-                'alt' => $state->alt(BrandAsset::Logo) ?? $name,
+                'alt' => $state->alt(BrandAsset::Logo, $event->locale) ?? $name,
                 'width' => $logo['width'],
                 'height' => $logo['height'],
             ]);
@@ -114,7 +117,7 @@ final readonly class BrandingHead
         }
         $share = $state->asset(BrandAsset::ShareImage) ?? ['file' => 'share.png', 'width' => BrandImages::SHARE_WIDTH, 'height' => BrandImages::SHARE_HEIGHT];
 
-        return [$file('/branding/' . $share['file']), $share['width'], $share['height'], $state->alt(BrandAsset::ShareImage) ?? $this->site->name];
+        return [$file('/branding/' . $share['file']), $share['width'], $share['height'], $state->alt(BrandAsset::ShareImage, $event->locale) ?? $this->site->name];
     }
 
     /**
@@ -126,6 +129,15 @@ final readonly class BrandingHead
     {
         $person = $this->site->ownerType === OwnerType::Person;
         $owner = ['@type' => $person ? 'Person' : 'Organization', '@id' => $base . '/#' . ($person ? 'person' : 'organization'), 'name' => $this->site->name, 'url' => $base . '/'];
+        $profile = SiteProfile::read($this->settings);
+        $owner += array_filter([
+            'legalName' => $person ? null : $profile->legalName,
+            'description' => $profile->description,
+            'email' => $profile->email,
+            'telephone' => $profile->phone,
+            'address' => $profile->address,
+            'sameAs' => $profile->sameAs === [] ? null : $profile->sameAs,
+        ], static fn (mixed $value): bool => $value !== null);
         $logo = $state->asset(BrandAsset::Logo);
         if ($logo !== null) {
             $owner[$person ? 'image' : 'logo'] = ['@type' => 'ImageObject', 'url' => $file('/branding/' . $logo['file']), 'width' => $logo['width'], 'height' => $logo['height']];

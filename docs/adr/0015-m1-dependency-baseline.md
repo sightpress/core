@@ -40,6 +40,7 @@ Core uses these runtime dependencies for M1. Each is a caret constraint on the m
 | File storage (+ its local adapter, a separate package in this major) | `league/flysystem`, `league/flysystem-local` | `^3` | C-5.1 |
 | Image processing (*new*) | `intervention/image` | `^4` | C-5.1 |
 | SVG sanitising (*new*) | `enshrined/svg-sanitize` | `^1` | C-6.6 |
+| Outgoing HTTP: IndexNow pings, off by default (*new*) | `symfony/http-client` | `^8` | C-7.3 |
 
 - Symfony components share one major (`^8`), as ADR-0013 requires, and are upgraded together.
 - PSR-7 comes from `nyholm/psr7` (ADR-0013), not `slim/psr7`.

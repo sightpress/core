@@ -39,6 +39,8 @@ final class AdminModuleTest extends TestCase
         self::assertSame([AdminAccessMiddleware::class], $routes[0]->item->middleware);
         $menu = array_values(array_filter($registry->adminMenu(), static fn ($m) => $m->module === 'admin'));
         self::assertSame(['dashboard', 'admin.dashboard', null], [$menu[0]->item->id, $menu[0]->item->route, $menu[0]->item->permission]);
+        self::assertSame(['admin.settings', 'settings.manage'], [$menu[1]->item->id, $menu[1]->item->permission]);
+        self::assertSame(['/admin/settings', \SightPress\Core\Admin\Http\SettingsHandler::class, ['GET', 'POST']], [$routes[1]->item->path, $routes[1]->item->handler, $routes[1]->item->methods]);
         $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'admin'));
         self::assertFileExists($views[0]->item->directory . '/layout.html.twig');
     }

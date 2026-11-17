@@ -36,5 +36,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0016](0016-module-entities-and-site-services.md) | Module services live in the site container; core modules map entities from a core list | Proposed |
 | [0017](0017-verification-codes-not-links.md) | Verification messages carry a six-digit code, never a link | Proposed |
 | [0018](0018-page-editor-from-block-schemas.md) | The page editor builds its fields from block schemas | Proposed |
+| [0019](0019-site-settings-in-the-site.md) | Site settings live in the site, and some of them win over the registry | Proposed |
 
 When an ADR's status changes, update it here too.

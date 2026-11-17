@@ -48,6 +48,11 @@ final class SiteModuleTest extends TestCase
             array_map(static fn ($registered) => $registered->item, $registry->commands()),
         );
         self::assertSame('SightPress\Core\Site\Migrations', $registry->migrations()[0]->item->namespace());
+        self::assertSame(
+            ['site.description', 'site.legal_name', 'site.contact_email', 'site.phone', 'site.address', 'site.same_as'],
+            array_map(static fn ($registered) => $registered->item->key, $registry->settings()),
+        );
+        self::assertSame([[\SightPress\Core\Site\Contract\SettingsChanged::class, \SightPress\Core\Site\DisplayChanged::class]], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $registry->listeners()));
         self::assertTrue($registry->services()[SiteSettings::class]->item->public);
         self::assertSame(DbalSiteSettings::class, $registry->services()[SiteSettings::class]->item->class);
     }

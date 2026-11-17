@@ -41,7 +41,7 @@ final class UserModuleTest extends TestCase
         self::assertSame(['site'], array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires));
         self::assertSame('SightPress\Core\User\Migrations', $registry->migrations()[1]->item->namespace());
         self::assertDirectoryExists($registry->migrations()[1]->item->directory());
-        $listener = $registry->listeners()[0]->item;
+        $listener = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'user'))[0]->item;
         self::assertSame([SiteProvisioning::class, CreateFirstAdmin::class, SiteProvisioning::ACCOUNTS], [$listener->event, $listener->listener, $listener->priority]);
         self::assertTrue($registry->services()[UserRepository::class]->item->public);
         self::assertSame(UserRepository::class, $registry->services()[\SightPress\Core\User\Contract\AccountDirectory::class]->item->class);

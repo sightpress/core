@@ -1,0 +1,46 @@
+{#
+    Site settings (/admin/settings): the site's name, main language and time zone, then one fieldset per group of
+    settings the modules registered (who runs the site, search & AI, others), and what can't be changed yet. One
+    "Save settings" button; errors go to the error summary, which gets focus.
+    Context: `form`, `action`, `sections` [{title, intro, fields}], `owner`, `languages`, `main_language`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Site settings') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Site settings') }}</h1>
+<p>{{ t('The logo, icon and share picture are on their own page:') }} <a href="/admin/settings/branding">{{ t('Branding') }}</a>.</p>
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    <fieldset class="admin-panel">
+        <legend>{{ t('The site') }}</legend>
+        {{ f.field(form, 'name') }}
+        {%- if languages %}
+        {{ f.field(form, 'default_locale') }}
+        {%- else %}
+        <p>{{ t('Language: {language}. More languages can be added from the command line.', {language: main_language}) }}</p>
+        {%- endif %}
+        {{ f.field(form, 'timezone') }}
+        <p>{{ t('The site is run by {owner}.', {owner: t(owner)}) }}</p>
+    </fieldset>
+    {%- for section in sections %}
+    <fieldset class="admin-panel">
+        <legend>{{ t(section.title) }}</legend>
+        {%- if section.intro %}<p>{{ t(section.intro) }}</p>{% endif %}
+        {%- for name in section.fields %}
+        {{ f.field(form, name) }}
+        {%- endfor %}
+    </fieldset>
+    {%- endfor %}
+    <section class="admin-panel" aria-labelledby="settings-later">
+        <h2 id="settings-later">{{ t('Not yet changeable') }}</h2>
+        <dl class="people-details">
+            <dt>{{ t('Visibility') }}</dt>
+            <dd>{{ t('Public: anyone can read the published pages. Sites for members only come in a later version.') }}</dd>
+            <dt>{{ t('Theme') }}</dt>
+            <dd>{{ t('SightPress Default. More themes come in a later version.') }}</dd>
+        </dl>
+    </section>
+    {{ f.submit(t('Save settings')) }}
+{{ f.end() }}
+{% endblock %}

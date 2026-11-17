@@ -119,6 +119,33 @@ final readonly class Site
     }
 
     /**
+     * The same site with what its admins chose in the site's own settings: the name visitors see, the default
+     * language (one of the site's languages) and the time zone dates are shown in. A value that doesn't fit is
+     * ignored, so a bad setting never stops the site.
+     */
+    public function withDisplay(?string $name, ?string $defaultLocale, ?string $defaultTimezone): self
+    {
+        $name = $name === null ? '' : trim($name);
+        $locale = $defaultLocale !== null && in_array($defaultLocale, $this->locales, true) ? $defaultLocale : $this->defaultLocale;
+        $timezone = $defaultTimezone !== null && in_array($defaultTimezone, DateTimeZone::listIdentifiers(), true) ? $defaultTimezone : $this->defaultTimezone;
+
+        return new self(
+            $this->id,
+            $this->slug,
+            $name === '' ? $this->name : $name,
+            $this->status,
+            $this->ownerType,
+            $this->domains,
+            $this->databaseDsn,
+            $this->storage,
+            $locale,
+            $this->locales,
+            $timezone,
+            $this->createdAt,
+        );
+    }
+
+    /**
      * The same site on another database.
      *
      * @param string $databaseDsn encrypted with {@see SecretBox}

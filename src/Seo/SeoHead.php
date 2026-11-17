@@ -29,6 +29,7 @@ final readonly class SeoHead
         private PageLinks $pages,
         private BlockRenderer $renderer,
         private BlockContexts $contexts,
+        private SearchConsoles $consoles,
     ) {
     }
 
@@ -51,6 +52,11 @@ final readonly class SeoHead
             $tags[] = self::tag('meta', ['name' => 'robots', 'content' => $robots]);
         }
         $tags[] = self::tag('link', ['rel' => 'canonical', 'href' => $canonical]);
+        if ($event->home) {
+            foreach ($this->consoles->tags() as $name => $code) {
+                $tags[] = self::tag('meta', ['name' => $name, 'content' => $code]);
+            }
+        }
         if ($event->public && !$event->noindex && $event->canonicalOverride === null) {
             $tags[] = self::tag('link', ['rel' => 'alternate', 'type' => 'text/markdown', 'href' => $base . MarkdownAddress::of($event->url, $event->home)]);
         }

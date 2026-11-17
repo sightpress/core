@@ -25,13 +25,16 @@ final class BrandingFixture
 
     public readonly Site $site;
 
-    public function __construct(string $name = 'Riverside Library', OwnerType $owner = OwnerType::Organization)
+    /**
+     * @param non-empty-list<string> $locales the first one is the default
+     */
+    public function __construct(string $name = 'Riverside Library', OwnerType $owner = OwnerType::Organization, array $locales = ['en-GB'])
     {
         $this->database = new CoreSiteDatabase();
         $this->directory = new TemporaryDirectory();
         $this->storage = new Filesystem(new LocalFilesystemAdapter($this->directory->path));
         $base = SiteFixture::site();
-        $this->site = new Site($base->id, $base->slug, $name, $base->status, $owner, $base->domains, $base->databaseDsn, $base->storage, 'en-GB', ['en-GB'], 'Europe/London', $base->createdAt);
+        $this->site = new Site($base->id, $base->slug, $name, $base->status, $owner, $base->domains, $base->databaseDsn, $base->storage, $locales[0], $locales, 'Europe/London', $base->createdAt);
     }
 
     public function service(): BrandingService

@@ -34,6 +34,7 @@ use stdClass;
 #[UsesClass(Services::class)]
 #[UsesClass(DatabaseDsn::class)]
 #[UsesClass(SecretBox::class)]
+#[UsesClass(\SightPress\Core\Site\Contract\SiteProfile::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
 #[UsesNamespace('SightPress\Core\Module')]
 #[UsesNamespace('SightPress\Core\Infrastructure\Event')]
@@ -120,6 +121,47 @@ final class SiteContainerFactoryTest extends TestCase
 
         $factory->reset();
         self::assertNotSame($third, $factory->forSite($site));
+    }
+
+    public function testTheSiteHasTheNameLanguageAndTimeZoneItsAdminsChose(): void
+    {
+        $settings = new class () implements \SightPress\Core\Site\Contract\SiteSettings {
+            /** @var array<string, string> */
+            public array $values = [];
+
+            public bool $broken = false;
+
+            public function get(string $key): ?string
+            {
+                if ($this->broken) {
+                    throw new \Doctrine\DBAL\Exception\TableNotFoundException(new \Doctrine\DBAL\Driver\PDO\Exception('no table'), null);
+                }
+
+                return $this->values[$key] ?? null;
+            }
+
+            public function set(string $key, string $value): void
+            {
+                $this->values[$key] = $value;
+            }
+        };
+        $settings->values = ['site.name' => 'Riverside Reading Room', 'site.default_timezone' => 'Asia/Tokyo', 'site.default_locale' => 'fr-FR'];
+        $factory = new SiteContainerFactory(
+            new Container(),
+            SiteFixture::secretBox(),
+            TenantConfig::fromArray(['cache_dir' => $this->directory->path], '/srv/app', ['APP_DEBUG' => '1']),
+            [],
+            [\SightPress\Core\Site\Contract\SiteSettings::class => $settings],
+        );
+        $registry = SiteFixture::site('demo');
+
+        $site = Services::get($factory->forSite($registry), Site::class);
+        self::assertSame(['Riverside Reading Room', 'Asia/Tokyo', $registry->defaultLocale], [$site->name, $site->defaultTimezone, $site->defaultLocale], 'a language the site isn’t written in is ignored');
+
+        $settings->broken = true;
+        $factory->reset();
+        self::assertSame($registry, Services::get($factory->forSite($registry), Site::class), 'a database without settings yet keeps the registry');
+        self::assertSame('demo', Services::get($this->factory()->forSite($registry), Site::class)->slug, 'no settings service, no change');
     }
 
     public function testModuleServicesAreBuiltPerSiteAgainstTheSiteDatabase(): void

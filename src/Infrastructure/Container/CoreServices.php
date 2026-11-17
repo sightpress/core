@@ -15,6 +15,8 @@ use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use SightPress\Core\Http\RateLimit\RateLimiters;
 use SightPress\Core\Http\Session\FileSessionStore;
 use SightPress\Core\Http\Session\SessionStore;
@@ -28,6 +30,7 @@ use SightPress\Core\Infrastructure\Mail\TransportMailSender;
 use Symfony\Component\Mailer\Transport;
 use SightPress\Core\Access\PermissionCatalogue;
 use SightPress\Core\Content\BlockTypeCatalogue;
+use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleServices;
@@ -121,9 +124,12 @@ final class CoreServices
             )),
             PermissionCatalogue::class => factory(static fn (): PermissionCatalogue => PermissionCatalogue::fromRegistry($modules)),
             AdminNavigation::class => factory(static fn (): AdminNavigation => AdminNavigation::fromRegistry($modules)),
+            SettingCatalogue::class => factory(static fn (): SettingCatalogue => SettingCatalogue::fromRegistry($modules)),
             BlockTypeCatalogue::class => factory(
                 static fn (ContainerInterface $container): BlockTypeCatalogue => BlockTypeCatalogue::fromRegistry($modules, $container),
             ),
+            // Outgoing requests (IndexNow pings, which are off by default) never wait long.
+            HttpClientInterface::class => factory(static fn (): HttpClientInterface => HttpClient::create(['timeout' => 5, 'max_redirects' => 0])),
             ErrorResponder::class => autowire()
                 ->constructorParameter('debug', $config->debug)
                 ->constructorParameter('noindex', !$config->environment->isProduction()),

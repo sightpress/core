@@ -9,6 +9,8 @@ use Psr\Cache\CacheItemPoolInterface;
 use SightPress\Core\Page\Contract\IndexedPage;
 use SightPress\Core\Page\Contract\MarkdownPages;
 use SightPress\Core\Page\Contract\PageIndex;
+use SightPress\Core\Site\Contract\SiteProfile;
+use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\TenantConfig;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -40,6 +42,7 @@ final class SeoFiles
         private readonly TenantConfig $config,
         private readonly AiCrawlerPolicy $aiCrawlers,
         private readonly MarkdownPages $documents,
+        private readonly SiteSettings $settings,
         ?CacheItemPoolInterface $cache = null,
     ) {
         $this->cache = $cache;
@@ -214,6 +217,10 @@ final class SeoFiles
      */
     private function summary(array $pages): string
     {
+        $about = SiteProfile::read($this->settings)->description;
+        if ($about !== null) {
+            return self::oneLine($about);
+        }
         foreach ($pages as $page) {
             if ($page->home && ($page->description ?? $page->summary) !== null) {
                 return self::oneLine((string) ($page->description ?? $page->summary));

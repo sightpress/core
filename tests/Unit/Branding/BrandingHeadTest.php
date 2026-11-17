@@ -15,6 +15,7 @@ use SightPress\Core\Http\Security\CspNonce;
 use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\OriginMediaUrlGenerator;
 use SightPress\Core\Page\Contract\PublicPageRendering;
+use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Tenant\OwnerType;
 use SightPress\Core\Tests\Support\BlockFixture;
 use SightPress\Core\Tests\Support\BrandingFixture;
@@ -72,6 +73,14 @@ final class BrandingHeadTest extends TestCase
         $branding->set(BrandAsset::Logo, BrandingFixture::svg(), 'Ada’s workshop');
         $branding->set(BrandAsset::Icon, MediaFixture::png(512, 512));
         $branding->set(BrandAsset::ShareImage, MediaFixture::jpeg(1200, 630), 'The workshop');
+        $settings = $this->fixture?->database->settings();
+        self::assertNotNull($settings);
+        foreach ([
+            SiteProfile::DESCRIPTION => 'Ada makes furniture.', SiteProfile::EMAIL => 'ada@example.org', SiteProfile::PHONE => '+44 20 7946 0000',
+            SiteProfile::ADDRESS => '1 Mill Lane, Leeds', SiteProfile::LEGAL_NAME => 'Ignored for a person', SiteProfile::SAME_AS => "https://example.social/@ada\nnot a link",
+        ] as $key => $value) {
+            $settings->set($key, $value);
+        }
         $blocks = new BlockFixture([], $this->fixture?->database);
         $picture = $blocks->addMedia();
         $draft = $blocks->addMedia(published: false);
@@ -85,7 +94,7 @@ final class BrandingHeadTest extends TestCase
         self::assertStringNotContainsString('og:description', $home->head());
         self::assertStringContainsString('<meta property="og:image" content="https://demo.example/branding/share.jpg' . $v . '">', $home->head(), 'an unpublished picture is not shared');
         self::assertStringContainsString('<meta property="og:image:alt" content="The workshop">', $home->head());
-        self::assertStringContainsString('"@type":"Person","@id":"https://demo.example/#person"', $home->head());
+        self::assertStringContainsString('"@type":"Person","@id":"https://demo.example/#person","name":"Riverside Library","url":"https://demo.example/","description":"Ada makes furniture.","email":"ada@example.org","telephone":"+44 20 7946 0000","address":"1 Mill Lane, Leeds","sameAs":["https://example.social/@ada"]', $home->head());
         self::assertStringContainsString('"image":{"@type":"ImageObject","url":"https://demo.example/branding/logo.svg' . $v . '"', $home->head());
         self::assertSame(['url' => 'https://demo.example/branding/logo.svg' . $v, 'alt' => 'Ada’s workshop', 'width' => 300, 'height' => 100], $home->variables()['branding_logo']);
 
@@ -113,7 +122,7 @@ final class BrandingHeadTest extends TestCase
         }
         $blocks = new BlockFixture([], $this->fixture->database);
 
-        return new BrandingHead($this->fixture->service(), $this->fixture->site, $blocks->media(), new OriginMediaUrlGenerator());
+        return new BrandingHead($this->fixture->service(), $this->fixture->site, $blocks->media(), new OriginMediaUrlGenerator(), $this->fixture->database->settings());
     }
 
     private function event(bool $home, ?string $description, ?int $socialImage = null): PublicPageRendering
