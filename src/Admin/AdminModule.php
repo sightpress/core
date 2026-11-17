@@ -30,6 +30,7 @@ final class AdminModule implements ModuleInterface
             '0.1.0',
             [
                 new ModuleRequirement('site', '^0.1'),
+                new ModuleRequirement('auth', '^0.1'),
                 new ModuleRequirement('user', '^0.1'),
                 new ModuleRequirement('rbac', '^0.1'),
                 new ModuleRequirement('page', '^0.1'),

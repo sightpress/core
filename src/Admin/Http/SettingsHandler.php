@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Admin\Contract\AdminScreens;
+use SightPress\Core\Auth\Contract\Passwords;
 use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
@@ -48,6 +49,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
     private const array SECTIONS = [
         'site' => ['Who runs the site', 'Search engines and AI search engines show these details with the site. Leave a field empty to keep it private.'],
         'seo' => ['Search & AI', 'How search engines and AI services may use the site.'],
+        'auth' => ['Passwords', 'What every new password on this site must have. People keep their current password until they next change it.'],
     ];
 
     public function __construct(
@@ -187,7 +189,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
         return match ($setting->type) {
             SettingType::Boolean => new Field($name, $setting->label, FieldType::Checkbox, hint: $hint, required: false),
             SettingType::Choice => new Field($name, $setting->label, FieldType::Radios, hint: $hint, choices: $setting->choices),
-            SettingType::Integer => new Field($name, $setting->label, hint: $hint, required: false, constraints: [new Regex('/^-?\d{1,18}$/', message: 'Enter a whole number, such as 10')], inputmode: 'numeric'),
+            SettingType::Integer => new Field($name, $setting->label, hint: $hint, required: $setting->key === Passwords::MIN_LENGTH_SETTING, constraints: [new Regex('/^-?\d{1,18}$/', message: 'Enter a whole number, such as 10'), ...self::rules($setting->key)], inputmode: 'numeric'),
             SettingType::LongText => new Field($name, $setting->label, FieldType::Textarea, hint: $hint, required: false, constraints: [new Length(max: 5000, maxMessage: sprintf('%s must be 5000 characters or fewer', $setting->label)), ...self::rules($setting->key)]),
             SettingType::Text => new Field($name, $setting->label, $setting->key === SiteProfile::EMAIL ? FieldType::Email : FieldType::Text, hint: $hint, required: false, constraints: [new Length(max: 500, maxMessage: sprintf('%s must be 500 characters or fewer', $setting->label)), ...self::rules($setting->key)]),
         };
@@ -209,6 +211,11 @@ final readonly class SettingsHandler implements RequestHandlerInterface
 
                         return;
                     }
+                }
+            })],
+            $key === Passwords::MIN_LENGTH_SETTING => [new Callback(static function (mixed $value, ExecutionContextInterface $context): void {
+                if (is_string($value) && preg_match('/^-?\d{1,18}$/', $value) === 1 && ((int) $value < Passwords::SHORTEST_MIN_LENGTH || (int) $value > Passwords::MAX_LENGTH)) {
+                    $context->buildViolation(sprintf('The shortest password allowed must be a number from %d to %d', Passwords::SHORTEST_MIN_LENGTH, Passwords::MAX_LENGTH))->addViolation();
                 }
             })],
             isset(SiteVerification::CODES[$key]) => [new Regex(SiteVerification::CODE_PATTERN, message: 'Paste only the code: the letters and digits between the quotes after content=')],

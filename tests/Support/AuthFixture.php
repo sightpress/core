@@ -11,6 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Auth\Http\AuthPages;
 use SightPress\Core\Auth\PasswordHasher;
 use SightPress\Core\Auth\PasswordReset;
+use SightPress\Core\Auth\PasswordRules;
 use SightPress\Core\Auth\EvenTiming;
 use SightPress\Core\Auth\VerificationCodeStore;
 use SightPress\Core\Auth\RememberTokens;
@@ -50,7 +51,7 @@ use Symfony\Component\Validator\Validation;
  */
 final class AuthFixture implements MailSender
 {
-    public const string PASSWORD = 'correct horse battery staple';
+    public const string PASSWORD = 'Correct horse battery staple 7!';
 
     public readonly CoreSiteDatabase $database;
 
@@ -176,6 +177,14 @@ final class AuthFixture implements MailSender
     public function timing(): EvenTiming
     {
         return new EvenTiming(1000);
+    }
+
+    /**
+     * The site's password policy (from its settings) and the hasher.
+     */
+    public function passwords(): PasswordRules
+    {
+        return new PasswordRules($this->hasher, $this->database->settings());
     }
 
     public function passwordReset(): PasswordReset

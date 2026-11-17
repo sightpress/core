@@ -26,7 +26,7 @@ use SightPress\Core\User\UserRepository;
 #[CoversNothing]
 final class AdminShellTest extends TestCase
 {
-    private const string PASSWORD = 'correct horse battery staple';
+    private const string PASSWORD = 'Correct horse battery staple 7!';
 
     private KernelSite $site;
 

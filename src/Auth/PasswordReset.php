@@ -97,7 +97,7 @@ final readonly class PasswordReset
     }
 
     /**
-     * Sets the new password (checked against {@see PasswordPolicy} by the caller).
+     * Sets the new password (checked against the site's {@see PasswordPolicy} by the caller).
      */
     public function complete(Account $account, #[SensitiveParameter] string $password): void
     {

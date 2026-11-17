@@ -29,7 +29,7 @@ use SightPress\Core\User\AvatarKind;
 #[UsesNamespace('SightPress\Core')]
 final class AcceptInvitationHandlerTest extends TestCase
 {
-    private const string PASSWORD = 'a long and lovely password';
+    private const string PASSWORD = 'A long and lovely password, 2!';
 
     private AuthFixture $auth;
 
@@ -202,7 +202,7 @@ final class AcceptInvitationHandlerTest extends TestCase
             $this->invitations,
             new AccountRegistrar($auth->users, $auth->avatars(), $auth->clock),
             new RoleGrantPolicy($auth->database->roles(), new RecordingEvents()),
-            new PasswordRules($auth->hasher),
+            $auth->passwords(),
             $policy ?? new AnyEmailPolicy(),
             $auth->site,
             $auth->clock,

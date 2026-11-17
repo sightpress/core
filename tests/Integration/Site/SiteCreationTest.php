@@ -74,14 +74,14 @@ final class SiteCreationTest extends TestCase
         self::assertSame(['admin', 'contributor', 'editor', 'member'], $this->roleNames($beta));
 
         // Each first admin types their setup code, chooses a password and signs in to their own site only.
-        $this->choosePassword($kernel, 'https://alpha.example', 'ada@example.org', $alphaCode, 'alpha admin long password');
-        $this->choosePassword($kernel, 'https://beta.example', 'grace@example.org', $betaCode, 'beta admin long password');
+        $this->choosePassword($kernel, 'https://alpha.example', 'ada@example.org', $alphaCode, 'Alpha admin long password 3!');
+        $this->choosePassword($kernel, 'https://beta.example', 'grace@example.org', $betaCode, 'Beta admin long password 4!');
 
         $onAlpha = new Browser($kernel, 'https://alpha.example');
-        self::assertSame('/admin', $onAlpha->submit('/login', ['email' => 'ada@example.org', 'password' => 'alpha admin long password'])->getHeaderLine('Location'));
+        self::assertSame('/admin', $onAlpha->submit('/login', ['email' => 'ada@example.org', 'password' => 'Alpha admin long password 3!'])->getHeaderLine('Location'));
         $onBeta = new Browser($kernel, 'https://beta.example');
-        self::assertSame(422, $onBeta->submit('/login', ['email' => 'ada@example.org', 'password' => 'alpha admin long password'])->getStatusCode());
-        self::assertSame('/admin', $onBeta->submit('/login', ['email' => 'grace@example.org', 'password' => 'beta admin long password'])->getHeaderLine('Location'));
+        self::assertSame(422, $onBeta->submit('/login', ['email' => 'ada@example.org', 'password' => 'Alpha admin long password 3!'])->getStatusCode());
+        self::assertSame('/admin', $onBeta->submit('/login', ['email' => 'grace@example.org', 'password' => 'Beta admin long password 4!'])->getHeaderLine('Location'));
 
         // A session of one site doesn't sign anyone in on the other, even with the cookie copied over.
         $copied = new Browser($kernel, 'https://beta.example');

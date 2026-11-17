@@ -3,7 +3,7 @@
 import { expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-export const PASSWORD = 'correct horse battery staple';
+export const PASSWORD = 'Correct horse battery staple 7!';
 const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
 /** Ports of the copies of the admin test site, by spec. */

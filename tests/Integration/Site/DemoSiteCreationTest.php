@@ -75,8 +75,8 @@ final class DemoSiteCreationTest extends TestCase
         // The editor types the printed code, chooses a password and reaches the admin.
         $bea = new Browser($kernel, 'https://demo.example');
         self::assertSame('/login/password', $bea->submit('/login/setup', ['email' => 'bea@example.org', 'code' => $code[1]])->getHeaderLine('Location'));
-        self::assertSame('/login', $bea->submit('/login/password', ['password' => 'bea editor long password'])->getHeaderLine('Location'));
-        self::assertSame('/admin', $bea->submit('/login', ['email' => 'bea@example.org', 'password' => 'bea editor long password'])->getHeaderLine('Location'));
+        self::assertSame('/login', $bea->submit('/login/password', ['password' => 'Bea editor long password 1!'])->getHeaderLine('Location'));
+        self::assertSame('/admin', $bea->submit('/login', ['email' => 'bea@example.org', 'password' => 'Bea editor long password 1!'])->getHeaderLine('Location'));
     }
 
     private function kernel(): Kernel

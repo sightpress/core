@@ -27,7 +27,7 @@ use SightPress\Core\User\UserRepository;
 #[CoversNothing]
 final class SiteSettingsFlowTest extends TestCase
 {
-    private const string PASSWORD = 'correct horse battery staple';
+    private const string PASSWORD = 'Correct horse battery staple 7!';
 
     private KernelSite $site;
 
@@ -64,6 +64,10 @@ final class SiteSettingsFlowTest extends TestCase
             'setting__site__same_as' => 'https://example.social/@riverside',
             'setting__seo__ai_crawlers' => 'search_only',
             'setting__seo__verify_google' => 'abc123',
+            'setting__auth__password_min_length' => '14',
+            'setting__auth__password_upper' => '1',
+            'setting__auth__password_lower' => '1',
+            'setting__auth__password_digit' => '1',
         ]);
         self::assertSame(303, $saved->getStatusCode(), (string) $saved->getBody());
         self::assertStringContainsString('The settings have been saved.', (string) $ada->request('GET', '/admin/settings')->getBody());
@@ -82,7 +86,7 @@ final class SiteSettingsFlowTest extends TestCase
 
         // C-7.4: the change is in the audit log, on screen and in the CSV file.
         $audit = (string) $ada->request('GET', '/admin/audit')->getBody();
-        self::assertStringContainsString('Changed the site settings: Site name, Time zone, About the site, Profiles on other sites, AI crawlers, Google Search Console verification code.', $audit);
+        self::assertStringContainsString('Changed the site settings: Site name, Time zone, About the site, Profiles on other sites, Shortest password allowed (number of characters), Must include a symbol (such as ! ? # or %), AI crawlers, Google Search Console verification code.', $audit);
         self::assertMatchesRegularExpression('#<td>Ada</td>\s*<td>Changed the site settings#', $audit);
         $csv = $ada->request('GET', '/admin/audit.csv');
         self::assertSame('text/csv; charset=utf-8', $csv->getHeaderLine('Content-Type'));

@@ -86,7 +86,7 @@ final class SiteDatabaseChangeTest extends TestCase
         self::assertSame(0, Services::get($onNew, UserRepository::class)->count());
 
         $this->console(['command' => 'site:enable', 'slug' => 'demo']);
-        $login = new Browser($this->kernel, 'https://demo.example')->submit('/login', ['email' => 'ada@example.org', 'password' => 'any long password here']);
+        $login = new Browser($this->kernel, 'https://demo.example')->submit('/login', ['email' => 'ada@example.org', 'password' => 'Any long password here 6!']);
         self::assertSame(422, $login->getStatusCode(), 'the admin lives in the old database only');
 
         $log = $this->project->log();

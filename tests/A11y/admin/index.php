@@ -3,7 +3,7 @@
 /**
  * A real site for the accessibility tests of the admin panel: the whole kernel with core's modules, one site on a
  * SQLite file (domain 127.0.0.1), one person per role and a few pages. Everyone's password is
- * "correct horse battery staple". Started by playwright.config.ts with PHP's built-in web server; never deployed.
+ * "Correct horse battery staple 7!". Started by playwright.config.ts with PHP's built-in web server; never deployed.
  *
  * People: Ada (admin), Bea (editor), Cleo (contributor) and Max (member).
  * Test-only addresses: `/_test/reset` starts again from a fresh site (forgets sessions and rate limits);
@@ -43,7 +43,7 @@ use SightPress\Core\User\UserRepository;
 require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
 const SECRET = 'a11y-secret-0123456789abcdef0123456789abcdef';
-const PASSWORD = 'correct horse battery staple';
+const PASSWORD = 'Correct horse battery staple 7!';
 
 $copy = getenv('SIGHTPRESS_A11Y_SITE');
 $project = sys_get_temp_dir() . '/sightpress-a11y-' . (is_string($copy) && preg_match('/^[a-z]+$/', $copy) === 1 ? $copy : 'admin');

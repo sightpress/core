@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints\Length;
  * `/login/invitation/account`: once {@see InvitationCodeHandler} checked the invitation code, the person who was
  * invited sets up their account (for {@see self::VERIFIED_FOR} seconds, while the invitation is still open). They give their names (prefilled with what
  * the inviter knew), an optional display name, their time zone (prefilled from the browser when it can say) and a
- * password; the account gets its avatar and the role of the invitation, and they are asked to sign in.
+ * password that meets the site's policy (spelled out in the hint); the account gets its avatar and the role of the invitation, and they are asked to sign in.
  */
 final readonly class AcceptInvitationHandler implements RequestHandlerInterface
 {
@@ -64,7 +64,7 @@ final readonly class AcceptInvitationHandler implements RequestHandlerInterface
         $session->regenerate();
     }
 
-    public static function form(Invitation $invitation, string $timezone): Form
+    public static function form(Invitation $invitation, string $timezone, string $passwordHint): Form
     {
         $length = static fn (string $label): Length => new Length(max: 100, maxMessage: sprintf('%s must be 100 characters or fewer', $label));
 
@@ -74,7 +74,7 @@ final readonly class AcceptInvitationHandler implements RequestHandlerInterface
             new Field('last_name', 'Last name', autocomplete: 'family-name', constraints: [$length('Last name')]),
             new Field('display_name', 'Display name', hint: 'Shown next to your work and in emails. Your first name is shown if you leave it empty.', required: false, constraints: [$length('Display name')], autocomplete: 'nickname'),
             new Field('timezone', 'Time zone', FieldType::Select, hint: 'Dates and times are shown in this time zone.', choices: TimezoneChoices::grouped()),
-            new Field('password', 'Password', FieldType::Password, hint: 'At least 12 characters. A few unrelated words are easy to remember and hard to guess.', autocomplete: 'new-password'),
+            new Field('password', 'Password', FieldType::Password, hint: $passwordHint, autocomplete: 'new-password'),
         )->withValues([
             'first_name' => $invitation->firstName ?? '',
             'last_name' => $invitation->lastName ?? '',
@@ -100,11 +100,11 @@ final readonly class AcceptInvitationHandler implements RequestHandlerInterface
             return $this->pages->page($request, '@people/accept-invalid.html.twig', ['title' => 'This invitation can’t be used', 'reason' => $problem], 403);
         }
         if ($request->getMethod() !== 'POST') {
-            return $this->show($request, $invitation, self::form($invitation, $this->site->defaultTimezone));
+            return $this->show($request, $invitation, self::form($invitation, $this->site->defaultTimezone, $this->passwords->hint()));
         }
 
         $body = $request->getParsedBody();
-        $form = $this->validator->submit(self::form($invitation, $this->site->defaultTimezone), is_array($body) ? $body : []);
+        $form = $this->validator->submit(self::form($invitation, $this->site->defaultTimezone, $this->passwords->hint()), is_array($body) ? $body : []);
         $weak = $form->error('password') === null ? $this->passwords->problem($form->text('password'), $invitation->email) : null;
         if ($weak !== null) {
             $form = $form->withErrors(['password' => $weak]);

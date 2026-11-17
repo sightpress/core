@@ -30,8 +30,13 @@ Codes are explained in `verification-codes.md`.
 
 ## Passwords
 
-- At least 12 characters, at most 256, and not your email address. No rules about kinds of characters: a few
-  unrelated words make a strong password that is easy to remember. Spaces count.
+- Every site has a **password policy** (ADR-0022), set by its admins in *Site settings → Passwords*. By default a
+  password needs at least 12 characters, a capital letter, a lower-case letter, a number and a symbol (such as
+  `! ? # %`). The shortest allowed can be set from 8 to 256, and each kind of character can be switched off.
+- Always: at most 256 characters and not your email address. Spaces are allowed (they don't count as a symbol).
+  Letters, numbers and symbols count in any script.
+- The hint under every password field says what the site's policy needs; an error names everything that is missing.
+- A new policy applies the next time someone chooses a password; current passwords keep working.
 - Stored only as an argon2id hash. A hash made with older settings is replaced the next time the person signs in.
 
 ## Security

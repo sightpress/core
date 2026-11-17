@@ -39,5 +39,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0019](0019-site-settings-in-the-site.md) | Site settings live in the site, and some of them win over the registry | Proposed |
 | [0020](0020-demo-content-in-site-provisioning.md) | Demo content is a flag on site provisioning, and steps can share ids | Proposed |
 | [0021](0021-guided-command-questions.md) | Commands ask guided questions, described by their parameters | Proposed |
+| [0022](0022-site-password-policy.md) | Every site has a password policy, and the Passwords contract describes it | Proposed |
 
 When an ADR's status changes, update it here too.

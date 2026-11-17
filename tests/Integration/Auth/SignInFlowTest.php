@@ -47,7 +47,7 @@ use Symfony\Component\Mime\Email;
 #[CoversNothing]
 final class SignInFlowTest extends TestCase
 {
-    private const string PASSWORD = 'correct horse battery staple';
+    private const string PASSWORD = 'Correct horse battery staple 7!';
 
     private TestProject $project;
 
@@ -208,13 +208,13 @@ final class SignInFlowTest extends TestCase
         self::assertSame('/login/password', $right->getHeaderLine('Location'));
         $reset = $this->request('GET', '/login/password');
         self::assertStringContainsString('<h1>Choose a new password</h1>', (string) $reset->getBody());
-        $changed = $this->submit($reset, '/login/password', ['password' => 'a completely new password']);
+        $changed = $this->submit($reset, '/login/password', ['password' => 'A completely new password 2!']);
         self::assertSame('/login', $changed->getHeaderLine('Location'));
         $signIn = $this->request('GET', '/login');
         self::assertStringContainsString('Your password has been changed.', (string) $signIn->getBody());
         self::assertSame(303, $this->request('GET', '/login/password')->getStatusCode(), 'the code works once');
         self::assertSame(422, $this->submit($signIn, '/login', ['email' => 'ada@example.org', 'password' => self::PASSWORD])->getStatusCode());
-        self::assertSame(303, $this->submit($this->request('GET', '/login'), '/login', ['email' => 'ada@example.org', 'password' => 'a completely new password'])->getStatusCode());
+        self::assertSame(303, $this->submit($this->request('GET', '/login'), '/login', ['email' => 'ada@example.org', 'password' => 'A completely new password 2!'])->getStatusCode());
 
         $this->cookies = $otherDevice;
         self::assertSame(303, $this->request('GET', '/admin/acme')->getStatusCode(), 'the other device is signed out');

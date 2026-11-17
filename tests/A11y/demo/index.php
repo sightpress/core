@@ -7,7 +7,7 @@
  * Started by playwright.config.ts with PHP's built-in web server; never deployed.
  *
  * Test-only shortcut: instead of typing the printed setup codes, every account (Ada the admin, Bea the editor, Cleo
- * the contributor and Max the member) gets the password "correct horse battery staple".
+ * the contributor and Max the member) gets the password "Correct horse battery staple 7!".
  *
  * `/_test/reset` starts again from a fresh site.
  *
@@ -35,7 +35,7 @@ use Symfony\Component\Mime\Email;
 require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
 const SECRET = 'a11y-secret-0123456789abcdef0123456789abcdef';
-const PASSWORD = 'correct horse battery staple';
+const PASSWORD = 'Correct horse battery staple 7!';
 
 $copy = getenv('SIGHTPRESS_A11Y_SITE');
 $project = sys_get_temp_dir() . '/sightpress-a11y-' . (is_string($copy) && preg_match('/^[a-z]+$/', $copy) === 1 ? $copy : 'demo');

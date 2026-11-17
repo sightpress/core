@@ -4,7 +4,7 @@ import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 const SITE = 'http://127.0.0.1:8098';
-const PASSWORD = 'correct horse battery staple';
+const PASSWORD = 'Correct horse battery staple 7!';
 const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
 async function expectNoViolations(page: Page): Promise<void> {
@@ -151,6 +151,9 @@ test('forgot password: ask for a code, type it, then choose a new password', asy
   await expect(page).toHaveURL(`${SITE}/login/password`);
   await expect(page.getByRole('heading', { level: 1, name: 'Choose a new password' })).toBeVisible();
   await expect(page.getByLabel('New password')).toHaveAttribute('autocomplete', 'new-password');
+  await expect(page.getByLabel('New password')).toHaveAccessibleDescription(
+    'At least 12 characters, including a capital letter, a lower-case letter, a number and a symbol, such as ! ? # or %.',
+  );
   await expectNoViolations(page);
 
   await page.getByLabel('New password').focus();
@@ -160,12 +163,12 @@ test('forgot password: ask for a code, type it, then choose a new password', asy
   await expect(page.getByLabel('New password')).toHaveAccessibleDescription(/Error: Your password must be at least 12 characters long\./);
   await expectNoViolations(page);
 
-  await page.getByLabel('New password').fill('a completely new password');
+  await page.getByLabel('New password').fill('A completely new password 2!');
   await page.getByLabel('New password').press('Enter');
   await expect(page).toHaveURL(`${SITE}/login`);
   await expect(page.getByRole('status')).toHaveText('Your password has been changed. Sign in with your new password.');
 
-  await signInByKeyboard(page, 'ada@example.org', 'a completely new password');
+  await signInByKeyboard(page, 'ada@example.org', 'A completely new password 2!');
   await expect(page).toHaveURL(`${SITE}/admin`);
 });
 

@@ -14,6 +14,9 @@
   codes of Google Search Console, Bing Webmaster Tools and Yandex Webmaster (only the code; it becomes a `<meta>`
   tag on the home page), and **IndexNow** (off by default: when on, the site tells search engines each time a page
   is published or unpublished; the key is at `/indexnow-key.txt`).
+- **Passwords** (the site's password policy, ADR-0022): the shortest password allowed (12 by default, from 8 to
+  256) and whether a password must include a capital letter, a lower-case letter, a number and a symbol (all on by
+  default). It applies the next time someone chooses a password; current passwords keep working.
 - **More settings**: modules can register their own settings; they appear here, grouped by module.
 - Visibility (public) and theme (SightPress Default) are shown; they can't be changed yet.
 - Mistakes are listed in the error summary at the top, which gets focus; "The settings have been saved." is read out.

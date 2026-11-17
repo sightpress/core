@@ -6,19 +6,31 @@ namespace SightPress\Core\Auth;
 
 use SensitiveParameter;
 use SightPress\Core\Auth\Contract\Passwords;
+use SightPress\Core\Site\Contract\SiteSettings;
 
 /**
- * The {@see PasswordPolicy} and the {@see PasswordHasher}, for other modules.
+ * The site's {@see PasswordPolicy} (read from its settings each time, so a change applies at once) and the
+ * {@see PasswordHasher}, for other modules.
  */
 final readonly class PasswordRules implements Passwords
 {
-    public function __construct(private PasswordHasher $hasher)
+    public function __construct(private PasswordHasher $hasher, private SiteSettings $settings)
     {
+    }
+
+    public function policy(): PasswordPolicy
+    {
+        return PasswordPolicy::fromSettings($this->settings);
     }
 
     public function problem(#[SensitiveParameter] string $password, string $email = ''): ?string
     {
-        return PasswordPolicy::problem($password, $email);
+        return $this->policy()->problem($password, $email);
+    }
+
+    public function hint(): string
+    {
+        return $this->policy()->hint();
     }
 
     public function hash(#[SensitiveParameter] string $password): string

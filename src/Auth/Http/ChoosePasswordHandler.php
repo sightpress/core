@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Auth\CodeSession;
-use SightPress\Core\Auth\PasswordPolicy;
+use SightPress\Core\Auth\Contract\Passwords;
 use SightPress\Core\Auth\PasswordReset;
 use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
@@ -23,7 +23,8 @@ use SightPress\Core\User\Contract\Accounts;
 /**
  * `/login/password`: after a code proved the account (reset or setup), the person chooses their new password — or
  * their first one, for a pending account — and is sent to sign in. Without a proved code, or once
- * {@see CodeSession::VERIFIED_FOR} has passed, it sends them back to ask for a code.
+ * {@see CodeSession::VERIFIED_FOR} has passed, it sends them back to ask for a code. The password must meet the
+ * site's policy ({@see Passwords}), which the hint spells out.
  */
 final readonly class ChoosePasswordHandler implements RequestHandlerInterface
 {
@@ -35,23 +36,18 @@ final readonly class ChoosePasswordHandler implements RequestHandlerInterface
         private PasswordReset $reset,
         private Accounts $accounts,
         private ClockInterface $clock,
+        private Passwords $passwords,
     ) {
     }
 
-    public static function form(): Form
+    /**
+     * The form, with the site's password policy in the hint.
+     */
+    public static function form(Passwords $passwords): Form
     {
         return Form::create(
             'choose-password',
-            new Field(
-                'password',
-                'New password',
-                FieldType::Password,
-                hint: sprintf(
-                    'At least %d characters. A few unrelated words make a strong password that is easy to remember.',
-                    PasswordPolicy::MIN_LENGTH,
-                ),
-                autocomplete: 'new-password',
-            ),
+            new Field('password', 'New password', FieldType::Password, hint: $passwords->hint(), autocomplete: 'new-password'),
         );
     }
 
@@ -67,11 +63,11 @@ final readonly class ChoosePasswordHandler implements RequestHandlerInterface
             return $this->pages->redirect(ForgotPasswordHandler::PATH);
         }
         if ($request->getMethod() !== 'POST') {
-            return $this->show($request, self::form(), $account);
+            return $this->show($request, self::form($this->passwords), $account);
         }
 
-        $form = $this->validator->submit(self::form(), AuthPages::body($request));
-        $problem = $form->isValid() ? PasswordPolicy::problem($form->text('password'), $account->email()) : null;
+        $form = $this->validator->submit(self::form($this->passwords), AuthPages::body($request));
+        $problem = $form->isValid() ? $this->passwords->problem($form->text('password'), $account->email()) : null;
         if ($problem !== null) {
             $form = $form->withErrors(['password' => $problem]);
         }

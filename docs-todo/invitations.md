@@ -26,7 +26,8 @@ Inviting the same address again replaces the earlier invitation, so only the new
 On the sign-in page the person chooses **Accept an invitation** (`/login/invitation`, in the site's own design and
 never indexed by search engines) and types their email address and the code. A right code opens the account form
 (`/login/invitation/account`), where they give their first and last name (both needed), an optional display name, their time zone (chosen from their browser's time zone
-when it can tell, otherwise the site's), and a password of at least 12 characters. Their account gets the role
+when it can tell, otherwise the site's), and a password that meets the site's password policy (by default at least 12 characters with a capital letter,
+a lower-case letter, a number and a symbol; the hint under the field says what is needed). Their account gets the role
 from the invitation and a picture of their initials, and they are sent to sign in, with a message read out by
 screen readers. A wrong, used, replaced or expired code gets the same message: check it, or ask to be invited
 again.

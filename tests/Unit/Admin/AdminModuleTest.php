@@ -30,7 +30,7 @@ final class AdminModuleTest extends TestCase
 
         self::assertSame('admin', $module->manifest()->id);
         self::assertTrue($module->manifest()->required);
-        self::assertSame(['site', 'user', 'rbac', 'page'], array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires));
+        self::assertSame(['site', 'auth', 'user', 'rbac', 'page'], array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires));
         self::assertSame(AdminShell::class, $registry->services()[AdminScreens::class]->item->class);
         self::assertTrue($registry->services()[AdminScreens::class]->item->public);
         $routes = array_values(array_filter($registry->routes(), static fn ($r) => $r->module === 'admin'));

@@ -102,6 +102,36 @@ final class SettingsHandlerTest extends TestCase
         self::assertSame(['The settings have been saved.', 'Nothing was changed.'], Flash::take($this->session));
     }
 
+    public function testEverySiteHasAPasswordPolicyItsAdminCanChange(): void
+    {
+        $html = (string) $this->handle('GET')->getBody();
+
+        self::assertStringContainsString('<legend>Passwords</legend>', $html);
+        self::assertStringContainsString('id="site-settings-setting--auth--password-min-length" value="12"', $html);
+        foreach (['upper', 'lower', 'digit', 'symbol'] as $kind) {
+            self::assertMatchesRegularExpression(sprintf('/<input type="checkbox" id="site-settings-setting--auth--password-%s" value="1"[^>]* checked/', $kind), $html);
+        }
+
+        $response = $this->handle('POST', $this->body(['setting__auth__password_min_length' => '16', 'setting__auth__password_symbol' => '']));
+        self::assertSame(303, $response->getStatusCode());
+        $settings = $this->fixture->auth->database->settings();
+        self::assertSame(['16', '0', null], [$settings->get('auth.password_min_length'), $settings->get('auth.password_symbol'), $settings->get('auth.password_upper')], 'settings left as they were are not stored');
+        $event = $this->events->events[0] ?? null;
+        self::assertInstanceOf(SettingsChanged::class, $event);
+        self::assertSame(['auth.password_min_length', 'auth.password_symbol'], $event->keys);
+    }
+
+    public function testThePasswordLengthStaysWithinItsLimits(): void
+    {
+        foreach (['7' => 'a number from 8 to 256', '257' => 'a number from 8 to 256', '-12' => 'a number from 8 to 256', '' => 'Enter'] as $length => $message) {
+            $response = $this->handle('POST', $this->body(['setting__auth__password_min_length' => (string) $length]));
+
+            self::assertSame(422, $response->getStatusCode(), (string) $length);
+            self::assertStringContainsString($message, (string) $response->getBody());
+        }
+        self::assertSame([], $this->events->events);
+    }
+
     public function testASiteInSeveralLanguagesChoosesItsMainOne(): void
     {
         $site = PageFixture::site(['en-GB', 'pt-PT']);
@@ -144,6 +174,11 @@ final class SettingsHandlerTest extends TestCase
             'timezone' => 'Europe/London',
             'setting__seo__ai_crawlers' => 'allow_all',
             'setting__acme__size' => '',
+            'setting__auth__password_min_length' => '12',
+            'setting__auth__password_upper' => '1',
+            'setting__auth__password_lower' => '1',
+            'setting__auth__password_digit' => '1',
+            'setting__auth__password_symbol' => '1',
         ];
     }
 

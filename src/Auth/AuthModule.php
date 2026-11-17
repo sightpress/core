@@ -30,11 +30,14 @@ use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\ModuleRequirement;
 use SightPress\Module\Routing\Route;
+use SightPress\Module\Setting\Setting;
+use SightPress\Module\Setting\SettingType;
 
 /**
  * Signing in and out: the shared `/login` and `/logout` pages, "keep me signed in" tokens, the {@see Authenticator}
  * that tells every request who is making it, and six-digit verification codes ({@see VerificationCodes}, public):
- * "Forgot your password?" and the first admin's setup code are typed on a page, never sent as links. Always on.
+ * "Forgot your password?" and the first admin's setup code are typed on a page, never sent as links, and the
+ * site's password policy ({@see PasswordPolicy}: settings `auth.password_*`). Always on.
  */
 final class AuthModule implements ModuleInterface
 {
@@ -76,6 +79,19 @@ final class AuthModule implements ModuleInterface
         foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class] as $class) {
             $services->autowire($class);
         }
+
+        $settings = $registrar->settings();
+        $settings->add(new Setting(
+            PasswordPolicy::MIN_LENGTH_SETTING,
+            'Shortest password allowed (number of characters)',
+            SettingType::Integer,
+            PasswordPolicy::MIN_LENGTH,
+            sprintf('From %d to %d. %d or more is recommended.', PasswordPolicy::FLOOR, PasswordPolicy::MAX_LENGTH, PasswordPolicy::MIN_LENGTH),
+        ));
+        $settings->add(new Setting(PasswordPolicy::UPPER_SETTING, 'Must include a capital letter', SettingType::Boolean, true));
+        $settings->add(new Setting(PasswordPolicy::LOWER_SETTING, 'Must include a lower-case letter', SettingType::Boolean, true));
+        $settings->add(new Setting(PasswordPolicy::DIGIT_SETTING, 'Must include a number', SettingType::Boolean, true));
+        $settings->add(new Setting(PasswordPolicy::SYMBOL_SETTING, 'Must include a symbol (such as ! ? # or %)', SettingType::Boolean, true));
 
         $registrar->subscribers()->listen(SiteProvisioning::class, FirstSetupCode::class, SiteProvisioning::SIGN_IN);
         $registrar->subscribers()->listen(SiteProvisioning::class, DemoAccounts::class, DemoAccounts::PRIORITY);

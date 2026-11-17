@@ -10,7 +10,7 @@ import { expect, test, type APIRequestContext, type Page } from '@playwright/tes
 import { expectNoViolations } from './support/admin-site';
 
 const SITE = 'http://127.0.0.1:8086';
-const PASSWORD = 'correct horse battery staple';
+const PASSWORD = 'Correct horse battery staple 7!';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -132,11 +132,11 @@ test('an invited person accepts with the code from their email and signs in', as
   await page.getByRole('button', { name: 'Continue' }).click();
   await expect(page.getByLabel('First name')).toHaveValue('Zoë');
   await page.getByLabel('Last name').fill('Ødegaard');
-  await page.getByLabel('Password').fill('a long password for zoe');
+  await page.getByLabel('Password').fill('A long password for Zoë 5!');
   await page.getByRole('button', { name: 'Create my account' }).click();
   await expect(page.getByRole('status')).toHaveText('Your account is ready. Sign in with zoe@example.org and your new password.');
 
-  await signIn(page, 'zoe@example.org', 'a long password for zoe');
+  await signIn(page, 'zoe@example.org', 'A long password for Zoë 5!');
   await expect(page).toHaveURL(`${SITE}/admin`);
   await expect(page.getByRole('navigation', { name: 'Admin' }).getByRole('link', { name: 'Pages' })).toBeVisible();
   await expect(page.getByRole('navigation', { name: 'Admin' }).getByRole('link', { name: 'People' })).toHaveCount(0);
@@ -155,12 +155,12 @@ test('someone who forgot their password resets it with the code from their email
   await page.getByLabel('6-digit code').fill(codeIn(mail));
   await page.getByRole('button', { name: 'Continue' }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Choose a new password' })).toBeVisible();
-  await page.getByLabel('New password').fill('a completely new password');
+  await page.getByLabel('New password').fill('A completely new password 2!');
   await page.getByLabel('New password').press('Enter');
   await expect(page.getByRole('status')).toHaveText('Your password has been changed. Sign in with your new password.');
 
   await signIn(page, 'bea@example.org');
   await expect(page).toHaveURL(/\/login/);
-  await signIn(page, 'bea@example.org', 'a completely new password');
+  await signIn(page, 'bea@example.org', 'A completely new password 2!');
   await expect(page).toHaveURL(`${SITE}/admin`);
 });

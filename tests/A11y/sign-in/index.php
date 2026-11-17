@@ -3,7 +3,7 @@
 /**
  * A real site for the accessibility tests of the sign-in pages: the whole kernel with core's modules, one site on a
  * SQLite file (domain 127.0.0.1) and two people, Ada (editor) and Max (member), whose password is
- * "correct horse battery staple", plus Nia (admin), who has no password yet and waits for a setup code. Started by
+ * "Correct horse battery staple 7!", plus Nia (admin), who has no password yet and waits for a setup code. Started by
  * playwright.config.ts with PHP's built-in web server; never deployed.
  *
  * Two test-only addresses: `/_test/reset` starts again from an empty site (forgets sessions and rate limits);
@@ -37,7 +37,7 @@ use SightPress\Core\User\UserRepository;
 require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
 const SECRET = 'a11y-secret-0123456789abcdef0123456789abcdef';
-const PASSWORD = 'correct horse battery staple';
+const PASSWORD = 'Correct horse battery staple 7!';
 
 $project = sys_get_temp_dir() . '/sightpress-a11y-sign-in';
 $uri = $_SERVER['REQUEST_URI'] ?? '/';

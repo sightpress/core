@@ -9,7 +9,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expectNoViolations } from './support/admin-site';
 
 const SITE = 'http://127.0.0.1:8087';
-const PASSWORD = 'correct horse battery staple';
+const PASSWORD = 'Correct horse battery staple 7!';
 
 test.describe.configure({ mode: 'serial' });
 

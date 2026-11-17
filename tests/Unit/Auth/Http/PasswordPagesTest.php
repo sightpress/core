@@ -139,11 +139,15 @@ final class PasswordPagesTest extends TestCase
         $short = $this->choose('POST', ['password' => 'short']);
         self::assertSame(422, $short->getStatusCode());
         self::assertStringContainsString('Your password must be at least 12 characters long.', (string) $short->getBody());
+        self::assertStringContainsString('At least 12 characters, including a capital letter, a lower-case letter, a number and a symbol, such as ! ? # or %.', $page);
+        $plain = $this->choose('POST', ['password' => 'a new long password']);
+        self::assertSame(422, $plain->getStatusCode());
+        self::assertStringContainsString('Your password must include a capital letter, a number and a symbol, such as ! ? # or %.', (string) $plain->getBody());
         self::assertStringContainsString('Enter new password', (string) $this->choose('POST', [])->getBody());
 
-        $done = $this->choose('POST', ['password' => ' a new long password ']);
+        $done = $this->choose('POST', ['password' => ' A new long password 2! ']);
         self::assertSame('/login', $done->getHeaderLine('Location'));
-        self::assertTrue($this->auth->hasher->verify(' a new long password ', $user->passwordHash()));
+        self::assertTrue($this->auth->hasher->verify(' A new long password 2! ', $user->passwordHash()));
         self::assertSame(['Your password has been changed. Sign in with your new password.'], Flash::take($this->session));
         self::assertSame('/login/forgot', $this->choose('GET')->getHeaderLine('Location'), 'only once');
     }
@@ -206,7 +210,7 @@ final class PasswordPagesTest extends TestCase
         $right = $this->setupPage('POST', ['email' => 'ada@example.org', 'code' => $code->readable()]);
         self::assertSame('/login/password', $right->getHeaderLine('Location'));
         self::assertStringContainsString('<h1>Choose your password</h1>', (string) $this->choose('GET')->getBody());
-        $this->choose('POST', ['password' => 'my very first password']);
+        $this->choose('POST', ['password' => 'My very 1st password!']);
         self::assertSame(UserStatus::Active, $user->status());
         self::assertSame(['Your password has been set. Sign in with it now.'], Flash::take($this->session));
     }
@@ -269,7 +273,7 @@ final class PasswordPagesTest extends TestCase
      */
     private function choose(string $method, array $body = []): ResponseInterface
     {
-        return new ChoosePasswordHandler($this->auth->pages(), $this->auth->validator(), $this->auth->passwordReset(), $this->auth->users, $this->auth->clock)
+        return new ChoosePasswordHandler($this->auth->pages(), $this->auth->validator(), $this->auth->passwordReset(), $this->auth->users, $this->auth->clock, $this->auth->passwords())
             ->handle($this->auth->request($method, 'https://demo.example/login/password', $body, session: $this->session));
     }
 }
