@@ -1,0 +1,55 @@
+# Changelog
+
+## 0.1.0 (2026-11-17)
+
+
+### Features
+
+* add content blocks with schema checks, sanitised rich text and five core types (C-4.2) ([#31](https://github.com/sightpress/core/issues/31)) ([8364828](https://github.com/sightpress/core/commit/8364828f172c3ed1f6b344dd30b40d948a53d47c))
+* add gallery, video, audio, file download and contact form blocks (C-4.3) ([#32](https://github.com/sightpress/core/issues/32)) ([3b12079](https://github.com/sightpress/core/commit/3b120794a3ac50ad899f427cef520231e0710fa5))
+* add My account with avatars, time zones and languages (C-3.6) ([#36](https://github.com/sightpress/core/issues/36)) ([2e2998a](https://github.com/sightpress/core/commit/2e2998ada866779470dbf106fe6a5842b3c20f68))
+* add security headers, sessions, CSRF checks and rate limits (C-1.2) ([#14](https://github.com/sightpress/core/issues/14)) ([f987c18](https://github.com/sightpress/core/commit/f987c183cfaffc54a454440aa5565026deaa67cb))
+* add the admin media library with announced upload progress (C-5.3) ([#39](https://github.com/sightpress/core/issues/39)) ([a57c883](https://github.com/sightpress/core/commit/a57c883a81ce7ef41ef3e629a61641041d86896d))
+* add the admin shell with permission-driven navigation and a dashboard (C-7.1) ([#35](https://github.com/sightpress/core/issues/35)) ([fd89846](https://github.com/sightpress/core/commit/fd89846cc328babdd91af9e90489a548801f3c6b))
+* add the default theme with design tokens, layouts and accessible partials (C-6.1) ([#26](https://github.com/sightpress/core/issues/26)) ([897d652](https://github.com/sightpress/core/commit/897d652fe128f6a7def7de64a65b201ce90a5cc0))
+* add the main and footer menus, breadcrumbs and the menu editor (C-6.3) ([#41](https://github.com/sightpress/core/issues/41)) ([490322b](https://github.com/sightpress/core/commit/490322b8fe6d8df237023fd19ce84842034ed434))
+* add the page list and the page editor with its block editor, search & AI fields and workflow buttons (C-7.2) ([#47](https://github.com/sightpress/core/issues/47)) ([debe3ce](https://github.com/sightpress/core/commit/debe3ce6867adea9263d3c5a98d1e2258a1b8bfd))
+* add the page tree with translations, addresses and revisions (C-4.1) ([#30](https://github.com/sightpress/core/issues/30)) ([8de9ffb](https://github.com/sightpress/core/commit/8de9ffba6f70a0e929a1f7e33480e59051b301c1))
+* add the site settings and branding screens, with the owner's profile, search console codes and IndexNow (C-7.3) ([#48](https://github.com/sightpress/core/issues/48)) ([95534c9](https://github.com/sightpress/core/commit/95534c95d333a19b3016d138c6207b9acf7e3cc4))
+* add users, roles and the sign-up guardrail as core modules (C-3.1) ([#20](https://github.com/sightpress/core/issues/20)) ([ceb4b9b](https://github.com/sightpress/core/commit/ceb4b9ba18fd01be5c17764fe2358f0cc14463cc))
+* ask guided questions in console commands, starting with site:create ([#52](https://github.com/sightpress/core/issues/52)) ([96eaa3d](https://github.com/sightpress/core/commit/96eaa3d20c5f8d726746ba8e76fb6cbcf11dc3dd))
+* boot the kernel from the tenant config, with accessible error pages (C-1.1) ([#12](https://github.com/sightpress/core/issues/12)) ([fffe2cf](https://github.com/sightpress/core/commit/fffe2cf5c318cb35d4739184a6df4520dee578f2))
+* build accessible forms with server-side validation (C-1.4) ([#16](https://github.com/sightpress/core/issues/16)) ([404d707](https://github.com/sightpress/core/commit/404d7075d610d73a5e637adfcbbc41c3717082f6))
+* check pages for accessibility and search problems before they are published (C-4.5) ([#34](https://github.com/sightpress/core/issues/34)) ([154d6f5](https://github.com/sightpress/core/commit/154d6f5a80c1abcdaea396b086d50a1c63f51a97))
+* check theme contrast and base font size with theme:validate (C-6.5) ([#27](https://github.com/sightpress/core/issues/27)) ([56bc694](https://github.com/sightpress/core/commit/56bc69498c723f59998b4d6db6eee180466748a7))
+* crawl a demo site for accessibility, search engines and AI readers as every role (C-8.1) ([#50](https://github.com/sightpress/core/issues/50)) ([a1a7644](https://github.com/sightpress/core/commit/a1a7644067e61c7654f130136c12f9bb509655e5))
+* create sites from the console and manage their status (C-2.3) ([#23](https://github.com/sightpress/core/issues/23)) ([f73f91e](https://github.com/sightpress/core/commit/f73f91e936361b20965282053b34a601b6b32b12))
+* decide access with an authorizer, page voter and admin door (C-3.2) ([#21](https://github.com/sightpress/core/issues/21)) ([ce22d22](https://github.com/sightpress/core/commit/ce22d22c591c0bf54fc1f92de6460162e73e371a))
+* give every new site published starter pages and menus (C-6.4) ([#42](https://github.com/sightpress/core/issues/42)) ([3887e48](https://github.com/sightpress/core/commit/3887e48d3f8175694b3d81bcf340f5d386c9ccf0))
+* give every public page its search engine title, description, canonical address and graph, plus sitemap.xml and robots.txt (C-6.7) ([#44](https://github.com/sightpress/core/issues/44)) ([82788f1](https://github.com/sightpress/core/commit/82788f1f957ef6a10ffe1164ddc2ddd437a5271f))
+* give every site a logo, icon set, share image and brand tags in the head (C-6.6) ([#43](https://github.com/sightpress/core/issues/43)) ([1c76eff](https://github.com/sightpress/core/commit/1c76eff9560376b7d458d1d26a022c8c6d18ac61))
+* give every site a password policy its admin can change, shown in the password hints (C-3.8) ([#53](https://github.com/sightpress/core/issues/53)) ([f7e1dfe](https://github.com/sightpress/core/commit/f7e1dfe733cac7d875c6f4aef84018a6fee59821))
+* invite people by email with a role, and let them set up their account (C-3.4) ([#37](https://github.com/sightpress/core/issues/37)) ([e6b7f6d](https://github.com/sightpress/core/commit/e6b7f6d2267fbcb9adae37a6e7adff6c6d0ebb49))
+* keep the tenant's sites in a validated registry file with encrypted DSNs (C-2.1) ([#18](https://github.com/sightpress/core/issues/18)) ([9e870d6](https://github.com/sightpress/core/commit/9e870d6707775f44386f228277028d8562a752cd))
+* list, sort and manage the people of a site in the admin (C-3.5) ([#38](https://github.com/sightpress/core/issues/38)) ([f7891a4](https://github.com/sightpress/core/commit/f7891a46d213ac168e4257a83d2ddb0e9bf13463))
+* load modules and boot the kernel only through them (C-1.5) ([#13](https://github.com/sightpress/core/issues/13)) ([5e06e3f](https://github.com/sightpress/core/commit/5e06e3faffff594cb4cf36a1d6b96127b4f3c29e))
+* move a disabled site to another database (C-2.4) ([#24](https://github.com/sightpress/core/issues/24)) ([f8f5bd1](https://github.com/sightpress/core/commit/f8f5bd11b5da6a9de28d3bb4492e7abdda95a4f3))
+* move pages through review and publishing, and ask editors to review (C-4.4) ([#33](https://github.com/sightpress/core/issues/33)) ([e5f45c8](https://github.com/sightpress/core/commit/e5f45c8c947b33cf881504aead03dedb27a204a2))
+* offer every public page to AI readers as Markdown and in llms.txt, with an AI crawler policy (C-6.8) ([#45](https://github.com/sightpress/core/issues/45)) ([98c9845](https://github.com/sightpress/core/commit/98c9845369a2abec11830e50da7c4d996082d2e5))
+* record who changed what in an append-only audit log, with filters and CSV export (C-7.4) ([#49](https://github.com/sightpress/core/issues/49)) ([1a3b75a](https://github.com/sightpress/core/commit/1a3b75a6d1732b74655255847627de1b50625514))
+* render templates with a theme-aware loader and core's helpers (C-1.3) ([#15](https://github.com/sightpress/core/issues/15)) ([1017933](https://github.com/sightpress/core/commit/10179338a61863cf62c6284ded38d8aea70ffcc0))
+* resolve the site from the host and give each site its own container (C-2.2) ([#19](https://github.com/sightpress/core/issues/19)) ([266eeb3](https://github.com/sightpress/core/commit/266eeb36b01e9df313ecd4d7fe2c61548e74b9f1))
+* send six-digit codes instead of links for password reset, invitations and the first admin (C-3.7) ([#46](https://github.com/sightpress/core/issues/46)) ([9265d40](https://github.com/sightpress/core/commit/9265d409ea6687c1e07f9ac80f14a45dcc05d938))
+* serve each site's media with caching, ranges and access checks (C-5.2) ([#29](https://github.com/sightpress/core/issues/29)) ([1bad923](https://github.com/sightpress/core/commit/1bad923646e040348a148303807ef6c38c0633f8))
+* serve the public site with the home page at / and pages at their address (C-6.2) ([#40](https://github.com/sightpress/core/issues/40)) ([5e2d817](https://github.com/sightpress/core/commit/5e2d817628f9eacfbbdb06f05c5dd724b58aafee))
+* sign in and out, keep me signed in and reset passwords (C-3.3) ([#22](https://github.com/sightpress/core/issues/22)) ([492f1b7](https://github.com/sightpress/core/commit/492f1b71cf09f354abda75a64d985d1cd906b328))
+* store each site's media and check, clean and dedupe uploads (C-5.1) ([#28](https://github.com/sightpress/core/issues/28)) ([5f27224](https://github.com/sightpress/core/commit/5f27224c8a9930a670202c3e84ca9dc85e8b8d6e))
+
+
+### Documentation
+
+* accept ADR-0014, permissions say whether sign-up roles may hold them (MI-0.2) ([#11](https://github.com/sightpress/core/issues/11)) ([873775e](https://github.com/sightpress/core/commit/873775e239a2479b4f8dd4895071a205ff0a4198))
+* accept ADRs 0001-0013; tenant registry as a config file (S-5) ([#10](https://github.com/sightpress/core/issues/10)) ([92f9a42](https://github.com/sightpress/core/commit/92f9a4209820d226549a3216bed69a3f1ed214b5))
+* accept ADRs 0015-0022 (M1) ([#54](https://github.com/sightpress/core/issues/54)) ([974a6f2](https://github.com/sightpress/core/commit/974a6f2c14dfc2dd6d548fd4c9d2a6ff0de1c6bf))
+* add the ADR template and ADRs 0001-0013 (S-5) ([#2](https://github.com/sightpress/core/issues/2)) ([ecdfcc8](https://github.com/sightpress/core/commit/ecdfcc87c036937d4d75768e8ee0d56f7bd80a53))
+* align ADR-0009 with module-interface 0.1 (S-7) ([#4](https://github.com/sightpress/core/issues/4)) ([ed1e349](https://github.com/sightpress/core/commit/ed1e3493fce9b97c3309f7eb6e247912d9b5cb39))
