@@ -33,6 +33,7 @@ use SightPress\Core\Module\ModuleSelection;
 #[UsesNamespace('SightPress\Core\Media')]
 #[UsesNamespace('SightPress\Core\Page')]
 #[UsesNamespace('SightPress\Core\Contact')]
+#[UsesNamespace('SightPress\Core\Audit')]
 #[UsesNamespace('SightPress\Core\Admin')]
 #[UsesNamespace('SightPress\Core\Navigation')]
 #[UsesNamespace('SightPress\Core\People')]

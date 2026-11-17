@@ -18,6 +18,8 @@ use SightPress\Core\Tenant\OwnerType;
 use SightPress\Core\Tests\Support\AdminFixture;
 use SightPress\Core\Tests\Support\BrandingFixture;
 use SightPress\Core\Tests\Support\MediaFixture;
+use SightPress\Core\Tests\Support\RecordingEvents;
+use SightPress\Core\Site\Contract\SettingsChanged;
 use SightPress\Core\User\Entity\User;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpForbiddenException;
@@ -34,11 +36,14 @@ final class BrandingAdminHandlerTest extends TestCase
 
     private User $ada;
 
+    private RecordingEvents $events;
+
     protected function setUp(): void
     {
         $this->admin = new AdminFixture();
         $this->branding = new BrandingFixture('Riverside', OwnerType::Organization, ['en-GB', 'pt-PT']);
         $this->session = new Session();
+        $this->events = new RecordingEvents();
         $this->ada = $this->admin->auth->user('ada@example.org', 'admin');
     }
 
@@ -84,6 +89,7 @@ final class BrandingAdminHandlerTest extends TestCase
         $this->handle('POST', ['asset' => 'share_image', 'action' => 'reset']);
         self::assertSame(['Share picture: the generated picture is back.'], Flash::take($this->session));
         self::assertFalse($this->branding->service()->state()->isUploaded(BrandAsset::ShareImage));
+        self::assertSame(['branding.share_image', 'branding.logo', 'branding.icon', 'branding.share_image'], array_map(static fn (object $e): string => $e instanceof SettingsChanged ? $e->keys[0] : '', $this->events->events));
     }
 
     public function testExplainsARefusedUploadOnce(): void
@@ -130,6 +136,6 @@ final class BrandingAdminHandlerTest extends TestCase
             $request = $request->withUploadedFiles(['file' => $file]);
         }
 
-        return new BrandingAdminHandler($this->admin->shell(), $this->branding->service(), $this->branding->site)->handle($request);
+        return new BrandingAdminHandler($this->admin->shell(), $this->branding->service(), $this->branding->site, $this->events)->handle($request);
     }
 }

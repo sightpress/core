@@ -78,3 +78,21 @@ test('the settings screens reflow at 320px', async ({ page }) => {
   await page.goto(`${SITE}/admin/settings/branding`);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });
+
+test('the audit log lists the change in a captioned table and filters it', async ({ page }) => {
+  await signIn(page, SITE, 'ada@example.org', '/admin/settings');
+  await page.getByLabel('Site name').fill('Riverside Reading Room');
+  await page.getByRole('button', { name: 'Save settings' }).click();
+  await page.getByRole('navigation', { name: 'Admin' }).getByRole('link', { name: 'Audit log' }).click();
+
+  await expect(page).toHaveTitle('Audit log - Admin - Riverside Reading Room');
+  const table = page.getByRole('table', { name: /entries, newest first/ });
+  await expect(table.getByRole('row', { name: /Changed the site settings: Site name/ })).toBeVisible();
+  await expectNoViolations(page);
+
+  await page.getByLabel('What').selectOption('settings');
+  await page.getByRole('button', { name: 'Show entries' }).click();
+  await expect(page.getByRole('table', { name: '1 entry' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Download these entries as a CSV file' })).toHaveAttribute('href', '/admin/audit.csv?type=settings');
+  await expectNoViolations(page);
+});

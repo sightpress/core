@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Module;
 
 use SightPress\Core\Admin\AdminModule;
+use SightPress\Core\Audit\AuditModule;
 use SightPress\Core\Auth\AuthModule;
 use SightPress\Core\Block\BlockModule;
 use SightPress\Core\Branding\BrandingModule;
@@ -49,6 +50,7 @@ final class CoreModules
             new ModuleCandidate(new MenuModule(), 'sightpress/core'),
             new ModuleCandidate(new BrandingModule(), 'sightpress/core'),
             new ModuleCandidate(new SeoModule(), 'sightpress/core'),
+            new ModuleCandidate(new AuditModule(), 'sightpress/core'),
         ];
     }
 

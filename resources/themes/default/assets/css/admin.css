@@ -142,3 +142,7 @@
 .branding-asset__preview { margin: 0 0 var(--space-3); }
 .branding-asset__preview img { display: block; max-width: 100%; height: auto; max-height: 12rem; width: auto; border: 1px solid var(--color-border); background: var(--color-surface); }
 .branding-asset form { margin-bottom: var(--space-3); }
+
+/* Audit log (C-7.4): the table scrolls on its own on narrow screens; the region can be scrolled by keyboard. */
+.table-wrapper { overflow-x: auto; max-width: 100%; margin-bottom: var(--space-4); }
+.audit-table td { vertical-align: top; }

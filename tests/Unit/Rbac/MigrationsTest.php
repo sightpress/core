@@ -28,6 +28,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(PageTables::class)]
 #[CoversClass(InvitationsTable::class)]
 #[CoversClass(MenuTable::class)]
+#[CoversClass(\SightPress\Core\Audit\Migrations\Version20261117120000::class)]
 #[CoversClass(PageShareImage::class)]
 #[CoversClass(PageSearchFields::class)]
 #[UsesNamespace('SightPress\Core')]
@@ -38,7 +39,7 @@ final class MigrationsTest extends TestCase
         $database = new CoreSiteDatabase();
 
         self::assertSame(
-            ['auth_remember_tokens', 'invitations', 'media', 'menu_items', 'migration_versions', 'page_revisions', 'page_translations', 'pages', 'permissions', 'role_permission', 'roles', 'site_settings', 'user_role', 'users', 'verification_code'],
+            ['audit_log', 'auth_remember_tokens', 'invitations', 'media', 'menu_items', 'migration_versions', 'page_revisions', 'page_translations', 'pages', 'permissions', 'role_permission', 'roles', 'site_settings', 'user_role', 'users', 'verification_code'],
             $database->tables(),
         );
         $descriptions = array_map(
@@ -51,6 +52,7 @@ final class MigrationsTest extends TestCase
         self::assertContains('Create the site_settings table.', $descriptions);
         self::assertContains('Create the invitations table.', $descriptions);
         self::assertContains('Create the menu_items table.', $descriptions);
+        self::assertContains('Create the audit_log table.', $descriptions);
         self::assertContains('Add the social_image_id column to page_translations.', $descriptions);
         self::assertContains('Add the seo_title, noindex and canonical_url columns to page_translations.', $descriptions);
         self::assertContains('Create the permissions, roles, role_permission and user_role tables.', $descriptions);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Branding\Http;
 
 use Locale;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -17,6 +18,7 @@ use SightPress\Core\Branding\BrandingService;
 use SightPress\Core\Branding\BrandingState;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Core\Site\Contract\SettingsChanged;
 use SightPress\Core\Tenant\Site;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpForbiddenException;
@@ -39,6 +41,7 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
         private AdminScreens $screens,
         private BrandingService $branding,
         private Site $site,
+        private EventDispatcherInterface $events,
     ) {
     }
 
@@ -73,8 +76,10 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
         $asset = BrandAsset::tryFrom(is_string($body['asset'] ?? null) ? $body['asset'] : '')
             ?? throw new HttpBadRequestException($request, 'This form isn’t one of the branding forms.');
         $what = self::title($asset);
+        $actor = Actor::fromRequest($request)->userId;
         if (($body['action'] ?? null) === 'reset') {
             $this->branding->reset($asset);
+            $this->events->dispatch(new SettingsChanged(['branding.' . $asset->value], $actor));
 
             return $this->screens->redirect($request, self::PATH . '#' . $asset->value, sprintf('%s: the generated picture is back.', $what));
         }
@@ -98,6 +103,7 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
             if ($asset !== BrandAsset::Icon && $alts !== []) {
                 $this->branding->describe($asset, $alts);
             }
+            $this->events->dispatch(new SettingsChanged(['branding.' . $asset->value], $actor));
         } catch (BrandingException $exception) {
             Session::fromRequest($request)->set(self::ERROR, ['asset' => $asset->value, 'message' => $exception->getMessage()]);
 

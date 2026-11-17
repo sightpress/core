@@ -79,5 +79,14 @@ final class SiteSettingsFlowTest extends TestCase
 
         $branding = (string) $ada->request('GET', '/admin/settings/branding')->getBody();
         self::assertStringContainsString('alt="The logo now: Riverside Reading Room"', $branding, 'the generated pictures use the new name');
+
+        // C-7.4: the change is in the audit log, on screen and in the CSV file.
+        $audit = (string) $ada->request('GET', '/admin/audit')->getBody();
+        self::assertStringContainsString('Changed the site settings: Site name, Time zone, About the site, Profiles on other sites, AI crawlers, Google Search Console verification code.', $audit);
+        self::assertMatchesRegularExpression('#<td>Ada</td>\s*<td>Changed the site settings#', $audit);
+        $csv = $ada->request('GET', '/admin/audit.csv');
+        self::assertSame('text/csv; charset=utf-8', $csv->getHeaderLine('Content-Type'));
+        self::assertStringContainsString(',Ada,settings.changed,settings,,', (string) $csv->getBody());
+        self::assertSame(303, $visitor->request('GET', '/admin/audit')->getStatusCode(), 'visitors are sent to sign in');
     }
 }

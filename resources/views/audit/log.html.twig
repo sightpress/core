@@ -1,0 +1,77 @@
+{#
+    The audit log (/admin/audit): filters in a search form, then a table (caption says what it shows and which page
+    of how many) with the time, who, what happened and the kind of thing. Older and newer entries are links.
+    Context: see AuditLogHandler.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Audit log') }}{% if pages > 1 %} ({{ t('page {page} of {pages}', {page: page, pages: pages}) }}){% endif %}{% endblock %}
+{% block content %}
+<h1>{{ t('Audit log') }}</h1>
+<p>{{ t('Who changed what, and when. Entries can’t be changed or removed.') }}</p>
+<form class="admin-filters" action="/admin/audit" method="get" role="search" aria-labelledby="audit-filters-title">
+    <h2 id="audit-filters-title">{{ t('Find entries') }}</h2>
+    <div class="field">
+        <label for="audit-who">{{ t('Who') }}</label>
+        <select id="audit-who" name="who">
+            <option value="">{{ t('Anyone') }}</option>
+            {%- for id, name in people %}
+            <option value="{{ id }}"{% if filters.who == id ~ '' %} selected{% endif %}>{{ name }}</option>
+            {%- endfor %}
+        </select>
+    </div>
+    <div class="field">
+        <label for="audit-type">{{ t('What') }}</label>
+        <select id="audit-type" name="type">
+            <option value="">{{ t('Everything') }}</option>
+            {%- for value, label in types %}
+            <option value="{{ value }}"{% if filters.type == value %} selected{% endif %}>{{ t(label) }}</option>
+            {%- endfor %}
+        </select>
+    </div>
+    <div class="field">
+        <label for="audit-from">{{ t('From') }} {{ t('(optional)') }}</label>
+        <p class="field-hint" id="audit-dates-hint">{{ t('A day, in the site’s time zone ({zone}).', {zone: timezone}) }}</p>
+        <input type="date" id="audit-from" name="from" value="{{ filters.from }}" aria-describedby="audit-dates-hint">
+    </div>
+    <div class="field">
+        <label for="audit-to">{{ t('To') }} {{ t('(optional)') }}</label>
+        <input type="date" id="audit-to" name="to" value="{{ filters.to }}" aria-describedby="audit-dates-hint">
+    </div>
+    <button type="submit">{{ t('Show entries') }}</button>
+    {%- if filtered %} <a href="/admin/audit">{{ t('Show all entries') }}</a>{% endif %}
+</form>
+{%- if bad_dates %}
+<p class="field-error">{{ t('A date was left out because it isn’t a day such as 2026-11-17.') }}</p>
+{%- endif %}
+<p><a href="/admin/audit.csv{{ query ? '?' ~ query : '' }}" download>{{ filtered ? t('Download these entries as a CSV file') : t('Download the whole log as a CSV file') }}</a></p>
+{%- if entries is empty %}
+<p>{{ filtered ? t('No entries match.') : t('Nothing has been recorded yet.') }}</p>
+{%- else %}
+<div class="table-wrapper" role="region" aria-labelledby="audit-caption" tabindex="0">
+<table class="audit-table">
+    <caption id="audit-caption">{{ total == 1 ? t('1 entry') : t('{count} entries, newest first', {count: total}) }}{% if pages > 1 %}{{ t(', page {page} of {pages}', {page: page, pages: pages}) }}{% endif %}</caption>
+    <thead>
+        <tr><th scope="col">{{ t('When') }}</th><th scope="col">{{ t('Who') }}</th><th scope="col">{{ t('What happened') }}</th><th scope="col">{{ t('Kind') }}</th></tr>
+    </thead>
+    <tbody>
+        {%- for row in entries %}
+        <tr>
+            <td><time datetime="{{ row.entry.occurredAt|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ row.entry.occurredAt|user_datetime }}</time></td>
+            <td>{{ row.who ?? t('System') }}</td>
+            <td>{{ row.entry.summary }}</td>
+            <td>{{ t(types[row.entry.entityType] ?? row.entry.entityType) }}</td>
+        </tr>
+        {%- endfor %}
+    </tbody>
+</table>
+</div>
+{%- if pages > 1 %}
+<nav class="pagination" aria-label="{{ t('Pages of the audit log') }}">
+    <ul>
+        {%- if page > 1 %}<li><a href="/admin/audit?{{ query ? query ~ '&' : '' }}page={{ page - 1 }}" rel="prev">{{ t('Newer entries') }}</a></li>{% endif %}
+        {%- if page < pages %}<li><a href="/admin/audit?{{ query ? query ~ '&' : '' }}page={{ page + 1 }}" rel="next">{{ t('Older entries') }}</a></li>{% endif %}
+    </ul>
+</nav>
+{%- endif %}
+{%- endif %}
+{% endblock %}
