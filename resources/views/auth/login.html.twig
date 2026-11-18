@@ -3,6 +3,9 @@
 {% block title %}{{ t('Sign in') }}{% endblock %}
 {% block content %}
 <h1>{{ t('Sign in') }}</h1>
+{%- if members_only|default(false) %}
+<p>{{ t('This site is for its members. Sign in to read it.') }}</p>
+{%- endif %}
 {{ f.error_summary(form) }}
 {{ f.start(form, action) }}
     {{ f.field(form, 'email') }}

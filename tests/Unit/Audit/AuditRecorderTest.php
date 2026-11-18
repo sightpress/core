@@ -60,7 +60,7 @@ final class AuditRecorderTest extends TestCase
         $users->save($zoe);
         $log = new AuditLog($pages->database->connection);
         $registry = ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue(CoreModules::candidates())->resolve(new ModuleSelection()));
-        $recorder = new AuditRecorder($log, new FixedClock(), new PageLinkQuery($pages->database->entityManager, $pages->addresses()), $media->media(), $users, $pages->site, SettingCatalogue::fromRegistry($registry));
+        $recorder = new AuditRecorder($log, new FixedClock(), new PageLinkQuery($pages->database->entityManager, $pages->addresses(), $pages->database->settings()), $media->media(), $users, $pages->site, SettingCatalogue::fromRegistry($registry));
         $page = (int) $about->id();
         $user = (int) $zoe->id();
 
@@ -104,7 +104,7 @@ final class AuditRecorderTest extends TestCase
             new \SightPress\Core\Page\Contract\ScheduledStepFailed($page, PageTransition::Unpublish, 'no permission', null),
             new \SightPress\Core\Auth\Contract\AccountRegistered($user, 'member'),
             new \SightPress\Core\Auth\Contract\AccountRegistered($user, 'member', 'editor'),
-            new SettingsChanged(['people.registration', 'rbac.registration_role'], 1),
+            new SettingsChanged(['people.registration', 'rbac.registration_role', 'site.visibility'], 1),
             new \stdClass(),
         ] as $event) {
             $recorder($event);
@@ -151,7 +151,7 @@ final class AuditRecorderTest extends TestCase
             'Couldn’t take “About us” off the site on schedule: no permission.',
             'Zoë signed up and confirmed their email address, with the “member” role.',
             'Zoë signed up and confirmed their email address. The sign-up role “editor” isn’t safe for people who sign up, so they got “member” instead.',
-            'Changed the site settings: Let anyone create an account, Role of people who sign up.',
+            'Changed the site settings: Let anyone create an account, Role of people who sign up, Who can read the site.',
         ], array_map(static fn (AuditEntry $e): string => $e->summary, $entries));
         self::assertSame(['page.submit', 'page', (string) $page, 3, ['from' => 'draft', 'to' => 'in_review', 'comment' => 'Ready']], [$entries[3]->action, $entries[3]->entityType, $entries[3]->entityId, $entries[3]->actorId, $entries[3]->details]);
         self::assertSame(['settings', null], [$entries[20]->entityType, $entries[20]->entityId]);

@@ -22,6 +22,7 @@ use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Rbac\Contract\PermissionLookup;
 use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\Contract\SiteVisibility;
 
 /**
  * `/login`, shared by every role: the sign-in form, and signing in. Afterwards people go back to the page they came
@@ -130,6 +131,7 @@ final readonly class LoginHandler implements RequestHandlerInterface
         return $this->pages->page($request, 'login.html.twig', [
             'form' => $form,
             'action' => '/login' . ($local === null ? '' : '?' . http_build_query(['return' => $local])),
+            'members_only' => SiteVisibility::isMembersOnly($this->settings),
             'sign_up' => SignUp::isOpen($this->settings->get(SignUp::SETTING)) ? SignUp::PATH . ($local === null ? '' : '?' . http_build_query(['return' => $local])) : null,
         ], $status);
     }

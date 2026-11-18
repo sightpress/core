@@ -115,7 +115,7 @@ final class IndexNowTest extends TestCase
         return new IndexNow(
             $this->pages->database->settings(),
             PageFixture::site(['en-GB']),
-            new PageLinkQuery($this->pages->database->entityManager, $this->pages->addresses()),
+            new PageLinkQuery($this->pages->database->entityManager, $this->pages->addresses(), $this->pages->database->settings()),
             $client,
             TenantConfig::fromArray([], '/srv/app', ['APP_ENV' => $environment]),
             $logger,

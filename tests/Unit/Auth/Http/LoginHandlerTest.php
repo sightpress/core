@@ -57,6 +57,14 @@ final class LoginHandlerTest extends TestCase
         self::assertSame([], Text::of(array_map(strval(...), Flash::take($session))), 'a flash message is shown once');
     }
 
+    public function testAMembersOnlySiteSaysSoOnTheSignInPage(): void
+    {
+        self::assertStringNotContainsString('This site is for its members.', (string) $this->handle($this->auth->request())->getBody());
+
+        $this->auth->database->settings()->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+        self::assertStringContainsString('<p>This site is for its members. Sign in to read it.</p>', (string) $this->handle($this->auth->request())->getBody());
+    }
+
     public function testLinksToTheSignUpFormOnlyWhileTheSiteLetsPeopleSignUp(): void
     {
         self::assertStringNotContainsString('Create an account', (string) $this->handle($this->auth->request())->getBody());

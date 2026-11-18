@@ -20,6 +20,7 @@ export const ADMIN_SITES = {
   revisions: 'http://127.0.0.1:8082',
   schedule: 'http://127.0.0.1:8081',
   signup: 'http://127.0.0.1:8079',
+  visibility: 'http://127.0.0.1:8078',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

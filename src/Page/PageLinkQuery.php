@@ -8,15 +8,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use SightPress\Core\Page\Contract\PageLink;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Entity\PageTranslation;
+use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\Contract\SiteVisibility;
 
 /**
- * Pages as links, from one query of their translations in a locale.
+ * Pages as links, from one query of their translations in a locale. A page is public when it is published and it and
+ * the site are public ({@see SiteVisibility}).
  */
 final readonly class PageLinkQuery implements PageLinks
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
         private PageAddresses $addresses,
+        private SiteSettings $settings,
     ) {
     }
 
@@ -78,14 +82,15 @@ final readonly class PageLinkQuery implements PageLinks
     private function link(PageTranslation $translation): PageLink
     {
         $page = $translation->page();
+        $public = $translation->isPublished() && SiteVisibility::isOpenToEveryone($page->isPublic(), $this->settings);
 
         return new PageLink(
             (int) $page->id(),
             $translation->title(),
             $this->addresses->url($translation),
             $page->depth(),
-            $translation->isPublished() && $page->isPublic(),
-            $translation->isPublished() && $page->isPublic() && !$translation->isNoindex() && $translation->canonicalUrl() === null,
+            $public,
+            $public && !$translation->isNoindex() && $translation->canonicalUrl() === null,
         );
     }
 }

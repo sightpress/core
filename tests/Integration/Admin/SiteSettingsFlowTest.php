@@ -60,6 +60,7 @@ final class SiteSettingsFlowTest extends TestCase
         $saved = $ada->submit('/admin/settings', [
             'name' => 'Riverside Reading Room',
             'timezone' => 'Europe/Lisbon',
+            'visibility' => 'public',
             'setting__site__description' => 'A small library by the river.',
             'setting__site__same_as' => 'https://example.social/@riverside',
             'setting__seo__ai_crawlers' => 'search_only',

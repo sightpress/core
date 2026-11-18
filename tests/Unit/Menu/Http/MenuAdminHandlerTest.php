@@ -140,7 +140,7 @@ final class MenuAdminHandlerTest extends TestCase
         $handler = new MenuAdminHandler(
             $this->fixture->shell(),
             $this->menus,
-            new PageLinkQuery($this->fixture->auth->database->entityManager, $this->pages->addresses()),
+            new PageLinkQuery($this->fixture->auth->database->entityManager, $this->pages->addresses(), $this->fixture->auth->database->settings()),
             $this->fixture->auth->validator(),
             $this->pages->site,
         );

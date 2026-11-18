@@ -138,6 +138,7 @@ final readonly class AuditRecorder
             'site.default_locale' => 'Main language',
             'site.locales' => 'Languages',
             'site.default_timezone' => 'Time zone',
+            'site.visibility' => 'Who can read the site',
             'people.registration' => 'Let anyone create an account',
             'rbac.registration_role' => 'Role of people who sign up',
             'branding.logo' => 'Logo',

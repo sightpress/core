@@ -101,6 +101,10 @@ final readonly class PageEditorHandler implements RequestHandlerInterface
             if ($form->text('layout') !== $page->layout()) {
                 $page->setLayout($form->text('layout'), $this->clock->now());
             }
+            $public = $form->text('visibility') === PageEditorScreen::EVERYONE;
+            if ($public !== $page->isPublic()) {
+                $page->setPublic($public, $this->clock->now());
+            }
             $this->editor->save($page, $locale, $content, $actor->userId);
         } catch (InvalidBlocks $exception) {
             $errors = [];

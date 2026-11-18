@@ -38,7 +38,7 @@ final class PublicMenusTest extends TestCase
         $menus->add(MenuName::Main, (int) $draftChild->id(), parent: $draftEntry);
         $menus->add(MenuName::Main, 9999);
         $menus->add(MenuName::Footer, null, 'Hours', '/hours');
-        $listener = new PublicMenus($menus, new PageLinkQuery($pages->database->entityManager, $pages->addresses()), $pages->site);
+        $listener = new PublicMenus($menus, new PageLinkQuery($pages->database->entityManager, $pages->addresses(), $pages->database->settings()), $pages->site);
 
         $event = $this->event((int) $team->id(), 'en-GB', '/about/team', 'Team', [(int) $about->id()], false);
         $listener($event);

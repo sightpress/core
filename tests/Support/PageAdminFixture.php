@@ -116,6 +116,7 @@ final class PageAdminFixture
             $choices,
             $this->pages->site,
             $this->pages->repository(),
+            $this->pages->database->settings(),
         );
     }
 

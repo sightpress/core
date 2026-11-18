@@ -13,6 +13,7 @@ use SightPress\Core\Block\Contract\BlockContexts;
 use SightPress\Core\Block\Contract\BlockRenderer;
 use SightPress\Core\Block\Contract\MediaTexts;
 use SightPress\Core\Http\AcceptNegotiator;
+use SightPress\Core\Http\Security\MembersOnlyMiddleware;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Page\Contract\MarkdownAddress;
 use SightPress\Core\Page\Contract\MarkdownPages;
@@ -25,6 +26,8 @@ use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\Contract\PageAction;
 use SightPress\Core\Rbac\Contract\PageState;
+use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\Contract\SiteVisibility;
 use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Template\ViewerPreferences;
 use SightPress\Core\Tenant\LocaleCode;
@@ -40,7 +43,8 @@ use Twig\Environment;
  * The public site: `/` is the home page, `/{path}` the page at that address (`/pt-pt/…` for other locales), in the
  * theme layout the page uses. Only pages the visitor may view are shown (published, and public or the visitor is
  * signed in), in a translation that isn't a draft of its own; anything else is a 404, so nothing is given away about
- * drafts. Addresses that aren't the page's own
+ * drafts. A published page for members only sends anonymous visitors to sign in and back; it, and every page of a
+ * members-only site ({@see SiteVisibility}), is never indexable. Addresses that aren't the page's own
  * are moved permanently: `/about/` → `/about`, the home page's own path → `/`, any of the site's other domains → its
  * first one; old addresses of pages that moved lead to their new ones (redirects table, P-1). Pages in the trash, and
  * pages deleted for good, are gone (410). Other modules add menus, `<head>` tags
@@ -72,6 +76,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         private TenantConfig $config,
         private MediaTexts $texts,
         private PageRedirects $redirects,
+        private SiteSettings $settings,
     ) {
     }
 
@@ -103,6 +108,9 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         $redirect = $translation === null ? $this->redirects->find($locale, rawurldecode($localPath)) : null;
         if ($redirect !== null) {
             return $this->redirected($request, $redirect, $markdownPath);
+        }
+        if ($translation !== null && !$actor->isSignedIn() && $translation->isPublished() && !$translation->page()->isPublic()) {
+            return $this->signIn($request);
         }
         if ($translation === null || !$this->visible($translation, $actor)) {
             $fallback = $this->fallback($locale, $localPath, $translation, $actor);
@@ -140,7 +148,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
             $translation->description(),
             array_values(array_diff(array_map(intval(...), array_filter(explode('/', $page->treePath()), static fn (string $id): bool => $id !== '')), [$page->id()])),
             $this->addresses->isHome($page),
-            $page->isPublic(),
+            SiteVisibility::isOpenToEveryone($page->isPublic(), $this->settings),
             $translation->updatedAt(),
             $translation->socialImage(),
             $translation->seoTitle(),
@@ -262,7 +270,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         $links = [];
         foreach ($this->site->locales as $locale) {
             $translation = $page->translation($locale);
-            if ($translation !== null && $translation->isPublished() && $page->isPublic()) {
+            if ($translation !== null && $translation->isPublished() && SiteVisibility::isOpenToEveryone($page->isPublic(), $this->settings)) {
                 $links[$locale] = sprintf('<%s%s>; rel="alternate"; hreflang="%s"', $base, $this->addresses->url($translation), $locale);
             }
         }
@@ -351,7 +359,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
     {
         $canonical = $translation->canonicalUrl() ?? $address;
         $body = $this->documents->document($translation->locale(), $translation->title(), $translation->summary(), $blocks, $canonical, $translation->updatedAt(), $baseUrl);
-        $indexable = $translation->page()->isPublic() && !$translation->isNoindex();
+        $indexable = SiteVisibility::isOpenToEveryone($translation->page()->isPublic(), $this->settings) && !$translation->isNoindex();
         $robots = match (true) {
             !$this->config->environment->isProduction() => 'noindex, nofollow',
             !$indexable => 'noindex',
@@ -395,6 +403,18 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         $home = $translation !== null && $this->addresses->isHome($translation->page());
 
         return $this->moved($request->getUri()->withPath($markdown ? MarkdownAddress::of($url, $home) : $url)->__toString());
+    }
+
+    /**
+     * A page for members only, asked for by someone who isn't signed in: sign in first, then come back (D24). The
+     * page's title and content are never sent.
+     */
+    private function signIn(ServerRequestInterface $request): ResponseInterface
+    {
+        return $this->responses->createResponse(302)
+            ->withHeader('Location', MembersOnlyMiddleware::signIn($request))
+            ->withHeader('Cache-Control', 'no-store')
+            ->withHeader('X-Robots-Tag', 'noindex, nofollow');
     }
 
     private function moved(string $location): ResponseInterface

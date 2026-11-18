@@ -23,6 +23,7 @@ use SightPress\Core\Http\RateLimit\RateLimitMiddleware;
 use SightPress\Core\Http\RouteInstaller;
 use SightPress\Core\Http\SiteResolverMiddleware;
 use SightPress\Core\Http\Security\AuthenticationMiddleware;
+use SightPress\Core\Http\Security\MembersOnlyMiddleware;
 use SightPress\Core\Http\Security\SecurityHeadersMiddleware;
 use SightPress\Core\Http\Session\SessionMiddleware;
 use SightPress\Core\Infrastructure\Container\Services;
@@ -102,8 +103,9 @@ final readonly class Kernel
         $app = new App($responseFactory, $container);
         // Middleware added last runs first. The site is resolved from the host before anything else touches the
         // request. Routing comes before the CSRF check, so an unknown address or method answers 404 or 405 rather
-        // than 403.
+        // than 403. Members-only sites send anonymous visitors to sign in once the visitor is known.
         $app->add(CsrfMiddleware::class);
+        $app->add(MembersOnlyMiddleware::class);
         $app->add(AuthenticationMiddleware::class);
         $app->addRoutingMiddleware();
         $app->add(SessionMiddleware::class);

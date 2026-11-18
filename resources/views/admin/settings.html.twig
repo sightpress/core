@@ -21,6 +21,7 @@
             {%- for language in languages %} {{ language.main ? t('{language} (main language)', {language: language.name}) : t(language.name) }}{{ loop.last ? '.' : ',' }}{% endfor %}
             <a href="{{ languages_path }}">{{ t('Change the languages') }}</a></p>
         {{ f.field(form, 'timezone') }}
+        {{ f.field(form, 'visibility') }}
         <p>{{ t('The site is run by {owner}.', {owner: t(owner)}) }}</p>
     </fieldset>
     {%- for section in sections %}
@@ -35,8 +36,6 @@
     <section class="admin-panel" aria-labelledby="settings-later">
         <h2 id="settings-later">{{ t('Not yet changeable') }}</h2>
         <dl class="people-details">
-            <dt>{{ t('Visibility') }}</dt>
-            <dd>{{ t('Public: anyone can read the published pages. Sites for members only come in a later version.') }}</dd>
             <dt>{{ t('Theme') }}</dt>
             <dd>{{ t('SightPress Default. More themes come in a later version.') }}</dd>
         </dl>

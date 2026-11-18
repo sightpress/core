@@ -69,7 +69,9 @@ final class SettingsHandlerTest extends TestCase
         self::assertStringContainsString('<a href="/admin/settings/languages">Change the languages</a>', $html);
         self::assertStringContainsString('The site is run by an organisation.', $html);
         self::assertStringContainsString('<a href="/admin/settings/branding">Branding</a>', $html);
-        self::assertStringContainsString('Public: anyone can read the published pages.', $html);
+        self::assertStringContainsString('<legend>Who can read the site</legend>', $html);
+        self::assertStringContainsString('value="public" checked', $html);
+        self::assertStringNotContainsString('Sites for members only come in a later version', $html);
         self::assertStringContainsString('<p>Only people you invite can join. <a href="/admin/settings/sign-up">Change who can sign up</a></p>', $html);
 
         $this->fixture->auth->database->settings()->set(\SightPress\Core\Auth\Contract\SignUp::SETTING, '1');
@@ -106,6 +108,23 @@ final class SettingsHandlerTest extends TestCase
         self::assertSame('0', Text::of($settings->get('seo.indexnow')));
         $this->handle('POST', $this->body([]));
         self::assertSame(['The settings have been saved.', 'Nothing was changed.'], Text::of(array_map(strval(...), Flash::take($this->session))));
+    }
+
+    public function testTheSiteCanBeMadeMembersOnlyAndPublicAgain(): void
+    {
+        $response = $this->handle('POST', $this->body(['visibility' => 'members']));
+
+        self::assertSame(303, $response->getStatusCode());
+        $settings = $this->fixture->auth->database->settings();
+        self::assertSame('members', $settings->get('site.visibility'));
+        $event = $this->events->events[0] ?? null;
+        self::assertInstanceOf(SettingsChanged::class, $event);
+        self::assertSame(['site.visibility'], Text::of($event->keys));
+        self::assertStringContainsString('value="members" checked', (string) $this->handle('GET')->getBody());
+
+        $this->handle('POST', $this->body([]));
+        self::assertSame('public', $settings->get('site.visibility'));
+        self::assertSame(422, $this->handle('POST', $this->body(['visibility' => 'secret']))->getStatusCode());
     }
 
     public function testEverySiteHasAPasswordPolicyItsAdminCanChange(): void
@@ -178,6 +197,7 @@ final class SettingsHandlerTest extends TestCase
         return $changes + [
             'name' => 'Demo',
             'timezone' => 'Europe/London',
+            'visibility' => 'public',
             'setting__seo__ai_crawlers' => 'allow_all',
             'setting__acme__size' => '',
             'setting__auth__password_min_length' => '12',

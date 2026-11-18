@@ -40,6 +40,8 @@ use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\Contract\PageAction;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Tenant\LocaleCode;
+use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\Contract\SiteVisibility;
 use SightPress\Core\Tenant\Site;
 use Symfony\Component\Validator\Constraints\Length;
 
@@ -54,6 +56,10 @@ final readonly class PageEditorScreen
 {
     /** Choices of the share image are `media-12`: a select's values can't be bare numbers. */
     public const string MEDIA_PREFIX = 'media-';
+
+    /** Values of the "Who can read this page" field. */
+    public const string EVERYONE = 'public';
+    public const string MEMBERS = 'members';
 
     public function __construct(
         private AdminScreens $screens,
@@ -70,6 +76,7 @@ final readonly class PageEditorScreen
         private MediaChoices $media,
         private Site $site,
         private PageRepository $pages,
+        private SiteSettings $settings,
     ) {
     }
 
@@ -88,6 +95,10 @@ final readonly class PageEditorScreen
             new Field('title', 'Title', hint: 'Shown at the top of the page, in the browser tab and in menus.', constraints: [$length(PageContent::TITLE_MAX_LENGTH)]),
             new Field('slug', 'Address', hint: new Message('The last part of the page’s web address, after {path}. Lower-case letters a to z, digits and hyphens. Leave it empty to make one from the title. Pages below this one move with it.', ['path' => $parent === null ? 'the site’s address' : '/' . $parent->path() . '/']), required: false),
             new Field('layout', 'Layout', FieldType::Select, choices: $this->admin->layouts($page->layout())),
+            new Field('visibility', 'Who can read this page', FieldType::Radios, hint: SiteVisibility::isMembersOnly($this->settings) ? 'The whole site is for members only, so only people who are signed in can read it, whatever you choose here.' : 'Pages for members only are left out of search engines, the sitemap and llms.txt. People who aren’t signed in are asked to sign in.', choices: [
+                self::EVERYONE => 'Everyone',
+                self::MEMBERS => 'Members only: people with an account on the site, once they sign in',
+            ]),
             new Field('summary', 'Summary', FieldType::Textarea, hint: 'One or two sentences about the page. Shown in lists of pages and read by AI search engines.', required: false, constraints: [$length(PageContent::SUMMARY_MAX_LENGTH)]),
             new Field('seo_title', 'Title in search results', hint: 'Only when it should differ from the title. Leave it empty to use the title.', required: false, constraints: [$length(PageContent::SEO_TITLE_MAX_LENGTH)]),
             new Field('description', 'Description for search engines', FieldType::Textarea, hint: new Message('One or two sentences. Search engines show about {max} characters.', ['max' => (string) PublishChecker::DESCRIPTION_MAX]), required: false, constraints: [$length(PageContent::DESCRIPTION_MAX_LENGTH)]),
@@ -112,10 +123,13 @@ final readonly class PageEditorScreen
         $translation = $page->translation($locale);
         $form = $this->form($locale, $page, $translation?->socialImage());
 
-        return $form->withValues($translation === null ? ['layout' => $page->layout()] : [
+        $visibility = $page->isPublic() ? self::EVERYONE : self::MEMBERS;
+
+        return $form->withValues($translation === null ? ['layout' => $page->layout(), 'visibility' => $visibility] : [
             'title' => $translation->title(),
             'slug' => $translation->slug(),
             'layout' => $page->layout(),
+            'visibility' => $visibility,
             'summary' => $translation->summary() ?? '',
             'seo_title' => $translation->seoTitle() ?? '',
             'description' => $translation->description() ?? '',

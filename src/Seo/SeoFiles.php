@@ -12,6 +12,7 @@ use SightPress\Core\Page\Contract\MarkdownPages;
 use SightPress\Core\Page\Contract\PageIndex;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\Contract\SiteVisibility;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\TenantConfig;
@@ -25,7 +26,8 @@ use XMLWriter;
  * another page), in every language, with when it last changed and, on sites with more than one language, its other
  * languages as `xhtml:link` alternates. `robots.txt` keeps crawlers out of the admin, sign-in and account pages
  * and points them to the sitemap, and names the AI crawlers the site's {@see AiCrawlerPolicy} keeps out; on an
- * install that isn't in production it keeps them out of everything.
+ * install that isn't in production, or on a members-only site ({@see SiteVisibility}), it keeps them out of
+ * everything (and the sitemap and `llms.txt` list nothing, as no page is public).
  */
 final class SeoFiles
 {
@@ -88,7 +90,7 @@ final class SeoFiles
 
     public function robots(string $baseUrl): string
     {
-        return $this->cached('robots.' . $this->aiCrawlers->current(), $baseUrl, fn (string $base): string => $this->buildRobots($base));
+        return $this->cached('robots.' . $this->aiCrawlers->current() . (SiteVisibility::isMembersOnly($this->settings) ? '.members' : ''), $baseUrl, fn (string $base): string => $this->buildRobots($base));
     }
 
     /**
@@ -206,6 +208,9 @@ final class SeoFiles
     {
         if (!$this->robots->isProduction()) {
             return "# This install is not in production: search engines are asked to stay away.\nUser-agent: *\nDisallow: /\n";
+        }
+        if (SiteVisibility::isMembersOnly($this->settings)) {
+            return "# This site is for its members only: search engines are asked to stay away.\nUser-agent: *\nDisallow: /\n";
         }
         $lines = ['User-agent: *'];
         foreach (self::PRIVATE_PATHS as $path) {

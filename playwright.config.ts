@@ -70,7 +70,7 @@ export default defineConfig({
     },
     // One copy of the admin test site per spec file (tests/A11y/support/admin-site.ts), so specs never reset each
     // other's site.
-    ...Object.entries({ admin: 8096, account: 8095, people: 8094, media: 8093, menus: 8092, pages: 8089, settings: 8088, languages: 8085, operations: 8083, revisions: 8082, schedule: 8081, signup: 8079 }).map(([copy, port]) => ({
+    ...Object.entries({ admin: 8096, account: 8095, people: 8094, media: 8093, menus: 8092, pages: 8089, settings: 8088, languages: 8085, operations: 8083, revisions: 8082, schedule: 8081, signup: 8079, visibility: 8078 }).map(([copy, port]) => ({
       command: `SIGHTPRESS_A11Y_SITE=${copy} php -S 127.0.0.1:${port} tests/A11y/admin/index.php`,
       url: `http://127.0.0.1:${port}/login`,
       reuseExistingServer: !process.env.CI,

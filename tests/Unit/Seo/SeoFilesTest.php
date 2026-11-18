@@ -112,6 +112,23 @@ final class SeoFilesTest extends TestCase
         self::assertStringContainsString('Disallow: /', $this->files('staging', new ArrayAdapter())->robots('https://demo.example'));
     }
 
+    public function testAMembersOnlySiteListsNothingAndKeepsCrawlersOut(): void
+    {
+        $this->pages->published('Home');
+        $this->pages->published('About');
+        $files = $this->files('production', new ArrayAdapter());
+        self::assertStringContainsString('Allow: /', $files->robots('https://demo.example'));
+
+        $this->pages->database->settings()->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+        $files->purge();
+
+        self::assertSame("# This site is for its members only: search engines are asked to stay away.\nUser-agent: *\nDisallow: /\n", $files->robots('https://demo.example'));
+        self::assertSame([], $files->indexable());
+        self::assertStringNotContainsString('<url>', $files->sitemap('https://demo.example'));
+        self::assertStringNotContainsString('/about', $files->llms('https://demo.example'));
+        self::assertSame([false, false], array_map(static fn (IndexedPage $page): bool => $page->public, $files->published()));
+    }
+
     public function testListsThePagesForAiReadersInLlmsTxt(): void
     {
         $home = $this->pages->published('Home');
@@ -220,7 +237,7 @@ final class SeoFilesTest extends TestCase
 
     private function index(): PageIndexQuery
     {
-        return new PageIndexQuery($this->pages->database->entityManager, $this->pages->addresses(), $this->pages->site, new BlockFixture([], $this->pages->database)->texts($this->pages->site));
+        return new PageIndexQuery($this->pages->database->entityManager, $this->pages->addresses(), $this->pages->site, new BlockFixture([], $this->pages->database)->texts($this->pages->site), $this->pages->database->settings());
     }
 
     private function policy(string $environment): RobotsPolicy

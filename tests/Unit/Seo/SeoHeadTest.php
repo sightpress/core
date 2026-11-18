@@ -162,7 +162,7 @@ final class SeoHeadTest extends TestCase
         return new SeoHead(
             $this->pages->site,
             new RobotsPolicy(new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment])),
-            new PageLinkQuery($this->pages->database->entityManager, $this->pages->addresses()),
+            new PageLinkQuery($this->pages->database->entityManager, $this->pages->addresses(), $this->pages->database->settings()),
             $blocks->renderer(),
             $blocks->contexts($this->pages->site),
             new SearchConsoles($this->pages->database->settings()),

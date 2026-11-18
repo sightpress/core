@@ -24,6 +24,7 @@ use SightPress\Core\Seo\Contract\SiteVerification;
 use SightPress\Core\Site\Contract\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\Contract\SiteVisibility;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\OwnerType;
 use SightPress\Core\Tenant\Site;
@@ -38,8 +39,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * `/admin/settings`: the site's name and time zone (its languages are on {@see LanguagesHandler}'s screen), then a field for every setting the modules
- * registered, grouped by what they are about (who runs the site, search & AI, then the other modules), and what
- * can't be changed yet (visibility, theme). Needs `settings.manage`. Saving says so in the live region and tells
+ * registered, grouped by what they are about (who runs the site, search & AI, then the other modules), who can read
+ * the site ({@see SiteVisibility}) and what can't be changed yet (the theme). Needs `settings.manage`. Saving says so in the live region and tells
  * the modules which settings changed ({@see SettingsChanged}).
  */
 final readonly class SettingsHandler implements RequestHandlerInterface
@@ -78,6 +79,10 @@ final readonly class SettingsHandler implements RequestHandlerInterface
     {
         $fields = [new Field('name', 'Site name', hint: 'Shown at the top of every page, in the browser tab and in search results.', constraints: [new Length(max: 120, maxMessage: 'The site name must be 120 characters or fewer')])];
         $fields[] = new Field('timezone', 'Time zone', FieldType::Select, hint: 'Dates and times are shown in it to visitors, and to people who haven’t chosen their own.', choices: TimezoneChoices::grouped());
+        $fields[] = new Field('visibility', 'Who can read the site', FieldType::Radios, choices: [
+            SiteVisibility::PUBLIC => 'Everyone. Pages marked for members only still need an account.',
+            SiteVisibility::MEMBERS => 'Only people with an account, once they sign in. Search engines and AI services can’t read any page.',
+        ]);
         foreach ($this->catalogue->all() as ['setting' => $setting]) {
             $fields[] = $this->field($setting);
         }
@@ -139,7 +144,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
      */
     private function current(): array
     {
-        $values = ['name' => $this->site->name, 'timezone' => $this->site->defaultTimezone];
+        $values = ['name' => $this->site->name, 'timezone' => $this->site->defaultTimezone, 'visibility' => self::visibility($this->settings)];
         foreach ($this->catalogue->all() as ['setting' => $setting]) {
             $value = SettingCatalogue::stored($setting, $this->settings->get($setting->key));
             $values[self::fieldName($setting->key)] = $setting->type === SettingType::Boolean ? ($value === '1' ? '1' : '') : $value;
@@ -158,6 +163,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
         $wanted = [
             SiteProfile::NAME => [$this->site->name, $form->text('name')],
             SiteProfile::DEFAULT_TIMEZONE => [$this->site->defaultTimezone, $form->text('timezone')],
+            SiteVisibility::SETTING => [self::visibility($this->settings), $form->text('visibility')],
         ];
         foreach ($this->catalogue->all() as ['setting' => $setting]) {
             $value = $form->text(self::fieldName($setting->key));
@@ -175,6 +181,11 @@ final readonly class SettingsHandler implements RequestHandlerInterface
         }
 
         return $changed;
+    }
+
+    private static function visibility(SiteSettings $settings): string
+    {
+        return SiteVisibility::isMembersOnly($settings) ? SiteVisibility::MEMBERS : SiteVisibility::PUBLIC;
     }
 
     private function field(Setting $setting): Field

@@ -26,7 +26,7 @@ final class PageLinkQueryTest extends TestCase
         $team = $fixture->published('Team', [], $about);
         $fixture->editor()->move($draft, null, 1);
         $fixture->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
-        $links = new PageLinkQuery($fixture->database->entityManager, $fixture->addresses());
+        $links = new PageLinkQuery($fixture->database->entityManager, $fixture->addresses(), $fixture->database->settings());
 
         self::assertEquals([
             (int) $home->id() => new PageLink((int) $home->id(), 'Welcome', '/', 0, true, true),
@@ -41,5 +41,8 @@ final class PageLinkQueryTest extends TestCase
         );
         self::assertFalse($links->all('en-GB')[1]->public);
         self::assertFalse($links->all('en-GB')[1]->indexable);
+
+        $fixture->database->settings()->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+        self::assertEquals(new PageLink((int) $home->id(), 'Welcome', '/', 0, false, false), $links->find([(int) $home->id()], 'en-GB')[(int) $home->id()], 'on a members-only site no page is public');
     }
 }

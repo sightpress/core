@@ -169,7 +169,7 @@ final class PublicPageHandlerTest extends TestCase
         }
     }
 
-    public function testDraftsMissingPagesAndMembersOnlyPagesForVisitorsAreNotFound(): void
+    public function testDraftsAndMissingPagesAreNotFoundAndMembersOnlyPagesAskVisitorsToSignIn(): void
     {
         $this->fixture->pages->published('Welcome');
         $this->fixture->pages->editor()->create('en-GB', new PageContent('Draft'));
@@ -177,13 +177,17 @@ final class PublicPageHandlerTest extends TestCase
         $members->setPublic(false, $this->fixture->pages->clock->now());
         $this->fixture->pages->repository()->flush();
 
-        foreach (['/draft', '/missing', '/members', '/fr/members', '/pt-pt/draft', '/pt-pt/missing'] as $path) {
+        foreach (['/draft', '/missing', '/fr/members', '/pt-pt/draft', '/pt-pt/missing'] as $path) {
             try {
                 $this->get('https://demo.example' . $path);
                 self::fail('Expected a 404 for ' . $path);
             } catch (HttpNotFoundException) {
                 $this->addToAssertionCount(1);
             }
+        }
+        foreach (['/members' => '/login?return=%2Fmembers', '/members.md' => '/login?return=%2Fmembers.md', '/members?x=1' => '/login?return=%2Fmembers%3Fx%3D1'] as $path => $location) {
+            $visitor = $this->get('https://demo.example' . $path);
+            self::assertSame([302, $location, 'no-store', 'noindex, nofollow', ''], [$visitor->getStatusCode(), $visitor->getHeaderLine('Location'), $visitor->getHeaderLine('Cache-Control'), $visitor->getHeaderLine('X-Robots-Tag'), (string) $visitor->getBody()], $path);
         }
 
         $untranslated = $this->get('https://demo.example/pt-pt');
@@ -192,6 +196,25 @@ final class PublicPageHandlerTest extends TestCase
         $signedIn = $this->get('https://demo.example/members', [], new Actor(7));
         self::assertSame(200, $signedIn->getStatusCode());
         self::assertSame('private, no-cache', $signedIn->getHeaderLine('Cache-Control'));
+        $event = end($this->fixture->pages->events);
+        self::assertInstanceOf(\SightPress\Core\Page\Contract\PublicPageRendering::class, $event);
+        self::assertFalse($event->public, 'never indexable');
+        $markdown = $this->get('https://demo.example/members.md', [], new Actor(7));
+        self::assertSame([200, 'noindex'], [$markdown->getStatusCode(), $markdown->getHeaderLine('X-Robots-Tag')]);
+    }
+
+    public function testOnAMembersOnlySiteNoPageIsIndexable(): void
+    {
+        $this->fixture->pages->published('Welcome');
+        $this->fixture->pages->published('About us');
+        $this->fixture->pages->database->settings()->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+
+        $page = $this->get('https://demo.example/about-us', [], new Actor(7));
+        $event = end($this->fixture->pages->events);
+        self::assertInstanceOf(\SightPress\Core\Page\Contract\PublicPageRendering::class, $event);
+        self::assertFalse($event->public);
+        self::assertSame(200, $page->getStatusCode());
+        self::assertSame('noindex', $this->get('https://demo.example/about-us.md', [], new Actor(7))->getHeaderLine('X-Robots-Tag'));
     }
 
     public function testAPageWithAFormIsPrivate(): void
@@ -269,12 +292,9 @@ final class PublicPageHandlerTest extends TestCase
         self::assertSame('https://demo.example/pt-pt', $this->handler()->handle($own)->getHeaderLine('Location'), 'a signed-in person\'s own language wins');
         $home->setPublic(false, $this->fixture->pages->clock->now());
         $this->fixture->pages->repository()->flush();
-        try {
-            $this->get('https://demo.example/', ['Accept-Language' => 'pt-PT']);
-            self::fail('a members-only home page is never negotiated');
-        } catch (HttpNotFoundException) {
-            $home->setPublic(true, $this->fixture->pages->clock->now());
-        }
+        $members = $this->get('https://demo.example/', ['Accept-Language' => 'pt-PT']);
+        self::assertSame([302, '/login'], [$members->getStatusCode(), $members->getHeaderLine('Location')], 'a members-only home page is never negotiated: sign in first');
+        $home->setPublic(true, $this->fixture->pages->clock->now());
         $english = $this->fixture->auth->request('GET', 'https://demo.example/')->withAttribute(\SightPress\Core\Template\ViewerPreferences::class, new \SightPress\Core\Template\ViewerPreferences('en-GB'))->withHeader('Accept-Language', 'pt-PT');
         self::assertSame(200, $this->handler()->handle($english)->getStatusCode());
         unset($about);
@@ -369,6 +389,7 @@ final class PublicPageHandlerTest extends TestCase
             new \SightPress\Core\Tenant\TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $config]),
             $this->fixture->blocks->texts($pages->site),
             $pages->redirects(),
+            $pages->database->settings(),
         );
     }
 }

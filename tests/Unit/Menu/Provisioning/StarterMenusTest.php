@@ -33,7 +33,7 @@ final class StarterMenusTest extends TestCase
         $menus->add(MenuName::Main, null, 'Shop', 'https://shop.example');
         $event = new SiteProvisioning($pages->site, new Container([
             MenuEditor::class => $menus,
-            PageLinks::class => new PageLinkQuery($pages->database->entityManager, $pages->addresses()),
+            PageLinks::class => new PageLinkQuery($pages->database->entityManager, $pages->addresses(), $pages->database->settings()),
         ]), new FirstAdmin('a@example.org', 'A', 'B'), 'https://demo.example');
 
         new StarterMenus()($event);

@@ -196,6 +196,28 @@ final class PageEditorHandlerTest extends TestCase
         self::assertStringContainsString('That button no longer matches', (string) $this->post($this->editor, $this->body(['op' => 'add:/blocks', 'add_type' => 'not a list']))->getBody());
     }
 
+    public function testAPageCanBeForMembersOnly(): void
+    {
+        $html = (string) $this->fixture->handle($this->fixture->editorHandler(), $this->editor, 'GET', '/admin/pages/x', [], (int) $this->page->id())->getBody();
+        self::assertStringContainsString('<legend>Who can read this page</legend>', $html);
+        self::assertStringContainsString('value="public" checked', $html);
+        self::assertStringContainsString('People who aren’t signed in are asked to sign in.', $html);
+
+        self::assertSame(303, $this->post($this->editor, $this->body(['visibility' => 'members']))->getStatusCode());
+        self::assertFalse($this->page->isPublic());
+        self::assertSame(303, $this->post($this->editor, $this->body(['visibility' => 'members']))->getStatusCode());
+        self::assertFalse($this->page->isPublic());
+        self::assertSame(422, $this->post($this->editor, $this->body(['visibility' => 'secret']))->getStatusCode());
+
+        $this->fixture->pages->database->settings()->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+        $members = (string) $this->fixture->handle($this->fixture->editorHandler(), $this->editor, 'GET', '/admin/pages/x', [], (int) $this->page->id())->getBody();
+        self::assertStringContainsString('value="members" checked', $members);
+        self::assertStringContainsString('The whole site is for members only', $members);
+
+        $this->post($this->editor, $this->body());
+        self::assertTrue($this->page->isPublic());
+    }
+
     public function testPreviewsRichTextInsideColumnsOnlyWhenItCanBeSaved(): void
     {
         $html = (string) $this->post($this->editor, $this->body(['op' => 'preview', 'blocks' => [
@@ -309,6 +331,7 @@ final class PageEditorHandlerTest extends TestCase
             'title' => 'A changed title',
             'slug' => '',
             'layout' => 'default',
+            'visibility' => 'public',
             'summary' => 'When we are open.',
             'seo_title' => '',
             'description' => '',

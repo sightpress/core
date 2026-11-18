@@ -56,7 +56,7 @@ final class PageEditingFlowTest extends TestCase
         $edit = $started->getHeaderLine('Location');
         self::assertMatchesRegularExpression('#^/admin/pages/\d+$#', $edit);
 
-        $fields = ['title' => 'Opening hours', 'slug' => 'hours', 'layout' => 'default', 'summary' => 'When the library is open.', 'description' => 'Opening times of the library.'];
+        $fields = ['title' => 'Opening hours', 'slug' => 'hours', 'layout' => 'default', 'visibility' => 'public', 'summary' => 'When the library is open.', 'description' => 'Opening times of the library.'];
         $added = $cleo->submit($edit, $fields + ['op' => 'add:/blocks', 'add_type' => ['/blocks' => 'heading']]);
         self::assertSame(200, $added->getStatusCode());
         self::assertStringContainsString('Added a Heading block. It is block 1 of 1.', (string) $added->getBody());

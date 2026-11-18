@@ -11,10 +11,12 @@ use SightPress\Core\Page\Contract\PageIndex;
 use SightPress\Core\Page\Entity\PageTranslation;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Tenant\Site;
+use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\Contract\SiteVisibility;
 
 /**
  * The published pages, from one query of their translations: those in the site's languages that aren't drafts of
- * their own.
+ * their own. A page is public when it and the site are ({@see SiteVisibility}).
  */
 final readonly class PageIndexQuery implements PageIndex
 {
@@ -23,6 +25,7 @@ final readonly class PageIndexQuery implements PageIndex
         private PageAddresses $addresses,
         private Site $site,
         private MediaTexts $texts,
+        private SiteSettings $settings,
     ) {
     }
 
@@ -83,7 +86,7 @@ final readonly class PageIndexQuery implements PageIndex
             $translation->seoTitle(),
             $translation->summary(),
             $translation->description(),
-            $page->isPublic(),
+            SiteVisibility::isOpenToEveryone($page->isPublic(), $this->settings),
             $translation->isNoindex(),
             $translation->canonicalUrl(),
             $page->depth(),

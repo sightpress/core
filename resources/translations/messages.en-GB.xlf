@@ -1447,6 +1447,12 @@
         <target>Every site always has a logo, an icon and a share picture: until you upload your own, they are made from the site name.</target>
       </segment>
     </unit>
+    <unit id="da2e5dc515b188dc">
+      <segment>
+        <source>Everyone</source>
+        <target>Everyone</target>
+      </segment>
+    </unit>
     <unit id="052ac92a1fb60792">
       <segment>
         <source>Everyone with an account, sorted by {column}, A to Z</source>
@@ -1457,6 +1463,12 @@
       <segment>
         <source>Everyone with an account, sorted by {column}, Z to A</source>
         <target>Everyone with an account, sorted by {column}, Z to A</target>
+      </segment>
+    </unit>
+    <unit id="c5a7f6c989faa6c1">
+      <segment>
+        <source>Everyone. Pages marked for members only still need an account.</source>
+        <target>Everyone. Pages marked for members only still need an account.</target>
       </segment>
     </unit>
     <unit id="75304cf77db08b6e">
@@ -2149,6 +2161,12 @@
         <target>Media</target>
       </segment>
     </unit>
+    <unit id="394fc6ce7fde03da">
+      <segment>
+        <source>Members only: people with an account on the site, once they sign in</source>
+        <target>Members only: people with an account on the site, once they sign in</target>
+      </segment>
+    </unit>
     <unit id="99af6606ff9d6cd5">
       <segment>
         <source>Menu</source>
@@ -2575,6 +2593,12 @@
         <target>Only people who may publish pages can schedule them.</target>
       </segment>
     </unit>
+    <unit id="59ab8025f478fa24">
+      <segment>
+        <source>Only people with an account, once they sign in. Search engines and AI services can’t read any page.</source>
+        <target>Only people with an account, once they sign in. Search engines and AI services can’t read any page.</target>
+      </segment>
+    </unit>
     <unit id="c9f4abc0d13a9df7">
       <segment>
         <source>Only people you invite can join.</source>
@@ -2663,6 +2687,12 @@
       <segment>
         <source>Pages can be nested at most {max} levels deep.</source>
         <target>Pages can be nested at most {max} levels deep.</target>
+      </segment>
+    </unit>
+    <unit id="f3eefabb7032f4d1">
+      <segment>
+        <source>Pages for members only are left out of search engines, the sitemap and llms.txt. People who aren’t signed in are asked to sign in.</source>
+        <target>Pages for members only are left out of search engines, the sitemap and llms.txt. People who aren’t signed in are asked to sign in.</target>
       </segment>
     </unit>
     <unit id="ec116b833afeb7af">
@@ -2789,12 +2819,6 @@
       <segment>
         <source>Profiles on other sites</source>
         <target>Profiles on other sites</target>
-      </segment>
-    </unit>
-    <unit id="dd86af1079c78856">
-      <segment>
-        <source>Public: anyone can read the published pages. Sites for members only come in a later version.</source>
-        <target>Public: anyone can read the published pages. Sites for members only come in a later version.</target>
       </segment>
     </unit>
     <unit id="859390eb495b2ead">
@@ -4387,6 +4411,12 @@
         <target>The website of {name}.</target>
       </segment>
     </unit>
+    <unit id="56f3dd7ee24efb85">
+      <segment>
+        <source>The whole site is for members only, so only people who are signed in can read it, whatever you choose here.</source>
+        <target>The whole site is for members only, so only people who are signed in can read it, whatever you choose here.</target>
+      </segment>
+    </unit>
     <unit id="4af90657959f0852">
       <segment>
         <source>The {count} pages under it, which are in the trash too, are deleted with it.</source>
@@ -4691,6 +4721,12 @@
       <segment>
         <source>This picture is {size} × {size2} pixels, which is more than {_000_000} million pixels. Make it smaller and upload it again.</source>
         <target>This picture is {size} × {size2} pixels, which is more than {_000_000} million pixels. Make it smaller and upload it again.</target>
+      </segment>
+    </unit>
+    <unit id="1aca1ffa176218b1">
+      <segment>
+        <source>This site is for its members. Sign in to read it.</source>
+        <target>This site is for its members. Sign in to read it.</target>
       </segment>
     </unit>
     <unit id="0b94084e8f539269">
@@ -5059,12 +5095,6 @@
         <target>View the saved page</target>
       </segment>
     </unit>
-    <unit id="7448611d5f93aa8a">
-      <segment>
-        <source>Visibility</source>
-        <target>Visibility</target>
-      </segment>
-    </unit>
     <unit id="74fb9787fceed2bb">
       <segment>
         <source>Visitors can no longer reach the pages in {language}: addresses starting with {prefix} answer “not found”.</source>
@@ -5261,6 +5291,18 @@
       <segment>
         <source>Who</source>
         <target>Who</target>
+      </segment>
+    </unit>
+    <unit id="39299b07d451a8fe">
+      <segment>
+        <source>Who can read the site</source>
+        <target>Who can read the site</target>
+      </segment>
+    </unit>
+    <unit id="67e59ac8fe705ebe">
+      <segment>
+        <source>Who can read this page</source>
+        <target>Who can read this page</target>
       </segment>
     </unit>
     <unit id="70c66d3ccc2d68d8">

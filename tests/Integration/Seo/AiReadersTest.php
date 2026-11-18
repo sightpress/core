@@ -79,7 +79,7 @@ final class AiReadersTest extends TestCase
         self::assertStringContainsString('<link rel="alternate" type="text/markdown" href="https://example.org/index.md">', (string) $this->browser->request('GET', '/')->getBody());
         self::assertSame('https://example.org/index.md', $this->browser->request('GET', '/home.md')->getHeaderLine('Location'));
         self::assertSame('https://example.org/about.md', $this->browser->request('GET', '/about/index.md')->getHeaderLine('Location'));
-        self::assertSame(404, $this->browser->request('GET', '/members.md')->getStatusCode(), 'members only');
+        self::assertSame(302, $this->browser->request('GET', '/members.md')->getStatusCode(), 'members only: sign in first');
         self::assertSame(404, $this->browser->request('GET', '/nowhere.md')->getStatusCode());
 
         $hidden = $this->browser->request('GET', '/hidden.md');
