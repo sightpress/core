@@ -14,6 +14,9 @@ use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
 use SightPress\Core\Http\Form\FormValidator;
+use SightPress\Core\Http\Session\Flash;
+use SightPress\Core\Http\Session\Session;
+use SightPress\Core\Page\Contract\StarterContent;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Site\Contract\SiteLanguageException;
 use SightPress\Core\Site\Contract\SiteLanguages;
@@ -34,6 +37,7 @@ final readonly class LanguagesHandler implements RequestHandlerInterface
         private AdminScreens $screens,
         private FormValidator $validator,
         private SiteLanguages $languages,
+        private StarterContent $starter,
     ) {
     }
 
@@ -73,6 +77,10 @@ final readonly class LanguagesHandler implements RequestHandlerInterface
             if (is_string($main)) {
                 return $this->makeMain($request, $main, $actor);
             }
+            $starter = $body['starter'] ?? null;
+            if (is_string($starter)) {
+                return $this->starterPages($request, $starter, $actor);
+            }
             $form = $this->validator->submit($this->form(false), $body);
             if ($form->isValid()) {
                 try {
@@ -91,12 +99,33 @@ final readonly class LanguagesHandler implements RequestHandlerInterface
                 'name' => new LanguageName($locale),
                 'main' => $locale === $this->languages->defaultLocale(),
                 'prefix' => $locale === $this->languages->defaultLocale() ? '/' : '/' . strtolower($locale) . '/',
+                'starter' => $locale !== $this->languages->defaultLocale() && $this->starter->missingIn($locale),
             ], $this->languages->locales()),
             'form' => $form,
             'action' => self::PATH,
             'remove_path' => RemoveLanguageHandler::PATH,
             'settings_path' => SettingsHandler::PATH,
         ], $form->submitted && !$form->isValid() ? 422 : 200);
+    }
+
+    /**
+     * Writes the starter pages missing in a language, as drafts of their own: nothing is published.
+     */
+    private function starterPages(ServerRequestInterface $request, string $locale, Actor $actor): ResponseInterface
+    {
+        if (!$this->languages->has($locale)) {
+            return $this->screens->redirect($request, self::PATH, new Message('The site isn’t written in “{locale}”. Its languages are: {locales}.', ['locale' => $locale, 'locales' => implode(', ', $this->languages->locales())]));
+        }
+        $report = $this->starter->writeIn($locale, $actor->userId);
+        $name = new LanguageName($locale);
+        Flash::add(Session::fromRequest($request), $report->titles === []
+            ? new Message('The starter pages are already written in {language}.', ['language' => $name])
+            : new Message('Created the starter pages in {language} as drafts: {pages}. Publish each translation from its page’s editor when it is ready.', ['language' => $name, 'pages' => implode(', ', $report->titles)]));
+
+        return $this->screens->redirect($request, self::PATH, $report->fallbacks === [] ? null : new Message(
+            'There are no starter pages in {language} yet, so they are in {other}: translate them before you publish them.',
+            ['language' => $name, 'other' => new LanguageName(StarterContent::LOCALES[0])],
+        ));
     }
 
     private function makeMain(ServerRequestInterface $request, string $locale, Actor $actor): ResponseInterface

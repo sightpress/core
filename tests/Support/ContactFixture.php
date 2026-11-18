@@ -30,11 +30,14 @@ final class ContactFixture
 
     public readonly ContactFormBlock $type;
 
-    public function __construct()
+    /**
+     * @param list<string> $locales the site's languages, the default first
+     */
+    public function __construct(array $locales = ['en-GB', 'pt-PT'])
     {
         $this->auth = new AuthFixture();
         $this->type = new ContactFormBlock($this->auth->templates);
-        $this->pages = new PageFixture($this->auth->database, [$this->type]);
+        $this->pages = new PageFixture($this->auth->database, [$this->type], $locales);
         $this->blocks = new BlockFixture([$this->type], $this->auth->database);
     }
 

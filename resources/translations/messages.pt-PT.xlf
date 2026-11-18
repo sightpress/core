@@ -235,6 +235,12 @@
         <target>Rastreadores de IA</target>
       </segment>
     </unit>
+    <unit id="1359ec883b211e72">
+      <segment>
+        <source>About me</source>
+        <target>Sobre mim</target>
+      </segment>
+    </unit>
     <unit id="6a6397a5acb13348">
       <segment>
         <source>About the page</source>
@@ -247,10 +253,22 @@
         <target>Sobre o site</target>
       </segment>
     </unit>
+    <unit id="b4b580a9ad8c344f">
+      <segment>
+        <source>About us</source>
+        <target>Sobre nós</target>
+      </segment>
+    </unit>
     <unit id="ec8d4d0ec7a6ba48">
       <segment>
         <source>Accept an invitation</source>
         <target>Aceitar um convite</target>
+      </segment>
+    </unit>
+    <unit id="340eb8c07faeca3d">
+      <segment>
+        <source>Accessibility statement</source>
+        <target>Declaração de acessibilidade</target>
       </segment>
     </unit>
     <unit id="ff8059dc6752afdd">
@@ -835,10 +853,22 @@
         <target>Formulário de contacto</target>
       </segment>
     </unit>
+    <unit id="24ffed7bd22da0a2">
+      <segment>
+        <source>Contact me</source>
+        <target>Contacte-me</target>
+      </segment>
+    </unit>
     <unit id="92eee4a4930f5e8e">
       <segment>
         <source>Contact phone number</source>
         <target>Número de telefone de contacto</target>
+      </segment>
+    </unit>
+    <unit id="47aaf31b83d6bfd7">
+      <segment>
+        <source>Contact us</source>
+        <target>Contacte-nos</target>
       </segment>
     </unit>
     <unit id="47bd29075f8b8019">
@@ -869,6 +899,18 @@
       <segment>
         <source>Create roles and change what they allow.</source>
         <target>Criar funções e alterar o que permitem.</target>
+      </segment>
+    </unit>
+    <unit id="d47930f08fd463ee">
+      <segment>
+        <source>Create the starter pages in {language}</source>
+        <target>Criar as páginas iniciais em {language}</target>
+      </segment>
+    </unit>
+    <unit id="b95d30a2d5ab6ebf">
+      <segment>
+        <source>Created the starter pages in {language} as drafts: {pages}. Publish each translation from its page’s editor when it is ready.</source>
+        <target>As páginas iniciais foram criadas em {language} como rascunhos: {pages}. Publique cada tradução no editor da página quando estiver pronta.</target>
       </segment>
     </unit>
     <unit id="67b696468610b879">
@@ -1435,6 +1477,12 @@
         <target>Como poderia ficar um resultado de pesquisa</target>
       </segment>
     </unit>
+    <unit id="b4eeb825735d11b4">
+      <segment>
+        <source>How accessible this website is, and how to report a problem.</source>
+        <target>Até que ponto este site é acessível e como comunicar um problema.</target>
+      </segment>
+    </unit>
     <unit id="93fccf1aa11ee4db">
       <segment>
         <source>How do I choose a layout?</source>
@@ -1787,6 +1835,12 @@
       <segment>
         <source>Message from the contact form on {site}</source>
         <target>Mensagem do formulário de contacto de {site}</target>
+      </segment>
+    </unit>
+    <unit id="8bf62f9b743993d8">
+      <segment>
+        <source>Message from the website of {name}</source>
+        <target>Mensagem do site de {name}</target>
       </segment>
     </unit>
     <unit id="6be36ca49ee85210">
@@ -2239,6 +2293,12 @@
         <target>Principal para a ação principal da página, secundário para as outras.</target>
       </segment>
     </unit>
+    <unit id="c385c34408069984">
+      <segment>
+        <source>Privacy notice</source>
+        <target>Aviso de privacidade</target>
+      </segment>
+    </unit>
     <unit id="a7acc4ebae2c0014">
       <segment>
         <source>Profile picture</source>
@@ -2585,6 +2645,12 @@
       <segment>
         <source>Send messages to</source>
         <target>Enviar mensagens para</target>
+      </segment>
+    </unit>
+    <unit id="f4b9e6a08daff608">
+      <segment>
+        <source>Send {name} a message.</source>
+        <target>Envie uma mensagem a {name}.</target>
       </segment>
     </unit>
     <unit id="9b397c96d4fd4cc4">
@@ -2975,6 +3041,12 @@
       <segment>
         <source>Tell search engines at once when a page is published or unpublished (IndexNow)</source>
         <target>Avisar logo os motores de pesquisa quando uma página é publicada ou despublicada (IndexNow)</target>
+      </segment>
+    </unit>
+    <unit id="8c45a486e4b1cad8">
+      <segment>
+        <source>Terms of use</source>
+        <target>Termos de utilização</target>
       </segment>
     </unit>
     <unit id="71988c4d8e0803ba">
@@ -3415,10 +3487,22 @@
         <target>O nome do site pode ter no máximo 120 caracteres</target>
       </segment>
     </unit>
+    <unit id="58eb5392b1a835a5">
+      <segment>
+        <source>The starter pages are already written in {language}.</source>
+        <target>As páginas iniciais já estão escritas em {language}.</target>
+      </segment>
+    </unit>
     <unit id="3cf090fd18937ed9">
       <segment>
         <source>The subject of the emails you get.</source>
         <target>O assunto dos emails que recebe.</target>
+      </segment>
+    </unit>
+    <unit id="6838873da7276a16">
+      <segment>
+        <source>The terms for using this website.</source>
+        <target>Os termos para usar este site.</target>
       </segment>
     </unit>
     <unit id="852c98d41ff32e43">
@@ -3467,6 +3551,12 @@
       <segment>
         <source>The website could not understand the request. Go back, check what you entered and try again.</source>
         <target>O site não percebeu o pedido. Volte atrás, verifique o que escreveu e tente outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="2bcc4eae26c27493">
+      <segment>
+        <source>The website of {name}.</source>
+        <target>O site de {name}.</target>
       </segment>
     </unit>
     <unit id="0ed13939e87c6efb">
@@ -3545,6 +3635,12 @@
       <segment>
         <source>There are no pages yet.</source>
         <target>Ainda não há páginas.</target>
+      </segment>
+    </unit>
+    <unit id="814df74d93882015">
+      <segment>
+        <source>There are no starter pages in {language} yet, so they are in {other}: translate them before you publish them.</source>
+        <target>Ainda não há páginas iniciais em {language}, por isso estão em {other}: traduza-as antes de as publicar.</target>
       </segment>
     </unit>
     <unit id="3f63f8bb3785f99e">
@@ -4105,6 +4201,12 @@
         <target>Respondemos para este endereço.</target>
       </segment>
     </unit>
+    <unit id="bfd3c224d2d5ffd0">
+      <segment>
+        <source>Welcome to {name}</source>
+        <target>Bem-vindo a {name}</target>
+      </segment>
+    </unit>
     <unit id="f8cf83a76a98df2d">
       <segment>
         <source>What</source>
@@ -4135,6 +4237,12 @@
         <target>O que mostra, em {language}</target>
       </segment>
     </unit>
+    <unit id="a54647e1dea37ae4">
+      <segment>
+        <source>What personal information this website collects and what is done with it.</source>
+        <target>Que informação pessoal este site recolhe e o que é feito com ela.</target>
+      </segment>
+    </unit>
     <unit id="af38f6a1030c016d">
       <segment>
         <source>What the file is, for example "Annual report 2026". Its type and size are added for you.</source>
@@ -4163,6 +4271,18 @@
       <segment>
         <source>Who changed what, and when. Entries can’t be changed or removed.</source>
         <target>Quem alterou o quê, e quando. Os registos não podem ser alterados nem removidos.</target>
+      </segment>
+    </unit>
+    <unit id="17504041d9653eb7">
+      <segment>
+        <source>Who {name} is and what they do.</source>
+        <target>Quem é {name} e o que faz.</target>
+      </segment>
+    </unit>
+    <unit id="1ace9461445ed7fd">
+      <segment>
+        <source>Who {name} is and what we do.</source>
+        <target>Quem é {name} e o que fazemos.</target>
       </segment>
     </unit>
     <unit id="ea66a754cf1cc732">
@@ -4811,6 +4931,12 @@
       <segment>
         <source>{width} × {height} pixels</source>
         <target>{width} × {height} píxeis</target>
+      </segment>
+    </unit>
+    <unit id="27332a01d77c6b2f">
+      <segment>
+        <source>“Create the starter pages” writes the home page, About, Contact, Privacy, Terms and Accessibility pages in that language as drafts. Nothing is published until you publish each translation.</source>
+        <target>“Criar as páginas iniciais” escreve a página inicial e as páginas Sobre, Contacto, Privacidade, Termos e Acessibilidade nesse idioma como rascunhos. Nada é publicado até publicar cada tradução.</target>
       </segment>
     </unit>
     <unit id="459e174b936e0a80">

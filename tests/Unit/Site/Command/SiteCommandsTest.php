@@ -81,7 +81,7 @@ final class SiteCommandsTest extends TestCase
         self::assertSame('Gave the first admin the admin role.', $lines[4]);
         self::assertSame(1, preg_match('#^Give the setup code (\d{3}) (\d{3}) to ada@example\.org\. They go to https://demo\.example/login/setup, type their email address and the code, and choose their password\. The code works once, for 7 days\.$#', $lines[5], $code));
         self::assertSame('Made the site\'s icons, wordmark and share image from its name; replace them with site:branding:set.', $lines[6]);
-        self::assertSame('Published the starter pages: Welcome to Riverside Library, About us, Contact us, Privacy notice, Terms of use, Accessibility statement.', $lines[7]);
+        self::assertSame('Published the starter pages in British English: Welcome to Riverside Library, About us, Contact us, Privacy notice, Terms of use, Accessibility statement.', $lines[7]);
         self::assertSame('Added 5 starter pages to the main and footer menus.', $lines[8]);
         self::assertSame('The site "demo" is ready at https://demo.example.', $lines[9]);
         self::assertStringNotContainsString('sqlite:', $this->stdout, 'the DSN itself is never printed');
@@ -175,7 +175,7 @@ final class SiteCommandsTest extends TestCase
         self::assertStringNotContainsString('Create the database', $this->stderr, 'SQLite needs no server to create it on');
         self::assertStringContainsString(
             "Here are your answers:\nShort name: demo\nName: Riverside Library and Archive\nDomains: demo.example\nAddress of the links: https://demo.example\n"
-            . "Run by: person\nMain language: British English (en-GB)\nTime zone: Europe/Lisbon\nDatabase engine: sqlite\nSQLite file: " . $this->database('demo') . "\n"
+            . "Run by: person\nLanguages: British English (en-GB)\nTime zone: Europe/Lisbon\nDatabase engine: sqlite\nSQLite file: " . $this->database('demo') . "\n"
             . "First admin's email: ada@example.org\nFirst admin's first name: Ada\nFirst admin's last name: Lovelace\nDemo content: no\n",
             $this->stdout,
         );

@@ -105,13 +105,13 @@ final readonly class CreateSiteCommand implements Command
             ),
             new CommandParameter(
                 'locale',
-                'Main language of the site, for example en-GB for British English or pt-BR for Brazilian Portuguese:',
+                'Language of the site, for example en-GB for British English; several separated by commas, the main one first (en-GB,pt-PT,es):',
                 $option,
                 true,
-                label: 'Main language',
+                label: 'Languages',
                 default: 'en-GB',
-                normalise: static fn (string $locale): string => LocaleCode::normalise($locale),
-                describe: static fn (string $locale): string => LocaleCode::describe($locale),
+                normalise: static fn (string $locales): string => implode(',', self::locales($locales)),
+                describe: static fn (string $locales): string => implode(', ', array_map(LocaleCode::describe(...), explode(',', $locales))),
             ),
             new CommandParameter(
                 'timezone',
@@ -216,7 +216,7 @@ final readonly class CreateSiteCommand implements Command
         }
         $slug = $input->argument('slug') ?? '';
         $domains = explode(', ', $input->option('domain') ?? '');
-        $locale = $input->option('locale') ?? '';
+        $locales = self::locales($input->option('locale') ?? '');
         $plainDsn = DatabaseQuestions::dsn($input);
         $dsn = DatabaseDsn::parse($plainDsn);
 
@@ -229,8 +229,8 @@ final readonly class CreateSiteCommand implements Command
             $domains,
             $this->secretBox->encrypt($plainDsn),
             new SiteStorage(),
-            $locale,
-            [$locale],
+            $locales[0],
+            $locales,
             $input->option('timezone') ?? $this->config->defaultTimezone,
             $this->clock->now(),
         );
@@ -333,5 +333,19 @@ final readonly class CreateSiteCommand implements Command
     private static function migrations(int $count): string
     {
         return $count === 1 ? '1 database migration' : sprintf('%d database migrations', $count);
+    }
+
+    /**
+     * The languages in a comma-separated list, written the SightPress way, each once, the main one first.
+     *
+     * @return non-empty-list<string>
+     *
+     * @throws \InvalidArgumentException when one isn't a locale
+     */
+    private static function locales(string $list): array
+    {
+        $locales = array_values(array_unique(array_map(LocaleCode::normalise(...), array_filter(array_map(trim(...), explode(',', $list)), static fn (string $locale): bool => $locale !== ''))));
+
+        return $locales === [] ? [LocaleCode::normalise($list)] : $locales;
     }
 }

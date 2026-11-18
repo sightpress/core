@@ -138,6 +138,37 @@ final class LanguagesHandlerTest extends TestCase
         $this->remove('GET', '/admin/settings/languages/remove?locale=fr-FR');
     }
 
+    public function testOffersToWriteTheStarterPagesInALanguageAsDrafts(): void
+    {
+        $this->starter(['en-GB', 'pt-PT'])->create('Ada Lovelace', 'https://demo.example', 'ada@example.org', null);
+        $languages = $this->languagesService(['en-GB', 'pt-PT', 'cy']);
+
+        $html = (string) $this->languages('GET', languages: $languages)->getBody();
+        self::assertStringContainsString('<button type="submit" name="starter" value="cy"', $html, 'Welsh was added after the site was made');
+        self::assertStringNotContainsString('name="starter" value="pt-PT"', $html, 'Portuguese has them');
+
+        $this->languages('POST', ['starter' => 'cy'], languages: $languages);
+        $messages = array_map(strval(...), Flash::take($this->session));
+        self::assertStringStartsWith('Created the starter pages in Welsh as drafts: Welcome to Demo, About us', $messages[0]);
+        self::assertSame('There are no starter pages in Welsh yet, so they are in British English: translate them before you publish them.', $messages[1]);
+        self::assertStringNotContainsString('name="starter"', (string) $this->languages('GET', languages: $languages)->getBody());
+
+        $this->languages('POST', ['starter' => 'cy'], languages: $languages);
+        self::assertSame(['The starter pages are already written in Welsh.'], Text::of(Flash::take($this->session)));
+        $this->languages('POST', ['starter' => 'fr-FR'], languages: $languages);
+        self::assertStringStartsWith('The site isn’t written in “fr-FR”.', implode(' ', array_map(strval(...), Flash::take($this->session))));
+    }
+
+    /**
+     * @param list<string> $locales
+     */
+    private function starter(array $locales = ['en-GB', 'pt-PT', 'cy']): \SightPress\Core\Page\Contract\StarterContent
+    {
+        $pages = new \SightPress\Core\Tests\Support\PageFixture($this->fixture->auth->database, [new \SightPress\Core\Contact\ContactFormBlock($this->fixture->auth->templates)], ['en-GB', 'pt-PT', 'cy']);
+
+        return new \SightPress\Core\Page\Contract\StarterContent($pages->editor(), $pages->repository(), $pages->addresses(), $this->fixture->auth->database->settings(), $this->fixture->auth->translations, $this->fixture->auth->twig, $pages->clock, PageFixture::site($locales));
+    }
+
     /**
      * @param list<string> $locales
      */
@@ -151,7 +182,7 @@ final class LanguagesHandlerTest extends TestCase
      */
     private function languages(string $method, array $body = [], ?User $user = null, ?SiteLanguages $languages = null): ResponseInterface
     {
-        $handler = new LanguagesHandler($this->fixture->shell(), $this->fixture->auth->validator(), $languages ?? $this->languagesService());
+        $handler = new LanguagesHandler($this->fixture->shell(), $this->fixture->auth->validator(), $languages ?? $this->languagesService(), $this->starter());
 
         return $handler->handle($this->fixture->request($user ?? $this->admin, $method, LanguagesHandler::PATH, $body, $this->session));
     }

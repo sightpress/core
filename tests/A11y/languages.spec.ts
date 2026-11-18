@@ -80,6 +80,22 @@ test('the admin panel changes language from its header, by keyboard', async ({ p
   await expect(page.getByRole('status')).toHaveText('The admin panel is now in British English.');
 });
 
+test('a language added later gets the starter pages as drafts, by keyboard', async ({ page, request }) => {
+  await request.get(`${SITE}/_test/starter`);
+  await signIn(page, SITE, 'ada@example.org', '/admin/settings/languages');
+  await page.getByLabel('Language to add').selectOption('cy');
+  await page.getByRole('button', { name: 'Add language' }).click();
+
+  const create = page.getByRole('button', { name: 'Create the starter pages in Welsh' });
+  await expectNoViolations(page);
+  await create.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('status')).toContainText('Created the starter pages in Welsh as drafts: Welcome to Riverside Library, About us');
+  await expect(page.getByRole('status')).toContainText('There are no starter pages in Welsh yet, so they are in British English');
+  await expect(page.getByRole('button', { name: 'Create the starter pages in Welsh' })).toHaveCount(0);
+  expect((await request.get(`${SITE}/cy/about`, { maxRedirects: 0 })).status(), 'drafts are not public').toBe(302);
+});
+
 test('the languages screens reflow at 320px', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 640 });
   await signIn(page, SITE, 'ada@example.org', '/admin/settings/languages');

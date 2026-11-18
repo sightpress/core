@@ -2,7 +2,7 @@
     The site's languages (/admin/settings/languages): a table of the languages with the address their pages start
     with, a "Make main language" button and a "Remove" link (to a confirmation page) for each other language, and the
     form that adds one. Each button and link names its language.
-    Context: `languages` [{code, name, main, prefix}], `form`, `action`, `remove_path`, `settings_path`.
+    Context: `languages` [{code, name, main, prefix, starter}], `form`, `action`, `remove_path`, `settings_path`.
 #}
 {% extends '@admin/layout.html.twig' %}
 {% import 'form/macros.html.twig' as f %}
@@ -34,6 +34,12 @@
                         <button type="submit" name="main" value="{{ language.code }}" class="button button--secondary">{{ t('Make {language} the main language', {language: language.name}) }}</button>
                     </form>
                     <a href="{{ remove_path }}?locale={{ language.code|url_encode }}">{{ t('Remove {language}', {language: language.name}) }}</a>
+                    {%- if language.starter %}
+                    <form action="{{ action }}" method="post" class="languages__main">
+                        {{ csrf_fields() }}
+                        <button type="submit" name="starter" value="{{ language.code }}" class="button button--secondary">{{ t('Create the starter pages in {language}', {language: language.name}) }}</button>
+                    </form>
+                    {%- endif %}
                     {%- endif %}
                 </td>
             </tr>
@@ -42,6 +48,7 @@
     </table>
     </div>
     {%- if languages|length > 1 %}
+    <p>{{ t('“Create the starter pages” writes the home page, About, Contact, Privacy, Terms and Accessibility pages in that language as drafts. Nothing is published until you publish each translation.') }}</p>
     <p>{{ t('Changing the main language changes the addresses of the pages in the old and the new main language. Links to their old addresses stop working.') }}</p>
     {%- endif %}
 </section>

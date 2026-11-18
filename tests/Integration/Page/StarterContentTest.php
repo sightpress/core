@@ -41,7 +41,7 @@ final class StarterContentTest extends TestCase
     public function testAnOrganizationGetsItsStarterPagesAndMenus(): void
     {
         $display = $this->create('library', 'organization', 'Riverside Library');
-        self::assertStringContainsString('Published the starter pages: Welcome to Riverside Library, About us, Contact us, Privacy notice, Terms of use, Accessibility statement.', $display);
+        self::assertStringContainsString('Published the starter pages in British English: Welcome to Riverside Library, About us, Contact us, Privacy notice, Terms of use, Accessibility statement.', $display);
         self::assertStringContainsString('Added 5 starter pages to the main and footer menus.', $display);
 
         $browser = new Browser($this->kernel(), 'https://library.example');
@@ -80,7 +80,47 @@ final class StarterContentTest extends TestCase
         self::assertStringContainsString('run by Ada Example', (string) $browser->request('GET', '/terms')->getBody());
     }
 
-    private function create(string $slug, string $ownerType, string $name): string
+    public function testASiteInThreeLanguagesGetsEveryStarterPageInEach(): void
+    {
+        $display = $this->create('tres', 'organization', 'Biblioteca', 'en-GB,pt_pt,ES');
+        self::assertStringContainsString('Published the starter pages in British English, European Portuguese, Spanish:', $display);
+        self::assertStringNotContainsString('Warning', $display);
+
+        $site = $this->services('tres');
+        $checker = Services::get($site, PublishChecker::class);
+        $pages = Services::get($site, PageRepository::class)->children(null);
+        self::assertCount(6, $pages);
+        foreach ($pages as $page) {
+            self::assertSame(['en-GB', 'es', 'pt-PT'], array_keys($page->translations()));
+            foreach ($page->translations() as $locale => $translation) {
+                self::assertTrue($translation->isPublished(), $locale);
+                self::assertSame([], $checker->check($page, $locale)->errors(), $locale . ': ' . $translation->title());
+            }
+        }
+
+        $browser = new Browser($this->kernel(), 'https://tres.example');
+        $spanish = (string) $browser->request('GET', '/es')->getBody();
+        self::assertStringContainsString('<html lang="es" dir="ltr">', $spanish);
+        self::assertStringContainsString('<h1>Te damos la bienvenida a Biblioteca</h1>', $spanish);
+        self::assertStringContainsString('<a href="/es/sobre">Sobre nosotros</a>', $spanish);
+        self::assertStringContainsString('<li><a href="/es/sobre">Sobre nosotros</a></li>', $spanish, 'the menus are in the page’s language');
+        self::assertSame(200, $browser->request('GET', '/pt-pt/acessibilidade')->getStatusCode());
+        self::assertStringContainsString('<loc>https://tres.example/es/condiciones</loc>', (string) $browser->request('GET', '/sitemap-es.xml')->getBody());
+
+        // A language added later gets them as drafts only.
+        $application = $this->kernel()->console();
+        $application->setAutoExit(false);
+        $tester = new ApplicationTester($application);
+        self::assertSame(0, $tester->run(['command' => 'site:locale:add', 'slug' => 'tres', 'locale' => 'cy', '--starter-pages' => true], ['interactive' => false]));
+        self::assertStringContainsString('Wrote the starter pages in Welsh (cy) as drafts:', $tester->getDisplay());
+        self::assertStringContainsString('Warning: there are no starter pages in Welsh (cy) yet, so they are in British English (en-GB).', $tester->getDisplay());
+        foreach (Services::get($this->services('tres'), PageRepository::class)->children(null) as $page) {
+            self::assertTrue($page->translation('cy')?->isDraft());
+        }
+        self::assertSame(302, new Browser($this->kernel(), 'https://tres.example')->request('GET', '/cy/about')->getStatusCode(), 'drafts aren’t public');
+    }
+
+    private function create(string $slug, string $ownerType, string $name, string $locales = 'en-GB'): string
     {
         $application = $this->kernel()->console();
         $application->setAutoExit(false);
@@ -92,7 +132,7 @@ final class StarterContentTest extends TestCase
             '--db' => TestDatabases::dsn($slug, $this->project->path() . '/sites', create: false),
             '--create-db' => true,
             '--owner-type' => $ownerType,
-            '--locale' => 'en-GB',
+            '--locale' => $locales,
             '--name' => $name,
             '--admin-email' => 'ada@example.org',
             '--admin-first-name' => 'Ada',

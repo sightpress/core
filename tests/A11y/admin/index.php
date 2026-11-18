@@ -8,7 +8,7 @@
  * People: Ada (admin), Bea (editor), Cleo (contributor) and Max (member).
  * Test-only addresses: `/_test/reset` starts again from a fresh site (forgets sessions and rate limits);
  * `/_test/invitation?email=…&role=…&first_name=…` invites someone from Ada and answers with the invitation code (the
- * test site sends no email).
+ * test site sends no email); `/_test/starter` writes the starter pages of a new site (I-4) in its languages.
  *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
@@ -27,6 +27,7 @@ use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Migration\MigrationConfigurationFactory;
 use SightPress\Core\Kernel;
 use SightPress\Core\Page\Contract\PageTransition;
+use SightPress\Core\Page\Contract\StarterContent;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
 use SightPress\Core\Page\Workflow\PageWorkflow;
@@ -135,6 +136,14 @@ if ($path === '/_test/invitation') {
     );
     header('Content-Type: text/plain');
     echo $code->code;
+
+    return;
+}
+
+if ($path === '/_test/starter') {
+    $kernel = Kernel::boot($project, $environment);
+    Services::get(site($kernel), StarterContent::class)->create('Ada Lovelace', 'http://127.0.0.1', 'ada@example.org', null);
+    http_response_code(204);
 
     return;
 }

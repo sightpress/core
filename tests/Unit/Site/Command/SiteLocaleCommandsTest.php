@@ -112,6 +112,20 @@ final class SiteLocaleCommandsTest extends TestCase
         self::assertSame("Welsh (cy) is already the main language.\n", $this->stdout);
     }
 
+    public function testCanWriteTheStarterPagesInTheNewLanguageAsDrafts(): void
+    {
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:locale:add', 'slug' => 'demo', 'locale' => 'pt_pt', '--starter-pages' => true]), $this->stderr);
+        self::assertStringContainsString('Wrote the starter pages in European Portuguese (pt-PT) as drafts: Bem-vindo a demo, Sobre nós,', $this->stdout);
+        self::assertStringNotContainsString('Warning', $this->stdout);
+
+        $this->console(['command' => 'site:locale:add', 'slug' => 'demo', 'locale' => 'cy', '--starter-pages' => true]);
+        self::assertStringContainsString('Warning: there are no starter pages in Welsh (cy) yet, so they are in British English (en-GB).', $this->stdout);
+
+        $this->console(['command' => 'site:locale:remove', 'slug' => 'demo', 'locale' => 'cy', '--yes' => true]);
+        $this->console(['command' => 'site:locale:add', 'slug' => 'demo', 'locale' => 'cy', '--starter-pages' => true]);
+        self::assertStringContainsString('The starter pages are already written in Welsh (cy).', $this->stdout, 'a language added again keeps its pages');
+    }
+
     public function testRefusesUnknownSites(): void
     {
         self::assertSame(Command::FAILURE, $this->console(['command' => 'site:locale:add', 'slug' => 'nope', 'locale' => 'es']));

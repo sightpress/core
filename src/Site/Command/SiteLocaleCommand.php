@@ -41,6 +41,17 @@ abstract readonly class SiteLocaleCommand implements Command
     abstract protected function change(SiteLanguages $languages, string $locale, CommandInput $input): array;
 
     /**
+     * What to do once the change is stored, in the site's new container (the language is already there), with the
+     * language as it was typed; returns what to tell the person.
+     *
+     * @return list<string>
+     */
+    protected function after(\Psr\Container\ContainerInterface $services, string $locale, CommandInput $input): array
+    {
+        return [];
+    }
+
+    /**
      * What the change is, for the log: `added`, `removed` or `made the default`.
      */
     abstract protected function verb(): string;
@@ -79,8 +90,10 @@ abstract readonly class SiteLocaleCommand implements Command
             return self::SUCCESS;
         }
 
-        $this->sites->save($site->withLocales($languages->locales(), $languages->defaultLocale()));
+        $changed = $site->withLocales($languages->locales(), $languages->defaultLocale());
+        $this->sites->save($changed);
         $this->containers->evict($slug);
+        $lines = [...$lines, ...$this->after($this->containers->forSite($changed), $locale, $input)];
         $this->loggers->create('sites')->notice(
             sprintf('Site "%s" language %s %s.', $slug, $locale, $this->verb()),
             ['site' => $slug, 'locale' => $locale, 'locales' => $languages->locales(), 'default_locale' => $languages->defaultLocale()],
