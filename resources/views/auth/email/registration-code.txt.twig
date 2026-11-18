@@ -1,0 +1,9 @@
+{% autoescape false %}
+{{ t('Hello {name},', {name: name}) }}
+
+{{ t('Someone signed up for {site} with this email address. To confirm it is yours, type this code on the page that asks for it:', {site: site_name}) }}
+
+{% include '@auth/email/code.txt.twig' %}
+
+{{ t('If it wasn’t you, you can ignore this email: the account can’t be used until the code is typed, and it is removed after a week.') }}
+{% endautoescape %}

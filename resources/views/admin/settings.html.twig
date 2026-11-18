@@ -2,7 +2,8 @@
     Site settings (/admin/settings): the site's name, its languages (with a link to change them) and time zone, then one fieldset per group of
     settings the modules registered (who runs the site, search & AI, others), and what can't be changed yet. One
     "Save settings" button; errors go to the error summary, which gets focus.
-    Context: `form`, `action`, `sections` [{title, intro, fields}], `owner`, `languages` [{name, main}], `languages_path`.
+    Context: `form`, `action`, `sections` [{title, intro, fields}], `owner`, `languages` [{name, main}], `languages_path`,
+    `sign_up_open`.
 #}
 {% extends '@admin/layout.html.twig' %}
 {% import 'form/macros.html.twig' as f %}
@@ -10,6 +11,7 @@
 {% block content %}
 <h1>{{ t('Site settings') }}</h1>
 <p>{{ t('The logo, icon and share picture are on their own page:') }} <a href="/admin/settings/branding">{{ t('Branding') }}</a>.</p>
+<p>{{ sign_up_open ? t('Anyone can create an account.') : t('Only people you invite can join.') }} <a href="/admin/settings/sign-up">{{ t('Change who can sign up') }}</a></p>
 {{ f.error_summary(form) }}
 {{ f.start(form, action) }}
     <fieldset class="admin-panel">

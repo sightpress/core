@@ -10,6 +10,9 @@
     {{ f.field(form, 'remember') }}
     {{ f.submit(t('Sign in')) }}
 {{ f.end() }}
+{%- if sign_up|default(null) %}
+<p>{{ t('New here?') }} <a href="{{ sign_up }}">{{ t('Create an account') }}</a></p>
+{%- endif %}
 <p><a href="/login/forgot">{{ t('Forgot your password?') }}</a></p>
 <p><a href="/login/invitation">{{ t('Accept an invitation') }}</a></p>
 <p><a href="/login/setup">{{ t('Set up your account with a setup code') }}</a></p>

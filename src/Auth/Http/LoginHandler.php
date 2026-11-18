@@ -7,6 +7,9 @@ namespace SightPress\Core\Auth\Http;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use SightPress\Core\Auth\CodeSession;
+use SightPress\Core\Auth\Contract\SignUp;
+use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Auth\RememberTokens;
 use SightPress\Core\Auth\ReturnTarget;
 use SightPress\Core\Auth\SignIn;
@@ -15,12 +18,16 @@ use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
 use SightPress\Core\Http\Form\FormValidator;
 use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Core\Http\Session\Flash;
+use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Rbac\Contract\PermissionLookup;
+use SightPress\Core\Site\Contract\SiteSettings;
 
 /**
  * `/login`, shared by every role: the sign-in form, and signing in. Afterwards people go back to the page they came
  * from (`?return=`, or the referring page of this site), never to `/admin` without `admin.access`. "Keep me signed
- * in" is unticked by default.
+ * in" is unticked by default. While the site lets people sign up, the page links to the sign-up form; someone who
+ * signed up but hasn't confirmed their email address goes to the page where they type the code.
  */
 final readonly class LoginHandler implements RequestHandlerInterface
 {
@@ -32,6 +39,7 @@ final readonly class LoginHandler implements RequestHandlerInterface
         private SignIn $signIn,
         private PermissionLookup $permissions,
         private RememberTokens $rememberTokens,
+        private SiteSettings $settings,
     ) {
     }
 
@@ -74,6 +82,13 @@ final readonly class LoginHandler implements RequestHandlerInterface
                 'email' => AuthPages::tooManyAttempts('tried to sign in', $result->retryAfter),
             ]), $return, 429);
         }
+        if ($result->unconfirmedEmail !== null) {
+            $session = Session::fromRequest($request);
+            CodeSession::startPending($session, VerificationPurpose::EmailVerify, $result->unconfirmedEmail);
+            Flash::add($session, 'You haven’t confirmed your email address yet. Type the code we emailed you, or send a new one.');
+
+            return $this->pages->redirect(SignUp::CODE_PATH);
+        }
         if ($result->account === null) {
             return $this->show($request, $form->withErrors(['email' => self::WRONG]), $return, 422);
         }
@@ -115,6 +130,7 @@ final readonly class LoginHandler implements RequestHandlerInterface
         return $this->pages->page($request, 'login.html.twig', [
             'form' => $form,
             'action' => '/login' . ($local === null ? '' : '?' . http_build_query(['return' => $local])),
+            'sign_up' => SignUp::isOpen($this->settings->get(SignUp::SETTING)) ? SignUp::PATH . ($local === null ? '' : '?' . http_build_query(['return' => $local])) : null,
         ], $status);
     }
 }

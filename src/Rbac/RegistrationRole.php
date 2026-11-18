@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Rbac;
 
+use SightPress\Core\Rbac\Contract\SignUpRoles;
 use SightPress\Core\Rbac\Entity\Role;
 use SightPress\Core\Site\Contract\SiteSettings;
 
@@ -11,7 +12,7 @@ use SightPress\Core\Site\Contract\SiteSettings;
  * The site setting `registration_role`: the role people get when they register themselves (default `member`). It
  * must always be sign-up-safe (ADR-0014).
  */
-final readonly class RegistrationRole
+final readonly class RegistrationRole implements SignUpRoles
 {
     public const string SETTING = 'rbac.registration_role';
 
@@ -27,6 +28,34 @@ final readonly class RegistrationRole
     public function name(): string
     {
         return $this->settings->get(self::SETTING) ?? RoleName::MEMBER;
+    }
+
+    /**
+     * The role a new account gets: the stored sign-up role while it exists and is sign-up-safe, otherwise `member`
+     * (someone may have changed the stored value straight in the database).
+     */
+    public function forNewAccount(): string
+    {
+        $role = $this->roles->findRole($this->name());
+
+        return $role !== null && RoleSafety::isSignUpSafe($role) ? $role->name() : RoleName::MEMBER;
+    }
+
+    /**
+     * The roles the sign-up role may be changed to (sign-up-safe ones), as name => label.
+     *
+     * @return array<string, string>
+     */
+    public function choices(): array
+    {
+        $choices = [];
+        foreach ($this->roles->roles() as $role) {
+            if (RoleSafety::isSignUpSafe($role)) {
+                $choices[$role->name()] = $role->label();
+            }
+        }
+
+        return $choices;
     }
 
     public function is(Role $role): bool

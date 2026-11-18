@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
-use SightPress\Core\People\EmailPolicy;
+use SightPress\Core\Auth\Contract\EmailPolicy;
 use SightPress\Core\People\Http\InviteHandler;
 use SightPress\Core\People\InvitationMailer;
 use SightPress\Core\People\Invitations;
@@ -162,7 +162,7 @@ final class InviteHandlerTest extends TestCase
             $auth->users,
             $this->invitations(),
             new InvitationMailer($auth, $auth->templates, $auth->site, $auth->translations),
-            $policy ?? new \SightPress\Core\People\AnyEmailPolicy(),
+            $policy ?? new \SightPress\Core\Auth\AnyEmailPolicy(),
         );
         $request = $this->admin->request($user, $body === [] ? 'GET' : 'POST', InviteHandler::PATH, $body, $this->session);
         if ($permissions !== null) {

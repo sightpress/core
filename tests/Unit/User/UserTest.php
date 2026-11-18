@@ -154,6 +154,46 @@ final class UserTest extends TestCase
         self::assertSame(UserStatus::Active, $user->status());
     }
 
+    public function testAnAccountSomeoneMadeForThemselvesWaitsForItsCode(): void
+    {
+        $user = $this->user();
+        $user->setPasswordHash('$argon2id$hash', $this->now);
+        $user->awaitEmailVerification($this->now->modify('+1 minute'));
+
+        self::assertSame(UserStatus::Unverified, $user->status());
+        self::assertTrue($user->awaitsEmailVerification());
+        self::assertFalse($user->isActive());
+        self::assertFalse($user->isPending());
+        self::assertEquals($this->now->modify('+1 minute'), $user->updatedAt());
+
+        $user->setPasswordHash('$argon2id$other', $this->now);
+        self::assertTrue($user->awaitsEmailVerification(), 'a new password doesn’t confirm the address');
+
+        try {
+            $user->deactivate($this->now);
+            self::fail('Deactivated an account that can’t sign in anyway');
+        } catch (UserException $exception) {
+            self::assertStringContainsString('hasn\'t been confirmed yet', $exception->getMessage());
+        }
+
+        $user->confirmEmail($this->now->modify('+2 minutes'));
+        self::assertTrue($user->isActive());
+        self::assertFalse($user->awaitsEmailVerification());
+        self::assertEquals($this->now->modify('+2 minutes'), $user->updatedAt());
+
+        $user->deactivate($this->now);
+        $user->confirmEmail($this->now);
+        self::assertSame(UserStatus::Deactivated, $user->status(), 'only an account waiting for its code changes');
+    }
+
+    public function testAnAccountWithoutAPasswordCantWaitForItsCode(): void
+    {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage('set a password first');
+
+        $this->user()->awaitEmailVerification($this->now);
+    }
+
     public function testAnEmptyPasswordHashIsRefused(): void
     {
         $this->expectException(UserException::class);

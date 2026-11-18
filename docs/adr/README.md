@@ -47,5 +47,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0027](0027-page-operations-and-redirects.md) | Page operations: archive and trash steps, a redirects table and "gone" addresses | Proposed |
 | [0028](0028-page-revisions-compared-and-restored.md) | Page revisions: versions per language, a word-by-word comparison and restoring without publishing | Proposed |
 | [0029](0029-scheduled-publishing-and-schedule-run.md) | Scheduled publishing and `schedule:run`, the one command for jobs at a set time | Proposed |
+| [0030](0030-self-registration-with-an-emailed-code.md) | Self-registration with an emailed code, an `unverified` account status and a sign-up role contract | Proposed |
 
 When an ADR's status changes, update it here too.

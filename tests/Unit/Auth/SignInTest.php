@@ -57,6 +57,23 @@ final class SignInTest extends TestCase
         }
     }
 
+    public function testOnlyTheRightPasswordSaysAnAccountWaitsForItsEmailAddressToBeConfirmed(): void
+    {
+        $this->auth->user(unverified: true);
+        $signIn = $this->auth->signIn();
+        $request = $this->auth->request('POST');
+
+        $wrong = $signIn->attempt($request, 'ada@example.org', 'wrong password!');
+        self::assertNull($wrong->unconfirmedEmail);
+        self::assertFalse($wrong->succeeded());
+
+        $right = $signIn->attempt($request, 'ADA@example.org', AuthFixture::PASSWORD);
+        self::assertFalse($right->succeeded());
+        self::assertNull($right->account);
+        self::assertNull($right->retryAfter);
+        self::assertSame('ada@example.org', $right->unconfirmedEmail);
+    }
+
     public function testTooManyAttemptsAreRefusedUntilTheWaitIsOver(): void
     {
         $this->auth->user();

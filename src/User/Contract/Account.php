@@ -33,6 +33,11 @@ interface Account
      */
     public function isPending(): bool;
 
+    /**
+     * Whether the person signed up themselves and hasn't typed the code we emailed them yet (they can't sign in).
+     */
+    public function awaitsEmailVerification(): bool;
+
     public function passwordHash(): ?string;
 
     /**

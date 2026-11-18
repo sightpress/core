@@ -17,8 +17,11 @@ final readonly class SignInResult
     /**
      * @param positive-int|null $retryAfter
      */
-    private function __construct(public ?Account $account, ?int $retryAfter = null)
-    {
+    private function __construct(
+        public ?Account $account,
+        ?int $retryAfter = null,
+        public ?string $unconfirmedEmail = null,
+    ) {
         $this->retryAfter = $retryAfter;
     }
 
@@ -30,6 +33,15 @@ final readonly class SignInResult
     public static function wrongCredentials(): self
     {
         return new self(null);
+    }
+
+    /**
+     * The password was right, but the person signed up and hasn't typed the code we emailed them yet: they can't sign
+     * in until they do.
+     */
+    public static function unconfirmed(Account $account): self
+    {
+        return new self(null, unconfirmedEmail: $account->email());
     }
 
     /**

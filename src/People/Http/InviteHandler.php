@@ -13,7 +13,7 @@ use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
 use SightPress\Core\Http\Form\FormValidator;
-use SightPress\Core\People\EmailPolicy;
+use SightPress\Core\Auth\Contract\EmailPolicy;
 use SightPress\Core\People\InvitationMailer;
 use SightPress\Core\People\Invitations;
 use SightPress\Core\Rbac\Contract\Actor;

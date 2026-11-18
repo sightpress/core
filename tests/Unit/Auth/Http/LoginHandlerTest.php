@@ -10,6 +10,9 @@ use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SightPress\Core\Auth\CodeSession;
+use SightPress\Core\Auth\Contract\SignUp;
+use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Auth\Http\AuthPages;
 use SightPress\Core\Auth\Http\LoginHandler;
 use SightPress\Core\Auth\RememberTokens;
@@ -52,6 +55,31 @@ final class LoginHandlerTest extends TestCase
         self::assertStringContainsString('<a href="/login/forgot">Forgot your password?</a>', $html);
         self::assertStringContainsString('<div class="messages" role="status">    <p>You have signed out.</p></div>', $html);
         self::assertSame([], Text::of(array_map(strval(...), Flash::take($session))), 'a flash message is shown once');
+    }
+
+    public function testLinksToTheSignUpFormOnlyWhileTheSiteLetsPeopleSignUp(): void
+    {
+        self::assertStringNotContainsString('Create an account', (string) $this->handle($this->auth->request())->getBody());
+
+        $this->auth->database->settings()->set(SignUp::SETTING, '1');
+        self::assertStringContainsString('<p>New here? <a href="/register">Create an account</a></p>', (string) $this->handle($this->auth->request())->getBody());
+        self::assertStringContainsString('<a href="/register?return=%2Fmembers">Create an account</a>', (string) $this->handle($this->auth->request(uri: 'https://demo.example/login?return=/members'))->getBody());
+    }
+
+    public function testSomeoneWhoHasntConfirmedTheirAddressIsSentToTheCodePage(): void
+    {
+        $this->auth->user(unverified: true);
+        $session = new Session();
+
+        $wrong = $this->post(['email' => 'ada@example.org', 'password' => 'not the password'], session: $session);
+        self::assertSame(422, $wrong->getStatusCode(), 'only the right password tells');
+
+        $response = $this->post(['email' => 'ada@example.org', 'password' => AuthFixture::PASSWORD], session: $session);
+        self::assertSame(303, $response->getStatusCode());
+        self::assertSame('/register/code', $response->getHeaderLine('Location'));
+        self::assertSame('ada@example.org', CodeSession::pending($session, VerificationPurpose::EmailVerify));
+        self::assertSame(['You haven’t confirmed your email address yet. Type the code we emailed you, or send a new one.'], Text::of(array_map(strval(...), Flash::take($session))));
+        self::assertNull($session->get(SignIn::SESSION_USER), 'not signed in');
     }
 
     public function testKeepsWhereThePersonCameFromInTheFormAddress(): void
@@ -168,6 +196,7 @@ final class LoginHandlerTest extends TestCase
             $this->auth->signIn(),
             $this->auth->database->roles(),
             $this->auth->rememberTokens(),
+            $this->auth->database->settings(),
         )->handle($request);
     }
 

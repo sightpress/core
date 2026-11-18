@@ -15,6 +15,10 @@ use SightPress\Core\Auth\PasswordRules;
 use SightPress\Core\Auth\EvenTiming;
 use SightPress\Core\Auth\VerificationCodeStore;
 use SightPress\Core\Auth\RememberTokens;
+use SightPress\Core\Auth\Registration\RegistrationMailer;
+use SightPress\Core\Auth\Registration\SelfRegistration;
+use SightPress\Core\Rbac\RoleGrantPolicy;
+use SightPress\Core\User\AccountRegistrar;
 use SightPress\Core\Auth\SessionAuthenticator;
 use SightPress\Core\Auth\SignIn;
 use SightPress\Core\Http\Csrf\CsrfTokens;
@@ -111,17 +115,22 @@ final class AuthFixture implements MailSender
     }
 
     /**
-     * Saves a user; with a role, active with {@see PASSWORD}; with a null role, active without any role.
+     * Saves a user; with a role, active with {@see PASSWORD}; with a null role, active without any role; unverified,
+     * signed up with {@see PASSWORD} and waiting for the emailed code.
      */
     public function user(
         string $email = 'ada@example.org',
         ?string $role = 'editor',
         bool $pending = false,
         bool $deactivated = false,
+        bool $unverified = false,
     ): User {
         $user = new User($email, 'Ada', 'Lovelace', 'UTC', new DateTimeImmutable('2026-11-01 09:00:00 UTC'));
         if (!$pending) {
             $user->setPasswordHash($this->hasher->hash(self::PASSWORD), $this->clock->now());
+        }
+        if ($unverified) {
+            $user->awaitEmailVerification($this->clock->now());
         }
         if ($deactivated) {
             $user->deactivate($this->clock->now());
@@ -216,6 +225,24 @@ final class AuthFixture implements MailSender
         }
 
         return $code[1] . $code[2];
+    }
+
+    /**
+     * Self-registration against this fixture's database, mail and clock; events go to the given dispatcher.
+     */
+    public function selfRegistration(RecordingEvents $events = new RecordingEvents()): SelfRegistration
+    {
+        return new SelfRegistration(
+            $this->database->settings(),
+            new AccountRegistrar($this->users, $this->avatars(), $this->clock),
+            $this->users,
+            $this->codes(),
+            $this->passwords(),
+            new RegistrationMailer($this, $this->templates, $this->site, $this->translations, $this->users),
+            $this->database->registrationRole(),
+            new RoleGrantPolicy($this->database->roles(), new RecordingEvents()),
+            $events,
+        );
     }
 
     public function authenticator(): SessionAuthenticator

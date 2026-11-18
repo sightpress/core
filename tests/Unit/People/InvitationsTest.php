@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Auth\Contract\TooManyCodes;
-use SightPress\Core\People\AnyEmailPolicy;
+use SightPress\Core\Auth\AnyEmailPolicy;
 use SightPress\Core\People\Invitation;
 use SightPress\Core\People\Invitations;
 use SightPress\Core\People\Migrations\Version20261116180000;

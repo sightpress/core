@@ -12,6 +12,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Admin\Contract\AdminScreens;
 use SightPress\Core\Auth\Contract\Passwords;
+use SightPress\Core\Auth\Contract\SignUp;
 use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
@@ -114,6 +115,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
                 array_values(array_unique([$this->site->defaultLocale, ...$this->site->locales])),
             ),
             'languages_path' => LanguagesHandler::PATH,
+            'sign_up_open' => SignUp::isOpen($this->settings->get(SignUp::SETTING)),
         ], $form->submitted && !$form->isValid() ? 422 : 200);
     }
 

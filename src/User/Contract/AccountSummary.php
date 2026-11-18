@@ -12,9 +12,11 @@ final readonly class AccountSummary
     public const string ACTIVE = 'active';
     public const string PENDING = 'pending';
     public const string DEACTIVATED = 'deactivated';
+    public const string UNVERIFIED = 'unverified';
 
     /**
-     * @param string  $status    {@see ACTIVE}, {@see PENDING} (no password set yet) or {@see DEACTIVATED}
+     * @param string  $status    {@see ACTIVE}, {@see PENDING} (no password set yet), {@see DEACTIVATED} or
+     *                           {@see UNVERIFIED} (signed up, email address not confirmed yet)
      * @param ?string $avatarUrl the 64 px avatar, or null when there is none
      */
     public function __construct(
@@ -30,5 +32,10 @@ final readonly class AccountSummary
     public function isDeactivated(): bool
     {
         return $this->status === self::DEACTIVATED;
+    }
+
+    public function isUnverified(): bool
+    {
+        return $this->status === self::UNVERIFIED;
     }
 }

@@ -11,8 +11,7 @@ use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
-use SightPress\Core\People\AnyEmailPolicy;
-use SightPress\Core\People\EmailPolicy;
+use SightPress\Core\Auth\Contract\EmailPolicy;
 use SightPress\Core\People\Http\AcceptInvitationHandler;
 use SightPress\Core\People\Http\InvitationCodeHandler;
 use SightPress\Core\People\Http\InviteHandler;
@@ -38,8 +37,7 @@ final class PeopleModuleTest extends TestCase
         $migrations = array_values(array_filter($registry->migrations(), static fn ($m) => $m->module === 'people'));
         self::assertSame('SightPress\Core\People\Migrations', $migrations[0]->item->namespace());
         self::assertDirectoryExists($migrations[0]->item->directory());
-        self::assertSame(AnyEmailPolicy::class, $registry->services()[EmailPolicy::class]->item->class);
-        self::assertFalse($registry->services()[EmailPolicy::class]->item->public);
+        self::assertSame('auth', $registry->services()[EmailPolicy::class]->module, 'the auth module owns the email policy');
         $routes = [];
         foreach (array_filter($registry->routes(), static fn ($r) => $r->module === 'people') as $route) {
             $routes[$route->item->name] = [$route->item->path, $route->item->handler, $route->item->middleware];
@@ -51,11 +49,13 @@ final class PeopleModuleTest extends TestCase
             'people.invite' => ['/admin/users/invite', InviteHandler::class, [AdminAccessMiddleware::class]],
             'people.invitation' => ['/login/invitation', InvitationCodeHandler::class, []],
             'people.invitation.account' => ['/login/invitation/account', AcceptInvitationHandler::class, []],
+            'people.sign_up' => ['/admin/settings/sign-up', \SightPress\Core\People\Http\SignUpSettingsHandler::class, [AdminAccessMiddleware::class]],
         ], $routes);
         $menu = array_values(array_filter($registry->adminMenu(), static fn ($m) => $m->module === 'people'));
         self::assertSame(['people.users', 'People', 'user.manage'], [$menu[0]->item->id, $menu[0]->item->label, $menu[0]->item->permission]);
         self::assertSame(['people.invite', 'Invite someone', 'user.invite'], [$menu[1]->item->id, $menu[1]->item->label, $menu[1]->item->permission]);
         $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'people'));
         self::assertFileExists($views[0]->item->directory . '/email/invitation.txt.twig');
+        self::assertFileExists($views[0]->item->directory . '/sign-up.html.twig');
     }
 }

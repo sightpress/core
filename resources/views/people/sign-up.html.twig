@@ -1,0 +1,19 @@
+{#
+    Sign-up settings (/admin/settings/sign-up): whether anyone may create an account, and the role they get (only
+    sign-up-safe roles are offered). What is set now is said in words first. Errors go to the error summary.
+    Context: `form`, `action`, `open`, `role` (label of the role new accounts get), `settings_path`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Sign-up') }}{% endblock %}
+{% block content %}
+<p><a href="{{ settings_path }}">{{ t('Back to site settings') }}</a></p>
+<h1>{{ t('Sign-up') }}</h1>
+<p>{{ open ? t('Anyone can create an account. New accounts get the “{role}” role once they confirm their email address.', {role: t(role)}) : t('Only people you invite can join. Nobody can create an account on their own.') }}</p>
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    {{ f.field(form, 'open') }}
+    {{ f.field(form, 'role') }}
+    {{ f.submit(t('Save sign-up settings')) }}
+{{ f.end() }}
+{% endblock %}

@@ -102,6 +102,9 @@ final class AuditRecorderTest extends TestCase
             new \SightPress\Core\Page\Contract\PageScheduled($page, null, null, 4),
             new \SightPress\Core\Page\Contract\ScheduledStepFailed($page, PageTransition::Publish, 'the publish checks found errors', 4),
             new \SightPress\Core\Page\Contract\ScheduledStepFailed($page, PageTransition::Unpublish, 'no permission', null),
+            new \SightPress\Core\Auth\Contract\AccountRegistered($user, 'member'),
+            new \SightPress\Core\Auth\Contract\AccountRegistered($user, 'member', 'editor'),
+            new SettingsChanged(['people.registration', 'rbac.registration_role'], 1),
             new \stdClass(),
         ] as $event) {
             $recorder($event);
@@ -146,6 +149,9 @@ final class AuditRecorderTest extends TestCase
             'Cleared the schedule of “About us”.',
             'Couldn’t publish “About us” on schedule: the publish checks found errors.',
             'Couldn’t take “About us” off the site on schedule: no permission.',
+            'Zoë signed up and confirmed their email address, with the “member” role.',
+            'Zoë signed up and confirmed their email address. The sign-up role “editor” isn’t safe for people who sign up, so they got “member” instead.',
+            'Changed the site settings: Let anyone create an account, Role of people who sign up.',
         ], array_map(static fn (AuditEntry $e): string => $e->summary, $entries));
         self::assertSame(['page.submit', 'page', (string) $page, 3, ['from' => 'draft', 'to' => 'in_review', 'comment' => 'Ready']], [$entries[3]->action, $entries[3]->entityType, $entries[3]->entityId, $entries[3]->actorId, $entries[3]->details]);
         self::assertSame(['settings', null], [$entries[20]->entityType, $entries[20]->entityId]);
@@ -156,6 +162,8 @@ final class AuditRecorderTest extends TestCase
         self::assertSame(['page.revision_restored', 4, ['locale' => 'pt-PT', 'restored' => 2, 'revision' => 5]], [$entries[31]->action, $entries[31]->actorId, $entries[31]->details]);
         self::assertSame(['page.scheduled', ['publish_at' => '2026-12-01T09:00:00+00:00', 'unpublish_at' => '2026-12-31T18:00:00+00:00']], [$entries[32]->action, $entries[32]->details]);
         self::assertSame(['page.schedule_failed', null, ['transition' => 'unpublish', 'reason' => 'no permission']], [$entries[36]->action, $entries[36]->actorId, $entries[36]->details]);
-        self::assertCount(18, AuditRecorder::EVENTS);
+        self::assertSame(['user.registered', 'user', (string) $user, $user, ['role' => 'member']], [$entries[37]->action, $entries[37]->entityType, $entries[37]->entityId, $entries[37]->actorId, $entries[37]->details]);
+        self::assertSame(['role' => 'member', 'refused_role' => 'editor'], $entries[38]->details);
+        self::assertCount(19, AuditRecorder::EVENTS);
     }
 }

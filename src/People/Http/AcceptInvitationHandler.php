@@ -18,7 +18,7 @@ use SightPress\Core\Http\Form\FormValidator;
 use SightPress\Core\Http\Form\TimezoneChoices;
 use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
-use SightPress\Core\People\EmailPolicy;
+use SightPress\Core\Auth\Contract\EmailPolicy;
 use SightPress\Core\People\Invitation;
 use SightPress\Core\People\Invitations;
 use SightPress\Core\Rbac\Contract\RoleGrants;

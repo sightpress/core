@@ -25,6 +25,9 @@
         {{ f.submit(t('Change role')) }}
     {{ f.end() }}
 </section>
+{%- if account.isUnverified %}
+<p>{{ t('{name} signed up but hasn’t typed the code we emailed them yet, so they can’t sign in. If they don’t, the account is removed a week after they signed up.', {name: account.effectiveName}) }}</p>
+{%- else %}
 <section class="admin-panel" aria-labelledby="people-status-title">
     <h2 id="people-status-title">{{ account.isDeactivated ? t('Reactivate account') : t('Deactivate account') }}</h2>
     {%- if account.isDeactivated %}
@@ -37,5 +40,6 @@
         <button type="submit" class="button{{ account.isDeactivated ? '' : ' button--secondary' }}">{{ account.isDeactivated ? t('Reactivate {name}', {name: account.effectiveName}) : t('Deactivate {name}', {name: account.effectiveName}) }}</button>
     </form>
 </section>
+{%- endif %}
 {%- endif %}
 {% endblock %}

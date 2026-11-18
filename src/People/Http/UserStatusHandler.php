@@ -13,7 +13,8 @@ use SightPress\Core\User\Contract\AccountRoster;
 
 /**
  * `POST /admin/users/{id}/status`: deactivates the person (they can't sign in, their content stays), or reactivates
- * them when they were deactivated. Nobody deactivates themselves. Needs `user.manage`.
+ * them when they were deactivated. Nobody deactivates themselves, and an account that hasn't confirmed its email
+ * address yet can't be deactivated (it can't sign in, and goes by itself after a week). Needs `user.manage`.
  */
 final readonly class UserStatusHandler implements RequestHandlerInterface
 {
@@ -29,6 +30,9 @@ final readonly class UserStatusHandler implements RequestHandlerInterface
         $path = UserHandler::path($account->id);
         if ($actor->userId === $account->id) {
             return $this->screens->redirect($request, $path, 'You can’t deactivate your own account.');
+        }
+        if ($account->isUnverified()) {
+            return $this->screens->redirect($request, $path, new Message('{effective_name} hasn’t confirmed their email address yet, so they can’t sign in anyway.', ['effective_name' => $account->effectiveName]));
         }
 
         if ($account->isDeactivated()) {

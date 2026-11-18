@@ -219,6 +219,22 @@ final class UserAdminHandlersTest extends TestCase
         self::assertTrue($this->admin->auth->users->find((int) $this->cleo->id())?->isActive());
     }
 
+    public function testSomeoneWhoHasntConfirmedTheirAddressIsShownSoAndCantBeDeactivated(): void
+    {
+        $nia = $this->admin->auth->user('nia@example.org', null, unverified: true);
+
+        self::assertStringContainsString('Hasn’t confirmed their email address yet', (string) $this->list($this->ada)->getBody());
+        $html = (string) $this->user($this->ada, $nia)->getBody();
+        self::assertStringContainsString('<dt>Status</dt><dd>Hasn’t confirmed their email address yet</dd>', $html);
+        self::assertStringContainsString('Ada signed up but hasn’t typed the code we emailed them yet, so they can’t sign in.', $html);
+        self::assertStringNotContainsString('/status" method="post"', $html);
+
+        $response = $this->changeStatus($this->ada, $nia);
+        self::assertSame('/admin/users/' . $nia->id(), $response->getHeaderLine('Location'));
+        self::assertSame(['Ada hasn’t confirmed their email address yet, so they can’t sign in anyway.'], array_map(strval(...), Flash::take($this->session)));
+        self::assertTrue($this->admin->auth->users->find((int) $nia->id())?->awaitsEmailVerification());
+    }
+
     private function list(User $actor, string $query = ''): ResponseInterface
     {
         $auth = $this->admin->auth;

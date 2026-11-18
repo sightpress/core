@@ -42,6 +42,25 @@ final readonly class UserRepository implements Accounts, AccountDirectory, Accou
         return is_int($changed) ? $changed : 0;
     }
 
+    /**
+     * Removes the accounts still waiting for their email address to be confirmed that were made before this time.
+     *
+     * @return int how many were removed
+     */
+    public function removeUnverified(\DateTimeImmutable $madeBefore): int
+    {
+        $removed = $this->entityManager->createQueryBuilder()
+            ->delete(User::class, 'u')
+            ->where('u.status = :status')
+            ->andWhere('u.createdAt < :before')
+            ->setParameter('status', UserStatus::Unverified->value)
+            ->setParameter('before', $madeBefore, \Doctrine\DBAL\Types\Types::DATETIME_IMMUTABLE)
+            ->getQuery()
+            ->execute();
+
+        return is_int($removed) ? $removed : 0;
+    }
+
     public function find(int $id): ?User
     {
         return $this->entityManager->find(User::class, $id);

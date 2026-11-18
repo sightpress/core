@@ -12,6 +12,7 @@ use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Contract\MediaUploaded;
 use SightPress\Core\Menu\Contract\MenuChanged;
 use SightPress\Core\Page\Contract\PageCloned;
+use SightPress\Core\Auth\Contract\AccountRegistered;
 use SightPress\Core\Page\Contract\PageCreated;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Contract\PageMoved;
@@ -45,7 +46,7 @@ final readonly class AuditRecorder
         PageCloned::class, PagePurged::class, RedirectChanged::class, RevisionRestored::class,
         PageScheduled::class, ScheduledStepFailed::class,
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
-        MenuChanged::class, RoleChanged::class, AccountChanged::class, SettingsChanged::class,
+        MenuChanged::class, RoleChanged::class, AccountChanged::class, AccountRegistered::class, SettingsChanged::class,
     ];
 
     public function __construct(
@@ -106,6 +107,9 @@ final readonly class AuditRecorder
             $event instanceof MenuChanged => $this->entry($event->actorId, 'menu.' . $event->change, 'menu', $event->menu->value, sprintf('%s: %s %s.', $event->menu->label(), str_replace('_', ' ', ucfirst($event->change)), $event->pageId === null ? sprintf('the link to %s', $event->url ?? 'an address') : sprintf('the entry for %s', $this->page($event->pageId))), array_filter(['item' => $event->itemId, 'page' => $event->pageId, 'url' => $event->url], static fn (mixed $value): bool => $value !== null)),
             $event instanceof RoleChanged => $this->entry($event->changedBy, 'user.role_changed', 'user', $event->userId, sprintf('Changed the role of %s from %s to %s.', $this->person($event->userId), $event->from ?? 'none', $event->to), ['from' => $event->from, 'to' => $event->to]),
             $event instanceof AccountChanged => $this->entry($event->changedBy, 'user.changed', 'user', $event->userId, sprintf('Changed the %s of %s.', self::words($event->fields), $this->person($event->userId)), ['fields' => $event->fields]),
+            $event instanceof AccountRegistered => $this->entry($event->userId, 'user.registered', 'user', $event->userId, $event->refusedRole === null
+                ? sprintf('%s signed up and confirmed their email address, with the “%s” role.', $this->person($event->userId), $event->role)
+                : sprintf('%s signed up and confirmed their email address. The sign-up role “%s” isn’t safe for people who sign up, so they got “%s” instead.', $this->person($event->userId), $event->refusedRole, $event->role), array_filter(['role' => $event->role, 'refused_role' => $event->refusedRole], static fn (?string $value): bool => $value !== null)),
             $event instanceof SettingsChanged => $this->entry($event->actorId, 'settings.changed', 'settings', null, sprintf('Changed the site settings: %s.', implode(', ', array_map($this->setting(...), $event->keys))), ['keys' => $event->keys]),
             default => null,
         };
@@ -134,6 +138,8 @@ final readonly class AuditRecorder
             'site.default_locale' => 'Main language',
             'site.locales' => 'Languages',
             'site.default_timezone' => 'Time zone',
+            'people.registration' => 'Let anyone create an account',
+            'rbac.registration_role' => 'Role of people who sign up',
             'branding.logo' => 'Logo',
             'branding.icon' => 'Icon',
             'branding.share_image' => 'Share picture',

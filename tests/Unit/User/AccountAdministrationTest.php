@@ -48,6 +48,13 @@ final class AccountAdministrationTest extends TestCase
         self::assertNull($summaries[1]->avatarUrl);
         self::assertEquals($summaries[1], $this->roster->summary((int) $pending->id()));
         self::assertNull($this->roster->summary(999));
+        self::assertFalse($summaries[0]->isUnverified());
+
+        $nia = $this->auth->user('nia.lind@example.org', unverified: true);
+        $unverified = $this->roster->summary((int) $nia->id());
+        self::assertSame(AccountSummary::UNVERIFIED, $unverified?->status);
+        self::assertTrue($unverified->isUnverified());
+        self::assertFalse($unverified->isDeactivated());
     }
 
     public function testDeactivatesAndReactivatesAndSaysWhoDidIt(): void

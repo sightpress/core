@@ -61,6 +61,8 @@ final class AuthModuleTest extends TestCase
             'auth.forgot.code' => '/login/forgot/code GET,POST',
             'auth.setup' => '/login/setup GET,POST',
             'auth.password' => '/login/password GET,POST',
+            'auth.register' => '/register GET,POST',
+            'auth.register.code' => '/register/code GET,POST',
         ], $routes);
         $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'auth'));
         self::assertSame('auth', $views[0]->item->namespace);
@@ -72,6 +74,10 @@ final class AuthModuleTest extends TestCase
         $commands = array_values(array_filter($registry->commands(), static fn ($c) => $c->module === 'auth'));
         self::assertSame([CreateAdminCommand::class], array_map(static fn ($c) => $c->item, $commands));
         self::assertTrue($registry->services()[VerificationCodes::class]->item->public);
+        self::assertSame(\SightPress\Core\Auth\AnyEmailPolicy::class, $registry->services()[\SightPress\Core\Auth\Contract\EmailPolicy::class]->item->class);
+        self::assertTrue($registry->services()[\SightPress\Core\Auth\Contract\EmailPolicy::class]->item->public);
+        $scheduled = array_values(array_filter($listeners, static fn ($l) => $l->item->event === \SightPress\Core\Site\Contract\ScheduleDue::class));
+        self::assertSame([\SightPress\Core\Auth\Registration\ForgetUnconfirmedAccounts::class], array_map(static fn ($l) => $l->item->listener, $scheduled));
     }
 
     public function testCodesAreKeyedWithTheTenantSecret(): void

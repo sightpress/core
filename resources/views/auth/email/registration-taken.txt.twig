@@ -1,0 +1,11 @@
+{% autoescape false %}
+{{ t('Hello {name},', {name: name}) }}
+
+{{ t('Someone tried to sign up for {site} with your email address. You already have an account there, so nothing was changed and no new account was made.', {site: site_name}) }}
+
+{{ t('If it was you, sign in with your email address and password. If you have forgotten your password, choose “Forgot your password?” on the sign-in page.') }}
+
+{{ t('If it wasn’t you, you can ignore this email. Your account and your password stay as they are.') }}
+
+{{ t('We never send links in our emails.') }}
+{% endautoescape %}

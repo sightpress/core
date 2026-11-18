@@ -8,20 +8,28 @@ use Doctrine\DBAL\Connection;
 use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
 use SightPress\Core\Auth\Command\CreateAdminCommand;
+use SightPress\Core\Auth\Contract\EmailPolicy;
 use SightPress\Core\Auth\Contract\Passwords;
+use SightPress\Core\Auth\Contract\SignUp;
 use SightPress\Core\Auth\Contract\VerificationCodes;
 use SightPress\Core\Auth\Http\AuthPages;
 use SightPress\Core\Auth\Http\ChoosePasswordHandler;
 use SightPress\Core\Auth\Http\ForgotPasswordHandler;
 use SightPress\Core\Auth\Http\LoginHandler;
 use SightPress\Core\Auth\Http\LogoutHandler;
+use SightPress\Core\Auth\Http\RegisterCodeHandler;
+use SightPress\Core\Auth\Http\RegisterHandler;
 use SightPress\Core\Auth\Http\ResetCodeHandler;
 use SightPress\Core\Auth\Http\SetupAccountHandler;
 use SightPress\Core\Auth\Provisioning\DemoAccounts;
 use SightPress\Core\Auth\Provisioning\FirstSetupCode;
+use SightPress\Core\Auth\Registration\ForgetUnconfirmedAccounts;
+use SightPress\Core\Auth\Registration\RegistrationMailer;
+use SightPress\Core\Auth\Registration\SelfRegistration;
 use SightPress\Core\Http\RateLimit\RateLimiters;
 use SightPress\Core\Http\Security\Authenticator;
 use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Site\Contract\ScheduleDue;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\User\Contract\Accounts;
@@ -37,7 +45,9 @@ use SightPress\Module\Setting\SettingType;
  * Signing in and out: the shared `/login` and `/logout` pages, "keep me signed in" tokens, the {@see Authenticator}
  * that tells every request who is making it, and six-digit verification codes ({@see VerificationCodes}, public):
  * "Forgot your password?" and the first admin's setup code are typed on a page, never sent as links, and the
- * site's password policy ({@see PasswordPolicy}: settings `auth.password_*`). Always on.
+ * site's password policy ({@see PasswordPolicy}: settings `auth.password_*`). Also self-registration
+ * ({@see SignUp}: `/register`, off by default, confirmed with an emailed code; unconfirmed accounts are removed by
+ * `schedule:run` after a week) and the {@see EmailPolicy} for who may join. Always on.
  */
 final class AuthModule implements ModuleInterface
 {
@@ -73,10 +83,11 @@ final class AuthModule implements ModuleInterface
             Services::get($c, TenantConfig::class)->secret
                 ?? throw new \LogicException('Verification codes need APP_SECRET: set it in the environment.'),
         ), public: true);
-        $services->autowire(EvenTiming::class);
+        $services->autowire(EvenTiming::class, public: true);
         $services->autowire(SessionAuthenticator::class, Authenticator::class);
         $services->autowire(PasswordRules::class, Passwords::class, public: true);
-        foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class] as $class) {
+        $services->autowire(AnyEmailPolicy::class, EmailPolicy::class, public: true);
+        foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class, SelfRegistration::class, RegistrationMailer::class, RegisterHandler::class, RegisterCodeHandler::class, ForgetUnconfirmedAccounts::class] as $class) {
             $services->autowire($class);
         }
 
@@ -95,6 +106,7 @@ final class AuthModule implements ModuleInterface
 
         $registrar->subscribers()->listen(SiteProvisioning::class, FirstSetupCode::class, SiteProvisioning::SIGN_IN);
         $registrar->subscribers()->listen(SiteProvisioning::class, DemoAccounts::class, DemoAccounts::PRIORITY);
+        $registrar->subscribers()->listen(ScheduleDue::class, ForgetUnconfirmedAccounts::class);
         $registrar->commands()->add(CreateAdminCommand::class);
 
         $routes = $registrar->routes();
@@ -104,5 +116,7 @@ final class AuthModule implements ModuleInterface
         $routes->add(new Route('auth.forgot.code', ResetCodeHandler::PATH, ResetCodeHandler::class, ['GET', 'POST']));
         $routes->add(new Route('auth.setup', SetupAccountHandler::PATH, SetupAccountHandler::class, ['GET', 'POST']));
         $routes->add(new Route('auth.password', ChoosePasswordHandler::PATH, ChoosePasswordHandler::class, ['GET', 'POST']));
+        $routes->add(new Route('auth.register', SignUp::PATH, RegisterHandler::class, ['GET', 'POST']));
+        $routes->add(new Route('auth.register.code', SignUp::CODE_PATH, RegisterCodeHandler::class, ['GET', 'POST']));
     }
 }

@@ -1,0 +1,37 @@
+{#
+    "Create an account" (/register), like the sign-in page, while the site lets anyone sign up. Never indexed. On a fresh
+    form the time zone is prefilled from the browser (js/timezone.js); without JavaScript the site's time zone stays
+    selected. The "{{ honeypot }}" field is hidden from everyone and only bots fill it in.
+    Context: `title`, `form`, `honeypot`, `action`, `sign_in`.
+#}
+{% extends '@auth/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t(title) }}{% endblock %}
+{% block content %}
+<h1>{{ t(title) }}</h1>
+<p>{{ t('All fields are needed unless they say “optional”. After this, we email you a 6-digit code to type on the next page.') }}</p>
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    {{ f.field(form, 'first_name') }}
+    {{ f.field(form, 'last_name') }}
+    {{ f.field(form, 'display_name') }}
+    {{ f.field(form, 'email') }}
+    {{ f.field(form, 'timezone') }}
+    {%- if form.has('locale') %}
+    {{ f.field(form, 'locale') }}
+    {%- endif %}
+    {{ f.field(form, 'password') }}
+    <div hidden>
+        <label for="{{ form.id }}-{{ honeypot }}">{{ t('Leave this field empty') }}</label>
+        <input type="text" id="{{ form.id }}-{{ honeypot }}" name="{{ honeypot }}" value="" tabindex="-1" autocomplete="off">
+    </div>
+    {{ f.submit(t('Create my account')) }}
+{{ f.end() }}
+<p>{{ t('Already have an account?') }} <a href="{{ sign_in }}">{{ t('Sign in') }}</a></p>
+{% endblock %}
+{% block scripts %}
+{{ parent() }}
+{%- if not form.submitted %}
+<script src="{{ asset('js/timezone.js') }}" data-select="{{ form.fieldId('timezone') }}" defer></script>
+{%- endif %}
+{% endblock %}

@@ -70,6 +70,10 @@ final class SettingsHandlerTest extends TestCase
         self::assertStringContainsString('The site is run by an organisation.', $html);
         self::assertStringContainsString('<a href="/admin/settings/branding">Branding</a>', $html);
         self::assertStringContainsString('Public: anyone can read the published pages.', $html);
+        self::assertStringContainsString('<p>Only people you invite can join. <a href="/admin/settings/sign-up">Change who can sign up</a></p>', $html);
+
+        $this->fixture->auth->database->settings()->set(\SightPress\Core\Auth\Contract\SignUp::SETTING, '1');
+        self::assertStringContainsString('<p>Anyone can create an account. <a href="/admin/settings/sign-up">', (string) $this->handle('GET')->getBody());
     }
 
     public function testSavesWhatChangedAndSaysSo(): void

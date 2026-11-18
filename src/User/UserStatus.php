@@ -12,6 +12,12 @@ enum UserStatus: string
     /** The account exists but the person hasn't set a password yet (first admin, invite not accepted). */
     case Pending = 'pending';
 
+    /**
+     * The person signed up themselves and hasn't typed the code we emailed them yet: they can't sign in, and the
+     * account is removed after a week if they never do.
+     */
+    case Unverified = 'unverified';
+
     /** The person can sign in. */
     case Active = 'active';
 

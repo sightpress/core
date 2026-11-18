@@ -55,6 +55,26 @@ final class RegistrationRoleTest extends TestCase
         self::assertSame('member', $database->registrationRole()->name());
     }
 
+    public function testOnlySignUpSafeRolesAreOfferedAndAnUnsafeStoredOneGivesMember(): void
+    {
+        $database = new CoreSiteDatabase();
+        $database->seeder()->seed();
+        $database->manager()->create('exporter', 'Exporter', ['audit.view']);
+        $registration = $database->registrationRole();
+
+        self::assertSame(['contributor' => 'Contributor', 'member' => 'Member'], $registration->choices());
+        self::assertSame('member', $registration->forNewAccount());
+
+        $registration->change('contributor');
+        self::assertSame('contributor', $registration->forNewAccount());
+
+        foreach (['editor', 'ghost'] as $stored) {
+            $database->settings()->set(RegistrationRole::SETTING, $stored);
+            self::assertSame($stored, $registration->name());
+            self::assertSame('member', $registration->forNewAccount(), $stored);
+        }
+    }
+
     public function testUnknownRolesAreRefused(): void
     {
         $database = new CoreSiteDatabase();

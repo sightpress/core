@@ -451,6 +451,12 @@
         <target>Admin</target>
       </segment>
     </unit>
+    <unit id="1c8f1ef3aa6c5c32">
+      <segment>
+        <source>All fields are needed unless they say “optional”. After this, we email you a 6-digit code to type on the next page.</source>
+        <target>All fields are needed unless they say “optional”. After this, we email you a 6-digit code to type on the next page.</target>
+      </segment>
+    </unit>
     <unit id="903542125c003f8f">
       <segment>
         <source>All pages</source>
@@ -473,6 +479,12 @@
       <segment>
         <source>All versions</source>
         <target>All versions</target>
+      </segment>
+    </unit>
+    <unit id="e77fea936d3e0118">
+      <segment>
+        <source>Already have an account?</source>
+        <target>Already have an account?</target>
       </segment>
     </unit>
     <unit id="16f89824f56a6359">
@@ -517,6 +529,12 @@
         <target>An account without a password can't be activated; set a password first.</target>
       </segment>
     </unit>
+    <unit id="45205edbabe40b0c">
+      <segment>
+        <source>An account without a password can't wait for its email address to be confirmed; set a password first.</source>
+        <target>An account without a password can't wait for its email address to be confirmed; set a password first.</target>
+      </segment>
+    </unit>
     <unit id="d0a8a14f54672f42">
       <segment>
         <source>An address can’t lead to itself.</source>
@@ -551,6 +569,18 @@
       <segment>
         <source>Anyone</source>
         <target>Anyone</target>
+      </segment>
+    </unit>
+    <unit id="54541bddff4a28db">
+      <segment>
+        <source>Anyone can create an account.</source>
+        <target>Anyone can create an account.</target>
+      </segment>
+    </unit>
+    <unit id="8c4122da16487ec0">
+      <segment>
+        <source>Anyone can create an account. New accounts get the “{role}” role once they confirm their email address.</source>
+        <target>Anyone can create an account. New accounts get the “{role}” role once they confirm their email address.</target>
       </segment>
     </unit>
     <unit id="b963d27ae3bc880a">
@@ -841,6 +871,12 @@
         <target>Change the site's name, profile, branding and other settings.</target>
       </segment>
     </unit>
+    <unit id="f08f3adc13b0b353">
+      <segment>
+        <source>Change who can sign up</source>
+        <target>Change who can sign up</target>
+      </segment>
+    </unit>
     <unit id="b3848685436faacf">
       <segment>
         <source>Change your details in My account</source>
@@ -973,6 +1009,18 @@
         <target>Columns</target>
       </segment>
     </unit>
+    <unit id="2a6df3aac68bec4c">
+      <segment>
+        <source>Confirm my email address</source>
+        <target>Confirm my email address</target>
+      </segment>
+    </unit>
+    <unit id="b835b7d6ded7051e">
+      <segment>
+        <source>Confirm your email address</source>
+        <target>Confirm your email address</target>
+      </segment>
+    </unit>
     <unit id="d80097d086dd7512">
       <segment>
         <source>Contact email address</source>
@@ -1037,6 +1085,18 @@
       <segment>
         <source>Copy this page</source>
         <target>Copy this page</target>
+      </segment>
+    </unit>
+    <unit id="86033f75a4c0876a">
+      <segment>
+        <source>Create an account</source>
+        <target>Create an account</target>
+      </segment>
+    </unit>
+    <unit id="8d064ad73095ab23">
+      <segment>
+        <source>Create an account on {site}</source>
+        <target>Create an account on {site}</target>
       </segment>
     </unit>
     <unit id="862d3b2696cfbc19">
@@ -1265,6 +1325,12 @@
       <segment>
         <source>Email subject</source>
         <target>Email subject</target>
+      </segment>
+    </unit>
+    <unit id="96ac7e5ca168b001">
+      <segment>
+        <source>Emails from the site are written in this language.</source>
+        <target>Emails from the site are written in this language.</target>
       </segment>
     </unit>
     <unit id="5bafec02e2558a28">
@@ -1705,10 +1771,34 @@
         <target>How do I choose a layout?</target>
       </segment>
     </unit>
+    <unit id="ed3bcecc81cdaa19">
+      <segment>
+        <source>If it was you, sign in with your email address and password. If you have forgotten your password, choose “Forgot your password?” on the sign-in page.</source>
+        <target>If it was you, sign in with your email address and password. If you have forgotten your password, choose “Forgot your password?” on the sign-in page.</target>
+      </segment>
+    </unit>
+    <unit id="1646ec7e94017f5b">
+      <segment>
+        <source>If it wasn’t you, you can ignore this email. Your account and your password stay as they are.</source>
+        <target>If it wasn’t you, you can ignore this email. Your account and your password stay as they are.</target>
+      </segment>
+    </unit>
+    <unit id="7945af1636674d68">
+      <segment>
+        <source>If it wasn’t you, you can ignore this email: the account can’t be used until the code is typed, and it is removed after a week.</source>
+        <target>If it wasn’t you, you can ignore this email: the account can’t be used until the code is typed, and it is removed after a week.</target>
+      </segment>
+    </unit>
     <unit id="8f86a232bbd2f5eb">
       <segment>
         <source>If there is an account for that address, we have emailed it a 6-digit code. The code works for {duration}, and only once.</source>
         <target>If there is an account for that address, we have emailed it a 6-digit code. The code works for {duration}, and only once.</target>
+      </segment>
+    </unit>
+    <unit id="0541782fa7b744b8">
+      <segment>
+        <source>If this address can be used for a new account, we have emailed it a 6-digit code. The code works for {duration}, and only once.</source>
+        <target>If this address can be used for a new account, we have emailed it a 6-digit code. The code works for {duration}, and only once.</target>
       </segment>
     </unit>
     <unit id="5833a166f25ae09d">
@@ -1949,6 +2039,12 @@
       <segment>
         <source>Leave this field empty</source>
         <target>Leave this field empty</target>
+      </segment>
+    </unit>
+    <unit id="6c5758b9fb72c5e0">
+      <segment>
+        <source>Let anyone create an account</source>
+        <target>Let anyone create an account</target>
       </segment>
     </unit>
     <unit id="1709305c9fa966d1">
@@ -2227,6 +2323,12 @@
         <target>New address</target>
       </segment>
     </unit>
+    <unit id="38c1c4457cd164cc">
+      <segment>
+        <source>New here?</source>
+        <target>New here?</target>
+      </segment>
+    </unit>
     <unit id="3dd9df4441fb348f">
       <segment>
         <source>New password</source>
@@ -2471,6 +2573,24 @@
       <segment>
         <source>Only people who may publish pages can schedule them.</source>
         <target>Only people who may publish pages can schedule them.</target>
+      </segment>
+    </unit>
+    <unit id="c9f4abc0d13a9df7">
+      <segment>
+        <source>Only people you invite can join.</source>
+        <target>Only people you invite can join.</target>
+      </segment>
+    </unit>
+    <unit id="d03eabd8c489aa20">
+      <segment>
+        <source>Only people you invite can join. Nobody can create an account on their own.</source>
+        <target>Only people you invite can join. Nobody can create an account on their own.</target>
+      </segment>
+    </unit>
+    <unit id="cc54070c82dbba3a">
+      <segment>
+        <source>Only roles that are safe to give to people you don’t know are listed. “Member” can read members-only pages and nothing more.</source>
+        <target>Only roles that are safe to give to people you don’t know are listed. “Member” can read members-only pages and nothing more.</target>
       </segment>
     </unit>
     <unit id="410c3aa8a88771e1">
@@ -2923,6 +3043,12 @@
         <target>Role</target>
       </segment>
     </unit>
+    <unit id="973288385d68374e">
+      <segment>
+        <source>Role of people who sign up</source>
+        <target>Role of people who sign up</target>
+      </segment>
+    </unit>
     <unit id="82cdf25cce6eee23">
       <segment>
         <source>SVG pictures can't be used as a profile picture. Upload a JPEG, PNG or WebP picture.</source>
@@ -2951,6 +3077,12 @@
       <segment>
         <source>Save settings</source>
         <target>Save settings</target>
+      </segment>
+    </unit>
+    <unit id="8d29de0525120893">
+      <segment>
+        <source>Save sign-up settings</source>
+        <target>Save sign-up settings</target>
       </segment>
     </unit>
     <unit id="7b015c0fcf9fe632">
@@ -3229,6 +3361,12 @@
         <target>Shown in browser tabs, bookmarks and on phone home screens. A square picture, at least {icon_min} × {icon_min} pixels: SVG, PNG or WebP.</target>
       </segment>
     </unit>
+    <unit id="b054b0d3f1e537b3">
+      <segment>
+        <source>Shown next to your name on the site and in emails. Your first name is shown if you leave it empty.</source>
+        <target>Shown next to your name on the site and in emails. Your first name is shown if you leave it empty.</target>
+      </segment>
+    </unit>
     <unit id="d9e5584e729a852c">
       <segment>
         <source>Shown next to your work and in emails. Shown as “{first_name}” if left empty.</source>
@@ -3307,6 +3445,12 @@
         <target>Sign out</target>
       </segment>
     </unit>
+    <unit id="3cc08ebe9d5f9c11">
+      <segment>
+        <source>Sign-up</source>
+        <target>Sign-up</target>
+      </segment>
+    </unit>
     <unit id="599a82d9808993c5">
       <segment>
         <source>Signed in as {name}</source>
@@ -3371,6 +3515,24 @@
       <segment>
         <source>Someone asked to reset the password of your account on {site}. Your code is:</source>
         <target>Someone asked to reset the password of your account on {site}. Your code is:</target>
+      </segment>
+    </unit>
+    <unit id="9bcf81a23f915e32">
+      <segment>
+        <source>Someone signed up for {site} with this email address. To confirm it is yours, type this code on the page that asks for it:</source>
+        <target>Someone signed up for {site} with this email address. To confirm it is yours, type this code on the page that asks for it:</target>
+      </segment>
+    </unit>
+    <unit id="c0bded503c093617">
+      <segment>
+        <source>Someone tried to sign up for {site} with your email address</source>
+        <target>Someone tried to sign up for {site} with your email address</target>
+      </segment>
+    </unit>
+    <unit id="13a56e80ed2cf51d">
+      <segment>
+        <source>Someone tried to sign up for {site} with your email address. You already have an account there, so nothing was changed and no new account was made.</source>
+        <target>Someone tried to sign up for {site} with your email address. You already have an account there, so nothing was changed and no new account was made.</target>
       </segment>
     </unit>
     <unit id="17a9d1126d36aa2c">
@@ -4081,6 +4243,12 @@
         <target>The shortest password allowed must be a number from {{ min }} to {{ max }}</target>
       </segment>
     </unit>
+    <unit id="c366139e1ad09357">
+      <segment>
+        <source>The sign-up settings have been saved.</source>
+        <target>The sign-up settings have been saved.</target>
+      </segment>
+    </unit>
     <unit id="0cbb8b176295463f">
       <segment>
         <source>The site</source>
@@ -4375,6 +4543,12 @@
         <target>This SVG file has nothing left to show once it is made safe. Upload a PNG instead.</target>
       </segment>
     </unit>
+    <unit id="6476216243f5ca4b">
+      <segment>
+        <source>This account hasn't been confirmed yet, so it can't sign in anyway. It is removed a week after it was made.</source>
+        <target>This account hasn't been confirmed yet, so it can't sign in anyway. It is removed a week after it was made.</target>
+      </segment>
+    </unit>
     <unit id="e7ca5d58fa6f183e">
       <segment>
         <source>This block was saved by a newer version of the &quot;{label}&quot; block. Update the module that adds it.</source>
@@ -4595,6 +4769,12 @@
       <segment>
         <source>To be taken off the site at {time}</source>
         <target>To be taken off the site at {time}</target>
+      </segment>
+    </unit>
+    <unit id="62bc2af82966b2e9">
+      <segment>
+        <source>Too many accounts have been made from here. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</source>
+        <target>Too many accounts have been made from here. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</target>
       </segment>
     </unit>
     <unit id="802600d124464157">
@@ -4927,6 +5107,12 @@
         <target>We email them a 6-digit invitation code, never a link. They type it on this site’s sign-in page, under “Accept an invitation”. The code works for 7 days and only once.</target>
       </segment>
     </unit>
+    <unit id="abc36c9c6eee7a79">
+      <segment>
+        <source>We email you a code to check it is yours. You sign in with it.</source>
+        <target>We email you a code to check it is yours. You sign in with it.</target>
+      </segment>
+    </unit>
     <unit id="ed27ef4e766c9729">
       <segment>
         <source>We have sent a new code to {email}. The code we sent before no longer works.</source>
@@ -4943,6 +5129,12 @@
       <segment>
         <source>We keep it for 30 days.</source>
         <target>We keep it for 30 days.</target>
+      </segment>
+    </unit>
+    <unit id="f69eeb77697b4aa4">
+      <segment>
+        <source>We never send links in our emails.</source>
+        <target>We never send links in our emails.</target>
       </segment>
     </unit>
     <unit id="e1bbb0d2ce73cbc1">
@@ -5051,6 +5243,12 @@
       <segment>
         <source>When a page moves or gets a new address, its old address leads to the new one, so links and bookmarks keep working. When a page is deleted for good, its old address tells visitors it is gone.</source>
         <target>When a page moves or gets a new address, its old address leads to the new one, so links and bookmarks keep working. When a page is deleted for good, its old address tells visitors it is gone.</target>
+      </segment>
+    </unit>
+    <unit id="acf02ada6cba251b">
+      <segment>
+        <source>When this is off, only people you invite can join. When it is on, the sign-in page has a “Create an account” link, and people confirm their email address with a code before they can sign in.</source>
+        <target>When this is off, only people you invite can join. When it is on, the sign-in page has a “Create an account” link, and people confirm their email address with a code before they can sign in.</target>
       </segment>
     </unit>
     <unit id="d63aa45e24323b30">
@@ -5227,6 +5425,12 @@
         <target>You have tried to sign in too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</target>
       </segment>
     </unit>
+    <unit id="c40382596d108085">
+      <segment>
+        <source>You haven’t confirmed your email address yet. Type the code we emailed you, or send a new one.</source>
+        <target>You haven’t confirmed your email address yet. Type the code we emailed you, or send a new one.</target>
+      </segment>
+    </unit>
     <unit id="816fca558e8ad8aa">
       <segment>
         <source>You need to sign in before you can see this page.</source>
@@ -5257,6 +5461,12 @@
         <target>Your code to choose your password for {site}</target>
       </segment>
     </unit>
+    <unit id="a4fd093adf609451">
+      <segment>
+        <source>Your code to confirm your email address for {site}</source>
+        <target>Your code to confirm your email address for {site}</target>
+      </segment>
+    </unit>
     <unit id="3db3caccf4b17206">
       <segment>
         <source>Your code to reset your password for {site}</source>
@@ -5279,6 +5489,12 @@
       <segment>
         <source>Your email address</source>
         <target>Your email address</target>
+      </segment>
+    </unit>
+    <unit id="3c449814eee4b6dd">
+      <segment>
+        <source>Your email address is confirmed and your account is ready. Sign in with {email} and your password.</source>
+        <target>Your email address is confirmed and your account is ready. Sign in with {email} and your password.</target>
       </segment>
     </unit>
     <unit id="7a057bd996a32915">
@@ -5587,6 +5803,12 @@
         <target>{effective_name} has been reactivated and can sign in again.</target>
       </segment>
     </unit>
+    <unit id="f7d63dbf426b241d">
+      <segment>
+        <source>{effective_name} hasn’t confirmed their email address yet, so they can’t sign in anyway.</source>
+        <target>{effective_name} hasn’t confirmed their email address yet, so they can’t sign in anyway.</target>
+      </segment>
+    </unit>
     <unit id="60e8e84c4ef9f356">
       <segment>
         <source>{effective_name}’s role is now {role}.</source>
@@ -5717,6 +5939,12 @@
       <segment>
         <source>{name} sent a message with the contact form on {page}.</source>
         <target>{name} sent a message with the contact form on {page}.</target>
+      </segment>
+    </unit>
+    <unit id="7afd507c0009cd50">
+      <segment>
+        <source>{name} signed up but hasn’t typed the code we emailed them yet, so they can’t sign in. If they don’t, the account is removed a week after they signed up.</source>
+        <target>{name} signed up but hasn’t typed the code we emailed them yet, so they can’t sign in. If they don’t, the account is removed a week after they signed up.</target>
       </segment>
     </unit>
     <unit id="c9acb770441c8e6d">

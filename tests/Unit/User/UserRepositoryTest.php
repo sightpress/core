@@ -20,6 +20,28 @@ use SightPress\Core\User\UserRepository;
 #[UsesNamespace('SightPress\Core')]
 final class UserRepositoryTest extends TestCase
 {
+    public function testRemovesOnlyUnverifiedAccountsMadeBeforeAGivenTime(): void
+    {
+        $database = new CoreSiteDatabase();
+        $users = new UserRepository($database->entityManager);
+        $made = new DateTimeImmutable('2026-11-01 09:00:00 UTC');
+        foreach (['old@example.org' => $made, 'new@example.org' => $made->modify('+3 days'), 'active@example.org' => $made] as $email => $at) {
+            $user = new User($email, 'A', 'B', 'UTC', $at);
+            $user->setPasswordHash('hash', $at);
+            if ($email !== 'active@example.org') {
+                $user->awaitEmailVerification($at);
+            }
+            $users->save($user);
+        }
+
+        self::assertSame(1, $users->removeUnverified($made->modify('+1 day')));
+        $database->entityManager->clear();
+
+        self::assertNull($users->findByEmail('old@example.org'));
+        self::assertNotNull($users->findByEmail('new@example.org'));
+        self::assertNotNull($users->findByEmail('active@example.org'));
+    }
+
     public function testSavesAndFindsUsers(): void
     {
         $database = new CoreSiteDatabase();
@@ -88,6 +110,11 @@ final class UserRepositoryTest extends TestCase
             public function isPending(): bool
             {
                 return true;
+            }
+
+            public function awaitsEmailVerification(): bool
+            {
+                return false;
             }
 
             public function passwordHash(): ?string

@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace SightPress\Core\People;
+namespace SightPress\Core\Auth;
+
+use SightPress\Core\Auth\Contract\EmailPolicy;
 
 /**
  * `email_policy: any`: every address may join.

@@ -41,6 +41,7 @@ final readonly class UsersHandler implements RequestHandlerInterface
         AccountSummary::ACTIVE => 'Active',
         AccountSummary::PENDING => 'Hasn’t set a password yet',
         AccountSummary::DEACTIVATED => 'Deactivated',
+        AccountSummary::UNVERIFIED => 'Hasn’t confirmed their email address yet',
     ];
 
     public function __construct(

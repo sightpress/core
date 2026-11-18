@@ -92,7 +92,7 @@ test('nothing private can be indexed', async ({ request }) => {
 const SCREENS: Record<'admin' | 'editor' | 'contributor', string[]> = {
   admin: [
     '/account', '/admin', '/admin/audit', '/admin/media', '/admin/media/{id}', '/admin/media/{id}/delete', '/admin/menus',
-    '/admin/pages', '/admin/pages/new', '/admin/pages/{id}', '/admin/pages/{id}/revisions', '/admin/pages/{id}/revisions/{id}', '/admin/redirects', '/admin/settings', '/admin/settings/branding', '/admin/settings/languages',
+    '/admin/pages', '/admin/pages/new', '/admin/pages/{id}', '/admin/pages/{id}/revisions', '/admin/pages/{id}/revisions/{id}', '/admin/redirects', '/admin/settings', '/admin/settings/branding', '/admin/settings/languages', '/admin/settings/sign-up',
     '/admin/users', '/admin/users/invite', '/admin/users/{id}',
   ],
   editor: [

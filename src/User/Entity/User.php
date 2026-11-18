@@ -123,6 +123,11 @@ final class User implements Account
         return $this->status === UserStatus::Pending;
     }
 
+    public function awaitsEmailVerification(): bool
+    {
+        return $this->status === UserStatus::Unverified;
+    }
+
     public function firstName(): string
     {
         return $this->firstName;
@@ -251,6 +256,32 @@ final class User implements Account
         $this->updatedAt = $now;
     }
 
+    /**
+     * The person signed up themselves: the account waits until they type the code we emailed them
+     * ({@see confirmEmail()}). It needs its password already.
+     */
+    public function awaitEmailVerification(DateTimeImmutable $now): void
+    {
+        if ($this->passwordHash === null) {
+            throw new UserException('An account without a password can\'t wait for its email address to be confirmed; set a password first.');
+        }
+
+        $this->status = UserStatus::Unverified;
+        $this->updatedAt = $now;
+    }
+
+    /**
+     * The person typed the code we emailed them: an account that was waiting for it can sign in. Other accounts
+     * don't change.
+     */
+    public function confirmEmail(DateTimeImmutable $now): void
+    {
+        if ($this->status === UserStatus::Unverified) {
+            $this->status = UserStatus::Active;
+            $this->updatedAt = $now;
+        }
+    }
+
     public function activate(DateTimeImmutable $now): void
     {
         if ($this->passwordHash === null) {
@@ -263,6 +294,9 @@ final class User implements Account
 
     public function deactivate(DateTimeImmutable $now): void
     {
+        if ($this->status === UserStatus::Unverified) {
+            throw new UserException('This account hasn\'t been confirmed yet, so it can\'t sign in anyway. It is removed a week after it was made.');
+        }
         $this->status = UserStatus::Deactivated;
         $this->updatedAt = $now;
     }

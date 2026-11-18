@@ -9,6 +9,8 @@
  * Test-only addresses: `/_test/reset` starts again from a fresh site (forgets sessions and rate limits);
  * `/_test/invitation?email=…&role=…&first_name=…` invites someone from Ada and answers with the invitation code (the
  * test site sends no email); `/_test/starter` writes the starter pages of a new site (I-4) in its languages.
+ * Test mailbox: the site keeps every email it would send in its folder, and `/_test/mail?to=…` answers with the
+ * latest one to that address as JSON (to, subject, text, html), or 404.
  *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
@@ -24,6 +26,7 @@ use Doctrine\Migrations\MigratorConfiguration;
 use SightPress\Core\Auth\PasswordHasher;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
+use SightPress\Core\Infrastructure\Mail\MailSender;
 use SightPress\Core\Infrastructure\Migration\MigrationConfigurationFactory;
 use SightPress\Core\Kernel;
 use SightPress\Core\Page\Contract\PageTransition;
@@ -40,6 +43,7 @@ use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\User\Avatar\AvatarService;
 use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\UserRepository;
+use Symfony\Component\Mime\Email;
 
 require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
@@ -51,6 +55,7 @@ $project = sys_get_temp_dir() . '/sightpress-a11y-' . (is_string($copy) && preg_
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
 $path = (string) parse_url(is_string($uri) ? $uri : '/', PHP_URL_PATH);
 $environment = ['APP_ENV' => 'test', 'APP_SECRET' => SECRET];
+$mailbox = $project . '/mail';
 
 if ($path === '/_test/reset') {
     exec('rm -rf ' . escapeshellarg($project));
@@ -148,7 +153,47 @@ if ($path === '/_test/starter') {
     return;
 }
 
-Kernel::boot($project, $environment)->run();
+if ($path === '/_test/mail') {
+    $to = is_string($_GET['to'] ?? null) ? strtolower($_GET['to']) : '';
+    $messages = glob($mailbox . '/*.json');
+    $messages = $messages === false ? [] : $messages;
+    rsort($messages);
+    foreach ($messages as $file) {
+        $message = json_decode((string) file_get_contents($file), true);
+        if (is_array($message) && is_array($message['to'] ?? null) && in_array($to, $message['to'], true)) {
+            header('Content-Type: application/json');
+            echo json_encode($message);
+
+            return;
+        }
+    }
+    http_response_code(404);
+
+    return;
+}
+
+$kernel = Kernel::boot($project, $environment);
+$container = $kernel->container();
+if (!$container instanceof DI\Container) {
+    throw new LogicException('The kernel container can\'t be changed.');
+}
+$container->set(MailSender::class, new readonly class ($mailbox) implements MailSender {
+    public function __construct(private string $folder)
+    {
+    }
+
+    public function send(Email $email): void
+    {
+        @mkdir($this->folder, 0o777, true);
+        file_put_contents($this->folder . '/' . sprintf('%.6f', microtime(true)) . '-' . bin2hex(random_bytes(4)) . '.json', json_encode([
+            'to' => array_map(static fn ($address): string => strtolower($address->getAddress()), $email->getTo()),
+            'subject' => $email->getSubject(),
+            'text' => $email->getTextBody(),
+            'html' => $email->getHtmlBody(),
+        ]));
+    }
+});
+$kernel->run();
 
 function site(Kernel $kernel): Psr\Container\ContainerInterface
 {

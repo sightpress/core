@@ -17,7 +17,9 @@ use SightPress\Core\User\Contract\Accounts;
  * Checks an email address and password, and starts and ends signed-in sessions.
  *
  * Attempts are limited per email address and client address (`sign_in` rate limit: 5 in 15 minutes). A wrong
- * address, a wrong password and an account that can't sign in all give the same answer, after the same work.
+ * address, a wrong password and an account that can't sign in all give the same answer, after the same work. Only
+ * with the right password does someone learn that an account they made themselves still waits for its email
+ * address to be confirmed.
  */
 final readonly class SignIn
 {
@@ -50,7 +52,15 @@ final readonly class SignIn
 
         $account = $this->accounts->findAccountByEmail($email);
         $hash = $account?->passwordHash();
-        if (!$this->hasher->verify($password, $hash) || $account === null || $hash === null || !$account->isActive()) {
+        if (!$this->hasher->verify($password, $hash) || $account === null || $hash === null) {
+            return SignInResult::wrongCredentials();
+        }
+        if ($account->awaitsEmailVerification()) {
+            $limiter->reset();
+
+            return SignInResult::unconfirmed($account);
+        }
+        if (!$account->isActive()) {
             return SignInResult::wrongCredentials();
         }
 
