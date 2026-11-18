@@ -1,0 +1,44 @@
+{#
+    The versions of a page in one language (/admin/pages/{id}/revisions), newest first: a table with the version (a
+    link to what changed in it), when it was saved (in the viewer's time zone), who saved it and the page's state
+    then. On a site with more than one language, links to the versions in each language.
+    Context: `title`, `language` (null on a site with one language), `languages`, `versions`, `edit_url`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ language ? t('Versions of “{title}” in {language}', {title: title, language: language}) : t('Versions of “{title}”', {title: title}) }}{% endblock %}
+{% block content %}
+<h1>{{ language ? t('Versions of “{title}” in {language}', {title: title, language: language}) : t('Versions of “{title}”', {title: title}) }}</h1>
+<p>{{ t('Each time the page is saved in this language, a new version is kept. Open a version to see what changed in it, and to restore it.') }} <a href="{{ edit_url }}">{{ t('Back to the page') }}</a></p>
+{%- if languages is not empty %}
+<nav aria-labelledby="version-languages">
+    <h2 id="version-languages">{{ t('Versions in other languages') }}</h2>
+    <ul>
+        {%- for row in languages %}
+        <li>{% if row.current %}<a href="{{ row.url }}" aria-current="page">{{ t(row.name) }}</a>{% else %}<a href="{{ row.url }}">{{ t(row.name) }}</a>{% endif %}</li>
+        {%- endfor %}
+    </ul>
+</nav>
+{%- endif %}
+{%- if versions is empty %}
+<p>{{ t('The page isn’t written in this language yet, so it has no versions in it.') }}</p>
+{%- else %}
+<div class="table-wrap" role="region" aria-labelledby="versions-caption" tabindex="0">
+<table>
+    <caption id="versions-caption">{{ t('Versions, newest first') }}</caption>
+    <thead>
+        <tr><th scope="col">{{ t('Version') }}</th><th scope="col">{{ t('Saved') }}</th><th scope="col">{{ t('By') }}</th><th scope="col">{{ t('State of the page then') }}</th></tr>
+    </thead>
+    <tbody>
+        {%- for row in versions %}
+        <tr>
+            <th scope="row"><a href="{{ row.url }}">{{ row.first ? t('Version {number} (the first)', {number: row.number}) : t('Version {number}', {number: row.number}) }}</a>{% if loop.first %} {{ t('(the current one)') }}{% endif %}</th>
+            <td><time datetime="{{ row.saved|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ row.saved|user_datetime }}</time></td>
+            <td>{{ row.by ?? t(row.by_note) }}</td>
+            <td>{{ row.state ? t(row.state) : t('Not known') }}</td>
+        </tr>
+        {%- endfor %}
+    </tbody>
+</table>
+</div>
+{%- endif %}
+{% endblock %}

@@ -17,6 +17,7 @@ export const ADMIN_SITES = {
   settings: 'http://127.0.0.1:8088',
   languages: 'http://127.0.0.1:8085',
   operations: 'http://127.0.0.1:8083',
+  revisions: 'http://127.0.0.1:8082',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

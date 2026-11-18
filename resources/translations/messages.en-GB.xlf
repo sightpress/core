@@ -43,6 +43,12 @@
         <target>(optional)</target>
       </segment>
     </unit>
+    <unit id="49dfea1c7484b3c7">
+      <segment>
+        <source>(the current one)</source>
+        <target>(the current one)</target>
+      </segment>
+    </unit>
     <unit id="4a43d11d27793f9e">
       <segment>
         <source>, page {page} of {pages}</source>
@@ -385,6 +391,12 @@
         <target>Add redirect</target>
       </segment>
     </unit>
+    <unit id="6b02e0d363a4af1c">
+      <segment>
+        <source>Added</source>
+        <target>Added</target>
+      </segment>
+    </unit>
     <unit id="a5fc2478b82afe6c">
       <segment>
         <source>Added a {label} block. It is {noun} {items} of {items2}.</source>
@@ -457,6 +469,12 @@
         <target>All pages ({count})</target>
       </segment>
     </unit>
+    <unit id="6473ccf96fd69ec9">
+      <segment>
+        <source>All versions</source>
+        <target>All versions</target>
+      </segment>
+    </unit>
     <unit id="16f89824f56a6359">
       <segment>
         <source>Alt text</source>
@@ -485,6 +503,12 @@
       <segment>
         <source>An SVG logo must be 512 KB or smaller.</source>
         <target>An SVG logo must be 512 KB or smaller.</target>
+      </segment>
+    </unit>
+    <unit id="df7274e83e46d8f1">
+      <segment>
+        <source>An account that no longer exists</source>
+        <target>An account that no longer exists</target>
       </segment>
     </unit>
     <unit id="b10533f60ffab30f">
@@ -649,6 +673,12 @@
         <target>Back to site settings</target>
       </segment>
     </unit>
+    <unit id="600ce10f1e2c8681">
+      <segment>
+        <source>Back to the page</source>
+        <target>Back to the page</target>
+      </segment>
+    </unit>
     <unit id="7fe5fc645b6cc30f">
       <segment>
         <source>Back to the pages</source>
@@ -673,10 +703,22 @@
         <target>Block {index} is not a block: it needs a type, a version from 1 up and its data, and nothing else.</target>
       </segment>
     </unit>
+    <unit id="fc92efe67502828e">
+      <segment>
+        <source>Block {index} of {count}: {label}</source>
+        <target>Block {index} of {count}: {label}</target>
+      </segment>
+    </unit>
     <unit id="4d5267c8bd035348">
       <segment>
         <source>Block {index} of {value}: {label}</source>
         <target>Block {index} of {value}: {label}</target>
+      </segment>
+    </unit>
+    <unit id="973c7fa98613bf90">
+      <segment>
+        <source>Block {index}: {label}</source>
+        <target>Block {index}: {label}</target>
       </segment>
     </unit>
     <unit id="1cd5a6687bb76e39">
@@ -701,6 +743,12 @@
       <segment>
         <source>Button text</source>
         <target>Button text</target>
+      </segment>
+    </unit>
+    <unit id="125466b821c6448a">
+      <segment>
+        <source>By</source>
+        <target>By</target>
       </segment>
     </unit>
     <unit id="c48cd231858e1cec">
@@ -1147,6 +1195,12 @@
         <target>Draft</target>
       </segment>
     </unit>
+    <unit id="35af95f5d792f7ff">
+      <segment>
+        <source>Each time the page is saved in this language, a new version is kept. Open a version to see what changed in it, and to restore it.</source>
+        <target>Each time the page is saved in this language, a new version is kept. Open a version to see what changed in it, and to restore it.</target>
+      </segment>
+    </unit>
     <unit id="fd21c3bfdb29ad22">
       <segment>
         <source>Edit any page</source>
@@ -1321,6 +1375,12 @@
         <target>Everything</target>
       </segment>
     </unit>
+    <unit id="a85279c165f26ab4">
+      <segment>
+        <source>Everything in it was new.</source>
+        <target>Everything in it was new.</target>
+      </segment>
+    </unit>
     <unit id="6ad9fd6476cd8173">
       <segment>
         <source>Everything said and shown, as text, for people who can't watch or hear the video.</source>
@@ -1349,6 +1409,12 @@
       <segment>
         <source>File download</source>
         <target>File download</target>
+      </segment>
+    </unit>
+    <unit id="2fad0899b81b370b">
+      <segment>
+        <source>File number {id} of the media library</source>
+        <target>File number {id} of the media library</target>
       </segment>
     </unit>
     <unit id="ce2925d1572cce2b">
@@ -1717,6 +1783,12 @@
         <target>It uses the saved translation: save your changes first. Visitors see it once the page itself is published.</target>
       </segment>
     </unit>
+    <unit id="652bcc3a47842889">
+      <segment>
+        <source>Item</source>
+        <target>Item</target>
+      </segment>
+    </unit>
     <unit id="bfbe1fb13cc82b61">
       <segment>
         <source>Its address tells visitors and search engines that the page is gone. A new page can use the address again.</source>
@@ -1787,6 +1859,12 @@
       <segment>
         <source>Language to add</source>
         <target>Language to add</target>
+      </segment>
+    </unit>
+    <unit id="c09c83fed7aa493f">
+      <segment>
+        <source>Language: {language}</source>
+        <target>Language: {language}</target>
       </segment>
     </unit>
     <unit id="318655cea4bd2096">
@@ -2155,10 +2233,22 @@
         <target>Next</target>
       </segment>
     </unit>
+    <unit id="1ea442a134b2a184">
+      <segment>
+        <source>No</source>
+        <target>No</target>
+      </segment>
+    </unit>
     <unit id="930a2568e5cf1826">
       <segment>
         <source>No blocks here yet.</source>
         <target>No blocks here yet.</target>
+      </segment>
+    </unit>
+    <unit id="c699aa00b26d36f6">
+      <segment>
+        <source>No changes</source>
+        <target>No changes</target>
       </segment>
     </unit>
     <unit id="2bb74a38997bbc4c">
@@ -2209,6 +2299,12 @@
         <target>None</target>
       </segment>
     </unit>
+    <unit id="117adf013b8521b5">
+      <segment>
+        <source>Not known</source>
+        <target>Not known</target>
+      </segment>
+    </unit>
     <unit id="9ccacf99fee1e017">
       <segment>
         <source>Not needed</source>
@@ -2231,6 +2327,12 @@
       <segment>
         <source>Note for the next person</source>
         <target>Note for the next person</target>
+      </segment>
+    </unit>
+    <unit id="94078232019697ff">
+      <segment>
+        <source>Nothing a reader would notice changed in this version.</source>
+        <target>Nothing a reader would notice changed in this version.</target>
       </segment>
     </unit>
     <unit id="b59069c7d78909b6">
@@ -2273,6 +2375,12 @@
       <segment>
         <source>Older entries</source>
         <target>Older entries</target>
+      </segment>
+    </unit>
+    <unit id="ab178acb89fad158">
+      <segment>
+        <source>Older versions</source>
+        <target>Older versions</target>
       </segment>
     </unit>
     <unit id="aa65b02fe490ea39">
@@ -2671,6 +2779,18 @@
         <target>Remove {language}?</target>
       </segment>
     </unit>
+    <unit id="4118fb4fed0ecec9">
+      <segment>
+        <source>Removed</source>
+        <target>Removed</target>
+      </segment>
+    </unit>
+    <unit id="4a9ff1659091daa1">
+      <segment>
+        <source>Removed block: {label}</source>
+        <target>Removed block: {label}</target>
+      </segment>
+    </unit>
     <unit id="fb5d97c6c68ea744">
       <segment>
         <source>Removed the redirect from {from}. That address now answers “not found”.</source>
@@ -2713,10 +2833,28 @@
         <target>Restore as a draft</target>
       </segment>
     </unit>
+    <unit id="0570daa12fe55db8">
+      <segment>
+        <source>Restore this version</source>
+        <target>Restore this version</target>
+      </segment>
+    </unit>
+    <unit id="dfa4e9cb8417ec39">
+      <segment>
+        <source>Restore version {number}</source>
+        <target>Restore version {number}</target>
+      </segment>
+    </unit>
     <unit id="89a07cedf414734d">
       <segment>
         <source>Restored as a draft. Publish it again when it is ready.</source>
         <target>Restored as a draft. Publish it again when it is ready.</target>
+      </segment>
+    </unit>
+    <unit id="e8d5d60f97ba9d62">
+      <segment>
+        <source>Restored version {number} as version {new}. Nothing was published: the page is still {state}.</source>
+        <target>Restored version {number} as version {new}. Nothing was published: the page is still {state}.</target>
       </segment>
     </unit>
     <unit id="cb39572f09f71897">
@@ -2783,6 +2921,12 @@
       <segment>
         <source>Save the {thing}</source>
         <target>Save the {thing}</target>
+      </segment>
+    </unit>
+    <unit id="b5c120b316c237a0">
+      <segment>
+        <source>Saved</source>
+        <target>Saved</target>
       </segment>
     </unit>
     <unit id="275d9bcb5e334ece">
@@ -3217,6 +3361,18 @@
         <target>State</target>
       </segment>
     </unit>
+    <unit id="0362d581afe3cda8">
+      <segment>
+        <source>State of the page then</source>
+        <target>State of the page then</target>
+      </segment>
+    </unit>
+    <unit id="f1031f09d0033054">
+      <segment>
+        <source>State of the page then: {state}</source>
+        <target>State of the page then: {state}</target>
+      </segment>
+    </unit>
     <unit id="f6ca05e190f1c858">
       <segment>
         <source>State: {state}</source>
@@ -3511,6 +3667,12 @@
         <target>The first entry at a level can't be moved in: there is no entry before it to go under.</target>
       </segment>
     </unit>
+    <unit id="b31f2c10d8db7e6f">
+      <segment>
+        <source>The first version in this language</source>
+        <target>The first version in this language</target>
+      </segment>
+    </unit>
     <unit id="a801e94a2170e023">
       <segment>
         <source>The full address must be {max} characters or fewer.</source>
@@ -3703,6 +3865,12 @@
         <target>The page isn't written in any of the site's languages, so there is nothing to copy.</target>
       </segment>
     </unit>
+    <unit id="6eacad48f91c6596">
+      <segment>
+        <source>The page isn’t written in this language yet, so it has no versions in it.</source>
+        <target>The page isn’t written in this language yet, so it has no versions in it.</target>
+      </segment>
+    </unit>
     <unit id="1f02ae3565967ed2">
       <segment>
         <source>The page starts as a draft: nobody else sees it until it is published.</source>
@@ -3865,6 +4033,12 @@
         <target>The subject of the emails you get.</target>
       </segment>
     </unit>
+    <unit id="6af642e51eefed35">
+      <segment>
+        <source>The system</source>
+        <target>The system</target>
+      </segment>
+    </unit>
     <unit id="6838873da7276a16">
       <segment>
         <source>The terms for using this website.</source>
@@ -3887,6 +4061,12 @@
       <segment>
         <source>The title must be {{ limit }} characters or fewer</source>
         <target>The title must be {{ limit }} characters or fewer</target>
+      </segment>
+    </unit>
+    <unit id="ed2c0d2b654e9e92">
+      <segment>
+        <source>The title, address, search fields and blocks of version {number} become a new version of the page in this language. The newer versions are kept. The page’s state doesn’t change and nothing is published.</source>
+        <target>The title, address, search fields and blocks of version {number} become a new version of the page in this language. The newer versions are kept. The page’s state doesn’t change and nothing is published.</target>
       </segment>
     </unit>
     <unit id="22bce20a92c0eca2">
@@ -4237,6 +4417,12 @@
         <target>This site isn't written in &quot;{locale}&quot;. Its languages are: {locales}.</target>
       </segment>
     </unit>
+    <unit id="a5321eeaa23645ad">
+      <segment>
+        <source>This translation is a draft of its own</source>
+        <target>This translation is a draft of its own</target>
+      </segment>
+    </unit>
     <unit id="8b9b7b9c5567e886">
       <segment>
         <source>This type of file can't be uploaded. {types}</source>
@@ -4489,6 +4675,66 @@
         <target>Use {{ limit }} characters or fewer.</target>
       </segment>
     </unit>
+    <unit id="dd167905de0defca">
+      <segment>
+        <source>Version</source>
+        <target>Version</target>
+      </segment>
+    </unit>
+    <unit id="f8b9f81427a563d2">
+      <segment>
+        <source>Version {number}</source>
+        <target>Version {number}</target>
+      </segment>
+    </unit>
+    <unit id="15a890a901e7a05f">
+      <segment>
+        <source>Version {number} (the first)</source>
+        <target>Version {number} (the first)</target>
+      </segment>
+    </unit>
+    <unit id="9ed19a054dc5de8c">
+      <segment>
+        <source>Version {number} can’t be restored: some of its blocks no longer pass the checks. Copy what you need from it instead.</source>
+        <target>Version {number} can’t be restored: some of its blocks no longer pass the checks. Copy what you need from it instead.</target>
+      </segment>
+    </unit>
+    <unit id="9428920d570cde8c">
+      <segment>
+        <source>Version {number} of the page isn't written in &quot;{locale}&quot;.</source>
+        <target>Version {number} of the page isn't written in &quot;{locale}&quot;.</target>
+      </segment>
+    </unit>
+    <unit id="5a84a07b0a994edf">
+      <segment>
+        <source>Version {number} of “{title}”</source>
+        <target>Version {number} of “{title}”</target>
+      </segment>
+    </unit>
+    <unit id="07ae1fa82853674c">
+      <segment>
+        <source>Versions in other languages</source>
+        <target>Versions in other languages</target>
+      </segment>
+    </unit>
+    <unit id="65c734ffb6c02ca4">
+      <segment>
+        <source>Versions of “{title}”</source>
+        <target>Versions of “{title}”</target>
+      </segment>
+    </unit>
+    <unit id="28602b4f6b83ba6d">
+      <segment>
+        <source>Versions of “{title}” in {language}</source>
+        <target>Versions of “{title}” in {language}</target>
+      </segment>
+    </unit>
+    <unit id="0ceb8903181c3d44">
+      <segment>
+        <source>Versions, newest first</source>
+        <target>Versions, newest first</target>
+      </segment>
+    </unit>
     <unit id="d534be829e32196b">
       <segment>
         <source>Video</source>
@@ -4517,6 +4763,12 @@
       <segment>
         <source>Visitors can no longer reach the pages in {language}: addresses starting with {prefix} answer “not found”.</source>
         <target>Visitors can no longer reach the pages in {language}: addresses starting with {prefix} answer “not found”.</target>
+      </segment>
+    </unit>
+    <unit id="0bdad74b6411096a">
+      <segment>
+        <source>Visitors can read this translation now, and restoring never publishes. Take the page back to draft, or make this translation a draft again, then restore the older version.</source>
+        <target>Visitors can read this translation now, and restoring never publishes. Take the page back to draft, or make this translation a draft again, then restore the older version.</target>
       </segment>
     </unit>
     <unit id="fa6cb1be0d431599">
@@ -4615,6 +4867,12 @@
         <target>What</target>
       </segment>
     </unit>
+    <unit id="bb56342ae191ed7e">
+      <segment>
+        <source>What changed since version {previous}</source>
+        <target>What changed since version {previous}</target>
+      </segment>
+    </unit>
     <unit id="483bd49023ae2bfb">
       <segment>
         <source>What happened</source>
@@ -4705,6 +4963,12 @@
         <target>With the country code, for example +44 20 7946 0000. Leave it empty to keep it private.</target>
       </segment>
     </unit>
+    <unit id="12491c890ef4e92f">
+      <segment>
+        <source>Words that were taken out are shown as “[removed: …]” and crossed out; words that were put in are shown as “[added: …]” and underlined.</source>
+        <target>Words that were taken out are shown as “[removed: …]” and crossed out; words that were put in are shown as “[added: …]” and underlined.</target>
+      </segment>
+    </unit>
     <unit id="f3a99956c6874fc4">
       <segment>
         <source>Write the {language} translation from scratch</source>
@@ -4733,6 +4997,12 @@
       <segment>
         <source>Yandex Webmaster verification code</source>
         <target>Yandex Webmaster verification code</target>
+      </segment>
+    </unit>
+    <unit id="85a39ab345d672ff">
+      <segment>
+        <source>Yes</source>
+        <target>Yes</target>
       </segment>
     </unit>
     <unit id="e7edf683f4040dc0">
@@ -4951,6 +5221,12 @@
         <target>a symbol, such as ! ? # or %</target>
       </segment>
     </unit>
+    <unit id="ae9fe23aff15b2b7">
+      <segment>
+        <source>added:</source>
+        <target>added:</target>
+      </segment>
+    </unit>
     <unit id="0bd7b9cee40a06a3">
       <segment>
         <source>alt text missing</source>
@@ -5051,6 +5327,12 @@
       <segment>
         <source>pictures</source>
         <target>pictures</target>
+      </segment>
+    </unit>
+    <unit id="53cce6d3d2286c4c">
+      <segment>
+        <source>removed:</source>
+        <target>removed:</target>
       </segment>
     </unit>
     <unit id="8be99bac00df84ae">

@@ -149,3 +149,12 @@
 .languages__main { display: inline; margin-inline-end: var(--space-3); }
 .translations__copy { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-block-end: var(--space-2); }
 .admin-header__language { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+/* Comparing versions of a page (P-2): every change is said in words ([removed: …], [added: …]), styles only help. */
+.diff { border-top: 1px solid var(--color-border); padding-block: var(--space-2); }
+.diff h3 { font-size: var(--font-size-base, 1rem); margin-block: 0 var(--space-1); }
+.diff__status { font-weight: 400; color: var(--color-text-muted); }
+.diff__rows dt { font-weight: 700; margin-top: var(--space-2); }
+.diff__rows dd { margin-inline-start: 0; overflow-wrap: anywhere; }
+.diff__mark { font-weight: 700; }
+.diff del { text-decoration: line-through; background: var(--color-error-surface); color: var(--color-text); }
+.diff ins { text-decoration: underline; background: var(--color-success-surface); color: var(--color-text); }

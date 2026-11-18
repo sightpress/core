@@ -19,12 +19,16 @@ use SightPress\Core\Page\Admin\Http\PageEditorHandler;
 use SightPress\Core\Page\Admin\Http\PageListHandler;
 use SightPress\Core\Page\Admin\Http\PageOperationsHandler;
 use SightPress\Core\Page\Admin\Http\PagePurgeHandler;
+use SightPress\Core\Page\Admin\Http\PageRevisionHandler;
+use SightPress\Core\Page\Admin\Http\PageRevisionsHandler;
 use SightPress\Core\Page\Admin\Http\PageTranslationHandler;
 use SightPress\Core\Page\Admin\Http\PageWorkflowHandler;
 use SightPress\Core\Page\Admin\Http\RedirectsHandler;
 use SightPress\Core\Page\Admin\PageAdmin;
 use SightPress\Core\Page\Admin\PageAdminModule;
 use SightPress\Core\Page\Publish\PublishChecker;
+use SightPress\Core\Page\Revision\RevisionDiff;
+use SightPress\Core\Page\Revision\RevisionHistory;
 use SightPress\Core\Page\Workflow\PageWorkflow;
 use SightPress\Core\Rbac\PageVoter;
 use SightPress\Core\Rbac\VoterAuthorizer;
@@ -163,6 +167,16 @@ final class PageAdminFixture
     public function redirectsHandler(): RedirectsHandler
     {
         return new RedirectsHandler($this->admin->shell(), $this->admin->auth->validator(), $this->pages->redirects(), $this->pages->addresses(), $this->pages->site);
+    }
+
+    public function revisionsHandler(): PageRevisionsHandler
+    {
+        return new PageRevisionsHandler($this->admin->shell(), $this->pageAdmin(), new RevisionHistory($this->pages->repository()), $this->authorizer(), $this->admin->auth->users, $this->pages->site);
+    }
+
+    public function revisionHandler(): PageRevisionHandler
+    {
+        return new PageRevisionHandler($this->admin->shell(), $this->pageAdmin(), new RevisionHistory($this->pages->repository()), new RevisionDiff($this->blocks->types), $this->pages->editor(), $this->authorizer(), $this->admin->auth->users, $this->pages->site);
     }
 
     /**

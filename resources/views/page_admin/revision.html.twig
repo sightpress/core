@@ -1,0 +1,75 @@
+{#
+    One version of a page in one language (/admin/pages/{id}/revisions/{revision}), compared with the version before
+    it: the details of the page, then each block, with a heading each. Every change says in words what it is
+    ("Changed", "[removed: …]", "[added: …]") as well as being marked with <del> and <ins>, so it reads the same
+    with styles off, in forced colours and with a screen reader. Then "Restore this version" for people who may
+    change the page, unless visitors can read the translation now (restoring never publishes).
+    Context: see PageRevisionHandler::handle().
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import _self as d %}
+{% block title %}{{ t('Version {number} of “{title}”', {number: number, title: title}) }}{% endblock %}
+{% block content %}
+<h1>{{ t('Version {number} of “{title}”', {number: number, title: title}) }}</h1>
+<p>
+    {{ t('Saved') }} <time datetime="{{ saved|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ saved|user_datetime }}</time>
+    · {{ t('By') }} {{ by ?? t(by_note) }}
+    {%- if state %} · {{ t('State of the page then: {state}', {state: t(state)}) }}{% endif %}
+    {%- if language %} · {{ t('Language: {language}', {language: language}) }}{% endif %}
+</p>
+<p><a href="{{ list_url }}">{{ t('All versions') }}</a></p>
+<section class="admin-panel" aria-labelledby="changes-title">
+    <h2 id="changes-title">{{ previous ? t('What changed since version {previous}', {previous: previous}) : t('The first version in this language') }}</h2>
+    <p>{{ t('Words that were taken out are shown as “[removed: …]” and crossed out; words that were put in are shown as “[added: …]” and underlined.') }}</p>
+    {%- if previous is null %}
+    <p>{{ t('Everything in it was new.') }}</p>
+    {%- elseif unchanged %}
+    <p>{{ t('Nothing a reader would notice changed in this version.') }}</p>
+    {%- endif %}
+    {%- for section in sections %}
+    {{ d.section(section, loop.index) }}
+    {%- endfor %}
+</section>
+{%- if may_restore %}
+<section class="admin-panel" aria-labelledby="restore-title">
+    <h2 id="restore-title">{{ t('Restore this version') }}</h2>
+    <p>{{ t('The title, address, search fields and blocks of version {number} become a new version of the page in this language. The newer versions are kept. The page’s state doesn’t change and nothing is published.', {number: number}) }}</p>
+    <form action="{{ action }}" method="post">
+        {{ csrf_fields() }}
+        <button type="submit">{{ t('Restore version {number}', {number: number}) }}</button>
+    </form>
+</section>
+{%- elseif restore_blocked %}
+<section class="admin-panel" aria-labelledby="restore-title">
+    <h2 id="restore-title">{{ t('Restore this version') }}</h2>
+    <p>{{ t('Visitors can read this translation now, and restoring never publishes. Take the page back to draft, or make this translation a draft again, then restore the older version.') }}</p>
+</section>
+{%- endif %}
+{% endblock %}
+
+{% macro section(section, index) %}
+    {%- import _self as d %}
+    {%- set status = {same: t('No changes'), changed: t('Changed'), added: t('Added'), removed: t('Removed')}[section.status] %}
+    <section class="diff diff--{{ section.status }}" aria-labelledby="diff-{{ index }}">
+        <h3 id="diff-{{ index }}">{{ t(section.heading) }} <span class="diff__status">({{ status }})</span></h3>
+        {%- if section.rows is not empty %}
+        <dl class="diff__rows">
+            {%- for row in section.rows %}
+            <dt>{% for part in row.label %}{{ t(part) }}{% if not loop.last %} › {% endif %}{% endfor %}</dt>
+            <dd>{{ d.parts(row.parts) }}</dd>
+            {%- endfor %}
+        </dl>
+        {%- endif %}
+    </section>
+{% endmacro %}
+
+{% macro parts(parts) %}
+    {%- for part in parts %}
+    {%- set text %}{% if part.words %}{{ t(part.words) }}{% else %}{{ part.text }}{% endif %}{% endset %}
+    {%- if part.kind == 'removed' %}<span class="diff__mark">[{{ t('removed:') }}</span> <del>{{ text }}</del><span class="diff__mark">]</span>
+    {%- elseif part.kind == 'added' %}<span class="diff__mark">[{{ t('added:') }}</span> <ins>{{ text }}</ins><span class="diff__mark">]</span>
+    {%- else %}<span>{{ text }}</span>
+    {%- endif %}
+    {%- if not loop.last %} {% endif %}
+    {%- endfor %}
+{% endmacro %}

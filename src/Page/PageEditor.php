@@ -14,10 +14,12 @@ use SightPress\Core\Page\Contract\PageCreated;
 use SightPress\Core\Page\Contract\PageMoved;
 use SightPress\Core\Page\Contract\PagePurged;
 use SightPress\Core\Page\Contract\PageSaved;
+use SightPress\Core\Page\Contract\RevisionRestored;
 use SightPress\Core\Page\Contract\TranslationPublished;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\Entity\PageRevision;
 use SightPress\Core\Page\Entity\PageTranslation;
+use SightPress\Core\Page\Revision\RevisionHistory;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Template\Translations;
 use SightPress\Core\Tenant\Site;
@@ -134,6 +136,44 @@ final readonly class PageEditor
         $this->events->dispatch(new TranslationPublished((int) $page->id(), $locale, $published, $revision->number(), $by));
 
         return true;
+    }
+
+    /**
+     * Writes the page in one language as an older revision kept it (title, address, summary, search fields and
+     * blocks), as a new revision. The page's state doesn't change, and a translation that is a draft stays one.
+     *
+     * Restoring never publishes, so it is refused while visitors can read the translation: the page has to be taken
+     * back to draft (or the translation made a draft) first.
+     *
+     * @throws PageException when the revision is of another page or doesn't have the translation, or visitors can
+     *                       read the translation now
+     * @throws InvalidBlocks when a block of the version no longer passes the checks
+     */
+    public function restore(Page $page, PageRevision $revision, string $locale, ?int $restoredBy = null): PageRevision
+    {
+        $this->checkLocale($locale);
+        $kept = $revision->page() === $page ? RevisionHistory::translation($revision, $locale) : null;
+        if ($kept === null) {
+            throw new PageException(new Message('Version {number} of the page isn\'t written in "{locale}".', ['number' => $revision->number(), 'locale' => $locale]));
+        }
+        if ($page->translation($locale)?->isPublished() === true) {
+            throw new PageException('Visitors can read this translation now, and restoring never publishes. Take the page back to draft, or make this translation a draft again, then restore the older version.');
+        }
+        $content = new PageContent(
+            is_string($kept['title'] ?? null) ? $kept['title'] : '',
+            is_string($kept['slug'] ?? null) ? $kept['slug'] : null,
+            is_string($kept['summary'] ?? null) ? $kept['summary'] : null,
+            is_string($kept['description'] ?? null) ? $kept['description'] : null,
+            is_array($kept['blocks'] ?? null) ? array_values($kept['blocks']) : [],
+            is_int($kept['social_image'] ?? null) ? $kept['social_image'] : null,
+            is_string($kept['seo_title'] ?? null) ? $kept['seo_title'] : null,
+            ($kept['noindex'] ?? false) === true,
+            is_string($kept['canonical_url'] ?? null) ? $kept['canonical_url'] : null,
+        );
+        $saved = $this->save($page, $locale, $content, $restoredBy);
+        $this->events->dispatch(new RevisionRestored((int) $page->id(), $locale, $revision->number(), $saved->number(), $restoredBy));
+
+        return $saved;
     }
 
     private function write(Page $page, string $locale, PageContent $content, ?int $savedBy, bool $draft): PageRevision

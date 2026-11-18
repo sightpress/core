@@ -20,6 +20,7 @@ use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
 use SightPress\Core\Page\Admin\Http\PageOperationsHandler;
 use SightPress\Core\Page\Admin\Http\PagePurgeHandler;
+use SightPress\Core\Page\Admin\Http\PageRevisionsHandler;
 use SightPress\Core\Page\Admin\Http\PageTranslationHandler;
 use SightPress\Core\Page\Admin\PageAdmin;
 use SightPress\Core\Page\Contract\PageTransition;
@@ -175,6 +176,7 @@ final readonly class PageEditorScreen
             'operations_action' => PageOperationsHandler::path((int) $page->id()),
             'may_copy' => $actor->has('page.create') && $page->state() !== PageState::Trash,
             'place' => PageOperationsHandler::mayMove($actor) && $page->state() !== PageState::Trash ? $this->place($page) : null,
+            'revisions_url' => $translation === null ? null : PageRevisionsHandler::path((int) $page->id(), $locale, $this->site->defaultLocale),
             'delete_url' => $this->authorizer->can($actor, PageAction::Purge->value, $page) ? PagePurgeHandler::path((int) $page->id()) : null,
         ], $status);
     }

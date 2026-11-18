@@ -365,7 +365,7 @@ figcaption { margin-top: var(--space-2); color: var(--color-text-muted); font-si
 /* Forced colours (Windows contrast themes): let the system colours through and keep edges visible. */
 
 @media (forced-colors: active) {
-  .button, button:not([class]) { border-color: ButtonText; }
+  .button, button:not([class]) { border-color: ButtonText; background: ButtonFace; color: ButtonText; }
   .card__title a:focus-visible::after, :focus-visible { outline-color: Highlight; }
   .alert { border-color: CanvasText; }
   .icon { forced-color-adjust: auto; }

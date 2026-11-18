@@ -28,6 +28,7 @@ use SightPress\Core\Tests\Support\PageFixture;
 #[CoversClass(\SightPress\Core\Page\Contract\PageCloned::class)]
 #[CoversClass(\SightPress\Core\Page\Contract\PagePurged::class)]
 #[CoversClass(PageShift::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\RevisionRestored::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PageEditorTest extends TestCase
 {
@@ -548,5 +549,69 @@ final class PageEditorTest extends TestCase
         self::assertInstanceOf(\SightPress\Core\Page\Contract\PagePurged::class, $last);
         self::assertSame('page ' . $nameless->id(), $last->title);
         self::assertSame(2, $page->position());
+    }
+
+    public function testRestoresAnOlderVersionAsANewRevisionWithoutPublishing(): void
+    {
+        $page = $this->editor->create('en-GB', new PageContent('About', 'about', 'Old summary', null, [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Hi', 'level' => 2]]]));
+        $first = $this->pages->revisions($page)[0];
+        $this->editor->save($page, 'en-GB', new PageContent('About us', 'about-us', null, 'New'));
+        $this->editor->save($page, 'pt-PT', new PageContent('Sobre'));
+        $this->fixture->events = [];
+
+        $restored = $this->editor->restore($page, $first, 'en-GB', 7);
+
+        $translation = $page->translation('en-GB');
+        self::assertSame(['About', 'about', 'Old summary', null, 'Hi'], [$translation?->title(), $translation?->slug(), $translation?->summary(), $translation?->description(), $translation?->blocks()[0]['data']['text'] ?? null]);
+        self::assertSame([4, PageState::Draft], [$restored->number(), $page->state()]);
+        self::assertEquals([
+            new PageSaved((int) $page->id(), 'en-GB', 4, 7),
+            new \SightPress\Core\Page\Contract\RevisionRestored((int) $page->id(), 'en-GB', 1, 4, 7),
+        ], $this->fixture->events);
+
+        // A version of another page is refused.
+        $other = $this->editor->create('en-GB', new PageContent('Other'));
+        $this->editor->save($other, 'pt-PT', new PageContent('Outra'));
+        $portuguese = $this->pages->revisions($other)[0];
+        $copy = $this->editor->create('en-GB', new PageContent('Copy'));
+        self::assertNotNull($copy->id());
+        $this->expectException(PageException::class);
+        $this->editor->restore($copy, $portuguese, 'pt-PT');
+    }
+
+    public function testRestoresATranslationThatVisitorsCantReadAndRefusesOneTheyCan(): void
+    {
+        $page = $this->fixture->published('News');
+        $this->editor->save($page, 'pt-PT', new PageContent('Notícias', 'noticias'));
+        $version = $this->pages->revisions($page)[0];
+        $this->editor->save($page, 'pt-PT', new PageContent('Novidades', 'novidades'));
+
+        $this->editor->restore($page, $version, 'pt-PT');
+        self::assertSame(['Notícias', true], [$page->translation('pt-PT')?->title(), $page->translation('pt-PT')?->isDraft()]);
+
+        try {
+            $this->editor->restore($page, $version, 'en-GB');
+            self::fail('A published translation was replaced.');
+        } catch (PageException $exception) {
+            self::assertStringStartsWith('Visitors can read this translation now', $exception->getMessage());
+        }
+        try {
+            $this->editor->restore($page, $this->pages->revisions($page)[3], 'pt-PT');
+            self::fail('A version without the translation was restored.');
+        } catch (PageException $exception) {
+            self::assertSame('Version 1 of the page isn\'t written in "pt-PT".', $exception->getMessage());
+        }
+    }
+
+    public function testRestoresOldSnapshotsWithMissingFields(): void
+    {
+        $page = $this->editor->create('en-GB', new PageContent('About', 'about', null, null, [], null, 'SEO', true, 'https://example.org/a'));
+        $revision = $this->pages->revisions($page)[0];
+        new \ReflectionProperty(\SightPress\Core\Page\Entity\PageRevision::class, 'snapshot')->setValue($revision, ['translations' => ['en-GB' => ['title' => 'Old', 'blocks' => 'broken']]]);
+
+        $this->editor->restore($page, $revision, 'en-GB');
+
+        $translation = $page->translation('en-GB');
+        self::assertSame(['Old', 'old', null, false, null], [$translation?->title(), $translation?->slug(), $translation?->seoTitle(), $translation?->isNoindex(), $translation?->canonicalUrl()]);
     }
 }

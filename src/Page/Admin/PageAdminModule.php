@@ -14,9 +14,13 @@ use SightPress\Core\Page\Admin\Http\PageEditorHandler;
 use SightPress\Core\Page\Admin\Http\PageListHandler;
 use SightPress\Core\Page\Admin\Http\PageOperationsHandler;
 use SightPress\Core\Page\Admin\Http\PagePurgeHandler;
+use SightPress\Core\Page\Admin\Http\PageRevisionHandler;
+use SightPress\Core\Page\Admin\Http\PageRevisionsHandler;
 use SightPress\Core\Page\Admin\Http\PageTranslationHandler;
 use SightPress\Core\Page\Admin\Http\PageWorkflowHandler;
 use SightPress\Core\Page\Admin\Http\RedirectsHandler;
+use SightPress\Core\Page\Revision\RevisionDiff;
+use SightPress\Core\Page\Revision\RevisionHistory;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\ModuleInterface;
@@ -28,7 +32,8 @@ use SightPress\Module\Routing\Route;
 /**
  * The page screens of the admin panel: the list of pages (a tree, with filters), starting a page, the page editor
  * with its block editor, search & AI fields, publish checks, workflow buttons (archive and trash too), copying and
- * moving the page; deleting a page in the trash for good; and the redirects. Always on.
+ * moving the page; its older versions, compared word by word and restored as a new version; deleting a page in
+ * the trash for good; and the redirects. Always on.
  */
 final class PageAdminModule implements ModuleInterface
 {
@@ -61,7 +66,8 @@ final class PageAdminModule implements ModuleInterface
             PageAdmin::class, BlockData::class, BlockOperation::class, BlockFormView::class, MediaChoices::class,
             PageEditorScreen::class, PageListHandler::class, NewPageHandler::class, PageEditorHandler::class,
             PageWorkflowHandler::class, PageTranslationHandler::class, PageOperationsHandler::class, PagePurgeHandler::class,
-            RedirectsHandler::class,
+            RedirectsHandler::class, RevisionHistory::class, RevisionDiff::class, PageRevisionsHandler::class,
+            PageRevisionHandler::class,
         ] as $class) {
             $services->autowire($class);
         }
@@ -75,6 +81,8 @@ final class PageAdminModule implements ModuleInterface
         $routes->add(new Route('page_admin.workflow', $page . '/workflow', PageWorkflowHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('page_admin.operations', $page . '/operations', PageOperationsHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('page_admin.delete', $page . '/delete', PagePurgeHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('page_admin.revisions', $page . '/revisions', PageRevisionsHandler::class, middleware: [AdminAccessMiddleware::class]));
+        $routes->add(new Route('page_admin.revision', $page . '/revisions/{' . PageRevisionHandler::NUMBER_ATTRIBUTE . ':[0-9]+}', PageRevisionHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('page_admin.redirects', RedirectsHandler::PATH, RedirectsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('page_admin.list', 'Pages', 'page_admin.list', 'page.edit.own', position: 10));
         $registrar->adminMenu()->add(new AdminMenuItem('page_admin.redirects', 'Redirects', 'page_admin.redirects', RedirectsHandler::PERMISSION, position: 15));

@@ -43,6 +43,7 @@ use SightPress\Core\User\UserRepository;
 #[CoversClass(\SightPress\Core\Page\Contract\PageCloned::class)]
 #[CoversClass(\SightPress\Core\Page\Contract\PagePurged::class)]
 #[CoversClass(\SightPress\Core\Page\Contract\RedirectChanged::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\RevisionRestored::class)]
 #[UsesNamespace('SightPress\Core')]
 final class AuditRecorderTest extends TestCase
 {
@@ -93,6 +94,7 @@ final class AuditRecorderTest extends TestCase
             new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::ADDED, 'pt-PT', 'antigo', 'novo', 4),
             new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::REMOVED, 'en-GB', 'old', null, 4),
             new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::REMOVED, 'en-GB', 'old', 'new', 4),
+            new \SightPress\Core\Page\Contract\RevisionRestored($page, 'pt-PT', 2, 5, 4),
             new \stdClass(),
         ] as $event) {
             $recorder($event);
@@ -131,6 +133,7 @@ final class AuditRecorderTest extends TestCase
             'Added a redirect from /antigo to /novo (European Portuguese).',
             'Removed the “gone” answer of /old (British English).',
             'Removed the redirect from /old to /new (British English).',
+            'Restored the European Portuguese text of “About us” from revision 2 (now revision 5).',
         ], array_map(static fn (AuditEntry $e): string => $e->summary, $entries));
         self::assertSame(['page.submit', 'page', (string) $page, 3, ['from' => 'draft', 'to' => 'in_review', 'comment' => 'Ready']], [$entries[3]->action, $entries[3]->entityType, $entries[3]->entityId, $entries[3]->actorId, $entries[3]->details]);
         self::assertSame(['settings', null], [$entries[20]->entityType, $entries[20]->entityId]);
@@ -138,6 +141,7 @@ final class AuditRecorderTest extends TestCase
         self::assertSame(['page.purged', 'page', '42', ['pages' => [42, 43, 44]]], [$entries[27]->action, $entries[27]->entityType, $entries[27]->entityId, $entries[27]->details]);
         self::assertSame(['redirect.added', 'redirect', null, ['locale' => 'pt-PT', 'from' => 'antigo', 'to' => 'novo']], [$entries[28]->action, $entries[28]->entityType, $entries[28]->entityId, $entries[28]->details]);
         self::assertSame(['page.cloned', ['source' => $page]], [$entries[25]->action, $entries[25]->details]);
-        self::assertCount(15, AuditRecorder::EVENTS);
+        self::assertSame(['page.revision_restored', 4, ['locale' => 'pt-PT', 'restored' => 2, 'revision' => 5]], [$entries[31]->action, $entries[31]->actorId, $entries[31]->details]);
+        self::assertCount(16, AuditRecorder::EVENTS);
     }
 }

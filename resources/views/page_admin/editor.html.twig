@@ -23,6 +23,7 @@
 <p class="page-editor__status">
     {{ t('State: {state}', {state: t(state)}) }}
     {%- if url %} · {{ t('Address: {url}', {url: url}) }} · <a href="{{ url }}">{{ t('View the saved page') }}</a>{% endif %}
+    {%- if revisions_url %} · <a href="{{ revisions_url }}">{{ t('Older versions') }}</a>{% endif %}
     · <a href="/admin/pages">{{ t('All pages') }}</a>
 </p>
 {%- set summary = [] %}
