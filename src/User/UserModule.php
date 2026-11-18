@@ -10,6 +10,7 @@ use League\Flysystem\FilesystemOperator;
 use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
 use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Site\Contract\LocaleRemoved;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\User\Avatar\AvatarGenerator;
 use SightPress\Core\User\Avatar\AvatarService;
@@ -77,6 +78,8 @@ final class UserModule implements ModuleInterface
             ['GET', 'HEAD'],
         ));
         $registrar->subscribers()->listen(SiteProvisioning::class, CreateFirstAdmin::class, SiteProvisioning::ACCOUNTS);
+        $registrar->services()->autowire(ForgetRemovedLocale::class);
+        $registrar->subscribers()->listen(LocaleRemoved::class, ForgetRemovedLocale::class);
         $registrar->permissions()->add(new Permission(
             'user.invite',
             'Invite people',

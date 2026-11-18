@@ -94,7 +94,7 @@ final class DemoContentTest extends TestCase
         }
         $picture = $this->media->repository()->find((int) $event->shared('demo.picture'));
         self::assertSame('A test pattern: coloured bars, a gradient and circles.', $picture?->altText('en-GB'));
-        self::assertNotNull($this->media->repository()->find((int) $event->shared('demo.audio'))?->transcript());
+        self::assertNotNull($this->media->repository()->find((int) $event->shared('demo.audio'))?->transcript('en-GB'));
 
         foreach (['bea@example.org' => 'editor', 'cleo@example.org' => 'contributor', 'max@example.org' => 'member'] as $email => $role) {
             $user = $this->auth->users->findByEmail($email);

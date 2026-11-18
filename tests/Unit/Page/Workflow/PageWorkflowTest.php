@@ -55,6 +55,7 @@ final class PageWorkflowTest extends TestCase
             $this->fixture->repository(),
             new ThemePageColours(new ThemeLoader()->load(TemplatePaths::defaultTheme())),
             $this->fixture->site,
+            $blocks->texts($this->fixture->site),
         );
         $this->workflow = new PageWorkflow($this->fixture->repository(), new VoterAuthorizer([new PageVoter()]), $this->fixture->clock, $this->fixture, $checks);
     }

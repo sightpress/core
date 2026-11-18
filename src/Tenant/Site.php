@@ -119,14 +119,25 @@ final readonly class Site
     }
 
     /**
-     * The same site with what its admins chose in the site's own settings: the name visitors see, the default
-     * language (one of the site's languages) and the time zone dates are shown in. A value that doesn't fit is
-     * ignored, so a bad setting never stops the site.
+     * The same site with what its admins chose in the site's own settings: the name visitors see, the languages it
+     * is written in, the default language (one of them) and the time zone dates are shown in. A value that doesn't
+     * fit is ignored, so a bad setting never stops the site: a list of languages with an invalid or repeated code
+     * is ignored as a whole, and the default language is kept in the list.
+     *
+     * @param list<string>|null $locales null keeps the registry's languages
      */
-    public function withDisplay(?string $name, ?string $defaultLocale, ?string $defaultTimezone): self
+    public function withDisplay(?string $name, ?string $defaultLocale, ?string $defaultTimezone, ?array $locales = null): self
     {
         $name = $name === null ? '' : trim($name);
-        $locale = $defaultLocale !== null && in_array($defaultLocale, $this->locales, true) ? $defaultLocale : $this->defaultLocale;
+        $languages = $this->locales;
+        if ($locales !== null && $locales !== [] && count(array_unique($locales)) === count($locales) && array_all($locales, LocaleCode::isValid(...))) {
+            $languages = array_values($locales);
+        }
+        $locale = match (true) {
+            $defaultLocale !== null && in_array($defaultLocale, $languages, true) => $defaultLocale,
+            in_array($this->defaultLocale, $languages, true) => $this->defaultLocale,
+            default => $languages[0],
+        };
         $timezone = $defaultTimezone !== null && in_array($defaultTimezone, DateTimeZone::listIdentifiers(), true) ? $defaultTimezone : $this->defaultTimezone;
 
         return new self(
@@ -139,8 +150,33 @@ final readonly class Site
             $this->databaseDsn,
             $this->storage,
             $locale,
-            $this->locales,
+            $languages,
             $timezone,
+            $this->createdAt,
+        );
+    }
+
+    /**
+     * The same site written in other languages, with another default language (one of them).
+     *
+     * @param list<string> $locales
+     *
+     * @throws SiteRegistryException when a locale is not valid, repeated, or the default is not in the list
+     */
+    public function withLocales(array $locales, string $defaultLocale): self
+    {
+        return new self(
+            $this->id,
+            $this->slug,
+            $this->name,
+            $this->status,
+            $this->ownerType,
+            $this->domains,
+            $this->databaseDsn,
+            $this->storage,
+            $defaultLocale,
+            $locales,
+            $this->defaultTimezone,
             $this->createdAt,
         );
     }

@@ -6,10 +6,10 @@ namespace SightPress\Core\Page;
 
 use SightPress\Core\Page\Contract\PublicPage;
 use SightPress\Core\Page\Contract\PublicPages;
-use SightPress\Core\Rbac\Contract\PageState;
 
 /**
- * Finds published, public pages by their address ({@see PageAddresses}): `/` is the home page.
+ * Finds published, public pages by their address ({@see PageAddresses}): `/` is the home page. A translation that
+ * is a draft of its own isn't found.
  */
 final readonly class PublishedPages implements PublicPages
 {
@@ -24,7 +24,7 @@ final readonly class PublishedPages implements PublicPages
             return null;
         }
         $page = $translation->page();
-        if ($page->state() !== PageState::Published || !$page->isPublic()) {
+        if (!$translation->isPublished() || !$page->isPublic()) {
             return null;
         }
 

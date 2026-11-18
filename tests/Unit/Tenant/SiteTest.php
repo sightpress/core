@@ -105,6 +105,35 @@ final class SiteTest extends TestCase
         self::assertSame($site->name, $site->withDisplay(null, null, null)->name);
     }
 
+    public function testTakesTheLanguagesTheAdminsChoseWhenTheyFit(): void
+    {
+        $site = \SightPress\Core\Tests\Support\PageFixture::site(['en-GB', 'pt-PT']);
+
+        $more = $site->withDisplay(null, 'es', null, ['en-GB', 'pt-PT', 'es']);
+        self::assertSame([['en-GB', 'pt-PT', 'es'], 'es'], [$more->locales, $more->defaultLocale]);
+        $fewer = $site->withDisplay(null, null, null, ['pt-PT', 'es']);
+        self::assertSame([['pt-PT', 'es'], 'pt-PT'], [$fewer->locales, $fewer->defaultLocale], 'the default moves to the first when it was removed');
+        $kept = $site->withDisplay(null, 'pt-PT', null, ['en-GB', 'pt-PT']);
+        self::assertSame('pt-PT', $kept->defaultLocale);
+        foreach ([[], ['en-GB', 'en-GB'], ['english']] as $invalid) {
+            self::assertSame(['en-GB', 'pt-PT'], $site->withDisplay(null, null, null, $invalid)->locales);
+        }
+    }
+
+    public function testChangesItsLanguagesKeepingEverythingElse(): void
+    {
+        $site = \SightPress\Core\Tests\Support\PageFixture::site(['en-GB']);
+
+        $changed = $site->withLocales(['en-GB', 'es'], 'es');
+
+        self::assertSame([['en-GB', 'es'], 'es'], [$changed->locales, $changed->defaultLocale]);
+        foreach (['id', 'slug', 'name', 'status', 'ownerType', 'domains', 'databaseDsn', 'storage', 'defaultTimezone'] as $property) {
+            self::assertSame($site->{$property}, $changed->{$property}, $property);
+        }
+        $this->expectException(\SightPress\Core\Tenant\SiteRegistryException::class);
+        $site->withLocales(['en-GB'], 'es');
+    }
+
     public function testMovesToAnotherDatabaseKeepingEverythingElse(): void
     {
         $site = SiteFixture::site('demo', ['demo.example'], SiteStatus::Disabled);

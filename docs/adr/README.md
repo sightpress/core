@@ -41,5 +41,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0021](0021-guided-command-questions.md) | Commands ask guided questions, described by their parameters | Accepted |
 | [0022](0022-site-password-policy.md) | Every site has a password policy, and the Passwords contract describes it | Accepted |
 | [0023](0023-search-dashboard-and-assistant-contracts.md) | Search, dashboard and AI assistant contracts (`module-interface` 0.4) | Proposed |
+| [0024](0024-site-languages-and-translation-drafts.md) | Site languages live in the site, translations can be drafts of their own | Proposed |
 
 When an ADR's status changes, update it here too.

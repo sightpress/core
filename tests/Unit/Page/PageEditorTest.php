@@ -22,6 +22,7 @@ use SightPress\Core\Tests\Support\PageFixture;
 #[CoversClass(PageCreated::class)]
 #[CoversClass(PageSaved::class)]
 #[CoversClass(PageMoved::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\TranslationPublished::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PageEditorTest extends TestCase
 {
@@ -304,5 +305,75 @@ final class PageEditorTest extends TestCase
         $this->fixture->events = [];
 
         return $pages;
+    }
+
+    public function testANewTranslationOfAWrittenPageStartsAsADraftOfItsOwn(): void
+    {
+        $about = $this->fixture->published('About');
+        self::assertFalse($about->translation('en-GB')?->isDraft());
+
+        $this->editor->save($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
+
+        $translation = $about->translation('pt-PT');
+        self::assertTrue($translation?->isDraft());
+        self::assertFalse($translation->isPublished());
+        $this->editor->save($about, 'pt-PT', new PageContent('Sobre nós', 'sobre'));
+        $saved = $about->translation('pt-PT');
+        self::assertTrue($saved?->isDraft(), 'saving keeps it a draft');
+    }
+
+    public function testTranslatesFromAnotherLanguageLeavingItAsItWas(): void
+    {
+        $blocks = [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Hi', 'level' => 2]]];
+        $about = $this->editor->create('en-GB', new PageContent('About', 'about', 'Who we are', 'All about us', $blocks, seoTitle: 'About us'));
+        $before = $about->translation('en-GB')?->snapshot();
+        $this->fixture->events = [];
+
+        $revision = $this->editor->translate($about, 'pt-PT', 'en-GB', 4);
+
+        $copy = $about->translation('pt-PT');
+        self::assertSame(['About', 'about', 'Who we are', 'All about us', $blocks, 'About us', true], [$copy?->title(), $copy?->slug(), $copy?->summary(), $copy?->description(), $copy?->blocks(), $copy?->seoTitle(), $copy?->isDraft()]);
+        self::assertSame($before, $about->translation('en-GB')?->snapshot());
+        self::assertEquals([new PageSaved((int) $about->id(), 'pt-PT', $revision->number(), 4)], $this->fixture->events);
+
+        foreach ([
+            ['pt-PT', 'en-GB', 'The page is already written in "pt-PT". Change that translation instead.'],
+            ['es', 'en-GB', 'This site isn\'t written in "es".'],
+        ] as [$locale, $from, $message]) {
+            try {
+                $this->editor->translate($about, $locale, $from);
+                self::fail($message);
+            } catch (PageException $exception) {
+                self::assertStringStartsWith($message, $exception->getMessage());
+            }
+        }
+    }
+
+    public function testCantTranslateFromALanguageThePageIsntWrittenIn(): void
+    {
+        $fixture = new PageFixture(null, [], ['en-GB', 'pt-PT', 'es']);
+        $about = $fixture->editor()->create('en-GB', new PageContent('About'));
+
+        $this->expectExceptionMessage('The page isn\'t written in "pt-PT", so it can\'t be copied from it.');
+        $fixture->editor()->translate($about, 'es', 'pt-PT');
+    }
+
+    public function testPublishesATranslationOnItsOwnAndMakesItADraftAgain(): void
+    {
+        $about = $this->fixture->published('About');
+        $this->editor->translate($about, 'pt-PT', 'en-GB');
+        $this->fixture->events = [];
+
+        self::assertTrue($this->editor->publishTranslation($about, 'pt-PT', true, 5));
+        self::assertTrue($about->translation('pt-PT')?->isPublished());
+        self::assertFalse($this->editor->publishTranslation($about, 'pt-PT', true, 5));
+        self::assertTrue($this->editor->publishTranslation($about, 'pt-PT', false, 5));
+        self::assertTrue($about->translation('pt-PT')->isDraft());
+        self::assertCount(2, $this->fixture->events);
+        self::assertEquals(new \SightPress\Core\Page\Contract\TranslationPublished((int) $about->id(), 'pt-PT', true, 3, 5), $this->fixture->events[0]);
+        self::assertSame(4, $this->pages->lastRevisionNumber($about));
+
+        $this->expectExceptionMessage('The page isn\'t written in "pt-PT" yet.');
+        $this->editor->publishTranslation($this->fixture->published('Contact'), 'pt-PT', true);
     }
 }

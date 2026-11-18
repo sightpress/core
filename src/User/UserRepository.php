@@ -21,6 +21,26 @@ final readonly class UserRepository implements Accounts, AccountDirectory, Accou
     {
     }
 
+    /**
+     * Gives everyone who chose this language the site's default one again (null), for example after the site stopped
+     * being written in it.
+     *
+     * @return int how many people had chosen it
+     */
+    public function forgetLocale(string $locale): int
+    {
+        $changed = $this->entityManager->createQueryBuilder()
+            ->update(User::class, 'u')
+            ->set('u.locale', ':none')
+            ->where('u.locale = :locale')
+            ->setParameter('none', null)
+            ->setParameter('locale', $locale)
+            ->getQuery()
+            ->execute();
+
+        return is_int($changed) ? $changed : 0;
+    }
+
     public function find(int $id): ?User
     {
         return $this->entityManager->find(User::class, $id);

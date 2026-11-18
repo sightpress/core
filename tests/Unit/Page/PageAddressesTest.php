@@ -38,7 +38,7 @@ final class PageAddressesTest extends TestCase
 
         $welcome = $fixture->published('Welcome');
         $about = $fixture->published('About');
-        $fixture->editor()->save($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
+        $fixture->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
         $addresses = $fixture->addresses();
         self::assertSame($welcome, $addresses->home());
         self::assertTrue($addresses->isHome($welcome));

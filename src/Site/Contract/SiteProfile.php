@@ -9,13 +9,15 @@ use SightPress\Core\Tenant\Site;
 /**
  * Who runs the site, as its admins describe it in the site settings: a short description, how to reach them and
  * their profiles on other sites. Search engines get it in the site's structured data (`Organization` or `Person`)
- * and AI readers in `llms.txt`. Also the name, default language and time zone the admins chose, which win over the
- * tenant registry inside the site ({@see Site::withDisplay()}).
+ * and AI readers in `llms.txt`. Also the name, languages, default language and time zone the admins chose, which win
+ * over the tenant registry inside the site ({@see Site::withDisplay()}).
  */
 final readonly class SiteProfile
 {
     public const string NAME = 'site.name';
     public const string DEFAULT_LOCALE = 'site.default_locale';
+    /** The site's languages, comma-separated (`en-GB,pt-PT`), written by {@see SiteLanguages}. */
+    public const string LOCALES = 'site.locales';
     public const string DEFAULT_TIMEZONE = 'site.default_timezone';
     public const string DESCRIPTION = 'site.description';
     public const string EMAIL = 'site.contact_email';
@@ -57,11 +59,18 @@ final readonly class SiteProfile
     }
 
     /**
-     * The site with the name, default language and time zone its admins chose, when they chose one.
+     * The site with the name, languages, default language and time zone its admins chose, when they chose them.
      */
     public static function display(Site $site, SiteSettings $settings): Site
     {
-        return $site->withDisplay($settings->get(self::NAME), $settings->get(self::DEFAULT_LOCALE), $settings->get(self::DEFAULT_TIMEZONE));
+        $locales = trim((string) $settings->get(self::LOCALES));
+
+        return $site->withDisplay(
+            $settings->get(self::NAME),
+            $settings->get(self::DEFAULT_LOCALE),
+            $settings->get(self::DEFAULT_TIMEZONE),
+            $locales === '' ? null : array_map(trim(...), explode(',', $locales)),
+        );
     }
 
     /**

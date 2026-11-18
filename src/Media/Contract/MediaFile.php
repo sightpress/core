@@ -68,11 +68,20 @@ interface MediaFile
      */
     public function isPublished(): bool;
 
+    /**
+     * The alt text written for the file in one language, if any (whoever shows it falls back to the main language's).
+     */
     public function altText(string $locale): ?string;
 
+    /**
+     * The caption written for the file in one language, if any.
+     */
     public function caption(string $locale): ?string;
 
-    public function transcript(): ?string;
+    /**
+     * The transcript of a video or audio file in one language, if any.
+     */
+    public function transcript(string $locale): ?string;
 
     /**
      * When the file was uploaded (UTC). Its content never changes after that.

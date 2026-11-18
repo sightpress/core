@@ -1,0 +1,23 @@
+{#
+    Confirms removing a language (/admin/settings/languages/remove?locale=…): what happens to its pages and to the
+    people who chose it, then "Remove" and "Keep it".
+    Context: `locale`, `name`, `main`, `prefix`, `action`, `cancel`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Remove {language}?', {language: name}) }}{% endblock %}
+{% block content %}
+<h1>{{ t('Remove {language}?', {language: name}) }}</h1>
+<ul>
+    <li>{{ t('Visitors can no longer reach the pages in {language}: addresses starting with {prefix} answer “not found”.', {language: name, prefix: prefix}) }}</li>
+    <li>{{ t('The translations are kept. Add {language} again to bring them back as they were.', {language: name}) }}</li>
+    <li>{{ t('People who chose {language} for their emails and the admin panel get {main} instead.', {language: name, main: main}) }}</li>
+</ul>
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <input type="hidden" name="locale" value="{{ locale }}">
+    <div class="page-editor__workflow">
+        <button type="submit" class="button button--danger">{{ t('Remove {language}', {language: name}) }}</button>
+        <a href="{{ cancel }}">{{ t('Keep {language}', {language: name}) }}</a>
+    </div>
+</form>
+{% endblock %}

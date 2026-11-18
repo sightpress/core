@@ -9,12 +9,17 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageException;
+use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Tenant\LocaleCode;
 
 /**
  * A page written in one locale: its title, slug, full address, summary, description and blocks.
  *
  * The address is unique per locale, which also keeps every slug unique among the children of one parent.
+ *
+ * A translation can be a draft of its own: added to a page that is already written in another language, it isn't
+ * shown to visitors (nor listed in the sitemap, `llms.txt` or menus) until someone publishes it, even when its page
+ * is published ({@see isPublished()}).
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'page_translations')]
@@ -63,6 +68,9 @@ final class PageTranslation
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $updatedAt;
 
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private bool $draft = false;
+
     public function __construct(
         #[ORM\ManyToOne(targetEntity: Page::class, inversedBy: 'translations')]
         #[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
@@ -72,10 +80,12 @@ final class PageTranslation
         PageContent $content,
         string $path,
         DateTimeImmutable $now,
+        bool $draft = false,
     ) {
         if (!LocaleCode::isValid($locale)) {
             throw new PageException(sprintf('"%s" is not a locale code such as "en-GB".', $locale));
         }
+        $this->draft = $draft;
         $this->rewrite($content, $path, $now);
     }
 
@@ -158,6 +168,33 @@ final class PageTranslation
         return $this->updatedAt;
     }
 
+    /**
+     * Whether this translation waits to be published on its own.
+     */
+    public function isDraft(): bool
+    {
+        return $this->draft;
+    }
+
+    /**
+     * Whether visitors can read it: the page is published and this translation isn't a draft.
+     */
+    public function isPublished(): bool
+    {
+        return !$this->draft && $this->page->state() === PageState::Published;
+    }
+
+    /**
+     * Publishes the translation (when the page is published) or makes it a draft again.
+     *
+     * @internal for {@see \SightPress\Core\Page\PageEditor}
+     */
+    public function setDraft(bool $draft, DateTimeImmutable $now): void
+    {
+        $this->draft = $draft;
+        $this->updatedAt = $now;
+    }
+
     public function content(): PageContent
     {
         return new PageContent($this->title, $this->slug, $this->summary, $this->description, $this->blocks, $this->socialImage, $this->seoTitle, $this->noindex, $this->canonicalUrl);
@@ -198,7 +235,7 @@ final class PageTranslation
     }
 
     /**
-     * @return array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string}
+     * @return array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string, draft: bool}
      */
     public function snapshot(): array
     {
@@ -213,6 +250,7 @@ final class PageTranslation
             'seo_title' => $this->seoTitle,
             'noindex' => $this->noindex,
             'canonical_url' => $this->canonicalUrl,
+            'draft' => $this->draft,
         ];
     }
 

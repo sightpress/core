@@ -145,6 +145,7 @@ final class SeoTest extends TestCase
         $text = static fn (string $html): array => [['type' => 'rich_text', 'version' => 1, 'data' => ['html' => $html]]];
         $this->pages['home'] = $editor->create('en-GB', new PageContent('Welcome to Demo', 'home', 'The library by the river.'));
         $editor->save($this->pages['home'], 'pt-PT', new PageContent('Bem-vindo', 'inicio', 'A biblioteca junto ao rio.'));
+        $editor->publishTranslation($this->pages['home'], 'pt-PT', true);
         $this->pages['about'] = $editor->create('en-GB', new PageContent('About us', 'about', null, null, $text('<p>We look after the books, the music and the view of the harbour, and we run reading groups for every age, from babies to grandparents, every single week of the year.</p>')));
         $this->pages['team'] = $editor->create('en-GB', new PageContent('Our team', 'team', null, 'The people behind the library.', [], null, 'Meet the team at Riverside'), $this->pages['about']);
         $this->pages['hidden'] = $editor->create('en-GB', new PageContent('Hidden', 'hidden', 'Not for search.', null, [], null, null, true));

@@ -65,9 +65,11 @@ final class MediaEditorTest extends TestCase
         $audio = new Media(str_repeat('a', 32), str_repeat('b', 64), new MediaFormat('audio/mpeg', MediaKind::Audio, 'mp3', 'MP3'), 'talk.mp3', 'Talk.mp3', 10, null, null, [], 1, new DateTimeImmutable());
         $this->fixture->repository()->save($audio);
 
-        self::assertSame(['transcript'], $this->editor->update($audio, [], 'Hello and welcome.', null, 1));
-        self::assertSame('Hello and welcome.', $audio->transcript());
-        self::assertSame([], $this->editor->update($audio, [], 'Hello and welcome.', null, 1));
+        self::assertSame(['transcript'], $this->editor->update($audio, [], ['en-GB' => 'Hello and welcome.', 'pt-PT' => ''], null, 1, 'en-GB'));
+        self::assertSame(['Hello and welcome.', 'Hello and welcome.'], [$audio->transcript('en-GB'), $audio->transcript('pt-PT') ?? $audio->transcript('en-GB')]);
+        self::assertSame([], $this->editor->update($audio, [], ['en-GB' => 'Hello and welcome.'], null, 1, 'en-GB'));
+        self::assertSame(['transcript'], $this->editor->update($audio, [], ['pt-PT' => 'Olá.'], null, 1, 'en-GB'));
+        self::assertSame('Olá.', $audio->transcript('pt-PT'));
     }
 
     public function testRefusesATranscriptForAPicture(): void
@@ -75,7 +77,7 @@ final class MediaEditorTest extends TestCase
         $picture = $this->fixture->uploader()->upload($this->fixture->file('a.png', MediaFixture::png()), 'a.png', 1)->media;
 
         $this->expectException(MediaException::class);
-        $this->editor->update($picture, [], 'Words', null, 1);
+        $this->editor->update($picture, [], ['en-GB' => 'Words'], null, 1);
     }
 
     public function testDeletesTheFileItsCopiesAndItsRow(): void

@@ -35,7 +35,8 @@ final class SeoModuleTest extends TestCase
         $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'seo'));
         self::assertSame([PublicPageRendering::class, SeoHead::class, 10], [$listeners[0]->item->event, $listeners[0]->item->listener, $listeners[0]->item->priority]);
         self::assertContains([PageSaved::class, SeoCachePurger::class], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $listeners));
-        self::assertCount(6, $listeners);
+        self::assertCount(8, $listeners);
+        self::assertContains([\SightPress\Core\Page\Contract\TranslationPublished::class, SeoCachePurger::class], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $listeners));
         self::assertContains([PageTransitioned::class, IndexNow::class], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $listeners));
         $routes = array_values(array_filter($registry->routes(), static fn ($r) => $r->module === 'seo'));
         self::assertSame(['/sitemap.xml', '/robots.txt', '/llms.txt', '/llms-full.txt', '/indexnow-key.txt'], array_map(static fn ($r) => $r->item->path, $routes));

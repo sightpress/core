@@ -64,7 +64,8 @@ final class SettingsHandlerTest extends TestCase
         self::assertStringContainsString('<legend>Search &amp; AI</legend>', $html);
         self::assertStringContainsString('name="setting__site__contact_email"', $html);
         self::assertStringContainsString('value="allow_all" checked', $html);
-        self::assertStringContainsString('Language: English (United Kingdom). More languages can be added from the command line.', $html);
+        self::assertStringContainsString('Languages: British English (main language).', $html);
+        self::assertStringContainsString('<a href="/admin/settings/languages">Change the languages</a>', $html);
         self::assertStringContainsString('The site is run by an organisation.', $html);
         self::assertStringContainsString('<a href="/admin/settings/branding">Branding</a>', $html);
         self::assertStringContainsString('Public: anyone can read the published pages.', $html);
@@ -132,14 +133,14 @@ final class SettingsHandlerTest extends TestCase
         self::assertSame([], $this->events->events);
     }
 
-    public function testASiteInSeveralLanguagesChoosesItsMainOne(): void
+    public function testASiteInSeveralLanguagesListsThemAndLeavesTheMainOneToTheLanguagesScreen(): void
     {
         $site = PageFixture::site(['en-GB', 'pt-PT']);
-        self::assertStringContainsString('Main language', (string) $this->handle('GET', site: $site)->getBody());
+        self::assertStringContainsString('Languages: British English (main language), European Portuguese.', (string) $this->handle('GET', site: $site)->getBody());
 
         $this->handle('POST', $this->body(['default_locale' => 'pt-PT']), site: $site);
 
-        self::assertSame('pt-PT', $this->fixture->auth->database->settings()->get(SiteProfile::DEFAULT_LOCALE));
+        self::assertNull($this->fixture->auth->database->settings()->get(SiteProfile::DEFAULT_LOCALE));
     }
 
     public function testExplainsWhatIsWrong(): void

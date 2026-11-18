@@ -25,7 +25,7 @@ final class PageLinkQueryTest extends TestCase
         $draft = $fixture->editor()->create('en-GB', new PageContent('Draft'));
         $team = $fixture->published('Team', [], $about);
         $fixture->editor()->move($draft, null, 1);
-        $fixture->editor()->save($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
+        $fixture->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
         $links = new PageLinkQuery($fixture->database->entityManager, $fixture->addresses());
 
         self::assertEquals([

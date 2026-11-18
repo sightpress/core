@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Block;
 
 use SightPress\Core\Block\Contract\BlockContexts;
+use SightPress\Core\Block\Contract\MediaTexts;
 use SightPress\Core\Block\Contract\BlockRenderer;
 use SightPress\Core\Block\Contract\BlockValidator;
 use SightPress\Core\Block\RichText\RichTextSanitizer;
@@ -58,6 +59,7 @@ final class BlockModule implements ModuleInterface
         $services->autowire(DefaultBlockValidator::class, BlockValidator::class, public: true);
         $services->autowire(DefaultBlockRenderer::class, BlockRenderer::class, public: true);
         $services->autowire(SiteBlockContexts::class, BlockContexts::class, public: true);
+        $services->autowire(MediaTexts::class, public: true);
         $services->autowire(DefaultBlockFinder::class, BlockFinder::class, public: true);
     }
 }

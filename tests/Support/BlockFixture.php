@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Support;
 
+use SightPress\Core\Block\Contract\MediaTexts;
 use DateTimeImmutable;
 use SightPress\Core\Block\DefaultBlockRenderer;
 use SightPress\Core\Block\DefaultBlockValidator;
@@ -51,6 +52,11 @@ final class BlockFixture
     public function media(): MediaRepository
     {
         return new MediaRepository($this->database->entityManager);
+    }
+
+    public function texts(?Site $site = null): MediaTexts
+    {
+        return new MediaTexts($this->media(), $site ?? PageFixture::site(['en-GB', 'pt-BR']));
     }
 
     public function validator(): DefaultBlockValidator

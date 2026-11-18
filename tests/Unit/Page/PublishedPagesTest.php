@@ -25,7 +25,7 @@ final class PublishedPagesTest extends TestCase
         $blocks = [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Hi', 'level' => 2]]];
         $about = $fixture->published('About', $blocks);
         $team = $fixture->published('Team', [], $about);
-        $fixture->editor()->save($about, 'pt-PT', new PageContent('Sobre', 'sobre', null, null, $blocks));
+        $fixture->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre', null, null, $blocks));
         $fixture->editor()->create('en-GB', new PageContent('Draft'));
         $hidden = $fixture->published('Hidden');
         $hidden->setPublic(false, $fixture->clock->now());

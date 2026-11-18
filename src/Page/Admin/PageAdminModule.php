@@ -12,6 +12,7 @@ use SightPress\Core\Page\Admin\Editor\PageEditorScreen;
 use SightPress\Core\Page\Admin\Http\NewPageHandler;
 use SightPress\Core\Page\Admin\Http\PageEditorHandler;
 use SightPress\Core\Page\Admin\Http\PageListHandler;
+use SightPress\Core\Page\Admin\Http\PageTranslationHandler;
 use SightPress\Core\Page\Admin\Http\PageWorkflowHandler;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Admin\AdminMenuItem;
@@ -55,7 +56,7 @@ final class PageAdminModule implements ModuleInterface
         foreach ([
             PageAdmin::class, BlockData::class, BlockOperation::class, BlockFormView::class, MediaChoices::class,
             PageEditorScreen::class, PageListHandler::class, NewPageHandler::class, PageEditorHandler::class,
-            PageWorkflowHandler::class,
+            PageWorkflowHandler::class, PageTranslationHandler::class,
         ] as $class) {
             $services->autowire($class);
         }
@@ -65,6 +66,7 @@ final class PageAdminModule implements ModuleInterface
         $routes->add(new Route('page_admin.list', PageAdmin::PATH, PageListHandler::class, middleware: [AdminAccessMiddleware::class]));
         $routes->add(new Route('page_admin.new', NewPageHandler::PATH, NewPageHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('page_admin.edit', $page, PageEditorHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('page_admin.translations', $page . '/translations', PageTranslationHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('page_admin.workflow', $page . '/workflow', PageWorkflowHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('page_admin.list', 'Pages', 'page_admin.list', 'page.edit.own', position: 10));
     }

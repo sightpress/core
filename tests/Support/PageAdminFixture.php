@@ -17,6 +17,7 @@ use SightPress\Core\Page\Admin\Editor\PageEditorScreen;
 use SightPress\Core\Page\Admin\Http\NewPageHandler;
 use SightPress\Core\Page\Admin\Http\PageEditorHandler;
 use SightPress\Core\Page\Admin\Http\PageListHandler;
+use SightPress\Core\Page\Admin\Http\PageTranslationHandler;
 use SightPress\Core\Page\Admin\Http\PageWorkflowHandler;
 use SightPress\Core\Page\Admin\PageAdmin;
 use SightPress\Core\Page\Admin\PageAdminModule;
@@ -43,10 +44,13 @@ final class PageAdminFixture
 
     public readonly Session $session;
 
-    public function __construct()
+    /**
+     * @param list<string> $locales the site's languages, the default first
+     */
+    public function __construct(array $locales = ['en-GB', 'pt-PT'])
     {
         $this->admin = new AdminFixture();
-        $this->pages = new PageFixture($this->admin->auth->database, [new GalleryBlock()]);
+        $this->pages = new PageFixture($this->admin->auth->database, [new GalleryBlock()], $locales);
         $this->blocks = new BlockFixture([new GalleryBlock()], $this->admin->auth->database);
         $this->session = new Session();
     }
@@ -81,6 +85,7 @@ final class PageAdminFixture
             $this->pages->repository(),
             new ThemePageColours(new ThemeLoader()->load(TemplatePaths::defaultTheme())),
             $this->pages->site,
+            $this->blocks->texts($this->pages->site),
         );
     }
 
@@ -136,12 +141,17 @@ final class PageAdminFixture
         return new PageWorkflowHandler($this->admin->shell(), $this->pageAdmin(), $this->screen(), $this->workflow(), $this->pages->site);
     }
 
+    public function translationHandler(): PageTranslationHandler
+    {
+        return new PageTranslationHandler($this->admin->shell(), $this->pageAdmin(), $this->screen(), $this->pages->editor(), $this->checks(), $this->authorizer(), $this->pages->site);
+    }
+
     /**
      * Runs a request through a handler as the person, with `{id}` set when given.
      *
      * @param array<string, mixed> $body
      */
-    public function handle(PageListHandler|NewPageHandler|PageEditorHandler|PageWorkflowHandler $handler, ?User $user, string $method, string $path, array $body = [], ?int $id = null): ResponseInterface
+    public function handle(PageListHandler|NewPageHandler|PageEditorHandler|PageWorkflowHandler|PageTranslationHandler $handler, ?User $user, string $method, string $path, array $body = [], ?int $id = null): ResponseInterface
     {
         $request = $this->admin->request($user, $method, $path, $body, $this->session);
         if ($id !== null) {

@@ -32,6 +32,21 @@ final class PageTranslationTest extends TestCase
         $this->page = new Page(null, 0, null, $this->now);
     }
 
+    public function testIsReadByVisitorsOnlyWhenThePageIsPublishedAndItIsntADraft(): void
+    {
+        $translation = new PageTranslation($this->page, 'pt-PT', new PageContent('Sobre'), 'sobre', $this->now, true);
+        self::assertTrue($translation->isDraft());
+        self::assertFalse($translation->isPublished());
+
+        $this->page->changeState(\SightPress\Core\Rbac\Contract\PageState::Published, $this->now);
+        self::assertFalse($translation->isPublished());
+        $later = new DateTimeImmutable('2026-11-18 10:00:00 UTC');
+        $translation->setDraft(false, $later);
+        self::assertTrue($translation->isPublished());
+        self::assertSame($later, $translation->updatedAt());
+        self::assertFalse($translation->snapshot()['draft']);
+    }
+
     public function testHoldsThePageInOneLocale(): void
     {
         $blocks = [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Hi']]];
@@ -51,7 +66,7 @@ final class PageTranslationTest extends TestCase
         ]);
         self::assertEquals(new PageContent('Team', 'team', 'Who', 'Desc', $blocks), $translation->content());
         self::assertSame(
-            ['title' => 'Team', 'slug' => 'team', 'path' => 'about/team', 'summary' => 'Who', 'description' => 'Desc', 'blocks' => $blocks, 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null],
+            ['title' => 'Team', 'slug' => 'team', 'path' => 'about/team', 'summary' => 'Who', 'description' => 'Desc', 'blocks' => $blocks, 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'draft' => false],
             $translation->snapshot(),
         );
         self::assertNull($translation->socialImage());

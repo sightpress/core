@@ -10,7 +10,7 @@ use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
 
 /**
- * The site's name, default language and time zone are read when its container is built ({@see SiteProfile::display()}).
+ * The site's name, languages, default language and time zone are read when its container is built ({@see SiteProfile::display()}).
  * When the admins change one of them, the container is forgotten, so the next request (also in a long-running
  * worker) builds a new one with the new values.
  */
@@ -24,7 +24,7 @@ final readonly class DisplayChanged
 
     public function __invoke(SettingsChanged $event): void
     {
-        if ($event->has(SiteProfile::NAME) || $event->has(SiteProfile::DEFAULT_LOCALE) || $event->has(SiteProfile::DEFAULT_TIMEZONE)) {
+        if ($event->has(SiteProfile::NAME) || $event->has(SiteProfile::LOCALES) || $event->has(SiteProfile::DEFAULT_LOCALE) || $event->has(SiteProfile::DEFAULT_TIMEZONE)) {
             $this->containers->evict($this->site->slug);
         }
     }

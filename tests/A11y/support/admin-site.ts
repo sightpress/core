@@ -15,6 +15,7 @@ export const ADMIN_SITES = {
   menus: 'http://127.0.0.1:8092',
   pages: 'http://127.0.0.1:8089',
   settings: 'http://127.0.0.1:8088',
+  languages: 'http://127.0.0.1:8085',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

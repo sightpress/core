@@ -245,11 +245,13 @@ final class MediaAdminHandlersTest extends TestCase
         self::assertMatchesRegularExpression('#Caption in English \(United Kingdom\) \(optional\)#', $html);
         self::assertMatchesRegularExpression('#Caption in Portuguese \(Brazil\) \(optional\)#', $html);
         self::assertStringNotContainsString('Alt text', $html);
-        self::assertStringContainsString('name="transcript"', $html);
+        self::assertStringContainsString('name="transcript_0"', $html);
+        self::assertStringContainsString('name="transcript_1"', $html);
+        self::assertStringContainsString('Leave it empty to use the transcript in the main language.', $html);
 
         self::assertMatchesRegularExpression('#<audio src="[^"]+" controls preload="metadata"></audio>#', (string) $this->item($this->ada, $audio, site: $site)->getBody());
-        $this->item($this->ada, $audio, ['caption_0' => '', 'caption_1' => 'Palestra', 'transcript' => 'Hello.', 'published' => ''], site: $site);
-        self::assertSame(['Palestra', 'Hello.'], [$audio->caption('pt-BR'), $audio->transcript()]);
+        $this->item($this->ada, $audio, ['caption_0' => '', 'caption_1' => 'Palestra', 'transcript_0' => 'Hello.', 'transcript_1' => 'Olá.', 'published' => ''], site: $site);
+        self::assertSame(['Palestra', 'Hello.', 'Olá.'], [$audio->caption('pt-BR'), $audio->transcript('en-GB'), $audio->transcript('pt-BR')]);
     }
 
     public function testDocumentsHaveNoPreview(): void

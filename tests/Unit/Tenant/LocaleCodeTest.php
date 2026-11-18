@@ -57,4 +57,19 @@ final class LocaleCodeTest extends TestCase
     {
         self::assertSame($name, LocaleCode::describe($locale));
     }
+
+    public function testListsEveryKnownLocaleByName(): void
+    {
+        $available = LocaleCode::available();
+
+        self::assertSame('British English', $available['en-GB']);
+        self::assertSame('Spanish', $available['es']);
+        self::assertSame('European Portuguese', $available['pt-PT']);
+        self::assertArrayNotHasKey('es-419', $available, 'only codes SightPress can write');
+        foreach (array_keys($available) as $code) {
+            self::assertTrue(LocaleCode::isValid($code), $code);
+        }
+        $names = array_values($available);
+        self::assertLessThan(array_search('Welsh', $names, true), array_search('Afrikaans', $names, true));
+    }
 }

@@ -44,7 +44,7 @@ final class SeoHeadTest extends TestCase
     {
         $home = $this->pages->published('Welcome');
         $about = $this->pages->published('About');
-        $this->pages->editor()->save($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
+        $this->pages->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
         $team = $this->pages->published('Team', [], $about);
         $blocks = new BlockFixture([], $this->pages->database);
         $picture = $blocks->addMedia();
@@ -95,7 +95,7 @@ final class SeoHeadTest extends TestCase
     public function testFrontPagesCopiesAndPagesOutOfSearch(): void
     {
         $home = $this->pages->published('Welcome to Demo');
-        $this->pages->editor()->save($home, 'pt-PT', new PageContent('Bem-vindo', 'inicio'));
+        $this->pages->translated($home, 'pt-PT', new PageContent('Bem-vindo', 'inicio'));
 
         $settings = $this->pages->database->settings();
         $settings->set('seo.verify_google', 'abc-123_XYZ');

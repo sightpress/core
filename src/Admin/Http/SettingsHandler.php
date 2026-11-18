@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Admin\Http;
 
-use Locale;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,6 +21,7 @@ use SightPress\Core\Seo\Contract\SiteVerification;
 use SightPress\Core\Site\Contract\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\OwnerType;
 use SightPress\Core\Tenant\Site;
 use SightPress\Module\Setting\Setting;
@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * `/admin/settings`: the site's name, default language and time zone, then a field for every setting the modules
+ * `/admin/settings`: the site's name and time zone (its languages are on {@see LanguagesHandler}'s screen), then a field for every setting the modules
  * registered, grouped by what they are about (who runs the site, search & AI, then the other modules), and what
  * can't be changed yet (visibility, theme). Needs `settings.manage`. Saving says so in the live region and tells
  * the modules which settings changed ({@see SettingsChanged}).
@@ -74,14 +74,6 @@ final readonly class SettingsHandler implements RequestHandlerInterface
     public function form(): Form
     {
         $fields = [new Field('name', 'Site name', hint: 'Shown at the top of every page, in the browser tab and in search results.', constraints: [new Length(max: 120, maxMessage: 'The site name must be 120 characters or fewer')])];
-        if (count($this->site->locales) > 1) {
-            $languages = [];
-            foreach ($this->site->locales as $locale) {
-                $name = Locale::getDisplayName($locale, 'en-GB');
-                $languages[$locale] = is_string($name) && $name !== '' ? $name : $locale;
-            }
-            $fields[] = new Field('default_locale', 'Main language', FieldType::Radios, hint: 'Pages in this language have addresses without a language part.', choices: $languages);
-        }
         $fields[] = new Field('timezone', 'Time zone', FieldType::Select, hint: 'Dates and times are shown in it to visitors, and to people who haven’t chosen their own.', choices: TimezoneChoices::grouped());
         foreach ($this->catalogue->all() as ['setting' => $setting]) {
             $fields[] = $this->field($setting);
@@ -115,8 +107,11 @@ final readonly class SettingsHandler implements RequestHandlerInterface
             'action' => self::PATH,
             'sections' => $this->sections(),
             'owner' => $this->site->ownerType === OwnerType::Person ? 'a person' : 'an organisation',
-            'languages' => count($this->site->locales) > 1,
-            'main_language' => Locale::getDisplayName($this->site->defaultLocale, 'en-GB'),
+            'languages' => array_map(
+                fn (string $locale): array => ['name' => LocaleCode::describe($locale), 'main' => $locale === $this->site->defaultLocale],
+                array_values(array_unique([$this->site->defaultLocale, ...$this->site->locales])),
+            ),
+            'languages_path' => LanguagesHandler::PATH,
         ], $form->submitted && !$form->isValid() ? 422 : 200);
     }
 
@@ -140,7 +135,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
      */
     private function current(): array
     {
-        $values = ['name' => $this->site->name, 'default_locale' => $this->site->defaultLocale, 'timezone' => $this->site->defaultTimezone];
+        $values = ['name' => $this->site->name, 'timezone' => $this->site->defaultTimezone];
         foreach ($this->catalogue->all() as ['setting' => $setting]) {
             $value = SettingCatalogue::stored($setting, $this->settings->get($setting->key));
             $values[self::fieldName($setting->key)] = $setting->type === SettingType::Boolean ? ($value === '1' ? '1' : '') : $value;
@@ -160,9 +155,6 @@ final readonly class SettingsHandler implements RequestHandlerInterface
             SiteProfile::NAME => [$this->site->name, $form->text('name')],
             SiteProfile::DEFAULT_TIMEZONE => [$this->site->defaultTimezone, $form->text('timezone')],
         ];
-        if ($form->has('default_locale')) {
-            $wanted[SiteProfile::DEFAULT_LOCALE] = [$this->site->defaultLocale, $form->text('default_locale')];
-        }
         foreach ($this->catalogue->all() as ['setting' => $setting]) {
             $value = $form->text(self::fieldName($setting->key));
             $wanted[$setting->key] = [

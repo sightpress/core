@@ -56,9 +56,10 @@ final readonly class DemoMedia
             $editor->update(
                 $media,
                 $alt === null ? [] : [$event->site->defaultLocale => ['alt' => $alt, 'caption' => null]],
-                $transcript,
+                $transcript === null ? null : [$event->site->defaultLocale => $transcript],
                 true,
                 $by,
+                $event->site->defaultLocale,
             );
             $event->share('demo.' . $name, (int) $media->id());
         }

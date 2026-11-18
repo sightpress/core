@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Page;
 
 use Doctrine\ORM\EntityManagerInterface;
+use SightPress\Core\Block\Contract\MediaTexts;
 use SightPress\Core\Page\Contract\IndexedPage;
 use SightPress\Core\Page\Contract\PageIndex;
 use SightPress\Core\Page\Entity\PageTranslation;
@@ -12,7 +13,8 @@ use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Tenant\Site;
 
 /**
- * The published pages, from one query of their translations.
+ * The published pages, from one query of their translations: those in the site's languages that aren't drafts of
+ * their own.
  */
 final readonly class PageIndexQuery implements PageIndex
 {
@@ -20,6 +22,7 @@ final readonly class PageIndexQuery implements PageIndex
         private EntityManagerInterface $entityManager,
         private PageAddresses $addresses,
         private Site $site,
+        private MediaTexts $texts,
     ) {
     }
 
@@ -31,10 +34,15 @@ final readonly class PageIndexQuery implements PageIndex
             ->from(PageTranslation::class, 't')
             ->join('t.page', 'p')
             ->where('p.state = :state')
+            ->andWhere('t.draft = :draft')
+            ->andWhere('t.locale IN (:locales)')
             ->setParameter('state', PageState::Published)
+            ->setParameter('draft', false)
+            ->setParameter('locales', $this->site->locales)
             ->getQuery()
             ->getResult();
 
+        $this->texts->preload(array_map(static fn (PageTranslation $translation): array => $translation->blocks(), $translations));
         $ids = [];
         foreach ($translations as $translation) {
             $ids[(int) $translation->page()->id()] = true;
@@ -80,7 +88,7 @@ final readonly class PageIndexQuery implements PageIndex
             $translation->canonicalUrl(),
             $page->depth(),
             $translation->updatedAt(),
-            $translation->blocks(),
+            $this->texts->fill($translation->blocks(), $translation->locale()),
             $this->addresses->isHome($page),
         );
     }

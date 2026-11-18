@@ -67,6 +67,8 @@ final class AuditRecorderTest extends TestCase
             new PageTransitioned($page, PageTransition::Approve, PageState::InReview, PageState::Approved, 4),
             new PageTransitioned($page, PageTransition::Publish, PageState::Approved, PageState::Published, 4),
             new PageTransitioned($page, PageTransition::Unpublish, PageState::Published, PageState::Draft, 4),
+            new \SightPress\Core\Page\Contract\TranslationPublished($page, 'pt-PT', true, 4, 3),
+            new \SightPress\Core\Page\Contract\TranslationPublished($page, 'pt-PT', false, 5, 3),
             new MediaUploaded($picture, 'k', MediaKind::Image, 3),
             new MediaChanged($picture, 3, ['alt', 'caption']),
             new MediaChanged(999, 3, []),
@@ -77,7 +79,7 @@ final class AuditRecorderTest extends TestCase
             new RoleChanged($user, 1, null, 'editor'),
             new RoleChanged(999, 1, 'editor', 'admin'),
             new AccountChanged($user, $user, ['display_name', 'avatar']),
-            new SettingsChanged(['site.name', 'site.contact_email', 'branding.logo', 'branding.icon', 'branding.share_image', 'site.default_locale', 'site.default_timezone', 'acme.other'], 1),
+            new SettingsChanged(['site.name', 'site.contact_email', 'branding.logo', 'branding.icon', 'branding.share_image', 'site.default_locale', 'site.locales', 'site.default_timezone', 'acme.other'], 1),
             new \stdClass(),
         ] as $event) {
             $recorder($event);
@@ -93,6 +95,8 @@ final class AuditRecorderTest extends TestCase
             'Approved “About us”.',
             'Published “About us”.',
             'Unpublished “About us”.',
+            'Published the European Portuguese translation of “About us”.',
+            'Made the European Portuguese translation of “About us” a draft again.',
             'Uploaded “lighthouse.jpg”.',
             'Changed the alt, caption of “lighthouse.jpg”.',
             'Changed the details of file 999.',
@@ -103,11 +107,11 @@ final class AuditRecorderTest extends TestCase
             'Changed the role of Zoë from none to editor.',
             'Changed the role of account 999 from editor to admin.',
             'Changed the display name, avatar of Zoë.',
-            'Changed the site settings: Site name, Contact email address, Logo, Icon, Share picture, Main language, Time zone, acme.other.',
+            'Changed the site settings: Site name, Contact email address, Logo, Icon, Share picture, Main language, Languages, Time zone, acme.other.',
         ], array_map(static fn (AuditEntry $e): string => $e->summary, $entries));
         self::assertSame(['page.submit', 'page', (string) $page, 3, ['from' => 'draft', 'to' => 'in_review', 'comment' => 'Ready']], [$entries[3]->action, $entries[3]->entityType, $entries[3]->entityId, $entries[3]->actorId, $entries[3]->details]);
-        self::assertSame(['settings', null], [$entries[18]->entityType, $entries[18]->entityId]);
-        self::assertSame(['menu.moved_up', 'main'], [$entries[12]->action, $entries[12]->entityId]);
-        self::assertCount(11, AuditRecorder::EVENTS);
+        self::assertSame(['settings', null], [$entries[20]->entityType, $entries[20]->entityId]);
+        self::assertSame(['menu.moved_up', 'main'], [$entries[14]->action, $entries[14]->entityId]);
+        self::assertCount(12, AuditRecorder::EVENTS);
     }
 }

@@ -69,7 +69,7 @@ final class PublicPageHandlerTest extends TestCase
         $this->fixture->pages->published('Welcome');
         $about = $this->fixture->pages->published('About us');
         $about->setLayout('gallery', $this->fixture->pages->clock->now());
-        $this->fixture->pages->editor()->save($about, 'pt-PT', new PageContent('Sobre nós', 'sobre'));
+        $this->fixture->pages->translated($about, 'pt-PT', new PageContent('Sobre nós', 'sobre'));
         $team = $this->fixture->pages->published('Team', [], $about);
 
         $html = (string) $this->get('https://demo.example/about-us')->getBody();
@@ -120,7 +120,7 @@ final class PublicPageHandlerTest extends TestCase
     public function testEveryPageIsThereAsMarkdown(): void
     {
         $home = $this->fixture->pages->published('Welcome', [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'News', 'level' => 2]]]);
-        $this->fixture->pages->editor()->save($home, 'pt-PT', new PageContent('Bem-vindo', 'inicio'));
+        $this->fixture->pages->translated($home, 'pt-PT', new PageContent('Bem-vindo', 'inicio'));
         $hidden = $this->fixture->pages->published('Hidden');
         $this->fixture->pages->editor()->save($hidden, 'en-GB', new PageContent('Hidden', 'hidden', null, null, [], null, null, true, 'https://elsewhere.example/hidden'));
 
@@ -202,6 +202,40 @@ final class PublicPageHandlerTest extends TestCase
         self::assertStringContainsString('Send message', (string) $response->getBody());
     }
 
+    public function testADraftTranslationIsOnlyThereForThePeopleWhoCanChangeThePage(): void
+    {
+        $this->fixture->pages->published('Welcome');
+        $about = $this->fixture->pages->published('About us');
+        $this->fixture->pages->editor()->translate($about, 'pt-PT', 'en-GB');
+
+        try {
+            $this->get('https://demo.example/pt-pt/about-us');
+            self::fail('visitors don\'t see a draft translation');
+        } catch (\Slim\Exception\HttpNotFoundException) {
+            self::assertSame(200, $this->get('https://demo.example/about-us')->getStatusCode());
+        }
+        $editor = new Actor(3, ['page.edit.any']);
+        $preview = $this->get('https://demo.example/pt-pt/about-us', [], $editor);
+        self::assertSame(['200', 'private, no-cache'], [(string) $preview->getStatusCode(), $preview->getHeaderLine('Cache-Control')]);
+    }
+
+    public function testAltTextLeftEmptyComesFromTheMediaLibraryInThePagesLanguage(): void
+    {
+        $id = $this->fixture->blocks->addMedia();
+        $file = $this->fixture->blocks->media()->find($id);
+        $file?->describe('en-GB', 'A lighthouse at dusk', null, new \DateTimeImmutable());
+        $file?->describe('pt-PT', 'Um farol ao anoitecer', null, new \DateTimeImmutable());
+        $this->fixture->blocks->media()->save($file ?? throw new \LogicException());
+        $this->fixture->pages->published('Welcome');
+        $blocks = [['type' => 'image', 'version' => 1, 'data' => ['media' => $id]]];
+        $about = $this->fixture->pages->published('Lighthouse', $blocks);
+        $this->fixture->pages->translated($about, 'pt-PT', new PageContent('Farol', 'farol', null, null, $blocks));
+
+        self::assertStringContainsString('alt="A lighthouse at dusk"', (string) $this->get('https://demo.example/lighthouse')->getBody());
+        self::assertStringContainsString('alt="Um farol ao anoitecer"', (string) $this->get('https://demo.example/pt-pt/farol')->getBody());
+        self::assertStringContainsString('![A lighthouse at dusk]', (string) $this->get('https://demo.example/lighthouse.md')->getBody());
+    }
+
     /**
      * @param array<string, string> $headers
      */
@@ -235,6 +269,7 @@ final class PublicPageHandlerTest extends TestCase
             new \SightPress\Core\Page\PageMarkdown($this->fixture->blocks->contexts($pages->site), $this->fixture->blocks->renderer()),
             new \SightPress\Core\Http\AcceptNegotiator(),
             new \SightPress\Core\Tenant\TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $config]),
+            $this->fixture->blocks->texts($pages->site),
         );
     }
 }

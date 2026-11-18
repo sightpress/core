@@ -227,17 +227,18 @@ final class Page implements PageSubject
     }
 
     /**
-     * Writes or rewrites the page in one locale.
+     * Writes or rewrites the page in one locale. A new translation can start as a draft of its own; an existing one
+     * keeps whether it is one.
      *
      * @param string $path the full address without the leading slash and locale prefix, for example `about/team`
      *
      * @internal for {@see \SightPress\Core\Page\PageEditor}
      */
-    public function write(string $locale, PageContent $content, string $path, DateTimeImmutable $now): PageTranslation
+    public function write(string $locale, PageContent $content, string $path, DateTimeImmutable $now, bool $draft = false): PageTranslation
     {
         $translation = $this->translations->get($locale);
         if ($translation === null) {
-            $translation = new PageTranslation($this, $locale, $content, $path, $now);
+            $translation = new PageTranslation($this, $locale, $content, $path, $now, $draft);
             $this->translations->set($locale, $translation);
         } else {
             $translation->rewrite($content, $path, $now);
@@ -274,7 +275,7 @@ final class Page implements PageSubject
     /**
      * Everything about the page that a revision keeps.
      *
-     * @return array{parent: ?int, position: int, layout: string, public: bool, state: string, translations: array<string, array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string}>}
+     * @return array{parent: ?int, position: int, layout: string, public: bool, state: string, translations: array<string, array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string, draft: bool}>}
      */
     public function snapshot(): array
     {

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Site;
 
+use SightPress\Core\Site\Command\AddSiteLocaleCommand;
 use SightPress\Core\Site\Command\ArchiveSiteCommand;
+use SightPress\Core\Site\Command\DefaultSiteLocaleCommand;
+use SightPress\Core\Site\Command\RemoveSiteLocaleCommand;
 use SightPress\Core\Site\Command\ChangeSiteDatabaseCommand;
 use SightPress\Core\Site\Command\CheckRegistryCommand;
 use SightPress\Core\Site\Command\CreateSiteCommand;
@@ -16,6 +19,7 @@ use SightPress\Core\Site\Command\MigrateSitesCommand;
 use SightPress\Core\Site\Command\PurgeSiteCommand;
 use SightPress\Core\Site\Command\UpgradeRegistryCommand;
 use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Core\Site\Contract\SiteLanguages;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Module\Setting\Setting;
@@ -52,12 +56,16 @@ final class SiteModule implements ModuleInterface
             PurgeSiteCommand::class,
             MigrateSitesCommand::class,
             ChangeSiteDatabaseCommand::class,
+            AddSiteLocaleCommand::class,
+            RemoveSiteLocaleCommand::class,
+            DefaultSiteLocaleCommand::class,
         ] as $command) {
             $registrar->commands()->add($command);
         }
         $registrar->migrations()->add(new SiteMigrations());
         $registrar->services()->autowire(DbalSiteSettings::class, SiteSettings::class, public: true);
         $registrar->services()->autowire(DisplayChanged::class);
+        $registrar->services()->autowire(SiteLanguages::class, public: true);
         $registrar->subscribers()->listen(SettingsChanged::class, DisplayChanged::class);
 
         $settings = $registrar->settings();

@@ -61,7 +61,7 @@ final class PublishCheckerTest extends TestCase
             ['type' => 'rich_text', 'version' => 1, 'data' => ['html' => '<p><a href="/a">here</a> <span lang="english">Hello</span> <span style="color: #0a3d91">Dark blue</span></p>']],
             ['type' => 'image', 'version' => 1, 'data' => ['media' => $draft]],
         ]));
-        $this->pages->editor()->save($page, 'pt-PT', new PageContent('Visite', null, 'Resumo', str_repeat('Descrição longa. ', 12)));
+        $this->pages->translated($page, 'pt-PT', new PageContent('Visite', null, 'Resumo', str_repeat('Descrição longa. ', 12)));
 
         $report = $this->checker()->check($page);
 
@@ -101,15 +101,25 @@ final class PublishCheckerTest extends TestCase
         self::assertSame([['blocks.invalid', '/blocks/0/type']], array_map(static fn (PublishIssue $issue): array => [$issue->rule, $issue->pointer], $report->errors()));
     }
 
-    public function testALanguageTheSiteNoLongerHasStopsPublishing(): void
+    public function testALanguageTheSiteNoLongerHasWaitsAndCantBePublishedOnItsOwn(): void
     {
         $page = $this->pages->editor()->create('en-GB', new PageContent('Home', null, 'S', 'D'));
-        $this->pages->editor()->save($page, 'pt-PT', new PageContent('Início', null, 'S', 'D'));
+        $this->pages->translated($page, 'pt-PT', new PageContent('Início', null, 'S', 'D'));
+        $checker = $this->checker(PageFixture::site(['en-GB']));
 
-        $report = $this->checker(PageFixture::site(['en-GB']))->check($page);
-
+        self::assertSame([], $checker->check($page)->issues, 'a removed language doesn\'t stop the page');
+        $report = $checker->check($page, 'pt-PT');
         self::assertSame([['pt-PT', 'page.language', '']], array_map(static fn (PublishIssue $issue): array => [$issue->locale, $issue->rule, $issue->pointer], $report->issues));
         self::assertSame(['3.1.1'], $report->issues[0]->wcag);
+    }
+
+    public function testADraftTranslationIsCheckedWhenItIsPublished(): void
+    {
+        $page = $this->pages->editor()->create('en-GB', new PageContent('Home', null, 'S', 'D'));
+        $this->pages->editor()->save($page, 'pt-PT', new PageContent('Início'));
+
+        self::assertSame(['en-GB'], array_values(array_unique(array_map(static fn (PublishIssue $issue): string => $issue->locale, [...$this->checker()->check($page)->issues, new PublishIssue('en-GB', A11ySeverity::Warning, PublishIssue::SEO, 'x', 'x', '')]))));
+        self::assertSame(['pt-PT'], array_values(array_unique(array_map(static fn (PublishIssue $issue): string => $issue->locale, $this->checker()->check($page, 'pt-PT')->issues))));
     }
 
     public function testIssuesLinkToTheirFieldInTheEditor(): void
@@ -139,6 +149,7 @@ final class PublishCheckerTest extends TestCase
             $this->pages->repository(),
             new ThemePageColours(new ThemeLoader()->load(TemplatePaths::defaultTheme())),
             $site,
+            $this->blocks->texts($site),
         );
     }
 }

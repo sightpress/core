@@ -46,7 +46,7 @@ final class MediaTest extends TestCase
         self::assertSame($now, $media->updatedAt());
         self::assertNull($media->altText('en-GB'));
         self::assertNull($media->caption('en-GB'));
-        self::assertNull($media->transcript());
+        self::assertNull($media->transcript('en-GB'));
     }
 
     public function testDescriptionsArePerLocaleAndEmptyTextRemovesThem(): void
@@ -93,13 +93,16 @@ final class MediaTest extends TestCase
         $now = new DateTimeImmutable();
         $audio = new Media(self::KEY, str_repeat('b', 64), new MediaFormat('audio/mpeg', MediaKind::Audio, 'mp3', 'MP3'), 'talk.mp3', 'Talk.mp3', 10, null, null, [], null, $now);
 
-        $audio->setTranscript(' Hello and welcome. ', $now);
-        self::assertSame('Hello and welcome.', $audio->transcript());
-        $audio->setTranscript(null, $now);
-        self::assertNull($audio->transcript());
+        $audio->setTranscript('en-GB', ' Hello and welcome. ', $now);
+        self::assertSame('Hello and welcome.', $audio->transcript('en-GB'));
+        self::assertNull($audio->transcript('pt-PT'));
+        $audio->setTranscript('pt-PT', 'Olá e bem-vindos.', $now);
+        self::assertSame(['Hello and welcome.', 'Olá e bem-vindos.'], [$audio->transcript('en-GB'), $audio->ownTranscript('pt-PT')]);
+        $audio->setTranscript('en-GB', null, $now);
+        self::assertNull($audio->transcript('en-GB'));
 
         $this->expectExceptionMessage('Only video and audio files have a transcript.');
-        self::picture()->setTranscript('Words', $now);
+        self::picture()->setTranscript('en-GB', 'Words', $now);
     }
 
     public function testATranscriptHasALimit(): void
@@ -107,7 +110,28 @@ final class MediaTest extends TestCase
         $audio = new Media(self::KEY, str_repeat('b', 64), new MediaFormat('video/mp4', MediaKind::Video, 'mp4', 'MP4'), 'a.mp4', 'a.mp4', 10, null, null, [], null, new DateTimeImmutable());
 
         $this->expectExceptionMessage('The transcript must be 200000 characters or fewer.');
-        $audio->setTranscript(str_repeat('a', 200_001), new DateTimeImmutable());
+        $audio->setTranscript('en-GB', str_repeat('a', 200_001), new DateTimeImmutable());
+    }
+
+    public function testRefusesATranscriptInAnUnknownLocale(): void
+    {
+        $audio = new Media(self::KEY, str_repeat('b', 64), new MediaFormat('audio/mpeg', MediaKind::Audio, 'mp3', 'MP3'), 'a.mp3', 'a.mp3', 10, null, null, [], null, new DateTimeImmutable());
+
+        $this->expectExceptionMessage('"english" is not a locale code such as "en-GB".');
+        $audio->setTranscript('english', 'Words', new DateTimeImmutable());
+    }
+
+    public function testATranscriptFromBeforeLanguagesCountsUntilTheMainLanguageGetsOne(): void
+    {
+        $now = new DateTimeImmutable();
+        $audio = new Media(self::KEY, str_repeat('b', 64), new MediaFormat('audio/mpeg', MediaKind::Audio, 'mp3', 'MP3'), 'a.mp3', 'a.mp3', 10, null, null, [], null, $now);
+        new \ReflectionProperty(Media::class, 'transcript')->setValue($audio, 'Old words.');
+
+        self::assertSame(['Old words.', 'Old words.', null], [$audio->transcript('en-GB'), $audio->transcript('pt-PT'), $audio->ownTranscript('en-GB')]);
+        $audio->setTranscript('pt-PT', 'Palavras.', $now);
+        self::assertSame(['Old words.', 'Palavras.'], [$audio->transcript('en-GB'), $audio->transcript('pt-PT')]);
+        $audio->setTranscript('en-GB', 'New words.', $now, main: true);
+        self::assertSame(['New words.', 'Palavras.', null], [$audio->transcript('en-GB'), $audio->transcript('pt-PT'), $audio->transcript('es')]);
     }
 
     public function testPublishesAndUnpublishes(): void

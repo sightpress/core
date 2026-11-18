@@ -16,6 +16,7 @@ use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
+use SightPress\Core\Page\Admin\Http\PageTranslationHandler;
 use SightPress\Core\Page\Admin\PageAdmin;
 use SightPress\Core\Page\Contract\PageTransition;
 use SightPress\Core\Page\Contract\PublishReport;
@@ -27,6 +28,7 @@ use SightPress\Core\Page\Workflow\PageWorkflow;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\Contract\PageAction;
+use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\Site;
 use Symfony\Component\Validator\Constraints\Length;
 
@@ -155,9 +157,55 @@ final readonly class PageEditorScreen
             'search' => $this->searchPreview($form, $page, $locale, $baseUrl),
             'description_length' => mb_strlen($form->text('description')),
             'description_max' => PublishChecker::DESCRIPTION_MAX,
-            'report' => $refused ?? ($translation === null ? null : $this->checks->check($page)),
+            'report' => $refused ?? ($translation === null ? null : $this->checks->check($page, $translation->isDraft() ? $locale : null)),
+            'translations' => $this->translations($page, $locale),
+            'translations_action' => PageTranslationHandler::path((int) $page->id()),
+            'draft_translation' => $translation?->isDraft() === true,
+            'current_has_translation' => $translation !== null,
+            'is_main_locale' => $locale === $this->site->defaultLocale,
+            'may_publish' => $actor->has('page.publish'),
             'report_focus' => $refused !== null,
         ], $status);
+    }
+
+    /**
+     * Each of the site's languages (the main one first) with how far the page is in it: not written yet, a draft
+     * (of its own, or because the page isn't published) or published; and the languages it can be copied from.
+     * Empty when the site has one language.
+     *
+     * @return list<array{code: string, name: string, status: string, current: bool, url: string, sources: array<string, string>}>
+     */
+    private function translations(Page $page, string $current): array
+    {
+        if (count($this->site->locales) < 2) {
+            return [];
+        }
+        $locales = array_values(array_unique([$this->site->defaultLocale, ...$this->site->locales]));
+        $sources = [];
+        foreach ($locales as $locale) {
+            if ($page->translation($locale) !== null) {
+                $sources[$locale] = LocaleCode::describe($locale);
+            }
+        }
+        $rows = [];
+        foreach ($locales as $locale) {
+            $translation = $page->translation($locale);
+            $rows[] = [
+                'code' => $locale,
+                'name' => LocaleCode::describe($locale),
+                'status' => match (true) {
+                    $translation === null => 'Not written yet',
+                    $translation->isPublished() => 'Published',
+                    $translation->isDraft() => 'Draft translation',
+                    default => 'Draft',
+                },
+                'current' => $locale === $current,
+                'url' => PageAdmin::editPath((int) $page->id()) . ($locale === $this->site->defaultLocale ? '' : '?locale=' . rawurlencode($locale)),
+                'sources' => $translation === null ? $sources : [],
+            ];
+        }
+
+        return $rows;
     }
 
     /**

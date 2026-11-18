@@ -11,6 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Block\Contract\BlockContexts;
 use SightPress\Core\Block\Contract\BlockRenderer;
+use SightPress\Core\Block\Contract\MediaTexts;
 use SightPress\Core\Http\AcceptNegotiator;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Page\Contract\MarkdownAddress;
@@ -30,7 +31,8 @@ use Twig\Environment;
 /**
  * The public site: `/` is the home page, `/{path}` the page at that address (`/pt-pt/…` for other locales), in the
  * theme layout the page uses. Only pages the visitor may view are shown (published, and public or the visitor is
- * signed in); anything else is a 404, so nothing is given away about drafts. Addresses that aren't the page's own
+ * signed in), in a translation that isn't a draft of its own; anything else is a 404, so nothing is given away about
+ * drafts. Addresses that aren't the page's own
  * are moved permanently: `/about/` → `/about`, the home page's own path → `/`, any of the site's other domains → its
  * first one. Other modules add menus, `<head>` tags
  * and more through the {@see PublicPageRendering} event.
@@ -59,6 +61,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         private MarkdownPages $documents,
         private AcceptNegotiator $negotiator,
         private TenantConfig $config,
+        private MediaTexts $texts,
     ) {
     }
 
@@ -78,6 +81,10 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         if ($translation === null || !$this->authorizer->can($actor, PageAction::View->value, $translation->page())) {
             throw new HttpNotFoundException($request);
         }
+        // A translation that is a draft of its own is only there for the people who can change the page.
+        if ($translation->isDraft() && !$this->authorizer->can($actor, PageAction::Edit->value, $translation->page())) {
+            throw new HttpNotFoundException($request);
+        }
         $url = $this->addresses->url($translation);
         $own = $markdownPath ? MarkdownAddress::of($url, $this->addresses->isHome($translation->page())) : $url;
         if (rawurldecode($path) !== $own) {
@@ -86,11 +93,12 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
 
         $page = $translation->page();
         $baseUrl = $uri->getScheme() . '://' . $uri->getAuthority();
+        $blocks = $this->texts->fill($translation->blocks(), $translation->locale());
         if ($markdownPath || $this->negotiator->prefersMarkdown($request)) {
-            return $this->markdown($request, $translation, $baseUrl . $url, $baseUrl, $actor);
+            return $this->markdown($request, $translation, $blocks, $baseUrl . $url, $baseUrl, $actor);
         }
         $context = $this->contexts->create($translation->locale(), $baseUrl, $request);
-        $content = $this->renderer->html($translation->blocks(), $context);
+        $content = $this->renderer->html($blocks, $context);
         $rendering = new PublicPageRendering(
             $request,
             (int) $page->id(),
@@ -108,7 +116,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
             $translation->seoTitle(),
             $translation->isNoindex(),
             $translation->canonicalUrl(),
-            $translation->blocks(),
+            $blocks,
             $content,
         );
         $this->events->dispatch($rendering);
@@ -134,10 +142,13 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
      * The page as Markdown (`/{path}.md`, or `Accept: text/markdown`), for readers that prefer text. Its canonical
      * address is the HTML page's; a page search engines shouldn't list says so in `X-Robots-Tag`.
      */
-    private function markdown(ServerRequestInterface $request, PageTranslation $translation, string $address, string $baseUrl, Actor $actor): ResponseInterface
+    /**
+     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     */
+    private function markdown(ServerRequestInterface $request, PageTranslation $translation, array $blocks, string $address, string $baseUrl, Actor $actor): ResponseInterface
     {
         $canonical = $translation->canonicalUrl() ?? $address;
-        $body = $this->documents->document($translation->locale(), $translation->title(), $translation->summary(), $translation->blocks(), $canonical, $translation->updatedAt(), $baseUrl);
+        $body = $this->documents->document($translation->locale(), $translation->title(), $translation->summary(), $blocks, $canonical, $translation->updatedAt(), $baseUrl);
         $indexable = $translation->page()->isPublic() && !$translation->isNoindex();
         $robots = match (true) {
             !$this->config->environment->isProduction() => 'noindex, nofollow',

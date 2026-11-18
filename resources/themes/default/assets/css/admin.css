@@ -146,3 +146,5 @@
 /* Audit log (C-7.4): the table scrolls on its own on narrow screens; the region can be scrolled by keyboard. */
 .table-wrapper { overflow-x: auto; max-width: 100%; margin-bottom: var(--space-4); }
 .audit-table td { vertical-align: top; }
+.languages__main { display: inline; margin-inline-end: var(--space-3); }
+.translations__copy { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-block-end: var(--space-2); }

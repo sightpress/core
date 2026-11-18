@@ -53,7 +53,7 @@ final class SeoFilesTest extends TestCase
     public function testListsThePublishedPagesInTreeOrderAndWhichMayBeIndexed(): void
     {
         $about = $this->pages->published('About');
-        $this->pages->editor()->save($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
+        $this->pages->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
         $home = $this->pages->published('Home');
         $this->pages->editor()->move($home, null, 0);
         $draft = $this->pages->editor()->create('en-GB', new PageContent('Draft'));
@@ -82,7 +82,7 @@ final class SeoFilesTest extends TestCase
     {
         $this->pages->published('Home');
         $about = $this->pages->published('About');
-        $this->pages->editor()->save($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
+        $this->pages->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
         $cache = new ArrayAdapter();
         $files = $this->files('production', $cache);
 
@@ -106,7 +106,7 @@ final class SeoFilesTest extends TestCase
         $home = $this->pages->published('Home');
         $this->pages->editor()->save($home, 'en-GB', new PageContent('Home', 'home', null, "The library\n by the river."));
         $about = $this->pages->published('About [us]');
-        $this->pages->editor()->save($about, 'pt-PT', new PageContent('Sobre', 'sobre', 'Quem somos.'));
+        $this->pages->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre', 'Quem somos.'));
         $files = $this->files('production', new ArrayAdapter());
 
         self::assertSame(
@@ -196,7 +196,7 @@ final class SeoFilesTest extends TestCase
 
     private function index(): PageIndexQuery
     {
-        return new PageIndexQuery($this->pages->database->entityManager, $this->pages->addresses(), $this->pages->site);
+        return new PageIndexQuery($this->pages->database->entityManager, $this->pages->addresses(), $this->pages->site, new BlockFixture([], $this->pages->database)->texts($this->pages->site));
     }
 
     private function policy(string $environment): RobotsPolicy

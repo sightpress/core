@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use SightPress\Core\Page\Contract\PageLink;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Entity\PageTranslation;
-use SightPress\Core\Rbac\Contract\PageState;
 
 /**
  * Pages as links, from one query of their translations in a locale.
@@ -85,7 +84,7 @@ final readonly class PageLinkQuery implements PageLinks
             $translation->title(),
             $this->addresses->url($translation),
             $page->depth(),
-            $page->state() === PageState::Published && $page->isPublic(),
+            $translation->isPublished() && $page->isPublic(),
         );
     }
 }

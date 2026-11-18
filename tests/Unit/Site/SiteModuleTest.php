@@ -44,6 +44,9 @@ final class SiteModuleTest extends TestCase
                 \SightPress\Core\Site\Command\PurgeSiteCommand::class,
                 \SightPress\Core\Site\Command\MigrateSitesCommand::class,
                 \SightPress\Core\Site\Command\ChangeSiteDatabaseCommand::class,
+                \SightPress\Core\Site\Command\AddSiteLocaleCommand::class,
+                \SightPress\Core\Site\Command\RemoveSiteLocaleCommand::class,
+                \SightPress\Core\Site\Command\DefaultSiteLocaleCommand::class,
             ],
             array_map(static fn ($registered) => $registered->item, $registry->commands()),
         );
@@ -54,6 +57,7 @@ final class SiteModuleTest extends TestCase
         );
         self::assertSame([[\SightPress\Core\Site\Contract\SettingsChanged::class, \SightPress\Core\Site\DisplayChanged::class]], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $registry->listeners()));
         self::assertTrue($registry->services()[SiteSettings::class]->item->public);
+        self::assertTrue($registry->services()[\SightPress\Core\Site\Contract\SiteLanguages::class]->item->public);
         self::assertSame(DbalSiteSettings::class, $registry->services()[SiteSettings::class]->item->class);
     }
 }

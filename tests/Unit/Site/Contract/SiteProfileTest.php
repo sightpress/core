@@ -47,6 +47,9 @@ final class SiteProfileTest extends TestCase
         $site = SiteProfile::display(PageFixture::site(['en-GB', 'pt-PT']), $settings);
 
         self::assertSame(['Riverside', 'pt-PT', 'Asia/Tokyo'], [$site->name, $site->defaultLocale, $site->defaultTimezone]);
+
+        $settings->set(SiteProfile::LOCALES, 'pt-PT, es');
+        self::assertSame(['pt-PT', 'es'], SiteProfile::display(PageFixture::site(['en-GB', 'pt-PT']), $settings)->locales);
     }
 
     public function testSaysWhichSettingsChanged(): void

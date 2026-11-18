@@ -27,7 +27,7 @@ final class PublicMenusTest extends TestCase
         $pages = new PageFixture();
         $home = $pages->published('Welcome');
         $about = $pages->published('About');
-        $pages->editor()->save($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
+        $pages->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
         $team = $pages->published('Team', [], $about);
         $draft = $pages->editor()->create('en-GB', new PageContent('Draft'));
         $draftChild = $pages->published('Under the draft', [], $draft);

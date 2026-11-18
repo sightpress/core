@@ -8,6 +8,7 @@ use SightPress\Core\Block\Contract\BlockContexts;
 use SightPress\Core\Block\Contract\BlockRenderer;
 use SightPress\Core\Block\Contract\BlockValidator;
 use SightPress\Core\Block\Contract\InvalidBlocks;
+use SightPress\Core\Block\Contract\MediaTexts;
 use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Page\Contract\PublishIssue;
 use SightPress\Core\Page\Contract\PublishReport;
@@ -19,10 +20,11 @@ use SightPress\Core\Theme\Contract\PageColours;
 use SightPress\Module\Block\A11ySeverity;
 
 /**
- * The checks a page must pass before it is published, in every language it is written in.
+ * The checks a page must pass before it is published, in every language it is published in (a translation that is a
+ * draft of its own is checked when it is published).
  *
  * Accessibility (errors stop publishing, unless a rule says it is a warning): every block type's own rules (alt
- * text, link text, captions, transcripts …), blocks that are still valid, files that are published, the language
+ * text, link text, captions, transcripts …, with the texts a block left empty taken from the media library), blocks that are still valid, files that are published, the language
  * of the page, and what {@see HtmlChecks} finds in each block's HTML — the page title is the only `h1`, heading
  * levels don't skip, every picture has `alt`, language codes are real, and colours chosen in the content have 4.5:1
  * contrast in every colour mode of the theme.
@@ -42,14 +44,24 @@ final readonly class PublishChecker
         private PageRepository $pages,
         private PageColours $colours,
         private Site $site,
+        private MediaTexts $texts,
     ) {
     }
 
-    public function check(Page $page): PublishReport
+    /**
+     * The checks of every language visitors will read when the page is published: translations that are drafts of
+     * their own, and those in a language the site no longer has, wait. With `$locale`, only that translation.
+     */
+    public function check(Page $page, ?string $locale = null): PublishReport
     {
         $issues = [];
         foreach ($page->translations() as $translation) {
-            $issues = [...$issues, ...$this->translation($page, $translation)];
+            $wanted = $locale === null
+                ? !$translation->isDraft() && in_array($translation->locale(), $this->site->locales, true)
+                : $translation->locale() === $locale;
+            if ($wanted) {
+                $issues = [...$issues, ...$this->translation($page, $translation)];
+            }
         }
 
         return new PublishReport($issues);
@@ -77,7 +89,7 @@ final readonly class PublishChecker
     private function blocks(PageTranslation $translation): array
     {
         $locale = $translation->locale();
-        $blocks = $translation->blocks();
+        $blocks = $this->texts->fill($translation->blocks(), $locale);
         try {
             $validated = $this->validator->validate($blocks);
         } catch (InvalidBlocks $invalid) {

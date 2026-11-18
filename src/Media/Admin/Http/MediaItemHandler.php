@@ -43,8 +43,9 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
     }
 
     /**
-     * The details form. Fields per language are named `alt_<n>` and `caption_<n>`, n being the language's position
-     * in the site's list; with one language the labels don't name it.
+     * The details form. Fields per language are named `alt_<n>`, `caption_<n>` and `transcript_<n>`, n being the
+     * language's position in the site's list; with one language the labels don't name it. Texts left empty in a
+     * language fall back to the main language's where the file is shown.
      */
     public function form(Media $media, bool $canPublish): Form
     {
@@ -73,17 +74,20 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
                 constraints: [new Length(max: Media::CAPTION_MAX_LENGTH, maxMessage: sprintf('The caption must be %d characters or fewer', Media::CAPTION_MAX_LENGTH))],
             );
             $values['caption_' . $index] = $media->caption($locale) ?? '';
-        }
-        if ($media->kind()->hasSpeech()) {
-            $fields[] = new Field(
-                'transcript',
-                'Transcript',
-                FieldType::Textarea,
-                hint: 'Everything that is said, and other sounds that matter, for people who can’t hear it. Pages with this file show a link to it.',
-                required: false,
-                constraints: [new Length(max: Media::TRANSCRIPT_MAX_LENGTH, maxMessage: 'The transcript is too long')],
-            );
-            $values['transcript'] = $media->transcript() ?? '';
+            if ($media->kind()->hasSpeech()) {
+                $fields[] = new Field(
+                    'transcript_' . $index,
+                    'Transcript' . $in,
+                    FieldType::Textarea,
+                    hint: $locale === $this->site->defaultLocale
+                        ? 'Everything that is said, and other sounds that matter, for people who can’t hear it. Pages with this file show a link to it.'
+                        : 'Leave it empty to use the transcript in the main language.',
+                    required: false,
+                    constraints: [new Length(max: Media::TRANSCRIPT_MAX_LENGTH, maxMessage: 'The transcript is too long')],
+                );
+                // The main language's field also shows a transcript written before files had one per language.
+                $values['transcript_' . $index] = ($locale === $this->site->defaultLocale ? $media->transcript($locale) : $media->ownTranscript($locale)) ?? '';
+            }
         }
         if ($canPublish) {
             $fields[] = new Field('published', 'Published', FieldType::Checkbox, hint: 'Published files can be seen by everyone who has their address. Unpublished files can only be seen by people who can upload media.', required: false);
@@ -107,18 +111,23 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
             return $this->show($request, $actor, $media, $form, 422);
         }
         $descriptions = [];
+        $transcripts = [];
         foreach (array_values($this->site->locales) as $index => $locale) {
             $descriptions[$locale] = [
                 'alt' => $media->kind() === MediaKind::Image ? $form->text('alt_' . $index) : null,
                 'caption' => $form->text('caption_' . $index),
             ];
+            if ($media->kind()->hasSpeech()) {
+                $transcripts[$locale] = $form->text('transcript_' . $index);
+            }
         }
         $changed = $this->editor->update(
             $media,
             $descriptions,
-            $media->kind()->hasSpeech() ? $form->text('transcript') : null,
+            $media->kind()->hasSpeech() ? $transcripts : null,
             $canPublish ? $form->text('published') === '1' : null,
             $actor->userId,
+            $this->site->defaultLocale,
         );
 
         return $this->screens->redirect($request, MediaAdmin::path($media), $changed === []

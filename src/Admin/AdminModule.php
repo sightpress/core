@@ -6,6 +6,8 @@ namespace SightPress\Core\Admin;
 
 use SightPress\Core\Admin\Contract\AdminScreens;
 use SightPress\Core\Admin\Http\DashboardHandler;
+use SightPress\Core\Admin\Http\LanguagesHandler;
+use SightPress\Core\Admin\Http\RemoveLanguageHandler;
 use SightPress\Core\Admin\Http\SettingsHandler;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Admin\AdminMenuItem;
@@ -45,8 +47,12 @@ final class AdminModule implements ModuleInterface
         $registrar->services()->autowire(AdminShell::class, AdminScreens::class, public: true);
         $registrar->services()->autowire(DashboardHandler::class);
         $registrar->services()->autowire(SettingsHandler::class);
+        $registrar->services()->autowire(LanguagesHandler::class);
+        $registrar->services()->autowire(RemoveLanguageHandler::class);
         $registrar->routes()->add(new Route('admin.dashboard', '/admin', DashboardHandler::class, middleware: [AdminAccessMiddleware::class]));
         $registrar->routes()->add(new Route('admin.settings', SettingsHandler::PATH, SettingsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $registrar->routes()->add(new Route('admin.languages', LanguagesHandler::PATH, LanguagesHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $registrar->routes()->add(new Route('admin.languages.remove', RemoveLanguageHandler::PATH, RemoveLanguageHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('dashboard', 'Dashboard', 'admin.dashboard', position: -100));
         $registrar->adminMenu()->add(new AdminMenuItem('admin.settings', 'Site settings', 'admin.settings', SettingsHandler::PERMISSION, position: 60));
     }

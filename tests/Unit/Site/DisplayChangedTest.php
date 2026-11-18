@@ -29,7 +29,7 @@ final class DisplayChangedTest extends TestCase
         $listener(new SettingsChanged([SiteProfile::EMAIL], 1));
         self::assertSame($container, $factory->forSite($site));
 
-        foreach ([SiteProfile::NAME, SiteProfile::DEFAULT_LOCALE, SiteProfile::DEFAULT_TIMEZONE] as $key) {
+        foreach ([SiteProfile::NAME, SiteProfile::LOCALES, SiteProfile::DEFAULT_LOCALE, SiteProfile::DEFAULT_TIMEZONE] as $key) {
             $listener(new SettingsChanged([$key], 1));
             self::assertNotSame($container, $factory->forSite($site), $key);
             $container = $factory->forSite($site);

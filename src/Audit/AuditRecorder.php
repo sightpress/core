@@ -17,8 +17,10 @@ use SightPress\Core\Page\Contract\PageMoved;
 use SightPress\Core\Page\Contract\PageSaved;
 use SightPress\Core\Page\Contract\PageTransition;
 use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Core\Page\Contract\TranslationPublished;
 use SightPress\Core\Rbac\Contract\RoleChanged;
 use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\User\Contract\AccountChanged;
 use SightPress\Core\User\Contract\Accounts;
@@ -33,7 +35,7 @@ final readonly class AuditRecorder
 {
     /** Events it writes an entry for. */
     public const array EVENTS = [
-        PageCreated::class, PageSaved::class, PageMoved::class, PageTransitioned::class,
+        PageCreated::class, PageSaved::class, PageMoved::class, PageTransitioned::class, TranslationPublished::class,
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
         MenuChanged::class, RoleChanged::class, AccountChanged::class, SettingsChanged::class,
     ];
@@ -62,6 +64,11 @@ final readonly class AuditRecorder
                 PageTransition::Publish => 'Published %s.',
                 PageTransition::Unpublish => 'Unpublished %s.',
             }, $this->page($event->pageId)), array_filter(['from' => $event->from->value, 'to' => $event->to->value, 'comment' => $event->comment], static fn (?string $value): bool => $value !== null)),
+            $event instanceof TranslationPublished => $this->entry($event->actorId, $event->published ? 'page.translation_published' : 'page.translation_drafted', 'page', $event->pageId, sprintf(
+                $event->published ? 'Published the %s translation of %s.' : 'Made the %s translation of %s a draft again.',
+                LocaleCode::describe($event->locale),
+                $this->page($event->pageId),
+            ), ['locale' => $event->locale, 'revision' => $event->revision]),
             $event instanceof MediaUploaded => $this->entry($event->uploadedBy, 'media.uploaded', 'media', $event->mediaId, sprintf('Uploaded %s.', $this->file($event->mediaId)), ['kind' => $event->kind->value]),
             $event instanceof MediaChanged => $this->entry($event->changedBy, 'media.changed', 'media', $event->mediaId, sprintf('Changed the %s of %s.', self::words($event->fields), $this->file($event->mediaId)), ['fields' => $event->fields]),
             $event instanceof MediaDeleted => $this->entry($event->deletedBy, 'media.deleted', 'media', $event->mediaId, sprintf('Deleted “%s”.', $event->originalName), []),
@@ -94,6 +101,7 @@ final readonly class AuditRecorder
         return match ($key) {
             'site.name' => 'Site name',
             'site.default_locale' => 'Main language',
+            'site.locales' => 'Languages',
             'site.default_timezone' => 'Time zone',
             'branding.logo' => 'Logo',
             'branding.icon' => 'Icon',

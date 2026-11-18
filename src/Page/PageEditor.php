@@ -11,6 +11,7 @@ use SightPress\Core\Block\Contract\InvalidBlocks;
 use SightPress\Core\Page\Contract\PageCreated;
 use SightPress\Core\Page\Contract\PageMoved;
 use SightPress\Core\Page\Contract\PageSaved;
+use SightPress\Core\Page\Contract\TranslationPublished;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\Entity\PageRevision;
 use SightPress\Core\Page\Entity\PageTranslation;
@@ -74,9 +75,56 @@ final readonly class PageEditor
 
     /**
      * Writes the page in one locale (adding the translation if it is new). A new slug moves the addresses of
-     * every page below it in that locale.
+     * every page below it in that locale. A translation added to a page that is already written in another
+     * language starts as a draft of its own ({@see publishTranslation()}).
      */
     public function save(Page $page, string $locale, PageContent $content, ?int $savedBy = null): PageRevision
+    {
+        return $this->write($page, $locale, $content, $savedBy, $page->translation($locale) === null && $page->translations() !== []);
+    }
+
+    /**
+     * Starts a translation as a copy of the page in another of its languages (title, summary, description, search
+     * fields and every block), as a draft to be translated. The page in the other language doesn't change.
+     *
+     * @throws PageException when the page is already written in `$locale`, or isn't written in `$from`
+     */
+    public function translate(Page $page, string $locale, string $from, ?int $savedBy = null): PageRevision
+    {
+        $this->checkLocale($locale);
+        if ($page->translation($locale) !== null) {
+            throw new PageException(sprintf('The page is already written in "%s". Change that translation instead.', $locale));
+        }
+        $source = $page->translation($from) ?? throw new PageException(sprintf('The page isn\'t written in "%s", so it can\'t be copied from it.', $from));
+
+        return $this->write($page, $locale, $source->content(), $savedBy, true);
+    }
+
+    /**
+     * Publishes a translation on its own (visitors read it once the page is published), or makes it a draft again.
+     *
+     * @return bool whether anything changed
+     *
+     * @throws PageException when the page isn't written in `$locale`
+     */
+    public function publishTranslation(Page $page, string $locale, bool $published, ?int $by = null): bool
+    {
+        $this->checkLocale($locale);
+        $translation = $page->translation($locale) ?? throw new PageException(sprintf('The page isn\'t written in "%s" yet.', $locale));
+        if ($translation->isDraft() !== $published) {
+            return false;
+        }
+        $revision = $this->pages->transaction(function () use ($page, $translation, $published, $by): PageRevision {
+            $translation->setDraft(!$published, $this->clock->now());
+
+            return $this->revise($page, $by);
+        });
+        $this->events->dispatch(new TranslationPublished((int) $page->id(), $locale, $published, $revision->number(), $by));
+
+        return true;
+    }
+
+    private function write(Page $page, string $locale, PageContent $content, ?int $savedBy, bool $draft): PageRevision
     {
         $this->checkLocale($locale);
         $content = $content->withBlocks($this->blocks->validate($content->blocks)->blocks);
@@ -85,11 +133,11 @@ final readonly class PageEditor
         $oldPath = $page->translation($locale)?->path();
         $below = $oldPath !== null && $oldPath !== $path ? $this->translationsBelow($page, $locale) : [];
 
-        $revision = $this->pages->transaction(function () use ($page, $locale, $content, $path, $oldPath, $below, $savedBy): PageRevision {
+        $revision = $this->pages->transaction(function () use ($page, $locale, $content, $path, $oldPath, $below, $savedBy, $draft): PageRevision {
             foreach ($below as $translation) {
                 $translation->rebase((string) $oldPath, $path);
             }
-            $page->write($locale, $content, $path, $this->clock->now());
+            $page->write($locale, $content, $path, $this->clock->now(), $draft);
 
             return $this->revise($page, $savedBy);
         });

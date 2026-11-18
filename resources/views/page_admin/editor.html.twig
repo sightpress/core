@@ -39,6 +39,72 @@
     </ul>
 </section>
 {%- endif %}
+{%- if translations is not empty %}
+<section class="admin-panel" aria-labelledby="translations-title">
+    <h2 id="translations-title">{{ t('Translations') }}</h2>
+    <div class="table-wrap" role="region" aria-labelledby="translations-caption" tabindex="0">
+    <table>
+        <caption id="translations-caption" class="visually-hidden">{{ t('The page in each language of the site') }}</caption>
+        <thead>
+            <tr><th scope="col">{{ t('Language') }}</th><th scope="col">{{ t('Status') }}</th><th scope="col">{{ t('Actions') }}</th></tr>
+        </thead>
+        <tbody>
+            {%- for row in translations %}
+            <tr>
+                <th scope="row" lang="{{ row.code }}">{{ row.name }}</th>
+                <td>{{ t(row.status) }}</td>
+                <td>
+                    {%- if row.current %}
+                    {{ t('You are editing it now.') }}
+                    {%- elseif row.sources is empty %}
+                    <a href="{{ row.url }}">{{ t('Edit the {language} translation', {language: row.name}) }}</a>
+                    {%- else %}
+                    {%- if editable %}
+                    <form action="{{ translations_action }}" method="post" class="translations__copy">
+                        {{ csrf_fields() }}
+                        <input type="hidden" name="op" value="translate">
+                        <input type="hidden" name="locale" value="{{ row.code }}">
+                        {%- if row.sources|length == 1 %}
+                        {%- for code, name in row.sources %}
+                        <input type="hidden" name="from" value="{{ code }}">
+                        <button type="submit" class="button button--secondary">{{ t('Translate into {language} from {source}', {language: row.name, source: name}) }}</button>
+                        {%- endfor %}
+                        {%- else %}
+                        <label for="translate-{{ row.code|lower }}-from">{{ t('Translate into {language} from', {language: row.name}) }}</label>
+                        <select id="translate-{{ row.code|lower }}-from" name="from">
+                            {%- for code, name in row.sources %}
+                            <option value="{{ code }}">{{ name }}</option>
+                            {%- endfor %}
+                        </select>
+                        <button type="submit" class="button button--secondary">{{ t('Start the {language} translation', {language: row.name}) }}</button>
+                        {%- endif %}
+                    </form>
+                    {%- endif %}
+                    <a href="{{ row.url }}">{{ t('Write the {language} translation from scratch', {language: row.name}) }}</a>
+                    {%- endif %}
+                </td>
+            </tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+    </div>
+    <p>{{ t('“Translate” copies the page’s text and blocks into a new draft translation, for you to translate. The page in the other language doesn’t change. A new translation stays a draft until it is published on its own.') }}</p>
+    {%- if may_publish and draft_translation %}
+    <form action="{{ translations_action }}" method="post">
+        {{ csrf_fields() }}
+        <input type="hidden" name="locale" value="{{ locale }}">
+        <button type="submit" name="op" value="publish">{{ t('Publish this translation') }}</button>
+        <p class="field-hint">{{ t('It uses the saved translation: save your changes first. Visitors see it once the page itself is published.') }}</p>
+    </form>
+    {%- elseif may_publish and not draft_translation and current_has_translation and not is_main_locale %}
+    <form action="{{ translations_action }}" method="post">
+        {{ csrf_fields() }}
+        <input type="hidden" name="locale" value="{{ locale }}">
+        <button type="submit" name="op" value="draft" class="button button--secondary">{{ t('Make this translation a draft again') }}</button>
+    </form>
+    {%- endif %}
+</section>
+{%- endif %}
 {%- if editable %}
 {{ f.start(form, action) }}
     <div class="page-editor__save">

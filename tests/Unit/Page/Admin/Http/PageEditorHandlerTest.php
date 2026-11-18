@@ -219,6 +219,41 @@ final class PageEditorHandlerTest extends TestCase
         self::assertCount(1, $this->fixture->pages->repository()->revisions($this->page));
     }
 
+    public function testListsTheTranslationsWithTheirStatusAndOffersToStartOne(): void
+    {
+        $html = $this->get($this->editor);
+
+        self::assertStringContainsString('<h2 id="translations-title">Translations</h2>', $html);
+        self::assertStringContainsString('<th scope="row" lang="en-GB">British English</th>', $html);
+        self::assertStringContainsString('You are editing it now.', $html);
+        self::assertStringContainsString('Not written yet', $html);
+        self::assertStringContainsString('Translate into European Portuguese from British English', $html);
+        self::assertStringContainsString('Write the European Portuguese translation from scratch', $html);
+
+        $this->fixture->pages->editor()->translate($this->page, 'pt-PT', 'en-GB');
+        $draft = (string) $this->fixture->handle($this->fixture->editorHandler(), $this->editor, 'GET', '/admin/pages/x?locale=pt-PT', id: (int) $this->page->id())->getBody();
+        self::assertStringContainsString('Draft translation', $draft);
+        self::assertStringContainsString('Edit the British English translation', $draft);
+        self::assertStringContainsString('<button type="submit" name="op" value="publish">Publish this translation</button>', $draft);
+
+        $this->fixture->pages->editor()->publishTranslation($this->page, 'pt-PT', true);
+        $ready = (string) $this->fixture->handle($this->fixture->editorHandler(), $this->editor, 'GET', '/admin/pages/x?locale=pt-PT', id: (int) $this->page->id())->getBody();
+        self::assertStringContainsString('Make this translation a draft again', $ready);
+        self::assertStringNotContainsString('Publish this translation', $this->get($this->contributor));
+    }
+
+    public function testASiteInOneLanguageHasNoTranslationsSection(): void
+    {
+        $fixture = new PageAdminFixture(['en-GB']);
+        $editor = $fixture->admin->auth->user('bea@example.org', 'editor');
+        $page = $fixture->pages->editor()->create('en-GB', new PageContent('About'));
+
+        $html = (string) $fixture->handle($fixture->editorHandler(), $editor, 'GET', '/admin/pages/x', id: (int) $page->id())->getBody();
+
+        self::assertStringContainsString('<h1>Edit “About”</h1>', $html);
+        self::assertStringNotContainsString('translations-title', $html);
+    }
+
     private function image(): int
     {
         $media = new Media(str_repeat('a', 32), str_repeat('b', 64), new MediaFormat('image/png', MediaKind::Image, 'png', 'PNG'), 'f.png', 'photo.png', 1, 10, 10, [], null, new DateTimeImmutable());

@@ -35,12 +35,13 @@ final class PageFixture implements EventDispatcherInterface
 
     /**
      * @param list<BlockType> $blockTypes block types next to core's
+     * @param list<string>    $locales    the site's languages, the default first
      */
-    public function __construct(?CoreSiteDatabase $database = null, private readonly array $blockTypes = [])
+    public function __construct(?CoreSiteDatabase $database = null, private readonly array $blockTypes = [], array $locales = ['en-GB', 'pt-PT'])
     {
         $this->database = $database ?? new CoreSiteDatabase();
         $this->clock = new FixedClock();
-        $this->site = self::site(['en-GB', 'pt-PT']);
+        $this->site = self::site($locales);
     }
 
     /**
@@ -88,6 +89,17 @@ final class PageFixture implements EventDispatcherInterface
         $this->repository()->flush();
 
         return $page;
+    }
+
+    /**
+     * Writes the page in another locale and publishes that translation on its own (a new translation starts as a
+     * draft).
+     */
+    public function translated(Page $page, string $locale, PageContent $content): void
+    {
+        $editor = $this->editor();
+        $editor->save($page, $locale, $content);
+        $editor->publishTranslation($page, $locale, true);
     }
 
     public function addresses(): PageAddresses

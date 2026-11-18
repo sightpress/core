@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tenant;
 
 use InvalidArgumentException;
+use Collator;
 use Locale;
 use ResourceBundle;
 
@@ -64,5 +65,27 @@ final class LocaleCode
         $name = $languages instanceof ResourceBundle ? $languages->get($icu) : null;
 
         return is_string($name) ? $name : (string) Locale::getDisplayName($icu, 'en');
+    }
+
+    /**
+     * Every locale the server knows, written the SightPress way, with its name: `['cy' => 'Welsh', 'en-GB' =>
+     * 'British English', …]`, sorted by name.
+     *
+     * @return array<non-empty-string, string>
+     */
+    public static function available(): array
+    {
+        $names = [];
+        $locales = ResourceBundle::getLocales('');
+        foreach (is_array($locales) ? $locales : [] as $icu) {
+            $code = is_string($icu) ? str_replace('_', '-', $icu) : '';
+            if ($code !== '' && self::isValid($code)) {
+                $names[$code] = self::describe($code);
+            }
+        }
+        $collator = new Collator('en');
+        uasort($names, static fn (string $a, string $b): int => (int) $collator->compare($a, $b));
+
+        return $names;
     }
 }

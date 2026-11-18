@@ -1,0 +1,56 @@
+{#
+    The site's languages (/admin/settings/languages): a table of the languages with the address their pages start
+    with, a "Make main language" button and a "Remove" link (to a confirmation page) for each other language, and the
+    form that adds one. Each button and link names its language.
+    Context: `languages` [{code, name, main, prefix}], `form`, `action`, `remove_path`, `settings_path`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Languages') }}{% endblock %}
+{% block content %}
+<p><a href="{{ settings_path }}">{{ t('Back to site settings') }}</a></p>
+<h1>{{ t('Languages') }}</h1>
+<p>{{ t('Every page can be written in each of these languages. Pages in the main language have addresses without a language part; the others start with the language code.') }}</p>
+<section class="admin-panel" aria-labelledby="languages-title">
+    <h2 id="languages-title">{{ t('The site is written in') }}</h2>
+    <div class="table-wrap" role="region" aria-labelledby="languages-caption" tabindex="0">
+    <table>
+        <caption id="languages-caption" class="visually-hidden">{{ t('Languages of the site, main language first') }}</caption>
+        <thead>
+            <tr><th scope="col">{{ t('Language') }}</th><th scope="col">{{ t('Code') }}</th><th scope="col">{{ t('Addresses start with') }}</th><th scope="col">{{ t('Actions') }}</th></tr>
+        </thead>
+        <tbody>
+            {%- for language in languages %}
+            <tr>
+                <th scope="row" lang="{{ language.code }}">{{ language.name }}</th>
+                <td>{{ language.code }}</td>
+                <td><code>{{ language.prefix }}</code></td>
+                <td>
+                    {%- if language.main %}
+                    {{ t('Main language') }}
+                    {%- else %}
+                    <form action="{{ action }}" method="post" class="languages__main">
+                        {{ csrf_fields() }}
+                        <button type="submit" name="main" value="{{ language.code }}" class="button button--secondary">{{ t('Make {language} the main language', {language: language.name}) }}</button>
+                    </form>
+                    <a href="{{ remove_path }}?locale={{ language.code|url_encode }}">{{ t('Remove {language}', {language: language.name}) }}</a>
+                    {%- endif %}
+                </td>
+            </tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+    </div>
+    {%- if languages|length > 1 %}
+    <p>{{ t('Changing the main language changes the addresses of the pages in the old and the new main language. Links to their old addresses stop working.') }}</p>
+    {%- endif %}
+</section>
+<section class="admin-panel" aria-labelledby="add-language-title">
+    <h2 id="add-language-title">{{ t('Add a language') }}</h2>
+    {{ f.error_summary(form) }}
+    {{ f.start(form, action) }}
+        {{ f.field(form, 'locale') }}
+        {{ f.submit(t('Add language')) }}
+    {{ f.end() }}
+</section>
+{% endblock %}

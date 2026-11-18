@@ -28,14 +28,18 @@ final readonly class MediaEditor
      * nothing changed.
      *
      * @param array<string, array{alt: ?string, caption: ?string}> $descriptions by locale
-     * @param ?string                                              $transcript   only for video and audio; null leaves it
+     * @param array<string, ?string>|null                          $transcripts  by locale, only for video and audio;
+     *                                                                           null leaves them
      * @param ?bool                                                $published    null leaves it
+     * @param ?string                                              $mainLocale   the site's main language, whose
+     *                                                                           transcript replaces one written before
+     *                                                                           files had one per language
      *
      * @return list<string> what changed (see {@see MediaChanged::$fields})
      *
      * @throws MediaException when a text is too long, a locale is not valid, or a transcript is given for a picture
      */
-    public function update(Media $media, array $descriptions, ?string $transcript, ?bool $published, ?int $changedBy): array
+    public function update(Media $media, array $descriptions, ?array $transcripts, ?bool $published, ?int $changedBy, ?string $mainLocale = null): array
     {
         $now = $this->clock->now();
         $changed = [];
@@ -46,10 +50,10 @@ final readonly class MediaEditor
             $changed['alt'] = ($changed['alt'] ?? false) || $alt !== $media->altText($locale);
             $changed['caption'] = ($changed['caption'] ?? false) || $caption !== $media->caption($locale);
         }
-        if ($transcript !== null) {
-            $before = $media->transcript();
-            $media->setTranscript($transcript, $now);
-            $changed['transcript'] = $before !== $media->transcript();
+        foreach ($transcripts ?? [] as $locale => $transcript) {
+            $before = $media->transcript($locale);
+            $media->setTranscript($locale, $transcript, $now, $locale === $mainLocale);
+            $changed['transcript'] = ($changed['transcript'] ?? false) || $before !== $media->transcript($locale);
         }
         if ($published !== null && $published !== $media->isPublished()) {
             $published ? $media->publish($now) : $media->unpublish($now);

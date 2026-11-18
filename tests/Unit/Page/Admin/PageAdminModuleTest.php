@@ -41,6 +41,7 @@ final class PageAdminModuleTest extends TestCase
         foreach ([
             PageAdmin::class, BlockData::class, BlockOperation::class, BlockFormView::class, MediaChoices::class,
             PageEditorScreen::class, PageListHandler::class, NewPageHandler::class, PageEditorHandler::class, PageWorkflowHandler::class,
+            \SightPress\Core\Page\Admin\Http\PageTranslationHandler::class,
         ] as $class) {
             self::assertArrayHasKey($class, $registry->services());
         }
@@ -53,6 +54,7 @@ final class PageAdminModuleTest extends TestCase
             'page_admin.list' => ['/admin/pages', PageListHandler::class, ['GET'], $admin],
             'page_admin.new' => ['/admin/pages/new', NewPageHandler::class, ['GET', 'POST'], $admin],
             'page_admin.edit' => ['/admin/pages/{id:[0-9]+}', PageEditorHandler::class, ['GET', 'POST'], $admin],
+            'page_admin.translations' => ['/admin/pages/{id:[0-9]+}/translations', \SightPress\Core\Page\Admin\Http\PageTranslationHandler::class, ['POST'], $admin],
             'page_admin.workflow' => ['/admin/pages/{id:[0-9]+}/workflow', PageWorkflowHandler::class, ['POST'], $admin],
         ], $routes);
         $menu = array_values(array_filter($registry->adminMenu(), static fn ($m) => $m->module === 'page_admin'));

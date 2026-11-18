@@ -66,8 +66,13 @@ final class Media implements MediaFile
     #[ORM\Column(type: Types::JSON)]
     private array $caption = [];
 
+    /** The transcript written before files had one per language: it counts as the main language's. */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $transcript = null;
+
+    /** @var array<string, string>|null locale => text */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $transcripts = null;
 
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $published = false;
@@ -208,9 +213,13 @@ final class Media implements MediaFile
         return $this->caption[$locale] ?? null;
     }
 
-    public function transcript(): ?string
+    /**
+     * The transcript in a language; a file whose transcript was written before files had one per language gives that
+     * one for every language that has none of its own.
+     */
+    public function transcript(string $locale): ?string
     {
-        return $this->transcript;
+        return $this->transcripts[$locale] ?? $this->transcript;
     }
 
     public function uploadedBy(): ?int
@@ -243,15 +252,29 @@ final class Media implements MediaFile
     }
 
     /**
-     * Sets the transcript of a video or audio file; empty text removes it.
+     * The transcript written in this very language, without the one written before files had one per language.
      */
-    public function setTranscript(?string $transcript, DateTimeImmutable $now): void
+    public function ownTranscript(string $locale): ?string
+    {
+        return $this->transcripts[$locale] ?? null;
+    }
+
+    /**
+     * Sets the transcript of a video or audio file in one language; empty text removes it. Setting the main
+     * language's (`$main`) replaces the transcript written before files had one per language.
+     */
+    public function setTranscript(string $locale, ?string $transcript, DateTimeImmutable $now, bool $main = false): void
     {
         if (!$this->kind->hasSpeech()) {
             throw new MediaException('Only video and audio files have a transcript.');
         }
-        $transcript = self::text($transcript, self::TRANSCRIPT_MAX_LENGTH, 'The transcript');
-        $this->transcript = $transcript;
+        if (!LocaleCode::isValid($locale)) {
+            throw new MediaException(sprintf('"%s" is not a locale code such as "en-GB".', $locale));
+        }
+        $this->transcripts = self::withText($this->transcripts ?? [], $locale, $transcript, self::TRANSCRIPT_MAX_LENGTH, 'The transcript');
+        if ($main) {
+            $this->transcript = null;
+        }
         $this->updatedAt = $now;
     }
 
