@@ -48,7 +48,7 @@ final class AdminShellTest extends TestCase
         self::assertStringContainsString('Signed in as Ada', $html);
         self::assertStringContainsString('<form action="/logout" method="post">', $html);
         self::assertMatchesRegularExpression('#<div class="messages" role="status">\s*<p>Your changes have been saved.</p>#', $html);
-        self::assertSame([], Flash::take($session));
+        self::assertSame([], array_map(strval(...), Flash::take($session)));
     }
 
     public function testPutsTheNumberOfErrorsInTheTitle(): void
@@ -81,6 +81,6 @@ final class AdminShellTest extends TestCase
         self::assertSame('/admin/users', $response->getHeaderLine('Location'));
         self::assertSame('no-store', $response->getHeaderLine('Cache-Control'));
         self::assertSame('/admin', $quiet->getHeaderLine('Location'));
-        self::assertSame(['Ada has been invited.'], Flash::take($session));
+        self::assertSame(['Ada has been invited.'], array_map(strval(...), Flash::take($session)));
     }
 }

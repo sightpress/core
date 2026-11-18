@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Media\Admin;
 
+use SightPress\Core\Tests\Support\Text;
 use DateTimeImmutable;
 use Nyholm\Psr7\Stream;
 use Nyholm\Psr7\UploadedFile;
@@ -142,12 +143,12 @@ final class MediaAdminHandlersTest extends TestCase
 
         $media = $this->media->repository()->newest(1)[0];
         self::assertSame(303, $response->getStatusCode());
-        self::assertSame('/admin/media/' . $media->id(), $response->getHeaderLine('Location'));
-        self::assertSame(['Dusk.png has been uploaded. Describe it below, so everyone can understand it.'], Flash::take($this->session));
+        self::assertSame('/admin/media/' . $media->id(), Text::of($response->getHeaderLine('Location')));
+        self::assertSame(['Dusk.png has been uploaded. Describe it below, so everyone can understand it.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         self::assertSame($this->cleo->id(), $media->uploadedBy());
 
         $this->send($this->cleo, new UploadedFile(Stream::create(MediaFixture::png()), 100, UPLOAD_ERR_OK, 'Again.png'));
-        self::assertSame(['Dusk.png is already in the library, so it wasn’t added again. Here it is.'], Flash::take($this->session));
+        self::assertSame(['Dusk.png is already in the library, so it wasn’t added again. Here it is.'], Text::of(array_map(strval(...), Flash::take($this->session))));
     }
 
     public function testTheProgressScriptGetsTheAddressAsJson(): void
@@ -155,17 +156,17 @@ final class MediaAdminHandlersTest extends TestCase
         $response = $this->send($this->cleo, new UploadedFile(Stream::create(MediaFixture::png()), 100, UPLOAD_ERR_OK, 'Dusk.png'), xhr: true);
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
+        self::assertSame('application/json', Text::of($response->getHeaderLine('Content-Type')));
         self::assertSame(json_encode(['location' => '/admin/media/' . $this->media->repository()->newest(1)[0]->id()], JSON_UNESCAPED_SLASHES), (string) $response->getBody());
 
         $refused = $this->send($this->cleo, null, xhr: true);
-        self::assertSame('{"location":"/admin/media"}', (string) $refused->getBody());
+        self::assertSame('{"location":"/admin/media"}', Text::of((string) $refused->getBody()));
     }
 
     public function testARefusedFileIsExplainedInTheLibrarysErrorSummary(): void
     {
         $response = $this->send($this->cleo, new UploadedFile(Stream::create('<svg xmlns="http://www.w3.org/2000/svg"/>'), 40, UPLOAD_ERR_OK, 'logo.svg'));
-        self::assertSame('/admin/media', $response->getHeaderLine('Location'));
+        self::assertSame('/admin/media', Text::of($response->getHeaderLine('Location')));
 
         $library = $this->library($this->cleo);
         self::assertSame(422, $library->getStatusCode());
@@ -203,14 +204,14 @@ final class MediaAdminHandlersTest extends TestCase
         $response = $this->item($this->ada, $picture, ['alt_0' => 'A lighthouse at dusk', 'caption_0' => 'Our lighthouse', 'published' => '1']);
 
         self::assertSame(303, $response->getStatusCode());
-        self::assertSame(['The details of lighthouse.jpg have been saved.'], Flash::take($this->session));
-        self::assertSame(['A lighthouse at dusk', 'Our lighthouse', true], [$picture->altText('en-GB'), $picture->caption('en-GB'), $picture->isPublished()]);
+        self::assertSame(['The details of lighthouse.jpg have been saved.'], Text::of(array_map(strval(...), Flash::take($this->session))));
+        self::assertSame(['A lighthouse at dusk', 'Our lighthouse', true], Text::of([$picture->altText('en-GB'), $picture->caption('en-GB'), $picture->isPublished()]));
         $html = (string) $this->item($this->ada, $picture)->getBody();
         self::assertMatchesRegularExpression('#<img src="[^"]+" alt="A lighthouse at dusk"#', $html);
         self::assertMatchesRegularExpression('#value="1" checked name="published"#', $html);
 
         $this->item($this->ada, $picture, ['alt_0' => 'A lighthouse at dusk', 'caption_0' => 'Our lighthouse', 'published' => '1']);
-        self::assertSame(['Nothing was changed.'], Flash::take($this->session));
+        self::assertSame(['Nothing was changed.'], Text::of(array_map(strval(...), Flash::take($this->session))));
     }
 
     public function testContributorsCantPublishWhateverTheySend(): void
@@ -220,7 +221,7 @@ final class MediaAdminHandlersTest extends TestCase
         $this->item($this->cleo, $picture, ['alt_0' => 'A lighthouse', 'caption_0' => '', 'published' => '1']);
 
         self::assertFalse($picture->isPublished());
-        self::assertSame('A lighthouse', $picture->altText('en-GB'));
+        self::assertSame('A lighthouse', Text::of($picture->altText('en-GB')));
     }
 
     public function testTooLongTextIsExplained(): void
@@ -242,8 +243,8 @@ final class MediaAdminHandlersTest extends TestCase
 
         $html = (string) $this->item($this->ada, $video, site: $site)->getBody();
         self::assertMatchesRegularExpression('#<video src="/media/[0-9a-f]{32}/tour\.mp4" controls preload="metadata"></video>#', $html);
-        self::assertMatchesRegularExpression('#Caption in English \(United Kingdom\) \(optional\)#', $html);
-        self::assertMatchesRegularExpression('#Caption in Portuguese \(Brazil\) \(optional\)#', $html);
+        self::assertMatchesRegularExpression('#Caption in British English \(optional\)#', $html);
+        self::assertMatchesRegularExpression('#Caption in Brazilian Portuguese \(optional\)#', $html);
         self::assertStringNotContainsString('Alt text', $html);
         self::assertStringContainsString('name="transcript_0"', $html);
         self::assertStringContainsString('name="transcript_1"', $html);
@@ -251,7 +252,7 @@ final class MediaAdminHandlersTest extends TestCase
 
         self::assertMatchesRegularExpression('#<audio src="[^"]+" controls preload="metadata"></audio>#', (string) $this->item($this->ada, $audio, site: $site)->getBody());
         $this->item($this->ada, $audio, ['caption_0' => '', 'caption_1' => 'Palestra', 'transcript_0' => 'Hello.', 'transcript_1' => 'Olá.', 'published' => ''], site: $site);
-        self::assertSame(['Palestra', 'Hello.', 'Olá.'], [$audio->caption('pt-BR'), $audio->transcript('en-GB'), $audio->transcript('pt-BR')]);
+        self::assertSame(['Palestra', 'Hello.', 'Olá.'], Text::of([$audio->caption('pt-BR'), $audio->transcript('en-GB'), $audio->transcript('pt-BR')]));
     }
 
     public function testDocumentsHaveNoPreview(): void
@@ -291,10 +292,10 @@ final class MediaAdminHandlersTest extends TestCase
         self::assertNotNull($this->media->repository()->find($id));
 
         $response = $this->delete($this->ada, $picture, 'POST');
-        self::assertSame('/admin/media', $response->getHeaderLine('Location'));
-        self::assertSame(['lighthouse.jpg has been deleted.'], Flash::take($this->session));
+        self::assertSame('/admin/media', Text::of($response->getHeaderLine('Location')));
+        self::assertSame(['lighthouse.jpg has been deleted.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         self::assertNull($this->media->repository()->find($id));
-        self::assertSame([], $this->media->stored());
+        self::assertSame([], Text::of($this->media->stored()));
     }
 
     public function testWhoMayDelete(): void

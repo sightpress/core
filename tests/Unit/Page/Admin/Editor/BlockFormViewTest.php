@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Page\Admin\Editor;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -41,30 +42,30 @@ final class BlockFormViewTest extends TestCase
         $editor = $this->view->build('en-GB', $blocks, previews: ['/blocks/0' => '<p>Preview</p>']);
         $list = $editor->list;
 
-        self::assertSame(['blocks', '/blocks', 'en-gb-blocks', 'blocks', 'Blocks', true, true], [self::get($list, 'kind'), self::get($list, 'pointer'), self::get($list, 'id'), self::get($list, 'name'), self::get($list, 'label'), self::get($list, 'can_add'), self::get($list, 'top_level')]);
+        self::assertSame(['blocks', '/blocks', 'en-gb-blocks', 'blocks', 'Blocks', true, true], Text::of([self::get($list, 'kind'), self::get($list, 'pointer'), self::get($list, 'id'), self::get($list, 'name'), self::get($list, 'label'), self::get($list, 'can_add'), self::get($list, 'top_level')]));
         [$heading, $image, $gone, $nonsense] = self::items(self::get($list, 'blocks'));
-        self::assertSame('Block 1 of 4: Heading', self::get($heading, 'legend'));
-        self::assertSame('block 1, Heading', self::get($heading, 'short'));
-        self::assertSame(['down', 'remove'], self::get($heading, 'moves'));
-        self::assertSame('<p>Preview</p>', self::get($heading, 'preview'));
+        self::assertSame('Block 1 of 4: Heading', Text::of(self::get($heading, 'legend')));
+        self::assertSame('block 1, Heading', Text::of(self::get($heading, 'short')));
+        self::assertSame(['down', 'remove'], Text::of(self::get($heading, 'moves')));
+        self::assertSame('<p>Preview</p>', Text::of(self::get($heading, 'preview')));
         self::assertNull(self::get($heading, 'kept'));
         [$text, $level] = self::items(self::get($heading, 'controls'));
-        self::assertSame(['text', 'Heading text', 'blocks[0][data][text]', 'en-gb-blocks-0-data-text', 'Hello', true, 200], [self::get($text, 'kind'), self::get($text, 'label'), self::get($text, 'name'), self::get($text, 'id'), self::get($text, 'value'), self::get($text, 'required'), self::get($text, 'maxlength')]);
-        self::assertSame(['select', '3', ['2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6']], [self::get($level, 'kind'), self::get($level, 'value'), self::get($level, 'choices')]);
+        self::assertSame(['text', 'Heading text', 'blocks[0][data][text]', 'en-gb-blocks-0-data-text', 'Hello', true, 200], Text::of([self::get($text, 'kind'), self::get($text, 'label'), self::get($text, 'name'), self::get($text, 'id'), self::get($text, 'value'), self::get($text, 'required'), self::get($text, 'maxlength')]));
+        self::assertSame(['select', '3', ['2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6']], Text::of([self::get($level, 'kind'), self::get($level, 'value'), self::get($level, 'choices')]));
         self::assertIsString(self::get($level, 'hint'));
 
-        self::assertSame(['up', 'down', 'remove'], self::get($image, 'moves'));
+        self::assertSame(['up', 'down', 'remove'], Text::of(self::get($image, 'moves')));
         [$media, $alt, $decorative] = self::items(self::get($image, 'controls'));
-        self::assertSame(['media', [4 => 'File 4 (no longer in the media library)']], [self::get($media, 'kind'), self::get($media, 'choices')]);
-        self::assertSame(['', false], [self::get($alt, 'value'), self::get($alt, 'required')]);
-        self::assertSame(['checkbox', true, ''], [self::get($decorative, 'kind'), self::get($decorative, 'checked'), self::get($decorative, 'value')]);
+        self::assertSame(['media', [4 => 'File 4 (no longer in the media library)']], Text::of([self::get($media, 'kind'), self::get($media, 'choices')]));
+        self::assertSame(['', false], Text::of([self::get($alt, 'value'), self::get($alt, 'required')]));
+        self::assertSame(['checkbox', true, ''], Text::of([self::get($decorative, 'kind'), self::get($decorative, 'checked'), self::get($decorative, 'value')]));
 
-        self::assertSame('Block 3 of 4: Unknown block "gone.block"', self::get($gone, 'legend'));
-        self::assertSame('{"keep":"me"}', self::get($gone, 'kept'));
-        self::assertSame([], self::get($gone, 'controls'));
+        self::assertSame('Block 3 of 4: Unknown block "gone.block"', Text::of(self::get($gone, 'legend')));
+        self::assertSame('{"keep":"me"}', Text::of(self::get($gone, 'kept')));
+        self::assertSame([], Text::of(self::get($gone, 'controls')));
         self::assertSame(2, self::get($gone, 'version'));
-        self::assertSame([1, 'Block 4 of 4: Unknown block ""', ['up', 'remove']], [self::get($nonsense, 'version'), self::get($nonsense, 'legend'), self::get($nonsense, 'moves')]);
-        self::assertSame([], $editor->errors);
+        self::assertSame([1, 'Block 4 of 4: Unknown block ""', ['up', 'remove']], Text::of([self::get($nonsense, 'version'), self::get($nonsense, 'legend'), self::get($nonsense, 'moves')]));
+        self::assertSame([], Text::of($editor->errors));
     }
 
     public function testListsInsideBlocksGetFieldsetsOfTheirOwn(): void
@@ -77,27 +78,27 @@ final class BlockFormViewTest extends TestCase
         [$gallery, $columns, $every] = self::items(self::get($list, 'blocks'));
 
         $images = self::get($gallery, 'controls', 0);
-        self::assertSame(['items', 'Picture', true, 'Pictures'], [self::get($images, 'kind'), self::get($images, 'noun'), self::get($images, 'can_add'), self::get($images, 'list_label')]);
-        self::assertSame('Picture 1 of 1', self::get($images, 'items', 0, 'legend'));
-        self::assertSame([], self::get($images, 'items', 0, 'moves'), 'a gallery keeps at least one picture');
-        self::assertSame('blocks[0][data][images][0]', self::get($images, 'items', 0, 'name'));
-        self::assertSame('picture 1', self::get($images, 'items', 0, 'short'));
+        self::assertSame(['items', 'Picture', true, 'Pictures'], Text::of([self::get($images, 'kind'), self::get($images, 'noun'), self::get($images, 'can_add'), self::get($images, 'list_label')]));
+        self::assertSame('Picture 1 of 1', Text::of(self::get($images, 'items', 0, 'legend')));
+        self::assertSame([], Text::of(self::get($images, 'items', 0, 'moves')), 'a gallery keeps at least one picture');
+        self::assertSame('blocks[0][data][images][0]', Text::of(self::get($images, 'items', 0, 'name')));
+        self::assertSame('picture 1', Text::of(self::get($images, 'items', 0, 'short')));
 
         $columnList = self::get($columns, 'controls', 0);
-        self::assertSame(['Column 1 of 2', ['down']], [self::get($columnList, 'items', 0, 'legend'), self::get($columnList, 'items', 0, 'moves')], 'columns keep at least two');
+        self::assertSame(['Column 1 of 2', ['down']], Text::of([self::get($columnList, 'items', 0, 'legend'), self::get($columnList, 'items', 0, 'moves')]), 'columns keep at least two');
         $inside = self::get($columnList, 'items', 0, 'controls', 0);
-        self::assertSame(['blocks', '/blocks/1/data/columns/0/blocks', false, true], [self::get($inside, 'kind'), self::get($inside, 'pointer'), self::get($inside, 'top_level'), self::get($inside, 'can_add')]);
+        self::assertSame(['blocks', '/blocks/1/data/columns/0/blocks', false, true], Text::of([self::get($inside, 'kind'), self::get($inside, 'pointer'), self::get($inside, 'top_level'), self::get($inside, 'can_add')]));
         $choices = self::get($inside, 'add_choices');
         self::assertIsArray($choices);
         self::assertArrayNotHasKey('columns', $choices, 'no columns inside columns');
-        self::assertSame('Block 1 of 1: Heading', self::get($inside, 'blocks', 0, 'legend'));
+        self::assertSame('Block 1 of 1: Heading', Text::of(self::get($inside, 'blocks', 0, 'legend')));
 
         $rows = self::get($every, 'controls', 6);
-        self::assertSame(['Item', 'Item 1 of 2', ['down', 'remove']], [self::get($rows, 'noun'), self::get($rows, 'items', 0, 'legend'), self::get($rows, 'items', 0, 'moves')]);
-        self::assertSame(['checkbox', true], [self::get($every, 'controls', 0, 'kind'), self::get($every, 'controls', 0, 'checked')]);
-        self::assertSame('7', self::get($every, 'controls', 4, 'value'));
-        self::assertSame(['red' => 'Red', 'blue' => 'Blue', '7' => '7'], self::get($every, 'controls', 4, 'choices'));
-        self::assertSame(['email', 'number', 'number'], [self::get($every, 'controls', 5, 'kind'), self::get($every, 'controls', 1, 'kind'), self::get($every, 'controls', 3, 'kind')]);
+        self::assertSame(['Item', 'Item 1 of 2', ['down', 'remove']], Text::of([self::get($rows, 'noun'), self::get($rows, 'items', 0, 'legend'), self::get($rows, 'items', 0, 'moves')]));
+        self::assertSame(['checkbox', true], Text::of([self::get($every, 'controls', 0, 'kind'), self::get($every, 'controls', 0, 'checked')]));
+        self::assertSame('7', Text::of(self::get($every, 'controls', 4, 'value')));
+        self::assertSame(['red' => 'Red', 'blue' => 'Blue', '7' => '7'], Text::of(self::get($every, 'controls', 4, 'choices')));
+        self::assertSame(['email', 'number', 'number'], Text::of([self::get($every, 'controls', 5, 'kind'), self::get($every, 'controls', 1, 'kind'), self::get($every, 'controls', 3, 'kind')]));
     }
 
     public function testPutsEachErrorOnItsFieldOrTheNearestBlockAndListsThemInPageOrder(): void
@@ -115,17 +116,17 @@ final class BlockFormViewTest extends TestCase
             ['id' => 'en-gb-blocks', 'message' => 'Blocks: Something else.'],
             ['id' => 'en-gb-blocks-0-data-text', 'message' => 'Heading text: Fill in this field.'],
             ['id' => 'en-gb-blocks-1', 'message' => 'Block 2 of 2: Image: Something is wrong with this image.'],
-        ], $editor->errors);
+        ], Text::of($editor->errors));
         self::assertIsArray(self::get($editor->list, 'blocks'));
-        self::assertSame(['Fill in this field.'], self::get($editor->list, 'blocks', 0, 'controls', 0, 'errors'));
-        self::assertSame(['Something is wrong with this image.'], self::get($editor->list, 'blocks', 1, 'errors'));
+        self::assertSame(['Fill in this field.'], Text::of(self::get($editor->list, 'blocks', 0, 'controls', 0, 'errors')));
+        self::assertSame(['Something is wrong with this image.'], Text::of(self::get($editor->list, 'blocks', 1, 'errors')));
     }
 
     public function testOffersTheBlockTypesInAlphabeticalOrder(): void
     {
         $top = $this->view->addable(true);
 
-        self::assertSame(['call_to_action', 'columns', 'acme.every_field', 'gallery', 'heading', 'image', 'rich_text'], array_keys($top));
+        self::assertSame(['call_to_action', 'columns', 'acme.every_field', 'gallery', 'heading', 'image', 'rich_text'], Text::of(array_keys($top)));
         self::assertArrayNotHasKey('columns', $this->view->addable(false));
         self::assertArrayHasKey('acme.every_field', $this->view->addable(false));
     }

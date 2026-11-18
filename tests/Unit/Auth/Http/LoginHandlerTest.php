@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Auth\Http;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -39,8 +40,8 @@ final class LoginHandlerTest extends TestCase
         $html = (string) $response->getBody();
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertSame('no-store', $response->getHeaderLine('Cache-Control'));
-        self::assertSame('noindex, nofollow', $response->getHeaderLine('X-Robots-Tag'));
+        self::assertSame('no-store', Text::of($response->getHeaderLine('Cache-Control')));
+        self::assertSame('noindex, nofollow', Text::of($response->getHeaderLine('X-Robots-Tag')));
         self::assertStringContainsString('<title>Sign in - Demo</title>', $html);
         self::assertStringContainsString('<h1>Sign in</h1>', $html);
         self::assertStringContainsString('<form id="sign-in" action="/login" method="post" novalidate>', $html);
@@ -50,7 +51,7 @@ final class LoginHandlerTest extends TestCase
         self::assertStringContainsString('Keep me signed in on this device for 30 days (optional)', $html);
         self::assertStringContainsString('<a href="/login/forgot">Forgot your password?</a>', $html);
         self::assertStringContainsString('<div class="messages" role="status">    <p>You have signed out.</p></div>', $html);
-        self::assertSame([], Flash::take($session), 'a flash message is shown once');
+        self::assertSame([], Text::of(array_map(strval(...), Flash::take($session))), 'a flash message is shown once');
     }
 
     public function testKeepsWhereThePersonCameFromInTheFormAddress(): void
@@ -78,8 +79,8 @@ final class LoginHandlerTest extends TestCase
         $response = $this->post(['email' => 'ada@example.org', 'password' => AuthFixture::PASSWORD], '?return=/admin/pages', $session);
 
         self::assertSame(303, $response->getStatusCode());
-        self::assertSame('/admin/pages', $response->getHeaderLine('Location'));
-        self::assertSame('noindex, nofollow', $response->getHeaderLine('X-Robots-Tag'), 'redirects say it too');
+        self::assertSame('/admin/pages', Text::of($response->getHeaderLine('Location')));
+        self::assertSame('noindex, nofollow', Text::of($response->getHeaderLine('X-Robots-Tag')), 'redirects say it too');
         self::assertSame($user->id(), $session->get(SignIn::SESSION_USER));
         self::assertFalse($response->hasHeader('Set-Cookie'), 'keep me signed in is off unless ticked');
     }
@@ -90,7 +91,7 @@ final class LoginHandlerTest extends TestCase
 
         $response = $this->post(['email' => 'ada@example.org', 'password' => AuthFixture::PASSWORD], '?return=/admin');
 
-        self::assertSame('/', $response->getHeaderLine('Location'));
+        self::assertSame('/', Text::of($response->getHeaderLine('Location')));
     }
 
     public function testTickingKeepMeSignedInSetsTheLongLivedCookie(): void
@@ -99,7 +100,7 @@ final class LoginHandlerTest extends TestCase
 
         $response = $this->post(['email' => 'ada@example.org', 'password' => AuthFixture::PASSWORD, 'remember' => '1']);
 
-        self::assertSame('/admin', $response->getHeaderLine('Location'));
+        self::assertSame('/admin', Text::of($response->getHeaderLine('Location')));
         self::assertStringStartsWith(RememberTokens::SECURE_COOKIE . '=', $response->getHeaderLine('Set-Cookie'));
     }
 
@@ -142,13 +143,13 @@ final class LoginHandlerTest extends TestCase
         $response = $this->handle($request);
 
         self::assertSame(303, $response->getStatusCode());
-        self::assertSame('/about', $response->getHeaderLine('Location'));
+        self::assertSame('/about', Text::of($response->getHeaderLine('Location')));
     }
 
     public function testTheWaitIsInWholeMinutes(): void
     {
-        self::assertSame('You have tried too many times. Wait 1 minute and try again.', AuthPages::tooManyAttempts('tried', 60));
-        self::assertSame('You have tried too many times. Wait 2 minutes and try again.', AuthPages::tooManyAttempts('tried', 61));
+        self::assertSame('You have tried to sign in too many times. Wait 1 minute and try again.', Text::of(AuthPages::tooManyAttempts('tried to sign in', 60)));
+        self::assertSame('You have tried to sign in too many times. Wait 2 minutes and try again.', Text::of(AuthPages::tooManyAttempts('tried to sign in', 61)));
     }
 
     /**
@@ -168,5 +169,11 @@ final class LoginHandlerTest extends TestCase
             $this->auth->database->roles(),
             $this->auth->rememberTokens(),
         )->handle($request);
+    }
+
+    public function testSaysWhatWasTriedTooOften(): void
+    {
+        self::assertSame('You have asked for a code too many times. Wait 3 minutes and try again.', Text::of(AuthPages::tooManyAttempts('asked for a code', 150)));
+        self::assertSame('You have tried a code too many times. Wait 1 minute and try again.', Text::of(AuthPages::tooManyAttempts('tried a code', 1)));
     }
 }

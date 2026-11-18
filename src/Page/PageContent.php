@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page;
 
+use SightPress\Core\Template\Message;
+
 /**
  * What an editor writes for one locale of a page: the title, the slug, the summary, the description for search
  * engines and the blocks. Checked and tidied when it is made, so a page never holds content that breaks these rules.
@@ -67,15 +69,11 @@ final readonly class PageContent
             throw new PageException('Give the page a title.');
         }
         if (mb_strlen($title) > self::TITLE_MAX_LENGTH) {
-            throw new PageException(sprintf('The title must be %d characters or fewer.', self::TITLE_MAX_LENGTH));
+            throw new PageException(new Message('The title must be {max} characters or fewer.', ['max' => (string) self::TITLE_MAX_LENGTH]));
         }
         $slug = $slug === null || trim($slug) === '' ? Slug::fromText($title) : trim($slug);
         if (!Slug::isValid($slug)) {
-            throw new PageException(sprintf(
-                'The address "%s" can only use lower-case letters a to z, digits and single hyphens between them, and be %d characters or fewer.',
-                $slug,
-                Slug::MAX_LENGTH,
-            ));
+            throw new PageException(new Message('The address "{slug}" can only use lower-case letters a to z, digits and single hyphens between them, and be {max} characters or fewer.', ['slug' => $slug, 'max' => (string) Slug::MAX_LENGTH]));
         }
 
         $this->title = $title;
@@ -138,7 +136,7 @@ final readonly class PageContent
             return null;
         }
         if (mb_strlen($text) > $max) {
-            throw new PageException(sprintf('%s must be %d characters or fewer.', $what, $max));
+            throw new PageException(new Message('{what} must be {max} characters or fewer.', ['what' => $what, 'max' => (string) $max]));
         }
 
         return $text;
@@ -152,7 +150,7 @@ final readonly class PageContent
     private static function blocks(array $blocks): array
     {
         if (count($blocks) > self::MAX_BLOCKS) {
-            throw new PageException(sprintf('A page can have at most %d blocks.', self::MAX_BLOCKS));
+            throw new PageException(new Message('A page can have at most {max} blocks.', ['max' => (string) self::MAX_BLOCKS]));
         }
 
         $clean = [];
@@ -167,10 +165,7 @@ final readonly class PageContent
                 || ($block['data'] !== [] && array_is_list($block['data']))
                 || count($block) !== 3
             ) {
-                throw new PageException(sprintf(
-                    'Block %d is not a block: it needs a type, a version from 1 up and its data, and nothing else.',
-                    $index + 1,
-                ));
+                throw new PageException(new Message('Block {index} is not a block: it needs a type, a version from 1 up and its data, and nothing else.', ['index' => $index + 1]));
             }
             /** @var array<string, mixed> $data */
             $data = $block['data'];

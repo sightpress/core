@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Media;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Media\Contract\MediaKind;
@@ -14,6 +16,8 @@ use SightPress\Core\Media\MediaTypes;
 #[CoversClass(MediaTypes::class)]
 #[CoversClass(MediaFormat::class)]
 #[CoversClass(MediaKind::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class MediaTypesTest extends TestCase
 {
     /**
@@ -40,7 +44,7 @@ final class MediaTypesTest extends TestCase
         $format = new MediaTypes()->match($detected, $name);
 
         self::assertNotNull($format);
-        self::assertSame([$mime, $kind, $extension], [$format->mimeType, $format->kind, $format->extension]);
+        self::assertSame([$mime, $kind, $extension], Text::of([$format->mimeType, $format->kind, $format->extension]));
     }
 
     public function testRefusesEverythingElseWhateverTheName(): void
@@ -57,7 +61,7 @@ final class MediaTypesTest extends TestCase
         self::assertSame(
             'You can upload pictures (JPEG, PNG, WebP, GIF), video (MP4, WebM), audio (MP3, M4A, Ogg, WAV) and documents '
             . '(PDF, Word, Excel, PowerPoint, OpenDocument text, OpenDocument spreadsheet, OpenDocument presentation, plain text, CSV, WebVTT captions, ZIP).',
-            new MediaTypes()->summary(),
+            Text::of(new MediaTypes()->summary()),
         );
     }
 
@@ -75,8 +79,8 @@ final class MediaTypesTest extends TestCase
     {
         $types = new MediaTypes();
 
-        self::assertSame('PDF', $types->label('application/pdf'));
-        self::assertSame('WebVTT captions', $types->label('text/vtt'));
+        self::assertSame('PDF', Text::of($types->label('application/pdf')));
+        self::assertSame('WebVTT captions', Text::of($types->label('text/vtt')));
         self::assertNull($types->label('image/svg+xml'));
     }
 

@@ -34,6 +34,19 @@
             <p class="admin-header__user">{{ t('Signed in as {name}', {name: admin_user_name}) }}</p>
             {%- endif %}
             <a href="/account">{{ t('My account') }}</a>
+            {%- if admin_languages|default([])|length > 1 %}
+            <form action="/account/language" method="post" class="admin-header__language">
+                {{ csrf_fields() }}
+                <input type="hidden" name="return" value="{{ current_path() }}">
+                <label for="admin-language">{{ t('Language') }}</label>
+                <select id="admin-language" name="locale">
+                    {%- for language in admin_languages %}
+                    <option value="{{ language.code }}" lang="{{ language.code }}"{% if language.code == admin_language %} selected{% endif %}>{{ language.name }}</option>
+                    {%- endfor %}
+                </select>
+                <button type="submit" class="button button--secondary">{{ t('Change language') }}</button>
+            </form>
+            {%- endif %}
             <form action="/logout" method="post">
                 {{ csrf_fields() }}
                 <button type="submit" class="button button--secondary">{{ t('Sign out') }}</button>

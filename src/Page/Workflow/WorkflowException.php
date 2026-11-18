@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Workflow;
 
+use SightPress\Core\Template\Message;
 use DomainException;
 
 /**
@@ -12,8 +13,19 @@ use DomainException;
  */
 final class WorkflowException extends DomainException
 {
-    public function __construct(string $message, public readonly bool $forbidden = false)
+    private Message $text;
+
+    public function __construct(string|Message $message, public readonly bool $forbidden = false)
     {
-        parent::__construct($message);
+        $this->text = Message::of($message);
+        parent::__construct((string) $this->text);
+    }
+
+    /**
+     * The message, to be shown translated.
+     */
+    public function text(): Message
+    {
+        return $this->text;
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Page\Publish;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -49,7 +50,7 @@ final class PublishCheckerTest extends TestCase
         $report = $this->checker()->check($page);
 
         self::assertTrue($report->canPublish());
-        self::assertSame([], $report->issues);
+        self::assertSame([], Text::of($report->issues));
     }
 
     public function testFindsWhatStopsPublishingAndWhatIsWorthFixing(): void
@@ -74,7 +75,7 @@ final class PublishCheckerTest extends TestCase
                 ['en-GB', 'page.lang_invalid', '/blocks/1'],
                 ['en-GB', 'page.contrast', '/blocks/1'],
             ],
-            array_map(static fn (PublishIssue $issue): array => [$issue->locale, $issue->rule, $issue->pointer], $report->errors()),
+            Text::of(array_map(static fn (PublishIssue $issue): array => [$issue->locale, $issue->rule, $issue->pointer], $report->errors())),
         );
         self::assertSame(
             [
@@ -84,10 +85,10 @@ final class PublishCheckerTest extends TestCase
                 ['en-GB', 'seo.title_duplicate', '/title', 'seo'],
                 ['pt-PT', 'seo.description_long', '/description', 'seo'],
             ],
-            array_map(static fn (PublishIssue $issue): array => [$issue->locale, $issue->rule, $issue->pointer, $issue->kind], $report->warnings()),
+            Text::of(array_map(static fn (PublishIssue $issue): array => [$issue->locale, $issue->rule, $issue->pointer, $issue->kind], $report->warnings())),
         );
-        self::assertSame('Another page is also called "visit US". Give this page a title of its own, so people can tell them apart in search results.', $report->warnings()[3]->message);
-        self::assertSame('Search engines show about 160 characters of the description; this one has 203. Shorten it.', $report->warnings()[4]->message);
+        self::assertSame('Another page is also called "visit US". Give this page a title of its own, so people can tell them apart in search results.', Text::of($report->warnings()[3]->message));
+        self::assertSame('Search engines show about 160 characters of the description; this one has 203. Shorten it.', Text::of($report->warnings()[4]->message));
         self::assertSame(A11ySeverity::Error, $report->issues[0]->severity, 'errors come first');
     }
 
@@ -98,7 +99,7 @@ final class PublishCheckerTest extends TestCase
 
         $report = $this->checker()->check($page);
 
-        self::assertSame([['blocks.invalid', '/blocks/0/type']], array_map(static fn (PublishIssue $issue): array => [$issue->rule, $issue->pointer], $report->errors()));
+        self::assertSame([['blocks.invalid', '/blocks/0/type']], Text::of(array_map(static fn (PublishIssue $issue): array => [$issue->rule, $issue->pointer], $report->errors())));
     }
 
     public function testALanguageTheSiteNoLongerHasWaitsAndCantBePublishedOnItsOwn(): void
@@ -107,10 +108,10 @@ final class PublishCheckerTest extends TestCase
         $this->pages->translated($page, 'pt-PT', new PageContent('Início', null, 'S', 'D'));
         $checker = $this->checker(PageFixture::site(['en-GB']));
 
-        self::assertSame([], $checker->check($page)->issues, 'a removed language doesn\'t stop the page');
+        self::assertSame([], Text::of($checker->check($page)->issues), 'a removed language doesn\'t stop the page');
         $report = $checker->check($page, 'pt-PT');
-        self::assertSame([['pt-PT', 'page.language', '']], array_map(static fn (PublishIssue $issue): array => [$issue->locale, $issue->rule, $issue->pointer], $report->issues));
-        self::assertSame(['3.1.1'], $report->issues[0]->wcag);
+        self::assertSame([['pt-PT', 'page.language', '']], Text::of(array_map(static fn (PublishIssue $issue): array => [$issue->locale, $issue->rule, $issue->pointer], $report->issues)));
+        self::assertSame(['3.1.1'], Text::of($report->issues[0]->wcag));
     }
 
     public function testADraftTranslationIsCheckedWhenItIsPublished(): void
@@ -118,21 +119,21 @@ final class PublishCheckerTest extends TestCase
         $page = $this->pages->editor()->create('en-GB', new PageContent('Home', null, 'S', 'D'));
         $this->pages->editor()->save($page, 'pt-PT', new PageContent('Início'));
 
-        self::assertSame(['en-GB'], array_values(array_unique(array_map(static fn (PublishIssue $issue): string => $issue->locale, [...$this->checker()->check($page)->issues, new PublishIssue('en-GB', A11ySeverity::Warning, PublishIssue::SEO, 'x', 'x', '')]))));
-        self::assertSame(['pt-PT'], array_values(array_unique(array_map(static fn (PublishIssue $issue): string => $issue->locale, $this->checker()->check($page, 'pt-PT')->issues))));
+        self::assertSame(['en-GB'], Text::of(array_values(array_unique(array_map(static fn (PublishIssue $issue): string => $issue->locale, [...$this->checker()->check($page)->issues, new PublishIssue('en-GB', A11ySeverity::Warning, PublishIssue::SEO, 'x', 'x', '')])))));
+        self::assertSame(['pt-PT'], Text::of(array_values(array_unique(array_map(static fn (PublishIssue $issue): string => $issue->locale, $this->checker()->check($page, 'pt-PT')->issues)))));
     }
 
     public function testIssuesLinkToTheirFieldInTheEditor(): void
     {
         $issue = new PublishIssue('pt-BR', A11ySeverity::Warning, PublishIssue::SEO, 'seo.description_missing', 'Add one.', '/description');
 
-        self::assertSame('pt-br-description', $issue->anchor());
-        self::assertSame('en-gb-blocks-3-data-columns-1-blocks-0-data-alt', PublishIssue::anchorFor('en-GB', '/blocks/3/data/columns/1/blocks/0/data/alt'));
-        self::assertSame('en-gb-blocks-0-data-a-b-c', PublishIssue::anchorFor('en-GB', '/blocks/0/data/A~1b~0c'));
-        self::assertSame('en-gb', PublishIssue::anchorFor('en-GB', ''));
-        self::assertSame('portugués (Brasil)', $issue->languageName('es'));
-        self::assertSame('Portuguese (Brazil)', $issue->languageName());
-        self::assertSame('zz', new PublishIssue('zz', A11ySeverity::Warning, PublishIssue::SEO, 'x.y', 'M', '')->languageName('zz'));
+        self::assertSame('pt-br-description', Text::of($issue->anchor()));
+        self::assertSame('en-gb-blocks-3-data-columns-1-blocks-0-data-alt', Text::of(PublishIssue::anchorFor('en-GB', '/blocks/3/data/columns/1/blocks/0/data/alt')));
+        self::assertSame('en-gb-blocks-0-data-a-b-c', Text::of(PublishIssue::anchorFor('en-GB', '/blocks/0/data/A~1b~0c')));
+        self::assertSame('en-gb', Text::of(PublishIssue::anchorFor('en-GB', '')));
+        self::assertSame('portugués (Brasil)', Text::of($issue->languageName('es')));
+        self::assertSame('Portuguese (Brazil)', Text::of($issue->languageName()));
+        self::assertSame('zz', Text::of(new PublishIssue('zz', A11ySeverity::Warning, PublishIssue::SEO, 'x.y', 'M', '')->languageName('zz')));
         self::assertFalse($issue->isError());
         self::assertTrue(new PublishReport([$issue])->canPublish());
     }

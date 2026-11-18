@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Contact;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -12,6 +13,8 @@ use SightPress\Core\Http\Session\Session;
 
 #[CoversClass(ContactForm::class)]
 #[UsesNamespace('SightPress\Core\Http')]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class ContactFormTest extends TestCase
 {
     public function testIdComesFromTheBlockData(): void
@@ -27,8 +30,8 @@ final class ContactFormTest extends TestCase
     {
         $form = ContactForm::form('contact-abc');
 
-        self::assertSame(['name', 'email', 'message'], array_map(static fn ($field): string => $field->name, $form->fields()));
-        self::assertSame(['name', 'email'], [$form->field('name')->autocomplete, $form->field('email')->autocomplete]);
+        self::assertSame(['name', 'email', 'message'], Text::of(array_map(static fn ($field): string => $field->name, $form->fields())));
+        self::assertSame(['name', 'email'], Text::of([$form->field('name')->autocomplete, $form->field('email')->autocomplete]));
     }
 
     public function testRemembersOneSubmissionUntilThePageShowsIt(): void
@@ -37,18 +40,18 @@ final class ContactFormTest extends TestCase
 
         $empty = ContactForm::recall($session, 'contact-a');
         self::assertFalse($empty['sent']);
-        self::assertSame([], $empty['form']->errors());
+        self::assertSame([], Text::of($empty['form']->errors()));
 
         ContactForm::remember($session, 'contact-a', ['name' => 'Ada', 'message' => ''], ['message' => 'Enter your message.'], false);
         ContactForm::remember($session, 'contact-b', ['name' => 'Bob'], [], true);
         $a = ContactForm::recall($session, 'contact-a');
-        self::assertSame(['message' => 'Enter your message.'], $a['form']->errors());
-        self::assertSame('Ada', $a['form']->value('name'));
-        self::assertSame([], ContactForm::recall($session, 'contact-a')['form']->errors());
+        self::assertSame(['message' => 'Enter your message.'], Text::of($a['form']->errors()));
+        self::assertSame('Ada', Text::of($a['form']->value('name')));
+        self::assertSame([], Text::of(ContactForm::recall($session, 'contact-a')['form']->errors()));
 
         $b = ContactForm::recall($session, 'contact-b');
         self::assertTrue($b['sent']);
-        self::assertSame('', $b['form']->value('name'));
+        self::assertSame('', Text::of($b['form']->value('name')));
     }
 
     public function testIgnoresBrokenSessionData(): void
@@ -60,8 +63,8 @@ final class ContactFormTest extends TestCase
 
         $a = ContactForm::recall($session, 'contact-a');
         self::assertFalse($a['sent']);
-        self::assertSame('a@example.org', $a['form']->value('email'));
-        self::assertSame('', $a['form']->value('name'));
+        self::assertSame('a@example.org', Text::of($a['form']->value('email')));
+        self::assertSame('', Text::of($a['form']->value('name')));
         self::assertFalse(ContactForm::recall($session, 'contact-b')['sent']);
     }
 }

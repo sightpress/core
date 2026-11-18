@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Editor;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Content\BlockTypeCatalogue;
 
 /**
@@ -48,7 +49,7 @@ final readonly class BlockOperation
         if ($action === 'remove') {
             array_splice($items, $index, 1);
 
-            return $this->result($document, $listPointer, array_values($items), sprintf('Removed %s.', $what), Pointer::id($locale, $listPointer));
+            return $this->result($document, $listPointer, array_values($items), new Message('Removed {what}.', ['what' => $what]), Pointer::id($locale, $listPointer));
         }
         $to = $action === 'up' ? $index - 1 : $index + 1;
         if ($to < 0 || $to >= $count) {
@@ -60,14 +61,7 @@ final readonly class BlockOperation
         $still = $action === 'up' ? $to > 0 : $to < $count - 1;
         $focus = $moved . '-' . ($still ? $action : ($action === 'up' ? 'down' : 'up'));
 
-        return $this->result($document, $listPointer, $items, sprintf(
-            'Moved %s %s. It is now %s %d of %d.',
-            $what,
-            $action,
-            $list['noun'],
-            $to + 1,
-            $count,
-        ), $focus);
+        return $this->result($document, $listPointer, $items, new Message('Moved {what} {action}. It is now {noun} {to} of {value}.', ['what' => $what, 'action' => $action, 'noun' => Message::of($list['noun']), 'to' => $to + 1, 'value' => (string) $count]), $focus);
     }
 
     /**
@@ -87,10 +81,10 @@ final readonly class BlockOperation
                 return null;
             }
             $items[] = BlockData::blank($type);
-            $message = sprintf('Added a %s block. It is %s %d of %d.', $type->label(), $list['noun'], count($items), count($items));
+            $message = new Message('Added a {label} block. It is {noun} {items} of {items2}.', ['label' => Message::of($type->label()), 'noun' => Message::of($list['noun']), 'items' => (string) count($items), 'items2' => (string) count($items)]);
         } else {
             $items[] = BlockData::skeleton($list['schema']) ?? [];
-            $message = sprintf('Added %s %d of %d.', $list['noun'], count($items), count($items));
+            $message = new Message('Added {noun} {items} of {items2}.', ['noun' => Message::of($list['noun']), 'items' => (string) count($items), 'items2' => (string) count($items)]);
         }
 
         return $this->result($document, $pointer, $items, $message, Pointer::id($locale, $pointer . '/' . (count($items) - 1)));
@@ -100,24 +94,24 @@ final readonly class BlockOperation
      * @param array<string, mixed> $document
      * @param list<mixed>          $items
      */
-    private function result(array $document, string $listPointer, array $items, string $message, string $focus): OperationResult
+    private function result(array $document, string $listPointer, array $items, string|Message $message, string $focus): OperationResult
     {
         $blocks = Pointer::set($document, $listPointer, $items)['blocks'] ?? [];
         /** @var list<array{type: string, version: int, data: array<string, mixed>}> $blocks */
-        return new OperationResult(array_values($blocks), $message . ' Save the page to keep this change.', $focus);
+        return new OperationResult(array_values($blocks), new Message('{change} Save the page to keep this change.', ['change' => Message::of($message)]), $focus);
     }
 
     /**
      * @param array{blocks: bool, schema: array<string, mixed>, noun: string} $list
      */
-    private function describe(array $list, mixed $item, int $index): string
+    private function describe(array $list, mixed $item, int $index): Message
     {
         if (!$list['blocks']) {
-            return sprintf('%s %d', $list['noun'], $index + 1);
+            return new Message('{noun} {index}', ['noun' => Message::of($list['noun']), 'index' => $index + 1]);
         }
         $type = is_array($item) && is_string($item['type'] ?? null) ? $this->types->get($item['type']) : null;
 
-        return sprintf('block %d (%s)', $index + 1, $type?->label() ?? 'unknown');
+        return new Message('block {index} ({unknown})', ['index' => $index + 1, 'unknown' => $type?->label() ?? 'unknown']);
     }
 
     /**

@@ -52,6 +52,8 @@ use Symfony\Component\Validator\Validation;
 #[UsesClass(Translations::class)]
 #[UsesClass(TwigFactory::class)]
 #[UsesClass(Viewer::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class FormRenderingTest extends TestCase
 {
     private TemporaryDirectory $directory;

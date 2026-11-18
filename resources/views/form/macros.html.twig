@@ -20,7 +20,7 @@
             <h2 id="{{ form.id }}-errors-title">{{ t('There is a problem') }}</h2>
             <ul>
                 {%- for error in form.errorSummary %}
-                <li><a href="#{{ error.fieldId }}">{{ error.message }}</a></li>
+                <li><a href="#{{ error.fieldId }}">{{ t(error.message) }}</a></li>
                 {%- endfor %}
             </ul>
         </section>
@@ -41,7 +41,7 @@
 {% endmacro %}
 
 {% macro label_text(field) -%}
-    {{ field.label }}{% if not field.required %} {{ t('(optional)') }}{% endif %}
+    {{ t(field.label) }}{% if not field.required %} {{ t('(optional)') }}{% endif %}
 {%- endmacro %}
 
 {% macro described_by(form, field) -%}
@@ -52,10 +52,10 @@
 {% macro hint_and_error(form, field) %}
     {%- set id = form.fieldId(field.name) -%}
     {%- if field.hint %}
-        <p class="field-hint" id="{{ id }}-hint">{{ field.hint }}</p>
+        <p class="field-hint" id="{{ id }}-hint">{{ t(field.hint) }}</p>
     {%- endif %}
     {%- if form.error(field.name) is not null %}
-        <p class="field-error" id="{{ id }}-error"><span class="visually-hidden">{{ t('Error:') }}</span> {{ form.error(field.name) }}</p>
+        <p class="field-error" id="{{ id }}-error"><span class="visually-hidden">{{ t('Error:') }}</span> {{ t(form.error(field.name)) }}</p>
     {%- endif %}
 {% endmacro %}
 
@@ -81,7 +81,7 @@
                     {%- set checked = type == 'radios' ? value == optionValue ~ '' : (optionValue ~ '') in value %}
                 <div class="field-option">
                     <input type="{{ type == 'radios' ? 'radio' : 'checkbox' }}" id="{{ optionId }}" name="{{ name }}{{ type == 'checkboxes' ? '[]' }}" value="{{ optionValue }}"{% if checked %} checked{% endif %}{% if invalid %} aria-invalid="true"{% endif %}>
-                    <label for="{{ optionId }}">{{ optionLabel }}</label>
+                    <label for="{{ optionId }}">{{ t(optionLabel) }}</label>
                 </div>
                 {%- endfor %}
             </fieldset>
@@ -103,13 +103,13 @@
                 <option value="">{{ t('Choose an option') }}</option>
                 {%- for optionValue, optionLabel in field.choices %}
                 {%- if optionLabel is iterable %}
-                <optgroup label="{{ optionValue }}">
+                <optgroup label="{{ t(optionValue) }}">
                     {%- for groupedValue, groupedLabel in optionLabel %}
-                    <option value="{{ groupedValue }}"{% if value == groupedValue ~ '' %} selected{% endif %}>{{ groupedLabel }}</option>
+                    <option value="{{ groupedValue }}"{% if value == groupedValue ~ '' %} selected{% endif %}>{{ t(groupedLabel) }}</option>
                     {%- endfor %}
                 </optgroup>
                 {%- else %}
-                <option value="{{ optionValue }}"{% if value == optionValue ~ '' %} selected{% endif %}>{{ optionLabel }}</option>
+                <option value="{{ optionValue }}"{% if field.localeChoices and optionValue != 'default' %} lang="{{ optionValue }}"{% endif %}{% if value == optionValue ~ '' %} selected{% endif %}>{{ t(optionLabel) }}</option>
                 {%- endif %}
                 {%- endfor %}
             </select>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media\Entity;
 
+use SightPress\Core\Template\Message;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -244,7 +245,7 @@ final class Media implements MediaFile
     public function describe(string $locale, ?string $alt, ?string $caption, DateTimeImmutable $now): void
     {
         if (!LocaleCode::isValid($locale)) {
-            throw new MediaException(sprintf('"%s" is not a locale code such as "en-GB".', $locale));
+            throw new MediaException(new Message('"{locale}" is not a locale code such as "en-GB".', ['locale' => $locale]));
         }
         $this->alt = self::withText($this->alt, $locale, $alt, self::ALT_MAX_LENGTH, 'The alt text');
         $this->caption = self::withText($this->caption, $locale, $caption, self::CAPTION_MAX_LENGTH, 'The caption');
@@ -269,7 +270,7 @@ final class Media implements MediaFile
             throw new MediaException('Only video and audio files have a transcript.');
         }
         if (!LocaleCode::isValid($locale)) {
-            throw new MediaException(sprintf('"%s" is not a locale code such as "en-GB".', $locale));
+            throw new MediaException(new Message('"{locale}" is not a locale code such as "en-GB".', ['locale' => $locale]));
         }
         $this->transcripts = self::withText($this->transcripts ?? [], $locale, $transcript, self::TRANSCRIPT_MAX_LENGTH, 'The transcript');
         if ($main) {
@@ -315,7 +316,7 @@ final class Media implements MediaFile
             return null;
         }
         if (mb_strlen($text) > $max) {
-            throw new MediaException(sprintf('%s must be %d characters or fewer.', $what, $max));
+            throw new MediaException(new Message('{what} must be {max} characters or fewer.', ['what' => $what, 'max' => (string) $max]));
         }
 
         return $text;

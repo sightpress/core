@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\People\Http;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -73,8 +74,8 @@ final class InviteHandlerTest extends TestCase
 
         self::assertSame(422, $response->getStatusCode());
         self::assertStringContainsString('Select one of the options for “Role”', (string) $response->getBody());
-        self::assertSame([], $this->invitations()->open());
-        self::assertSame([], $this->admin->auth->sent);
+        self::assertSame([], Text::of($this->invitations()->open()));
+        self::assertSame([], Text::of($this->admin->auth->sent));
     }
 
     public function testSendsTheInvitationAndSaysSo(): void
@@ -84,32 +85,32 @@ final class InviteHandlerTest extends TestCase
         $response = $this->handle($bea, ['email' => ' Nia@Example.org ', 'role' => 'contributor', 'first_name' => 'Nia', 'last_name' => '']);
 
         self::assertSame(303, $response->getStatusCode());
-        self::assertSame('/admin/users/invite', $response->getHeaderLine('Location'));
-        self::assertSame(['We have sent an invitation to nia@example.org to join as contributor. Its code works for 7 days.'], Flash::take($this->session));
+        self::assertSame('/admin/users/invite', Text::of($response->getHeaderLine('Location')));
+        self::assertSame(['We have sent an invitation to nia@example.org to join as contributor. Its code works for 7 days.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         $open = $this->invitations()->open();
         self::assertCount(1, $open);
-        self::assertSame(['nia@example.org', 'contributor', 'Nia', null, $bea->id()], [$open[0]->email, $open[0]->role, $open[0]->firstName, $open[0]->lastName, $open[0]->invitedBy]);
+        self::assertSame(['nia@example.org', 'contributor', 'Nia', null, $bea->id()], Text::of([$open[0]->email, $open[0]->role, $open[0]->firstName, $open[0]->lastName, $open[0]->invitedBy]));
 
         self::assertCount(1, $this->admin->auth->sent);
         $email = $this->admin->auth->sent[0];
-        self::assertSame('nia@example.org', $email->getTo()[0]->getAddress());
-        self::assertSame('Ada invited you to Demo', $email->getSubject());
+        self::assertSame('nia@example.org', Text::of($email->getTo()[0]->getAddress()));
+        self::assertSame('Ada invited you to Demo', Text::of($email->getSubject()));
         $text = (string) $email->getTextBody();
         self::assertStringContainsString('Hello Nia,', $text);
         self::assertStringContainsString('Ada has invited you to join Demo as contributor.', $text);
         self::assertStringContainsString('To accept, go to the sign-in page of Demo, choose “Accept an invitation”, and type your email address and this invitation code:', $text);
-        self::assertStringContainsString('The invitation works until 21 November 2026, 12:00 (Europe/London time).', $text);
+        self::assertStringContainsString('The invitation works until 21 Nov 2026, 12:00:00 (Europe/London time).', $text);
         self::assertStringContainsString('The code works for 7 days, and only once.', $text);
         self::assertStringContainsString('We will never send you a link.', $text);
         $code = AuthFixture::codeIn($email);
-        self::assertStringNotContainsString($code, $email->getSubject());
+        self::assertStringNotContainsString($code, (string) $email->getSubject());
         $html = (string) $email->getHtmlBody();
         self::assertStringContainsString(substr($code, 0, 3) . ' ' . substr($code, 3), $html);
-        self::assertStringContainsString('<html lang="en-GB">', $html);
+        self::assertStringContainsString('<html lang="en-GB" dir="ltr">', $html);
         foreach ([$text, $html] as $body) {
             self::assertDoesNotMatchRegularExpression('#https?://|<a\b|www\.|demo\.example|<img\b#i', $body, 'no link, no web address, no image');
         }
-        self::assertSame('nia@example.org', $this->invitations()->verify('nia@example.org', $code, '192.0.2.1')?->email);
+        self::assertSame('nia@example.org', Text::of($this->invitations()->verify('nia@example.org', $code, '192.0.2.1')?->email));
     }
 
     public function testAnAddressWithAnAccountOrRefusedByThePolicyIsExplained(): void
@@ -125,7 +126,7 @@ final class InviteHandlerTest extends TestCase
         $policy->method('problem')->willReturn('Only addresses at example.org can join.');
         $refused = $this->handle($ada, ['email' => 'nia@elsewhere.example', 'role' => 'member'], policy: $policy);
         self::assertStringContainsString('Only addresses at example.org can join.', (string) $refused->getBody());
-        self::assertSame([], $this->invitations()->open());
+        self::assertSame([], Text::of($this->invitations()->open()));
     }
 
     public function testARoleThatCanNoLongerBeGivenIsRefused(): void
@@ -143,7 +144,7 @@ final class InviteHandlerTest extends TestCase
     {
         $this->handle(null, ['email' => 'nia@example.org', 'role' => 'contributor'], permissions: ['admin.access', 'user.invite']);
 
-        self::assertSame('Someone invited you to Demo', $this->admin->auth->sent[0]->getSubject());
+        self::assertSame('Someone invited you to Demo', Text::of($this->admin->auth->sent[0]->getSubject()));
         self::assertStringContainsString("Hello,\n", (string) $this->admin->auth->sent[0]->getTextBody());
     }
 
@@ -160,7 +161,7 @@ final class InviteHandlerTest extends TestCase
             $grants ?? new RoleGrantPolicy($auth->database->roles(), new RecordingEvents()),
             $auth->users,
             $this->invitations(),
-            new InvitationMailer($auth, $auth->templates, $auth->site),
+            new InvitationMailer($auth, $auth->templates, $auth->site, $auth->translations),
             $policy ?? new \SightPress\Core\People\AnyEmailPolicy(),
         );
         $request = $this->admin->request($user, $body === [] ? 'GET' : 'POST', InviteHandler::PATH, $body, $this->session);

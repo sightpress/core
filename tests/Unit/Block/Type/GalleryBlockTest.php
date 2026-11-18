@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Block\Type;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -22,12 +23,12 @@ final class GalleryBlockTest extends TestCase
     {
         $type = new GalleryBlock();
 
-        self::assertSame(['gallery', 'Gallery', 1], [$type->name(), $type->label(), $type->version()]);
+        self::assertSame(['gallery', 'Gallery', 1], Text::of([$type->name(), $type->label(), $type->version()]));
         self::assertStringContainsString('"maxItems":50', (string) json_encode($type->schema()));
-        self::assertSame(['images' => []], $type->upgradeData(1, ['images' => []]));
+        self::assertSame(['images' => []], Text::of($type->upgradeData(1, ['images' => []])));
         self::assertInstanceOf(GalleryAltRule::class, $type->a11yRules()[0]);
-        self::assertSame([['media' => 1]], GalleryBlock::images(['images' => [['media' => 1], 'x']]));
-        self::assertSame([], GalleryBlock::images(['images' => 'x']));
+        self::assertSame([['media' => 1]], Text::of(GalleryBlock::images(['images' => [['media' => 1], 'x']])));
+        self::assertSame([], Text::of(GalleryBlock::images(['images' => 'x'])));
     }
 
     public function testRendersAListOfFigures(): void
@@ -44,11 +45,11 @@ final class GalleryBlockTest extends TestCase
             '<div class="block-gallery"><ul class="block-gallery__items" role="list">'
             . '<li><figure>' . $img . ' alt="Harbour" loading="lazy" decoding="async"><figcaption>At dawn</figcaption></figure></li>'
             . '<li><figure>' . $img . ' alt="" loading="lazy" decoding="async"></figure></li></ul></div>',
-            $type->render($data, $fixture->context()),
+            Text::of($type->render($data, $fixture->context())),
         );
         self::assertStringEndsWith('</ul><figcaption>Our harbour &amp; town</figcaption></figure>', $type->render($data + ['caption' => 'Our harbour & town'], $fixture->context()));
         self::assertStringStartsWith('<figure class="block-gallery">', $type->render($data + ['caption' => 'x'], $fixture->context()));
-        self::assertSame('', $type->render(['images' => [['media' => $draft, 'alt' => 'A']]], $fixture->context()));
+        self::assertSame('', Text::of($type->render(['images' => [['media' => $draft, 'alt' => 'A']]], $fixture->context())));
     }
 
     public function testMarkdownAndStructuredData(): void
@@ -57,12 +58,12 @@ final class GalleryBlockTest extends TestCase
         $context = new PlainBlockContext();
         $data = ['images' => [['media' => 1, 'alt' => 'One'], ['media' => 2, 'decorative' => true]], 'caption' => 'Two pictures'];
 
-        self::assertSame("![One](https://cdn.example/1)\n\n_Two pictures_", $type->renderMarkdown($data, $context));
+        self::assertSame("![One](https://cdn.example/1)\n\n_Two pictures_", Text::of($type->renderMarkdown($data, $context)));
         self::assertSame(
             ['@type' => 'ImageGallery', 'image' => [['@type' => 'ImageObject', 'contentUrl' => 'https://cdn.example/1', 'description' => 'One']], 'description' => 'Two pictures'],
-            $type->structuredData($data, $context),
+            Text::of($type->structuredData($data, $context)),
         );
-        self::assertSame(['@type' => 'ImageGallery', 'image' => [['@type' => 'ImageObject', 'contentUrl' => 'https://cdn.example/1', 'description' => 'One']]], $type->structuredData(['images' => [['media' => 1, 'alt' => 'One']]], $context));
+        self::assertSame(['@type' => 'ImageGallery', 'image' => [['@type' => 'ImageObject', 'contentUrl' => 'https://cdn.example/1', 'description' => 'One']]], Text::of($type->structuredData(['images' => [['media' => 1, 'alt' => 'One']]], $context)));
         self::assertNull($type->structuredData(['images' => [['media' => 2, 'decorative' => true]]], $context));
     }
 
@@ -71,8 +72,8 @@ final class GalleryBlockTest extends TestCase
         $issues = new GalleryAltRule()->check(['images' => [['media' => 1, 'alt' => 'Fine'], ['media' => 2], ['media' => 3, 'alt' => 'IMG_0042']]]);
 
         self::assertSame(
-            [['image.alt_missing', '/images/1/alt', A11ySeverity::Error, 'Picture 2: Describe the image, or mark it as decorative.'], ['image.alt_file_name', '/images/2/alt', A11ySeverity::Warning, 'Picture 3: The alt text looks like a file name. Describe what the image shows.']],
-            array_map(static fn ($issue): array => [$issue->rule, $issue->field, $issue->severity, $issue->message], $issues),
+            [['image.alt_missing', '/images/1/alt', A11ySeverity::Error, 'Describe the image, or mark it as decorative.'], ['image.alt_file_name', '/images/2/alt', A11ySeverity::Warning, 'The alt text looks like a file name. Describe what the image shows.']],
+            Text::of(array_map(static fn ($issue): array => [$issue->rule, $issue->field, $issue->severity, $issue->message], $issues)),
         );
     }
 }

@@ -1,0 +1,4841 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en-GB" trgLang="pt-PT">
+  <file id="messages">
+    <unit id="007f12925f863798">
+      <segment>
+        <source>"{email}" is not a valid email address.</source>
+        <target>"{email}" não é um endereço de email válido.</target>
+      </segment>
+    </unit>
+    <unit id="ba8742d6d79b75c4">
+      <segment>
+        <source>"{label}" can't be done now: the page is {from}.</source>
+        <target>Não é possível "{label}" agora: a página está {from}.</target>
+      </segment>
+    </unit>
+    <unit id="04c58d5ff66793fa">
+      <segment>
+        <source>"{lang}" is not a language code. Use a code such as "fr" or "pt-BR".</source>
+        <target>"{lang}" não é um código de idioma. Use um código como "fr" ou "pt-BR".</target>
+      </segment>
+    </unit>
+    <unit id="841f4cba4705ff77">
+      <segment>
+        <source>"{layout}" is not a layout name such as "default" or "home".</source>
+        <target>"{layout}" não é um nome de esquema, como "default" ou "home".</target>
+      </segment>
+    </unit>
+    <unit id="eb3c52b599e277d6">
+      <segment>
+        <source>"{locale}" is not a locale code such as "en-GB".</source>
+        <target>"{locale}" não é um código de idioma, como "en-GB".</target>
+      </segment>
+    </unit>
+    <unit id="bff8bb82dc963fb1">
+      <segment>
+        <source>"{timezone}" is not a time zone. Use an IANA time zone such as "Europe/London".</source>
+        <target>"{timezone}" não é um fuso horário. Use um fuso horário IANA, como "Europe/Lisbon".</target>
+      </segment>
+    </unit>
+    <unit id="0059798b7f7023e4">
+      <segment>
+        <source>(optional)</source>
+        <target>(opcional)</target>
+      </segment>
+    </unit>
+    <unit id="4a43d11d27793f9e">
+      <segment>
+        <source>, page {page} of {pages}</source>
+        <target>, página {page} de {pages}</target>
+      </segment>
+    </unit>
+    <unit id="17a2552ef847eb3c">
+      <segment>
+        <source>1 entry</source>
+        <target>1 registo</target>
+      </segment>
+    </unit>
+    <unit id="f5be93a4a20971d0">
+      <segment>
+        <source>1 error:</source>
+        <target>1 erro:</target>
+      </segment>
+    </unit>
+    <unit id="9cdb3d8d4844b88e">
+      <segment>
+        <source>1 page matches</source>
+        <target>1 página corresponde</target>
+      </segment>
+    </unit>
+    <unit id="273db90e050b3632">
+      <segment>
+        <source>1 problem stops this page being published</source>
+        <target>1 problema impede a publicação desta página</target>
+      </segment>
+    </unit>
+    <unit id="12f9ee52c899e379">
+      <segment>
+        <source>2 starts a main part of the page, 3 a part of that, and so on. The page title is the only level 1.</source>
+        <target>2 inicia uma parte principal da página, 3 uma parte dessa, e assim por diante. O título da página é o único de nível 1.</target>
+      </segment>
+    </unit>
+    <unit id="9cf224f961eae4fb">
+      <segment>
+        <source>2 to 4 columns side by side on wide screens, one after another on narrow ones.</source>
+        <target>2 a 4 colunas lado a lado em ecrãs largos, uma depois da outra em ecrãs estreitos.</target>
+      </segment>
+    </unit>
+    <unit id="0d1fa0dfcc9e3821">
+      <segment>
+        <source>6-digit code</source>
+        <target>código de 6 dígitos</target>
+      </segment>
+    </unit>
+    <unit id="dec2a89361238d51">
+      <segment>
+        <source>A "{label}" block can't sit inside another block.</source>
+        <target>Um bloco "{label}" não pode ficar dentro de outro bloco.</target>
+      </segment>
+    </unit>
+    <unit id="201fa15e6ed200aa">
+      <segment>
+        <source>A JPEG, PNG or WebP picture, up to {max_bytes} MB. It is cropped to a square from the middle.</source>
+        <target>Uma imagem JPEG, PNG ou WebP, até {max_bytes} MB. É recortada num quadrado a partir do centro.</target>
+      </segment>
+    </unit>
+    <unit id="0e90718a0675813c">
+      <segment>
+        <source>A WebVTT captions file (.vtt) from the media library.</source>
+        <target>Um ficheiro de legendas WebVTT (.vtt) da biblioteca de multimédia.</target>
+      </segment>
+    </unit>
+    <unit id="23c5290860776ab4">
+      <segment>
+        <source>A custom role: {label}.</source>
+        <target>Uma função personalizada: {label}.</target>
+      </segment>
+    </unit>
+    <unit id="bda1657c0992da2a">
+      <segment>
+        <source>A date was left out because it isn’t a day such as 2026-11-17.</source>
+        <target>Uma data ficou de fora porque não é um dia, como 2026-11-17.</target>
+      </segment>
+    </unit>
+    <unit id="a8bdfe8f1fcd9e59">
+      <segment>
+        <source>A day, in the site’s time zone ({zone}).</source>
+        <target>Um dia, no fuso horário do site ({zone}).</target>
+      </segment>
+    </unit>
+    <unit id="8951a3cc6f7b602b">
+      <segment>
+        <source>A file from the media library.</source>
+        <target>Um ficheiro da biblioteca de multimédia.</target>
+      </segment>
+    </unit>
+    <unit id="56c6d09c4af3c112">
+      <segment>
+        <source>A full web address such as https://example.org, or an address on this site such as /events.</source>
+        <target>Um endereço web completo, como https://example.org, ou um endereço deste site, como /eventos.</target>
+      </segment>
+    </unit>
+    <unit id="29171dd79e243fe5">
+      <segment>
+        <source>A language tag such as en-GB. Leave it empty for the page's language.</source>
+        <target>Uma etiqueta de idioma, como pt-PT. Deixe em branco para usar o idioma da página.</target>
+      </segment>
+    </unit>
+    <unit id="225030ee9e7b3a0d">
+      <segment>
+        <source>A link has no text. Give every link text that says where it goes.</source>
+        <target>Uma ligação não tem texto. Dê a cada ligação um texto que diga para onde vai.</target>
+      </segment>
+    </unit>
+    <unit id="52c319d3eb1e35fa">
+      <segment>
+        <source>A media checksum must be a SHA-256 hash in lower-case hex.</source>
+        <target>A soma de verificação de um ficheiro tem de ser um hash SHA-256 em hexadecimal minúsculo.</target>
+      </segment>
+    </unit>
+    <unit id="e233b24593d5ee21">
+      <segment>
+        <source>A media key must be 32 lower-case hex characters.</source>
+        <target>A chave de um ficheiro tem de ter 32 caracteres hexadecimais minúsculos.</target>
+      </segment>
+    </unit>
+    <unit id="82b6f34869936a14">
+      <segment>
+        <source>A menu entry is either a page or a link.</source>
+        <target>Uma entrada de menu é uma página ou uma ligação.</target>
+      </segment>
+    </unit>
+    <unit id="9cc99126d170c63a">
+      <segment>
+        <source>A page can have at most {max} blocks.</source>
+        <target>Uma página pode ter no máximo {max} blocos.</target>
+      </segment>
+    </unit>
+    <unit id="bc35bed99e2dbdbf">
+      <segment>
+        <source>A page can't be moved under itself or under one of its own subpages.</source>
+        <target>Uma página não pode ser movida para debaixo de si própria nem de uma das suas subpáginas.</target>
+      </segment>
+    </unit>
+    <unit id="f142d9e908f34520">
+      <segment>
+        <source>A page needs to be saved before it gets its place in the tree.</source>
+        <target>Uma página tem de ser guardada antes de ter o seu lugar na árvore.</target>
+      </segment>
+    </unit>
+    <unit id="0f02ddbb725fb26d">
+      <segment>
+        <source>A page of this site, such as /contact, or a full address such as https://example.org.</source>
+        <target>Uma página deste site, como /contacto, ou um endereço completo, como https://example.org.</target>
+      </segment>
+    </unit>
+    <unit id="5ab49fc083432126">
+      <segment>
+        <source>A page you can’t open</source>
+        <target>Uma página que não pode abrir</target>
+      </segment>
+    </unit>
+    <unit id="de200aa07dedd766">
+      <segment>
+        <source>A password hash can't be empty.</source>
+        <target>O hash de uma palavra-passe não pode estar vazio.</target>
+      </segment>
+    </unit>
+    <unit id="2d3b8686330cdedf">
+      <segment>
+        <source>A picture from the media library.</source>
+        <target>Uma imagem da biblioteca de multimédia.</target>
+      </segment>
+    </unit>
+    <unit id="2577d4b2318fc055">
+      <segment>
+        <source>A picture needs both a width and a height of at least 1 pixel.</source>
+        <target>Uma imagem precisa de largura e altura de pelo menos 1 píxel.</target>
+      </segment>
+    </unit>
+    <unit id="f5e86012b0eaff31">
+      <segment>
+        <source>A sound file from the media library.</source>
+        <target>Um ficheiro de som da biblioteca de multimédia.</target>
+      </segment>
+    </unit>
+    <unit id="939c9ee3ad52ea23">
+      <segment>
+        <source>A video from the media library.</source>
+        <target>Um vídeo da biblioteca de multimédia.</target>
+      </segment>
+    </unit>
+    <unit id="29b725a37e648efe">
+      <segment>
+        <source>AI crawlers</source>
+        <target>Rastreadores de IA</target>
+      </segment>
+    </unit>
+    <unit id="6a6397a5acb13348">
+      <segment>
+        <source>About the page</source>
+        <target>Sobre a página</target>
+      </segment>
+    </unit>
+    <unit id="a253af2869e66e0b">
+      <segment>
+        <source>About the site</source>
+        <target>Sobre o site</target>
+      </segment>
+    </unit>
+    <unit id="ec8d4d0ec7a6ba48">
+      <segment>
+        <source>Accept an invitation</source>
+        <target>Aceitar um convite</target>
+      </segment>
+    </unit>
+    <unit id="ff8059dc6752afdd">
+      <segment>
+        <source>Actions</source>
+        <target>Ações</target>
+      </segment>
+    </unit>
+    <unit id="8f27dd2091dd413c">
+      <segment>
+        <source>Add a captions file, or say that the video has no speech.</source>
+        <target>Adicione um ficheiro de legendas ou indique que o vídeo não tem fala.</target>
+      </segment>
+    </unit>
+    <unit id="d78f78ba893ada5d">
+      <segment>
+        <source>Add a language</source>
+        <target>Adicionar um idioma</target>
+      </segment>
+    </unit>
+    <unit id="b1109578faeffc9b">
+      <segment>
+        <source>Add a link</source>
+        <target>Adicionar uma ligação</target>
+      </segment>
+    </unit>
+    <unit id="ca18fd7475a0b71e">
+      <segment>
+        <source>Add a page</source>
+        <target>Adicionar uma página</target>
+      </segment>
+    </unit>
+    <unit id="b09e4fcba1ad369f">
+      <segment>
+        <source>Add a transcript of what is said and shown, for people who can't see or hear the video.</source>
+        <target>Adicione uma transcrição do que é dito e mostrado, para quem não pode ver ou ouvir o vídeo.</target>
+      </segment>
+    </unit>
+    <unit id="01ea6af5c8e871da">
+      <segment>
+        <source>Add a transcript, for people who can't hear the audio.</source>
+        <target>Adicione uma transcrição, para quem não pode ouvir o áudio.</target>
+      </segment>
+    </unit>
+    <unit id="b3295f0a2532bb28">
+      <segment>
+        <source>Add a {thing}</source>
+        <target>Adicionar {thing}</target>
+      </segment>
+    </unit>
+    <unit id="96ab9f9f2ceb4e1d">
+      <segment>
+        <source>Add at least {{ limit }}.</source>
+        <target>Adicione pelo menos {{ limit }}.</target>
+      </segment>
+    </unit>
+    <unit id="328e818521e4efde">
+      <segment>
+        <source>Add block</source>
+        <target>Adicionar bloco</target>
+      </segment>
+    </unit>
+    <unit id="7ef7c4415c8ea5de">
+      <segment>
+        <source>Add language</source>
+        <target>Adicionar idioma</target>
+      </segment>
+    </unit>
+    <unit id="dfe9ca4d0f96ed0a">
+      <segment>
+        <source>Add link</source>
+        <target>Adicionar ligação</target>
+      </segment>
+    </unit>
+    <unit id="ae764a4a4d8bb1e9">
+      <segment>
+        <source>Add page</source>
+        <target>Adicionar página</target>
+      </segment>
+    </unit>
+    <unit id="11673112c3dfa89c">
+      <segment>
+        <source>Add pictures, video, audio and files.</source>
+        <target>Adicione imagens, vídeo, áudio e ficheiros.</target>
+      </segment>
+    </unit>
+    <unit id="a5fc2478b82afe6c">
+      <segment>
+        <source>Added a {label} block. It is {noun} {items} of {items2}.</source>
+        <target>Foi adicionado um bloco {label}. É {noun} {items} de {items2}.</target>
+      </segment>
+    </unit>
+    <unit id="253f82797bf5a8fc">
+      <segment>
+        <source>Added {added}. Translate pages into it from each page’s editor.</source>
+        <target>Foi adicionado: {added}. Traduza as páginas a partir do editor de cada página.</target>
+      </segment>
+    </unit>
+    <unit id="b2ea461200b088b7">
+      <segment>
+        <source>Added {noun} {items} of {items2}.</source>
+        <target>Foi adicionado {noun} {items} de {items2}.</target>
+      </segment>
+    </unit>
+    <unit id="56ef8f20955f2564">
+      <segment>
+        <source>Address</source>
+        <target>Endereço</target>
+      </segment>
+    </unit>
+    <unit id="b0f86c86b2569d2f">
+      <segment>
+        <source>Address of the original</source>
+        <target>Endereço do original</target>
+      </segment>
+    </unit>
+    <unit id="a8376f3cdce8decc">
+      <segment>
+        <source>Address: {url}</source>
+        <target>Endereço: {url}</target>
+      </segment>
+    </unit>
+    <unit id="42418964a20f472d">
+      <segment>
+        <source>Addresses start with</source>
+        <target>Os endereços começam por</target>
+      </segment>
+    </unit>
+    <unit id="c1c224b03cd9bc7b">
+      <segment>
+        <source>Admin</source>
+        <target>Administração</target>
+      </segment>
+    </unit>
+    <unit id="903542125c003f8f">
+      <segment>
+        <source>All pages</source>
+        <target>Todas as páginas</target>
+      </segment>
+    </unit>
+    <unit id="061e01aaef1f6aa2">
+      <segment>
+        <source>All pages (1)</source>
+        <target>Todas as páginas (1)</target>
+      </segment>
+    </unit>
+    <unit id="02ac9d318c8d33fc">
+      <segment>
+        <source>All pages ({count})</source>
+        <target>Todas as páginas ({count})</target>
+      </segment>
+    </unit>
+    <unit id="16f89824f56a6359">
+      <segment>
+        <source>Alt text</source>
+        <target>Texto alternativo</target>
+      </segment>
+    </unit>
+    <unit id="ed3c9d0eb9a38766">
+      <segment>
+        <source>Alt text in {language}</source>
+        <target>Texto alternativo em {language}</target>
+      </segment>
+    </unit>
+    <unit id="1767f181e0e8f6cf">
+      <segment>
+        <source>Alt text must be {{ limit }} characters or fewer</source>
+        <target>O texto alternativo pode ter no máximo {{ limit }} caracteres</target>
+      </segment>
+    </unit>
+    <unit id="b53f3ff91b5b7904">
+      <segment>
+        <source>Alternative text</source>
+        <target>Texto alternativo</target>
+      </segment>
+    </unit>
+    <unit id="16824499c0c8a776">
+      <segment>
+        <source>An SVG logo must be 512 KB or smaller.</source>
+        <target>Um logótipo SVG tem de ter 512 KB ou menos.</target>
+      </segment>
+    </unit>
+    <unit id="b10533f60ffab30f">
+      <segment>
+        <source>An account without a password can't be activated; set a password first.</source>
+        <target>Uma conta sem palavra-passe não pode ser ativada; defina primeiro uma palavra-passe.</target>
+      </segment>
+    </unit>
+    <unit id="b37bb429ea8cb1b6">
+      <segment>
+        <source>An avatar needs a file path.</source>
+        <target>Um avatar precisa de um caminho de ficheiro.</target>
+      </segment>
+    </unit>
+    <unit id="43786f7b5c2aada4">
+      <segment>
+        <source>Another account already uses {email}.</source>
+        <target>Outra conta já usa {email}.</target>
+      </segment>
+    </unit>
+    <unit id="51f7d5de980f3380">
+      <segment>
+        <source>Another page is also called "{title}". Give this page a title of its own, so people can tell them apart in search results.</source>
+        <target>Outra página também se chama "{title}". Dê a esta página um título próprio, para que as pessoas as distingam nos resultados de pesquisa.</target>
+      </segment>
+    </unit>
+    <unit id="224776b25589e5cd">
+      <segment>
+        <source>Any state</source>
+        <target>Qualquer estado</target>
+      </segment>
+    </unit>
+    <unit id="8d486bb2d3f85d1b">
+      <segment>
+        <source>Anyone</source>
+        <target>Qualquer pessoa</target>
+      </segment>
+    </unit>
+    <unit id="b963d27ae3bc880a">
+      <segment>
+        <source>Apply themes</source>
+        <target>Aplicar temas</target>
+      </segment>
+    </unit>
+    <unit id="6007acbe30b2cd98">
+      <segment>
+        <source>Approve</source>
+        <target>Aprovar</target>
+      </segment>
+    </unit>
+    <unit id="233f3946b2d0b92e">
+      <segment>
+        <source>Approve, publish and unpublish pages.</source>
+        <target>Aprovar, publicar e despublicar páginas.</target>
+      </segment>
+    </unit>
+    <unit id="87b42e40c2a290e0">
+      <segment>
+        <source>Approved</source>
+        <target>Aprovada</target>
+      </segment>
+    </unit>
+    <unit id="47e90ca237781d16">
+      <segment>
+        <source>Approved. It can be published now.</source>
+        <target>Aprovada. Já pode ser publicada.</target>
+      </segment>
+    </unit>
+    <unit id="0e50b40628d605ce">
+      <segment>
+        <source>Archive pages</source>
+        <target>Arquivar páginas</target>
+      </segment>
+    </unit>
+    <unit id="bdb86505f8062d15">
+      <segment>
+        <source>Archived</source>
+        <target>Arquivada</target>
+      </segment>
+    </unit>
+    <unit id="7756faecccba93a2">
+      <segment>
+        <source>Ask search engines and AI search engines not to list this page</source>
+        <target>Pedir aos motores de pesquisa e aos motores de pesquisa de IA que não listem esta página</target>
+      </segment>
+    </unit>
+    <unit id="91f9d3ce4e6d173f">
+      <segment>
+        <source>At least {min_length} characters, including {kinds}.</source>
+        <target>Pelo menos {min_length} caracteres, incluindo {kinds}.</target>
+      </segment>
+    </unit>
+    <unit id="66526bedc52e023f">
+      <segment>
+        <source>At least {min_length} characters. A few unrelated words make a strong password that is easy to remember.</source>
+        <target>Pelo menos {min_length} caracteres. Algumas palavras sem relação entre si fazem uma palavra-passe forte e fácil de lembrar.</target>
+      </segment>
+    </unit>
+    <unit id="bc1b88907d3b748a">
+      <segment>
+        <source>Audio</source>
+        <target>Áudio</target>
+      </segment>
+    </unit>
+    <unit id="e4d36f9a4e22d3a2">
+      <segment>
+        <source>Audit log</source>
+        <target>Registo de auditoria</target>
+      </segment>
+    </unit>
+    <unit id="1f0cc35745fb7f9f">
+      <segment>
+        <source>Avatar colour "{color}" must be written as #rrggbb in lower case.</source>
+        <target>A cor do avatar "{color}" tem de ser escrita como #rrggbb em minúsculas.</target>
+      </segment>
+    </unit>
+    <unit id="d378c5c1d5622eff">
+      <segment>
+        <source>Back to media</source>
+        <target>Voltar à multimédia</target>
+      </segment>
+    </unit>
+    <unit id="cd7925d972bea462">
+      <segment>
+        <source>Back to people</source>
+        <target>Voltar às pessoas</target>
+      </segment>
+    </unit>
+    <unit id="71fe31ccd37c3268">
+      <segment>
+        <source>Back to sign in</source>
+        <target>Voltar ao início de sessão</target>
+      </segment>
+    </unit>
+    <unit id="67cfa4b79bb023cf">
+      <segment>
+        <source>Back to site settings</source>
+        <target>Voltar às definições do site</target>
+      </segment>
+    </unit>
+    <unit id="7fe5fc645b6cc30f">
+      <segment>
+        <source>Back to the pages</source>
+        <target>Voltar às páginas</target>
+      </segment>
+    </unit>
+    <unit id="ea1596ca8d7d05c2">
+      <segment>
+        <source>Back to the site settings</source>
+        <target>Voltar às definições do site</target>
+      </segment>
+    </unit>
+    <unit id="5d4b008ca70e5029">
+      <segment>
+        <source>Bing Webmaster Tools verification code</source>
+        <target>Código de verificação do Bing Webmaster Tools</target>
+      </segment>
+    </unit>
+    <unit id="68d3069f5b7a8d4a">
+      <segment>
+        <source>Block {index} is not a block: it needs a type, a version from 1 up and its data, and nothing else.</source>
+        <target>O bloco {index} não é um bloco: precisa de um tipo, de uma versão a partir de 1 e dos seus dados, e de mais nada.</target>
+      </segment>
+    </unit>
+    <unit id="4d5267c8bd035348">
+      <segment>
+        <source>Block {index} of {value}: {label}</source>
+        <target>Bloco {index} de {value}: {label}</target>
+      </segment>
+    </unit>
+    <unit id="1cd5a6687bb76e39">
+      <segment>
+        <source>Blocks</source>
+        <target>Blocos</target>
+      </segment>
+    </unit>
+    <unit id="d417aa16da364524">
+      <segment>
+        <source>Branding</source>
+        <target>Imagem de marca</target>
+      </segment>
+    </unit>
+    <unit id="2bd873d6c734e63e">
+      <segment>
+        <source>Breadcrumb</source>
+        <target>Caminho</target>
+      </segment>
+    </unit>
+    <unit id="ec208ead74fa7337">
+      <segment>
+        <source>Button text</source>
+        <target>Texto do botão</target>
+      </segment>
+    </unit>
+    <unit id="c48cd231858e1cec">
+      <segment>
+        <source>Call to action</source>
+        <target>Chamada para ação</target>
+      </segment>
+    </unit>
+    <unit id="87d296ec94898c86">
+      <segment>
+        <source>Caption</source>
+        <target>Legenda</target>
+      </segment>
+    </unit>
+    <unit id="6bf2ed0e6639d866">
+      <segment>
+        <source>Caption in {language}</source>
+        <target>Legenda em {language}</target>
+      </segment>
+    </unit>
+    <unit id="a3378ea8ebbc597c">
+      <segment>
+        <source>Caption of the gallery</source>
+        <target>Legenda da galeria</target>
+      </segment>
+    </unit>
+    <unit id="43bf6af8e2d9b895">
+      <segment>
+        <source>Captions</source>
+        <target>Legendas</target>
+      </segment>
+    </unit>
+    <unit id="009ed110badf6e7b">
+      <segment>
+        <source>Change language</source>
+        <target>Mudar de idioma</target>
+      </segment>
+    </unit>
+    <unit id="3ac62fc736d0c372">
+      <segment>
+        <source>Change pages anyone wrote.</source>
+        <target>Alterar páginas escritas por qualquer pessoa.</target>
+      </segment>
+    </unit>
+    <unit id="59730480de70673d">
+      <segment>
+        <source>Change pages they wrote.</source>
+        <target>Alterar as páginas que escreveram.</target>
+      </segment>
+    </unit>
+    <unit id="3f9c991f63a9a376">
+      <segment>
+        <source>Change password</source>
+        <target>Mudar a palavra-passe</target>
+      </segment>
+    </unit>
+    <unit id="a43a8d8cfd29b9b8">
+      <segment>
+        <source>Change role</source>
+        <target>Mudar a função</target>
+      </segment>
+    </unit>
+    <unit id="af4192f42f3f9209">
+      <segment>
+        <source>Change the languages</source>
+        <target>Mudar os idiomas</target>
+      </segment>
+    </unit>
+    <unit id="bb597922b06752dd">
+      <segment>
+        <source>Change the main and footer menus.</source>
+        <target>Alterar o menu principal e o menu do rodapé.</target>
+      </segment>
+    </unit>
+    <unit id="39979d6654fc1bcd">
+      <segment>
+        <source>Change the role of any user, and deactivate accounts.</source>
+        <target>Mudar a função de qualquer utilizador e desativar contas.</target>
+      </segment>
+    </unit>
+    <unit id="5fc2310a755b5206">
+      <segment>
+        <source>Change the site's name, profile, branding and other settings.</source>
+        <target>Alterar o nome, o perfil, a imagem de marca e outras definições do site.</target>
+      </segment>
+    </unit>
+    <unit id="b3848685436faacf">
+      <segment>
+        <source>Change your details in My account</source>
+        <target>Altere os seus dados em A minha conta</target>
+      </segment>
+    </unit>
+    <unit id="2a6141e43be0c212">
+      <segment>
+        <source>Changed</source>
+        <target>Alterado</target>
+      </segment>
+    </unit>
+    <unit id="d20f7cd2fbed23b2">
+      <segment>
+        <source>Changing the main language changes the addresses of the pages in the old and the new main language. Links to their old addresses stop working.</source>
+        <target>Mudar o idioma principal muda os endereços das páginas no idioma principal antigo e no novo. As ligações para os endereços antigos deixam de funcionar.</target>
+      </segment>
+    </unit>
+    <unit id="56705b8191556193">
+      <segment>
+        <source>Choose a file from the media library.</source>
+        <target>Escolha um ficheiro da biblioteca de multimédia.</target>
+      </segment>
+    </unit>
+    <unit id="e38bc21697727c9a">
+      <segment>
+        <source>Choose a file to upload.</source>
+        <target>Escolha um ficheiro para carregar.</target>
+      </segment>
+    </unit>
+    <unit id="833b8512168fcc88">
+      <segment>
+        <source>Choose a new password</source>
+        <target>Escolha uma nova palavra-passe</target>
+      </segment>
+    </unit>
+    <unit id="e8c63d0348a38ba2">
+      <segment>
+        <source>Choose a picture to upload.</source>
+        <target>Escolha uma imagem para carregar.</target>
+      </segment>
+    </unit>
+    <unit id="aef4076f194a6de6">
+      <segment>
+        <source>Choose an option</source>
+        <target>Escolha uma opção</target>
+      </segment>
+    </unit>
+    <unit id="f031e7ea7dc59260">
+      <segment>
+        <source>Choose one of the options.</source>
+        <target>Escolha uma das opções.</target>
+      </segment>
+    </unit>
+    <unit id="c8a50c818e2a05bd">
+      <segment>
+        <source>Choose the language to add</source>
+        <target>Escolha o idioma a adicionar</target>
+      </segment>
+    </unit>
+    <unit id="3ac159e1a3b3a2ab">
+      <segment>
+        <source>Choose the site's theme.</source>
+        <target>Escolher o tema do site.</target>
+      </segment>
+    </unit>
+    <unit id="6a97c8601a0aa71f">
+      <segment>
+        <source>Choose your password</source>
+        <target>Escolha a sua palavra-passe</target>
+      </segment>
+    </unit>
+    <unit id="651d7e2ee68dd15b">
+      <segment>
+        <source>Choose {field}</source>
+        <target>Escolha {field}</target>
+      </segment>
+    </unit>
+    <unit id="6abb008e42cedef5">
+      <segment>
+        <source>Choosing a layout</source>
+        <target>Escolher um esquema</target>
+      </segment>
+    </unit>
+    <unit id="7d9eb7acb13e2462">
+      <segment>
+        <source>Close</source>
+        <target>Fechar</target>
+      </segment>
+    </unit>
+    <unit id="340f463033e0fd5d">
+      <segment>
+        <source>Code</source>
+        <target>Código</target>
+      </segment>
+    </unit>
+    <unit id="c3401508872584e9">
+      <segment>
+        <source>Code works until</source>
+        <target>O código funciona até</target>
+      </segment>
+    </unit>
+    <unit id="3fdc9a587693f9e6">
+      <segment>
+        <source>Column</source>
+        <target>Coluna</target>
+      </segment>
+    </unit>
+    <unit id="53aade77cd69a77b">
+      <segment>
+        <source>Columns</source>
+        <target>Colunas</target>
+      </segment>
+    </unit>
+    <unit id="d80097d086dd7512">
+      <segment>
+        <source>Contact email address</source>
+        <target>Endereço de email de contacto</target>
+      </segment>
+    </unit>
+    <unit id="2520a0ba56639359">
+      <segment>
+        <source>Contact form</source>
+        <target>Formulário de contacto</target>
+      </segment>
+    </unit>
+    <unit id="92eee4a4930f5e8e">
+      <segment>
+        <source>Contact phone number</source>
+        <target>Número de telefone de contacto</target>
+      </segment>
+    </unit>
+    <unit id="47bd29075f8b8019">
+      <segment>
+        <source>Content</source>
+        <target>Conteúdo</target>
+      </segment>
+    </unit>
+    <unit id="31fbef162594de01">
+      <segment>
+        <source>Continue</source>
+        <target>Continuar</target>
+      </segment>
+    </unit>
+    <unit id="862d3b2696cfbc19">
+      <segment>
+        <source>Create my account</source>
+        <target>Criar a minha conta</target>
+      </segment>
+    </unit>
+    <unit id="054fee38aa210573">
+      <segment>
+        <source>Create pages</source>
+        <target>Criar páginas</target>
+      </segment>
+    </unit>
+    <unit id="9449e88a94c71f1d">
+      <segment>
+        <source>Create roles and change what they allow.</source>
+        <target>Criar funções e alterar o que permitem.</target>
+      </segment>
+    </unit>
+    <unit id="67b696468610b879">
+      <segment>
+        <source>Dashboard</source>
+        <target>Painel</target>
+      </segment>
+    </unit>
+    <unit id="c1a1042c8235286c">
+      <segment>
+        <source>Dates and times are shown in it to visitors, and to people who haven’t chosen their own.</source>
+        <target>As datas e horas são mostradas neste fuso aos visitantes e a quem não escolheu o seu.</target>
+      </segment>
+    </unit>
+    <unit id="6fd83268dde1c4c8">
+      <segment>
+        <source>Dates and times are shown in this time zone.</source>
+        <target>As datas e horas são mostradas neste fuso horário.</target>
+      </segment>
+    </unit>
+    <unit id="5e31b73d3d36bee7">
+      <segment>
+        <source>Deactivate account</source>
+        <target>Desativar a conta</target>
+      </segment>
+    </unit>
+    <unit id="18200e0b87ac25cd">
+      <segment>
+        <source>Deactivate {name}</source>
+        <target>Desativar {name}</target>
+      </segment>
+    </unit>
+    <unit id="8dd26ec1bc9769ac">
+      <segment>
+        <source>Delete page</source>
+        <target>Eliminar a página</target>
+      </segment>
+    </unit>
+    <unit id="2938f6a74c475cee">
+      <segment>
+        <source>Delete pages</source>
+        <target>Eliminar páginas</target>
+      </segment>
+    </unit>
+    <unit id="862e90092a7ae82b">
+      <segment>
+        <source>Delete pages for good.</source>
+        <target>Eliminar páginas definitivamente.</target>
+      </segment>
+    </unit>
+    <unit id="8314cd6e5b4d1c92">
+      <segment>
+        <source>Delete this file</source>
+        <target>Eliminar este ficheiro</target>
+      </segment>
+    </unit>
+    <unit id="3cf8146e529f1e42">
+      <segment>
+        <source>Delete {name}</source>
+        <target>Eliminar {name}</target>
+      </segment>
+    </unit>
+    <unit id="a4b982a9e0bc2413">
+      <segment>
+        <source>Delete {name}?</source>
+        <target>Eliminar {name}?</target>
+      </segment>
+    </unit>
+    <unit id="f83c2abfde5a5fcb">
+      <segment>
+        <source>Describe the image, or mark it as decorative.</source>
+        <target>Descreva a imagem ou marque-a como decorativa.</target>
+      </segment>
+    </unit>
+    <unit id="43f6eafd1b516de1">
+      <segment>
+        <source>Describe what the video shows in the transcript, for people who can't see it.</source>
+        <target>Descreva na transcrição o que o vídeo mostra, para quem não o pode ver.</target>
+      </segment>
+    </unit>
+    <unit id="ebf1b2336d7badc0">
+      <segment>
+        <source>Description for search engines</source>
+        <target>Descrição para os motores de pesquisa</target>
+      </segment>
+    </unit>
+    <unit id="45989de49fb7f66d">
+      <segment>
+        <source>Details</source>
+        <target>Detalhes</target>
+      </segment>
+    </unit>
+    <unit id="914182d5e25f69e1">
+      <segment>
+        <source>Dimensions</source>
+        <target>Dimensões</target>
+      </segment>
+    </unit>
+    <unit id="2b7f6a84de917e38">
+      <segment>
+        <source>Display name</source>
+        <target>Nome a mostrar</target>
+      </segment>
+    </unit>
+    <unit id="21eb3ca3e267af93">
+      <segment>
+        <source>Do you want to sign out of {site}?</source>
+        <target>Quer terminar a sessão em {site}?</target>
+      </segment>
+    </unit>
+    <unit id="b96ae23c5eba4138">
+      <segment>
+        <source>Download the whole log as a CSV file</source>
+        <target>Descarregar o registo completo como ficheiro CSV</target>
+      </segment>
+    </unit>
+    <unit id="d1aa6a70d6840eb3">
+      <segment>
+        <source>Download these entries as a CSV file</source>
+        <target>Descarregar estes registos como ficheiro CSV</target>
+      </segment>
+    </unit>
+    <unit id="ebf12ef47cf575b3">
+      <segment>
+        <source>Draft</source>
+        <target>Rascunho</target>
+      </segment>
+    </unit>
+    <unit id="fd21c3bfdb29ad22">
+      <segment>
+        <source>Edit any page</source>
+        <target>Editar qualquer página</target>
+      </segment>
+    </unit>
+    <unit id="d8a33eb0524d1b09">
+      <segment>
+        <source>Edit own pages</source>
+        <target>Editar as próprias páginas</target>
+      </segment>
+    </unit>
+    <unit id="fd3be4d6b0c8a97b">
+      <segment>
+        <source>Edit the {language} translation</source>
+        <target>Editar a tradução em {language}</target>
+      </segment>
+    </unit>
+    <unit id="8198d077be014f3b">
+      <segment>
+        <source>Edit “{title}”</source>
+        <target>Editar “{title}”</target>
+      </segment>
+    </unit>
+    <unit id="f2488fd4ef4adbc6">
+      <segment>
+        <source>Email address</source>
+        <target>Endereço de email</target>
+      </segment>
+    </unit>
+    <unit id="1b00d2ac8cb22b85">
+      <segment>
+        <source>Email address:</source>
+        <target>Endereço de email:</target>
+      </segment>
+    </unit>
+    <unit id="848f0ca2c125e4dc">
+      <segment>
+        <source>Email subject</source>
+        <target>Assunto do email</target>
+      </segment>
+    </unit>
+    <unit id="5bafec02e2558a28">
+      <segment>
+        <source>Enter a number for “{field}”</source>
+        <target>Escreva um número em “{field}”</target>
+      </segment>
+    </unit>
+    <unit id="2c1678c721775709">
+      <segment>
+        <source>Enter a real date for “{field}”</source>
+        <target>Escreva uma data real em “{field}”</target>
+      </segment>
+    </unit>
+    <unit id="23d3a3c23e5a81b3">
+      <segment>
+        <source>Enter a web address in the right format, like https://example.com</source>
+        <target>Escreva um endereço web no formato certo, como https://example.com</target>
+      </segment>
+    </unit>
+    <unit id="a0c3df554e3414b1">
+      <segment>
+        <source>Enter a web address starting with https://, an address on this site starting with /, or a mailto: or tel: link.</source>
+        <target>Escreva um endereço web que comece por https://, um endereço deste site que comece por / ou uma ligação mailto: ou tel:.</target>
+      </segment>
+    </unit>
+    <unit id="9043475b1fc7c981">
+      <segment>
+        <source>Enter a whole number, such as 10</source>
+        <target>Escreva um número inteiro, como 10</target>
+      </segment>
+    </unit>
+    <unit id="bc8f316043076396">
+      <segment>
+        <source>Enter a {what}.</source>
+        <target>Escreva {what}.</target>
+      </segment>
+    </unit>
+    <unit id="84a6bb7491d2cac7">
+      <segment>
+        <source>Enter an email address in the right format, like name@example.com</source>
+        <target>Escreva um endereço de email no formato certo, como nome@example.com</target>
+      </segment>
+    </unit>
+    <unit id="d92d082ed49ad1e4">
+      <segment>
+        <source>Enter an email address such as name@example.org.</source>
+        <target>Escreva um endereço de email, como nome@example.org.</target>
+      </segment>
+    </unit>
+    <unit id="ffdee41cba99d290">
+      <segment>
+        <source>Enter the 6 digits of the code, like 123 456</source>
+        <target>Escreva os 6 dígitos do código, como 123 456</target>
+      </segment>
+    </unit>
+    <unit id="ac7622f7aa547539">
+      <segment>
+        <source>Enter the 6-digit code</source>
+        <target>Escreva o código de 6 dígitos</target>
+      </segment>
+    </unit>
+    <unit id="2b10ccd5ca679294">
+      <segment>
+        <source>Enter the email address you sign in with. We will email you a 6-digit code to type on the next page.</source>
+        <target>Escreva o endereço de email com que inicia sessão. Vamos enviar-lhe por email um código de 6 dígitos para escrever na página seguinte.</target>
+      </segment>
+    </unit>
+    <unit id="62fd9988e2dff052">
+      <segment>
+        <source>Enter your code</source>
+        <target>Escreva o seu código</target>
+      </segment>
+    </unit>
+    <unit id="a9e125721d614fac">
+      <segment>
+        <source>Enter {field}</source>
+        <target>Preencha {field}</target>
+      </segment>
+    </unit>
+    <unit id="0f37fca8fbb91800">
+      <segment>
+        <source>Error code: {code}</source>
+        <target>Código do erro: {code}</target>
+      </segment>
+    </unit>
+    <unit id="617062906764f3b8">
+      <segment>
+        <source>Error:</source>
+        <target>Erro:</target>
+      </segment>
+    </unit>
+    <unit id="70d1b24e9cfb8c2c">
+      <segment>
+        <source>Every page can be written in each of these languages. Pages in the main language have addresses without a language part; the others start with the language code.</source>
+        <target>Cada página pode ser escrita em cada um destes idiomas. As páginas no idioma principal têm endereços sem a parte do idioma; as outras começam pelo código do idioma.</target>
+      </segment>
+    </unit>
+    <unit id="30617e60d6a1f8ba">
+      <segment>
+        <source>Every site always has a logo, an icon and a share picture: until you upload your own, they are made from the site name.</source>
+        <target>Todos os sites têm sempre um logótipo, um ícone e uma imagem de partilha: enquanto não carregar os seus, são feitos a partir do nome do site.</target>
+      </segment>
+    </unit>
+    <unit id="052ac92a1fb60792">
+      <segment>
+        <source>Everyone with an account, sorted by {column}, A to Z</source>
+        <target>Todas as pessoas com conta, ordenadas por {column}, de A a Z</target>
+      </segment>
+    </unit>
+    <unit id="2dd8a3f32c115b68">
+      <segment>
+        <source>Everyone with an account, sorted by {column}, Z to A</source>
+        <target>Todas as pessoas com conta, ordenadas por {column}, de Z a A</target>
+      </segment>
+    </unit>
+    <unit id="75304cf77db08b6e">
+      <segment>
+        <source>Everything</source>
+        <target>Tudo</target>
+      </segment>
+    </unit>
+    <unit id="6ad9fd6476cd8173">
+      <segment>
+        <source>Everything said and shown, as text, for people who can't watch or hear the video.</source>
+        <target>Tudo o que é dito e mostrado, em texto, para quem não pode ver ou ouvir o vídeo.</target>
+      </segment>
+    </unit>
+    <unit id="b3582d219214e96b">
+      <segment>
+        <source>Everything said, as text, for people who can't hear the recording.</source>
+        <target>Tudo o que é dito, em texto, para quem não pode ouvir a gravação.</target>
+      </segment>
+    </unit>
+    <unit id="ef8f39ba8acd0740">
+      <segment>
+        <source>Everything that is said, and other sounds that matter, for people who can’t hear it. Pages with this file show a link to it.</source>
+        <target>Tudo o que é dito, e outros sons importantes, para quem não pode ouvir. As páginas com este ficheiro mostram uma ligação para a transcrição.</target>
+      </segment>
+    </unit>
+    <unit id="50009ce1da4d15e1">
+      <segment>
+        <source>File</source>
+        <target>Ficheiro</target>
+      </segment>
+    </unit>
+    <unit id="c2574e9445b91308">
+      <segment>
+        <source>File download</source>
+        <target>Transferência de ficheiro</target>
+      </segment>
+    </unit>
+    <unit id="ce2925d1572cce2b">
+      <segment>
+        <source>File to upload</source>
+        <target>Ficheiro a carregar</target>
+      </segment>
+    </unit>
+    <unit id="6fccaa3102b23b1b">
+      <segment>
+        <source>File {current} (no longer in the media library)</source>
+        <target>Ficheiro {current} (já não está na biblioteca de multimédia)</target>
+      </segment>
+    </unit>
+    <unit id="abc7e9892806b047">
+      <segment>
+        <source>Files</source>
+        <target>Ficheiros</target>
+      </segment>
+    </unit>
+    <unit id="3c25aece102727cf">
+      <segment>
+        <source>Files, newest first ({count} in all)</source>
+        <target>Ficheiros, mais recentes primeiro ({count} no total)</target>
+      </segment>
+    </unit>
+    <unit id="35a238faf5f16aba">
+      <segment>
+        <source>Fill in this field.</source>
+        <target>Preencha este campo.</target>
+      </segment>
+    </unit>
+    <unit id="526f6a3215654715">
+      <segment>
+        <source>Find entries</source>
+        <target>Procurar registos</target>
+      </segment>
+    </unit>
+    <unit id="e3011326d8ffcc7b">
+      <segment>
+        <source>Find pages</source>
+        <target>Procurar páginas</target>
+      </segment>
+    </unit>
+    <unit id="702ef921ed1d89bf">
+      <segment>
+        <source>First name</source>
+        <target>Nome próprio</target>
+      </segment>
+    </unit>
+    <unit id="84c11cf7fe021639">
+      <segment>
+        <source>Fix before publishing</source>
+        <target>A corrigir antes de publicar</target>
+      </segment>
+    </unit>
+    <unit id="26c87bb51e6978fe">
+      <segment>
+        <source>Footer</source>
+        <target>Rodapé</target>
+      </segment>
+    </unit>
+    <unit id="357956504457e190">
+      <segment>
+        <source>Footer menu</source>
+        <target>Menu do rodapé</target>
+      </segment>
+    </unit>
+    <unit id="1a3783e4c1771bca">
+      <segment>
+        <source>For an organisation, its registered name, if it differs from the site name. Leave it empty otherwise.</source>
+        <target>No caso de uma organização, o nome registado, se for diferente do nome do site. Caso contrário, deixe em branco.</target>
+      </segment>
+    </unit>
+    <unit id="d011a1f74f246fc2">
+      <segment>
+        <source>For example what you changed, or what needs fixing. At most 1000 characters.</source>
+        <target>Por exemplo, o que alterou ou o que é preciso corrigir. No máximo 1000 caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="aced5d34227b06ea">
+      <segment>
+        <source>For the account {email}.</source>
+        <target>Para a conta {email}.</target>
+      </segment>
+    </unit>
+    <unit id="80f5f19a23c0035e">
+      <segment>
+        <source>For your security, a form only works for a while after you open it, and only on this website.</source>
+        <target>Por segurança, um formulário só funciona durante algum tempo depois de ser aberto, e só neste site.</target>
+      </segment>
+    </unit>
+    <unit id="afd25fdf17c7f534">
+      <segment>
+        <source>Forgot your password?</source>
+        <target>Esqueceu-se da palavra-passe?</target>
+      </segment>
+    </unit>
+    <unit id="218197693424e015">
+      <segment>
+        <source>From</source>
+        <target>De</target>
+      </segment>
+    </unit>
+    <unit id="788bd22024fa60ac">
+      <segment>
+        <source>From Bing Webmaster Tools, with the "meta tag" method: only the code in content="…".</source>
+        <target>Do Bing Webmaster Tools, com o método "meta tag": só o código em content="…".</target>
+      </segment>
+    </unit>
+    <unit id="d97c8d4e567d13b6">
+      <segment>
+        <source>From Google Search Console, when you add the site there with the "HTML tag" method: only the code in content="…".</source>
+        <target>Da Google Search Console, quando adiciona o site com o método "Etiqueta HTML": só o código em content="…".</target>
+      </segment>
+    </unit>
+    <unit id="db1d483d015e4e90">
+      <segment>
+        <source>From Yandex Webmaster, with the "meta tag" method: only the code in content="…".</source>
+        <target>Do Yandex Webmaster, com o método "meta tag": só o código em content="…".</target>
+      </segment>
+    </unit>
+    <unit id="d25010e826504bae">
+      <segment>
+        <source>Full legal name</source>
+        <target>Nome legal completo</target>
+      </segment>
+    </unit>
+    <unit id="f13a64ba2fea87ef">
+      <segment>
+        <source>Full name</source>
+        <target>Nome completo</target>
+      </segment>
+    </unit>
+    <unit id="352cfc749e55222e">
+      <segment>
+        <source>Gallery</source>
+        <target>Galeria</target>
+      </segment>
+    </unit>
+    <unit id="070351e3bfb6696c">
+      <segment>
+        <source>Give the link a label.</source>
+        <target>Dê um nome à ligação.</target>
+      </segment>
+    </unit>
+    <unit id="753af4c73750ed02">
+      <segment>
+        <source>Give the page a title.</source>
+        <target>Dê um título à página.</target>
+      </segment>
+    </unit>
+    <unit id="803f5b51a49b5490">
+      <segment>
+        <source>Given to search engines with the site’s details, so people can reach you. Leave it empty to keep it private.</source>
+        <target>Dado aos motores de pesquisa com os dados do site, para que as pessoas o possam contactar. Deixe em branco para o manter privado.</target>
+      </segment>
+    </unit>
+    <unit id="6c19b783fd6796e5">
+      <segment>
+        <source>Go back, reload the page and send the form again.</source>
+        <target>Volte atrás, recarregue a página e envie o formulário outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="ef1fc008f4c9acd8">
+      <segment>
+        <source>Go to My account</source>
+        <target>Ir para A minha conta</target>
+      </segment>
+    </unit>
+    <unit id="27a0d553bf2983ca">
+      <segment>
+        <source>Go to sign in</source>
+        <target>Ir para o início de sessão</target>
+      </segment>
+    </unit>
+    <unit id="2882ffb62b611c9f">
+      <segment>
+        <source>Go to the admin panel</source>
+        <target>Ir para a administração</target>
+      </segment>
+    </unit>
+    <unit id="adceddedfd5962e3">
+      <segment>
+        <source>Go to the home page</source>
+        <target>Ir para a página inicial</target>
+      </segment>
+    </unit>
+    <unit id="552163f3b9392634">
+      <segment>
+        <source>Google Search Console verification code</source>
+        <target>Código de verificação da Google Search Console</target>
+      </segment>
+    </unit>
+    <unit id="0d7d12ac624c66e6">
+      <segment>
+        <source>Grid</source>
+        <target>Grelha</target>
+      </segment>
+    </unit>
+    <unit id="b34f17f02ecf0307">
+      <segment>
+        <source>Heading</source>
+        <target>Título</target>
+      </segment>
+    </unit>
+    <unit id="9301c48a8a9c4589">
+      <segment>
+        <source>Heading text</source>
+        <target>Texto do título</target>
+      </segment>
+    </unit>
+    <unit id="ec6b334e36ce8a7e">
+      <segment>
+        <source>Hello {name},</source>
+        <target>Olá, {name},</target>
+      </segment>
+    </unit>
+    <unit id="dafe7694460f4e37">
+      <segment>
+        <source>Hello,</source>
+        <target>Olá,</target>
+      </segment>
+    </unit>
+    <unit id="b8b1a80738820c43">
+      <segment>
+        <source>Hide the pages under</source>
+        <target>Esconder as páginas debaixo de</target>
+      </segment>
+    </unit>
+    <unit id="3a78695388b38b5c">
+      <segment>
+        <source>Home</source>
+        <target>Início</target>
+      </segment>
+    </unit>
+    <unit id="11d58b08de98e059">
+      <segment>
+        <source>Home page</source>
+        <target>Página inicial</target>
+      </segment>
+    </unit>
+    <unit id="e6b2970d4dc89b45">
+      <segment>
+        <source>How a search result could look</source>
+        <target>Como poderia ficar um resultado de pesquisa</target>
+      </segment>
+    </unit>
+    <unit id="93fccf1aa11ee4db">
+      <segment>
+        <source>How do I choose a layout?</source>
+        <target>Como escolho um esquema?</target>
+      </segment>
+    </unit>
+    <unit id="8f86a232bbd2f5eb">
+      <segment>
+        <source>If there is an account for that address, we have emailed it a 6-digit code. The code works for {duration}, and only once.</source>
+        <target>Se existir uma conta para esse endereço, enviámos-lhe por email um código de 6 dígitos. O código funciona durante {duration} e só uma vez.</target>
+      </segment>
+    </unit>
+    <unit id="5833a166f25ae09d">
+      <segment>
+        <source>If you did not ask for this, you can ignore this email: nothing changes until the code is used.</source>
+        <target>Se não pediu isto, pode ignorar este email: nada muda enquanto o código não for usado.</target>
+      </segment>
+    </unit>
+    <unit id="9e8e69a6a9eb04dd">
+      <segment>
+        <source>If you look after this server, create a site and link this address to it.</source>
+        <target>Se é responsável por este servidor, crie um site e associe-lhe este endereço.</target>
+      </segment>
+    </unit>
+    <unit id="321c2c005347bbd2">
+      <segment>
+        <source>If you pasted the web address, check you copied the entire address.</source>
+        <target>Se colou o endereço web, verifique se copiou o endereço inteiro.</target>
+      </segment>
+    </unit>
+    <unit id="95dcb1f2e11f9cfd">
+      <segment>
+        <source>If you think you should have access, ask the person who looks after this website.</source>
+        <target>Se acha que devia ter acesso, peça à pessoa responsável por este site.</target>
+      </segment>
+    </unit>
+    <unit id="251d7c8df34da1a8">
+      <segment>
+        <source>If you typed the web address, check it is correct.</source>
+        <target>Se escreveu o endereço web, verifique se está correto.</target>
+      </segment>
+    </unit>
+    <unit id="f286776611ef7068">
+      <segment>
+        <source>If you weren’t expecting this, you can ignore this email: no account is made until the code is used.</source>
+        <target>Se não estava à espera disto, pode ignorar este email: nenhuma conta é criada enquanto o código não for usado.</target>
+      </segment>
+    </unit>
+    <unit id="1aa4cb0bcca76e92">
+      <segment>
+        <source>Image</source>
+        <target>Imagem</target>
+      </segment>
+    </unit>
+    <unit id="e314adc21a562ff3">
+      <segment>
+        <source>In the trash</source>
+        <target>No lixo</target>
+      </segment>
+    </unit>
+    <unit id="32c719e3b25887fd">
+      <segment>
+        <source>Information:</source>
+        <target>Informação:</target>
+      </segment>
+    </unit>
+    <unit id="bdc60ce300748bda">
+      <segment>
+        <source>Invitations not yet accepted</source>
+        <target>Convites ainda não aceites</target>
+      </segment>
+    </unit>
+    <unit id="27bf0f2d3f3f5490">
+      <segment>
+        <source>Invite people</source>
+        <target>Convidar pessoas</target>
+      </segment>
+    </unit>
+    <unit id="517120c0c35c63f7">
+      <segment>
+        <source>Invite people to the site with a role they are allowed to give.</source>
+        <target>Convidar pessoas para o site com uma função que possam atribuir.</target>
+      </segment>
+    </unit>
+    <unit id="9b7639e8de286c00">
+      <segment>
+        <source>Invite someone</source>
+        <target>Convidar alguém</target>
+      </segment>
+    </unit>
+    <unit id="c7a6f15607da6325">
+      <segment>
+        <source>Invited by</source>
+        <target>Convidado por</target>
+      </segment>
+    </unit>
+    <unit id="a07e82c73be3667b">
+      <segment>
+        <source>It is then also left out of the sitemap and llms.txt.</source>
+        <target>Também fica fora do mapa do site e do llms.txt.</target>
+      </segment>
+    </unit>
+    <unit id="ce88e3d0735abde8">
+      <segment>
+        <source>It uses the saved translation: save your changes first. Visitors see it once the page itself is published.</source>
+        <target>Usa a tradução guardada: guarde primeiro as suas alterações. Os visitantes veem-na quando a própria página estiver publicada.</target>
+      </segment>
+    </unit>
+    <unit id="7b9ba3c88cb71c0f">
+      <segment>
+        <source>Join {name}</source>
+        <target>Juntar-se a {name}</target>
+      </segment>
+    </unit>
+    <unit id="a3ee8a66a35bd62a">
+      <segment>
+        <source>Keep alt text under 250 characters; put longer descriptions in the caption or the text.</source>
+        <target>Mantenha o texto alternativo abaixo de 250 caracteres; coloque descrições mais longas na legenda ou no texto.</target>
+      </segment>
+    </unit>
+    <unit id="b44c0be20c1245f2">
+      <segment>
+        <source>Keep me signed in on this device for 30 days</source>
+        <target>Manter a sessão iniciada neste dispositivo durante 30 dias</target>
+      </segment>
+    </unit>
+    <unit id="59ed4f3c39404008">
+      <segment>
+        <source>Keep the comment to {max} characters or fewer.</source>
+        <target>O comentário pode ter no máximo {max} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="15911fa03c012569">
+      <segment>
+        <source>Keep the file and go back</source>
+        <target>Manter o ficheiro e voltar</target>
+      </segment>
+    </unit>
+    <unit id="b5603e6613fa5760">
+      <segment>
+        <source>Keep {language}</source>
+        <target>Manter {language}</target>
+      </segment>
+    </unit>
+    <unit id="f5387f9bb6ed7031">
+      <segment>
+        <source>Kind</source>
+        <target>Tipo</target>
+      </segment>
+    </unit>
+    <unit id="a4fe65264ef7dbb3">
+      <segment>
+        <source>Language</source>
+        <target>Idioma</target>
+      </segment>
+    </unit>
+    <unit id="f67e3afe1d58b156">
+      <segment>
+        <source>Language of the captions</source>
+        <target>Idioma das legendas</target>
+      </segment>
+    </unit>
+    <unit id="201dbbc3231e98a5">
+      <segment>
+        <source>Language to add</source>
+        <target>Idioma a adicionar</target>
+      </segment>
+    </unit>
+    <unit id="318655cea4bd2096">
+      <segment>
+        <source>Languages</source>
+        <target>Idiomas</target>
+      </segment>
+    </unit>
+    <unit id="661c5b3823baa584">
+      <segment>
+        <source>Languages of the site, main language first</source>
+        <target>Idiomas do site, primeiro o principal</target>
+      </segment>
+    </unit>
+    <unit id="02fff3ed8d7d677b">
+      <segment>
+        <source>Languages:</source>
+        <target>Idiomas:</target>
+      </segment>
+    </unit>
+    <unit id="7b4888049459f04a">
+      <segment>
+        <source>Last name</source>
+        <target>Apelido</target>
+      </segment>
+    </unit>
+    <unit id="382ac5f308f76c24">
+      <segment>
+        <source>Last updated</source>
+        <target>Última atualização</target>
+      </segment>
+    </unit>
+    <unit id="a511909161e1b84f">
+      <segment>
+        <source>Layout</source>
+        <target>Esquema</target>
+      </segment>
+    </unit>
+    <unit id="253f90712d048f07">
+      <segment>
+        <source>Leave it empty to use the site’s share image.</source>
+        <target>Deixe em branco para usar a imagem de partilha do site.</target>
+      </segment>
+    </unit>
+    <unit id="8240ddb618c6dcfb">
+      <segment>
+        <source>Leave it empty to use the transcript in the main language.</source>
+        <target>Deixe em branco para usar a transcrição no idioma principal.</target>
+      </segment>
+    </unit>
+    <unit id="7a98b652df9fc0c8">
+      <segment>
+        <source>Leave this field empty</source>
+        <target>Deixe este campo em branco</target>
+      </segment>
+    </unit>
+    <unit id="1709305c9fa966d1">
+      <segment>
+        <source>Level</source>
+        <target>Nível</target>
+      </segment>
+    </unit>
+    <unit id="a6a32dbc5618ea39">
+      <segment>
+        <source>Link</source>
+        <target>Ligação</target>
+      </segment>
+    </unit>
+    <unit id="13844ffc728705a2">
+      <segment>
+        <source>Link address</source>
+        <target>Endereço da ligação</target>
+      </segment>
+    </unit>
+    <unit id="ac1b459e9fe2fc05">
+      <segment>
+        <source>Link text</source>
+        <target>Texto da ligação</target>
+      </segment>
+    </unit>
+    <unit id="6f202f54a7b2d8fe">
+      <segment>
+        <source>List</source>
+        <target>Lista</target>
+      </segment>
+    </unit>
+    <unit id="1bef68fd6f56a8a5">
+      <segment>
+        <source>Made from the site name.</source>
+        <target>Feito a partir do nome do site.</target>
+      </segment>
+    </unit>
+    <unit id="eb814be3ca3b78c0">
+      <segment>
+        <source>Main</source>
+        <target>Principal</target>
+      </segment>
+    </unit>
+    <unit id="d8428119b571d9fc">
+      <segment>
+        <source>Main language</source>
+        <target>Idioma principal</target>
+      </segment>
+    </unit>
+    <unit id="45c892de4963e29c">
+      <segment>
+        <source>Main menu</source>
+        <target>Menu principal</target>
+      </segment>
+    </unit>
+    <unit id="6edb3d350c0026cd">
+      <segment>
+        <source>Make this translation a draft again</source>
+        <target>Voltar a fazer desta tradução um rascunho</target>
+      </segment>
+    </unit>
+    <unit id="8ebac5544296f653">
+      <segment>
+        <source>Make uploaded files public.</source>
+        <target>Tornar públicos os ficheiros carregados.</target>
+      </segment>
+    </unit>
+    <unit id="c66d2a93fd0d39da">
+      <segment>
+        <source>Make {language} the main language</source>
+        <target>Tornar {language} o idioma principal</target>
+      </segment>
+    </unit>
+    <unit id="bf716741d3106585">
+      <segment>
+        <source>Manage menus</source>
+        <target>Gerir menus</target>
+      </segment>
+    </unit>
+    <unit id="b646c8d2583c0bc0">
+      <segment>
+        <source>Manage roles</source>
+        <target>Gerir funções</target>
+      </segment>
+    </unit>
+    <unit id="6f219d05525bf516">
+      <segment>
+        <source>Manage site settings</source>
+        <target>Gerir as definições do site</target>
+      </segment>
+    </unit>
+    <unit id="58606e582452ca98">
+      <segment>
+        <source>Manage users</source>
+        <target>Gerir utilizadores</target>
+      </segment>
+    </unit>
+    <unit id="d357175cfe8978d3">
+      <segment>
+        <source>Media</source>
+        <target>Multimédia</target>
+      </segment>
+    </unit>
+    <unit id="99af6606ff9d6cd5">
+      <segment>
+        <source>Menu</source>
+        <target>Menu</target>
+      </segment>
+    </unit>
+    <unit id="93534e3e8a8dccfd">
+      <segment>
+        <source>Menus</source>
+        <target>Menus</target>
+      </segment>
+    </unit>
+    <unit id="1fbb81268b1439c9">
+      <segment>
+        <source>Menus can be at most {max} levels deep.</source>
+        <target>Os menus podem ter no máximo {max} níveis.</target>
+      </segment>
+    </unit>
+    <unit id="231dc6c71010a794">
+      <segment>
+        <source>Message after sending</source>
+        <target>Mensagem depois de enviar</target>
+      </segment>
+    </unit>
+    <unit id="6ad0d02834d46c1d">
+      <segment>
+        <source>Message from the contact form on {site}</source>
+        <target>Mensagem do formulário de contacto de {site}</target>
+      </segment>
+    </unit>
+    <unit id="6be36ca49ee85210">
+      <segment>
+        <source>Missing</source>
+        <target>Em falta</target>
+      </segment>
+    </unit>
+    <unit id="98dede264eb5c7d7">
+      <segment>
+        <source>Missing page (#{page_id})</source>
+        <target>Página em falta (#{page_id})</target>
+      </segment>
+    </unit>
+    <unit id="90eae2a9657cd484">
+      <segment>
+        <source>More settings: {module}</source>
+        <target>Mais definições: {module}</target>
+      </segment>
+    </unit>
+    <unit id="40bb50da160cdc21">
+      <segment>
+        <source>Move down</source>
+        <target>Descer</target>
+      </segment>
+    </unit>
+    <unit id="d233016d0f2ac940">
+      <segment>
+        <source>Move in</source>
+        <target>Avançar</target>
+      </segment>
+    </unit>
+    <unit id="8509d7528a50d4c3">
+      <segment>
+        <source>Move out</source>
+        <target>Recuar</target>
+      </segment>
+    </unit>
+    <unit id="c66feb5eb8f217c7">
+      <segment>
+        <source>Move up</source>
+        <target>Subir</target>
+      </segment>
+    </unit>
+    <unit id="46b8a23abb6b155a">
+      <segment>
+        <source>Moved {what} {action}. It is now {noun} {to} of {value}.</source>
+        <target>{what} foi movido {action}. Agora é {noun} {to} de {value}.</target>
+      </segment>
+    </unit>
+    <unit id="2220c3e766f66512">
+      <segment>
+        <source>Must include a capital letter</source>
+        <target>Tem de incluir uma letra maiúscula</target>
+      </segment>
+    </unit>
+    <unit id="8d1b6a48eac7c9ae">
+      <segment>
+        <source>Must include a lower-case letter</source>
+        <target>Tem de incluir uma letra minúscula</target>
+      </segment>
+    </unit>
+    <unit id="5f7116d5f3de196f">
+      <segment>
+        <source>Must include a number</source>
+        <target>Tem de incluir um algarismo</target>
+      </segment>
+    </unit>
+    <unit id="a036ed6195bd0a13">
+      <segment>
+        <source>Must include a symbol (such as ! ? # or %)</source>
+        <target>Tem de incluir um símbolo (como ! ? # ou %)</target>
+      </segment>
+    </unit>
+    <unit id="b53181a4d853c390">
+      <segment>
+        <source>My account</source>
+        <target>A minha conta</target>
+      </segment>
+    </unit>
+    <unit id="dcd1d5223f73b3a9">
+      <segment>
+        <source>Name</source>
+        <target>Nome</target>
+      </segment>
+    </unit>
+    <unit id="a30136f2c54efc85">
+      <segment>
+        <source>Names the recording for screen readers and search engines.</source>
+        <target>Dá nome à gravação para leitores de ecrã e motores de pesquisa.</target>
+      </segment>
+    </unit>
+    <unit id="fe144f52404230ef">
+      <segment>
+        <source>Names the video for screen readers and search engines.</source>
+        <target>Dá nome ao vídeo para leitores de ecrã e motores de pesquisa.</target>
+      </segment>
+    </unit>
+    <unit id="3dd9df4441fb348f">
+      <segment>
+        <source>New password</source>
+        <target>Nova palavra-passe</target>
+      </segment>
+    </unit>
+    <unit id="b671118d828d07ab">
+      <segment>
+        <source>New picture</source>
+        <target>Nova imagem</target>
+      </segment>
+    </unit>
+    <unit id="61d6ff4e7f3c0d21">
+      <segment>
+        <source>Newer entries</source>
+        <target>Registos mais recentes</target>
+      </segment>
+    </unit>
+    <unit id="d3f648cd55b4d0d2">
+      <segment>
+        <source>News pages</source>
+        <target>Páginas de notícias</target>
+      </segment>
+    </unit>
+    <unit id="1ff57a29d7c9d11b">
+      <segment>
+        <source>Next</source>
+        <target>Seguinte</target>
+      </segment>
+    </unit>
+    <unit id="930a2568e5cf1826">
+      <segment>
+        <source>No blocks here yet.</source>
+        <target>Ainda não há blocos aqui.</target>
+      </segment>
+    </unit>
+    <unit id="2bb74a38997bbc4c">
+      <segment>
+        <source>No description or summary yet: search engines pick some text from the page.</source>
+        <target>Ainda sem descrição nem resumo: os motores de pesquisa escolhem algum texto da página.</target>
+      </segment>
+    </unit>
+    <unit id="335099e7833025d4">
+      <segment>
+        <source>No email after a few minutes? Check your spam folder. You can ask for a new code once a minute.</source>
+        <target>Não recebeu o email ao fim de alguns minutos? Veja a pasta de spam. Pode pedir um novo código uma vez por minuto.</target>
+      </segment>
+    </unit>
+    <unit id="a68fe1c170fa476a">
+      <segment>
+        <source>No entries match.</source>
+        <target>Nenhum registo corresponde.</target>
+      </segment>
+    </unit>
+    <unit id="51d36a3243a76993">
+      <segment>
+        <source>No file chosen</source>
+        <target>Nenhum ficheiro escolhido</target>
+      </segment>
+    </unit>
+    <unit id="14497643bcf60e60">
+      <segment>
+        <source>No pages are waiting for review.</source>
+        <target>Não há páginas à espera de revisão.</target>
+      </segment>
+    </unit>
+    <unit id="784a72084c4e3246">
+      <segment>
+        <source>No role</source>
+        <target>Sem função</target>
+      </segment>
+    </unit>
+    <unit id="eb7e00b264f4ef03">
+      <segment>
+        <source>No site configured</source>
+        <target>Nenhum site configurado</target>
+      </segment>
+    </unit>
+    <unit id="dc937b59892604f5">
+      <segment>
+        <source>None</source>
+        <target>Nenhum</target>
+      </segment>
+    </unit>
+    <unit id="9ccacf99fee1e017">
+      <segment>
+        <source>Not needed</source>
+        <target>Não é preciso</target>
+      </segment>
+    </unit>
+    <unit id="c652001687f15923">
+      <segment>
+        <source>Not published</source>
+        <target>Não publicado</target>
+      </segment>
+    </unit>
+    <unit id="3bbe7ecfd73d004a">
+      <segment>
+        <source>Not yet changeable</source>
+        <target>Ainda não pode ser alterado</target>
+      </segment>
+    </unit>
+    <unit id="0bc54243c4fa448f">
+      <segment>
+        <source>Note for the next person</source>
+        <target>Nota para a pessoa seguinte</target>
+      </segment>
+    </unit>
+    <unit id="b59069c7d78909b6">
+      <segment>
+        <source>Nothing has been recorded yet.</source>
+        <target>Ainda não foi registado nada.</target>
+      </segment>
+    </unit>
+    <unit id="33e1c3128a52368f">
+      <segment>
+        <source>Nothing has changed yet.</source>
+        <target>Ainda não mudou nada.</target>
+      </segment>
+    </unit>
+    <unit id="c7184db03014c6d2">
+      <segment>
+        <source>Nothing is kept until you save. The buttons that add, move or remove blocks don’t save.</source>
+        <target>Nada fica guardado enquanto não guardar. Os botões que adicionam, movem ou removem blocos não guardam.</target>
+      </segment>
+    </unit>
+    <unit id="54ca5460e9428a6b">
+      <segment>
+        <source>Nothing was changed.</source>
+        <target>Não foi alterado nada.</target>
+      </segment>
+    </unit>
+    <unit id="62f32f746e406534">
+      <segment>
+        <source>Older entries</source>
+        <target>Registos mais antigos</target>
+      </segment>
+    </unit>
+    <unit id="aa65b02fe490ea39">
+      <segment>
+        <source>One or two sentences about the page. Shown in lists of pages and read by AI search engines.</source>
+        <target>Uma ou duas frases sobre a página. Mostrada nas listas de páginas e lida pelos motores de pesquisa de IA.</target>
+      </segment>
+    </unit>
+    <unit id="69f4fc5b633c8e36">
+      <segment>
+        <source>One or two sentences about the site and who runs it. Search engines and AI search engines show it with the site.</source>
+        <target>Uma ou duas frases sobre o site e quem o gere. Os motores de pesquisa, incluindo os de IA, mostram-nas com o site.</target>
+      </segment>
+    </unit>
+    <unit id="ae266cf73b706eee">
+      <segment>
+        <source>One or two sentences. Search engines show about {max} characters.</source>
+        <target>Uma ou duas frases. Os motores de pesquisa mostram cerca de {max} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="22fb1553f82cebb6">
+      <segment>
+        <source>Only accounts found here can be saved here, not a {class}.</source>
+        <target>Só podem ser guardadas aqui contas encontradas aqui, não um {class}.</target>
+      </segment>
+    </unit>
+    <unit id="922d546e02a632fd">
+      <segment>
+        <source>Only editors and admins can publish or unpublish files.</source>
+        <target>Só editores e administradores podem publicar ou despublicar ficheiros.</target>
+      </segment>
+    </unit>
+    <unit id="7ef521d189ebb075">
+      <segment>
+        <source>Only if visitors should know it. Leave it empty to keep it private.</source>
+        <target>Só se os visitantes o deverem saber. Deixe em branco para o manter privado.</target>
+      </segment>
+    </unit>
+    <unit id="281174d34c52eaad">
+      <segment>
+        <source>Only pages I wrote</source>
+        <target>Só as páginas que escrevi</target>
+      </segment>
+    </unit>
+    <unit id="2ec0b2fd72b24d55">
+      <segment>
+        <source>Only part of the file arrived. Try uploading it again.</source>
+        <target>Só chegou parte do ficheiro. Tente carregá-lo outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="410c3aa8a88771e1">
+      <segment>
+        <source>Only tick this on a device that only you use.</source>
+        <target>Só marque isto num dispositivo que só a pessoa usa.</target>
+      </segment>
+    </unit>
+    <unit id="e1136f0418c7d008">
+      <segment>
+        <source>Only video and audio files have a transcript.</source>
+        <target>Só os ficheiros de vídeo e áudio têm transcrição.</target>
+      </segment>
+    </unit>
+    <unit id="9cacc5298472cd91">
+      <segment>
+        <source>Only when it should differ from the title. Leave it empty to use the title.</source>
+        <target>Só quando deve ser diferente do título. Deixe em branco para usar o título.</target>
+      </segment>
+    </unit>
+    <unit id="6ed006f4c5bf0355">
+      <segment>
+        <source>Only when this page is a copy of a page on another site: its full address, starting with https://.</source>
+        <target>Só quando esta página é uma cópia de uma página de outro site: o endereço completo, a começar por https://.</target>
+      </segment>
+    </unit>
+    <unit id="4340511e1ece4291">
+      <segment>
+        <source>Open invitations, newest first</source>
+        <target>Convites em aberto, os mais recentes primeiro</target>
+      </segment>
+    </unit>
+    <unit id="911fa06e14a182df">
+      <segment>
+        <source>Open the page</source>
+        <target>Abrir a página</target>
+      </segment>
+    </unit>
+    <unit id="0a30a815d67d7dd2">
+      <segment>
+        <source>Page</source>
+        <target>Página</target>
+      </segment>
+    </unit>
+    <unit id="a469ab4ca4e55bf5">
+      <segment>
+        <source>Page not found</source>
+        <target>Página não encontrada</target>
+      </segment>
+    </unit>
+    <unit id="1c9b0c7a864fa6f5">
+      <segment>
+        <source>Page published</source>
+        <target>Página publicada</target>
+      </segment>
+    </unit>
+    <unit id="dfc63a33a0e1cbc6">
+      <segment>
+        <source>Page {id}</source>
+        <target>Página {id}</target>
+      </segment>
+    </unit>
+    <unit id="9046da16aea909ba">
+      <segment>
+        <source>Pages</source>
+        <target>Páginas</target>
+      </segment>
+    </unit>
+    <unit id="eabd6801059da726">
+      <segment>
+        <source>Pages can be nested at most {max} levels deep.</source>
+        <target>As páginas podem ter no máximo {max} níveis.</target>
+      </segment>
+    </unit>
+    <unit id="ec116b833afeb7af">
+      <segment>
+        <source>Pages of files</source>
+        <target>Páginas de ficheiros</target>
+      </segment>
+    </unit>
+    <unit id="d9474b4a0fd8346f">
+      <segment>
+        <source>Pages of the audit log</source>
+        <target>Páginas do registo de auditoria</target>
+      </segment>
+    </unit>
+    <unit id="d010dbb9e7489dc8">
+      <segment>
+        <source>Pages that aren't published yet appear in the menu once they are.</source>
+        <target>As páginas ainda não publicadas aparecem no menu quando forem publicadas.</target>
+      </segment>
+    </unit>
+    <unit id="e7cf3ef4f17c3999">
+      <segment>
+        <source>Password</source>
+        <target>Palavra-passe</target>
+      </segment>
+    </unit>
+    <unit id="5318d3066bf37f8c">
+      <segment>
+        <source>Paste only the code: the letters and digits between the quotes after content=</source>
+        <target>Cole só o código: as letras e os algarismos entre as aspas depois de content=</target>
+      </segment>
+    </unit>
+    <unit id="7db20897053bb278">
+      <segment>
+        <source>People</source>
+        <target>Pessoas</target>
+      </segment>
+    </unit>
+    <unit id="738aa17fbf8f0e7b">
+      <segment>
+        <source>People who chose {language} for their emails and the admin panel get {main} instead.</source>
+        <target>Quem escolheu {language} para os emails e a administração passa a receber {main}.</target>
+      </segment>
+    </unit>
+    <unit id="9a1c54f55e7cfb1c">
+      <segment>
+        <source>Picture</source>
+        <target>Imagem</target>
+      </segment>
+    </unit>
+    <unit id="9ec7965061b947b2">
+      <segment>
+        <source>Picture shown when the page is shared</source>
+        <target>Imagem mostrada quando a página é partilhada</target>
+      </segment>
+    </unit>
+    <unit id="1e6245009d677035">
+      <segment>
+        <source>Pictures</source>
+        <target>Imagens</target>
+      </segment>
+    </unit>
+    <unit id="403976066d8cb25c">
+      <segment>
+        <source>Please review "{title}" on {site}</source>
+        <target>Reveja "{title}" em {site}</target>
+      </segment>
+    </unit>
+    <unit id="2de23914417f2801">
+      <segment>
+        <source>Postal address</source>
+        <target>Morada postal</target>
+      </segment>
+    </unit>
+    <unit id="e6519450c07400ef">
+      <segment>
+        <source>Poster picture</source>
+        <target>Imagem de capa</target>
+      </segment>
+    </unit>
+    <unit id="f6169890e49e419f">
+      <segment>
+        <source>Preview of {block}</source>
+        <target>Pré-visualização de {block}</target>
+      </segment>
+    </unit>
+    <unit id="a57b08a480b822a0">
+      <segment>
+        <source>Previous</source>
+        <target>Anterior</target>
+      </segment>
+    </unit>
+    <unit id="1d97622d13b0bde4">
+      <segment>
+        <source>Primary for the main action of the page, secondary for others.</source>
+        <target>Principal para a ação principal da página, secundário para as outras.</target>
+      </segment>
+    </unit>
+    <unit id="a7acc4ebae2c0014">
+      <segment>
+        <source>Profile picture</source>
+        <target>Fotografia de perfil</target>
+      </segment>
+    </unit>
+    <unit id="9f5063db7ceb8d92">
+      <segment>
+        <source>Profiles on other sites</source>
+        <target>Perfis noutros sites</target>
+      </segment>
+    </unit>
+    <unit id="dd86af1079c78856">
+      <segment>
+        <source>Public: anyone can read the published pages. Sites for members only come in a later version.</source>
+        <target>Público: qualquer pessoa pode ler as páginas publicadas. Os sites só para membros chegam numa versão futura.</target>
+      </segment>
+    </unit>
+    <unit id="859390eb495b2ead">
+      <segment>
+        <source>Publish</source>
+        <target>Publicar</target>
+      </segment>
+    </unit>
+    <unit id="2c7e0065e1ef4398">
+      <segment>
+        <source>Publish media</source>
+        <target>Publicar multimédia</target>
+      </segment>
+    </unit>
+    <unit id="2a25349bd2190013">
+      <segment>
+        <source>Publish pages</source>
+        <target>Publicar páginas</target>
+      </segment>
+    </unit>
+    <unit id="8f9adafabe942493">
+      <segment>
+        <source>Publish this translation</source>
+        <target>Publicar esta tradução</target>
+      </segment>
+    </unit>
+    <unit id="2ef42ec21d9300dd">
+      <segment>
+        <source>Published</source>
+        <target>Publicada</target>
+      </segment>
+    </unit>
+    <unit id="ff723f1189468171">
+      <segment>
+        <source>Published files can be seen by everyone who has their address. Unpublished files can only be seen by people who can upload media.</source>
+        <target>Os ficheiros publicados podem ser vistos por quem tiver o endereço. Os ficheiros não publicados só podem ser vistos por quem pode carregar multimédia.</target>
+      </segment>
+    </unit>
+    <unit id="b3b58b88328adf51">
+      <segment>
+        <source>Published the {name} translation. Visitors can see it now.</source>
+        <target>A tradução em {name} foi publicada. Os visitantes já a podem ver.</target>
+      </segment>
+    </unit>
+    <unit id="7be5d25f629a2141">
+      <segment>
+        <source>Published. Visitors can see the page now.</source>
+        <target>Publicada. Os visitantes já podem ver a página.</target>
+      </segment>
+    </unit>
+    <unit id="8b331af35d290d45">
+      <segment>
+        <source>Put it under</source>
+        <target>Colocar debaixo de</target>
+      </segment>
+    </unit>
+    <unit id="0d12535cc8911055">
+      <segment>
+        <source>Reactivate account</source>
+        <target>Reativar a conta</target>
+      </segment>
+    </unit>
+    <unit id="fb09c514407cced1">
+      <segment>
+        <source>Reactivate {name}</source>
+        <target>Reativar {name}</target>
+      </segment>
+    </unit>
+    <unit id="83b3b277abbf82ba">
+      <segment>
+        <source>Read the guide</source>
+        <target>Ler o guia</target>
+      </segment>
+    </unit>
+    <unit id="c056e02b87d51881">
+      <segment>
+        <source>Ready to publish</source>
+        <target>Pronta para publicar</target>
+      </segment>
+    </unit>
+    <unit id="f1ae55791767384d">
+      <segment>
+        <source>Ready to publish, with suggestions</source>
+        <target>Pronta para publicar, com sugestões</target>
+      </segment>
+    </unit>
+    <unit id="6cb44b56336af70b">
+      <segment>
+        <source>Recent activity</source>
+        <target>Atividade recente</target>
+      </segment>
+    </unit>
+    <unit id="c3812fc4acb861d5">
+      <segment>
+        <source>Remove</source>
+        <target>Remover</target>
+      </segment>
+    </unit>
+    <unit id="1bc6f23b53041b45">
+      <segment>
+        <source>Remove picture</source>
+        <target>Remover a imagem</target>
+      </segment>
+    </unit>
+    <unit id="63f50b46a5ca0fac">
+      <segment>
+        <source>Remove {language}</source>
+        <target>Remover {language}</target>
+      </segment>
+    </unit>
+    <unit id="6bf34f12aec41ae0">
+      <segment>
+        <source>Remove {language}?</source>
+        <target>Remover {language}?</target>
+      </segment>
+    </unit>
+    <unit id="93356de6958c41d1">
+      <segment>
+        <source>Removed {locale}. Its translations are kept: add the language again to bring them back.</source>
+        <target>{locale} foi removido. As traduções ficam guardadas: adicione o idioma outra vez para as recuperar.</target>
+      </segment>
+    </unit>
+    <unit id="aea4077806447ac0">
+      <segment>
+        <source>Removed {what}.</source>
+        <target>{what} foi removido.</target>
+      </segment>
+    </unit>
+    <unit id="b672347e4f6fe1ba">
+      <segment>
+        <source>Reply to this email to answer them at {email}.</source>
+        <target>Responda a este email para lhe responder em {email}.</target>
+      </segment>
+    </unit>
+    <unit id="67bd10458fe45585">
+      <segment>
+        <source>Reset the {thing} to the generated one</source>
+        <target>Repor o {thing} gerado</target>
+      </segment>
+    </unit>
+    <unit id="59fa4379be1f3398">
+      <segment>
+        <source>Reset your password</source>
+        <target>Repor a palavra-passe</target>
+      </segment>
+    </unit>
+    <unit id="cb39572f09f71897">
+      <segment>
+        <source>Review "{title}"</source>
+        <target>Rever "{title}"</target>
+      </segment>
+    </unit>
+    <unit id="9fcf95981c13a4ec">
+      <segment>
+        <source>Review and publishing</source>
+        <target>Revisão e publicação</target>
+      </segment>
+    </unit>
+    <unit id="17188ac25ef2e702">
+      <segment>
+        <source>Revisions are numbered from 1.</source>
+        <target>As revisões são numeradas a partir de 1.</target>
+      </segment>
+    </unit>
+    <unit id="14736a2eb9f4159f">
+      <segment>
+        <source>Role</source>
+        <target>Função</target>
+      </segment>
+    </unit>
+    <unit id="82cdf25cce6eee23">
+      <segment>
+        <source>SVG pictures can't be used as a profile picture. Upload a JPEG, PNG or WebP picture.</source>
+        <target>As imagens SVG não podem ser usadas como fotografia de perfil. Carregue uma imagem JPEG, PNG ou WebP.</target>
+      </segment>
+    </unit>
+    <unit id="1509f561f2416598">
+      <segment>
+        <source>Save</source>
+        <target>Guardar</target>
+      </segment>
+    </unit>
+    <unit id="bb76faabfd0b8e65">
+      <segment>
+        <source>Save details</source>
+        <target>Guardar os detalhes</target>
+      </segment>
+    </unit>
+    <unit id="66684832de28fa7b">
+      <segment>
+        <source>Save page</source>
+        <target>Guardar a página</target>
+      </segment>
+    </unit>
+    <unit id="7f3a3b142814581a">
+      <segment>
+        <source>Save settings</source>
+        <target>Guardar as definições</target>
+      </segment>
+    </unit>
+    <unit id="7b015c0fcf9fe632">
+      <segment>
+        <source>Save the page before making it the home page.</source>
+        <target>Guarde a página antes de a tornar a página inicial.</target>
+      </segment>
+    </unit>
+    <unit id="21b7401d6131b7af">
+      <segment>
+        <source>Save the {thing}</source>
+        <target>Guardar o {thing}</target>
+      </segment>
+    </unit>
+    <unit id="275d9bcb5e334ece">
+      <segment>
+        <source>Saved “{title}”.</source>
+        <target>“{title}” foi guardada.</target>
+      </segment>
+    </unit>
+    <unit id="4361504419a49e5d">
+      <segment>
+        <source>Saved “{title}”. The changes are on the site now.</source>
+        <target>“{title}” foi guardada. As alterações já estão no site.</target>
+      </segment>
+    </unit>
+    <unit id="43de072bcdc4b364">
+      <segment>
+        <source>Say what happens, for example "Book a visit".</source>
+        <target>Diga o que acontece, por exemplo "Marcar uma visita".</target>
+      </segment>
+    </unit>
+    <unit id="4a45b1cbb51b9eee">
+      <segment>
+        <source>Say what the picture shows and why it is there, as you would to someone on the phone. Pages can still mark it as decorative where it adds nothing.</source>
+        <target>Diga o que a imagem mostra e porque está ali, como o faria a alguém ao telefone. As páginas podem marcá-la como decorativa quando não acrescenta nada.</target>
+      </segment>
+    </unit>
+    <unit id="918de73b4a19f19a">
+      <segment>
+        <source>Say where the link goes, for example "Opening hours".</source>
+        <target>Diga para onde vai a ligação, por exemplo "Horário".</target>
+      </segment>
+    </unit>
+    <unit id="0ad5d30940debe95">
+      <segment>
+        <source>Say where the link goes, for example "Read the annual report" instead of "Read more".</source>
+        <target>Diga para onde vai a ligação, por exemplo "Ler o relatório anual" em vez de "Ler mais".</target>
+      </segment>
+    </unit>
+    <unit id="5c9cb044218cba64">
+      <segment>
+        <source>Screen readers already say it is an image. Start with what it shows.</source>
+        <target>Os leitores de ecrã já dizem que é uma imagem. Comece pelo que mostra.</target>
+      </segment>
+    </unit>
+    <unit id="8e3c69d784ac8e8b">
+      <segment>
+        <source>Search &amp; AI</source>
+        <target>Pesquisa e IA</target>
+      </segment>
+    </unit>
+    <unit id="f8fca50366d93bc8">
+      <segment>
+        <source>Search engines show about {max} characters of the description; this one has {description}. Shorten it.</source>
+        <target>Os motores de pesquisa mostram cerca de {max} caracteres da descrição; esta tem {description}. Encurte-a.</target>
+      </segment>
+    </unit>
+    <unit id="3048b5ea49603392">
+      <segment>
+        <source>See who changed what, and when.</source>
+        <target>Ver quem alterou o quê, e quando.</target>
+      </segment>
+    </unit>
+    <unit id="1c7ccd3071e432af">
+      <segment>
+        <source>Select one of the options for “{field}”</source>
+        <target>Escolha uma das opções em “{field}”</target>
+      </segment>
+    </unit>
+    <unit id="87dd4440d822305c">
+      <segment>
+        <source>Select only the options shown for “{field}”</source>
+        <target>Escolha só as opções mostradas em “{field}”</target>
+      </segment>
+    </unit>
+    <unit id="3e19d718d9d051bf">
+      <segment>
+        <source>Select {field}</source>
+        <target>Escolha {field}</target>
+      </segment>
+    </unit>
+    <unit id="9200fc2f31ae11ab">
+      <segment>
+        <source>Send a new code</source>
+        <target>Enviar um novo código</target>
+      </segment>
+    </unit>
+    <unit id="93ec3039e14be453">
+      <segment>
+        <source>Send a page to the editors.</source>
+        <target>Enviar uma página aos editores.</target>
+      </segment>
+    </unit>
+    <unit id="253519dd9a549fda">
+      <segment>
+        <source>Send back to draft</source>
+        <target>Devolver a rascunho</target>
+      </segment>
+    </unit>
+    <unit id="dba4038b651b7bf1">
+      <segment>
+        <source>Send invitation</source>
+        <target>Enviar o convite</target>
+      </segment>
+    </unit>
+    <unit id="b50ba388e8412642">
+      <segment>
+        <source>Send me a code</source>
+        <target>Enviar-me um código</target>
+      </segment>
+    </unit>
+    <unit id="93a26b1eaff99b3a">
+      <segment>
+        <source>Send message</source>
+        <target>Enviar mensagem</target>
+      </segment>
+    </unit>
+    <unit id="d02671ed6f917fc0">
+      <segment>
+        <source>Send messages to</source>
+        <target>Enviar mensagens para</target>
+      </segment>
+    </unit>
+    <unit id="9b397c96d4fd4cc4">
+      <segment>
+        <source>Sent back to draft. The writer can change it and send it again.</source>
+        <target>Devolvida a rascunho. Quem a escreveu pode alterá-la e enviá-la outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="d97dc28ae34eab97">
+      <segment>
+        <source>Sent for review. The editors have been told by email.</source>
+        <target>Enviada para revisão. Os editores foram avisados por email.</target>
+      </segment>
+    </unit>
+    <unit id="4e4116871bf1515d">
+      <segment>
+        <source>Set password</source>
+        <target>Definir a palavra-passe</target>
+      </segment>
+    </unit>
+    <unit id="34b78ccf40c00903">
+      <segment>
+        <source>Set up your account</source>
+        <target>Configurar a sua conta</target>
+      </segment>
+    </unit>
+    <unit id="5ca5a4ddeb72c1ae">
+      <segment>
+        <source>Set up your account with a setup code</source>
+        <target>Configurar a sua conta com um código de configuração</target>
+      </segment>
+    </unit>
+    <unit id="0cbc2d4920472af9">
+      <segment>
+        <source>Setup codes work for 7 days, and only once. If yours no longer works, ask the person who set up the site for a new one.</source>
+        <target>Os códigos de configuração funcionam durante 7 dias e só uma vez. Se o seu já não funciona, peça um novo a quem criou o site.</target>
+      </segment>
+    </unit>
+    <unit id="39397661fc8e9eeb">
+      <segment>
+        <source>Shortest password allowed (number of characters)</source>
+        <target>Palavra-passe mais curta permitida (número de caracteres)</target>
+      </segment>
+    </unit>
+    <unit id="6ecf40552a8afc91">
+      <segment>
+        <source>Show all entries</source>
+        <target>Mostrar todos os registos</target>
+      </segment>
+    </unit>
+    <unit id="1c63de92fc96606f">
+      <segment>
+        <source>Show all pages</source>
+        <target>Mostrar todas as páginas</target>
+      </segment>
+    </unit>
+    <unit id="617948a6e6de3843">
+      <segment>
+        <source>Show entries</source>
+        <target>Mostrar registos</target>
+      </segment>
+    </unit>
+    <unit id="43edf542cdef4d3b">
+      <segment>
+        <source>Show files as</source>
+        <target>Mostrar os ficheiros como</target>
+      </segment>
+    </unit>
+    <unit id="b10bf7b3d339564d">
+      <segment>
+        <source>Show pages</source>
+        <target>Mostrar páginas</target>
+      </segment>
+    </unit>
+    <unit id="636107c588e6cd51">
+      <segment>
+        <source>Show the pages under</source>
+        <target>Mostrar as páginas debaixo de</target>
+      </segment>
+    </unit>
+    <unit id="75aa09cda18ea905">
+      <segment>
+        <source>Shown at the top of every page, in the browser tab and in search results.</source>
+        <target>Mostrado no topo de todas as páginas, no separador do navegador e nos resultados de pesquisa.</target>
+      </segment>
+    </unit>
+    <unit id="832685bdbae8b5b9">
+      <segment>
+        <source>Shown at the top of the page, in the browser tab and in menus.</source>
+        <target>Mostrado no topo da página, no separador do navegador e nos menus.</target>
+      </segment>
+    </unit>
+    <unit id="22d8ad321f6863d2">
+      <segment>
+        <source>Shown before the video plays.</source>
+        <target>Mostrada antes de o vídeo começar.</target>
+      </segment>
+    </unit>
+    <unit id="4d27cc16b286a7ca">
+      <segment>
+        <source>Shown in browser tabs, bookmarks and on phone home screens. A square picture, at least {icon_min} × {icon_min} pixels: SVG, PNG or WebP.</source>
+        <target>Mostrado nos separadores do navegador, nos marcadores e nos ecrãs iniciais dos telemóveis. Uma imagem quadrada, com pelo menos {icon_min} × {icon_min} píxeis: SVG, PNG ou WebP.</target>
+      </segment>
+    </unit>
+    <unit id="d9e5584e729a852c">
+      <segment>
+        <source>Shown next to your work and in emails. Shown as “{first_name}” if left empty.</source>
+        <target>Mostrado ao lado do seu trabalho e nos emails. Se ficar em branco, aparece “{first_name}”.</target>
+      </segment>
+    </unit>
+    <unit id="daa72fc1cb16f30e">
+      <segment>
+        <source>Shown next to your work and in emails. Your first name is shown if you leave it empty.</source>
+        <target>Mostrado ao lado do seu trabalho e nos emails. Se ficar em branco, aparece o seu nome próprio.</target>
+      </segment>
+    </unit>
+    <unit id="c32ebc3adfa928b9">
+      <segment>
+        <source>Shown under all the pictures.</source>
+        <target>Mostrada debaixo de todas as imagens.</target>
+      </segment>
+    </unit>
+    <unit id="4279e77b70819b16">
+      <segment>
+        <source>Shown under the file on pages that show captions.</source>
+        <target>Mostrada debaixo do ficheiro nas páginas que mostram legendas.</target>
+      </segment>
+    </unit>
+    <unit id="f976fc0163a4ef92">
+      <segment>
+        <source>Shown under the picture, for everyone.</source>
+        <target>Mostrada debaixo da imagem, para toda a gente.</target>
+      </segment>
+    </unit>
+    <unit id="cca2a5a30d86a898">
+      <segment>
+        <source>Shown under the picture.</source>
+        <target>Mostrada debaixo da imagem.</target>
+      </segment>
+    </unit>
+    <unit id="be5017eb55081750">
+      <segment>
+        <source>Shown when someone shares a page of the site. At least {share_width} × {share_height} pixels: JPEG, PNG or WebP. A larger picture is cropped from the middle.</source>
+        <target>Mostrada quando alguém partilha uma página do site. Pelo menos {share_width} × {share_height} píxeis: JPEG, PNG ou WebP. Uma imagem maior é recortada a partir do centro.</target>
+      </segment>
+    </unit>
+    <unit id="af5508afae44ccd3">
+      <segment>
+        <source>SightPress Default. More themes come in a later version.</source>
+        <target>SightPress Default. Mais temas numa versão futura.</target>
+      </segment>
+    </unit>
+    <unit id="618ab7d74d2fc262">
+      <segment>
+        <source>SightPress is running, but no site is set up for this address yet.</source>
+        <target>O SightPress está a funcionar, mas ainda não há nenhum site configurado para este endereço.</target>
+      </segment>
+    </unit>
+    <unit id="bfd402b2f6f38125">
+      <segment>
+        <source>Sign in</source>
+        <target>Iniciar sessão</target>
+      </segment>
+    </unit>
+    <unit id="831b4193ccfa012a">
+      <segment>
+        <source>Sign in to see this page</source>
+        <target>Inicie sessão para ver esta página</target>
+      </segment>
+    </unit>
+    <unit id="1a5fbb3408a810fd">
+      <segment>
+        <source>Sign in to the admin panel.</source>
+        <target>Iniciar sessão na administração.</target>
+      </segment>
+    </unit>
+    <unit id="48f0d3d397d49f13">
+      <segment>
+        <source>Sign out</source>
+        <target>Terminar sessão</target>
+      </segment>
+    </unit>
+    <unit id="599a82d9808993c5">
+      <segment>
+        <source>Signed in as {name}</source>
+        <target>Sessão iniciada como {name}</target>
+      </segment>
+    </unit>
+    <unit id="475f9dc4e4ff83bb">
+      <segment>
+        <source>Site default ({language})</source>
+        <target>Predefinição do site ({language})</target>
+      </segment>
+    </unit>
+    <unit id="e98af105bc0e1adf">
+      <segment>
+        <source>Site name</source>
+        <target>Nome do site</target>
+      </segment>
+    </unit>
+    <unit id="c9049740523fca2e">
+      <segment>
+        <source>Site settings</source>
+        <target>Definições do site</target>
+      </segment>
+    </unit>
+    <unit id="1af851907331c0ed">
+      <segment>
+        <source>Size</source>
+        <target>Tamanho</target>
+      </segment>
+    </unit>
+    <unit id="c887f134c26ea831">
+      <segment>
+        <source>Skip to main content</source>
+        <target>Saltar para o conteúdo principal</target>
+      </segment>
+    </unit>
+    <unit id="b88b435f3a4f318e">
+      <segment>
+        <source>Some links don’t say where they go, such as “click here” or “read more”. Say where each link goes.</source>
+        <target>Algumas ligações não dizem para onde vão, como “clique aqui” ou “ler mais”. Diga para onde vai cada ligação.</target>
+      </segment>
+    </unit>
+    <unit id="577bb3786b9ecf7a">
+      <segment>
+        <source>Some links have no text. Give every link text that says where it goes.</source>
+        <target>Algumas ligações não têm texto. Dê a cada ligação um texto que diga para onde vai.</target>
+      </segment>
+    </unit>
+    <unit id="864c855e3d64399d">
+      <segment>
+        <source>Someone</source>
+        <target>Alguém</target>
+      </segment>
+    </unit>
+    <unit id="72e1ef4435edf83a">
+      <segment>
+        <source>Someone asked for a code to choose the password of your new account on {site}. Your code is:</source>
+        <target>Alguém pediu um código para escolher a palavra-passe da sua nova conta em {site}. O seu código é:</target>
+      </segment>
+    </unit>
+    <unit id="1d1344fb226ca880">
+      <segment>
+        <source>Someone asked to reset the password of your account on {site}. Your code is:</source>
+        <target>Alguém pediu para repor a palavra-passe da sua conta em {site}. O seu código é:</target>
+      </segment>
+    </unit>
+    <unit id="17a9d1126d36aa2c">
+      <segment>
+        <source>Something went wrong on our side. Try again later.</source>
+        <target>Algo correu mal do nosso lado. Tente mais tarde.</target>
+      </segment>
+    </unit>
+    <unit id="c17056b1d423a6f7">
+      <segment>
+        <source>Sorry, something is wrong with this request</source>
+        <target>Lamentamos, há algo de errado com este pedido</target>
+      </segment>
+    </unit>
+    <unit id="365adf1db52070ea">
+      <segment>
+        <source>Sorry, the service is unavailable</source>
+        <target>Lamentamos, o serviço não está disponível</target>
+      </segment>
+    </unit>
+    <unit id="38f8bc27a35c80ad">
+      <segment>
+        <source>Sorry, there is a problem with the service</source>
+        <target>Lamentamos, há um problema com o serviço</target>
+      </segment>
+    </unit>
+    <unit id="691e57c6fd8be4fd">
+      <segment>
+        <source>Start a new page</source>
+        <target>Começar uma página nova</target>
+      </segment>
+    </unit>
+    <unit id="64f639594836ffb4">
+      <segment>
+        <source>Start new pages.</source>
+        <target>Começar páginas novas.</target>
+      </segment>
+    </unit>
+    <unit id="953b84a86a130faa">
+      <segment>
+        <source>Start the page</source>
+        <target>Começar a página</target>
+      </segment>
+    </unit>
+    <unit id="2deecf45f0b0e1b5">
+      <segment>
+        <source>Start the {language} translation</source>
+        <target>Começar a tradução em {language}</target>
+      </segment>
+    </unit>
+    <unit id="fed3e414c9ca6120">
+      <segment>
+        <source>Started the {name} translation as a copy of the {from} page. Translate the text, then publish the translation.</source>
+        <target>A tradução em {name} foi começada como cópia da página em {from}. Traduza o texto e depois publique a tradução.</target>
+      </segment>
+    </unit>
+    <unit id="a3b50c476732c740">
+      <segment>
+        <source>State</source>
+        <target>Estado</target>
+      </segment>
+    </unit>
+    <unit id="f6ca05e190f1c858">
+      <segment>
+        <source>State: {state}</source>
+        <target>Estado: {state}</target>
+      </segment>
+    </unit>
+    <unit id="920e413c7d411b61">
+      <segment>
+        <source>Status</source>
+        <target>Estado</target>
+      </segment>
+    </unit>
+    <unit id="dc961a2e2d05d2c2">
+      <segment>
+        <source>Stay signed in and go to the home page</source>
+        <target>Manter a sessão e ir para a página inicial</target>
+      </segment>
+    </unit>
+    <unit id="7e744141b40ea550">
+      <segment>
+        <source>Style</source>
+        <target>Estilo</target>
+      </segment>
+    </unit>
+    <unit id="40447e4493fb3832">
+      <segment>
+        <source>Submit for review</source>
+        <target>Enviar para revisão</target>
+      </segment>
+    </unit>
+    <unit id="0a0742673c76515b">
+      <segment>
+        <source>Submit pages for review</source>
+        <target>Enviar páginas para revisão</target>
+      </segment>
+    </unit>
+    <unit id="b34e2c1485fa6dd5">
+      <segment>
+        <source>Success:</source>
+        <target>Sucesso:</target>
+      </segment>
+    </unit>
+    <unit id="ab970ed3d5c22fe1">
+      <segment>
+        <source>Suggestion:</source>
+        <target>Sugestão:</target>
+      </segment>
+    </unit>
+    <unit id="16c1d601fc669504">
+      <segment>
+        <source>Suggestions</source>
+        <target>Sugestões</target>
+      </segment>
+    </unit>
+    <unit id="8e76a94ac8320d51">
+      <segment>
+        <source>Summary</source>
+        <target>Resumo</target>
+      </segment>
+    </unit>
+    <unit id="6725e7bbcd28f3a8">
+      <segment>
+        <source>System</source>
+        <target>Sistema</target>
+      </segment>
+    </unit>
+    <unit id="ab862303a4b6d360">
+      <segment>
+        <source>Take pages off the site and keep them.</source>
+        <target>Retirar páginas do site e guardá-las.</target>
+      </segment>
+    </unit>
+    <unit id="890ab358a55d7fce">
+      <segment>
+        <source>Technical details</source>
+        <target>Detalhes técnicos</target>
+      </segment>
+    </unit>
+    <unit id="459654fcd2ffadb5">
+      <segment>
+        <source>Tell search engines at once when a page is published or unpublished (IndexNow)</source>
+        <target>Avisar logo os motores de pesquisa quando uma página é publicada ou despublicada (IndexNow)</target>
+      </segment>
+    </unit>
+    <unit id="71988c4d8e0803ba">
+      <segment>
+        <source>Text</source>
+        <target>Texto</target>
+      </segment>
+    </unit>
+    <unit id="7d411f3bc7c16dc4">
+      <segment>
+        <source>Thank you. Your message has been sent.</source>
+        <target>Obrigado. A sua mensagem foi enviada.</target>
+      </segment>
+    </unit>
+    <unit id="acc88ce00ba0dbd5">
+      <segment>
+        <source>That button no longer matches the page. Nothing was changed; try again.</source>
+        <target>Esse botão já não corresponde à página. Não foi alterado nada; tente outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="574bf1e5213afe77">
+      <segment>
+        <source>That menu entry isn't there any more.</source>
+        <target>Essa entrada do menu já não existe.</target>
+      </segment>
+    </unit>
+    <unit id="ce58ee2f8cb35bdd">
+      <segment>
+        <source>The address "/{path}" is already used by the page "{title}". Choose another one.</source>
+        <target>O endereço "/{path}" já é usado pela página "{title}". Escolha outro.</target>
+      </segment>
+    </unit>
+    <unit id="8ae28d5e67ba4400">
+      <segment>
+        <source>The address "{path}" is not below "{old_prefix}".</source>
+        <target>O endereço "{path}" não está abaixo de "{old_prefix}".</target>
+      </segment>
+    </unit>
+    <unit id="ea05c3b9f2d95de1">
+      <segment>
+        <source>The address "{path}" must end with the slug "{slug}".</source>
+        <target>O endereço "{path}" tem de terminar com o slug "{slug}".</target>
+      </segment>
+    </unit>
+    <unit id="d02f1c8d1b1e75f2">
+      <segment>
+        <source>The address "{slug}" can only use lower-case letters a to z, digits and single hyphens between them, and be {max} characters or fewer.</source>
+        <target>O endereço "{slug}" só pode usar letras minúsculas de a a z, algarismos e hífenes simples entre eles, e ter no máximo {max} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="5e01ff3c31b4e842">
+      <segment>
+        <source>The address "{slug}" is used by the system. Choose another one for a top-level page.</source>
+        <target>O endereço "{slug}" é usado pelo sistema. Escolha outro para uma página de topo.</target>
+      </segment>
+    </unit>
+    <unit id="cf1a3ccc3ed03d5e">
+      <segment>
+        <source>The address must start with https://, http://, mailto:, tel: or / (an address on this site).</source>
+        <target>O endereço tem de começar por https://, http://, mailto:, tel: ou / (um endereço deste site).</target>
+      </segment>
+    </unit>
+    <unit id="22fe4386dd8cd11f">
+      <segment>
+        <source>The address the invitation was sent to.</source>
+        <target>O endereço para onde o convite foi enviado.</target>
+      </segment>
+    </unit>
+    <unit id="7d9b242e8f60596e">
+      <segment>
+        <source>The address you sign in with.</source>
+        <target>O endereço com que inicia sessão.</target>
+      </segment>
+    </unit>
+    <unit id="74b32468512c1305">
+      <segment>
+        <source>The address your account was made with.</source>
+        <target>O endereço com que a sua conta foi criada.</target>
+      </segment>
+    </unit>
+    <unit id="c8b8e68b0ea3fe44">
+      <segment>
+        <source>The admin panel is now in {language}.</source>
+        <target>A administração está agora em {language}.</target>
+      </segment>
+    </unit>
+    <unit id="c84dd06be0f9d035">
+      <segment>
+        <source>The alt text looks like a file name. Describe what the image shows.</source>
+        <target>O texto alternativo parece o nome de um ficheiro. Descreva o que a imagem mostra.</target>
+      </segment>
+    </unit>
+    <unit id="b79c13010f306db8">
+      <segment>
+        <source>The caption must be {{ limit }} characters or fewer</source>
+        <target>A legenda pode ter no máximo {{ limit }} caracteres</target>
+      </segment>
+    </unit>
+    <unit id="96adcb148e6a4029">
+      <segment>
+        <source>The code works for {duration}, and only once.</source>
+        <target>O código funciona durante {duration} e só uma vez.</target>
+      </segment>
+    </unit>
+    <unit id="cb57aed060802f3b">
+      <segment>
+        <source>The demo file {file} could not be copied.</source>
+        <target>Não foi possível copiar o ficheiro de demonstração {file}.</target>
+      </segment>
+    </unit>
+    <unit id="95ec58d8d559d5bb">
+      <segment>
+        <source>The details of {original_name} have been saved.</source>
+        <target>Os detalhes de {original_name} foram guardados.</target>
+      </segment>
+    </unit>
+    <unit id="2304168ff1f66751">
+      <segment>
+        <source>The email address that gets the messages. It is never shown on the page.</source>
+        <target>O endereço de email que recebe as mensagens. Nunca é mostrado na página.</target>
+      </segment>
+    </unit>
+    <unit id="9d0cb1a43355f396">
+      <segment>
+        <source>The entry</source>
+        <target>A entrada</target>
+      </segment>
+    </unit>
+    <unit id="d738875703300dda">
+      <segment>
+        <source>The file and its smaller copies are deleted for good. Pages that use it will show it as missing until someone chooses another file.</source>
+        <target>O ficheiro e as suas cópias mais pequenas são eliminados definitivamente. As páginas que o usam vão mostrá-lo em falta até alguém escolher outro ficheiro.</target>
+      </segment>
+    </unit>
+    <unit id="848c3ff391ad1451">
+      <segment>
+        <source>The file could not be uploaded. Try again.</source>
+        <target>Não foi possível carregar o ficheiro. Tente outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="aef400309e8af6cb">
+      <segment>
+        <source>The file is empty. Choose another file.</source>
+        <target>O ficheiro está vazio. Escolha outro ficheiro.</target>
+      </segment>
+    </unit>
+    <unit id="ffc1cc061f6bf856">
+      <segment>
+        <source>The file is larger than 5 MB. Make it smaller and try again.</source>
+        <target>O ficheiro tem mais de 5 MB. Reduza-o e tente outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="ffd9b5df0adaef26">
+      <segment>
+        <source>The file is larger than this server accepts. Make it smaller and try again.</source>
+        <target>O ficheiro é maior do que este servidor aceita. Reduza-o e tente outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="7886fea4db50de0a">
+      <segment>
+        <source>The file is larger than this server accepts. Make it smaller or ask your site administrator to raise the limit.</source>
+        <target>O ficheiro é maior do que este servidor aceita. Reduza-o ou peça à pessoa que administra o site para aumentar o limite.</target>
+      </segment>
+    </unit>
+    <unit id="0cd06ab592105d45">
+      <segment>
+        <source>The file is {size}; {kind} can be at most {max}.</source>
+        <target>O ficheiro tem {size}; {kind} podem ter no máximo {max}.</target>
+      </segment>
+    </unit>
+    <unit id="6fc4d48d659c5843">
+      <segment>
+        <source>The file must be a JPEG, PNG or WebP picture.</source>
+        <target>O ficheiro tem de ser uma imagem JPEG, PNG ou WebP.</target>
+      </segment>
+    </unit>
+    <unit id="36c027d17ffa2a55">
+      <segment>
+        <source>The first entry at a level can't be moved in: there is no entry before it to go under.</source>
+        <target>A primeira entrada de um nível não pode avançar: não há nenhuma entrada antes dela para ficar debaixo.</target>
+      </segment>
+    </unit>
+    <unit id="a801e94a2170e023">
+      <segment>
+        <source>The full address must be {max} characters or fewer.</source>
+        <target>O endereço completo pode ter no máximo {max} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="849d0b7eb04672f5">
+      <segment>
+        <source>The full addresses of the site’s profiles elsewhere (social networks, directories), one per line, each starting with https://. Search engines use them to know these profiles belong to the same owner.</source>
+        <target>Os endereços completos dos perfis do site noutros sítios (redes sociais, diretórios), um por linha, cada um a começar por https://. Os motores de pesquisa usam-nos para saber que estes perfis pertencem ao mesmo dono.</target>
+      </segment>
+    </unit>
+    <unit id="4acb9edde6123538">
+      <segment>
+        <source>The icon must be a square picture of at least {icon_min} × {icon_min} pixels. This one is {width} × {height} pixels.</source>
+        <target>O ícone tem de ser uma imagem quadrada com pelo menos {icon_min} × {icon_min} píxeis. Esta tem {width} × {height} píxeis.</target>
+      </segment>
+    </unit>
+    <unit id="90113638911d1c58">
+      <segment>
+        <source>The icon of {name} now</source>
+        <target>O ícone de {name} agora</target>
+      </segment>
+    </unit>
+    <unit id="7422a281d91068c1">
+      <segment>
+        <source>The invitation works until {expires} ({timezone} time).</source>
+        <target>O convite funciona até {expires} (hora de {timezone}).</target>
+      </segment>
+    </unit>
+    <unit id="a13ed63764682b18">
+      <segment>
+        <source>The label must be {max} characters or fewer.</source>
+        <target>O nome pode ter no máximo {max} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="a96528eea05da871">
+      <segment>
+        <source>The language of your emails and of the admin panel, where it has been translated.</source>
+        <target>O idioma dos seus emails e da administração, onde estiver traduzida.</target>
+      </segment>
+    </unit>
+    <unit id="8031a4750fcadeb1">
+      <segment>
+        <source>The last part of the page’s web address, after {path}. Lower-case letters a to z, digits and hyphens. Leave it empty to make one from the title. Pages below this one move with it.</source>
+        <target>A última parte do endereço web da página, depois de {path}. Letras minúsculas de a a z, algarismos e hífenes. Deixe em branco para o criar a partir do título. As páginas abaixo desta mudam com ela.</target>
+      </segment>
+    </unit>
+    <unit id="18c50df70566f41a">
+      <segment>
+        <source>The logo must be at least as wide as it is high, and at most 8 times as wide. This one is {width} × {height}.</source>
+        <target>O logótipo tem de ser pelo menos tão largo como alto, e no máximo 8 vezes mais largo. Este tem {width} × {height}.</target>
+      </segment>
+    </unit>
+    <unit id="c1c34746e1f0688e">
+      <segment>
+        <source>The logo now: {name}</source>
+        <target>O logótipo agora: {name}</target>
+      </segment>
+    </unit>
+    <unit id="9e8e4b5224ade1b1">
+      <segment>
+        <source>The logo, icon and share picture are on their own page:</source>
+        <target>O logótipo, o ícone e a imagem de partilha estão numa página própria:</target>
+      </segment>
+    </unit>
+    <unit id="c8d0b6156b5fc67c">
+      <segment>
+        <source>The main menu is at the top of every page of the site, the footer menu at the bottom. Menus can be three levels deep; visitors open the levels below with a button.</source>
+        <target>O menu principal está no topo de todas as páginas do site, o menu do rodapé no fundo. Os menus podem ter três níveis; os visitantes abrem os níveis de baixo com um botão.</target>
+      </segment>
+    </unit>
+    <unit id="1d54593dd201420c">
+      <segment>
+        <source>The original address must be a full web address starting with https:// or http://.</source>
+        <target>O endereço do original tem de ser um endereço web completo a começar por https:// ou http://.</target>
+      </segment>
+    </unit>
+    <unit id="7a555406af0e0878">
+      <segment>
+        <source>The page above this one isn't written in "{locale}" yet. Translate it first.</source>
+        <target>A página acima desta ainda não está escrita em "{locale}". Traduza-a primeiro.</target>
+      </segment>
+    </unit>
+    <unit id="88f2e744f2e6d707">
+      <segment>
+        <source>The page does not accept this kind of request. Go back and try again.</source>
+        <target>A página não aceita este tipo de pedido. Volte atrás e tente outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="b47243e627f0b9d7">
+      <segment>
+        <source>The page has not been saved.</source>
+        <target>A página não foi guardada.</target>
+      </segment>
+    </unit>
+    <unit id="e8d631db7222ce03">
+      <segment>
+        <source>The page in each language of the site</source>
+        <target>A página em cada idioma do site</target>
+      </segment>
+    </unit>
+    <unit id="71e431c30ab7ac7c">
+      <segment>
+        <source>The page is already written in "{locale}". Change that translation instead.</source>
+        <target>A página já está escrita em "{locale}". Altere essa tradução.</target>
+      </segment>
+    </unit>
+    <unit id="bd8bb379611ed478">
+      <segment>
+        <source>The page is made of blocks, shown one after another. Each block below is a group of fields with buttons to move or remove it.</source>
+        <target>A página é feita de blocos, mostrados uns a seguir aos outros. Cada bloco abaixo é um grupo de campos com botões para o mover ou remover.</target>
+      </segment>
+    </unit>
+    <unit id="7027209938c80db2">
+      <segment>
+        <source>The page isn't written in "{from}", so it can't be copied from it.</source>
+        <target>A página não está escrita em "{from}", por isso não pode ser copiada daí.</target>
+      </segment>
+    </unit>
+    <unit id="c9a608144864be9d">
+      <segment>
+        <source>The page isn't written in "{locale}" yet.</source>
+        <target>A página ainda não está escrita em "{locale}".</target>
+      </segment>
+    </unit>
+    <unit id="1f02ae3565967ed2">
+      <segment>
+        <source>The page starts as a draft: nobody else sees it until it is published.</source>
+        <target>A página começa como rascunho: mais ninguém a vê até ser publicada.</target>
+      </segment>
+    </unit>
+    <unit id="ce591068bdf6a80e">
+      <segment>
+        <source>The page this one belongs to. Its address starts with that page’s address.</source>
+        <target>A página a que esta pertence. O endereço desta começa pelo endereço dessa página.</target>
+      </segment>
+    </unit>
+    <unit id="d6f8feb3000921f1">
+      <segment>
+        <source>The page you are looking for is no longer available.</source>
+        <target>A página que procura já não está disponível.</target>
+      </segment>
+    </unit>
+    <unit id="d3ef3d7557dbe39a">
+      <segment>
+        <source>The picture could not be drawn.</source>
+        <target>Não foi possível desenhar a imagem.</target>
+      </segment>
+    </unit>
+    <unit id="f2d847afddbe135b">
+      <segment>
+        <source>The picture didn't arrive. Try uploading it again.</source>
+        <target>A imagem não chegou. Tente carregá-la outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="cfccb6fbb84cbfaf">
+      <segment>
+        <source>The picture is only decoration: screen readers skip it</source>
+        <target>A imagem é só decoração: os leitores de ecrã ignoram-na</target>
+      </segment>
+    </unit>
+    <unit id="067d0b2e0fb650cf">
+      <segment>
+        <source>The picture must be smaller than {max_bytes} MB.</source>
+        <target>A imagem tem de ter menos de {max_bytes} MB.</target>
+      </segment>
+    </unit>
+    <unit id="87a46a41a2e809ec">
+      <segment>
+        <source>The previews show your changes. Save the page to keep them.</source>
+        <target>As pré-visualizações mostram as suas alterações. Guarde a página para as manter.</target>
+      </segment>
+    </unit>
+    <unit id="82471aa3707f336a">
+      <segment>
+        <source>The schema of block type "{block_type}" uses {what} at "{at}", which SightPress doesn't support.</source>
+        <target>O esquema do tipo de bloco "{block_type}" usa {what} em "{at}", que o SightPress não suporta.</target>
+      </segment>
+    </unit>
+    <unit id="dc9927bece38cfc4">
+      <segment>
+        <source>The settings have been saved.</source>
+        <target>As definições foram guardadas.</target>
+      </segment>
+    </unit>
+    <unit id="8469815f156e0527">
+      <segment>
+        <source>The share image must be a file of the media library.</source>
+        <target>A imagem de partilha tem de ser um ficheiro da biblioteca de multimédia.</target>
+      </segment>
+    </unit>
+    <unit id="aefee67ba05d5c39">
+      <segment>
+        <source>The share image must be {share_width} × {share_height} pixels, or larger in the same proportions. This one is {width} × {height} pixels.</source>
+        <target>A imagem de partilha tem de ter {share_width} × {share_height} píxeis, ou ser maior nas mesmas proporções. Esta tem {width} × {height} píxeis.</target>
+      </segment>
+    </unit>
+    <unit id="972c1e3505b1188e">
+      <segment>
+        <source>The share picture now: {name}</source>
+        <target>A imagem de partilha agora: {name}</target>
+      </segment>
+    </unit>
+    <unit id="9c90b2ebd256f2b8">
+      <segment>
+        <source>The shortest password allowed must be a number from {{ min }} to {{ max }}</source>
+        <target>A palavra-passe mais curta permitida tem de ser um número de {{ min }} a {{ max }}</target>
+      </segment>
+    </unit>
+    <unit id="0cbb8b176295463f">
+      <segment>
+        <source>The site</source>
+        <target>O site</target>
+      </segment>
+    </unit>
+    <unit id="c5e1f6780776d1f5">
+      <segment>
+        <source>The site is already written in {locale} ({locale2}).</source>
+        <target>O site já está escrito em {locale} ({locale2}).</target>
+      </segment>
+    </unit>
+    <unit id="0ee4b33d01354886">
+      <segment>
+        <source>The site is run by {owner}.</source>
+        <target>O site é gerido por {owner}.</target>
+      </segment>
+    </unit>
+    <unit id="53c10b2993cd1849">
+      <segment>
+        <source>The site is written in</source>
+        <target>O site está escrito em</target>
+      </segment>
+    </unit>
+    <unit id="084c9d28e93bf657">
+      <segment>
+        <source>The site isn't written in "{locale}" any more. Remove this language from the page, or add it to the site.</source>
+        <target>O site já não está escrito em "{locale}". Remova este idioma da página ou adicione-o ao site.</target>
+      </segment>
+    </unit>
+    <unit id="a70e2fa293919d31">
+      <segment>
+        <source>The site isn't written in "{locale}".</source>
+        <target>O site não está escrito em "{locale}".</target>
+      </segment>
+    </unit>
+    <unit id="e6b8b587893a250c">
+      <segment>
+        <source>The site isn’t written in “{locale}”. Its languages are: {locales}.</source>
+        <target>O site não está escrito em “{locale}”. Os seus idiomas são: {locales}.</target>
+      </segment>
+    </unit>
+    <unit id="7c547a95de8447a9">
+      <segment>
+        <source>The site name must be 120 characters or fewer</source>
+        <target>O nome do site pode ter no máximo 120 caracteres</target>
+      </segment>
+    </unit>
+    <unit id="3cf090fd18937ed9">
+      <segment>
+        <source>The subject of the emails you get.</source>
+        <target>O assunto dos emails que recebe.</target>
+      </segment>
+    </unit>
+    <unit id="852c98d41ff32e43">
+      <segment>
+        <source>The text colour {foreground} on {behind} has a contrast of {ratio}:1{mode}; it needs at least 4.5:1. Choose another colour, add a background colour that goes with it, or remove it.</source>
+        <target>A cor do texto {foreground} sobre {behind} tem um contraste de {ratio}:1{mode}; precisa de pelo menos 4,5:1. Escolha outra cor, adicione uma cor de fundo que combine com ela ou remova-a.</target>
+      </segment>
+    </unit>
+    <unit id="85a6ea9f1fa6f22b">
+      <segment>
+        <source>The title must be {max} characters or fewer.</source>
+        <target>O título pode ter no máximo {max} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="c491f9125dc0a223">
+      <segment>
+        <source>The title must be {{ limit }} characters or fewer</source>
+        <target>O título pode ter no máximo {{ limit }} caracteres</target>
+      </segment>
+    </unit>
+    <unit id="dcfc4c4510532334">
+      <segment>
+        <source>The transcript is too long</source>
+        <target>A transcrição é demasiado longa</target>
+      </segment>
+    </unit>
+    <unit id="bece0f39ee3543aa">
+      <segment>
+        <source>The translations are kept. Add {language} again to bring them back as they were.</source>
+        <target>As traduções ficam guardadas. Adicione {language} outra vez para as recuperar como estavam.</target>
+      </segment>
+    </unit>
+    <unit id="84e91fdf4a44672e">
+      <segment>
+        <source>The uploaded file can't be read. Try uploading it again.</source>
+        <target>Não é possível ler o ficheiro carregado. Tente carregá-lo outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="b7f3bc8fae1065da">
+      <segment>
+        <source>The video has no speech or important sounds, so it needs no captions</source>
+        <target>O vídeo não tem fala nem sons importantes, por isso não precisa de legendas</target>
+      </segment>
+    </unit>
+    <unit id="9dd80ea3cf8063b8">
+      <segment>
+        <source>The website could not understand the request. Go back, check what you entered and try again.</source>
+        <target>O site não percebeu o pedido. Volte atrás, verifique o que escreveu e tente outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="0ed13939e87c6efb">
+      <segment>
+        <source>The {label} can't be read. It may be damaged; save it again and try the new file.</source>
+        <target>Não é possível ler o {label}. Pode estar danificado; guarde-o outra vez e tente com o ficheiro novo.</target>
+      </segment>
+    </unit>
+    <unit id="6940e4bfb7fd2bea">
+      <segment>
+        <source>The {label} is {size} × {size2} pixels, which is too large. Make it smaller than 40 million pixels.</source>
+        <target>O {label} tem {size} × {size2} píxeis, o que é demasiado grande. Reduza-o para menos de 40 milhões de píxeis.</target>
+      </segment>
+    </unit>
+    <unit id="6afe05ea387cc5f6">
+      <segment>
+        <source>The {label} must be 5 MB or smaller.</source>
+        <target>O {label} tem de ter 5 MB ou menos.</target>
+      </segment>
+    </unit>
+    <unit id="c9caa24203afbeee">
+      <segment>
+        <source>The {label} must be a {web_p} picture.</source>
+        <target>O {label} tem de ser uma imagem {web_p}.</target>
+      </segment>
+    </unit>
+    <unit id="d31994bcfa230570">
+      <segment>
+        <source>The {name} translation is a draft again. Visitors can’t see it.</source>
+        <target>A tradução em {name} voltou a ser um rascunho. Os visitantes não a podem ver.</target>
+      </segment>
+    </unit>
+    <unit id="b078685d781f2206">
+      <segment>
+        <source>The {name} translation is ready. Visitors can see it once the page is published.</source>
+        <target>A tradução em {name} está pronta. Os visitantes podem vê-la quando a página for publicada.</target>
+      </segment>
+    </unit>
+    <unit id="1f4964e4741be383">
+      <segment>
+        <source>The {what} must be {max} characters or fewer.</source>
+        <target>O {what} pode ter no máximo {max} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="efb52e7172b77731">
+      <segment>
+        <source>Theme</source>
+        <target>Tema</target>
+      </segment>
+    </unit>
+    <unit id="346d867592183370">
+      <segment>
+        <source>There are no blocks yet. Add the first one below.</source>
+        <target>Ainda não há blocos. Adicione o primeiro abaixo.</target>
+      </segment>
+    </unit>
+    <unit id="241692ba6d4c2ad1">
+      <segment>
+        <source>There are no files of this kind yet.</source>
+        <target>Ainda não há ficheiros deste tipo.</target>
+      </segment>
+    </unit>
+    <unit id="15f60c4ba653b802">
+      <segment>
+        <source>There are no files yet. Upload one above.</source>
+        <target>Ainda não há ficheiros. Carregue um acima.</target>
+      </segment>
+    </unit>
+    <unit id="54cddc0e49ed9c64">
+      <segment>
+        <source>There are no open invitations.</source>
+        <target>Não há convites em aberto.</target>
+      </segment>
+    </unit>
+    <unit id="df8a1676f61cc666">
+      <segment>
+        <source>There are no pages yet.</source>
+        <target>Ainda não há páginas.</target>
+      </segment>
+    </unit>
+    <unit id="3f63f8bb3785f99e">
+      <segment>
+        <source>There is a problem</source>
+        <target>Há um problema</target>
+      </segment>
+    </unit>
+    <unit id="08f24b664477790c">
+      <segment>
+        <source>There is already an account for {email}.</source>
+        <target>Já existe uma conta para {email}.</target>
+      </segment>
+    </unit>
+    <unit id="f3e8759b55887d39">
+      <segment>
+        <source>There is no account {id}.</source>
+        <target>Não existe a conta {id}.</target>
+      </segment>
+    </unit>
+    <unit id="6c10ed12e5bf4e46">
+      <segment>
+        <source>There is no block type "{type}" on this site. Remove the block or turn on the module that adds it.</source>
+        <target>Não existe nenhum tipo de bloco "{type}" neste site. Remova o bloco ou ative o módulo que o adiciona.</target>
+      </segment>
+    </unit>
+    <unit id="de410bbe2db097fe">
+      <segment>
+        <source>These buttons use the saved page. Save your changes first.</source>
+        <target>Estes botões usam a página guardada. Guarde primeiro as suas alterações.</target>
+      </segment>
+    </unit>
+    <unit id="dfe48d3160fdfea5">
+      <segment>
+        <source>They can change it when they accept.</source>
+        <target>A pessoa pode alterá-lo quando aceitar.</target>
+      </segment>
+    </unit>
+    <unit id="4f41f24e94af1857">
+      <segment>
+        <source>This SVG file can't be read. Export it again from your drawing program, or upload a PNG instead.</source>
+        <target>Não é possível ler este ficheiro SVG. Exporte-o outra vez do seu programa de desenho ou carregue antes um PNG.</target>
+      </segment>
+    </unit>
+    <unit id="31d2f6047a73b98b">
+      <segment>
+        <source>This SVG file has no size: give it a viewBox, or a width and a height, and upload it again.</source>
+        <target>Este ficheiro SVG não tem tamanho: dê-lhe uma viewBox, ou uma largura e uma altura, e carregue-o outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="223b82dc84300cc2">
+      <segment>
+        <source>This SVG file has nothing left to show once it is made safe. Upload a PNG instead.</source>
+        <target>Este ficheiro SVG não tem nada para mostrar depois de ser tornado seguro. Carregue antes um PNG.</target>
+      </segment>
+    </unit>
+    <unit id="e7ca5d58fa6f183e">
+      <segment>
+        <source>This block was saved by a newer version of the "{label}" block. Update the module that adds it.</source>
+        <target>Este bloco foi guardado por uma versão mais recente do bloco "{label}". Atualize o módulo que o adiciona.</target>
+      </segment>
+    </unit>
+    <unit id="0dffe2ad9a531303">
+      <segment>
+        <source>This captions file isn't in WebVTT format: its first line must be "WEBVTT".</source>
+        <target>Este ficheiro de legendas não está no formato WebVTT: a primeira linha tem de ser "WEBVTT".</target>
+      </segment>
+    </unit>
+    <unit id="28296a2e534db16a">
+      <segment>
+        <source>This entry is already at the top level.</source>
+        <target>Esta entrada já está no nível de topo.</target>
+      </segment>
+    </unit>
+    <unit id="59a246044fc05e65">
+      <segment>
+        <source>This entry is already the first at its level.</source>
+        <target>Esta entrada já é a primeira do seu nível.</target>
+      </segment>
+    </unit>
+    <unit id="6c1da8e0dca89dc8">
+      <segment>
+        <source>This entry is already the last at its level.</source>
+        <target>Esta entrada já é a última do seu nível.</target>
+      </segment>
+    </unit>
+    <unit id="2dc3dd7634a13089">
+      <segment>
+        <source>This field isn't allowed here.</source>
+        <target>Este campo não é permitido aqui.</target>
+      </segment>
+    </unit>
+    <unit id="73a7fe9c2246ebe3">
+      <segment>
+        <source>This file isn't in the media library any more. Choose another one.</source>
+        <target>Este ficheiro já não está na biblioteca de multimédia. Escolha outro.</target>
+      </segment>
+    </unit>
+    <unit id="04083a32b3e0b1bc">
+      <segment>
+        <source>This form has expired</source>
+        <target>Este formulário expirou</target>
+      </segment>
+    </unit>
+    <unit id="09a89f87d85763e5">
+      <segment>
+        <source>This heading jumps from level {heading} to level {level}. Use level {heading2}, or add the missing level before it.</source>
+        <target>Este título salta do nível {heading} para o nível {level}. Use o nível {heading2} ou adicione antes o nível em falta.</target>
+      </segment>
+    </unit>
+    <unit id="33bc174e7b9cebca">
+      <segment>
+        <source>This is how it is cropped: {width} × {height} pixels.</source>
+        <target>É assim que fica recortada: {width} × {height} píxeis.</target>
+      </segment>
+    </unit>
+    <unit id="eb62db7aaaefae96">
+      <segment>
+        <source>This is not a block: it needs a type, a version and its data.</source>
+        <target>Isto não é um bloco: precisa de um tipo, de uma versão e dos seus dados.</target>
+      </segment>
+    </unit>
+    <unit id="7e8faacaadf41661">
+      <segment>
+        <source>This is the picture you uploaded.</source>
+        <target>Esta é a imagem que carregou.</target>
+      </segment>
+    </unit>
+    <unit id="a5fa1f0ba99b488d">
+      <segment>
+        <source>This is your own account. You can’t change your own role or deactivate yourself; ask another admin.</source>
+        <target>Esta é a sua própria conta. Não pode mudar a sua própria função nem desativar-se; peça a outro administrador.</target>
+      </segment>
+    </unit>
+    <unit id="f920cf864159e2ff">
+      <segment>
+        <source>This isn't in the expected format.</source>
+        <target>Isto não está no formato esperado.</target>
+      </segment>
+    </unit>
+    <unit id="90592e12a47a1c14">
+      <segment>
+        <source>This kind of block isn’t installed on the site, so it can’t be changed here. Saving the page keeps it as it is; remove it if it is no longer needed.</source>
+        <target>Este tipo de bloco não está instalado no site, por isso não pode ser alterado aqui. Guardar a página mantém-no como está; remova-o se já não for preciso.</target>
+      </segment>
+    </unit>
+    <unit id="369ea12094bf19a2">
+      <segment>
+        <source>This menu is empty. Add a page or a link below.</source>
+        <target>Este menu está vazio. Adicione uma página ou uma ligação abaixo.</target>
+      </segment>
+    </unit>
+    <unit id="9838ee1ec7e13b9f">
+      <segment>
+        <source>This page cannot do that</source>
+        <target>Esta página não pode fazer isso</target>
+      </segment>
+    </unit>
+    <unit id="782151674ace44e2">
+      <segment>
+        <source>This page has been removed</source>
+        <target>Esta página foi removida</target>
+      </segment>
+    </unit>
+    <unit id="1e636a03b968c9da">
+      <segment>
+        <source>This picture can't be read. It may be damaged; save it again and try the new file.</source>
+        <target>Não é possível ler esta imagem. Pode estar danificada; guarde-a outra vez e tente com o ficheiro novo.</target>
+      </segment>
+    </unit>
+    <unit id="86783ede31effb10">
+      <segment>
+        <source>This picture can't be read. It may be damaged; try saving it again and uploading the new file.</source>
+        <target>Não é possível ler esta imagem. Pode estar danificada; tente guardá-la outra vez e carregar o ficheiro novo.</target>
+      </segment>
+    </unit>
+    <unit id="32ac1fd488d2d9e8">
+      <segment>
+        <source>This picture has no alt text yet.</source>
+        <target>Esta imagem ainda não tem texto alternativo.</target>
+      </segment>
+    </unit>
+    <unit id="3a7a0b440eda651e">
+      <segment>
+        <source>This picture has too many pixels. Make it smaller and upload it again.</source>
+        <target>Esta imagem tem demasiados píxeis. Reduza-a e carregue-a outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="f8d1e16f83f1e1c9">
+      <segment>
+        <source>This picture is {size} × {size2} pixels, which is more than {_000_000} million pixels. Make it smaller and upload it again.</source>
+        <target>Esta imagem tem {size} × {size2} píxeis, mais de {_000_000} milhões de píxeis. Reduza-a e carregue-a outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="0b94084e8f539269">
+      <segment>
+        <source>This site isn't written in "{locale}". Its languages are: {locales}.</source>
+        <target>Este site não está escrito em "{locale}". Os seus idiomas são: {locales}.</target>
+      </segment>
+    </unit>
+    <unit id="8b9b7b9c5567e886">
+      <segment>
+        <source>This type of file can't be uploaded. {types}</source>
+        <target>Este tipo de ficheiro não pode ser carregado. {types}</target>
+      </segment>
+    </unit>
+    <unit id="86c063da1f13fb61">
+      <segment>
+        <source>This website is not available at the moment.</source>
+        <target>Este site não está disponível de momento.</target>
+      </segment>
+    </unit>
+    <unit id="b9fe1464783e1c0d">
+      <segment>
+        <source>Time zone</source>
+        <target>Fuso horário</target>
+      </segment>
+    </unit>
+    <unit id="7e8cd2056da73a7f">
+      <segment>
+        <source>Title</source>
+        <target>Título</target>
+      </segment>
+    </unit>
+    <unit id="7dfa0e7283dd450c">
+      <segment>
+        <source>Title contains</source>
+        <target>O título contém</target>
+      </segment>
+    </unit>
+    <unit id="5c340641072ebd61">
+      <segment>
+        <source>Title in search results</source>
+        <target>Título nos resultados de pesquisa</target>
+      </segment>
+    </unit>
+    <unit id="f4b06ef6d3c81436">
+      <segment>
+        <source>To</source>
+        <target>Até</target>
+      </segment>
+    </unit>
+    <unit id="6a204b3de85a373e">
+      <segment>
+        <source>To accept, go to the sign-in page of {site}, choose “Accept an invitation”, and type your email address and this invitation code:</source>
+        <target>Para aceitar, vá à página de início de sessão de {site}, escolha “Aceitar um convite” e escreva o seu endereço de email e este código de convite:</target>
+      </segment>
+    </unit>
+    <unit id="802600d124464157">
+      <segment>
+        <source>Too many requests</source>
+        <target>Demasiados pedidos</target>
+      </segment>
+    </unit>
+    <unit id="721164f0dc7096a8">
+      <segment>
+        <source>Transcript</source>
+        <target>Transcrição</target>
+      </segment>
+    </unit>
+    <unit id="0a05d6e371ddc7db">
+      <segment>
+        <source>Transcript in {language}</source>
+        <target>Transcrição em {language}</target>
+      </segment>
+    </unit>
+    <unit id="16eae89cbaedac0c">
+      <segment>
+        <source>Translate into {language} from</source>
+        <target>Traduzir para {language} a partir de</target>
+      </segment>
+    </unit>
+    <unit id="25978b57f2240b00">
+      <segment>
+        <source>Translate into {language} from {source}</source>
+        <target>Traduzir para {language} a partir de {source}</target>
+      </segment>
+    </unit>
+    <unit id="266a41b90d4f831e">
+      <segment>
+        <source>Translations</source>
+        <target>Traduções</target>
+      </segment>
+    </unit>
+    <unit id="d49e7a43789a5e16">
+      <segment>
+        <source>Try again in {minutes} minutes.</source>
+        <target>Tente outra vez dentro de {minutes} minutos.</target>
+      </segment>
+    </unit>
+    <unit id="baaddf70fb5d432b">
+      <segment>
+        <source>Type</source>
+        <target>Tipo</target>
+      </segment>
+    </unit>
+    <unit id="2c55d4896ea6ef39">
+      <segment>
+        <source>Type of block to add</source>
+        <target>Tipo de bloco a adicionar</target>
+      </segment>
+    </unit>
+    <unit id="a368990dabf8bc6f">
+      <segment>
+        <source>Type of block to add here</source>
+        <target>Tipo de bloco a adicionar aqui</target>
+      </segment>
+    </unit>
+    <unit id="ac60345e79847ef3">
+      <segment>
+        <source>Type the email address of your account and the setup code you were given. Then you choose your password.</source>
+        <target>Escreva o endereço de email da sua conta e o código de configuração que recebeu. Depois escolhe a sua palavra-passe.</target>
+      </segment>
+    </unit>
+    <unit id="c54839f88a5fdf73">
+      <segment>
+        <source>Type the email address the invitation was sent to and the 6-digit invitation code from the email. Then you set up your account.</source>
+        <target>Escreva o endereço de email para onde o convite foi enviado e o código de convite de 6 dígitos do email. Depois configura a sua conta.</target>
+      </segment>
+    </unit>
+    <unit id="00d9facd85c68f8e">
+      <segment>
+        <source>Type the first letters of its name to move through the list. Pages are then translated into it one by one; nothing is published in it until you publish each translation.</source>
+        <target>Escreva as primeiras letras do nome para avançar na lista. Depois as páginas são traduzidas para ele uma a uma; nada é publicado nesse idioma até publicar cada tradução.</target>
+      </segment>
+    </unit>
+    <unit id="1c6fff87c5ad9705">
+      <segment>
+        <source>Under: {pages}</source>
+        <target>Debaixo de: {pages}</target>
+      </segment>
+    </unit>
+    <unit id="613c19e780c6293b">
+      <segment>
+        <source>Unknown block "{name}"</source>
+        <target>Bloco desconhecido "{name}"</target>
+      </segment>
+    </unit>
+    <unit id="2db04a54fa743150">
+      <segment>
+        <source>Unpublish</source>
+        <target>Despublicar</target>
+      </segment>
+    </unit>
+    <unit id="711bb42f45337fd0">
+      <segment>
+        <source>Unpublished. Visitors can’t see the page any more; it is a draft again.</source>
+        <target>Despublicada. Os visitantes já não podem ver a página; voltou a ser um rascunho.</target>
+      </segment>
+    </unit>
+    <unit id="38a2166b8a38877b">
+      <segment>
+        <source>Until you upload a picture, your initials are shown.</source>
+        <target>Enquanto não carregar uma imagem, são mostradas as suas iniciais.</target>
+      </segment>
+    </unit>
+    <unit id="d8dcb031d5bd9d7b">
+      <segment>
+        <source>Update the previews</source>
+        <target>Atualizar as pré-visualizações</target>
+      </segment>
+    </unit>
+    <unit id="865e89de78d94c74">
+      <segment>
+        <source>Upload</source>
+        <target>Carregar</target>
+      </segment>
+    </unit>
+    <unit id="e44f3a85acf5fb04">
+      <segment>
+        <source>Upload a file</source>
+        <target>Carregar um ficheiro</target>
+      </segment>
+    </unit>
+    <unit id="3ea5f2ab32440769">
+      <segment>
+        <source>Upload media</source>
+        <target>Carregar multimédia</target>
+      </segment>
+    </unit>
+    <unit id="0aa62f7898f3c61b">
+      <segment>
+        <source>Upload picture</source>
+        <target>Carregar a imagem</target>
+      </segment>
+    </unit>
+    <unit id="81a53c5aaa74430d">
+      <segment>
+        <source>Upload them in the media library</source>
+        <target>Carregue-os na biblioteca de multimédia</target>
+      </segment>
+    </unit>
+    <unit id="3cc3767e7032c703">
+      <segment>
+        <source>Uploaded</source>
+        <target>Carregado</target>
+      </segment>
+    </unit>
+    <unit id="4e90d58eab8b9888">
+      <segment>
+        <source>Uploaded.</source>
+        <target>Carregado.</target>
+      </segment>
+    </unit>
+    <unit id="3b768aa3ef4800ff">
+      <segment>
+        <source>Use another email address</source>
+        <target>Usar outro endereço de email</target>
+      </segment>
+    </unit>
+    <unit id="cabb0a1d1f7a2b15">
+      <segment>
+        <source>Use at least {{ limit }} characters.</source>
+        <target>Use pelo menos {{ limit }} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="addf32b6d0f2ea7c">
+      <segment>
+        <source>Use at most {{ limit }}.</source>
+        <target>Use no máximo {{ limit }}.</target>
+      </segment>
+    </unit>
+    <unit id="fafb6498f927d53c">
+      <segment>
+        <source>Use the admin panel</source>
+        <target>Usar a administração</target>
+      </segment>
+    </unit>
+    <unit id="96cb79324a257f15">
+      <segment>
+        <source>Use {{ compared_value }} or less.</source>
+        <target>Use {{ compared_value }} ou menos.</target>
+      </segment>
+    </unit>
+    <unit id="40e5db834f8ce8e6">
+      <segment>
+        <source>Use {{ compared_value }} or more.</source>
+        <target>Use {{ compared_value }} ou mais.</target>
+      </segment>
+    </unit>
+    <unit id="3c79e48462417d3d">
+      <segment>
+        <source>Use {{ limit }} characters or fewer.</source>
+        <target>Use {{ limit }} caracteres ou menos.</target>
+      </segment>
+    </unit>
+    <unit id="d534be829e32196b">
+      <segment>
+        <source>Video</source>
+        <target>Vídeo</target>
+      </segment>
+    </unit>
+    <unit id="bc3f7d4e85a6566f">
+      <segment>
+        <source>View the audit log</source>
+        <target>Ver o registo de auditoria</target>
+      </segment>
+    </unit>
+    <unit id="3d53f50eb9397b19">
+      <segment>
+        <source>View the saved page</source>
+        <target>Ver a página guardada</target>
+      </segment>
+    </unit>
+    <unit id="7448611d5f93aa8a">
+      <segment>
+        <source>Visibility</source>
+        <target>Visibilidade</target>
+      </segment>
+    </unit>
+    <unit id="74fb9787fceed2bb">
+      <segment>
+        <source>Visitors can no longer reach the pages in {language}: addresses starting with {prefix} answer “not found”.</source>
+        <target>Os visitantes deixam de conseguir abrir as páginas em {language}: os endereços que começam por {prefix} respondem “não encontrado”.</target>
+      </segment>
+    </unit>
+    <unit id="fa6cb1be0d431599">
+      <segment>
+        <source>Visitors can see it now.</source>
+        <target>Os visitantes já a podem ver.</target>
+      </segment>
+    </unit>
+    <unit id="cf1f703c161d6b4e">
+      <segment>
+        <source>Wait {retry_after}, then send a new code. The code we sent before still works.</source>
+        <target>Aguarde {retry_after} e depois envie um novo código. O código que enviámos antes continua a funcionar.</target>
+      </segment>
+    </unit>
+    <unit id="a61935d6be7b9f04">
+      <segment>
+        <source>Waiting for review</source>
+        <target>À espera de revisão</target>
+      </segment>
+    </unit>
+    <unit id="63ea82367063caf1">
+      <segment>
+        <source>Warning:</source>
+        <target>Aviso:</target>
+      </segment>
+    </unit>
+    <unit id="5d6b2c9ef1ef2a01">
+      <segment>
+        <source>We email them a 6-digit invitation code, never a link. They type it on this site’s sign-in page, under “Accept an invitation”. The code works for 7 days and only once.</source>
+        <target>Enviamos-lhes por email um código de convite de 6 dígitos, nunca uma ligação. Escrevem-no na página de início de sessão deste site, em “Aceitar um convite”. O código funciona durante 7 dias e só uma vez.</target>
+      </segment>
+    </unit>
+    <unit id="ed27ef4e766c9729">
+      <segment>
+        <source>We have sent a new code to {email}. The code we sent before no longer works.</source>
+        <target>Enviámos um novo código para {email}. O código que enviámos antes já não funciona.</target>
+      </segment>
+    </unit>
+    <unit id="23027da390ff4b79">
+      <segment>
+        <source>We have sent an invitation to {email} to join as {label}. Its code works for 7 days.</source>
+        <target>Enviámos um convite para {email} para se juntar como {label}. O código funciona durante 7 dias.</target>
+      </segment>
+    </unit>
+    <unit id="8b239a2b8cb09ed6">
+      <segment>
+        <source>We keep it for 30 days.</source>
+        <target>Guardamo-lo durante 30 dias.</target>
+      </segment>
+    </unit>
+    <unit id="e1bbb0d2ce73cbc1">
+      <segment>
+        <source>We never send links. Invitation codes work for 7 days, and only once. If yours no longer works, ask the person who invited you to invite you again.</source>
+        <target>Nunca enviamos ligações. Os códigos de convite funcionam durante 7 dias e só uma vez. Se o seu já não funciona, peça a quem o convidou para o convidar outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="b918f2a22b101567">
+      <segment>
+        <source>We never send links. Type the code here, on this site.</source>
+        <target>Nunca enviamos ligações. Escreva o código aqui, neste site.</target>
+      </segment>
+    </unit>
+    <unit id="57ae0c6f2ee80b07">
+      <segment>
+        <source>We send the invitation to this address.</source>
+        <target>Enviamos o convite para este endereço.</target>
+      </segment>
+    </unit>
+    <unit id="ac44260169ab69f6">
+      <segment>
+        <source>We sent it by email to {email}. You can type it with or without spaces.</source>
+        <target>Enviámo-lo por email para {email}. Pode escrevê-lo com ou sem espaços.</target>
+      </segment>
+    </unit>
+    <unit id="60192f608c3771b8">
+      <segment>
+        <source>We will never send you a link. Type this code on the page where you asked for it. Never share it with anyone.</source>
+        <target>Nunca lhe enviaremos uma ligação. Escreva este código na página onde o pediu. Nunca o partilhe com ninguém.</target>
+      </segment>
+    </unit>
+    <unit id="68779505e462ddc9">
+      <segment>
+        <source>We'll reply to this address.</source>
+        <target>Respondemos para este endereço.</target>
+      </segment>
+    </unit>
+    <unit id="f8cf83a76a98df2d">
+      <segment>
+        <source>What</source>
+        <target>O quê</target>
+      </segment>
+    </unit>
+    <unit id="483bd49023ae2bfb">
+      <segment>
+        <source>What happened</source>
+        <target>O que aconteceu</target>
+      </segment>
+    </unit>
+    <unit id="9ddea2ad220473e5">
+      <segment>
+        <source>What happens to my data?</source>
+        <target>O que acontece aos meus dados?</target>
+      </segment>
+    </unit>
+    <unit id="8e7ddf931c59c8c4">
+      <segment>
+        <source>What it shows</source>
+        <target>O que mostra</target>
+      </segment>
+    </unit>
+    <unit id="87743a7d86a9a4f1">
+      <segment>
+        <source>What it shows, in {language}</source>
+        <target>O que mostra, em {language}</target>
+      </segment>
+    </unit>
+    <unit id="af38f6a1030c016d">
+      <segment>
+        <source>What the file is, for example "Annual report 2026". Its type and size are added for you.</source>
+        <target>O que é o ficheiro, por exemplo "Relatório anual 2026". O tipo e o tamanho são acrescentados automaticamente.</target>
+      </segment>
+    </unit>
+    <unit id="bbaffb3e96128c93">
+      <segment>
+        <source>What the picture shows, for people who can't see it. Leave it empty only for a decorative picture.</source>
+        <target>O que a imagem mostra, para quem não a pode ver. Deixe em branco só numa imagem decorativa.</target>
+      </segment>
+    </unit>
+    <unit id="cf9c7aa24a26aac4">
+      <segment>
+        <source>When</source>
+        <target>Quando</target>
+      </segment>
+    </unit>
+    <unit id="c17b94b8c9394d40">
+      <segment>
+        <source>Who</source>
+        <target>Quem</target>
+      </segment>
+    </unit>
+    <unit id="70c66d3ccc2d68d8">
+      <segment>
+        <source>Who changed what, and when. Entries can’t be changed or removed.</source>
+        <target>Quem alterou o quê, e quando. Os registos não podem ser alterados nem removidos.</target>
+      </segment>
+    </unit>
+    <unit id="ea66a754cf1cc732">
+      <segment>
+        <source>With the country code, for example +44 20 7946 0000. Leave it empty to keep it private.</source>
+        <target>Com o indicativo do país, por exemplo +351 21 123 4567. Deixe em branco para o manter privado.</target>
+      </segment>
+    </unit>
+    <unit id="f3a99956c6874fc4">
+      <segment>
+        <source>Write the {language} translation from scratch</source>
+        <target>Escrever a tradução em {language} de raiz</target>
+      </segment>
+    </unit>
+    <unit id="59e35390265774c4">
+      <segment>
+        <source>Written as HTML: paragraphs &lt;p&gt;, headings &lt;h2&gt; to &lt;h6&gt;, lists &lt;ul&gt;, &lt;ol&gt; and &lt;li&gt;, links &lt;a href="…"&gt;, &lt;strong&gt; and &lt;em&gt;. Anything else is removed when you save.</source>
+        <target>Escrito em HTML: parágrafos &lt;p&gt;, títulos &lt;h2&gt; a &lt;h6&gt;, listas &lt;ul&gt;, &lt;ol&gt; e &lt;li&gt;, ligações &lt;a href="…"&gt;, &lt;strong&gt; e &lt;em&gt;. Tudo o resto é removido ao guardar.</target>
+      </segment>
+    </unit>
+    <unit id="a8ccb988984f0cdf">
+      <segment>
+        <source>Written by you</source>
+        <target>Escrita por si</target>
+      </segment>
+    </unit>
+    <unit id="fe98f0fa3821dede">
+      <segment>
+        <source>Written by {name}</source>
+        <target>Escrita por {name}</target>
+      </segment>
+    </unit>
+    <unit id="dcc33e1d26111b0a">
+      <segment>
+        <source>Yandex Webmaster verification code</source>
+        <target>Código de verificação do Yandex Webmaster</target>
+      </segment>
+    </unit>
+    <unit id="e7edf683f4040dc0">
+      <segment>
+        <source>You are editing it now.</source>
+        <target>Está a editá-la agora.</target>
+      </segment>
+    </unit>
+    <unit id="4a4b1e51aa69b57e">
+      <segment>
+        <source>You can change it later.</source>
+        <target>Pode alterá-lo mais tarde.</target>
+      </segment>
+    </unit>
+    <unit id="55184fa2cf345fe1">
+      <segment>
+        <source>You can upload pictures ({pictures}), video ({video}), audio ({audio}) and documents ({documents}).</source>
+        <target>Pode carregar imagens ({pictures}), vídeo ({video}), áudio ({audio}) e documentos ({documents}).</target>
+      </segment>
+    </unit>
+    <unit id="c657514dedda5f2f">
+      <segment>
+        <source>You can't use the admin panel</source>
+        <target>Não pode usar a administração</target>
+      </segment>
+    </unit>
+    <unit id="606c4165c25860e5">
+      <segment>
+        <source>You can’t change this page now: it is {state}. You can still view it and use the buttons below.</source>
+        <target>Não pode alterar esta página agora: está {state}. Pode na mesma vê-la e usar os botões abaixo.</target>
+      </segment>
+    </unit>
+    <unit id="d402cfaad3855cfb">
+      <segment>
+        <source>You can’t deactivate your own account.</source>
+        <target>Não pode desativar a sua própria conta.</target>
+      </segment>
+    </unit>
+    <unit id="6be54543aa7b7a95">
+      <segment>
+        <source>You do not have permission to see this page</source>
+        <target>Não tem permissão para ver esta página</target>
+      </segment>
+    </unit>
+    <unit id="280913c915eb9a08">
+      <segment>
+        <source>You don't have permission to do "{label}" on this page.</source>
+        <target>Não tem permissão para "{label}" nesta página.</target>
+      </segment>
+    </unit>
+    <unit id="0c31c28291228cff">
+      <segment>
+        <source>You have asked for a code too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</source>
+        <target>Pediu um código demasiadas vezes. Aguarde {minutes, plural, one {# minuto} other {# minutos}} e tente outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="9b81d9a620519c08">
+      <segment>
+        <source>You have been invited to join as {role}. Your account will use {email}.</source>
+        <target>Foi convidado para se juntar como {role}. A sua conta vai usar {email}.</target>
+      </segment>
+    </unit>
+    <unit id="be391d69d5e45d4c">
+      <segment>
+        <source>You have no drafts.</source>
+        <target>Não tem rascunhos.</target>
+      </segment>
+    </unit>
+    <unit id="c0f5c7fe2cfe8049">
+      <segment>
+        <source>You have sent a lot of messages. Try again in {minutes, plural, one {# minute} other {# minutes}}.</source>
+        <target>Enviou muitas mensagens. Tente outra vez dentro de {minutes, plural, one {# minuto} other {# minutos}}.</target>
+      </segment>
+    </unit>
+    <unit id="06f40d71d283ff76">
+      <segment>
+        <source>You have sent too many requests in a short time.</source>
+        <target>Enviou demasiados pedidos num curto espaço de tempo.</target>
+      </segment>
+    </unit>
+    <unit id="bbae9220b37c9678">
+      <segment>
+        <source>You have signed out.</source>
+        <target>Terminou a sessão.</target>
+      </segment>
+    </unit>
+    <unit id="2dc2d5f0e211cd30">
+      <segment>
+        <source>You have tried a code too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</source>
+        <target>Tentou um código demasiadas vezes. Aguarde {minutes, plural, one {# minuto} other {# minutos}} e tente outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="5fb0a23314d2b329">
+      <segment>
+        <source>You have tried to sign in too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</source>
+        <target>Tentou iniciar sessão demasiadas vezes. Aguarde {minutes, plural, one {# minuto} other {# minutos}} e tente outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="816fca558e8ad8aa">
+      <segment>
+        <source>You need to sign in before you can see this page.</source>
+        <target>Tem de iniciar sessão para ver esta página.</target>
+      </segment>
+    </unit>
+    <unit id="88ef35011933b42c">
+      <segment>
+        <source>Your account doesn't give you access to the admin panel. You can still read the site and change your own details.</source>
+        <target>A sua conta não lhe dá acesso à administração. Pode na mesma ler o site e alterar os seus próprios dados.</target>
+      </segment>
+    </unit>
+    <unit id="86b78ecd6cf30465">
+      <segment>
+        <source>Your account is ready. Sign in with {email} and your new password.</source>
+        <target>A sua conta está pronta. Inicie sessão com {email} e a nova palavra-passe.</target>
+      </segment>
+    </unit>
+    <unit id="1adf839155d9c4c9">
+      <segment>
+        <source>Your code has run out of time. Ask for a new code to choose your password.</source>
+        <target>O seu código expirou. Peça um novo código para escolher a palavra-passe.</target>
+      </segment>
+    </unit>
+    <unit id="d6ea8f5cdc95fa3d">
+      <segment>
+        <source>Your code to choose your password for {site}</source>
+        <target>O seu código para escolher a palavra-passe em {site}</target>
+      </segment>
+    </unit>
+    <unit id="3db3caccf4b17206">
+      <segment>
+        <source>Your code to reset your password for {site}</source>
+        <target>O seu código para repor a palavra-passe em {site}</target>
+      </segment>
+    </unit>
+    <unit id="c0bcd4c0f8e70784">
+      <segment>
+        <source>Your details</source>
+        <target>Os seus dados</target>
+      </segment>
+    </unit>
+    <unit id="56b4f7ddaf7e3703">
+      <segment>
+        <source>Your drafts</source>
+        <target>Os seus rascunhos</target>
+      </segment>
+    </unit>
+    <unit id="3fa7c5ef191f6fdd">
+      <segment>
+        <source>Your email address</source>
+        <target>O seu endereço de email</target>
+      </segment>
+    </unit>
+    <unit id="7a057bd996a32915">
+      <segment>
+        <source>Your message</source>
+        <target>A sua mensagem</target>
+      </segment>
+    </unit>
+    <unit id="2c6b2e253c01fb2e">
+      <segment>
+        <source>Your name</source>
+        <target>O seu nome</target>
+      </segment>
+    </unit>
+    <unit id="c4f7329ffbd542ee">
+      <segment>
+        <source>Your password has been changed. Sign in with your new password.</source>
+        <target>A sua palavra-passe foi alterada. Inicie sessão com a nova palavra-passe.</target>
+      </segment>
+    </unit>
+    <unit id="12bdb14f867be0fd">
+      <segment>
+        <source>Your password has been set. Sign in with it now.</source>
+        <target>A sua palavra-passe foi definida. Inicie sessão com ela agora.</target>
+      </segment>
+    </unit>
+    <unit id="20789f4a167939aa">
+      <segment>
+        <source>Your password must be at least {min_length} characters long.</source>
+        <target>A palavra-passe tem de ter pelo menos {min_length} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="053d4c22ab6c2ccd">
+      <segment>
+        <source>Your password must be {max} characters or fewer.</source>
+        <target>A palavra-passe pode ter no máximo {max} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="8a3b304f3f1def7e">
+      <segment>
+        <source>Your password must include {missing}.</source>
+        <target>A palavra-passe tem de incluir {missing}.</target>
+      </segment>
+    </unit>
+    <unit id="c94b294ced7192b9">
+      <segment>
+        <source>a capital letter</source>
+        <target>uma letra maiúscula</target>
+      </segment>
+    </unit>
+    <unit id="db245a89cfc8f5fd">
+      <segment>
+        <source>a lower-case letter</source>
+        <target>uma letra minúscula</target>
+      </segment>
+    </unit>
+    <unit id="d24f1fa16d122006">
+      <segment>
+        <source>a number</source>
+        <target>um algarismo</target>
+      </segment>
+    </unit>
+    <unit id="eeb664bcd969ac3e">
+      <segment>
+        <source>a symbol, such as ! ? # or %</source>
+        <target>um símbolo, como ! ? # ou %</target>
+      </segment>
+    </unit>
+    <unit id="0bd7b9cee40a06a3">
+      <segment>
+        <source>alt text missing</source>
+        <target>falta o texto alternativo</target>
+      </segment>
+    </unit>
+    <unit id="e6ef5e87009dabb1">
+      <segment>
+        <source>audio files</source>
+        <target>ficheiros de áudio</target>
+      </segment>
+    </unit>
+    <unit id="efb08de9fa31dca2">
+      <segment>
+        <source>block {index} ({unknown})</source>
+        <target>bloco {index} ({unknown})</target>
+      </segment>
+    </unit>
+    <unit id="22c445d0a5bac81e">
+      <segment>
+        <source>block {index}, {label}</source>
+        <target>bloco {index}, {label}</target>
+      </segment>
+    </unit>
+    <unit id="ddf377084a322427">
+      <segment>
+        <source>dark mode</source>
+        <target>modo escuro</target>
+      </segment>
+    </unit>
+    <unit id="f7f9800fece80b25">
+      <segment>
+        <source>dark mode with more contrast</source>
+        <target>modo escuro com mais contraste</target>
+      </segment>
+    </unit>
+    <unit id="9b16b44d0e0a5cac">
+      <segment>
+        <source>documents</source>
+        <target>documentos</target>
+      </segment>
+    </unit>
+    <unit id="c2d4b446a44ce54f">
+      <segment>
+        <source>icon</source>
+        <target>ícone</target>
+      </segment>
+    </unit>
+    <unit id="a4357ab009ceb753">
+      <segment>
+        <source>interface colour</source>
+        <target>cor da interface</target>
+      </segment>
+    </unit>
+    <unit id="a6ea4833bc3f883c">
+      <segment>
+        <source>light mode</source>
+        <target>modo claro</target>
+      </segment>
+    </unit>
+    <unit id="7697424180360052">
+      <segment>
+        <source>light mode with more contrast</source>
+        <target>modo claro com mais contraste</target>
+      </segment>
+    </unit>
+    <unit id="3598ce6f965b2481">
+      <segment>
+        <source>logo</source>
+        <target>logótipo</target>
+      </segment>
+    </unit>
+    <unit id="7c8d64b8ae424a67">
+      <segment>
+        <source>not shown until the page is published</source>
+        <target>não mostrada até a página ser publicada</target>
+      </segment>
+    </unit>
+    <unit id="ab8d5cdca43cc8eb">
+      <segment>
+        <source>opens in a new tab</source>
+        <target>abre num novo separador</target>
+      </segment>
+    </unit>
+    <unit id="3660315a9af3df25">
+      <segment>
+        <source>page</source>
+        <target>página</target>
+      </segment>
+    </unit>
+    <unit id="ab11fed5fa0baf4e">
+      <segment>
+        <source>page {page} of {pages}</source>
+        <target>página {page} de {pages}</target>
+      </segment>
+    </unit>
+    <unit id="752f502ee3ac5744">
+      <segment>
+        <source>pictures</source>
+        <target>imagens</target>
+      </segment>
+    </unit>
+    <unit id="8be99bac00df84ae">
+      <segment>
+        <source>share image</source>
+        <target>imagem de partilha</target>
+      </segment>
+    </unit>
+    <unit id="982d9e3eb996f559">
+      <segment>
+        <source>text</source>
+        <target>texto</target>
+      </segment>
+    </unit>
+    <unit id="26760e7ce5a56f4b">
+      <segment>
+        <source>videos</source>
+        <target>vídeos</target>
+      </segment>
+    </unit>
+    <unit id="937fc0698f0c4764">
+      <segment>
+        <source>{about}: {problem}</source>
+        <target>{about}: {problem}</target>
+      </segment>
+    </unit>
+    <unit id="f2296abaf5cba502">
+      <segment>
+        <source>{author} submitted the page "{title}" on {site} for review.</source>
+        <target>{author} enviou a página "{title}" de {site} para revisão.</target>
+      </segment>
+    </unit>
+    <unit id="a3aa1735e3536b13">
+      <segment>
+        <source>{author} submitted the page "{title}" on {site} for review. To check it and approve it or send it back, open this link:</source>
+        <target>{author} enviou a página "{title}" de {site} para revisão. Para a verificar e aprovar ou devolver, abra esta ligação:</target>
+      </segment>
+    </unit>
+    <unit id="1422f4f1bb980c6e">
+      <segment>
+        <source>{change} Save the page to keep this change.</source>
+        <target>{change} Guarde a página para manter esta alteração.</target>
+      </segment>
+    </unit>
+    <unit id="52e7b5cd5c20db88">
+      <segment>
+        <source>{count, plural, one {# day} other {# days}}</source>
+        <target>{count, plural, one {# dia} other {# dias}}</target>
+      </segment>
+    </unit>
+    <unit id="cc01d0d02a53a1e8">
+      <segment>
+        <source>{count, plural, one {# hour} other {# hours}}</source>
+        <target>{count, plural, one {# hora} other {# horas}}</target>
+      </segment>
+    </unit>
+    <unit id="48f209430d923107">
+      <segment>
+        <source>{count, plural, one {# minute} other {# minutes}}</source>
+        <target>{count, plural, one {# minuto} other {# minutos}}</target>
+      </segment>
+    </unit>
+    <unit id="5b5dd96d193eeb89">
+      <segment>
+        <source>{count, plural, one {# second} other {# seconds}}</source>
+        <target>{count, plural, one {# segundo} other {# segundos}}</target>
+      </segment>
+    </unit>
+    <unit id="cedb35ac8ccc4874">
+      <segment>
+        <source>{count} characters. Search engines show about {max}.</source>
+        <target>{count} caracteres. Os motores de pesquisa mostram cerca de {max}.</target>
+      </segment>
+    </unit>
+    <unit id="32da240ab8f074d5">
+      <segment>
+        <source>{count} entries, newest first</source>
+        <target>{count} registos, os mais recentes primeiro</target>
+      </segment>
+    </unit>
+    <unit id="8a4c97a193289a3c">
+      <segment>
+        <source>{count} errors:</source>
+        <target>{count} erros:</target>
+      </segment>
+    </unit>
+    <unit id="ef6419bf5dbea6c1">
+      <segment>
+        <source>{count} pages match</source>
+        <target>{count} páginas correspondem</target>
+      </segment>
+    </unit>
+    <unit id="57257e06a46a3d69">
+      <segment>
+        <source>{count} problems stop this page being published</source>
+        <target>{count} problemas impedem a publicação desta página</target>
+      </segment>
+    </unit>
+    <unit id="1d52452666c4e0eb">
+      <segment>
+        <source>{effective_name} already has this role. Nothing was changed.</source>
+        <target>{effective_name} já tem esta função. Não foi alterado nada.</target>
+      </segment>
+    </unit>
+    <unit id="2649b479fc701a74">
+      <segment>
+        <source>{effective_name} has been deactivated and can no longer sign in. Their pages stay.</source>
+        <target>{effective_name} foi desativado e já não pode iniciar sessão. As suas páginas ficam.</target>
+      </segment>
+    </unit>
+    <unit id="11eb7b3d8f41bf9b">
+      <segment>
+        <source>{effective_name} has been reactivated and can sign in again.</source>
+        <target>{effective_name} foi reativado e pode voltar a iniciar sessão.</target>
+      </segment>
+    </unit>
+    <unit id="60e8e84c4ef9f356">
+      <segment>
+        <source>{effective_name}’s role is now {role}.</source>
+        <target>A função de {effective_name} é agora {role}.</target>
+      </segment>
+    </unit>
+    <unit id="1de75eebee770600">
+      <segment>
+        <source>{field} must be {{ limit }} characters or fewer</source>
+        <target>{field} pode ter no máximo {{ limit }} caracteres</target>
+      </segment>
+    </unit>
+    <unit id="1c088992cac55ea3">
+      <segment>
+        <source>{first} and {last}</source>
+        <target>{first} e {last}</target>
+      </segment>
+    </unit>
+    <unit id="5aa0721a13c266cf">
+      <segment>
+        <source>{first}, {rest}</source>
+        <target>{first}, {rest}</target>
+      </segment>
+    </unit>
+    <unit id="04465f1428e7b500">
+      <segment>
+        <source>{inviter} has invited you to join {site} as {role}.</source>
+        <target>{inviter} convidou-o para se juntar a {site} como {role}.</target>
+      </segment>
+    </unit>
+    <unit id="7ec136d5042f455a">
+      <segment>
+        <source>{inviter} invited you to {site}</source>
+        <target>{inviter} convidou-o para {site}</target>
+      </segment>
+    </unit>
+    <unit id="52ec82df02e75c7a">
+      <segment>
+        <source>{item} has been added to the {label}.</source>
+        <target>{item} foi adicionado ao {label}.</target>
+      </segment>
+    </unit>
+    <unit id="2ef556d642f8dbaf">
+      <segment>
+        <source>{language} (main language)</source>
+        <target>{language} (idioma principal)</target>
+      </segment>
+    </unit>
+    <unit id="c4c169f78f4da7a1">
+      <segment>
+        <source>{locale} ({locale2}) is the main language, so it can’t be removed. Make another language the main one first.</source>
+        <target>{locale} ({locale2}) é o idioma principal, por isso não pode ser removido. Torne primeiro outro idioma o principal.</target>
+      </segment>
+    </unit>
+    <unit id="e7e580a096d7d592">
+      <segment>
+        <source>{locale} is now the main language. Its pages have addresses without a language part.</source>
+        <target>{locale} é agora o idioma principal. As suas páginas têm endereços sem a parte do idioma.</target>
+      </segment>
+    </unit>
+    <unit id="4e77984ccffff99d">
+      <segment>
+        <source>{name} ({code})</source>
+        <target>{name} ({code})</target>
+      </segment>
+    </unit>
+    <unit id="bd0aa116c5c6bdd3">
+      <segment>
+        <source>{name} ({type})</source>
+        <target>{name} ({type})</target>
+      </segment>
+    </unit>
+    <unit id="9fdbc74d4b67936a">
+      <segment>
+        <source>{name} ({type}), not published yet</source>
+        <target>{name} ({type}), ainda não publicado</target>
+      </segment>
+    </unit>
+    <unit id="7553f8112e837e7f">
+      <segment>
+        <source>{name} can’t sign in. Reactivating lets them sign in again with their old password.</source>
+        <target>{name} não pode iniciar sessão. Reativar permite-lhe voltar a iniciar sessão com a palavra-passe antiga.</target>
+      </segment>
+    </unit>
+    <unit id="6a5ee76e749e4d1c">
+      <segment>
+        <source>{name} has been deleted.</source>
+        <target>{name} foi eliminado.</target>
+      </segment>
+    </unit>
+    <unit id="ffeed099d7ba845c">
+      <segment>
+        <source>{name} has been uploaded. Describe it below, so everyone can understand it.</source>
+        <target>{name} foi carregado. Descreva-o abaixo, para que toda a gente o perceba.</target>
+      </segment>
+    </unit>
+    <unit id="1ca6e358d78e465e">
+      <segment>
+        <source>{name} is already in the library, so it wasn’t added again. Here it is.</source>
+        <target>{name} já está na biblioteca, por isso não foi adicionado outra vez. Aqui está.</target>
+      </segment>
+    </unit>
+    <unit id="2fd65f207c10d95e">
+      <segment>
+        <source>{name} saved “{title}”</source>
+        <target>{name} guardou “{title}”</target>
+      </segment>
+    </unit>
+    <unit id="2d0050f31eec88e2">
+      <segment>
+        <source>{name} sent a message with the contact form on {page} ({url}).</source>
+        <target>{name} enviou uma mensagem com o formulário de contacto em {page} ({url}).</target>
+      </segment>
+    </unit>
+    <unit id="8280da1513292832">
+      <segment>
+        <source>{name} sent a message with the contact form on {page}.</source>
+        <target>{name} enviou uma mensagem com o formulário de contacto em {page}.</target>
+      </segment>
+    </unit>
+    <unit id="c9acb770441c8e6d">
+      <segment>
+        <source>{name} won’t be able to sign in, and is signed out straight away. Their pages stay. You can reactivate the account later.</source>
+        <target>{name} deixa de poder iniciar sessão e a sessão é terminada de imediato. As suas páginas ficam. Pode reativar a conta mais tarde.</target>
+      </segment>
+    </unit>
+    <unit id="026619bd5685dbd1">
+      <segment>
+        <source>{noun} {index}</source>
+        <target>{noun} {index}</target>
+      </segment>
+    </unit>
+    <unit id="db132a812eaf244a">
+      <segment>
+        <source>{noun} {index} of {value}</source>
+        <target>{noun} {index} de {value}</target>
+      </segment>
+    </unit>
+    <unit id="9845ce5c6fc18487">
+      <segment>
+        <source>{types} New files stay unpublished until an editor publishes them.</source>
+        <target>{types} Os ficheiros novos ficam por publicar até um editor os publicar.</target>
+      </segment>
+    </unit>
+    <unit id="85a85f231e56df24">
+      <segment>
+        <source>{what} must be {max} characters or fewer.</source>
+        <target>{what} pode ter no máximo {max} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="f826b0aea616965e">
+      <segment>
+        <source>{what}: the generated picture is back.</source>
+        <target>{what}: a imagem gerada está de volta.</target>
+      </segment>
+    </unit>
+    <unit id="e8ed11efcb1fee0a">
+      <segment>
+        <source>{what}: the text has been saved.</source>
+        <target>{what}: o texto foi guardado.</target>
+      </segment>
+    </unit>
+    <unit id="28859335a50e71c3">
+      <segment>
+        <source>{what}: uploaded.</source>
+        <target>{what}: carregado.</target>
+      </segment>
+    </unit>
+    <unit id="3066143dc4ba4309">
+      <segment>
+        <source>{what}: uploaded. The preview shows how it was cropped.</source>
+        <target>{what}: carregado. A pré-visualização mostra como foi recortado.</target>
+      </segment>
+    </unit>
+    <unit id="be193ae6cd17fde5">
+      <segment>
+        <source>{width} × {height} pixels</source>
+        <target>{width} × {height} píxeis</target>
+      </segment>
+    </unit>
+    <unit id="459e174b936e0a80">
+      <segment>
+        <source>“Translate” copies the page’s text and blocks into a new draft translation, for you to translate. The page in the other language doesn’t change. A new translation stays a draft until it is published on its own.</source>
+        <target>“Traduzir” copia o texto e os blocos da página para uma nova tradução em rascunho, para a traduzir. A página no outro idioma não muda. Uma tradução nova fica em rascunho até ser publicada por si própria.</target>
+      </segment>
+    </unit>
+    <unit id="36d747060c7fe568">
+      <segment>
+        <source>“{title}” has been started as a draft. Add its content, then save it.</source>
+        <target>“{title}” foi começada como rascunho. Adicione o conteúdo e depois guarde-a.</target>
+      </segment>
+    </unit>
+    <unit id="f0dbda94d9980153">
+      <segment>
+        <source>“{title}” was saved</source>
+        <target>“{title}” foi guardada</target>
+      </segment>
+    </unit>
+    <unit id="59d372831f77b917">
+      <segment>
+        <source>“{{ line }}” is not a full web address starting with https://. Put one address on each line.</source>
+        <target>“{{ line }}” não é um endereço web completo a começar por https://. Coloque um endereço por linha.</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>

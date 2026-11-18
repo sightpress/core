@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Menu\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -79,7 +80,7 @@ final readonly class MenuAdminHandler implements RequestHandlerInterface
 
                         return $this->add($request, $linkForm, null, $linkForm->text('label'), $linkForm->text('url'), $actor);
                     } catch (MenuException $exception) {
-                        $linkForm = $linkForm->withErrors(['url' => $exception->getMessage()]);
+                        $linkForm = $linkForm->withErrors(['url' => $exception->text()]);
                     }
                 }
             } else {
@@ -108,7 +109,7 @@ final readonly class MenuAdminHandler implements RequestHandlerInterface
         $item = $this->menus->add($menu, $pageId, $label, $url, $actor->userId);
         Session::fromRequest($request)->set(self::FOCUS, 'item-' . $item->id());
 
-        return $this->screens->redirect($request, self::PATH, sprintf('%s has been added to the %s.', $this->label($item), mb_strtolower($menu->label())));
+        return $this->screens->redirect($request, self::PATH, new Message('{item} has been added to the {label}.', ['item' => $this->label($item), 'label' => Message::of($menu->label())->lowerFirst()]));
     }
 
     private function move(ServerRequestInterface $request, string $action, mixed $id, Actor $actor): ResponseInterface
@@ -135,7 +136,7 @@ final readonly class MenuAdminHandler implements RequestHandlerInterface
             };
             $message = sprintf($template, $label);
         } catch (MenuException $exception) {
-            $message = $label . ': ' . $exception->getMessage();
+            $message = $label . ': ' . $exception->text();
         }
         Session::fromRequest($request)->set(self::FOCUS, $action === 'remove' ? 'menu-' . $item->menu()->value : sprintf('item-%d-%s', $item->id(), $action));
 
@@ -178,7 +179,7 @@ final readonly class MenuAdminHandler implements RequestHandlerInterface
             }
             $built[] = [
                 'id' => (int) $item->id(),
-                'label' => $item->label() ?? $link->title ?? sprintf('Missing page (#%d)', (int) $item->pageId()),
+                'label' => $item->label() ?? $link->title ?? new Message('Missing page (#{page_id})', ['page_id' => (string) (int) $item->pageId()]),
                 'link' => $item->url() ?? $link?->url,
                 'page' => $item->pageId() !== null,
                 'hidden' => $item->pageId() !== null && $link?->public !== true,

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="{{ current_locale() }}" dir="{{ text_direction(current_locale()) }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,7 +7,7 @@
 </head>
 <body style="margin: 0; padding: 1.5rem; font-family: system-ui, sans-serif; font-size: 18px; line-height: 1.5; color: #1a1a1a; background: #ffffff;">
 <p>{{ t('Hello {name},', {'name': name}) }}</p>
-<p>{{ t('{author} submitted the page "{title}" on {site} for review.', {'author': author, 'title': title, 'site': site_name}) }}</p>
+<p>{{ t('{author} submitted the page "{title}" on {site} for review.', {'author': author ?? t('Someone'), 'title': title, 'site': site_name}) }}</p>
 <p><a href="{{ link }}" style="color: #0b4f9c;">{{ t('Review "{title}"', {'title': title}) }}</a></p>
 </body>
 </html>

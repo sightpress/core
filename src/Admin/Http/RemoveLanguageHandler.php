@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Admin\Http;
 
+use SightPress\Core\Template\LanguageName;
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -44,18 +46,18 @@ final readonly class RemoveLanguageHandler implements RequestHandlerInterface
         try {
             $this->languages->checkRemovable($locale);
         } catch (SiteLanguageException $exception) {
-            return $this->screens->redirect($request, LanguagesHandler::PATH, $exception->getMessage());
+            return $this->screens->redirect($request, LanguagesHandler::PATH, $exception->text());
         }
         if ($request->getMethod() === 'POST') {
             $this->languages->remove($locale, $actor->userId);
 
-            return $this->screens->redirect($request, LanguagesHandler::PATH, sprintf('Removed %s. Its translations are kept: add the language again to bring them back.', LocaleCode::describe($locale)));
+            return $this->screens->redirect($request, LanguagesHandler::PATH, new Message('Removed {locale}. Its translations are kept: add the language again to bring them back.', ['locale' => new LanguageName($locale)]));
         }
 
         return $this->screens->render($request, '@admin/remove-language.html.twig', [
             'locale' => $locale,
-            'name' => LocaleCode::describe($locale),
-            'main' => LocaleCode::describe($this->languages->defaultLocale()),
+            'name' => new LanguageName($locale),
+            'main' => new LanguageName($this->languages->defaultLocale()),
             'prefix' => '/' . strtolower($locale) . '/',
             'action' => self::PATH,
             'cancel' => LanguagesHandler::PATH,

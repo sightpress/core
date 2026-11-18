@@ -73,13 +73,13 @@ final class MenuAdminHandlerTest extends TestCase
 
         $added = $this->handle('POST', ['action' => 'add-page', 'menu' => 'main', 'page' => 'page-' . $team->id()]);
         self::assertSame(303, $added->getStatusCode());
-        self::assertSame(['Team has been added to the main menu.'], Flash::take($this->session));
+        self::assertSame(['Team has been added to the main menu.'], array_map(strval(...), Flash::take($this->session)));
         $item = $this->menus->items(MenuName::Main)[0];
         self::assertStringContainsString('<span id="item-' . $item->id() . '" tabindex="-1" autofocus>Team</span>', (string) $this->handle('GET')->getBody());
         self::assertStringNotContainsString('autofocus', (string) $this->handle('GET')->getBody(), 'focus is moved once');
 
         $this->handle('POST', ['action' => 'add-link', 'menu' => 'footer', 'label' => 'Hours', 'url' => '/hours']);
-        self::assertSame(['Hours has been added to the footer menu.'], Flash::take($this->session));
+        self::assertSame(['Hours has been added to the footer menu.'], array_map(strval(...), Flash::take($this->session)));
 
         $missing = $this->handle('POST', ['action' => 'add-page', 'page' => 'page-' . $team->id()]);
         self::assertSame(422, $missing->getStatusCode());
@@ -120,7 +120,7 @@ final class MenuAdminHandlerTest extends TestCase
         ] as [$action, $item, $message, $focus]) {
             $response = $this->handle('POST', ['action' => $action, 'item' => (string) $item->id()]);
             self::assertSame(303, $response->getStatusCode());
-            self::assertSame([$message], Flash::take($this->session), $action);
+            self::assertSame([$message], array_map(strval(...), Flash::take($this->session)), $action);
             if ($action !== 'out') {
                 self::assertStringContainsString($focus, (string) $this->handle('GET')->getBody(), $action);
             } else {
@@ -129,7 +129,7 @@ final class MenuAdminHandlerTest extends TestCase
         }
 
         $this->handle('POST', ['action' => 'remove', 'item' => 'x']);
-        self::assertSame(['That menu entry isn\'t there any more.'], Flash::take($this->session));
+        self::assertSame(['That menu entry isn\'t there any more.'], array_map(strval(...), Flash::take($this->session)));
     }
 
     /**

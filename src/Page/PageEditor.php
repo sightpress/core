@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page;
 
+use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Block\Contract\BlockValidator;
@@ -93,9 +94,9 @@ final readonly class PageEditor
     {
         $this->checkLocale($locale);
         if ($page->translation($locale) !== null) {
-            throw new PageException(sprintf('The page is already written in "%s". Change that translation instead.', $locale));
+            throw new PageException(new Message('The page is already written in "{locale}". Change that translation instead.', ['locale' => $locale]));
         }
-        $source = $page->translation($from) ?? throw new PageException(sprintf('The page isn\'t written in "%s", so it can\'t be copied from it.', $from));
+        $source = $page->translation($from) ?? throw new PageException(new Message('The page isn\'t written in "{from}", so it can\'t be copied from it.', ['from' => $from]));
 
         return $this->write($page, $locale, $source->content(), $savedBy, true);
     }
@@ -110,7 +111,7 @@ final readonly class PageEditor
     public function publishTranslation(Page $page, string $locale, bool $published, ?int $by = null): bool
     {
         $this->checkLocale($locale);
-        $translation = $page->translation($locale) ?? throw new PageException(sprintf('The page isn\'t written in "%s" yet.', $locale));
+        $translation = $page->translation($locale) ?? throw new PageException(new Message('The page isn\'t written in "{locale}" yet.', ['locale' => $locale]));
         if ($translation->isDraft() !== $published) {
             return false;
         }
@@ -163,7 +164,7 @@ final readonly class PageEditor
         }
         $newDepth = $parent === null ? 0 : $parent->depth() + 1;
         if ($newDepth + $height >= Page::MAX_DEPTH) {
-            throw new PageException(sprintf('Pages can be nested at most %d levels deep.', Page::MAX_DEPTH));
+            throw new PageException(new Message('Pages can be nested at most {max} levels deep.', ['max' => (string) Page::MAX_DEPTH]));
         }
 
         $paths = [];
@@ -223,11 +224,7 @@ final readonly class PageEditor
     private function checkLocale(string $locale): void
     {
         if (!in_array($locale, $this->site->locales, true)) {
-            throw new PageException(sprintf(
-                'This site isn\'t written in "%s". Its languages are: %s.',
-                $locale,
-                implode(', ', $this->site->locales),
-            ));
+            throw new PageException(new Message('This site isn\'t written in "{locale}". Its languages are: {locales}.', ['locale' => $locale, 'locales' => implode(', ', $this->site->locales)]));
         }
     }
 
@@ -235,10 +232,7 @@ final readonly class PageEditor
     {
         if ($parent === null) {
             if (Slug::isReservedAtRoot($slug, $this->site->locales)) {
-                throw new PageException(sprintf(
-                    'The address "%s" is used by the system. Choose another one for a top-level page.',
-                    $slug,
-                ));
+                throw new PageException(new Message('The address "{slug}" is used by the system. Choose another one for a top-level page.', ['slug' => $slug]));
             }
 
             return $slug;
@@ -246,10 +240,7 @@ final readonly class PageEditor
 
         $parentTranslation = $parent->translation($locale);
         if ($parentTranslation === null) {
-            throw new PageException(sprintf(
-                'The page above this one isn\'t written in "%s" yet. Translate it first.',
-                $locale,
-            ));
+            throw new PageException(new Message('The page above this one isn\'t written in "{locale}" yet. Translate it first.', ['locale' => $locale]));
         }
 
         return $parentTranslation->path() . '/' . $slug;
@@ -259,11 +250,7 @@ final readonly class PageEditor
     {
         $taken = $this->pages->findByPath($locale, $path);
         if ($taken !== null && $taken->page() !== $page) {
-            throw new PageException(sprintf(
-                'The address "/%s" is already used by the page "%s". Choose another one.',
-                $path,
-                $taken->title(),
-            ));
+            throw new PageException(new Message('The address "/{path}" is already used by the page "{title}". Choose another one.', ['path' => $path, 'title' => $taken->title()]));
         }
     }
 

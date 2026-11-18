@@ -7,7 +7,7 @@
 
 {% include '@auth/email/code.txt.twig' %}
 
-{{ t('The invitation works until {expires}.', {expires: expires}) }}
+{{ t('The invitation works until {expires} ({timezone} time).', {expires: expires|user_datetime, timezone: timezone}) }}
 
 {{ t('If you weren’t expecting this, you can ignore this email: no account is made until the code is used.') }}
 {% endautoescape %}

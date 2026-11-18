@@ -240,4 +240,13 @@ final class PageWorkflowTest extends TestCase
     {
         return $this->fixture->editor()->create('en-GB', new PageContent('Page ' . bin2hex(random_bytes(3))), null, $author);
     }
+
+    public function testItsMessagesCanBeShownTranslated(): void
+    {
+        $exception = new WorkflowException(new \SightPress\Core\Template\Message('“{label}” can’t be done now.', ['label' => 'Publish']), true);
+
+        self::assertSame('“Publish” can’t be done now.', $exception->getMessage());
+        self::assertSame('“{label}” can’t be done now.', $exception->text()->text);
+        self::assertTrue($exception->forbidden);
+    }
 }

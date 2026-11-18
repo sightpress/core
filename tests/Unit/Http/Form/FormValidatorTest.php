@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Http\Form;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +21,8 @@ use Symfony\Component\Validator\Validation;
 #[UsesClass(Form::class)]
 #[UsesClass(Field::class)]
 #[UsesClass(FieldType::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class FormValidatorTest extends TestCase
 {
     public function testAValidSubmissionIsNormalised(): void
@@ -37,11 +41,11 @@ final class FormValidatorTest extends TestCase
         ]);
 
         self::assertTrue($form->isValid(), (string) json_encode($form->errors()));
-        self::assertSame('Ada Lovelace', $form->value('name'));
-        self::assertSame("Line one\nLine two\nthree", $form->value('bio'));
-        self::assertSame(['a11y'], $form->value('topics'));
-        self::assertSame('1', $form->value('terms'));
-        self::assertSame('  correct horse  ', $form->value('secret'), 'passwords are kept exactly as typed');
+        self::assertSame('Ada Lovelace', Text::of($form->value('name')));
+        self::assertSame("Line one\nLine two\nthree", Text::of($form->value('bio')));
+        self::assertSame(['a11y'], Text::of($form->value('topics')));
+        self::assertSame('1', Text::of($form->value('terms')));
+        self::assertSame('  correct horse  ', Text::of($form->value('secret')), 'passwords are kept exactly as typed');
     }
 
     public function testMissingRequiredFieldsSayWhatToDo(): void
@@ -53,7 +57,7 @@ final class FormValidatorTest extends TestCase
             'email' => 'Enter email address',
             'role' => 'Select role',
             'terms' => 'Agree to the terms to continue',
-        ], $form->errors());
+        ], Text::of($form->errors()));
     }
 
     /**
@@ -75,7 +79,7 @@ final class FormValidatorTest extends TestCase
     {
         $form = $this->submit([$field => $value] + $this->valid());
 
-        self::assertSame([$field => $message], $form->errors());
+        self::assertSame([$field => $message], Text::of($form->errors()));
     }
 
     /**
@@ -113,8 +117,8 @@ final class FormValidatorTest extends TestCase
         $wrong = $validator->submit($form, ['timezone' => 'Europe']);
 
         self::assertTrue($valid->isValid());
-        self::assertSame('', $valid->value('picture'));
-        self::assertSame(['timezone' => 'Select one of the options for “Time zone”'], $wrong->errors());
+        self::assertSame('', Text::of($valid->value('picture')));
+        self::assertSame(['timezone' => 'Select one of the options for “Time zone”'], Text::of($wrong->errors()));
     }
 
     /**

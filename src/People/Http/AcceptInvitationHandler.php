@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\People\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -64,9 +65,9 @@ final readonly class AcceptInvitationHandler implements RequestHandlerInterface
         $session->regenerate();
     }
 
-    public static function form(Invitation $invitation, string $timezone, string $passwordHint): Form
+    public static function form(Invitation $invitation, string $timezone, string|Message $passwordHint): Form
     {
-        $length = static fn (string $label): Length => new Length(max: 100, maxMessage: sprintf('%s must be 100 characters or fewer', $label));
+        $length = static fn (string $label): Length => new Length(max: 100, maxMessage: '{field} must be {{ limit }} characters or fewer');
 
         return Form::create(
             'accept',
@@ -124,12 +125,12 @@ final readonly class AcceptInvitationHandler implements RequestHandlerInterface
                 $this->passwords->hash($form->text('password')),
             );
         } catch (AccountException $exception) {
-            return $this->pages->page($request, '@people/accept-invalid.html.twig', ['title' => 'This invitation can’t be used', 'reason' => $exception->getMessage()], 409);
+            return $this->pages->page($request, '@people/accept-invalid.html.twig', ['title' => 'This invitation can’t be used', 'reason' => $exception->text()], 409);
         }
         $this->roles->assign((int) $account->id(), $invitation->role);
         $this->invitations->accept($invitation);
         $session->remove(self::SESSION);
-        Flash::add($session, sprintf('Your account is ready. Sign in with %s and your new password.', $invitation->email));
+        Flash::add($session, new Message('Your account is ready. Sign in with {email} and your new password.', ['email' => $invitation->email]));
 
         return $this->redirect('/login');
     }
@@ -144,7 +145,7 @@ final readonly class AcceptInvitationHandler implements RequestHandlerInterface
     private function show(ServerRequestInterface $request, Invitation $invitation, Form $form, int $status = 200): ResponseInterface
     {
         return $this->pages->page($request, '@people/accept.html.twig', [
-            'title' => sprintf('Join %s', $this->site->name),
+            'title' => new Message('Join {name}', ['name' => $this->site->name]),
             'form' => $form,
             'invitation' => $invitation,
             'role' => $this->roles->find($invitation->role)->label ?? $invitation->role,

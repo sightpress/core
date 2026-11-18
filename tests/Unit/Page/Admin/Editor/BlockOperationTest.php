@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Page\Admin\Editor;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -42,9 +43,9 @@ final class BlockOperationTest extends TestCase
 
         self::assertNotNull($result);
         self::assertCount(6, $result->blocks);
-        self::assertSame(['type' => 'heading', 'version' => 1, 'data' => []], $result->blocks[5]);
-        self::assertSame('Added a Heading block. It is block 6 of 6.' . self::SAVE, $result->message);
-        self::assertSame('en-gb-blocks-5', $result->focus);
+        self::assertSame(['type' => 'heading', 'version' => 1, 'data' => []], Text::of($result->blocks[5]));
+        self::assertSame('Added a Heading block. It is block 6 of 6.' . self::SAVE, Text::of($result->message));
+        self::assertSame('en-gb-blocks-5', Text::of($result->focus));
         self::assertNull($this->operations->apply('en-GB', $this->blocks, 'add:/blocks', 'no_such_type'));
         self::assertNull($this->operations->apply('en-GB', $this->blocks, 'add:/blocks'));
     }
@@ -53,43 +54,43 @@ final class BlockOperationTest extends TestCase
     {
         $picture = $this->operations->apply('en-GB', $this->blocks, 'add:/blocks/2/data/images');
         self::assertNotNull($picture);
-        self::assertSame([['media' => 1], ['media' => 2], []], $picture->blocks[2]['data']['images']);
-        self::assertSame('Added picture 3 of 3.' . self::SAVE, $picture->message);
-        self::assertSame('en-gb-blocks-2-data-images-2', $picture->focus);
+        self::assertSame([['media' => 1], ['media' => 2], []], Text::of($picture->blocks[2]['data']['images']));
+        self::assertSame('Added picture 3 of 3.' . self::SAVE, Text::of($picture->message));
+        self::assertSame('en-gb-blocks-2-data-images-2', Text::of($picture->focus));
 
         $column = $this->operations->apply('en-GB', $this->blocks, 'add:/blocks/3/data/columns');
         self::assertNotNull($column);
-        self::assertSame([["blocks" => []], ["blocks" => []], []], $column->blocks[3]['data']['columns']);
-        self::assertSame('Added column 3 of 3.' . self::SAVE, $column->message);
+        self::assertSame([["blocks" => []], ["blocks" => []], []], Text::of($column->blocks[3]['data']['columns']));
+        self::assertSame('Added column 3 of 3.' . self::SAVE, Text::of($column->message));
 
         $inside = $this->operations->apply('en-GB', $this->blocks, 'add:/blocks/3/data/columns/1/blocks', 'rich_text');
         self::assertNotNull($inside);
-        self::assertSame([['blocks' => []], ['blocks' => [['type' => 'rich_text', 'version' => 1, 'data' => []]]]], $inside->blocks[3]['data']['columns']);
-        self::assertSame('en-gb-blocks-3-data-columns-1-blocks-0', $inside->focus);
+        self::assertSame([['blocks' => []], ['blocks' => [['type' => 'rich_text', 'version' => 1, 'data' => []]]]], Text::of($inside->blocks[3]['data']['columns']));
+        self::assertSame('en-gb-blocks-3-data-columns-1-blocks-0', Text::of($inside->focus));
     }
 
     public function testMovesUpAndDownWithFocusOnTheSameButtonWhileItIsThere(): void
     {
         $up = $this->operations->apply('en-GB', $this->blocks, 'up:/blocks/2');
         self::assertNotNull($up);
-        self::assertSame(['gallery', 'rich_text'], [$up->blocks[1]['type'], $up->blocks[2]['type']]);
-        self::assertSame('Moved block 3 (Gallery) up. It is now block 2 of 5.' . self::SAVE, $up->message);
-        self::assertSame('en-gb-blocks-1-up', $up->focus);
+        self::assertSame(['gallery', 'rich_text'], Text::of([$up->blocks[1]['type'], $up->blocks[2]['type']]));
+        self::assertSame('Moved block 3 (Gallery) up. It is now block 2 of 5.' . self::SAVE, Text::of($up->message));
+        self::assertSame('en-gb-blocks-1-up', Text::of($up->focus));
 
         $top = $this->operations->apply('en-GB', $this->blocks, 'up:/blocks/1');
-        self::assertSame('en-gb-blocks-0-down', $top?->focus, 'first now: focus moves to "Move down"');
+        self::assertSame('en-gb-blocks-0-down', Text::of($top?->focus), 'first now: focus moves to "Move down"');
 
         $down = $this->operations->apply('en-GB', $this->blocks, 'down:/blocks/0');
-        self::assertSame('en-gb-blocks-1-down', $down?->focus);
+        self::assertSame('en-gb-blocks-1-down', Text::of($down?->focus));
         $bottom = $this->operations->apply('en-GB', $this->blocks, 'down:/blocks/3');
         self::assertNotNull($bottom);
-        self::assertSame('en-gb-blocks-4-up', $bottom->focus, 'last now: focus moves to "Move up"');
-        self::assertSame('Moved block 4 (Columns) down. It is now block 5 of 5.' . self::SAVE, $bottom->message);
+        self::assertSame('en-gb-blocks-4-up', Text::of($bottom->focus), 'last now: focus moves to "Move up"');
+        self::assertSame('Moved block 4 (Columns) down. It is now block 5 of 5.' . self::SAVE, Text::of($bottom->message));
 
         $picture = $this->operations->apply('en-GB', $this->blocks, 'down:/blocks/2/data/images/0');
         self::assertNotNull($picture);
-        self::assertSame([['media' => 2], ['media' => 1]], $picture->blocks[2]['data']['images']);
-        self::assertSame('Moved picture 1 down. It is now picture 2 of 2.' . self::SAVE, $picture->message);
+        self::assertSame([['media' => 2], ['media' => 1]], Text::of($picture->blocks[2]['data']['images']));
+        self::assertSame('Moved picture 1 down. It is now picture 2 of 2.' . self::SAVE, Text::of($picture->message));
     }
 
     public function testRemovesWithFocusOnTheList(): void
@@ -98,8 +99,8 @@ final class BlockOperationTest extends TestCase
 
         self::assertNotNull($removed);
         self::assertCount(4, $removed->blocks);
-        self::assertSame('Removed block 5 (unknown).' . self::SAVE, $removed->message);
-        self::assertSame('en-gb-blocks', $removed->focus);
+        self::assertSame('Removed block 5 (unknown).' . self::SAVE, Text::of($removed->message));
+        self::assertSame('en-gb-blocks', Text::of($removed->focus));
     }
 
     public function testIgnoresButtonsThatDontMatchTheBlocks(): void

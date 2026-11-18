@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\User;
 
+use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use SightPress\Core\User\Avatar\AvatarService;
 use SightPress\Core\User\Contract\Account;
@@ -50,7 +51,7 @@ final readonly class AccountRegistrar implements AccountRegistration, PendingAcc
         #[\SensitiveParameter] ?string $passwordHash,
     ): User {
         if ($this->users->findByEmail($email) !== null) {
-            throw new AccountException(sprintf('There is already an account for %s.', User::normalizeEmail($email)));
+            throw new AccountException(new Message('There is already an account for {email}.', ['email' => User::normalizeEmail($email)]));
         }
         $now = $this->clock->now();
         try {
@@ -59,7 +60,7 @@ final readonly class AccountRegistrar implements AccountRegistration, PendingAcc
                 $user->setPasswordHash($passwordHash, $now);
             }
         } catch (UserException $exception) {
-            throw new AccountException($exception->getMessage(), previous: $exception);
+            throw new AccountException($exception->text(), previous: $exception);
         }
         $this->users->save($user);
         $this->avatars->generate($user);

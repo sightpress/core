@@ -135,7 +135,7 @@ final class AcceptInvitationHandlerTest extends TestCase
 
         self::assertSame(303, $response->getStatusCode());
         self::assertSame('/login', $response->getHeaderLine('Location'));
-        self::assertSame(['Your account is ready. Sign in with nia@example.org and your new password.'], Flash::take($this->session));
+        self::assertSame(['Your account is ready. Sign in with nia@example.org and your new password.'], array_map(strval(...), Flash::take($this->session)));
         $user = $this->auth->users->findByEmail('nia@example.org');
         self::assertNotNull($user);
         self::assertTrue($user->isActive());

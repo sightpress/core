@@ -34,7 +34,7 @@ final class ImageAltRule implements A11yRule
             $issues[] = new A11yIssue('image.alt_redundant', 'Screen readers already say it is an image. Start with what it shows.', A11ySeverity::Warning, '/alt', ['1.1.1']);
         }
         if (mb_strlen($alt) > self::LONG) {
-            $issues[] = new A11yIssue('image.alt_long', sprintf('Keep alt text under %d characters; put longer descriptions in the caption or the text.', self::LONG), A11ySeverity::Warning, '/alt', ['1.1.1']);
+            $issues[] = new A11yIssue('image.alt_long', 'Keep alt text under 250 characters; put longer descriptions in the caption or the text.', A11ySeverity::Warning, '/alt', ['1.1.1']);
         }
 
         return $issues;

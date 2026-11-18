@@ -32,6 +32,8 @@ test('a member changes their details by keyboard and hears that they were saved'
   await expect(page.getByLabel('Time zone')).toBeFocused();
   await page.getByLabel('Time zone').selectOption('Asia/Tokyo');
   await page.keyboard.press('Tab');
+  await expect(page.getByLabel('Language (optional)')).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'Save details' })).toBeFocused();
   await page.keyboard.press('Enter');
 

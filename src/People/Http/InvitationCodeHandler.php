@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\People\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -64,11 +65,7 @@ final readonly class InvitationCodeHandler implements RequestHandlerInterface
         } catch (TooManyCodes $exception) {
             $minutes = (int) ceil($exception->retryAfter / 60);
 
-            return $this->show($request, $form->withErrors([CodeEntry::FIELD => sprintf(
-                'You have tried a code too many times. Wait %d %s and try again.',
-                $minutes,
-                $minutes === 1 ? 'minute' : 'minutes',
-            )]), 429);
+            return $this->show($request, $form->withErrors([CodeEntry::FIELD => new Message('You have tried a code too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.', ['minutes' => $minutes])]), 429);
         }
         if ($invitation === null) {
             return $this->show($request, $form->withErrors([CodeEntry::FIELD => self::WRONG]), 422);

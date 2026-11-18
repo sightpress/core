@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Auth;
 
+use SightPress\Core\User\Contract\AccountPreferences;
+use SightPress\Core\Template\Viewer;
+use SightPress\Core\Template\Translations;
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Clock\ClockInterface;
 use SensitiveParameter;
@@ -41,6 +45,8 @@ final readonly class PasswordReset
         private TemplateRenderer $templates,
         private ClockInterface $clock,
         private Site $site,
+        private AccountPreferences $preferences,
+        private Translations $translations,
     ) {
     }
 
@@ -117,12 +123,13 @@ final readonly class PasswordReset
             'valid_for' => CodeEntry::duration(VerificationPurpose::PasswordReset->lifetime(VerificationChannel::Email)),
         ];
 
+        $viewer = Viewer::recipient($account->id() === null ? null : $this->preferences->preferencesOf($account->id()), $this->site);
+        $request = $request->withAttribute(Viewer::class, $viewer);
+        $subject = new Message($pending ? 'Your code to choose your password for {site}' : 'Your code to reset your password for {site}', ['site' => $this->site->name]);
+
         $this->mail->send(new Email()
             ->to(new Address($account->email(), $account->effectiveName()))
-            ->subject(sprintf(
-                $pending ? 'Your code to choose your password for %s' : 'Your code to reset your password for %s',
-                $this->site->name,
-            ))
+            ->subject($this->translations->translate($subject, [], $viewer->locale))
             ->text($this->templates->render($request, '@auth/email/password.txt.twig', $context))
             ->html($this->templates->render($request, '@auth/email/password.html.twig', $context)));
     }

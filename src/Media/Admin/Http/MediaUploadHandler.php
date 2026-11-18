@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media\Admin\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,20 +43,20 @@ final readonly class MediaUploadHandler implements RequestHandlerInterface
             }
             $result = $this->uploader->uploadFile($upload, $actor->userId);
         } catch (MediaException $exception) {
-            Session::fromRequest($request)->set(MediaLibraryHandler::ERROR_KEY, $exception->getMessage());
+            Session::fromRequest($request)->set(MediaLibraryHandler::ERROR_KEY, $exception->text()->export());
 
             return $this->go($request, MediaAdmin::PATH, null);
         }
 
         $name = $result->media->originalName();
         $message = $result->duplicate
-            ? sprintf('%s is already in the library, so it wasn’t added again. Here it is.', $name)
-            : sprintf('%s has been uploaded. Describe it below, so everyone can understand it.', $name);
+            ? new Message('{name} is already in the library, so it wasn’t added again. Here it is.', ['name' => $name])
+            : new Message('{name} has been uploaded. Describe it below, so everyone can understand it.', ['name' => $name]);
 
         return $this->go($request, MediaAdmin::path($result->media), $message);
     }
 
-    private function go(ServerRequestInterface $request, string $path, ?string $message): ResponseInterface
+    private function go(ServerRequestInterface $request, string $path, string|Message|null $message): ResponseInterface
     {
         $redirect = $this->screens->redirect($request, $path, $message);
         if ($request->getHeaderLine('X-Requested-With') !== 'XMLHttpRequest') {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Http\Error;
 
+use SightPress\Core\Template\Message;
+
 /**
  * Renders an {@see ErrorPage} as Problem Details JSON (RFC 9457) for clients that ask for JSON.
  */
@@ -15,9 +17,9 @@ final readonly class JsonErrorRenderer
     {
         $problem = [
             'type' => 'about:blank',
-            'title' => $page->title,
+            'title' => (string) Message::of($page->title),
             'status' => $page->status,
-            'detail' => implode(' ', $page->paragraphs),
+            'detail' => implode(' ', array_map(static fn (string|Message $text): string => (string) Message::of($text), $page->paragraphs)),
         ];
         if ($details !== null && $details !== '') {
             $problem['debug'] = $details;

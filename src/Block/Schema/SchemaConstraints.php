@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Block\Schema;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Block\Contract\BlockSchema;
 use SightPress\Core\Block\BlockException;
 use Symfony\Component\Validator\Constraint;
@@ -296,11 +297,6 @@ final class SchemaConstraints
 
     private static function unsupported(string $blockType, string $at, string $what): BlockException
     {
-        return new BlockException(sprintf(
-            'The schema of block type "%s" uses %s at "%s", which SightPress doesn\'t support.',
-            $blockType,
-            $what,
-            $at === '' ? '/' : $at,
-        ));
+        return new BlockException(new Message('The schema of block type "{block_type}" uses {what} at "{at}", which SightPress doesn\'t support.', ['block_type' => $blockType, 'what' => $what, 'at' => $at === '' ? '/' : $at]));
     }
 }

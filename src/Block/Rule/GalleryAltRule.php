@@ -21,7 +21,7 @@ final class GalleryAltRule implements A11yRule
             foreach ($rule->check($image) as $issue) {
                 $issues[] = new A11yIssue(
                     $issue->rule,
-                    sprintf('Picture %d: %s', $index + 1, $issue->message),
+                    $issue->message,
                     $issue->severity,
                     '/images/' . $index . '/alt',
                     $issue->wcag,

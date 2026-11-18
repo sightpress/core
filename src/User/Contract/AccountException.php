@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\User\Contract;
 
+use SightPress\Core\Template\TranslatableText;
 use RuntimeException;
 
 /**
@@ -11,4 +12,5 @@ use RuntimeException;
  */
 final class AccountException extends RuntimeException
 {
+    use TranslatableText;
 }

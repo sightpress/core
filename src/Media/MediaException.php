@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media;
 
+use SightPress\Core\Template\TranslatableText;
 use RuntimeException;
 
 /**
@@ -12,4 +13,5 @@ use RuntimeException;
  */
 final class MediaException extends RuntimeException
 {
+    use TranslatableText;
 }

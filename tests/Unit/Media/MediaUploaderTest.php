@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Media;
 
+use SightPress\Core\Tests\Support\Text;
 use Nyholm\Psr7\Stream;
 use Nyholm\Psr7\UploadedFile;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -47,19 +48,19 @@ final class MediaUploaderTest extends TestCase
         self::assertNotNull($media->id());
         self::assertMatchesRegularExpression('/^[0-9a-f]{32}$/', $media->key());
         self::assertSame(hash('sha256', $jpeg), $media->checksum());
-        self::assertSame([MediaKind::Image, 'image/jpeg', 'ferias-no-algarve.jpg', 'Férias no Algarve.JPG'], [$media->kind(), $media->mimeType(), $media->fileName(), $media->originalName()]);
-        self::assertSame([700, 350, [320, 640]], [$media->width(), $media->height(), $media->variantWidths()]);
+        self::assertSame([MediaKind::Image, 'image/jpeg', 'ferias-no-algarve.jpg', 'Férias no Algarve.JPG'], Text::of([$media->kind(), $media->mimeType(), $media->fileName(), $media->originalName()]));
+        self::assertSame([700, 350, [320, 640]], Text::of([$media->width(), $media->height(), $media->variantWidths()]));
         self::assertFalse($media->isPublished());
         self::assertSame(7, $media->uploadedBy());
         self::assertSame($this->fixture->clock->now(), $media->createdAt());
 
         $key = $media->key();
-        self::assertSame([MediaFiles::path($key, 'jpg', 320), MediaFiles::path($key, 'jpg', 640), MediaFiles::path($key, 'jpg')], $this->fixture->stored());
+        self::assertSame([MediaFiles::path($key, 'jpg', 320), MediaFiles::path($key, 'jpg', 640), MediaFiles::path($key, 'jpg')], Text::of($this->fixture->stored()));
         $stored = $this->fixture->storage->read(MediaFiles::path($key, 'jpg'));
         self::assertSame(strlen($stored), $media->size());
         self::assertStringNotContainsString('SightPressCam', $stored);
 
-        self::assertEquals([new MediaUploaded($media->id(), $key, MediaKind::Image, 7)], $this->fixture->events);
+        self::assertEquals([new MediaUploaded($media->id(), $key, MediaKind::Image, 7)], Text::of($this->fixture->events));
         self::assertSame($media, $this->fixture->repository()->findByKey($key));
     }
 
@@ -69,7 +70,7 @@ final class MediaUploaderTest extends TestCase
 
         $media = $this->fixture->uploader()->upload($this->fixture->file('upload.tmp', $csv), 'Points.csv', null)->media;
 
-        self::assertSame([MediaKind::Document, 'text/csv', 'points.csv', strlen($csv), null, []], [$media->kind(), $media->mimeType(), $media->fileName(), $media->size(), $media->width(), $media->variantWidths()]);
+        self::assertSame([MediaKind::Document, 'text/csv', 'points.csv', strlen($csv), null, []], Text::of([$media->kind(), $media->mimeType(), $media->fileName(), $media->size(), $media->width(), $media->variantWidths()]));
         self::assertSame($csv, $this->fixture->storage->read(MediaFiles::path($media->key(), 'csv')));
     }
 
@@ -78,9 +79,9 @@ final class MediaUploaderTest extends TestCase
         $uploader = $this->fixture->uploader();
 
         $captions = $uploader->upload($this->fixture->file('a.vtt', "WEBVTT\n\n00:00.000 --> 00:02.000\nHello\n"), 'Captions EN.vtt', 1)->media;
-        self::assertSame(['text/vtt', 'captions-en.vtt'], [$captions->mimeType(), $captions->fileName()]);
-        self::assertSame('text/vtt', $uploader->upload($this->fixture->file('b.vtt', "\xEF\xBB\xBFWEBVTT - With a title\n"), 'b.vtt', 1)->media->mimeType());
-        self::assertSame('text/vtt', $uploader->upload($this->fixture->file('c.vtt', 'WEBVTT'), 'c.vtt', 1)->media->mimeType());
+        self::assertSame(['text/vtt', 'captions-en.vtt'], Text::of([$captions->mimeType(), $captions->fileName()]));
+        self::assertSame('text/vtt', Text::of($uploader->upload($this->fixture->file('b.vtt', "\xEF\xBB\xBFWEBVTT - With a title\n"), 'b.vtt', 1)->media->mimeType()));
+        self::assertSame('text/vtt', Text::of($uploader->upload($this->fixture->file('c.vtt', 'WEBVTT'), 'c.vtt', 1)->media->mimeType()));
 
         $this->expectException(MediaException::class);
         $this->expectExceptionMessage('This captions file isn\'t in WebVTT format: its first line must be "WEBVTT".');
@@ -117,8 +118,8 @@ final class MediaUploaderTest extends TestCase
                 self::assertStringStartsWith($message, $exception->getMessage());
             }
         }
-        self::assertSame([], $this->fixture->stored());
-        self::assertSame([], $this->fixture->events);
+        self::assertSame([], Text::of($this->fixture->stored()));
+        self::assertSame([], Text::of($this->fixture->events));
     }
 
     public function testRefusesAFileThatIsNotThere(): void
@@ -156,7 +157,7 @@ final class MediaUploaderTest extends TestCase
             self::assertNotInstanceOf(MediaException::class, $exception);
         }
 
-        self::assertSame([], $this->fixture->stored());
+        self::assertSame([], Text::of($this->fixture->stored()));
     }
 
     public function testTakesFilesSentWithAForm(): void
@@ -166,7 +167,7 @@ final class MediaUploaderTest extends TestCase
 
         $media = $this->fixture->uploader()->uploadFile($upload, 3)->media;
 
-        self::assertSame(['text/plain', 'notes.txt', 3], [$media->mimeType(), $media->fileName(), $media->uploadedBy()]);
+        self::assertSame(['text/plain', 'notes.txt', 3], Text::of([$media->mimeType(), $media->fileName(), $media->uploadedBy()]));
         self::assertCount($before, (array) glob(sys_get_temp_dir() . '/sp-upload-*'));
     }
 

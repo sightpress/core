@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Template\DateFormatter;
 use SightPress\Core\Template\Viewer;
@@ -16,6 +17,8 @@ use SightPress\Core\Template\ViewerPreferences;
 #[CoversClass(DateFormatter::class)]
 #[CoversClass(Viewer::class)]
 #[CoversClass(ViewerPreferences::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class DateFormatterTest extends TestCase
 {
     private DateTimeImmutable $utc;

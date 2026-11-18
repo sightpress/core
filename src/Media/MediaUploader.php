@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media;
 
+use SightPress\Core\Template\Message;
 use finfo;
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -86,19 +87,14 @@ final readonly class MediaUploader
         $detected = new finfo(FILEINFO_MIME_TYPE)->file($localFile);
         $format = $this->types->match(is_string($detected) ? $detected : '', $clientName);
         if ($format === null) {
-            throw new MediaException('This type of file can\'t be uploaded. ' . $this->types->summary());
+            throw new MediaException(new Message('This type of file can\'t be uploaded. {types}', ['types' => $this->types->summary()]));
         }
         if ($format->mimeType === 'text/vtt' && !self::isWebVtt($localFile)) {
             throw new MediaException('This captions file isn\'t in WebVTT format: its first line must be "WEBVTT".');
         }
         $max = $this->limits->maxBytes($format->kind);
         if ($size > $max) {
-            throw new MediaException(sprintf(
-                'The file is %s; %s can be at most %s.',
-                MediaLimits::describe($size),
-                self::plural($format->kind),
-                MediaLimits::describe($max),
-            ));
+            throw new MediaException(new Message('The file is {size}; {kind} can be at most {max}.', ['size' => MediaLimits::describe($size), 'kind' => self::plural($format->kind), 'max' => MediaLimits::describe($max)]));
         }
 
         $checksum = (string) hash_file('sha256', $localFile);
@@ -165,13 +161,13 @@ final readonly class MediaUploader
         return preg_match('/^(?:\xEF\xBB\xBF)?WEBVTT(?:[ \t\r\n]|$)/', $start) === 1;
     }
 
-    private static function plural(MediaKind $kind): string
+    private static function plural(MediaKind $kind): Message
     {
         return match ($kind) {
-            MediaKind::Image => 'pictures',
-            MediaKind::Video => 'videos',
-            MediaKind::Audio => 'audio files',
-            MediaKind::Document => 'documents',
+            MediaKind::Image => new Message('pictures'),
+            MediaKind::Video => new Message('videos'),
+            MediaKind::Audio => new Message('audio files'),
+            MediaKind::Document => new Message('documents'),
         };
     }
 }

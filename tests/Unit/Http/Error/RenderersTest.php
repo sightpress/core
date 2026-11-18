@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Http\Error;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Http\Error\ErrorPage;
@@ -14,6 +16,8 @@ use SightPress\Core\Http\Error\JsonErrorRenderer;
 #[CoversClass(HtmlErrorRenderer::class)]
 #[CoversClass(JsonErrorRenderer::class)]
 #[UsesClass(ErrorPage::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class RenderersTest extends TestCase
 {
     public function testHtmlPageIsAccessibleAndEscaped(): void
@@ -22,7 +26,7 @@ final class RenderersTest extends TestCase
 
         $html = new HtmlErrorRenderer()->render($page);
 
-        self::assertStringContainsString('<html lang="en-GB">', $html);
+        self::assertStringContainsString('<html lang="en-GB" dir="ltr">', $html);
         self::assertStringContainsString('<title>Page &lt;not&gt; found - SightPress</title>', $html);
         self::assertSame(1, substr_count($html, '<main>'));
         self::assertSame(1, substr_count($html, '<h1>'));
@@ -62,7 +66,7 @@ final class RenderersTest extends TestCase
 
         self::assertSame(
             "default-src 'none'; style-src '{$hash}'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
-            $renderer->contentSecurityPolicy(),
+            Text::of($renderer->contentSecurityPolicy()),
         );
     }
 
@@ -73,11 +77,11 @@ final class RenderersTest extends TestCase
 
         self::assertSame(
             '{"type":"about:blank","title":"Page not found","status":404,"detail":"First. Second."}',
-            $renderer->render($page),
+            Text::of($renderer->render($page)),
         );
         self::assertSame(
             '{"type":"about:blank","title":"Page not found","status":404,"detail":"First. Second.","debug":"trace/é"}',
-            $renderer->render($page, 'trace/é'),
+            Text::of($renderer->render($page, 'trace/é')),
         );
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Admin\Http;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -51,7 +52,7 @@ final class LanguagesHandlerTest extends TestCase
                 $call();
                 self::fail('editors can\'t change languages');
             } catch (HttpForbiddenException) {
-                self::assertSame([], $this->events->events);
+                self::assertSame([], Text::of($this->events->events));
             }
         }
     }
@@ -61,8 +62,8 @@ final class LanguagesHandlerTest extends TestCase
         $html = (string) $this->languages('GET')->getBody();
 
         self::assertStringContainsString('<title>Languages - Admin - Demo</title>', $html);
-        self::assertStringContainsString('<th scope="row" lang="en-GB">British English</th>', $html);
-        self::assertStringContainsString('<th scope="row" lang="pt-PT">European Portuguese</th>', $html);
+        self::assertStringContainsString('<th scope="row">British English</th>', $html);
+        self::assertStringContainsString('<th scope="row">European Portuguese</th>', $html);
         self::assertStringContainsString('<code>/pt-pt/</code>', $html);
         self::assertStringContainsString('Make European Portuguese the main language', $html);
         self::assertStringContainsString('href="/admin/settings/languages/remove?locale=pt-PT">Remove European Portuguese</a>', $html);
@@ -74,9 +75,9 @@ final class LanguagesHandlerTest extends TestCase
     {
         $response = $this->languages('POST', ['locale' => 'es']);
 
-        self::assertSame([303, '/admin/settings/languages'], [$response->getStatusCode(), $response->getHeaderLine('Location')]);
-        self::assertSame('en-GB,pt-PT,es', $this->fixture->auth->database->settings()->get(SiteProfile::LOCALES));
-        self::assertSame(['Added Spanish. Translate pages into it from each page’s editor.'], Flash::take($this->session));
+        self::assertSame([303, '/admin/settings/languages'], Text::of([$response->getStatusCode(), $response->getHeaderLine('Location')]));
+        self::assertSame('en-GB,pt-PT,es', Text::of($this->fixture->auth->database->settings()->get(SiteProfile::LOCALES)));
+        self::assertSame(['Added Spanish. Translate pages into it from each page’s editor.'], Text::of(array_map(strval(...), Flash::take($this->session))));
     }
 
     public function testExplainsWhatIsWrongWithALanguageToAdd(): void
@@ -87,7 +88,7 @@ final class LanguagesHandlerTest extends TestCase
 
         $unknown = $this->languages('POST', ['locale' => 'klingon']);
         self::assertSame(422, $unknown->getStatusCode());
-        self::assertSame([], $this->events->events);
+        self::assertSame([], Text::of($this->events->events));
     }
 
     public function testExplainsWhenALanguageWasAddedMeanwhile(): void
@@ -103,13 +104,13 @@ final class LanguagesHandlerTest extends TestCase
         $response = $this->languages('POST', ['main' => 'pt-PT']);
 
         self::assertSame(303, $response->getStatusCode());
-        self::assertSame('pt-PT', $this->fixture->auth->database->settings()->get(SiteProfile::DEFAULT_LOCALE));
-        self::assertSame(['European Portuguese is now the main language. Its pages have addresses without a language part.'], Flash::take($this->session));
+        self::assertSame('pt-PT', Text::of($this->fixture->auth->database->settings()->get(SiteProfile::DEFAULT_LOCALE)));
+        self::assertSame(['European Portuguese is now the main language. Its pages have addresses without a language part.'], Text::of(array_map(strval(...), Flash::take($this->session))));
 
         $this->languages('POST', ['main' => 'en-GB'], languages: $this->languagesService(['en-GB', 'pt-PT']));
-        self::assertSame(['Nothing was changed.'], Flash::take($this->session));
+        self::assertSame(['Nothing was changed.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         $this->languages('POST', ['main' => 'fr-FR']);
-        self::assertStringContainsString('The site isn’t written in “fr-FR”.', implode(' ', Flash::take($this->session)));
+        self::assertStringContainsString('The site isn’t written in “fr-FR”.', implode(' ', array_map(strval(...), Flash::take($this->session))));
     }
 
     public function testAsksBeforeRemovingALanguageAndSaysWhatHappens(): void
@@ -122,8 +123,8 @@ final class LanguagesHandlerTest extends TestCase
         self::assertStringContainsString('<input type="hidden" name="locale" value="pt-PT">', $html);
 
         $response = $this->remove('POST', RemoveLanguageHandler::PATH, ['locale' => 'pt-PT']);
-        self::assertSame([303, '/admin/settings/languages'], [$response->getStatusCode(), $response->getHeaderLine('Location')]);
-        self::assertSame('en-GB', $this->fixture->auth->database->settings()->get(SiteProfile::LOCALES));
+        self::assertSame([303, '/admin/settings/languages'], Text::of([$response->getStatusCode(), $response->getHeaderLine('Location')]));
+        self::assertSame('en-GB', Text::of($this->fixture->auth->database->settings()->get(SiteProfile::LOCALES)));
         self::assertEquals(new LocaleRemoved('pt-PT', (int) $this->admin->id()), $this->events->events[1]);
     }
 
@@ -131,7 +132,7 @@ final class LanguagesHandlerTest extends TestCase
     {
         $response = $this->remove('GET', '/admin/settings/languages/remove?locale=en-GB');
         self::assertSame(303, $response->getStatusCode());
-        self::assertStringContainsString('is the main language, so it can’t be removed', implode(' ', Flash::take($this->session)));
+        self::assertStringContainsString('is the main language, so it can’t be removed', implode(' ', array_map(strval(...), Flash::take($this->session))));
 
         $this->expectException(HttpNotFoundException::class);
         $this->remove('GET', '/admin/settings/languages/remove?locale=fr-FR');

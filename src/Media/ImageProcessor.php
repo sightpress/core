@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media;
 
+use SightPress\Core\Template\Message;
 use Intervention\Image\Format;
 use Intervention\Image\Interfaces\ExceptionInterface;
 use Intervention\Image\Interfaces\ImageManagerInterface;
@@ -36,12 +37,7 @@ final readonly class ImageProcessor
             throw new MediaException('This picture can\'t be read. It may be damaged; try saving it again and uploading the new file.');
         }
         if ($size[0] * $size[1] > $this->limits->imagePixels) {
-            throw new MediaException(sprintf(
-                'This picture is %d × %d pixels, which is more than %s million pixels. Make it smaller and upload it again.',
-                $size[0],
-                $size[1],
-                number_format($this->limits->imagePixels / 1_000_000, 0, '.', ','),
-            ));
+            throw new MediaException(new Message('This picture is {size} × {size2} pixels, which is more than {_000_000} million pixels. Make it smaller and upload it again.', ['size' => (string) $size[0], 'size2' => (string) $size[1], '_000_000' => number_format($this->limits->imagePixels / 1_000_000, 0, '.', ',')]));
         }
 
         $target = match ($format->extension) {

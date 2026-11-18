@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Publish;
 
+use SightPress\Core\Template\Message;
 use Dom\Element;
 use Dom\HTMLDocument;
 use Dom\Text;
@@ -22,7 +23,7 @@ final class HtmlChecks
      *                                                                        (1 for the page title); updated
      * @param array<string, array{text: string, background: string}> $modes   theme colours by colour mode name
      *
-     * @return list<array{rule: string, message: string, severity: A11ySeverity, wcag: list<string>}>
+     * @return list<array{rule: string, message: string|Message, severity: A11ySeverity, wcag: list<string>}>
      */
     public static function check(string $html, int &$heading, array $modes): array
     {
@@ -43,7 +44,7 @@ final class HtmlChecks
     }
 
     /**
-     * @return list<array{rule: string, message: string, severity: A11ySeverity, wcag: list<string>}>
+     * @return list<array{rule: string, message: string|Message, severity: A11ySeverity, wcag: list<string>}>
      */
     private static function element(Element $element, int &$heading): array
     {
@@ -54,12 +55,7 @@ final class HtmlChecks
             if ($level === 1) {
                 $issues[] = self::issue('page.heading_h1', 'Only the page title is a level 1 heading. Use level 2 here.', ['1.3.1']);
             } elseif ($level > $heading + 1) {
-                $issues[] = self::issue('page.heading_skipped', sprintf(
-                    'This heading jumps from level %d to level %d. Use level %d, or add the missing level before it.',
-                    $heading,
-                    $level,
-                    $heading + 1,
-                ), ['1.3.1']);
+                $issues[] = self::issue('page.heading_skipped', new Message('This heading jumps from level {heading} to level {level}. Use level {heading2}, or add the missing level before it.', ['heading' => (string) $heading, 'level' => (string) $level, 'heading2' => $heading + 1]), ['1.3.1']);
             }
             $heading = $level;
         }
@@ -68,7 +64,7 @@ final class HtmlChecks
         }
         $lang = $element->getAttribute('lang');
         if ($lang !== null && !self::isLanguage($lang)) {
-            $issues[] = self::issue('page.lang_invalid', sprintf('"%s" is not a language code. Use a code such as "fr" or "pt-BR".', $lang), ['3.1.2']);
+            $issues[] = self::issue('page.lang_invalid', new Message('"{lang}" is not a language code. Use a code such as "fr" or "pt-BR".', ['lang' => $lang]), ['3.1.2']);
         }
         return $issues;
     }
@@ -89,7 +85,7 @@ final class HtmlChecks
      * checked once.
      *
      * @param array<string, array{text: string, background: string}>                  $modes
-     * @param list<array{rule: string, message: string, severity: A11ySeverity, wcag: list<string>}> $issues
+     * @param list<array{rule: string, message: string|Message, severity: A11ySeverity, wcag: list<string>}> $issues
      * @param array<string, true>                                                        $seen
      */
     private static function colours(Element $element, ?string $text, ?string $background, array $modes, array &$issues, array &$seen): void
@@ -112,7 +108,7 @@ final class HtmlChecks
     /**
      * @param array<string, array{text: string, background: string}> $modes
      *
-     * @return array{rule: string, message: string, severity: A11ySeverity, wcag: list<string>}|null
+     * @return array{rule: string, message: string|Message, severity: A11ySeverity, wcag: list<string>}|null
      */
     private static function contrast(?string $text, ?string $background, array $modes): ?array
     {
@@ -130,13 +126,7 @@ final class HtmlChecks
         }
         [$ratio, $foreground, $behind, $mode] = $worst;
 
-        return self::issue('page.contrast', sprintf(
-            'The text colour %s on %s has a contrast of %s:1%s; it needs at least 4.5:1. Choose another colour, add a background colour that goes with it, or remove it.',
-            $foreground,
-            $behind,
-            number_format(floor($ratio * 100) / 100, 2),
-            $mode === null ? '' : ' in ' . $mode,
-        ), ['1.4.3']);
+        return self::issue('page.contrast', new Message('The text colour {foreground} on {behind} has a contrast of {ratio}:1{mode}; it needs at least 4.5:1. Choose another colour, add a background colour that goes with it, or remove it.', ['foreground' => $foreground, 'behind' => $behind, 'ratio' => number_format(floor($ratio * 100) / 100, 2), 'mode' => $mode === null ? '' : ' in ' . $mode]), ['1.4.3']);
     }
 
     /**
@@ -158,9 +148,9 @@ final class HtmlChecks
     /**
      * @param list<string> $wcag
      *
-     * @return array{rule: string, message: string, severity: A11ySeverity, wcag: list<string>}
+     * @return array{rule: string, message: string|Message, severity: A11ySeverity, wcag: list<string>}
      */
-    private static function issue(string $rule, string $message, array $wcag): array
+    private static function issue(string $rule, string|Message $message, array $wcag): array
     {
         return ['rule' => $rule, 'message' => $message, 'severity' => A11ySeverity::Error, 'wcag' => $wcag];
     }

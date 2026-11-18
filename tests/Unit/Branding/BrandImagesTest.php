@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Branding;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Branding\BrandAsset;
@@ -19,6 +20,8 @@ use SightPress\Core\Tests\Support\MediaFixture;
 #[UsesClass(BrandColours::class)]
 #[UsesClass(Initials::class)]
 #[UsesClass(BrandingException::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class BrandImagesTest extends TestCase
 {
     private BrandImages $images;

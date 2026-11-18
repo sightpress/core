@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media\Admin\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -42,6 +43,6 @@ final readonly class MediaDeleteHandler implements RequestHandlerInterface
         $name = $media->originalName();
         $this->editor->delete($media, $actor->userId);
 
-        return $this->screens->redirect($request, MediaAdmin::PATH, sprintf('%s has been deleted.', $name));
+        return $this->screens->redirect($request, MediaAdmin::PATH, new Message('{name} has been deleted.', ['name' => $name]));
     }
 }

@@ -21,6 +21,7 @@ use SightPress\Core\User\Contract\PendingAccounts;
 use SightPress\Core\User\Contract\AccountRoster;
 use SightPress\Core\User\Contract\Accounts;
 use SightPress\Core\User\Http\AccountHandler;
+use SightPress\Core\User\Http\AccountLanguageHandler;
 use SightPress\Core\User\Http\AccountPages;
 use SightPress\Core\User\Http\AccountPictureHandler;
 use SightPress\Core\User\Http\AvatarFileHandler;
@@ -63,13 +64,14 @@ final class UserModule implements ModuleInterface
             Services::get($c, FilesystemOperator::class),
             Services::get($c, ClockInterface::class),
         ));
-        foreach ([AccountPages::class, AccountHandler::class, AccountPictureHandler::class, AvatarFileHandler::class] as $class) {
+        foreach ([AccountPages::class, AccountHandler::class, AccountPictureHandler::class, AvatarFileHandler::class, AccountLanguageHandler::class] as $class) {
             $registrar->services()->autowire($class);
         }
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/user');
         $routes = $registrar->routes();
         $routes->add(new Route('user.account', AccountPages::PATH, AccountHandler::class, ['GET', 'POST']));
         $routes->add(new Route('user.account.picture', '/account/picture', AccountPictureHandler::class, ['POST']));
+        $routes->add(new Route('user.account.language', AccountLanguageHandler::PATH, AccountLanguageHandler::class, ['POST']));
         $routes->add(new Route('user.account.picture.remove', AccountPictureHandler::REMOVE_PATH, AccountPictureHandler::class, ['POST']));
         $routes->add(new Route(
             'user.avatar',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\People\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -89,15 +90,11 @@ final readonly class UserHandler implements RequestHandlerInterface
             return $this->show($request, $account, $current, $form, false, 422);
         }
         if ($role === $current?->name) {
-            return $this->screens->redirect($request, self::path($account->id), sprintf('%s already has this role. Nothing was changed.', $account->effectiveName));
+            return $this->screens->redirect($request, self::path($account->id), new Message('{effective_name} already has this role. Nothing was changed.', ['effective_name' => $account->effectiveName]));
         }
         $this->roles->change($actor, $account->id, $role);
 
-        return $this->screens->redirect($request, self::path($account->id), sprintf(
-            '%s’s role is now %s.',
-            $account->effectiveName,
-            $this->roles->find($role)->label ?? $role,
-        ));
+        return $this->screens->redirect($request, self::path($account->id), new Message('{effective_name}’s role is now {role}.', ['effective_name' => $account->effectiveName, 'role' => $this->roles->find($role)->label ?? $role]));
     }
 
     private function show(ServerRequestInterface $request, AccountSummary $account, ?RoleChoice $current, Form $form, bool $self, int $status = 200): ResponseInterface

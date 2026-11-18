@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Entity;
 
+use SightPress\Core\Template\Message;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -83,7 +84,7 @@ final class PageTranslation
         bool $draft = false,
     ) {
         if (!LocaleCode::isValid($locale)) {
-            throw new PageException(sprintf('"%s" is not a locale code such as "en-GB".', $locale));
+            throw new PageException(new Message('"{locale}" is not a locale code such as "en-GB".', ['locale' => $locale]));
         }
         $this->draft = $draft;
         $this->rewrite($content, $path, $now);
@@ -227,7 +228,7 @@ final class PageTranslation
     public function rebase(string $oldPrefix, string $newPrefix): void
     {
         if (!str_starts_with($this->path, $oldPrefix . '/')) {
-            throw new PageException(sprintf('The address "%s" is not below "%s".', $this->path, $oldPrefix));
+            throw new PageException(new Message('The address "{path}" is not below "{old_prefix}".', ['path' => $this->path, 'old_prefix' => $oldPrefix]));
         }
         $path = $newPrefix . substr($this->path, strlen($oldPrefix));
         self::checkPath($path, $this->slug);
@@ -257,10 +258,10 @@ final class PageTranslation
     private static function checkPath(string $path, string $slug): void
     {
         if (strlen($path) > self::PATH_MAX_LENGTH) {
-            throw new PageException(sprintf('The full address must be %d characters or fewer.', self::PATH_MAX_LENGTH));
+            throw new PageException(new Message('The full address must be {max} characters or fewer.', ['max' => (string) self::PATH_MAX_LENGTH]));
         }
         if ($path !== $slug && !str_ends_with($path, '/' . $slug)) {
-            throw new PageException(sprintf('The address "%s" must end with the slug "%s".', $path, $slug));
+            throw new PageException(new Message('The address "{path}" must end with the slug "{slug}".', ['path' => $path, 'slug' => $slug]));
         }
     }
 }

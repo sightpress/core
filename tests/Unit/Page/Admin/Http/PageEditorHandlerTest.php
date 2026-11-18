@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Page\Admin\Http;
 
+use SightPress\Core\Tests\Support\Text;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
@@ -183,28 +184,28 @@ final class PageEditorHandlerTest extends TestCase
         $response = $this->post($this->editor, $this->body(['layout' => 'home', 'social_image' => 'media-' . $image, 'noindex' => '1']));
 
         self::assertSame(303, $response->getStatusCode());
-        self::assertSame('/admin/pages/' . $this->page->id(), $response->getHeaderLine('Location'));
-        self::assertSame(['Saved “A changed title”.'], Flash::take($this->fixture->session));
+        self::assertSame('/admin/pages/' . $this->page->id(), Text::of($response->getHeaderLine('Location')));
+        self::assertSame(['Saved “A changed title”.'], Text::of(array_map(strval(...), Flash::take($this->fixture->session))));
         $translation = $this->page->translation('en-GB');
-        self::assertSame(['A changed title', 'home', $image, true], [$translation?->title(), $this->page->layout(), $translation?->socialImage(), $translation?->isNoindex()]);
+        self::assertSame(['A changed title', 'home', $image, true], Text::of([$translation?->title(), $this->page->layout(), $translation?->socialImage(), $translation?->isNoindex()]));
         self::assertCount(2, $this->fixture->pages->repository()->revisions($this->page));
-        self::assertSame('Every day', $translation?->blocks()[0]['data']['text'] ?? null);
+        self::assertSame('Every day', Text::of($translation?->blocks()[0]['data']['text'] ?? null));
 
         $this->page->changeState(\SightPress\Core\Rbac\Contract\PageState::Published, new DateTimeImmutable());
         $this->post($this->editor, $this->body(['title' => 'Live now']));
-        self::assertSame(['Saved “Live now”. The changes are on the site now.'], Flash::take($this->fixture->session));
+        self::assertSame(['Saved “Live now”. The changes are on the site now.'], Text::of(array_map(strval(...), Flash::take($this->fixture->session))));
 
         $this->fixture->pages->site->locales === ['en-GB', 'pt-PT'] || self::fail('The fixture site is written in two languages.');
         $translated = $this->fixture->handle($this->fixture->editorHandler(), $this->editor, 'POST', '/admin/pages/x?locale=pt-PT', $this->body(['title' => 'Horário']), (int) $this->page->id());
-        self::assertSame('/admin/pages/' . $this->page->id() . '?locale=pt-PT', $translated->getHeaderLine('Location'));
-        self::assertSame('Horário', $this->page->translation('pt-PT')?->title());
+        self::assertSame('/admin/pages/' . $this->page->id() . '?locale=pt-PT', Text::of($translated->getHeaderLine('Location')));
+        self::assertSame('Horário', Text::of($this->page->translation('pt-PT')?->title()));
     }
 
     public function testExplainsWhyThePageCantBeSaved(): void
     {
         $tooLong = $this->post($this->editor, $this->body(['title' => str_repeat('x', 201)]));
         self::assertSame(422, $tooLong->getStatusCode());
-        self::assertStringContainsString('The title must be 200 characters or fewer', (string) $tooLong->getBody());
+        self::assertStringContainsString('Title must be 200 characters or fewer', (string) $tooLong->getBody());
 
         $blocks = $this->post($this->editor, $this->body(['blocks' => [['type' => 'heading', 'version' => '1', 'data' => ['text' => '', 'level' => '2']]]]));
         self::assertSame(422, $blocks->getStatusCode());
@@ -224,7 +225,7 @@ final class PageEditorHandlerTest extends TestCase
         $html = $this->get($this->editor);
 
         self::assertStringContainsString('<h2 id="translations-title">Translations</h2>', $html);
-        self::assertStringContainsString('<th scope="row" lang="en-GB">British English</th>', $html);
+        self::assertStringContainsString('<th scope="row">British English</th>', $html);
         self::assertStringContainsString('You are editing it now.', $html);
         self::assertStringContainsString('Not written yet', $html);
         self::assertStringContainsString('Translate into European Portuguese from British English', $html);

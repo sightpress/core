@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Branding\Http;
 
+use SightPress\Core\Template\Message;
 use Locale;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -63,7 +64,7 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
 
         return $this->screens->render($request, '@branding/admin.html.twig', [
             'assets' => array_map(fn (BrandAsset $asset): array => $this->view($state, $asset), BrandAsset::cases()),
-            'error' => is_array($error) && is_string($error['asset'] ?? null) && is_string($error['message'] ?? null) ? $error : null,
+            'error' => is_array($error) && is_string($error['asset'] ?? null) && Message::import($error['message'] ?? null) !== null ? ['asset' => $error['asset'], 'message' => Message::import($error['message'])] : null,
             'error_count' => is_array($error) ? 1 : 0,
             'action' => self::PATH,
         ], is_array($error) ? 422 : 200);
@@ -81,7 +82,7 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
             $this->branding->reset($asset);
             $this->events->dispatch(new SettingsChanged(['branding.' . $asset->value], $actor));
 
-            return $this->screens->redirect($request, self::PATH . '#' . $asset->value, sprintf('%s: the generated picture is back.', $what));
+            return $this->screens->redirect($request, self::PATH . '#' . $asset->value, new Message('{what}: the generated picture is back.', ['what' => $what]));
         }
 
         $alts = [];
@@ -105,16 +106,16 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
             }
             $this->events->dispatch(new SettingsChanged(['branding.' . $asset->value], $actor));
         } catch (BrandingException $exception) {
-            Session::fromRequest($request)->set(self::ERROR, ['asset' => $asset->value, 'message' => $exception->getMessage()]);
+            Session::fromRequest($request)->set(self::ERROR, ['asset' => $asset->value, 'message' => $exception->text()->export()]);
 
             // No fragment: focus goes to the error summary, not to the section.
             return $this->screens->redirect($request, self::PATH);
         }
 
         return $this->screens->redirect($request, self::PATH . '#' . $asset->value, match (true) {
-            $uploaded && $asset === BrandAsset::ShareImage => sprintf('%s: uploaded. The preview shows how it was cropped.', $what),
-            $uploaded => sprintf('%s: uploaded.', $what),
-            default => sprintf('%s: the text has been saved.', $what),
+            $uploaded && $asset === BrandAsset::ShareImage => new Message('{what}: uploaded. The preview shows how it was cropped.', ['what' => $what]),
+            $uploaded => new Message('{what}: uploaded.', ['what' => $what]),
+            default => new Message('{what}: the text has been saved.', ['what' => $what]),
         });
     }
 
@@ -140,16 +141,16 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
             'title' => self::title($asset),
             'intro' => match ($asset) {
                 BrandAsset::Logo => 'Shown at the top of every page and links to the home page. Without one, the site name is shown as text. SVG, PNG or WebP.',
-                BrandAsset::Icon => sprintf('Shown in browser tabs, bookmarks and on phone home screens. A square picture, at least %1$d × %1$d pixels: SVG, PNG or WebP.', BrandImages::ICON_MIN),
-                BrandAsset::ShareImage => sprintf('Shown when someone shares a page of the site. At least %d × %d pixels: JPEG, PNG or WebP. A larger picture is cropped from the middle.', BrandImages::SHARE_WIDTH, BrandImages::SHARE_HEIGHT),
+                BrandAsset::Icon => new Message('Shown in browser tabs, bookmarks and on phone home screens. A square picture, at least {icon_min} × {icon_min} pixels: SVG, PNG or WebP.', ['icon_min' => (string) BrandImages::ICON_MIN]),
+                BrandAsset::ShareImage => new Message('Shown when someone shares a page of the site. At least {share_width} × {share_height} pixels: JPEG, PNG or WebP. A larger picture is cropped from the middle.', ['share_width' => (string) BrandImages::SHARE_WIDTH, 'share_height' => (string) BrandImages::SHARE_HEIGHT]),
             },
             'accept' => $asset === BrandAsset::ShareImage ? 'image/jpeg,image/png,image/webp' : 'image/svg+xml,image/png,image/webp',
             'uploaded' => $state->isUploaded($asset),
             'preview' => $file === null ? null : ($asset === BrandAsset::Icon ? '/' : '/branding/') . $file . '?v=' . rawurlencode($state->version),
             'preview_alt' => match ($asset) {
-                BrandAsset::Logo => sprintf('The logo now: %s', $state->alt($asset) ?? $this->site->name),
-                BrandAsset::Icon => sprintf('The icon of %s now', $this->site->name),
-                BrandAsset::ShareImage => sprintf('The share picture now: %s', $state->alt($asset) ?? $this->site->name),
+                BrandAsset::Logo => new Message('The logo now: {name}', ['name' => $state->alt($asset) ?? $this->site->name]),
+                BrandAsset::Icon => new Message('The icon of {name} now', ['name' => $this->site->name]),
+                BrandAsset::ShareImage => new Message('The share picture now: {name}', ['name' => $state->alt($asset) ?? $this->site->name]),
             },
             'width' => $entry['width'] ?? null,
             'height' => $entry['height'] ?? null,

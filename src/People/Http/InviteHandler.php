@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\People\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -65,7 +66,7 @@ final readonly class InviteHandler implements RequestHandlerInterface
     public static function form(array $roles): Form
     {
         $choices = self::choices($roles);
-        $length = static fn (string $label): Length => new Length(max: 100, maxMessage: sprintf('%s must be 100 characters or fewer', $label));
+        $length = static fn (string $label): Length => new Length(max: 100, maxMessage: '{field} must be {{ limit }} characters or fewer');
 
         $form = Form::create(
             'invite',
@@ -97,7 +98,7 @@ final readonly class InviteHandler implements RequestHandlerInterface
         $email = Invitations::normalizeEmail($form->text('email'));
         $role = $form->text('role');
         $problem = $this->emailPolicy->problem($email)
-            ?? ($this->accounts->findAccountByEmail($email) === null ? null : sprintf('There is already an account for %s.', $email));
+            ?? ($this->accounts->findAccountByEmail($email) === null ? null : new Message('There is already an account for {email}.', ['email' => $email]));
         if ($problem !== null) {
             return $this->show($request, $form->withErrors(['email' => $problem]), 422);
         }
@@ -115,11 +116,7 @@ final readonly class InviteHandler implements RequestHandlerInterface
         }
         $this->mailer->send($request, $invitation, $code, $inviter?->effectiveName() ?? 'Someone', $label);
 
-        return $this->screens->redirect($request, self::PATH, sprintf(
-            'We have sent an invitation to %s to join as %s. Its code works for 7 days.',
-            $email,
-            mb_strtolower($label),
-        ));
+        return $this->screens->redirect($request, self::PATH, new Message('We have sent an invitation to {email} to join as {label}. Its code works for 7 days.', ['email' => $email, 'label' => mb_strtolower($label)]));
     }
 
     private function show(ServerRequestInterface $request, Form $form, int $status = 200): ResponseInterface

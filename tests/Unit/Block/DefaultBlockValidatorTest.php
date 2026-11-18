@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Block;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -47,19 +48,19 @@ final class DefaultBlockValidatorTest extends TestCase
             ]]],
         ]);
 
-        self::assertSame(['type' => 'rich_text', 'version' => 1, 'data' => ['html' => '<p>Hi <a href="/about">here</a></p>']], $result->blocks[1]);
-        self::assertSame(['type' => 'acme.badge', 'version' => 2, 'data' => ['label' => 'TODO']], $result->blocks[2]);
+        self::assertSame(['type' => 'rich_text', 'version' => 1, 'data' => ['html' => '<p>Hi <a href="/about">here</a></p>']], Text::of($result->blocks[1]));
+        self::assertSame(['type' => 'acme.badge', 'version' => 2, 'data' => ['label' => 'TODO']], Text::of($result->blocks[2]));
         self::assertSame(['columns' => [
             ['blocks' => [['type' => 'image', 'version' => 1, 'data' => ['media' => $picture]]]],
             ['blocks' => [['type' => 'acme.badge', 'version' => 2, 'data' => ['label' => 'New', 'icon' => $icon]]]],
-        ]], $result->blocks[3]['data']);
-        self::assertSame([$picture, $icon], $result->mediaIds);
+        ]], Text::of($result->blocks[3]['data']));
+        self::assertSame([$picture, $icon], Text::of($result->mediaIds));
 
         self::assertSame(
             [['/1', 'rich_text', 'rich_text.link_vague', '/1/data/html'], ['/2', 'acme.badge', 'acme.badge_todo', '/2/data/label'], ['/3/data/columns/0/blocks/0', 'image', 'image.alt_missing', '/3/data/columns/0/blocks/0/data/alt']],
-            array_map(static fn (BlockIssue $issue): array => [$issue->pointer, $issue->type, $issue->issue->rule, $issue->fieldPointer()], $result->issues),
+            Text::of(array_map(static fn (BlockIssue $issue): array => [$issue->pointer, $issue->type, $issue->issue->rule, $issue->fieldPointer()], $result->issues)),
         );
-        self::assertSame(['image.alt_missing'], array_map(static fn (BlockIssue $issue): string => $issue->issue->rule, $result->errors()));
+        self::assertSame(['image.alt_missing'], Text::of(array_map(static fn (BlockIssue $issue): string => $issue->issue->rule, $result->errors())));
         self::assertCount(2, $result->warnings());
     }
 
@@ -67,7 +68,7 @@ final class DefaultBlockValidatorTest extends TestCase
     {
         $result = $this->fixture->validator()->validate([]);
 
-        self::assertSame([[], [], []], [$result->blocks, $result->issues, $result->mediaIds]);
+        self::assertSame([[], [], []], Text::of([$result->blocks, $result->issues, $result->mediaIds]));
     }
 
     public function testCollectsEverythingThatIsWrong(): void
@@ -107,7 +108,7 @@ final class DefaultBlockValidatorTest extends TestCase
                     ['/6/data/media', 'This file isn\'t in the media library any more. Choose another one.'],
                     ['/7/data/media', 'Choose a picture.'],
                 ],
-                array_map(static fn (BlockViolation $violation): array => [$violation->pointer, $violation->message], $exception->violations),
+                Text::of(array_map(static fn (BlockViolation $violation): array => [$violation->pointer, $violation->message], $exception->violations)),
             );
             self::assertStringStartsWith('The blocks can\'t be saved yet. /0: This is not a block', $exception->getMessage());
         }
@@ -119,7 +120,7 @@ final class DefaultBlockValidatorTest extends TestCase
         $validator = new BlockFixture([new MediaKindsBlockType()], $this->fixture->database)->validator();
         $captions = $this->fixture->addCaptions();
         $pdf = $this->fixture->addMedia(kind: MediaKind::Document);
-        self::assertSame([$captions, $pdf, $picture], $validator->validate([['type' => 'acme.media_kinds', 'version' => 1, 'data' => ['captions' => $captions, 'document' => $pdf, 'any' => $picture]]])->mediaIds);
+        self::assertSame([$captions, $pdf, $picture], Text::of($validator->validate([['type' => 'acme.media_kinds', 'version' => 1, 'data' => ['captions' => $captions, 'document' => $pdf, 'any' => $picture]]])->mediaIds));
 
         $this->expectException(InvalidBlocks::class);
         $this->expectExceptionMessage('/0/data/video: Choose a video. /0/data/audio: Choose an audio file. /0/data/document: Choose a document, such as a PDF. /0/data/captions: Choose a captions file in WebVTT format (.vtt).');

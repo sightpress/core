@@ -45,11 +45,42 @@ final class PasswordResetTest extends TestCase
         self::assertStringContainsString('The code works for 15 minutes, and only once.', $text);
         self::assertStringContainsString('We will never send you a link. Type this code on the page where you asked for it. Never share it with anyone.', $text);
         self::assertStringContainsString('you can ignore this email', $text);
-        self::assertStringContainsString('<html lang="en-GB">', $html);
+        self::assertStringContainsString('<html lang="en-GB" dir="ltr">', $html);
         foreach ([$text, $html] as $body) {
             self::assertDoesNotMatchRegularExpression('#https?://|<a\b|www\.|demo\.example|<img\b#i', $body);
         }
         self::assertSame($user, $this->auth->passwordReset()->verify($this->auth->request('POST'), VerificationPurpose::PasswordReset, 'ada@example.org', $code));
+    }
+
+    /**
+     * @return iterable<string, array{string, string, string, string}>
+     */
+    public static function shippedLanguages(): iterable
+    {
+        yield 'British English' => ['en-GB', 'Your code to reset your password for Demo', 'The code works for 15 minutes, and only once.', 'We will never send you a link.'];
+        yield 'European Portuguese' => ['pt-PT', 'O seu código para repor a palavra-passe em Demo', 'O código funciona durante 15 minutos e só uma vez.', 'Nunca lhe enviaremos uma ligação.'];
+        yield 'Spanish' => ['es', 'Tu código para restablecer tu contraseña en Demo', 'El código funciona durante 15 minutos y solo una vez.', 'Nunca te enviaremos un enlace.'];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('shippedLanguages')]
+    public function testTheEmailIsInThePersonsLanguageAndNeverHasALink(string $locale, string $subject, string $validFor, string $neverALink): void
+    {
+        $user = $this->auth->user();
+        $user->changeLocale($locale, $this->auth->clock->now());
+        $this->auth->users->save($user);
+
+        $this->auth->passwordReset()->request($this->auth->request('POST'), 'ada@example.org');
+
+        $email = $this->auth->sent[0];
+        self::assertSame($subject, $email->getSubject());
+        $text = (string) $email->getTextBody();
+        $html = (string) $email->getHtmlBody();
+        self::assertStringContainsString($validFor, $text);
+        self::assertStringContainsString($neverALink, $text);
+        self::assertStringContainsString('<html lang="' . $locale . '" dir="ltr">', $html);
+        foreach ([$text, $html, $email->getSubject()] as $body) {
+            self::assertDoesNotMatchRegularExpression('#https?://|<a\b|www\.|demo\.example|<img\b#i', $body);
+        }
     }
 
     public function testAPendingAccountGetsACodeToChooseItsFirstPassword(): void

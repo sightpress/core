@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Auth;
 
+use SightPress\Core\Template\Message;
 use SensitiveParameter;
 use SightPress\Core\Auth\Contract\Passwords;
 use SightPress\Core\Site\Contract\SiteSettings;
@@ -42,10 +43,10 @@ final readonly class PasswordPolicy
 
     /** Kind => [pattern, what the person must include]. */
     private const array KINDS = [
-        'upper' => ['/\p{Lu}/u', 'a capital letter'],
-        'lower' => ['/\p{Ll}/u', 'a lower-case letter'],
-        'digit' => ['/\p{Nd}/u', 'a number'],
-        'symbol' => ['/[\p{P}\p{S}]/u', 'a symbol, such as ! ? # or %'],
+        'upper' => '/\p{Lu}/u',
+        'lower' => '/\p{Ll}/u',
+        'digit' => '/\p{Nd}/u',
+        'symbol' => '/[\p{P}\p{S}]/u',
     ];
 
     public int $minLength;
@@ -81,14 +82,14 @@ final readonly class PasswordPolicy
      * The problem with the password, as a sentence for the form, or null when it is fine. When several kinds of
      * characters are missing, the sentence names all of them, so the person can fix the password in one go.
      */
-    public function problem(#[SensitiveParameter] string $password, string $email = ''): ?string
+    public function problem(#[SensitiveParameter] string $password, string $email = ''): string|Message|null
     {
         $length = mb_strlen($password);
         if ($length < $this->minLength) {
-            return sprintf('Your password must be at least %d characters long.', $this->minLength);
+            return new Message('Your password must be at least {min_length} characters long.', ['min_length' => $this->minLength]);
         }
         if ($length > self::MAX_LENGTH) {
-            return sprintf('Your password must be %d characters or fewer.', self::MAX_LENGTH);
+            return new Message('Your password must be {max} characters or fewer.', ['max' => (string) self::MAX_LENGTH]);
         }
         if ($email !== '' && mb_strtolower(trim($password)) === mb_strtolower(trim($email))) {
             return 'Your password must not be your email address.';
@@ -100,38 +101,49 @@ final readonly class PasswordPolicy
             }
         }
 
-        return $missing === [] ? null : sprintf('Your password must include %s.', self::listed($missing));
+        return $missing === [] ? null : new Message('Your password must include {missing}.', ['missing' => self::listed($missing)]);
     }
 
     /**
      * What a new password needs, in one sentence for the hint under the password field.
      */
-    public function hint(): string
+    public function hint(): Message
     {
         $kinds = array_column($this->required(), 1);
 
         return $kinds === []
-            ? sprintf('At least %d characters. A few unrelated words make a strong password that is easy to remember.', $this->minLength)
-            : sprintf('At least %d characters, including %s.', $this->minLength, self::listed($kinds));
+            ? new Message('At least {min_length} characters. A few unrelated words make a strong password that is easy to remember.', ['min_length' => (string) $this->minLength])
+            : new Message('At least {min_length} characters, including {kinds}.', ['min_length' => (string) $this->minLength, 'kinds' => self::listed($kinds)]);
     }
 
     /**
-     * @return list<array{string, string}>
+     * @return list<array{string, Message}>
      */
     private function required(): array
     {
         $on = ['upper' => $this->upper, 'lower' => $this->lower, 'digit' => $this->digit, 'symbol' => $this->symbol];
 
-        return array_values(array_filter(self::KINDS, static fn (string $kind): bool => $on[$kind], ARRAY_FILTER_USE_KEY));
+        $what = [
+            'upper' => new Message('a capital letter'),
+            'lower' => new Message('a lower-case letter'),
+            'digit' => new Message('a number'),
+            'symbol' => new Message('a symbol, such as ! ? # or %'),
+        ];
+        $required = [];
+        foreach (self::KINDS as $kind => $pattern) {
+            if ($on[$kind]) {
+                $required[] = [$pattern, $what[$kind]];
+            }
+        }
+
+        return $required;
     }
 
     /**
-     * @param non-empty-list<string> $items
+     * @param non-empty-list<Message> $items
      */
-    private static function listed(array $items): string
+    private static function listed(array $items): Message
     {
-        $last = array_pop($items);
-
-        return $items === [] ? $last : implode(', ', $items) . ' and ' . $last;
+        return Message::list($items);
     }
 }

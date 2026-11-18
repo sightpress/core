@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Menu\Entity;
 
+use SightPress\Core\Template\Message;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use SightPress\Core\Menu\Contract\MenuName;
@@ -61,7 +62,7 @@ final class MenuItem
             throw new MenuException('Give the link a label.');
         }
         if ($this->label !== null && mb_strlen($this->label) > self::LABEL_MAX_LENGTH) {
-            throw new MenuException(sprintf('The label must be %d characters or fewer.', self::LABEL_MAX_LENGTH));
+            throw new MenuException(new Message('The label must be {max} characters or fewer.', ['max' => (string) self::LABEL_MAX_LENGTH]));
         }
         if ($this->url !== null && (strlen($this->url) > self::URL_MAX_LENGTH || !self::isLink($this->url))) {
             throw new MenuException('The address must start with https://, http://, mailto:, tel: or / (an address on this site).');

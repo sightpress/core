@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Http\Error;
 
+use SightPress\Core\Tests\Support\Text;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -30,6 +32,8 @@ use Throwable;
 #[CoversClass(HttpTooManyRequestsException::class)]
 #[CoversClass(\SightPress\Core\Http\Csrf\CsrfTokenMismatchException::class)]
 #[CoversClass(\SightPress\Core\Http\Error\NoAdminAccessException::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class ErrorCatalogueTest extends TestCase
 {
     public function testThePageForPeopleWithoutAdminAccessLinksToTheirAccount(): void
@@ -37,7 +41,7 @@ final class ErrorCatalogueTest extends TestCase
         $page = new ErrorCatalogue()->pageFor(new \SightPress\Core\Http\Error\NoAdminAccessException(new ServerRequest('GET', '/admin')));
 
         self::assertTrue($page->homeLink);
-        self::assertSame(['/account' => 'Go to My account'], $page->links);
+        self::assertSame(['/account' => 'Go to My account'], Text::of($page->links));
     }
 
     /**
@@ -82,7 +86,7 @@ final class ErrorCatalogueTest extends TestCase
         self::assertStringContainsString($text, implode(' ', $page->paragraphs));
         self::assertStringNotContainsString('secret', implode(' ', $page->paragraphs));
         self::assertTrue($page->homeLink);
-        self::assertSame([], $page->headers);
+        self::assertSame([], Text::of($page->headers));
     }
 
     public function testNoSiteConfiguredHasNoHomeLink(): void
@@ -90,7 +94,7 @@ final class ErrorCatalogueTest extends TestCase
         $page = new ErrorCatalogue()->pageFor(new NoSiteConfiguredException(new ServerRequest('GET', '/')));
 
         self::assertSame(404, $page->status);
-        self::assertSame('No site configured', $page->title);
+        self::assertSame('No site configured', Text::of($page->title));
         self::assertFalse($page->homeLink);
     }
 
@@ -98,7 +102,7 @@ final class ErrorCatalogueTest extends TestCase
     {
         $exception = new HttpMethodNotAllowedException(new ServerRequest('PUT', '/'))->setAllowedMethods(['GET', 'POST']);
 
-        self::assertSame(['Allow' => 'GET, POST'], new ErrorCatalogue()->pageFor($exception)->headers);
+        self::assertSame(['Allow' => 'GET, POST'], Text::of(new ErrorCatalogue()->pageFor($exception)->headers));
     }
 
     /**
@@ -126,8 +130,8 @@ final class ErrorCatalogueTest extends TestCase
             self::assertSame($seconds, $exception->retryAfter());
             $page = new ErrorCatalogue()->pageFor($exception);
 
-            self::assertSame(['Retry-After' => (string) $seconds], $page->headers);
-            self::assertContains($text, $page->paragraphs);
+            self::assertSame(['Retry-After' => (string) $seconds], Text::of($page->headers));
+            self::assertContains($text, (array) Text::of($page->paragraphs));
         }
     }
 
@@ -135,7 +139,7 @@ final class ErrorCatalogueTest extends TestCase
     {
         $exception = new HttpServiceUnavailableException(new ServerRequest('GET', '/'));
 
-        self::assertSame('Service unavailable.', $exception->getMessage());
+        self::assertSame('Service unavailable.', Text::of($exception->getMessage()));
         self::assertSame(503, $exception->getCode());
         self::assertNull($exception->retryAfter());
     }

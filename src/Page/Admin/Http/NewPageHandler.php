@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -55,7 +56,7 @@ final readonly class NewPageHandler implements RequestHandlerInterface
 
         return Form::create(
             'new-page',
-            new Field('title', 'Title', hint: 'You can change it later.', constraints: [new Length(max: PageContent::TITLE_MAX_LENGTH, maxMessage: sprintf('The title must be %d characters or fewer', PageContent::TITLE_MAX_LENGTH))]),
+            new Field('title', 'Title', hint: 'You can change it later.', constraints: [new Length(max: PageContent::TITLE_MAX_LENGTH, maxMessage: 'The title must be {{ limit }} characters or fewer')]),
             new Field('parent', 'Put it under', FieldType::Select, hint: 'The page this one belongs to. Its address starts with that page’s address.', choices: $parents),
             new Field('layout', 'Layout', FieldType::Radios, choices: $this->admin->layouts()),
         )->withValues(['parent' => self::TOP, 'layout' => 'default']);
@@ -81,12 +82,9 @@ final readonly class NewPageHandler implements RequestHandlerInterface
                         $this->pages->flush();
                     }
 
-                    return $this->screens->redirect($request, PageAdmin::editPath((int) $page->id()), sprintf(
-                        '“%s” has been started as a draft. Add its content, then save it.',
-                        $form->text('title'),
-                    ));
+                    return $this->screens->redirect($request, PageAdmin::editPath((int) $page->id()), new Message('“{title}” has been started as a draft. Add its content, then save it.', ['title' => $form->text('title')]));
                 } catch (PageException $exception) {
-                    $form = $form->withErrors(['title' => $exception->getMessage()]);
+                    $form = $form->withErrors(['title' => $exception->text()]);
                 }
             }
         }

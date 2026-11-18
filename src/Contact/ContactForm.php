@@ -8,6 +8,7 @@ use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
 use SightPress\Core\Http\Session\Session;
+use SightPress\Core\Template\Message;
 use Symfony\Component\Validator\Constraints\Length;
 
 /**
@@ -49,12 +50,12 @@ final class ContactForm
      * Keeps a submission's outcome for the next time the page shows the form.
      *
      * @param array<string, string> $values
-     * @param array<string, string> $errors
+     * @param array<string, string|Message> $errors
      */
     public static function remember(Session $session, string $id, array $values, array $errors, bool $sent): void
     {
         $bag = &$session->bag(self::SESSION);
-        $bag[$id] = ['values' => $sent ? [] : $values, 'errors' => $errors, 'sent' => $sent];
+        $bag[$id] = ['values' => $sent ? [] : $values, 'errors' => array_map(static fn (string|Message $error): array => Message::of($error)->export(), $errors), 'sent' => $sent];
     }
 
     /**
@@ -72,7 +73,13 @@ final class ContactForm
             return ['form' => $form, 'sent' => false];
         }
         $values = self::strings($state['values'] ?? null);
-        $errors = self::strings($state['errors'] ?? null);
+        $errors = [];
+        foreach (is_array($state['errors'] ?? null) ? $state['errors'] : [] as $name => $error) {
+            $message = Message::import($error);
+            if (is_string($name) && $message !== null) {
+                $errors[$name] = $message;
+            }
+        }
 
         return [
             'form' => $errors === [] ? $form->withValues($values) : $form->submitted($values, $errors),

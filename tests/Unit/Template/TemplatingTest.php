@@ -46,6 +46,9 @@ use Twig\Error\RuntimeError;
 #[UsesClass(Viewer::class)]
 #[UsesClass(TextDirection::class)]
 #[UsesNamespace('SightPress\Core\Module')]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesNamespace('SightPress\Core\Infrastructure\Crypto')]
 final class TemplatingTest extends TestCase
 {
     private TemporaryDirectory $directory;
@@ -72,10 +75,11 @@ final class TemplatingTest extends TestCase
             {% if can('page.publish') %}publish{% else %}no publish{% endif %}
             {{ when|user_date }} / {{ when|user_datetime('short') }}
             <html lang="{{ current_locale() }}" dir="{{ text_direction(current_locale()) }}"> {{ text_direction('ar') }}
+            [{{ t(none) }}{{ t('') }}] {{ current_path() }}
             {% macro nonce() %}{{ csp_nonce() }}{% endmacro %}{{ _self.nonce() }}
             TWIG);
 
-        $this->request = new ServerRequest('GET', '/')
+        $this->request = new ServerRequest('GET', '/admin/pages?state=draft')
             ->withAttribute(CspNonce::class, new CspNonce('abc+/='))
             ->withAttribute(GrantedPermissions::class, new GrantedPermissions(['page.publish']))
             ->withAttribute(Viewer::class, new Viewer('en-GB', 'Europe/London'));
@@ -102,6 +106,7 @@ final class TemplatingTest extends TestCase
             'title' => '<b>"Hi"</b>',
             'name' => 'Ada & Grace',
             'when' => new DateTimeImmutable('2026-07-01 23:30:00 UTC'),
+            'none' => null,
         ]);
 
         self::assertStringContainsString('<p title="&lt;b&gt;&quot;Hi&quot;&lt;/b&gt;">&lt;b&gt;&quot;Hi&quot;&lt;/b&gt;</p>', $html);
@@ -111,6 +116,7 @@ final class TemplatingTest extends TestCase
         self::assertStringContainsString('publish', $html);
         self::assertStringContainsString('2 July 2026 / 02/07/2026, 00:30', $html);
         self::assertStringContainsString('<html lang="en-GB" dir="ltr"> rtl', $html);
+        self::assertStringContainsString('[] /admin/pages?state=draft', $html, 'nothing to translate is nothing');
         self::assertStringEndsWith('abc+/=', trim($html), 'csp_nonce() works inside macros');
     }
 
@@ -122,6 +128,7 @@ final class TemplatingTest extends TestCase
             'title' => 't',
             'name' => 'n',
             'when' => new DateTimeImmutable('2026-07-01 23:30:00 UTC'),
+            'none' => null,
         ]);
 
         self::assertStringContainsString('no publish', $html);

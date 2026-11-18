@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Page;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -14,6 +15,8 @@ use SightPress\Core\Page\Slug;
 
 #[CoversClass(PageContent::class)]
 #[UsesClass(Slug::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class PageContentTest extends TestCase
 {
     public function testTidiesTheContentAndMakesTheSlugFromTheTitle(): void

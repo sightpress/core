@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Contact\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -67,11 +68,7 @@ final readonly class ContactFormHandler implements RequestHandlerInterface
         $limit = $this->limiters->limiter('contact_form', is_string($address) ? $address : 'unknown')->consume();
         if (!$limit->isAccepted()) {
             $minutes = (int) ceil(RateLimiters::secondsUntil($limit->getRetryAfter()) / 60);
-            ContactForm::remember($session, $id, $values, ['message' => sprintf(
-                'You have sent a lot of messages. Try again in %d %s.',
-                $minutes,
-                $minutes === 1 ? 'minute' : 'minutes',
-            )], false);
+            ContactForm::remember($session, $id, $values, ['message' => new Message('You have sent a lot of messages. Try again in {minutes, plural, one {# minute} other {# minutes}}.', ['minutes' => $minutes])], false);
         } elseif (is_string($body[ContactForm::HONEYPOT] ?? null) && $body[ContactForm::HONEYPOT] !== '') {
             ContactForm::remember($session, $id, [], [], true);
         } elseif (!$form->isValid()) {

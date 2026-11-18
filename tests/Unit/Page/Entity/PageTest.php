@@ -6,6 +6,7 @@ namespace SightPress\Core\Tests\Unit\Page\Entity;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -22,6 +23,8 @@ use SightPress\Core\Tenant\LocaleCode;
 #[UsesClass(PageContent::class)]
 #[UsesClass(Slug::class)]
 #[UsesClass(LocaleCode::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class PageTest extends TestCase
 {
     private DateTimeImmutable $now;

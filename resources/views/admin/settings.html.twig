@@ -16,7 +16,7 @@
         <legend>{{ t('The site') }}</legend>
         {{ f.field(form, 'name') }}
         <p>{{ t('Languages:') }}
-            {%- for language in languages %} {{ language.main ? t('{language} (main language)', {language: language.name}) : language.name }}{{ loop.last ? '.' : ',' }}{% endfor %}
+            {%- for language in languages %} {{ language.main ? t('{language} (main language)', {language: language.name}) : t(language.name) }}{{ loop.last ? '.' : ',' }}{% endfor %}
             <a href="{{ languages_path }}">{{ t('Change the languages') }}</a></p>
         {{ f.field(form, 'timezone') }}
         <p>{{ t('The site is run by {owner}.', {owner: t(owner)}) }}</p>

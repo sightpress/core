@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Rbac;
 
+use SightPress\Core\Template\Message;
 use InvalidArgumentException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Rbac\Contract\Actor;
@@ -103,6 +104,6 @@ final readonly class RoleGrantPolicy implements RoleGrants
 
     private static function choice(Role $role): RoleChoice
     {
-        return new RoleChoice($role->name(), $role->label(), self::DESCRIPTIONS[$role->name()] ?? sprintf('A custom role: %s.', $role->label()));
+        return new RoleChoice($role->name(), $role->label(), self::DESCRIPTIONS[$role->name()] ?? new Message('A custom role: {label}.', ['label' => Message::of($role->label())]));
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Auth\Contract;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Http\Form\Field;
 use Symfony\Component\Validator\Constraints\Regex;
 
@@ -27,7 +28,7 @@ final class CodeEntry
      *
      * @param string $hint where the code was sent, or where to find it
      */
-    public static function field(string $hint): Field
+    public static function field(string|Message $hint): Field
     {
         return new Field(
             self::FIELD,
@@ -46,15 +47,13 @@ final class CodeEntry
     /**
      * "15 minutes", "1 hour", "7 days": how long a code works, in words.
      */
-    public static function duration(int $seconds): string
+    public static function duration(int $seconds): Message
     {
-        [$amount, $unit] = match (true) {
-            $seconds >= 86400 && $seconds % 86400 === 0 => [intdiv($seconds, 86400), 'day'],
-            $seconds >= 3600 && $seconds % 3600 === 0 => [intdiv($seconds, 3600), 'hour'],
-            default => [max(1, intdiv($seconds, 60)), 'minute'],
+        return match (true) {
+            $seconds >= 86400 && $seconds % 86400 === 0 => new Message('{count, plural, one {# day} other {# days}}', ['count' => intdiv($seconds, 86400)]),
+            $seconds >= 3600 && $seconds % 3600 === 0 => new Message('{count, plural, one {# hour} other {# hours}}', ['count' => intdiv($seconds, 3600)]),
+            default => new Message('{count, plural, one {# minute} other {# minutes}}', ['count' => max(1, intdiv($seconds, 60))]),
         };
-
-        return sprintf('%d %s%s', $amount, $unit, $amount === 1 ? '' : 's');
     }
 
     /**
@@ -62,11 +61,12 @@ final class CodeEntry
      *
      * @param positive-int $seconds
      */
-    public static function wait(int $seconds): string
+    public static function wait(int $seconds): Message
     {
         if ($seconds <= 60) {
-            return sprintf('%d %s', $seconds, $seconds === 1 ? 'second' : 'seconds');
+            return new Message('{count, plural, one {# second} other {# seconds}}', ['count' => $seconds]);
         }
-        return sprintf('%d minutes', (int) ceil($seconds / 60));
+
+        return new Message('{count, plural, one {# minute} other {# minutes}}', ['count' => (int) ceil($seconds / 60)]);
     }
 }

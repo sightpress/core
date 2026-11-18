@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\User;
 
+use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\User\Avatar\AvatarService;
@@ -50,7 +51,7 @@ final readonly class AccountAdministration implements AccountRoster
 
     private function user(int $id): User
     {
-        return $this->users->find($id) ?? throw new AccountException(sprintf('There is no account %d.', $id));
+        return $this->users->find($id) ?? throw new AccountException(new Message('There is no account {id}.', ['id' => (string) $id]));
     }
 
     private function saved(User $user, ?int $changedBy): void

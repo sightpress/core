@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\People;
 
+use SightPress\Core\Template\Viewer;
+use SightPress\Core\Template\Translations;
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Auth\Contract\CodeEntry;
 use SightPress\Core\Auth\Contract\IssuedCode;
@@ -27,6 +30,7 @@ final readonly class InvitationMailer
         private MailSender $mail,
         private TemplateRenderer $templates,
         private Site $site,
+        private Translations $translations,
     ) {
     }
 
@@ -40,12 +44,16 @@ final readonly class InvitationMailer
             'name' => $invitation->firstName,
             'code' => $code->readable(),
             'valid_for' => CodeEntry::duration(VerificationPurpose::Invitation->lifetime(VerificationChannel::Email)),
-            'expires' => sprintf('%s (%s time)', $expires->format('j F Y, H:i'), $this->site->defaultTimezone),
+            'expires' => $expires,
+            'timezone' => $this->site->defaultTimezone,
         ];
+        // The person has no account yet: the email is in the site's language.
+        $viewer = Viewer::recipient(null, $this->site);
+        $request = $request->withAttribute(Viewer::class, $viewer);
 
         $this->mail->send(new Email()
             ->to(new Address($invitation->email))
-            ->subject(sprintf('%s invited you to %s', $inviter, $this->site->name))
+            ->subject($this->translations->translate(new Message('{inviter} invited you to {site}', ['inviter' => $inviter, 'site' => $this->site->name]), [], $viewer->locale))
             ->text($this->templates->render($request, '@people/email/invitation.txt.twig', $context))
             ->html($this->templates->render($request, '@people/email/invitation.html.twig', $context)));
     }

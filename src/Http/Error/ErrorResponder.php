@@ -7,6 +7,11 @@ namespace SightPress\Core\Http\Error;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SightPress\Core\Template\Translations;
+use SightPress\Core\Template\ViewerPreferences;
+use SightPress\Core\Tenant\Site;
+use SightPress\Core\Tenant\SiteContext;
+use Slim\Exception\HttpException;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Log\LoggerInterface;
 use SightPress\Core\Http\AcceptNegotiator;
@@ -28,6 +33,8 @@ final readonly class ErrorResponder
         private LoggerInterface $logger,
         private bool $debug = false,
         private bool $noindex = false,
+        private ?Translations $translations = null,
+        private string $defaultLocale = Translations::SOURCE_LOCALE,
     ) {
     }
 
@@ -60,7 +67,7 @@ final readonly class ErrorResponder
             $response = $response
                 ->withHeader('Content-Type', 'text/html; charset=utf-8')
                 ->withHeader('Content-Security-Policy', $this->html->contentSecurityPolicy())
-                ->withBody($this->streamFactory->createStream($this->html->render($page, $details)));
+                ->withBody($this->streamFactory->createStream($this->html->render($page, $details, $this->translations, $this->locale($exception instanceof HttpException ? $exception->getRequest() : $request))));
         }
 
         if ($this->noindex) {
@@ -72,6 +79,32 @@ final readonly class ErrorResponder
         }
 
         return $response;
+    }
+
+    /**
+     * The language of an error page: the signed-in person's, else the language part of the address on the site
+     * (`/pt-pt/…`), else the site's default, else the admin default.
+     */
+    private function locale(ServerRequestInterface $request): string
+    {
+        $own = $request->getAttribute(ViewerPreferences::class);
+        if ($own instanceof ViewerPreferences && $own->locale !== null && $own->locale !== '') {
+            return $own->locale;
+        }
+        $context = SiteContext::fromRequest($request);
+        if ($context === null) {
+            return $this->defaultLocale;
+        }
+        $site = $context->container->has(Site::class) ? $context->container->get(Site::class) : $context->site;
+        $site = $site instanceof Site ? $site : $context->site;
+        $first = strtolower(explode('/', ltrim($request->getUri()->getPath(), '/'))[0]);
+        foreach ($site->locales as $locale) {
+            if (strtolower($locale) === $first) {
+                return $locale;
+            }
+        }
+
+        return $site->defaultLocale;
     }
 
     private function details(Throwable $exception): string

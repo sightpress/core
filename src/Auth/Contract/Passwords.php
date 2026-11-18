@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Auth\Contract;
 
+use SightPress\Core\Template\Message;
+
 /**
  * The site's password policy and hashing, for every place where people choose a password. Every site has a policy
  * (length and kinds of characters); its admin can change it in the site settings.
@@ -22,14 +24,14 @@ interface Passwords
     /**
      * What is wrong with the password, in plain words, or null when it is fine.
      */
-    public function problem(#[\SensitiveParameter] string $password, string $email = ''): ?string;
+    public function problem(#[\SensitiveParameter] string $password, string $email = ''): string|Message|null;
 
     /**
      * What a new password needs under the site's policy, in one sentence for the hint under the password field,
      * for example "At least 12 characters, including a capital letter, a lower-case letter, a number and a symbol,
      * such as ! ? # or %."
      */
-    public function hint(): string;
+    public function hint(): Message;
 
     /**
      * An argon2id hash of the password.

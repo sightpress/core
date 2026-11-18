@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Editor;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Core\Page\PageContent;
 use SightPress\Module\Block\BlockType;
@@ -27,7 +28,7 @@ final readonly class BlockFormView
 
     /**
      * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
-     * @param array<string, string>                                               $errors   pointer (`/blocks/2/data/alt`) => message
+     * @param array<string, string|Message>                                            $errors   pointer (`/blocks/2/data/alt`) => message
      * @param array<string, string>                                               $previews pointer of a block => its HTML
      */
     public function build(string $locale, array $blocks, array $errors = [], array $previews = []): EditorBlocks
@@ -106,7 +107,7 @@ final readonly class BlockFormView
         $name = is_string($block['type'] ?? null) ? $block['type'] : '';
         $type = $this->types->get($name);
         $data = is_array($block['data'] ?? null) ? $block['data'] : [];
-        $label = $type?->label() ?? sprintf('Unknown block "%s"', $name);
+        $label = $type?->label() ?? new Message('Unknown block "{name}"', ['name' => $name]);
 
         return [
             'kind' => 'block',
@@ -116,8 +117,8 @@ final readonly class BlockFormView
             'type' => $name,
             'version' => is_int($block['version'] ?? null) ? $block['version'] : ($type?->version() ?? 1),
             'label' => $label,
-            'legend' => sprintf('Block %d of %d: %s', $index + 1, $count, $label),
-            'short' => sprintf('block %d, %s', $index + 1, $label),
+            'legend' => new Message('Block {index} of {value}: {label}', ['index' => $index + 1, 'value' => (string) $count, 'label' => $label]),
+            'short' => new Message('block {index}, {label}', ['index' => $index + 1, 'label' => $label]),
             'moves' => self::moves($index, $count, true),
             'controls' => $type === null ? [] : $this->controls($locale, $pointer . '/data', $type->schema(), $data, $previews),
             'kept' => $type === null ? json_encode((object) $data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : null,
@@ -211,8 +212,8 @@ final readonly class BlockFormView
                 'pointer' => $at,
                 'id' => Pointer::id($locale, $at),
                 'name' => Pointer::name($at),
-                'legend' => sprintf('%s %d of %d', $noun, $index + 1, $count),
-                'short' => sprintf('%s %d', mb_strtolower($noun), $index + 1),
+                'legend' => new Message('{noun} {index} of {value}', ['noun' => Message::of($noun), 'index' => $index + 1, 'value' => (string) $count]),
+                'short' => new Message('{noun} {index}', ['noun' => Message::of($noun)->lowerFirst(), 'index' => $index + 1]),
                 'moves' => $moves,
                 'controls' => $this->controls($locale, $at, $itemSchema, is_array($item) ? $item : [], $previews),
                 'errors' => [],
@@ -307,8 +308,8 @@ final readonly class BlockFormView
      * Gives every node its errors and lists them, in the order of the page, for the error summary.
      *
      * @param array<string, mixed>              $node
-     * @param array<string, list<string>>       $assigned
-     * @param list<array{id: string, message: string}> $summary
+     * @param array<string, list<string|Message>> $assigned
+     * @param list<array{id: string, message: string|Message}> $summary
      *
      * @return array<string, mixed>
      */
@@ -319,7 +320,7 @@ final readonly class BlockFormView
         $node['errors'] = $assigned[$pointer] ?? [];
         $about = $node['legend'] ?? $node['label'] ?? null;
         foreach ($node['errors'] as $message) {
-            $summary[] = ['id' => $id, 'message' => is_string($about) ? $about . ': ' . $message : $message];
+            $summary[] = ['id' => $id, 'message' => is_string($about) || $about instanceof Message ? new Message('{about}: {problem}', ['about' => Message::of($about), 'problem' => Message::of($message)]) : $message];
         }
         foreach (['blocks', 'controls', 'items'] as $children) {
             if (is_array($node[$children] ?? null)) {

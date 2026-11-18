@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Admin\Http;
 
+use SightPress\Core\Template\LanguageName;
+use SightPress\Core\Template\Message;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -108,7 +110,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
             'sections' => $this->sections(),
             'owner' => $this->site->ownerType === OwnerType::Person ? 'a person' : 'an organisation',
             'languages' => array_map(
-                fn (string $locale): array => ['name' => LocaleCode::describe($locale), 'main' => $locale === $this->site->defaultLocale],
+                fn (string $locale): array => ['name' => new LanguageName($locale), 'main' => $locale === $this->site->defaultLocale],
                 array_values(array_unique([$this->site->defaultLocale, ...$this->site->locales])),
             ),
             'languages_path' => LanguagesHandler::PATH,
@@ -116,13 +118,13 @@ final readonly class SettingsHandler implements RequestHandlerInterface
     }
 
     /**
-     * @return list<array{title: string, intro: string, fields: list<string>}>
+     * @return list<array{title: string|Message, intro: string, fields: list<string>}>
      */
     private function sections(): array
     {
         $sections = [];
         foreach ($this->catalogue->all() as ['module' => $module, 'setting' => $setting]) {
-            [$title, $intro] = self::SECTIONS[$module] ?? [sprintf('More settings: %s', ucfirst(str_replace('_', ' ', $module))), ''];
+            [$title, $intro] = self::SECTIONS[$module] ?? [new Message('More settings: {module}', ['module' => ucfirst(str_replace('_', ' ', $module))]), ''];
             $sections[$module] ??= ['title' => $title, 'intro' => $intro, 'fields' => []];
             $sections[$module]['fields'][] = self::fieldName($setting->key);
         }
@@ -182,8 +184,8 @@ final readonly class SettingsHandler implements RequestHandlerInterface
             SettingType::Boolean => new Field($name, $setting->label, FieldType::Checkbox, hint: $hint, required: false),
             SettingType::Choice => new Field($name, $setting->label, FieldType::Radios, hint: $hint, choices: $setting->choices),
             SettingType::Integer => new Field($name, $setting->label, hint: $hint, required: $setting->key === Passwords::MIN_LENGTH_SETTING, constraints: [new Regex('/^-?\d{1,18}$/', message: 'Enter a whole number, such as 10'), ...self::rules($setting->key)], inputmode: 'numeric'),
-            SettingType::LongText => new Field($name, $setting->label, FieldType::Textarea, hint: $hint, required: false, constraints: [new Length(max: 5000, maxMessage: sprintf('%s must be 5000 characters or fewer', $setting->label)), ...self::rules($setting->key)]),
-            SettingType::Text => new Field($name, $setting->label, $setting->key === SiteProfile::EMAIL ? FieldType::Email : FieldType::Text, hint: $hint, required: false, constraints: [new Length(max: 500, maxMessage: sprintf('%s must be 500 characters or fewer', $setting->label)), ...self::rules($setting->key)]),
+            SettingType::LongText => new Field($name, $setting->label, FieldType::Textarea, hint: $hint, required: false, constraints: [new Length(max: 5000, maxMessage: '{field} must be {{ limit }} characters or fewer'), ...self::rules($setting->key)]),
+            SettingType::Text => new Field($name, $setting->label, $setting->key === SiteProfile::EMAIL ? FieldType::Email : FieldType::Text, hint: $hint, required: false, constraints: [new Length(max: 500, maxMessage: '{field} must be {{ limit }} characters or fewer'), ...self::rules($setting->key)]),
         };
     }
 
@@ -199,7 +201,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
                 foreach (SiteProfile::lines(is_string($value) ? $value : '') as $line) {
                     $line = trim($line);
                     if ($line !== '' && !SiteProfile::isLink($line)) {
-                        $context->buildViolation(sprintf('“%s” is not a full web address starting with https://. Put one address on each line.', mb_strimwidth($line, 0, 80, '…')))->addViolation();
+                        $context->buildViolation('“{{ line }}” is not a full web address starting with https://. Put one address on each line.')->setParameter('{{ line }}', mb_strimwidth($line, 0, 80, '…'))->addViolation();
 
                         return;
                     }
@@ -207,7 +209,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
             })],
             $key === Passwords::MIN_LENGTH_SETTING => [new Callback(static function (mixed $value, ExecutionContextInterface $context): void {
                 if (is_string($value) && preg_match('/^-?\d{1,18}$/', $value) === 1 && ((int) $value < Passwords::SHORTEST_MIN_LENGTH || (int) $value > Passwords::MAX_LENGTH)) {
-                    $context->buildViolation(sprintf('The shortest password allowed must be a number from %d to %d', Passwords::SHORTEST_MIN_LENGTH, Passwords::MAX_LENGTH))->addViolation();
+                    $context->buildViolation('The shortest password allowed must be a number from {{ min }} to {{ max }}')->setParameter('{{ min }}', (string) Passwords::SHORTEST_MIN_LENGTH)->setParameter('{{ max }}', (string) Passwords::MAX_LENGTH)->addViolation();
                 }
             })],
             isset(SiteVerification::CODES[$key]) => [new Regex(SiteVerification::CODE_PATTERN, message: 'Paste only the code: the letters and digits between the quotes after content=')],

@@ -102,6 +102,25 @@ test('the home page is in the visitor’s language only at the top address', asy
   await context.close();
 });
 
+test('the language switcher names each language in its own words and keeps the visitor on the page', async ({ page }) => {
+  await page.goto(`${SITE}/he/odot`);
+  // Hebrew has no interface translation yet, so the site's own words fall back to British English.
+  const switcher = page.getByRole('navigation', { name: 'Languages' });
+  await expect(page.locator('a.site-name')).toHaveAttribute('href', '/');
+  await expect(switcher.getByRole('link')).toHaveText(['British English', 'Português europeu', 'עברית']);
+  await expect(switcher.getByRole('link', { name: 'עברית' })).toHaveAttribute('aria-current', 'page');
+  await expect(switcher.getByRole('link', { name: 'Português europeu' })).toHaveAttribute('lang', 'pt-PT');
+  await expectNoViolations(page);
+
+  await switcher.getByRole('link', { name: 'British English' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(`${SITE}/about`);
+  await expect(page.getByRole('navigation', { name: 'Languages' })).toBeVisible();
+  await page.getByRole('navigation', { name: 'Languages' }).getByRole('link', { name: 'Português europeu' }).click();
+  await expect(page).toHaveURL(`${SITE}/pt-pt/sobre`);
+  await expect(page.getByRole('link', { name: 'Saltar para o conteúdo principal' })).toBeAttached();
+});
+
 test('translated pages score 100 for search engines in Lighthouse', async () => {
   test.setTimeout(180_000);
   const port = 9400 + test.info().workerIndex;

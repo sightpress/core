@@ -6,6 +6,7 @@ namespace SightPress\Core\Tests\Unit\Media\Entity;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Media\Contract\MediaKind;
@@ -18,6 +19,8 @@ use SightPress\Core\Tenant\LocaleCode;
 #[UsesClass(MediaFormat::class)]
 #[UsesClass(LocaleCode::class)]
 #[UsesClass(MediaKind::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class MediaTest extends TestCase
 {
     private const string KEY = '0123456789abcdef0123456789abcdef';

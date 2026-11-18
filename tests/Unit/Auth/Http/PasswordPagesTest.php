@@ -148,7 +148,7 @@ final class PasswordPagesTest extends TestCase
         $done = $this->choose('POST', ['password' => ' A new long password 2! ']);
         self::assertSame('/login', $done->getHeaderLine('Location'));
         self::assertTrue($this->auth->hasher->verify(' A new long password 2! ', $user->passwordHash()));
-        self::assertSame(['Your password has been changed. Sign in with your new password.'], Flash::take($this->session));
+        self::assertSame(['Your password has been changed. Sign in with your new password.'], array_map(strval(...), Flash::take($this->session)));
         self::assertSame('/login/forgot', $this->choose('GET')->getHeaderLine('Location'), 'only once');
     }
 
@@ -212,7 +212,7 @@ final class PasswordPagesTest extends TestCase
         self::assertStringContainsString('<h1>Choose your password</h1>', (string) $this->choose('GET')->getBody());
         $this->choose('POST', ['password' => 'My very 1st password!']);
         self::assertSame(UserStatus::Active, $user->status());
-        self::assertSame(['Your password has been set. Sign in with it now.'], Flash::take($this->session));
+        self::assertSame(['Your password has been set. Sign in with it now.'], array_map(strval(...), Flash::take($this->session)));
     }
 
     public function testTooManySetupTriesAreExplained(): void
@@ -230,7 +230,7 @@ final class PasswordPagesTest extends TestCase
 
         $none = $this->choose('GET');
         self::assertSame('/login/forgot', $none->getHeaderLine('Location'));
-        self::assertSame(['Your code has run out of time. Ask for a new code to choose your password.'], Flash::take($this->session));
+        self::assertSame(['Your code has run out of time. Ask for a new code to choose your password.'], array_map(strval(...), Flash::take($this->session)));
 
         CodeSession::verified($this->session, VerificationPurpose::PasswordReset, (int) $user->id(), $this->auth->clock->now()->getTimestamp());
         $this->auth->clock->advance(CodeSession::VERIFIED_FOR + 1);

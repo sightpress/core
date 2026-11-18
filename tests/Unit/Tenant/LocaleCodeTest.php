@@ -72,4 +72,13 @@ final class LocaleCodeTest extends TestCase
         $names = array_values($available);
         self::assertLessThan(array_search('Welsh', $names, true), array_search('Afrikaans', $names, true));
     }
+
+    public function testNamesALocaleInItsOwnLanguage(): void
+    {
+        self::assertSame('British English', LocaleCode::ownName('en-GB'));
+        self::assertSame('Português europeu', LocaleCode::ownName('pt-PT'));
+        self::assertSame('Español', LocaleCode::ownName('es'));
+        self::assertSame('עברית', LocaleCode::ownName('he'));
+        self::assertSame('Qaa', LocaleCode::ownName('qaa'), 'a code ICU doesn’t know stays a code');
+    }
 }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Http\Form;
 
+use SightPress\Core\Tests\Support\Text;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Http\Form\Field;
@@ -15,6 +17,8 @@ use SightPress\Core\Http\Form\Form;
 #[CoversClass(Form::class)]
 #[CoversClass(Field::class)]
 #[CoversClass(FieldType::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class FormTest extends TestCase
 {
     public function testAFormHoldsFieldsValuesAndErrors(): void
@@ -25,17 +29,17 @@ final class FormTest extends TestCase
             new Field('topics', 'Topics', FieldType::Checkboxes, choices: ['a11y' => 'Accessibility', 'seo' => 'Search']),
         )->withValues(['display_name' => 'Ada']);
 
-        self::assertSame('profile', $form->id);
+        self::assertSame('profile', Text::of($form->id));
         self::assertCount(2, $form->fields());
         self::assertTrue($form->has('topics'));
         self::assertFalse($form->has('email'));
-        self::assertSame('Ada', $form->value('display_name'));
-        self::assertSame('Ada', $form->text('display_name'));
-        self::assertSame('', $form->text('topics'));
-        self::assertSame(['display_name' => 'Ada', 'topics' => []], $form->values());
-        self::assertSame('profile-display-name', $form->fieldId('display_name'));
-        self::assertSame('profile-topics', $form->optionId('topics', 0));
-        self::assertSame('profile-topics-2', $form->optionId('topics', 1));
+        self::assertSame('Ada', Text::of($form->value('display_name')));
+        self::assertSame('Ada', Text::of($form->text('display_name')));
+        self::assertSame('', Text::of($form->text('topics')));
+        self::assertSame(['display_name' => 'Ada', 'topics' => []], Text::of($form->values()));
+        self::assertSame('profile-display-name', Text::of($form->fieldId('display_name')));
+        self::assertSame('profile-topics', Text::of($form->optionId('topics', 0)));
+        self::assertSame('profile-topics-2', Text::of($form->optionId('topics', 1)));
         self::assertFalse($form->submitted);
         self::assertFalse($form->isValid());
         self::assertNull($form->error('display_name'));
@@ -49,11 +53,11 @@ final class FormTest extends TestCase
 
         self::assertTrue($form->submitted);
         self::assertFalse($form->isValid());
-        self::assertSame(['first' => 'Enter first', 'second' => 'Enter second'], $form->errors());
+        self::assertSame(['first' => 'Enter first', 'second' => 'Enter second'], Text::of($form->errors()));
         self::assertSame([
             ['fieldId' => 'f-first', 'message' => 'Enter first'],
             ['fieldId' => 'f-second', 'message' => 'Enter second'],
-        ], $form->errorSummary());
+        ], Text::of($form->errorSummary()));
         self::assertTrue(Form::create('f', new Field('first', 'First'))->submitted(['first' => 'x'], [])->isValid());
     }
 
@@ -85,15 +89,15 @@ final class FormTest extends TestCase
 
     public function testRequiredMessagesStartWithWhatToDo(): void
     {
-        self::assertSame('Enter email address', new Field('email', 'Email address', FieldType::Email)->requiredMessage());
-        self::assertSame('Select role', new Field('role', 'Role', FieldType::Select, choices: ['a' => 'A'])->requiredMessage());
-        self::assertSame('Agree to the terms', new Field('terms', 'Terms', FieldType::Checkbox, requiredMessage: 'Agree to the terms')->requiredMessage());
+        self::assertSame('Enter email address', Text::of(new Field('email', 'Email address', FieldType::Email)->requiredMessage()));
+        self::assertSame('Select role', Text::of(new Field('role', 'Role', FieldType::Select, choices: ['a' => 'A'])->requiredMessage()));
+        self::assertSame('Agree to the terms', Text::of(new Field('terms', 'Terms', FieldType::Checkbox, requiredMessage: 'Agree to the terms')->requiredMessage()));
         self::assertTrue(FieldType::Radios->isGroup());
         self::assertFalse(FieldType::Select->isGroup());
         self::assertTrue(FieldType::Checkboxes->hasChoices());
         self::assertFalse(FieldType::Text->hasChoices());
-        self::assertSame('Select', FieldType::Checkbox->requiredVerb());
-        self::assertSame('Choose picture', new Field('picture', 'Picture', FieldType::File, accept: 'image/png')->requiredMessage());
+        self::assertSame('Select', Text::of(FieldType::Checkbox->requiredVerb()));
+        self::assertSame('Choose picture', Text::of(new Field('picture', 'Picture', FieldType::File, accept: 'image/png')->requiredMessage()));
     }
 
     public function testGroupedChoicesListEveryValue(): void
@@ -104,6 +108,6 @@ final class FormTest extends TestCase
             'none' => 'None',
         ]);
 
-        self::assertSame(['UTC', 'Europe/Lisbon', 'Europe/London', 'none'], $field->choiceValues());
+        self::assertSame(['UTC', 'Europe/Lisbon', 'Europe/London', 'none'], Text::of($field->choiceValues()));
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\User\Entity;
 
+use SightPress\Core\Template\Message;
 use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\DBAL\Types\Types;
@@ -241,7 +242,7 @@ final class User implements Account
             throw new UserException('An avatar needs a file path.');
         }
         if (preg_match('/^#[0-9a-f]{6}$/', $color) !== 1) {
-            throw new UserException(sprintf('Avatar colour "%s" must be written as #rrggbb in lower case.', $color));
+            throw new UserException(new Message('Avatar colour "{color}" must be written as #rrggbb in lower case.', ['color' => $color]));
         }
 
         $this->avatarKind = $kind;
@@ -290,7 +291,7 @@ final class User implements Account
             mb_strlen($email) > self::EMAIL_MAX_LENGTH
             || filter_var($email, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE) === false
         ) {
-            throw new UserException(sprintf('"%s" is not a valid email address.', $email));
+            throw new UserException(new Message('"{email}" is not a valid email address.', ['email' => $email]));
         }
 
         return $email;
@@ -300,14 +301,10 @@ final class User implements Account
     {
         $name = trim($name);
         if ($name === '') {
-            throw new UserException(sprintf('Enter a %s.', $what));
+            throw new UserException(new Message('Enter a {what}.', ['what' => $what]));
         }
         if (mb_strlen($name) > self::NAME_MAX_LENGTH) {
-            throw new UserException(sprintf(
-                'The %s must be %d characters or fewer.',
-                $what,
-                self::NAME_MAX_LENGTH,
-            ));
+            throw new UserException(new Message('The {what} must be {max} characters or fewer.', ['what' => $what, 'max' => (string) self::NAME_MAX_LENGTH]));
         }
 
         return $name;
@@ -325,10 +322,7 @@ final class User implements Account
     private static function checkTimezone(string $timezone): string
     {
         if (!in_array($timezone, DateTimeZone::listIdentifiers(), true)) {
-            throw new UserException(sprintf(
-                '"%s" is not a time zone. Use an IANA time zone such as "Europe/London".',
-                $timezone,
-            ));
+            throw new UserException(new Message('"{timezone}" is not a time zone. Use an IANA time zone such as "Europe/London".', ['timezone' => $timezone]));
         }
 
         return $timezone;
@@ -337,7 +331,7 @@ final class User implements Account
     private static function checkLocale(?string $locale): ?string
     {
         if ($locale !== null && !LocaleCode::isValid($locale)) {
-            throw new UserException(sprintf('"%s" is not a locale code such as "en-GB".', $locale));
+            throw new UserException(new Message('"{locale}" is not a locale code such as "en-GB".', ['locale' => $locale]));
         }
 
         return $locale;

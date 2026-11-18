@@ -55,7 +55,7 @@ final class PublishChecksTest extends TestCase
             self::fail('Expected publishing to be blocked.');
         } catch (PublishBlocked $blocked) {
             self::assertSame(['page.heading_skipped', 'page.contrast'], array_map(static fn (PublishIssue $issue): string => $issue->rule, $blocked->report->errors()));
-            self::assertStringContainsString('in dark mode', $blocked->report->errors()[1]->message);
+            self::assertStringContainsString('in dark mode', (string) $blocked->report->errors()[1]->message);
         }
 
         $editor->save($page, 'en-GB', new PageContent('Events', null, null, null, [

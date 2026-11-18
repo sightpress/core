@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Site\Contract;
 
+use SightPress\Core\Template\LanguageName;
+use SightPress\Core\Template\Message;
 use InvalidArgumentException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Tenant\LocaleCode;
@@ -70,7 +72,7 @@ final class SiteLanguages
             throw new SiteLanguageException($exception->getMessage(), 0, $exception);
         }
         if ($locale === '' || $this->has($locale)) {
-            throw new SiteLanguageException(sprintf('The site is already written in %s (%s).', LocaleCode::describe($locale), $locale));
+            throw new SiteLanguageException(new Message('The site is already written in {locale} ({locale2}).', ['locale' => new LanguageName($locale), 'locale2' => $locale]));
         }
         $this->locales[] = $locale;
         $this->store([SiteProfile::LOCALES], $actorId);
@@ -101,7 +103,7 @@ final class SiteLanguages
     {
         $this->check($locale);
         if ($locale === $this->default) {
-            throw new SiteLanguageException(sprintf('%s (%s) is the main language, so it can’t be removed. Make another language the main one first.', LocaleCode::describe($locale), $locale));
+            throw new SiteLanguageException(new Message('{locale} ({locale2}) is the main language, so it can’t be removed. Make another language the main one first.', ['locale' => new LanguageName($locale), 'locale2' => $locale]));
         }
     }
 
@@ -131,7 +133,7 @@ final class SiteLanguages
     private function check(string $locale): void
     {
         if ($locale === '' || !$this->has($locale)) {
-            throw new SiteLanguageException(sprintf('The site isn’t written in “%s”. Its languages are: %s.', $locale, implode(', ', $this->locales())));
+            throw new SiteLanguageException(new Message('The site isn’t written in “{locale}”. Its languages are: {locales}.', ['locale' => $locale, 'locales' => implode(', ', $this->locales())]));
         }
     }
 

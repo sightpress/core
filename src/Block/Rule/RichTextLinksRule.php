@@ -35,10 +35,10 @@ final class RichTextLinksRule implements A11yRule
 
         $issues = [];
         if ($empty > 0) {
-            $issues[] = new A11yIssue('rich_text.link_empty', sprintf('%d %s no text. Give every link text that says where it goes.', $empty, $empty === 1 ? 'link has' : 'links have'), A11ySeverity::Error, '/html', ['2.4.4', '4.1.2']);
+            $issues[] = new A11yIssue('rich_text.link_empty', $empty === 1 ? 'A link has no text. Give every link text that says where it goes.' : 'Some links have no text. Give every link text that says where it goes.', A11ySeverity::Error, '/html', ['2.4.4', '4.1.2']);
         }
         if ($vague !== []) {
-            $issues[] = new A11yIssue('rich_text.link_vague', sprintf('Say where these links go: "%s".', implode('", "', array_unique($vague))), A11ySeverity::Warning, '/html', ['2.4.4']);
+            $issues[] = new A11yIssue('rich_text.link_vague', 'Some links don’t say where they go, such as “click here” or “read more”. Say where each link goes.', A11ySeverity::Warning, '/html', ['2.4.4']);
         }
 
         return $issues;

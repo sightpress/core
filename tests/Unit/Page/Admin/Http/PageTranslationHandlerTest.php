@@ -47,12 +47,12 @@ final class PageTranslationHandlerTest extends TestCase
         $response = $this->send($this->editor, ['op' => 'translate', 'locale' => 'pt-PT', 'from' => 'en-GB']);
 
         self::assertSame([303, '/admin/pages/' . $this->page->id() . '?locale=pt-PT'], [$response->getStatusCode(), $response->getHeaderLine('Location')]);
-        self::assertSame(['Started the European Portuguese translation as a copy of the British English page. Translate the text, then publish the translation.'], Flash::take($this->fixture->session));
+        self::assertSame(['Started the European Portuguese translation as a copy of the British English page. Translate the text, then publish the translation.'], array_map(strval(...), Flash::take($this->fixture->session)));
         $copy = $this->page->translation('pt-PT');
         self::assertSame(['Opening hours', true], [$copy?->title(), $copy?->isDraft()]);
 
         $this->send($this->editor, ['op' => 'translate', 'locale' => 'pt-PT', 'from' => 'en-GB']);
-        self::assertSame(['The page is already written in "pt-PT". Change that translation instead.'], Flash::take($this->fixture->session));
+        self::assertSame(['The page is already written in "pt-PT". Change that translation instead.'], array_map(strval(...), Flash::take($this->fixture->session)));
     }
 
     public function testPublishesATranslationOnceItsChecksPassAndMakesItADraftAgain(): void
@@ -60,18 +60,18 @@ final class PageTranslationHandlerTest extends TestCase
         $this->fixture->pages->editor()->translate($this->page, 'pt-PT', 'en-GB');
 
         $this->send($this->editor, ['op' => 'publish', 'locale' => 'pt-PT']);
-        self::assertSame(['Published the European Portuguese translation. Visitors can see it now.'], Flash::take($this->fixture->session));
+        self::assertSame(['Published the European Portuguese translation. Visitors can see it now.'], array_map(strval(...), Flash::take($this->fixture->session)));
         self::assertTrue($this->page->translation('pt-PT')?->isPublished());
         $this->send($this->editor, ['op' => 'publish', 'locale' => 'pt-PT']);
-        self::assertSame(['Nothing was changed.'], Flash::take($this->fixture->session));
+        self::assertSame(['Nothing was changed.'], array_map(strval(...), Flash::take($this->fixture->session)));
 
         $response = $this->send($this->editor, ['op' => 'draft', 'locale' => 'pt-PT']);
         self::assertSame('/admin/pages/' . $this->page->id() . '?locale=pt-PT', $response->getHeaderLine('Location'));
-        self::assertSame(['The European Portuguese translation is a draft again. Visitors can’t see it.'], Flash::take($this->fixture->session));
+        self::assertSame(['The European Portuguese translation is a draft again. Visitors can’t see it.'], array_map(strval(...), Flash::take($this->fixture->session)));
 
         $this->page->changeState(PageState::Draft, new \DateTimeImmutable());
         $this->send($this->editor, ['op' => 'publish', 'locale' => 'pt-PT']);
-        self::assertSame(['The European Portuguese translation is ready. Visitors can see it once the page is published.'], Flash::take($this->fixture->session));
+        self::assertSame(['The European Portuguese translation is ready. Visitors can see it once the page is published.'], array_map(strval(...), Flash::take($this->fixture->session)));
     }
 
     public function testRefusedPublishingShowsTheProblems(): void

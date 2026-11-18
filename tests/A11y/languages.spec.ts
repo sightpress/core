@@ -60,6 +60,26 @@ test('a page is translated from the editor’s translations table', async ({ pag
   await expectNoViolations(page);
 });
 
+test('the admin panel changes language from its header, by keyboard', async ({ page }) => {
+  await signIn(page, SITE, 'ada@example.org', '/admin/pages');
+  const language = page.getByLabel('Language', { exact: true });
+  await expect(language.locator('option[value="es"]')).toHaveText('Español');
+  await expect(language.locator('option[value="es"]')).toHaveAttribute('lang', 'es');
+  await language.selectOption('es');
+  await page.getByRole('button', { name: 'Change language' }).focus();
+  await page.keyboard.press('Enter');
+
+  await expect(page).toHaveURL(`${SITE}/admin/pages`);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+  await expect(page.getByRole('status')).toHaveText('La administración está ahora en Español.');
+  await expect(page).toHaveTitle('Páginas - Administración - Riverside Library');
+  await expectNoViolations(page);
+
+  await page.getByLabel('Idioma', { exact: true }).selectOption('en-GB');
+  await page.getByRole('button', { name: 'Cambiar de idioma' }).click();
+  await expect(page.getByRole('status')).toHaveText('The admin panel is now in British English.');
+});
+
 test('the languages screens reflow at 320px', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 640 });
   await signIn(page, SITE, 'ada@example.org', '/admin/settings/languages');

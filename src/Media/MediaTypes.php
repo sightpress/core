@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Media\Contract\MediaFormats;
 use SightPress\Core\Media\Contract\MediaKind;
 
@@ -76,17 +77,20 @@ final readonly class MediaTypes implements MediaFormats
     /**
      * A sentence listing what can be uploaded, for error messages.
      */
-    public function summary(): string
+    public function summary(): Message
     {
         $labels = array_fill_keys(array_map(static fn (MediaKind $kind): string => $kind->value, MediaKind::cases()), []);
         foreach (self::all() as $format) {
             $labels[$format->kind->value][$format->label] = $format->label;
         }
+        $names = array_map(static fn (array $names): string => implode(', ', $names), $labels);
 
-        return sprintf(
-            'You can upload pictures (%s), video (%s), audio (%s) and documents (%s).',
-            ...array_map(static fn (array $names): string => implode(', ', $names), array_values($labels)),
-        );
+        return new Message('You can upload pictures ({pictures}), video ({video}), audio ({audio}) and documents ({documents}).', [
+            'pictures' => $names[MediaKind::Image->value],
+            'video' => $names[MediaKind::Video->value],
+            'audio' => $names[MediaKind::Audio->value],
+            'documents' => $names[MediaKind::Document->value],
+        ]);
     }
 
     /**

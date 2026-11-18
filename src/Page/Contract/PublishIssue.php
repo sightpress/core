@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Contract;
 
+use SightPress\Core\Template\Message;
 use Locale;
 use SightPress\Module\Block\A11ySeverity;
 
@@ -19,7 +20,7 @@ final readonly class PublishIssue
     /**
      * @param string       $kind    {@see ACCESSIBILITY} or {@see SEO}
      * @param string       $rule    id of the check, for example `image.alt_missing` or `seo.description_missing`
-     * @param string       $message plain en-GB sentence that says how to fix it
+     * @param string|Message $message plain en-GB sentence that says how to fix it (shown translated)
      * @param string       $pointer JSON Pointer to what it is about in the page's content in that language:
      *                              `/title`, `/summary`, `/description`, `/blocks/2` or `/blocks/2/data/alt`
      * @param list<string> $wcag    WCAG success criteria it is about
@@ -29,7 +30,7 @@ final readonly class PublishIssue
         public A11ySeverity $severity,
         public string $kind,
         public string $rule,
-        public string $message,
+        public string|Message $message,
         public string $pointer,
         public array $wcag = [],
     ) {

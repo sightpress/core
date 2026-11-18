@@ -144,7 +144,7 @@ final class UserAdminHandlersTest extends TestCase
         self::assertSame('admin', $this->roles()->roleOf((int) $this->ada->id())?->name);
 
         $response = $this->changeStatus($this->ada, $this->ada);
-        self::assertSame(['You can’t deactivate your own account.'], Flash::take($this->session));
+        self::assertSame(['You can’t deactivate your own account.'], array_map(strval(...), Flash::take($this->session)));
         self::assertSame('/admin/users/' . $this->ada->id(), $response->getHeaderLine('Location'));
         self::assertTrue($this->admin->auth->users->find((int) $this->ada->id())?->isActive());
     }
@@ -155,11 +155,11 @@ final class UserAdminHandlersTest extends TestCase
 
         self::assertSame(303, $response->getStatusCode());
         self::assertSame('/admin/users/' . $this->bea->id(), $response->getHeaderLine('Location'));
-        self::assertSame(['Bea’s role is now Contributor.'], Flash::take($this->session));
+        self::assertSame(['Bea’s role is now Contributor.'], array_map(strval(...), Flash::take($this->session)));
         self::assertSame('contributor', $this->roles()->roleOf((int) $this->bea->id())?->name);
 
         $this->user($this->ada, $this->bea, ['role' => 'contributor']);
-        self::assertSame(['Bea already has this role. Nothing was changed.'], Flash::take($this->session));
+        self::assertSame(['Bea already has this role. Nothing was changed.'], array_map(strval(...), Flash::take($this->session)));
     }
 
     public function testAMissingOrRefusedRoleIsExplained(): void
@@ -207,7 +207,7 @@ final class UserAdminHandlersTest extends TestCase
     public function testDeactivatesAndReactivatesSomeone(): void
     {
         $this->changeStatus($this->ada, $this->cleo);
-        self::assertSame(['Cleo has been deactivated and can no longer sign in. Their pages stay.'], Flash::take($this->session));
+        self::assertSame(['Cleo has been deactivated and can no longer sign in. Their pages stay.'], array_map(strval(...), Flash::take($this->session)));
         self::assertFalse($this->admin->auth->users->find((int) $this->cleo->id())?->isActive());
 
         $html = (string) $this->user($this->ada, $this->cleo)->getBody();
@@ -215,7 +215,7 @@ final class UserAdminHandlersTest extends TestCase
         self::assertStringContainsString('Reactivate Cleo</button>', $html);
 
         $this->changeStatus($this->ada, $this->cleo);
-        self::assertSame(['Cleo has been reactivated and can sign in again.'], Flash::take($this->session));
+        self::assertSame(['Cleo has been reactivated and can sign in again.'], array_map(strval(...), Flash::take($this->session)));
         self::assertTrue($this->admin->auth->users->find((int) $this->cleo->id())?->isActive());
     }
 

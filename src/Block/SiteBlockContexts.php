@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Block;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Block\Contract\BlockContexts;
 use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Media\Contract\MediaFormats;
@@ -30,7 +31,7 @@ final readonly class SiteBlockContexts implements BlockContexts
     public function create(string $locale, string $baseUrl, ?ServerRequestInterface $request = null): BlockContext
     {
         if (!in_array($locale, $this->site->locales, true)) {
-            throw new BlockException(sprintf('The site isn\'t written in "%s".', $locale));
+            throw new BlockException(new Message('The site isn\'t written in "{locale}".', ['locale' => $locale]));
         }
 
         return new SiteBlockContext(

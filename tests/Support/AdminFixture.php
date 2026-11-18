@@ -32,6 +32,7 @@ final class AdminFixture
             AdminNavigation::fromRegistry($this->auth->database->registry),
             $this->auth->users,
             $this->auth->site,
+            $this->auth->translations,
         );
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\User;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -36,13 +37,13 @@ final class UserModuleTest extends TestCase
             ])->resolve(new ModuleSelection()),
         );
 
-        self::assertSame('user', $module->manifest()->id);
+        self::assertSame('user', Text::of($module->manifest()->id));
         self::assertTrue($module->manifest()->required);
-        self::assertSame(['site'], array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires));
-        self::assertSame('SightPress\Core\User\Migrations', $registry->migrations()[1]->item->namespace());
+        self::assertSame(['site'], Text::of(array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires)));
+        self::assertSame('SightPress\Core\User\Migrations', Text::of($registry->migrations()[1]->item->namespace()));
         self::assertDirectoryExists($registry->migrations()[1]->item->directory());
         $listener = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'user'))[0]->item;
-        self::assertSame([SiteProvisioning::class, CreateFirstAdmin::class, SiteProvisioning::ACCOUNTS], [$listener->event, $listener->listener, $listener->priority]);
+        self::assertSame([SiteProvisioning::class, CreateFirstAdmin::class, SiteProvisioning::ACCOUNTS], Text::of([$listener->event, $listener->listener, $listener->priority]));
         self::assertTrue($registry->services()[UserRepository::class]->item->public);
         self::assertSame(UserRepository::class, $registry->services()[\SightPress\Core\User\Contract\AccountDirectory::class]->item->class);
         self::assertSame(UserRepository::class, $registry->services()[\SightPress\Core\User\Contract\AccountPreferences::class]->item->class);
@@ -53,17 +54,17 @@ final class UserModuleTest extends TestCase
             \Psr\Clock\ClockInterface::class => new \SightPress\Core\Tests\Support\FixedClock(),
         ])->build()));
         self::assertSame(
-            ['user.account' => ['/account', ['GET', 'POST']], 'user.account.picture' => ['/account/picture', ['POST']], 'user.account.picture.remove' => ['/account/picture/remove', ['POST']], 'user.avatar' => ['/avatars/{file}', ['GET', 'HEAD']]],
-            array_combine(
+            ['user.account' => ['/account', ['GET', 'POST']], 'user.account.picture' => ['/account/picture', ['POST']], 'user.account.language' => ['/account/language', ['POST']], 'user.account.picture.remove' => ['/account/picture/remove', ['POST']], 'user.avatar' => ['/avatars/{file}', ['GET', 'HEAD']]],
+            Text::of(array_combine(
                 array_map(static fn ($r) => $r->item->name, $registry->routes()),
                 array_map(static fn ($r) => [$r->item->path, $r->item->methods], $registry->routes()),
-            ),
+            )),
         );
-        self::assertSame([], array_values(array_filter($registry->routes(), static fn ($r) => $r->item->middleware !== [])), '/account checks sign-in itself, for members too');
+        self::assertSame([], Text::of(array_values(array_filter($registry->routes(), static fn ($r) => $r->item->middleware !== []))), '/account checks sign-in itself, for members too');
         self::assertDirectoryExists($registry->views()[0]->item->directory);
         self::assertSame(
             ['user.invite', 'user.manage'],
-            array_map(static fn ($registered) => $registered->item->name, $registry->permissions()),
+            Text::of(array_map(static fn ($registered) => $registered->item->name, $registry->permissions())),
         );
         foreach ($registry->permissions() as $registered) {
             self::assertFalse($registered->item->allowedOnSignUp);

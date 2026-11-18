@@ -6,6 +6,7 @@ namespace SightPress\Core\Tests\Unit\User;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,8 @@ use SightPress\Core\User\UserStatus;
 
 #[CoversClass(User::class)]
 #[UsesClass(LocaleCode::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class UserTest extends TestCase
 {
     private DateTimeImmutable $now;

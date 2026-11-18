@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Menu\Entity;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +16,8 @@ use SightPress\Core\Menu\MenuException;
 #[CoversClass(MenuItem::class)]
 #[CoversClass(MenuName::class)]
 #[UsesClass(MenuException::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class MenuItemTest extends TestCase
 {
     public function testAnEntryIsAPageOrALinkWithALabel(): void

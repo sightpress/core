@@ -20,7 +20,7 @@
     <h3>{{ group.title }}</h3>
     <ul>
         {%- for issue in group.issues %}
-        <li><a href="#{{ issue.anchor }}"><span class="visually-hidden">{{ group.label }} </span>{{ issue.message }}</a>
+        <li><a href="#{{ issue.anchor }}"><span class="visually-hidden">{{ group.label }} </span>{{ t(issue.message) }}</a>
             <span class="publish-report__where">({{ issue.languageName(current_locale()) }}{% if issue.wcag is not empty %}, WCAG {{ issue.wcag|join(', ') }}{% endif %})</span></li>
         {%- endfor %}
     </ul>

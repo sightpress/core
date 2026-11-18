@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\User\Http;
 
-use Locale;
+use SightPress\Core\Tenant\LocaleCode;
+use SightPress\Core\Template\Translations;
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,6 +38,7 @@ final readonly class AccountPages
         private ResponseFactoryInterface $responses,
         private UserRepository $users,
         private Site $site,
+        private Translations $translations,
     ) {
     }
 
@@ -57,7 +60,7 @@ final readonly class AccountPages
             new Field(
                 'display_name',
                 'Display name',
-                hint: sprintf('Shown next to your work and in emails. Shown as “%s” if left empty.', $user->firstName()),
+                hint: new Message('Shown next to your work and in emails. Shown as “{first_name}” if left empty.', ['first_name' => $user->firstName()]),
                 required: false,
                 constraints: [self::length('Display name')],
                 autocomplete: 'nickname',
@@ -70,12 +73,13 @@ final readonly class AccountPages
                 choices: TimezoneChoices::grouped(),
             ),
         ];
-        if (count($this->site->locales) > 1) {
-            $choices = ['default' => sprintf('Site default (%s)', self::languageName($this->site->defaultLocale))];
-            foreach ($this->site->locales as $locale) {
-                $choices[$locale] = self::languageName($locale);
+        $locales = array_values(array_unique([...$this->site->locales, ...$this->translations->locales()]));
+        if (count($locales) > 1) {
+            $choices = ['default' => new Message('Site default ({language})', ['language' => LocaleCode::ownName($this->site->defaultLocale)])];
+            foreach ($locales as $locale) {
+                $choices[$locale] = LocaleCode::ownName($locale);
             }
-            $fields[] = new Field('locale', 'Language', FieldType::Select, hint: 'The language of your emails and of the admin panel, where it has been translated.', choices: $choices);
+            $fields[] = new Field('locale', 'Language', FieldType::Select, hint: 'The language of your emails and of the admin panel, where it has been translated.', required: false, choices: $choices, localeChoices: true);
         }
 
         return Form::create('details', ...$fields)->withValues([
@@ -93,10 +97,7 @@ final readonly class AccountPages
             'picture',
             'New picture',
             FieldType::File,
-            hint: sprintf(
-                'A JPEG, PNG or WebP picture, up to %d MB. It is cropped to a square from the middle.',
-                AvatarService::MAX_BYTES / 1024 / 1024,
-            ),
+            hint: new Message('A JPEG, PNG or WebP picture, up to {max_bytes} MB. It is cropped to a square from the middle.', ['max_bytes' => (string) AvatarService::MAX_BYTES / 1024 / 1024]),
             accept: 'image/jpeg,image/png,image/webp',
         ));
     }
@@ -149,14 +150,7 @@ final readonly class AccountPages
 
     private static function length(string $label): Length
     {
-        return new Length(max: User::NAME_MAX_LENGTH, maxMessage: sprintf('%s must be %d characters or fewer', $label, User::NAME_MAX_LENGTH));
+        return new Length(max: User::NAME_MAX_LENGTH, maxMessage: '{field} must be {{ limit }} characters or fewer');
     }
 
-    private static function languageName(string $locale): string
-    {
-        $english = (string) Locale::getDisplayName($locale, 'en-GB');
-        $own = (string) Locale::getDisplayName($locale, $locale);
-
-        return $own === $english || $own === '' ? $english : $english . ' – ' . $own;
-    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Workflow;
 
+use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Page\Contract\PageTransition;
@@ -73,14 +74,10 @@ final readonly class PageWorkflow
     {
         $from = $page->state();
         if (!$this->machine->can($page, $transition->value)) {
-            throw new WorkflowException(sprintf(
-                '"%s" can\'t be done now: the page is %s.',
-                $transition->label(),
-                self::describe($from),
-            ));
+            throw new WorkflowException(new Message('"{label}" can\'t be done now: the page is {from}.', ['label' => Message::of($transition->label()), 'from' => Message::of(self::describe($from))]));
         }
         if (!$this->authorizer->can($actor, $transition->action()->value, $page)) {
-            throw new WorkflowException(sprintf('You don\'t have permission to do "%s" on this page.', $transition->label()), true);
+            throw new WorkflowException(new Message('You don\'t have permission to do "{label}" on this page.', ['label' => Message::of($transition->label())]), true);
         }
         if ($transition === PageTransition::Publish) {
             $report = $this->checks->check($page);
@@ -90,7 +87,7 @@ final readonly class PageWorkflow
         }
         $comment = $comment === null ? null : trim($comment);
         if ($comment !== null && mb_strlen($comment) > self::COMMENT_MAX_LENGTH) {
-            throw new WorkflowException(sprintf('Keep the comment to %d characters or fewer.', self::COMMENT_MAX_LENGTH));
+            throw new WorkflowException(new Message('Keep the comment to {max} characters or fewer.', ['max' => (string) self::COMMENT_MAX_LENGTH]));
         }
 
         $this->machine->apply($page, $transition->value, ['now' => $this->clock->now()]);

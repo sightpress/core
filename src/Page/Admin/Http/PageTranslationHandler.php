@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Http;
 
+use SightPress\Core\Template\LanguageName;
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -67,7 +69,7 @@ final readonly class PageTranslationHandler implements RequestHandlerInterface
             throw new HttpBadRequestException($request, 'This site isn’t written in that language.');
         }
         $edit = PageAdmin::editPath((int) $page->id()) . ($locale === $this->site->defaultLocale ? '' : '?locale=' . rawurlencode($locale));
-        $name = LocaleCode::describe($locale);
+        $name = new LanguageName($locale);
 
         $op = $body['op'] ?? null;
         if ($op === 'translate') {
@@ -81,14 +83,10 @@ final readonly class PageTranslationHandler implements RequestHandlerInterface
             try {
                 $this->editor->translate($page, $locale, $from, $actor->userId);
             } catch (PageException $exception) {
-                return $this->screens->redirect($request, PageAdmin::editPath((int) $page->id()), $exception->getMessage());
+                return $this->screens->redirect($request, PageAdmin::editPath((int) $page->id()), $exception->text());
             }
 
-            return $this->screens->redirect($request, $edit, sprintf(
-                'Started the %s translation as a copy of the %s page. Translate the text, then publish the translation.',
-                $name,
-                LocaleCode::describe($from),
-            ));
+            return $this->screens->redirect($request, $edit, new Message('Started the {name} translation as a copy of the {from} page. Translate the text, then publish the translation.', ['name' => $name, 'from' => new LanguageName($from)]));
         }
         if ($op !== 'publish' && $op !== 'draft') {
             throw new HttpBadRequestException($request, 'Choose one of the translation buttons.');
@@ -107,9 +105,9 @@ final readonly class PageTranslationHandler implements RequestHandlerInterface
 
         return $this->screens->redirect($request, $edit, match (true) {
             !$changed => 'Nothing was changed.',
-            $op === 'draft' => sprintf('The %s translation is a draft again. Visitors can’t see it.', $name),
-            $translation->isPublished() => sprintf('Published the %s translation. Visitors can see it now.', $name),
-            default => sprintf('The %s translation is ready. Visitors can see it once the page is published.', $name),
+            $op === 'draft' => new Message('The {name} translation is a draft again. Visitors can’t see it.', ['name' => $name]),
+            $translation->isPublished() => new Message('Published the {name} translation. Visitors can see it now.', ['name' => $name]),
+            default => new Message('The {name} translation is ready. Visitors can see it once the page is published.', ['name' => $name]),
         });
     }
 }

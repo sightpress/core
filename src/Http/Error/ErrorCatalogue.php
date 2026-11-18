@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Http\Error;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Http\Csrf\CsrfTokenMismatchException;
 use Slim\Exception\HttpException;
 use Slim\Exception\HttpMethodNotAllowedException;
@@ -28,8 +29,7 @@ final readonly class ErrorCatalogue
 
         if ($exception instanceof NoAdminAccessException) {
             return new ErrorPage(403, 'You can\'t use the admin panel', [
-                'Your account doesn\'t give you access to the admin panel. You can still read the site and change '
-                . 'your own details.',
+                'Your account doesn\'t give you access to the admin panel. You can still read the site and change your own details.',
                 'If you think you should have access, ask the person who looks after this website.',
             ], links: ['/account' => 'Go to My account']);
         }
@@ -93,7 +93,7 @@ final readonly class ErrorCatalogue
     /**
      * @return non-empty-string
      */
-    private function tryAgain(?int $seconds): string
+    private function tryAgain(?int $seconds): string|Message
     {
         if ($seconds === null) {
             return 'Try again later.';
@@ -101,6 +101,6 @@ final readonly class ErrorCatalogue
 
         $minutes = (int) ceil($seconds / 60);
 
-        return $minutes <= 1 ? 'Try again in a minute.' : sprintf('Try again in %d minutes.', $minutes);
+        return $minutes <= 1 ? 'Try again in a minute.' : new Message('Try again in {minutes} minutes.', ['minutes' => (string) $minutes]);
     }
 }

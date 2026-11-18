@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media\Admin\Http;
 
+use SightPress\Core\Template\LanguageName;
+use SightPress\Core\Template\Message;
 use Locale;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,6 +23,7 @@ use SightPress\Core\Media\MediaEditor;
 use SightPress\Core\Media\MediaLimits;
 use SightPress\Core\Media\MediaTypes;
 use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\Site;
 use Symfony\Component\Validator\Constraints\Length;
 
@@ -53,31 +56,31 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
         $values = [];
         $many = count($this->site->locales) > 1;
         foreach (array_values($this->site->locales) as $index => $locale) {
-            $in = $many ? sprintf(' in %s', Locale::getDisplayName($locale, 'en-GB')) : '';
+            $language = new LanguageName($locale);
             if ($media->kind() === MediaKind::Image) {
                 $fields[] = new Field(
                     'alt_' . $index,
-                    'Alt text' . $in,
+                    $many ? new Message('Alt text in {language}', ['language' => $language]) : 'Alt text',
                     FieldType::Textarea,
                     hint: 'Say what the picture shows and why it is there, as you would to someone on the phone. Pages can still mark it as decorative where it adds nothing.',
                     required: false,
-                    constraints: [new Length(max: Media::ALT_MAX_LENGTH, maxMessage: sprintf('Alt text must be %d characters or fewer', Media::ALT_MAX_LENGTH))],
+                    constraints: [new Length(max: Media::ALT_MAX_LENGTH, maxMessage: 'Alt text must be {{ limit }} characters or fewer')],
                 );
                 $values['alt_' . $index] = $media->altText($locale) ?? '';
             }
             $fields[] = new Field(
                 'caption_' . $index,
-                'Caption' . $in,
+                $many ? new Message('Caption in {language}', ['language' => $language]) : 'Caption',
                 FieldType::Textarea,
                 hint: 'Shown under the file on pages that show captions.',
                 required: false,
-                constraints: [new Length(max: Media::CAPTION_MAX_LENGTH, maxMessage: sprintf('The caption must be %d characters or fewer', Media::CAPTION_MAX_LENGTH))],
+                constraints: [new Length(max: Media::CAPTION_MAX_LENGTH, maxMessage: 'The caption must be {{ limit }} characters or fewer')],
             );
             $values['caption_' . $index] = $media->caption($locale) ?? '';
             if ($media->kind()->hasSpeech()) {
                 $fields[] = new Field(
                     'transcript_' . $index,
-                    'Transcript' . $in,
+                    $many ? new Message('Transcript in {language}', ['language' => $language]) : 'Transcript',
                     FieldType::Textarea,
                     hint: $locale === $this->site->defaultLocale
                         ? 'Everything that is said, and other sounds that matter, for people who can’t hear it. Pages with this file show a link to it.'
@@ -132,7 +135,7 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
 
         return $this->screens->redirect($request, MediaAdmin::path($media), $changed === []
             ? 'Nothing was changed.'
-            : sprintf('The details of %s have been saved.', $media->originalName()));
+            : new Message('The details of {original_name} have been saved.', ['original_name' => $media->originalName()]));
     }
 
     private function show(ServerRequestInterface $request, Actor $actor, Media $media, Form $form, int $status = 200): ResponseInterface

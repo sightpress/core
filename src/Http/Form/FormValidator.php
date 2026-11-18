@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Http\Form;
 
+use SightPress\Core\Template\Message;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\Email;
@@ -47,11 +49,30 @@ final readonly class FormValidator
 
             $violations = $this->validator->validate($value, [...$this->builtIn($field), ...$field->constraints]);
             if (count($violations) > 0) {
-                $errors[$field->name] = (string) $violations->get(0)->getMessage();
+                $message = self::message($violations->get(0));
+                // The built-in checks name the field: “{field}” is its label.
+                $errors[$field->name] = str_contains($message->text, '{field}')
+                    ? new Message($message->text, [...$message->parameters, 'field' => Message::of($field->label)])
+                    : $message;
             }
         }
 
         return $form->submitted($values, $errors);
+    }
+
+    /**
+     * The violation's message as written in the constraint, with the validator's values (`{{ limit }}`), so it can be
+     * translated. A message without a template is kept as it is.
+     */
+    public static function message(ConstraintViolationInterface $violation): Message
+    {
+        $template = $violation->getMessageTemplate();
+        $parameters = [];
+        foreach ($violation->getParameters() as $name => $value) {
+            $parameters[(string) $name] = is_scalar($value) ? (string) $value : '';
+        }
+
+        return $template === '' ? Message::of((string) $violation->getMessage()) : new Message($template, $parameters);
     }
 
     /**
@@ -81,7 +102,6 @@ final readonly class FormValidator
      */
     private function builtIn(Field $field): array
     {
-        $label = $field->label;
 
         return match ($field->type) {
             FieldType::Email => [new Email(message: 'Enter an email address in the right format, like name@example.com')],
@@ -89,16 +109,16 @@ final readonly class FormValidator
                 message: 'Enter a web address in the right format, like https://example.com',
                 requireTld: true,
             )],
-            FieldType::Number => [new Type('numeric', message: sprintf('Enter a number for “%s”', $label))],
-            FieldType::Date => [new Date(message: sprintf('Enter a real date for “%s”', $label))],
+            FieldType::Number => [new Type('numeric', message: 'Enter a number for “{field}”')],
+            FieldType::Date => [new Date(message: 'Enter a real date for “{field}”')],
             FieldType::Select, FieldType::Radios => [new Choice(
                 choices: $field->choiceValues(),
-                message: sprintf('Select one of the options for “%s”', $label),
+                message: 'Select one of the options for “{field}”',
             )],
             FieldType::Checkboxes => [new Choice(
                 choices: $field->choiceValues(),
                 multiple: true,
-                multipleMessage: sprintf('Select only the options shown for “%s”', $label),
+                multipleMessage: 'Select only the options shown for “{field}”',
             )],
             default => [],
         };

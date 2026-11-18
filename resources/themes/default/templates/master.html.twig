@@ -9,7 +9,8 @@
     Context (all optional): `site_name`, `branding_logo` ({url, alt, width, height}: an uploaded logo shown instead
     of the name), `locale`, `main_menu` and `footer_menu` (lists of {label, url, current,
     children}; up to three levels), `breadcrumbs` (list of {label, url}, the last one the current page; a null label is the home page, "Home"),
-    `messages` (list of texts), `form` (its errors put "Error: " in front of the <title>), `document_title` (the
+    `languages` (the page in each published language: {code, name, url, current}, for the language switcher),
+    `home_url` (the home page in the page's language), `messages` (list of texts), `form` (its errors put "Error: " in front of the <title>), `document_title` (the
     whole <title>, set by the SEO module; otherwise the page's title and the site name).
 
     Submenus of the main menu are nested lists, all shown without JavaScript; js/site.js turns them into disclosure
@@ -35,11 +36,20 @@
     <div class="container site-header__inner">
         {% block brand %}
         {%- if branding_logo is defined and branding_logo %}
-        <a class="site-name site-name--logo" href="/"><img src="{{ branding_logo.url }}" alt="{{ branding_logo.alt }}" width="{{ branding_logo.width }}" height="{{ branding_logo.height }}"></a>
+        <a class="site-name site-name--logo" href="{{ home_url|default('/') }}"><img src="{{ branding_logo.url }}" alt="{{ branding_logo.alt }}" width="{{ branding_logo.width }}" height="{{ branding_logo.height }}"></a>
         {%- else %}
-        <a class="site-name" href="/">{{ site_name }}</a>
+        <a class="site-name" href="{{ home_url|default('/') }}">{{ site_name }}</a>
         {%- endif %}
         {% endblock %}
+        {%- if languages is defined and languages is not empty %}
+        <nav class="language-switcher" aria-label="{{ t('Languages') }}">
+            <ul>
+                {%- for language in languages %}
+                <li><a href="{{ language.url }}" lang="{{ language.code }}" hreflang="{{ language.code }}"{% if language.current %} aria-current="page"{% endif %}>{{ language.name }}</a></li>
+                {%- endfor %}
+            </ul>
+        </nav>
+        {%- endif %}
         {%- if main_menu is defined and main_menu is not empty %}
         <nav class="menu menu--main" aria-label="{{ t('Main') }}" data-submenu-label="{{ t('Show the pages under') }}">
             {{ _self.menu(main_menu, 'main-menu') }}

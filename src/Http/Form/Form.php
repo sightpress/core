@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Http\Form;
 
+use SightPress\Core\Template\Message;
 use InvalidArgumentException;
 
 /**
@@ -18,7 +19,7 @@ final readonly class Form
     /**
      * @param list<Field>                         $fields
      * @param array<string, string|list<string>>  $values
-     * @param array<string, string>               $errors field name => message
+     * @param array<string, string|Message>       $errors field name => message
      */
     private function __construct(
         public string $id,
@@ -62,7 +63,7 @@ final readonly class Form
     /**
      * The form with extra errors found after validation, for example "That email address is already used".
      *
-     * @param array<string, string> $errors field name => message
+     * @param array<string, string|Message> $errors field name => message
      */
     public function withErrors(array $errors): self
     {
@@ -77,7 +78,7 @@ final readonly class Form
      * @internal used by {@see FormValidator}
      *
      * @param array<string, string|list<string>> $values
-     * @param array<string, string>              $errors
+     * @param array<string, string|Message>      $errors
      */
     public function submitted(array $values, array $errors): self
     {
@@ -145,13 +146,13 @@ final readonly class Form
         return $values;
     }
 
-    public function error(string $name): ?string
+    public function error(string $name): string|Message|null
     {
         return $this->errors[$name] ?? null;
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string|Message>
      */
     public function errors(): array
     {
@@ -182,7 +183,7 @@ final readonly class Form
     /**
      * The errors in field order, for the error summary.
      *
-     * @return list<array{fieldId: string, message: string}>
+     * @return list<array{fieldId: string, message: string|Message}>
      */
     public function errorSummary(): array
     {

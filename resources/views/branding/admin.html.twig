@@ -13,7 +13,7 @@
 {%- if error %}
 <section class="error-summary" id="branding-errors" aria-labelledby="branding-errors-title" tabindex="-1" autofocus>
     <h2 id="branding-errors-title">{{ t('There is a problem') }}</h2>
-    <ul><li><a href="#{{ error.asset }}-file">{{ error.message }}</a></li></ul>
+    <ul><li><a href="#{{ error.asset }}-file">{{ t(error.message) }}</a></li></ul>
 </section>
 {%- endif %}
 {%- for a in assets %}
@@ -32,7 +32,7 @@
         <input type="hidden" name="asset" value="{{ a.asset }}">
         <div class="field{% if invalid %} field--error{% endif %}">
             <label for="{{ a.asset }}-file">{{ t('New picture') }} {{ t('(optional)') }}</label>
-            {%- if invalid %}<p class="field-error" id="{{ a.asset }}-file-error"><span class="visually-hidden">{{ t('Error:') }}</span> {{ error.message }}</p>{% endif %}
+            {%- if invalid %}<p class="field-error" id="{{ a.asset }}-file-error"><span class="visually-hidden">{{ t('Error:') }}</span> {{ t(error.message) }}</p>{% endif %}
             <input type="file" id="{{ a.asset }}-file" name="file" accept="{{ a.accept }}"{% if invalid %} aria-invalid="true" aria-describedby="{{ a.asset }}-file-error"{% endif %}>
         </div>
         {%- for language in a.languages %}

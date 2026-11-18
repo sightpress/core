@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media\Admin\Provisioning;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Media\MediaEditor;
 use SightPress\Core\Media\MediaException;
@@ -46,7 +47,7 @@ final readonly class DemoMedia
         foreach (self::FILES as $name => [$file, $alt, $transcript]) {
             $copy = tempnam(sys_get_temp_dir(), 'sp-demo-');
             if ($copy === false || !@copy(($this->directory ?? self::directory()) . '/' . $file, $copy)) {
-                throw new MediaException(sprintf('The demo file %s could not be copied.', $file));
+                throw new MediaException(new Message('The demo file {file} could not be copied.', ['file' => $file]));
             }
             try {
                 $media = $uploader->upload($copy, $file, $by)->media;

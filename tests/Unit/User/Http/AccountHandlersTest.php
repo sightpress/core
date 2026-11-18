@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\User\Http;
 
+use SightPress\Core\Tests\Support\Text;
 use Nyholm\Psr7\Stream;
 use Nyholm\Psr7\UploadedFile;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -28,6 +29,7 @@ use SightPress\Core\User\Http\AccountPictureHandler;
 
 #[CoversClass(AccountPages::class)]
 #[CoversClass(AccountHandler::class)]
+#[CoversClass(\SightPress\Core\User\Http\AccountLanguageHandler::class)]
 #[CoversClass(AccountPictureHandler::class)]
 #[CoversClass(AccountChanged::class)]
 #[UsesNamespace('SightPress\Core')]
@@ -57,7 +59,7 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
     {
         foreach ([$this->details(null), $this->picture(null), $this->picture(null, remove: true)] as $response) {
             self::assertSame(303, $response->getStatusCode());
-            self::assertSame('/login?return=%2Faccount', $response->getHeaderLine('Location'));
+            self::assertSame('/login?return=%2Faccount', Text::of($response->getHeaderLine('Location')));
         }
     }
 
@@ -69,8 +71,8 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
         $html = (string) $response->getBody();
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertSame('no-store', $response->getHeaderLine('Cache-Control'));
-        self::assertSame('noindex, nofollow', $response->getHeaderLine('X-Robots-Tag'));
+        self::assertSame('no-store', Text::of($response->getHeaderLine('Cache-Control')));
+        self::assertSame('noindex, nofollow', Text::of($response->getHeaderLine('X-Robots-Tag')));
         self::assertStringContainsString('<title>My account - Demo</title>', $html);
         self::assertStringContainsString('<h1>My account</h1>', $html);
         self::assertStringContainsString('Email address: max@example.org', $html);
@@ -78,7 +80,7 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
         self::assertStringContainsString('Shown as “Zoë” if left empty.', $html);
         self::assertStringContainsString('<optgroup label="Asia">', $html);
         self::assertStringContainsString('<option value="Asia/Tokyo" selected>Tokyo</option>', $html);
-        self::assertStringNotContainsString('name="locale"', $html, 'one locale: no language choice');
+        self::assertStringContainsString('<option value="es" lang="es">Español</option>', $html, 'the admin languages are offered too');
         self::assertMatchesRegularExpression('#<img class="avatar avatar--large" src="/avatars/[0-9a-f]{32}\.svg" alt="Zoë"#', $html);
         self::assertStringContainsString('Until you upload a picture, your initials are shown.', $html);
         self::assertStringContainsString('enctype="multipart/form-data"', $html);
@@ -95,15 +97,15 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
         $response = $this->details($max, 'POST', ['first_name' => ' Anna ', 'last_name' => 'Lind', 'display_name' => 'Annie', 'timezone' => 'Europe/Lisbon']);
 
         self::assertSame(303, $response->getStatusCode());
-        self::assertSame('/account', $response->getHeaderLine('Location'));
-        self::assertSame(['Your details have been saved.'], Flash::take($this->session));
+        self::assertSame('/account', Text::of($response->getHeaderLine('Location')));
+        self::assertSame(['Your details have been saved.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         $this->auth->database->entityManager->clear();
         $saved = $this->auth->users->find((int) $max->id());
         self::assertNotNull($saved);
-        self::assertSame(['Anna', 'Lind', 'Annie', 'Europe/Lisbon'], [$saved->firstName(), $saved->lastName(), $saved->displayName(), $saved->timezone()]);
+        self::assertSame(['Anna', 'Lind', 'Annie', 'Europe/Lisbon'], Text::of([$saved->firstName(), $saved->lastName(), $saved->displayName(), $saved->timezone()]));
         self::assertNotSame($before, $saved->avatarPath());
         self::assertStringContainsString('>AL</text>', $this->auth->storage()->read((string) $saved->avatarPath()));
-        self::assertEquals([new AccountChanged((int) $max->id(), $max->id(), ['first_name', 'last_name', 'display_name', 'timezone', 'avatar'])], $this->events);
+        self::assertEquals([new AccountChanged((int) $max->id(), $max->id(), ['first_name', 'last_name', 'display_name', 'timezone', 'avatar'])], Text::of($this->events));
     }
 
     public function testATimeZoneChangeAloneKeepsTheAvatarAndNothingChangedIsSaidToo(): void
@@ -113,11 +115,11 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
 
         $this->details($max, 'POST', ['first_name' => 'Zoë', 'last_name' => 'Ødegaard', 'timezone' => 'America/Sao_Paulo']);
         self::assertSame($avatar, $max->avatarPath());
-        self::assertEquals([new AccountChanged((int) $max->id(), $max->id(), ['timezone'])], $this->events);
-        Flash::take($this->session);
+        self::assertEquals([new AccountChanged((int) $max->id(), $max->id(), ['timezone'])], Text::of($this->events));
+        array_map(strval(...), Flash::take($this->session));
 
         $this->details($max, 'POST', ['first_name' => 'Zoë', 'last_name' => 'Ødegaard', 'timezone' => 'America/Sao_Paulo']);
-        self::assertSame(['You didn’t change anything.'], Flash::take($this->session));
+        self::assertSame(['You didn’t change anything.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         self::assertCount(1, $this->events);
     }
 
@@ -134,7 +136,7 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
         self::assertStringContainsString('<a href="#details-first-name">Enter first name</a>', $html);
         self::assertStringContainsString('Last name must be 100 characters or fewer', $html);
         self::assertStringContainsString('Select one of the options for “Time zone”', $html);
-        self::assertSame([], $this->events);
+        self::assertSame([], Text::of($this->events));
     }
 
     public function testOnASiteWithSeveralLanguagesPeopleChooseTheirsOrTheSiteDefault(): void
@@ -143,15 +145,15 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
         $pages = $this->pages(PageFixture::site(['en-GB', 'pt-PT']));
 
         $html = (string) $this->handle(new AccountHandler($pages, $this->auth->validator(), $this->auth->users, $this->auth->avatars(), $this->auth->clock, $this), $this->request($max))->getBody();
-        self::assertStringContainsString('<option value="default" selected>Site default (English (United Kingdom))</option>', $html);
-        self::assertStringContainsString('<option value="pt-PT">Portuguese (Portugal) – português (Portugal)</option>', $html);
+        self::assertStringContainsString('<option value="default" selected>Site default (British English)</option>', $html);
+        self::assertStringContainsString('<option value="pt-PT" lang="pt-PT">Português europeu</option>', $html);
 
         $handler = new AccountHandler($pages, $this->auth->validator(), $this->auth->users, $this->auth->avatars(), $this->auth->clock, $this);
         $this->handle($handler, $this->request($max, 'POST', ['first_name' => 'Zoë', 'last_name' => 'Ødegaard', 'timezone' => 'Asia/Tokyo', 'locale' => 'pt-PT']));
-        self::assertSame('pt-PT', $max->locale());
+        self::assertSame('pt-PT', Text::of($max->locale()));
         $this->handle($handler, $this->request($max, 'POST', ['first_name' => 'Zoë', 'last_name' => 'Ødegaard', 'timezone' => 'Asia/Tokyo', 'locale' => 'default']));
         self::assertNull($max->locale());
-        self::assertSame([['locale'], ['locale']], $this->changedFields());
+        self::assertSame([['locale'], ['locale']], Text::of($this->changedFields()));
     }
 
     public function testUploadsAndRemovesAPictureAndAnnouncesIt(): void
@@ -161,8 +163,8 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
         $this->auth->avatars()->generate($staff);
 
         $response = $this->picture($max, files: ['picture' => self::upload(MediaFixture::jpeg(300, 300))]);
-        self::assertSame('/account', $response->getHeaderLine('Location'));
-        self::assertSame(['Your new picture has been saved.'], Flash::take($this->session));
+        self::assertSame('/account', Text::of($response->getHeaderLine('Location')));
+        self::assertSame(['Your new picture has been saved.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         self::assertSame(AvatarKind::Uploaded, $max->avatarKind());
         $html = (string) $this->details($max)->getBody();
         self::assertStringContainsString('This is the picture you uploaded.', $html);
@@ -170,9 +172,9 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
         self::assertStringContainsString('<form action="/account/picture/remove" method="post">', $html);
 
         $this->picture($max, remove: true);
-        self::assertSame(['Your picture has been removed. Your initials are shown instead.'], Flash::take($this->session));
+        self::assertSame(['Your picture has been removed. Your initials are shown instead.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         self::assertSame(AvatarKind::Generated, $max->avatarKind());
-        self::assertSame([['avatar'], ['avatar']], $this->changedFields());
+        self::assertSame([['avatar'], ['avatar']], Text::of($this->changedFields()));
         self::assertStringContainsString('<a href="/admin">Go to the admin panel</a>', (string) $this->details($staff)->getBody());
     }
 
@@ -192,7 +194,7 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
             self::assertStringContainsString('<a href="#picture-picture">' . htmlspecialchars($message, ENT_QUOTES), $html);
             self::assertStringContainsString('aria-invalid="true"', $html);
         }
-        self::assertSame([], $this->events);
+        self::assertSame([], Text::of($this->events));
     }
 
     /**
@@ -222,7 +224,7 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
 
     private function pages(?Site $site = null): AccountPages
     {
-        return new AccountPages($this->auth->templates, $this->auth->http, $this->auth->users, $site ?? $this->auth->site);
+        return new AccountPages($this->auth->templates, $this->auth->http, $this->auth->users, $site ?? $this->auth->site, $this->auth->translations);
     }
 
     /**
@@ -248,6 +250,27 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
         }
 
         return $this->handle($handler, $request);
+    }
+
+    public function testTheLanguageSwitcherChangesThePersonsLanguageAndGoesBack(): void
+    {
+        $max = $this->member();
+        $handler = new \SightPress\Core\User\Http\AccountLanguageHandler($this->pages(), $this->auth->users, $this->auth->translations, $this->auth->site, $this->auth->clock, $this, $this->auth->http);
+
+        $response = $handler->handle($this->request($max, 'POST', ['locale' => 'es', 'return' => '/admin/pages?state=draft']));
+
+        self::assertSame([303, '/admin/pages?state=draft'], [$response->getStatusCode(), $response->getHeaderLine('Location')]);
+        self::assertSame('es', $this->auth->users->find((int) $max->id())?->locale());
+        self::assertSame(['The admin panel is now in Español.'], Text::of(\SightPress\Core\Http\Session\Flash::take($this->session)));
+        self::assertCount(1, $this->events);
+
+        $again = $handler->handle($this->request($max, 'POST', ['locale' => 'es', 'return' => '//elsewhere.example/']));
+        self::assertSame('/account', $again->getHeaderLine('Location'), 'only addresses on this site');
+        self::assertCount(1, $this->events, 'nothing changed');
+        self::assertSame(303, $handler->handle($this->request(null, 'POST', ['locale' => 'es']))->getStatusCode(), 'visitors are sent to sign in');
+
+        $this->expectException(\Slim\Exception\HttpBadRequestException::class);
+        $handler->handle($this->request($max, 'POST', ['locale' => 'klingon']));
     }
 
     /**

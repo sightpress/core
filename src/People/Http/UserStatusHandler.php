@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\People\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -32,10 +33,10 @@ final readonly class UserStatusHandler implements RequestHandlerInterface
 
         if ($account->isDeactivated()) {
             $this->accounts->reactivate($account->id, $actor->userId);
-            $message = sprintf('%s has been reactivated and can sign in again.', $account->effectiveName);
+            $message = new Message('{effective_name} has been reactivated and can sign in again.', ['effective_name' => $account->effectiveName]);
         } else {
             $this->accounts->deactivate($account->id, $actor->userId);
-            $message = sprintf('%s has been deactivated and can no longer sign in. Their pages stay.', $account->effectiveName);
+            $message = new Message('{effective_name} has been deactivated and can no longer sign in. Their pages stay.', ['effective_name' => $account->effectiveName]);
         }
 
         return $this->screens->redirect($request, $path, $message);

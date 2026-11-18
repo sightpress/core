@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Auth;
 
+use SightPress\Core\Template\Message;
 use SensitiveParameter;
 use SightPress\Core\Auth\Contract\Passwords;
 use SightPress\Core\Site\Contract\SiteSettings;
@@ -23,12 +24,12 @@ final readonly class PasswordRules implements Passwords
         return PasswordPolicy::fromSettings($this->settings);
     }
 
-    public function problem(#[SensitiveParameter] string $password, string $email = ''): ?string
+    public function problem(#[SensitiveParameter] string $password, string $email = ''): string|Message|null
     {
         return $this->policy()->problem($password, $email);
     }
 
-    public function hint(): string
+    public function hint(): Message
     {
         return $this->policy()->hint();
     }

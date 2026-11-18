@@ -71,6 +71,8 @@ final class AuthFixture implements MailSender
 
     public readonly \Twig\Environment $twig;
 
+    public readonly Translations $translations;
+
     /** @var list<Email> */
     public array $sent = [];
 
@@ -92,10 +94,11 @@ final class AuthFixture implements MailSender
         $this->hasher = new PasswordHasher(['memory_cost' => 8, 'time_cost' => 1, 'threads' => 1]);
 
         $current = new CurrentRequest();
+        $this->translations = Translations::fromDirectories([dirname(__DIR__, 2) . '/resources/translations']);
         $this->twig = $twig = new TwigFactory()->create(
             new TemplatePaths([TemplatePaths::defaultTheme()], TemplatePaths::core()),
             $this->database->registry,
-            new TemplateExtension($current, new AssetUrls(), Translations::fromDirectories([]), new DateFormatter(), new Viewer('en-GB', 'UTC')),
+            new TemplateExtension($current, new AssetUrls(), $this->translations, new DateFormatter(), new Viewer('en-GB', 'UTC')),
             sys_get_temp_dir(),
             true,
         );
@@ -198,6 +201,8 @@ final class AuthFixture implements MailSender
             $this->templates,
             $this->clock,
             $this->site,
+            $this->users,
+            $this->translations,
         );
     }
 

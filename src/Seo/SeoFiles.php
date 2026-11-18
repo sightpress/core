@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Seo;
 
+use SightPress\Core\Template\LanguageName;
 use DateTimeZone;
 use Psr\Cache\CacheItemPoolInterface;
 use SightPress\Core\Page\Contract\IndexedPage;
@@ -237,7 +238,7 @@ final class SeoFiles
         }
         foreach ($byLocale as $locale => $localePages) {
             $lines[] = '';
-            $lines[] = count($byLocale) > 1 ? sprintf('## Pages in %s (%s)', LocaleCode::describe($locale), $locale) : '## Pages';
+            $lines[] = count($byLocale) > 1 ? sprintf('## Pages in %s (%s)', new LanguageName($locale), $locale) : '## Pages';
             $lines[] = '';
             foreach ($localePages as $page) {
                 $notes = $page->description ?? $page->summary;

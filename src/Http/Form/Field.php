@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Http\Form;
 
 use InvalidArgumentException;
+use SightPress\Core\Template\Message;
 use Symfony\Component\Validator\Constraint;
 
 /**
@@ -16,31 +17,34 @@ final readonly class Field
 {
     /**
      * @param string                $name            lower-case letters, digits and `_`
-     * @param string                $label           visible label, in plain words
-     * @param string|null           $hint            short help shown under the label and read with the field
+     * @param string|Message        $label           visible label, in plain words (en-GB; shown translated)
+     * @param string|Message|null   $hint            short help shown under the label and read with the field
      * @param list<Constraint>      $constraints     extra checks after the built-in ones for the type
-     * @param array<string, string|array<string, string>> $choices value => label, for select, radios and
+     * @param array<string, string|Message|array<string, string|Message>> $choices value => label, for select, radios and
      *                                               checkboxes; a select can group them: group label => [value =>
      *                                               label] becomes an `<optgroup>`
      * @param string|null           $autocomplete    `autocomplete` token, for example `email` or `new-password`
-     * @param string|null           $requiredMessage message when a required field is empty; by default
+     * @param string|Message|null   $requiredMessage message when a required field is empty; by default
      *                                               "Enter …" or "Select …" followed by the label
      * @param string|null           $accept          for a file field: the `accept` list, for example
      *                                               `image/jpeg,image/png`
      * @param string|null           $inputmode       `inputmode` hint for on-screen keyboards, for example `numeric`
+     * @param bool                  $localeChoices   whether the choices are languages (values are locale codes, labels
+     *                                               in that language): each option gets its `lang`
      */
     public function __construct(
         public string $name,
-        public string $label,
+        public string|Message $label,
         public FieldType $type = FieldType::Text,
-        public ?string $hint = null,
+        public string|Message|null $hint = null,
         public bool $required = true,
         public array $constraints = [],
         public array $choices = [],
         public ?string $autocomplete = null,
-        public ?string $requiredMessage = null,
+        public string|Message|null $requiredMessage = null,
         public ?string $accept = null,
         public ?string $inputmode = null,
+        public bool $localeChoices = false,
     ) {
         if (preg_match('/^[a-z][a-z0-9_]*$/', $name) !== 1) {
             throw new InvalidArgumentException(sprintf(
@@ -48,7 +52,7 @@ final readonly class Field
                 $name,
             ));
         }
-        if (trim($label) === '') {
+        if (trim((string) $label) === '') {
             throw new InvalidArgumentException(sprintf('Field "%s" needs a label.', $name));
         }
         if ($type->hasChoices() && $choices === []) {
@@ -77,8 +81,18 @@ final readonly class Field
         return $values;
     }
 
-    public function requiredMessage(): string
+    public function requiredMessage(): Message
     {
-        return $this->requiredMessage ?? $this->type->requiredVerb() . ' ' . lcfirst($this->label);
+        if ($this->requiredMessage !== null) {
+            return Message::of($this->requiredMessage);
+        }
+
+        $field = ['field' => Message::of($this->label)->lowerFirst()];
+
+        return match ($this->type->requiredVerb()) {
+            'Select' => new Message('Select {field}', $field),
+            'Choose' => new Message('Choose {field}', $field),
+            default => new Message('Enter {field}', $field),
+        };
     }
 }

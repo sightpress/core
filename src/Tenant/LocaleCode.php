@@ -68,6 +68,24 @@ final class LocaleCode
     }
 
     /**
+     * The locale's name in its own language, as a language switcher shows it: `pt-PT` is "português europeu", `es`
+     * "español", `he` "עברית"; its first letter in upper case where the language has cases.
+     */
+    public static function ownName(string $locale): string
+    {
+        $icu = str_replace('-', '_', $locale);
+        $name = null;
+        foreach (array_unique([$icu, (string) Locale::getPrimaryLanguage($icu)]) as $bundle) {
+            $languages = ResourceBundle::create($bundle, 'ICUDATA-lang')?->get('Languages');
+            $found = $languages instanceof ResourceBundle ? $languages->get($icu) : null;
+            $name ??= is_string($found) && $found !== '' ? $found : null;
+        }
+        $name ??= (string) Locale::getDisplayName($icu, $icu);
+
+        return mb_strtoupper(mb_substr($name, 0, 1)) . mb_substr($name, 1);
+    }
+
+    /**
      * Every locale the server knows, written the SightPress way, with its name: `['cy' => 'Welsh', 'en-GB' =>
      * 'British English', …]`, sorted by name.
      *

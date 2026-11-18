@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Http\Error;
 
+use SightPress\Core\Template\Message;
+use SightPress\Core\Template\TextDirection;
+use SightPress\Core\Template\Translations;
+
 /**
  * Renders an {@see ErrorPage} as a complete, accessible HTML page (WCAG 2.2 AA): `lang`, a unique `<title>`, one
  * `<main>` landmark, one `<h1>`, system colours that follow light and dark mode, and a visible focus outline.
@@ -29,30 +33,35 @@ final readonly class HtmlErrorRenderer
     }
 
     /**
-     * @param string|null $details technical details (debug mode only); shown in a disclosure
+     * @param string|null       $details      technical details (debug mode only); shown in a disclosure
+     * @param Translations|null $translations the page is in `$locale` when they are given, in en-GB otherwise
      */
-    public function render(ErrorPage $page, ?string $details = null): string
+    public function render(ErrorPage $page, ?string $details = null, ?Translations $translations = null, string $locale = Translations::SOURCE_LOCALE): string
     {
-        $title = $this->escape($page->title);
+        $locale = $translations === null ? Translations::SOURCE_LOCALE : $locale;
+        $t = static fn (string|Message $text): string => $translations === null ? (string) Message::of($text) : $translations->translate($text, [], $locale);
+        $title = $this->escape($t($page->title));
         $paragraphs = '';
         foreach ($page->paragraphs as $paragraph) {
-            $paragraphs .= '<p>' . $this->escape($paragraph) . "</p>\n";
+            $paragraphs .= '<p>' . $this->escape($t($paragraph)) . "</p>\n";
         }
-        $paragraphs .= sprintf("<p>Error code: %d</p>\n", $page->status);
+        $paragraphs .= '<p>' . $this->escape($t(new Message('Error code: {code}', ['code' => (string) $page->status]))) . "</p>\n";
         if ($page->homeLink) {
-            $paragraphs .= "<p><a href=\"/\">Go to the home page</a></p>\n";
+            $paragraphs .= '<p><a href="/">' . $this->escape($t(new Message('Go to the home page'))) . "</a></p>\n";
         }
         foreach ($page->links as $href => $text) {
-            $paragraphs .= sprintf("<p><a href=\"%s\">%s</a></p>\n", $this->escape($href), $this->escape($text));
+            $paragraphs .= '<p><a href="' . $this->escape($href) . '">' . $this->escape($t($text)) . "</a></p>\n";
         }
         if ($details !== null && $details !== '') {
-            $paragraphs .= "<details>\n<summary>Technical details</summary>\n<pre>"
+            $paragraphs .= '<details>' . "\n<summary>" . $this->escape($t(new Message('Technical details'))) . "</summary>\n<pre>"
                 . $this->escape($details) . "</pre>\n</details>\n";
         }
+        $lang = $this->escape($locale);
+        $dir = TextDirection::of($locale);
 
         return <<<HTML
             <!DOCTYPE html>
-            <html lang="en-GB">
+            <html lang="{$lang}" dir="{$dir}">
             <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Auth;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Auth\PasswordHasher;
@@ -13,6 +15,8 @@ use SightPress\Core\Tests\Support\ArraySiteSettings;
 
 #[CoversClass(PasswordHasher::class)]
 #[CoversClass(PasswordPolicy::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class PasswordTest extends TestCase
 {
     private const array CHEAP = ['memory_cost' => 8, 'time_cost' => 1, 'threads' => 1];
@@ -57,7 +61,7 @@ final class PasswordTest extends TestCase
     #[DataProvider('passwords')]
     public function testTheDefaultPolicyExplainsWhatIsWrong(string $password, string $email, ?string $problem): void
     {
-        self::assertSame($problem, new PasswordPolicy()->problem($password, $email));
+        self::assertSame($problem, Text::of(new PasswordPolicy()->problem($password, $email)));
     }
 
     public function testTheDefaultPolicyIsTwelveCharactersWithEveryKind(): void
@@ -66,19 +70,19 @@ final class PasswordTest extends TestCase
 
         self::assertSame(12, $policy->minLength);
         self::assertTrue($policy->upper && $policy->lower && $policy->digit && $policy->symbol);
-        self::assertSame('At least 12 characters, including a capital letter, a lower-case letter, a number and a symbol, such as ! ? # or %.', $policy->hint());
+        self::assertSame('At least 12 characters, including a capital letter, a lower-case letter, a number and a symbol, such as ! ? # or %.', Text::of($policy->hint()));
     }
 
     public function testASiteCanChangeItsPolicy(): void
     {
         $policy = new PasswordPolicy(16, upper: false, lower: true, digit: false, symbol: false);
 
-        self::assertSame('At least 16 characters, including a lower-case letter.', $policy->hint());
-        self::assertSame('Your password must be at least 16 characters long.', $policy->problem('correct horse'));
+        self::assertSame('At least 16 characters, including a lower-case letter.', Text::of($policy->hint()));
+        self::assertSame('Your password must be at least 16 characters long.', Text::of($policy->problem('correct horse')));
         self::assertNull($policy->problem('correct horse battery'));
 
         $plain = new PasswordPolicy(10, false, false, false, false);
-        self::assertSame('At least 10 characters. A few unrelated words make a strong password that is easy to remember.', $plain->hint());
+        self::assertSame('At least 10 characters. A few unrelated words make a strong password that is easy to remember.', Text::of($plain->hint()));
         self::assertNull($plain->problem('0123456789'));
     }
 

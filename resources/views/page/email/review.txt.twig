@@ -1,7 +1,7 @@
 {% autoescape false %}
 {{ t('Hello {name},', {'name': name}) }}
 
-{{ t('{author} submitted the page "{title}" on {site} for review. To check it and approve it or send it back, open this link:', {'author': author, 'title': title, 'site': site_name}) }}
+{{ t('{author} submitted the page "{title}" on {site} for review. To check it and approve it or send it back, open this link:', {'author': author ?? t('Someone'), 'title': title, 'site': site_name}) }}
 
 {{ link }}
 {% endautoescape %}

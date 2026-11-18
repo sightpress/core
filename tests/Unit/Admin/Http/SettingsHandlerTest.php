@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Admin\Http;
 
+use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -85,22 +86,22 @@ final class SettingsHandlerTest extends TestCase
         ]));
 
         self::assertSame(303, $response->getStatusCode());
-        self::assertSame(['The settings have been saved.'], Flash::take($this->session));
+        self::assertSame(['The settings have been saved.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         $settings = $this->fixture->auth->database->settings();
-        self::assertSame(['Riverside Reading Room', 'Asia/Tokyo', 'hello@example.org', 'search_only', '1', '12'], [
+        self::assertSame(['Riverside Reading Room', 'Asia/Tokyo', 'hello@example.org', 'search_only', '1', '12'], Text::of([
             $settings->get(SiteProfile::NAME), $settings->get(SiteProfile::DEFAULT_TIMEZONE), $settings->get(SiteProfile::EMAIL),
             $settings->get('seo.ai_crawlers'), $settings->get('seo.indexnow'), $settings->get('acme.size'),
-        ]);
+        ]));
         $event = $this->events->events[0] ?? null;
         self::assertInstanceOf(SettingsChanged::class, $event);
-        self::assertSame([SiteProfile::NAME, SiteProfile::DEFAULT_TIMEZONE, 'site.contact_email', 'site.same_as', 'seo.ai_crawlers', 'seo.verify_google', 'seo.indexnow', 'acme.size'], $event->keys);
+        self::assertSame([SiteProfile::NAME, SiteProfile::DEFAULT_TIMEZONE, 'site.contact_email', 'site.same_as', 'seo.ai_crawlers', 'seo.verify_google', 'seo.indexnow', 'acme.size'], Text::of($event->keys));
         self::assertSame($this->admin->id(), $event->actorId);
 
         $again = $this->handle('POST', $this->body(['setting__seo__indexnow' => '']));
         self::assertSame(303, $again->getStatusCode());
-        self::assertSame('0', $settings->get('seo.indexnow'));
+        self::assertSame('0', Text::of($settings->get('seo.indexnow')));
         $this->handle('POST', $this->body([]));
-        self::assertSame(['The settings have been saved.', 'Nothing was changed.'], Flash::take($this->session));
+        self::assertSame(['The settings have been saved.', 'Nothing was changed.'], Text::of(array_map(strval(...), Flash::take($this->session))));
     }
 
     public function testEverySiteHasAPasswordPolicyItsAdminCanChange(): void
@@ -116,10 +117,10 @@ final class SettingsHandlerTest extends TestCase
         $response = $this->handle('POST', $this->body(['setting__auth__password_min_length' => '16', 'setting__auth__password_symbol' => '']));
         self::assertSame(303, $response->getStatusCode());
         $settings = $this->fixture->auth->database->settings();
-        self::assertSame(['16', '0', null], [$settings->get('auth.password_min_length'), $settings->get('auth.password_symbol'), $settings->get('auth.password_upper')], 'settings left as they were are not stored');
+        self::assertSame(['16', '0', null], Text::of([$settings->get('auth.password_min_length'), $settings->get('auth.password_symbol'), $settings->get('auth.password_upper')]), 'settings left as they were are not stored');
         $event = $this->events->events[0] ?? null;
         self::assertInstanceOf(SettingsChanged::class, $event);
-        self::assertSame(['auth.password_min_length', 'auth.password_symbol'], $event->keys);
+        self::assertSame(['auth.password_min_length', 'auth.password_symbol'], Text::of($event->keys));
     }
 
     public function testThePasswordLengthStaysWithinItsLimits(): void
@@ -130,7 +131,7 @@ final class SettingsHandlerTest extends TestCase
             self::assertSame(422, $response->getStatusCode(), (string) $length);
             self::assertStringContainsString($message, (string) $response->getBody());
         }
-        self::assertSame([], $this->events->events);
+        self::assertSame([], Text::of($this->events->events));
     }
 
     public function testASiteInSeveralLanguagesListsThemAndLeavesTheMainOneToTheLanguagesScreen(): void
@@ -160,7 +161,7 @@ final class SettingsHandlerTest extends TestCase
         self::assertStringContainsString('“http://insecure.example” is not a full web address starting with https://.', $html);
         self::assertStringContainsString('Paste only the code', $html);
         self::assertStringContainsString('Enter a whole number, such as 10', $html);
-        self::assertSame([], $this->events->events);
+        self::assertSame([], Text::of($this->events->events));
     }
 
     /**

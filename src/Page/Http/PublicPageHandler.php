@@ -24,7 +24,9 @@ use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\Contract\PageAction;
 use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Template\ViewerPreferences;
+use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\LocaleFallback;
+use SightPress\Core\Template\Viewer;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\TenantConfig;
 use Slim\Exception\HttpNotFoundException;
@@ -136,6 +138,10 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         );
         $this->events->dispatch($rendering);
         $layout = 'layouts/' . $page->layout() . '.html.twig';
+        // The site's own words (menus, buttons, the language switcher) are in the page's language.
+        $own = $request->getAttribute(ViewerPreferences::class);
+        $timezone = $own instanceof ViewerPreferences && $own->timezone !== null && $own->timezone !== '' ? $own->timezone : $this->site->defaultTimezone;
+        $request = $request->withAttribute(Viewer::class, new Viewer($translation->locale() === '' ? $this->site->defaultLocale : $translation->locale(), $timezone));
         $body = $this->templates->render($request, '@page/public.html.twig', [
             ...$rendering->variables(),
             'head' => $rendering->head(),
@@ -146,11 +152,43 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
             'site_name' => $this->site->name,
             'content' => $content,
             'updated_at' => $translation->updatedAt(),
+            'home_url' => $this->homeUrl($translation->locale()),
+            'languages' => $this->languages($translation),
         ]);
 
         $personal = $actor->isSignedIn() || Session::fromRequest($request)->all() !== [];
 
         return $this->respond($request, $body, 'text/html; charset=utf-8', $translation->locale(), $rendering->canonicalUrl(), $rendering->robots(), $personal);
+    }
+
+    /**
+     * The home page in a language when it is published in it, otherwise the home page in the default language.
+     */
+    private function homeUrl(string $locale): string
+    {
+        $home = $this->addresses->home()?->translation($locale);
+
+        return $home !== null && $home->isPublished() ? $this->addresses->homeUrl($locale) : '/';
+    }
+
+    /**
+     * The page in each of the site's languages it is published in, for the language switcher: each language named in
+     * its own language. Empty when there is only one.
+     *
+     * @return list<array{code: string, name: string, url: string, current: bool}>
+     */
+    private function languages(PageTranslation $current): array
+    {
+        $page = $current->page();
+        $languages = [];
+        foreach ($this->site->locales as $locale) {
+            $translation = $page->translation($locale);
+            if ($translation !== null && ($translation === $current || $translation->isPublished())) {
+                $languages[] = ['code' => $locale, 'name' => LocaleCode::ownName($locale), 'url' => $this->addresses->url($translation), 'current' => $translation === $current];
+            }
+        }
+
+        return count($languages) > 1 ? $languages : [];
     }
 
     /**

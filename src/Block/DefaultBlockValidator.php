@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Block;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Block\Contract\BlockIssue;
 use SightPress\Core\Block\Contract\BlockValidator;
 use SightPress\Core\Block\Contract\BlockViolation;
@@ -114,12 +115,12 @@ final readonly class DefaultBlockValidator implements BlockValidator
         }
         $type = $this->types->get($block['type']);
         if ($type === null) {
-            $violations[] = new BlockViolation($pointer . '/type', sprintf('There is no block type "%s" on this site. Remove the block or turn on the module that adds it.', $block['type']));
+            $violations[] = new BlockViolation($pointer . '/type', new Message('There is no block type "{type}" on this site. Remove the block or turn on the module that adds it.', ['type' => $block['type']]));
 
             return null;
         }
         if (!$topLevel && $type instanceof ParentBlockType) {
-            $violations[] = new BlockViolation($pointer . '/type', sprintf('A "%s" block can\'t sit inside another block.', $type->label()));
+            $violations[] = new BlockViolation($pointer . '/type', new Message('A "{label}" block can\'t sit inside another block.', ['label' => Message::of($type->label())]));
 
             return null;
         }
@@ -127,7 +128,7 @@ final readonly class DefaultBlockValidator implements BlockValidator
         $stored = $block['data'];
         $data = BlockUpgrader::upgrade($type, $block['version'], $stored);
         if ($data === null) {
-            $violations[] = new BlockViolation($pointer . '/version', sprintf('This block was saved by a newer version of the "%s" block. Update the module that adds it.', $type->label()));
+            $violations[] = new BlockViolation($pointer . '/version', new Message('This block was saved by a newer version of the "{label}" block. Update the module that adds it.', ['label' => Message::of($type->label())]));
 
             return null;
         }

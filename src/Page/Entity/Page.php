@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Entity;
 
+use SightPress\Core\Template\Message;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -78,7 +79,7 @@ final class Page implements PageSubject
         $this->position = max(0, $position);
         $this->depth = $this->parent === null ? 0 : $this->parent->depth + 1;
         if ($this->depth >= self::MAX_DEPTH) {
-            throw new PageException(sprintf('Pages can be nested at most %d levels deep.', self::MAX_DEPTH));
+            throw new PageException(new Message('Pages can be nested at most {max} levels deep.', ['max' => (string) self::MAX_DEPTH]));
         }
         $this->updatedAt = $createdAt;
         $this->translations = new ArrayCollection();
@@ -266,7 +267,7 @@ final class Page implements PageSubject
     public function setLayout(string $layout, DateTimeImmutable $now): void
     {
         if (preg_match(self::LAYOUT_PATTERN, $layout) !== 1) {
-            throw new PageException(sprintf('"%s" is not a layout name such as "default" or "home".', $layout));
+            throw new PageException(new Message('"{layout}" is not a layout name such as "default" or "home".', ['layout' => $layout]));
         }
         $this->layout = $layout;
         $this->updatedAt = $now;

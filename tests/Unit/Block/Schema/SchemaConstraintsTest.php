@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Block\Schema;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Block\BlockException;
@@ -13,6 +14,8 @@ use Symfony\Component\Validator\Validation;
 
 #[CoversClass(SchemaConstraints::class)]
 #[CoversClass(BlockException::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class SchemaConstraintsTest extends TestCase
 {
     private const array SCHEMA = [

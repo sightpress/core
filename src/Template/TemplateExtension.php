@@ -17,11 +17,12 @@ use Twig\TwigFunction;
  * Core's template functions and filters:
  *
  * - `asset(path)`: URL of a theme file;
- * - `t(message, parameters)`: the message in the viewer's language;
+ * - `t(message, parameters)`: the message (a text or a {@see Message}) in the viewer's language;
  * - `can(permission)`: whether the viewer holds a permission;
  * - `csp_nonce()`: the nonce every inline `<script>` and `<style>` needs;
  * - `csrf_fields()`: the hidden CSRF fields every `POST` form needs;
  * - `current_locale()`: the viewer's language, for example `en-GB`;
+ * - `current_path()`: the path and query of the page being shown;
  * - `text_direction(locale)`: `rtl` for right-to-left scripts, otherwise `ltr`;
  * - `value|user_datetime(style)` and `value|user_date(style)`: a UTC date in the viewer's time zone and language.
  */
@@ -46,6 +47,7 @@ final class TemplateExtension extends AbstractExtension
             new TwigFunction('csrf_fields', $this->csrfFields(...), ['is_safe' => ['html']]),
             new TwigFunction('current_locale', $this->currentLocale(...)),
             new TwigFunction('text_direction', TextDirection::of(...)),
+            new TwigFunction('current_path', $this->currentPath(...)),
         ];
     }
 
@@ -60,8 +62,12 @@ final class TemplateExtension extends AbstractExtension
     /**
      * @param array<string, mixed> $parameters
      */
-    public function translate(string $message, array $parameters = [], string $domain = 'messages'): string
+    public function translate(Message|LanguageName|string|null $message, array $parameters = [], string $domain = 'messages'): string
     {
+        if ($message === null || $message === '') {
+            return '';
+        }
+
         return $this->translations->translate($message, $parameters, $this->viewer()->locale, $domain);
     }
 
@@ -88,6 +94,16 @@ final class TemplateExtension extends AbstractExtension
         );
 
         return $input($token->nameKey, $token->name) . $input($token->valueKey, $token->value);
+    }
+
+    /**
+     * The path and query of the page being shown, for forms that bring people back to it.
+     */
+    public function currentPath(): string
+    {
+        $uri = $this->request->get()->getUri();
+
+        return $uri->getPath() . ($uri->getQuery() === '' ? '' : '?' . $uri->getQuery());
     }
 
     public function currentLocale(): string

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Admin\Http;
 
+use SightPress\Core\Template\LanguageName;
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -44,7 +46,7 @@ final readonly class LanguagesHandler implements RequestHandlerInterface
         $labels = [];
         $known = LocaleCode::available();
         foreach ($offered ? array_diff_key($known, array_flip($this->languages->locales())) : $known as $code => $name) {
-            $labels[$code] = sprintf('%s (%s)', $name, $code);
+            $labels[$code] = new Message('{name} ({code})', ['name' => $name, 'code' => $code]);
         }
 
         return Form::create('add-language', new Field(
@@ -52,7 +54,7 @@ final readonly class LanguagesHandler implements RequestHandlerInterface
             'Language to add',
             FieldType::Select,
             hint: 'Type the first letters of its name to move through the list. Pages are then translated into it one by one; nothing is published in it until you publish each translation.',
-            choices: ['' => 'Choose a language', ...$labels],
+            choices: $labels,
             requiredMessage: 'Choose the language to add',
         ));
     }
@@ -76,9 +78,9 @@ final readonly class LanguagesHandler implements RequestHandlerInterface
                 try {
                     $added = $this->languages->add($form->text('locale'), $actor->userId);
 
-                    return $this->screens->redirect($request, self::PATH, sprintf('Added %s. Translate pages into it from each page’s editor.', LocaleCode::describe($added)));
+                    return $this->screens->redirect($request, self::PATH, new Message('Added {added}. Translate pages into it from each page’s editor.', ['added' => new LanguageName($added)]));
                 } catch (SiteLanguageException $exception) {
-                    $form = $form->withErrors(['locale' => $exception->getMessage()]);
+                    $form = $form->withErrors(['locale' => $exception->text()]);
                 }
             }
         }
@@ -86,7 +88,7 @@ final readonly class LanguagesHandler implements RequestHandlerInterface
         return $this->screens->render($request, '@admin/languages.html.twig', [
             'languages' => array_map(fn (string $locale): array => [
                 'code' => $locale,
-                'name' => LocaleCode::describe($locale),
+                'name' => new LanguageName($locale),
                 'main' => $locale === $this->languages->defaultLocale(),
                 'prefix' => $locale === $this->languages->defaultLocale() ? '/' : '/' . strtolower($locale) . '/',
             ], $this->languages->locales()),
@@ -102,11 +104,11 @@ final readonly class LanguagesHandler implements RequestHandlerInterface
         try {
             $changed = $this->languages->makeDefault($locale, $actor->userId);
         } catch (SiteLanguageException $exception) {
-            return $this->screens->redirect($request, self::PATH, $exception->getMessage());
+            return $this->screens->redirect($request, self::PATH, $exception->text());
         }
 
         return $this->screens->redirect($request, self::PATH, $changed
-            ? sprintf('%s is now the main language. Its pages have addresses without a language part.', LocaleCode::describe($locale))
+            ? new Message('{locale} is now the main language. Its pages have addresses without a language part.', ['locale' => new LanguageName($locale)])
             : 'Nothing was changed.');
     }
 }

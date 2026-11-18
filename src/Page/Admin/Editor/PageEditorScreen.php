@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Editor;
 
+use SightPress\Core\Template\LanguageName;
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Admin\Contract\AdminScreens;
@@ -71,15 +73,12 @@ final readonly class PageEditorScreen
         $images = self::prefixed($this->media->for(BlockSchema::FORMAT_IMAGE, $socialImage));
 
         $fields = [
-            new Field('title', 'Title', hint: 'Shown at the top of the page, in the browser tab and in menus.', constraints: [$length(PageContent::TITLE_MAX_LENGTH, 'The title')]),
-            new Field('slug', 'Address', hint: sprintf(
-                'The last part of the page’s web address, after %s. Lower-case letters a to z, digits and hyphens. Leave it empty to make one from the title. Pages below this one move with it.',
-                $parent === null ? 'the site’s address' : '/' . $parent->path() . '/',
-            ), required: false),
+            new Field('title', 'Title', hint: 'Shown at the top of the page, in the browser tab and in menus.', constraints: [$length(PageContent::TITLE_MAX_LENGTH)]),
+            new Field('slug', 'Address', hint: new Message('The last part of the page’s web address, after {path}. Lower-case letters a to z, digits and hyphens. Leave it empty to make one from the title. Pages below this one move with it.', ['path' => $parent === null ? 'the site’s address' : '/' . $parent->path() . '/']), required: false),
             new Field('layout', 'Layout', FieldType::Select, choices: $this->admin->layouts($page->layout())),
-            new Field('summary', 'Summary', FieldType::Textarea, hint: 'One or two sentences about the page. Shown in lists of pages and read by AI search engines.', required: false, constraints: [$length(PageContent::SUMMARY_MAX_LENGTH, 'The summary')]),
-            new Field('seo_title', 'Title in search results', hint: 'Only when it should differ from the title. Leave it empty to use the title.', required: false, constraints: [$length(PageContent::SEO_TITLE_MAX_LENGTH, 'The title in search results')]),
-            new Field('description', 'Description for search engines', FieldType::Textarea, hint: sprintf('One or two sentences. Search engines show about %d characters.', PublishChecker::DESCRIPTION_MAX), required: false, constraints: [$length(PageContent::DESCRIPTION_MAX_LENGTH, 'The description')]),
+            new Field('summary', 'Summary', FieldType::Textarea, hint: 'One or two sentences about the page. Shown in lists of pages and read by AI search engines.', required: false, constraints: [$length(PageContent::SUMMARY_MAX_LENGTH)]),
+            new Field('seo_title', 'Title in search results', hint: 'Only when it should differ from the title. Leave it empty to use the title.', required: false, constraints: [$length(PageContent::SEO_TITLE_MAX_LENGTH)]),
+            new Field('description', 'Description for search engines', FieldType::Textarea, hint: new Message('One or two sentences. Search engines show about {max} characters.', ['max' => (string) PublishChecker::DESCRIPTION_MAX]), required: false, constraints: [$length(PageContent::DESCRIPTION_MAX_LENGTH)]),
         ];
         if ($images !== []) {
             $fields[] = new Field('social_image', 'Picture shown when the page is shared', FieldType::Select, hint: 'Leave it empty to use the site’s share image.', required: false, choices: $images);
@@ -87,7 +86,7 @@ final readonly class PageEditorScreen
         $fields = [
             ...$fields,
             new Field('noindex', 'Ask search engines and AI search engines not to list this page', FieldType::Checkbox, hint: 'It is then also left out of the sitemap and llms.txt.', required: false),
-            new Field('canonical_url', 'Address of the original', FieldType::Url, hint: 'Only when this page is a copy of a page on another site: its full address, starting with https://.', required: false, constraints: [$length(PageContent::CANONICAL_MAX_LENGTH, 'The address of the original')]),
+            new Field('canonical_url', 'Address of the original', FieldType::Url, hint: 'Only when this page is a copy of a page on another site: its full address, starting with https://.', required: false, constraints: [$length(PageContent::CANONICAL_MAX_LENGTH)]),
         ];
 
         return Form::create(strtolower($locale), ...$fields);
@@ -116,7 +115,7 @@ final readonly class PageEditorScreen
 
     /**
      * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
-     * @param array<string, string>                                               $blockErrors pointer => message
+     * @param array<string, string|Message>                                            $blockErrors pointer => message
      */
     public function render(
         ServerRequestInterface $request,
@@ -135,7 +134,7 @@ final readonly class PageEditorScreen
         $baseUrl = $uri->getScheme() . '://' . $uri->getAuthority();
         $editor = $this->view->build($locale, $blocks, $blockErrors, $editable ? $this->previews($locale, $blocks, $baseUrl, $request) : []);
         $translation = $page->translation($locale);
-        $title = $translation?->title() ?? sprintf('Page %d', (int) $page->id());
+        $title = $translation?->title() ?? new Message('Page {id}', ['id' => (string) (int) $page->id()]);
         $errorCount = count($form->errors()) + count($editor->errors);
 
         return $this->screens->render($request, '@page_admin/editor.html.twig', [
@@ -152,7 +151,7 @@ final readonly class PageEditorScreen
             'focus' => $errorCount > 0 ? null : $focus,
             'action' => PageAdmin::editPath((int) $page->id()) . ($locale === $this->site->defaultLocale ? '' : '?locale=' . rawurlencode($locale)),
             'workflow_action' => PageAdmin::workflowPath((int) $page->id()),
-            'transitions' => array_map(static fn (PageTransition $transition): array => ['value' => $transition->value, 'label' => $transition->label()], $this->workflow->available($page, $actor)),
+            'transitions' => array_map(static fn (PageTransition $transition): array => ['value' => $transition->value, 'label' => Message::of($transition->label())], $this->workflow->available($page, $actor)),
             'url' => $translation === null ? null : $this->addresses->url($translation),
             'search' => $this->searchPreview($form, $page, $locale, $baseUrl),
             'description_length' => mb_strlen($form->text('description')),
@@ -173,7 +172,7 @@ final readonly class PageEditorScreen
      * (of its own, or because the page isn't published) or published; and the languages it can be copied from.
      * Empty when the site has one language.
      *
-     * @return list<array{code: string, name: string, status: string, current: bool, url: string, sources: array<string, string>}>
+     * @return list<array{code: string, name: LanguageName, status: string, current: bool, url: string, sources: array<string, LanguageName>}>
      */
     private function translations(Page $page, string $current): array
     {
@@ -184,7 +183,7 @@ final readonly class PageEditorScreen
         $sources = [];
         foreach ($locales as $locale) {
             if ($page->translation($locale) !== null) {
-                $sources[$locale] = LocaleCode::describe($locale);
+                $sources[$locale] = new LanguageName($locale);
             }
         }
         $rows = [];
@@ -192,7 +191,7 @@ final readonly class PageEditorScreen
             $translation = $page->translation($locale);
             $rows[] = [
                 'code' => $locale,
-                'name' => LocaleCode::describe($locale),
+                'name' => new LanguageName($locale),
                 'status' => match (true) {
                     $translation === null => 'Not written yet',
                     $translation->isPublished() => 'Published',
@@ -292,9 +291,9 @@ final readonly class PageEditorScreen
     }
 
     /**
-     * @param array<int, string> $choices
+     * @param array<int, string|Message> $choices
      *
-     * @return array<string, string>
+     * @return array<string, string|Message>
      */
     private static function prefixed(array $choices): array
     {
@@ -317,8 +316,8 @@ final readonly class PageEditorScreen
     /**
      * @param positive-int $max
      */
-    private static function length(int $max, string $what): Length
+    private static function length(int $max): Length
     {
-        return new Length(max: $max, maxMessage: sprintf('%s must be %d characters or fewer', $what, $max));
+        return new Length(max: $max, maxMessage: '{field} must be {{ limit }} characters or fewer');
     }
 }

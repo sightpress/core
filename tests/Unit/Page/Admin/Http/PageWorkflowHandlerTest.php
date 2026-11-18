@@ -54,7 +54,7 @@ final class PageWorkflowHandlerTest extends TestCase
             self::assertSame(303, $response->getStatusCode());
             self::assertSame('/admin/pages/' . $this->page->id(), $response->getHeaderLine('Location'));
             self::assertSame($state, $this->page->state(), $transition);
-            self::assertSame([$message], Flash::take($this->fixture->session));
+            self::assertSame([$message], array_map(strval(...), Flash::take($this->fixture->session)));
         }
     }
 
@@ -62,7 +62,7 @@ final class PageWorkflowHandlerTest extends TestCase
     {
         $this->send($this->editor, ['transition' => 'publish']);
 
-        self::assertSame(['"Publish" can\'t be done now: the page is a draft.'], Flash::take($this->fixture->session));
+        self::assertSame(['"Publish" can\'t be done now: the page is a draft.'], array_map(strval(...), Flash::take($this->fixture->session)));
     }
 
     public function testRefusedPublishingShowsTheProblemsWithFocusOnThem(): void

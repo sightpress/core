@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\User;
 
+use SightPress\Core\Template\TranslatableText;
 use InvalidArgumentException;
 
 /**
@@ -12,4 +13,5 @@ use InvalidArgumentException;
  */
 final class UserException extends InvalidArgumentException
 {
+    use TranslatableText;
 }

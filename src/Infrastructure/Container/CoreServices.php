@@ -132,7 +132,9 @@ final class CoreServices
             HttpClientInterface::class => factory(static fn (): HttpClientInterface => HttpClient::create(['timeout' => 5, 'max_redirects' => 0])),
             ErrorResponder::class => autowire()
                 ->constructorParameter('debug', $config->debug)
-                ->constructorParameter('noindex', !$config->environment->isProduction()),
+                ->constructorParameter('noindex', !$config->environment->isProduction())
+                ->constructorParameter('translations', get(Translations::class))
+                ->constructorParameter('defaultLocale', $config->adminLocale),
         ];
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Auth\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,10 +44,7 @@ final readonly class ResetCodeHandler implements RequestHandlerInterface
 
     public static function form(string $email): Form
     {
-        return Form::create('reset-code', CodeEntry::field(sprintf(
-            'We sent it by email to %s. You can type it with or without spaces.',
-            VerificationTarget::mask(VerificationChannel::Email, $email),
-        )));
+        return Form::create('reset-code', CodeEntry::field(new Message('We sent it by email to {email}. You can type it with or without spaces.', ['email' => VerificationTarget::mask(VerificationChannel::Email, $email)])));
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -96,14 +94,11 @@ final readonly class ResetCodeHandler implements RequestHandlerInterface
         });
         if ($limited !== null) {
             return $this->show($request, self::form($email)->withErrors([CodeEntry::FIELD => $limited->tooSoon
-                ? sprintf('Wait %s, then send a new code. The code we sent before still works.', CodeEntry::wait($limited->retryAfter))
+                ? new Message('Wait {retry_after}, then send a new code. The code we sent before still works.', ['retry_after' => CodeEntry::wait($limited->retryAfter)])
                 : AuthPages::tooManyAttempts('asked for a code', $limited->retryAfter)]), 429);
         }
 
-        Flash::add($session, sprintf(
-            'We have sent a new code to %s. The code we sent before no longer works.',
-            VerificationTarget::mask(VerificationChannel::Email, $email),
-        ));
+        Flash::add($session, new Message('We have sent a new code to {email}. The code we sent before no longer works.', ['email' => VerificationTarget::mask(VerificationChannel::Email, $email)]));
 
         return $this->pages->redirect(self::PATH);
     }

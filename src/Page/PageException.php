@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page;
 
+use SightPress\Core\Template\TranslatableText;
 use RuntimeException;
 
 /**
@@ -11,4 +12,5 @@ use RuntimeException;
  */
 final class PageException extends RuntimeException
 {
+    use TranslatableText;
 }

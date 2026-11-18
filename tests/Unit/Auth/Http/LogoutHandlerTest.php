@@ -61,7 +61,7 @@ final class LogoutHandlerTest extends TestCase
         self::assertSame(303, $response->getStatusCode());
         self::assertSame('/login', $response->getHeaderLine('Location'));
         self::assertStringContainsString('Max-Age=0', $response->getHeaderLine('Set-Cookie'));
-        self::assertSame(['You have signed out.'], Flash::take($session));
+        self::assertSame(['You have signed out.'], array_map(strval(...), Flash::take($session)));
         self::assertSame([], $session->all());
         self::assertNull($this->auth->rememberTokens()->consume($request));
     }

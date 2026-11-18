@@ -68,7 +68,7 @@ final class NewPageHandlerTest extends TestCase
         self::assertNotNull($page);
         self::assertSame(PageAdmin::editPath((int) $page->id()), $response->getHeaderLine('Location'));
         self::assertSame(['home', PageState::Draft, (int) $this->contributor->id()], [$page->layout(), $page->state(), $page->authorId()]);
-        self::assertSame(['“Our team” has been started as a draft. Add its content, then save it.'], Flash::take($this->fixture->session));
+        self::assertSame(['“Our team” has been started as a draft. Add its content, then save it.'], array_map(strval(...), Flash::take($this->fixture->session)));
 
         $top = $this->fixture->handle($this->fixture->newHandler(), $this->contributor, 'POST', NewPageHandler::PATH, ['title' => 'Events', 'parent' => 'top', 'layout' => 'default']);
         self::assertSame(303, $top->getStatusCode());

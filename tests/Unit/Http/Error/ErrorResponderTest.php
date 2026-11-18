@@ -11,6 +11,7 @@ use Monolog\Processor\PsrLogMessageProcessor;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -33,6 +34,9 @@ use Slim\Exception\HttpNotFoundException;
 #[UsesClass(JsonErrorRenderer::class)]
 #[UsesClass(AcceptNegotiator::class)]
 #[UsesClass(HttpServiceUnavailableException::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesNamespace('SightPress\Core\Infrastructure\Crypto')]
 final class ErrorResponderTest extends TestCase
 {
     private TestHandler $log;
@@ -112,7 +116,31 @@ final class ErrorResponderTest extends TestCase
         self::assertSame(500, $failed->getStatusCode());
     }
 
-    private function responder(bool $debug = false, bool $noindex = false): ErrorResponder
+    public function testErrorPagesAreInTheVisitorsLanguage(): void
+    {
+        $translations = \SightPress\Core\Template\Translations::fromDirectories([dirname(__DIR__, 4) . '/resources/translations']);
+        $responder = $this->responder(translations: $translations);
+        $site = \SightPress\Core\Tests\Support\PageFixture::site(['en-GB', 'es', 'pt-PT']);
+        $context = new \SightPress\Core\Tenant\SiteContext($site, new \SightPress\Core\Tests\Support\ArrayContainer());
+        $page = static fn (string $path, ?string $own = null): ServerRequest => (function () use ($path, $own, $context): ServerRequest {
+            $request = new ServerRequest('GET', 'https://demo.example' . $path)->withAttribute(\SightPress\Core\Tenant\SiteContext::class, $context);
+
+            return $own === null ? $request : $request->withAttribute(\SightPress\Core\Template\ViewerPreferences::class, new \SightPress\Core\Template\ViewerPreferences($own));
+        })();
+
+        $spanish = (string) $responder->respond($page('/es/nada'), new \Slim\Exception\HttpNotFoundException($page('/es/nada')))->getBody();
+        self::assertStringContainsString('<html lang="es" dir="ltr">', $spanish);
+        self::assertStringContainsString('<h1>No se ha encontrado la página</h1>', $spanish);
+        self::assertStringContainsString('Ir a la página de inicio', $spanish);
+        self::assertStringContainsString('<html lang="pt-PT"', (string) $responder->respond($page('/es/nada', 'pt-PT'), new RuntimeException('x'))->getBody(), 'a person’s own language wins');
+        self::assertStringContainsString('<html lang="en-GB"', (string) $responder->respond($page('/about'), new RuntimeException('x'))->getBody(), 'the site’s default');
+        self::assertStringContainsString('<html lang="en-GB"', (string) $responder->respond(new ServerRequest('GET', '/'), new RuntimeException('x'))->getBody(), 'no site: the admin default');
+        $withSite = new \SightPress\Core\Tenant\SiteContext($site, new \SightPress\Core\Tests\Support\ArrayContainer([\SightPress\Core\Tenant\Site::class => \SightPress\Core\Tests\Support\PageFixture::site(['pt-PT', 'en-GB'])]));
+        $displayed = new ServerRequest('GET', 'https://demo.example/x')->withAttribute(\SightPress\Core\Tenant\SiteContext::class, $withSite);
+        self::assertStringContainsString('<html lang="pt-PT"', (string) $responder->respond($displayed, new RuntimeException('x'))->getBody(), 'the site as its admins set it up');
+    }
+
+    private function responder(bool $debug = false, bool $noindex = false, ?\SightPress\Core\Template\Translations $translations = null): ErrorResponder
     {
         $factory = new Psr17Factory();
 
@@ -126,6 +154,7 @@ final class ErrorResponderTest extends TestCase
             new Logger('test', [$this->log], [new PsrLogMessageProcessor()]),
             $debug,
             $noindex,
+            $translations,
         );
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\User\Avatar;
 
+use SightPress\Core\Template\Message;
 use finfo;
 use Intervention\Image\Format;
 use Intervention\Image\Interfaces\ExceptionInterface;
@@ -87,7 +88,7 @@ final readonly class AvatarService
     {
         $error = $upload->getError();
         if ($error === UPLOAD_ERR_INI_SIZE || $error === UPLOAD_ERR_FORM_SIZE || $upload->getSize() > self::MAX_BYTES) {
-            throw new AvatarException(sprintf('The picture must be smaller than %d MB.', self::MAX_BYTES / 1024 / 1024));
+            throw new AvatarException(new Message('The picture must be smaller than {max_bytes} MB.', ['max_bytes' => (string) self::MAX_BYTES / 1024 / 1024]));
         }
         if ($error === UPLOAD_ERR_NO_FILE) {
             throw new AvatarException('Choose a picture to upload.');

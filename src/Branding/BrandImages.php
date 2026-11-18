@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Branding;
 
+use SightPress\Core\Template\Message;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Format;
 use Intervention\Image\ImageManager;
@@ -58,21 +59,17 @@ final readonly class BrandImages
     public function size(string $bytes, BrandAsset $asset): array
     {
         if (strlen($bytes) > self::MAX_BYTES) {
-            throw new BrandingException(sprintf('The %s must be 5 MB or smaller.', $asset->label()));
+            throw new BrandingException(new Message('The {label} must be 5 MB or smaller.', ['label' => Message::of($asset->label())->lowerFirst()]));
         }
         if (!isset(self::RASTER_TYPES[self::mimeType($bytes)])) {
-            throw new BrandingException(sprintf(
-                'The %s must be a %s picture.',
-                $asset->label(),
-                $asset === BrandAsset::Logo ? 'SVG, PNG, JPEG or WebP' : 'PNG, JPEG or WebP',
-            ));
+            throw new BrandingException(new Message('The {label} must be a {web_p} picture.', ['label' => Message::of($asset->label())->lowerFirst(), 'web_p' => $asset === BrandAsset::Logo ? 'SVG, PNG, JPEG or WebP' : 'PNG, JPEG or WebP']));
         }
         $size = @getimagesizefromstring($bytes);
         if ($size === false || $size[0] < 1 || $size[1] < 1) {
-            throw new BrandingException(sprintf('The %s can\'t be read. It may be damaged; save it again and try the new file.', $asset->label()));
+            throw new BrandingException(new Message('The {label} can\'t be read. It may be damaged; save it again and try the new file.', ['label' => Message::of($asset->label())->lowerFirst()]));
         }
         if ($size[0] * $size[1] > self::MAX_PIXELS) {
-            throw new BrandingException(sprintf('The %s is %d × %d pixels, which is too large. Make it smaller than 40 million pixels.', $asset->label(), $size[0], $size[1]));
+            throw new BrandingException(new Message('The {label} is {size} × {size2} pixels, which is too large. Make it smaller than 40 million pixels.', ['label' => Message::of($asset->label())->lowerFirst(), 'size' => (string) $size[0], 'size2' => (string) $size[1]]));
         }
 
         return [$size[0], $size[1]];
@@ -87,12 +84,7 @@ final readonly class BrandImages
     {
         [$width, $height] = $this->size($bytes, BrandAsset::Icon);
         if ($width !== $height || $width < self::ICON_MIN) {
-            throw new BrandingException(sprintf(
-                'The icon must be a square picture of at least %1$d × %1$d pixels. This one is %2$d × %3$d pixels.',
-                self::ICON_MIN,
-                $width,
-                $height,
-            ));
+            throw new BrandingException(new Message('The icon must be a square picture of at least {icon_min} × {icon_min} pixels. This one is {width} × {height} pixels.', ['icon_min' => (string) self::ICON_MIN, 'width' => (string) $width, 'height' => (string) $height]));
         }
         $files = [];
         foreach (self::ICON_FILES as $name => $pixels) {
@@ -112,13 +104,7 @@ final readonly class BrandImages
         [$width, $height] = $this->size($bytes, BrandAsset::ShareImage);
         $ratio = self::SHARE_WIDTH / self::SHARE_HEIGHT;
         if ($width < self::SHARE_WIDTH || $height < self::SHARE_HEIGHT || abs($width / $height - $ratio) > $ratio * 0.02) {
-            throw new BrandingException(sprintf(
-                'The share image must be %d × %d pixels, or larger in the same proportions. This one is %d × %d pixels.',
-                self::SHARE_WIDTH,
-                self::SHARE_HEIGHT,
-                $width,
-                $height,
-            ));
+            throw new BrandingException(new Message('The share image must be {share_width} × {share_height} pixels, or larger in the same proportions. This one is {width} × {height} pixels.', ['share_width' => (string) self::SHARE_WIDTH, 'share_height' => (string) self::SHARE_HEIGHT, 'width' => (string) $width, 'height' => (string) $height]));
         }
 
         return $this->encode($bytes, static fn ($image) => $image->cover(self::SHARE_WIDTH, self::SHARE_HEIGHT), Format::JPEG, ['quality' => 85]);
@@ -144,11 +130,7 @@ final readonly class BrandImages
     {
         $ratio = $width / $height;
         if ($ratio < 1 || $ratio > 8) {
-            throw new BrandingException(sprintf(
-                'The logo must be at least as wide as it is high, and at most 8 times as wide. This one is %s × %s.',
-                self::number($width),
-                self::number($height),
-            ));
+            throw new BrandingException(new Message('The logo must be at least as wide as it is high, and at most 8 times as wide. This one is {width} × {height}.', ['width' => self::number($width), 'height' => self::number($height)]));
         }
     }
 

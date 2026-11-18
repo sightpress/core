@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Workflow;
 
+use SightPress\Core\User\Contract\AccountPreferences;
+use SightPress\Core\Template\Viewer;
+use SightPress\Core\Template\Translations;
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use SightPress\Core\Infrastructure\Mail\MailSender;
 use SightPress\Core\Page\Contract\PageTransition;
@@ -33,6 +37,8 @@ final readonly class ReviewRequestMailer
         private TemplateRenderer $templates,
         private ServerRequestFactoryInterface $requests,
         private Site $site,
+        private AccountPreferences $preferences,
+        private Translations $translations,
     ) {
     }
 
@@ -56,15 +62,17 @@ final readonly class ReviewRequestMailer
             $context = [
                 'site_name' => $this->site->name,
                 'name' => $reviewer->effectiveName(),
-                'author' => $author?->effectiveName() ?? 'Someone',
+                'author' => $author?->effectiveName(),
                 'title' => $title,
                 'link' => $base . sprintf(self::EDIT_PATH, $event->pageId),
             ];
+            $viewer = Viewer::recipient($this->preferences->preferencesOf((int) $reviewer->id()), $this->site);
+            $own = $request->withAttribute(Viewer::class, $viewer);
             $this->mail->send(new Email()
                 ->to(new Address($reviewer->email(), $reviewer->effectiveName()))
-                ->subject(sprintf('Please review "%s" on %s', $title, $this->site->name))
-                ->text($this->templates->render($request, '@page/email/review.txt.twig', $context))
-                ->html($this->templates->render($request, '@page/email/review.html.twig', $context)));
+                ->subject($this->translations->translate(new Message('Please review "{title}" on {site}', ['title' => $title, 'site' => $this->site->name]), [], $viewer->locale))
+                ->text($this->templates->render($own, '@page/email/review.txt.twig', $context))
+                ->html($this->templates->render($own, '@page/email/review.html.twig', $context)));
         }
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Branding;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Branding\BrandingException;
@@ -12,6 +13,8 @@ use SightPress\Core\Branding\SvgCleaner;
 
 #[CoversClass(SvgCleaner::class)]
 #[UsesClass(BrandingException::class)]
+#[UsesNamespace('SightPress\Core\Template')]
+#[UsesNamespace('SightPress\Core\Tenant')]
 final class SvgCleanerTest extends TestCase
 {
     public function testRemovesScriptsHandlersAndOutsideReferences(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -72,7 +73,7 @@ final readonly class PageListHandler implements RequestHandlerInterface
         }
         $matches = array_values(array_filter($nodes, static fn (array $node): bool => $node['open']
             && ($state === null || $node['state'] === $state)
-            && ($text === '' || mb_stripos($node['title'], $text) !== false)
+            && ($text === '' || mb_stripos((string) $node['title'], $text) !== false)
             && (!$mine || $node['mine'])));
 
         return $this->screens->render($request, '@page_admin/list.html.twig', [
@@ -92,7 +93,7 @@ final readonly class PageListHandler implements RequestHandlerInterface
     /**
      * @param array<int, string> $names
      *
-     * @return array{page: Page, id: int, title: string, locale: string, url: ?string, state: PageState, state_label: string, author: ?string, updated: \DateTimeImmutable, mine: bool, open: bool, home: bool}
+     * @return array{page: Page, id: int, title: string|Message, locale: string, url: ?string, state: PageState, state_label: string, author: ?string, updated: \DateTimeImmutable, mine: bool, open: bool, home: bool}
      */
     private function node(Page $page, Actor $actor, array $names): array
     {
@@ -102,7 +103,7 @@ final readonly class PageListHandler implements RequestHandlerInterface
         return [
             'page' => $page,
             'id' => (int) $page->id(),
-            'title' => $translation?->title() ?? sprintf('Page %d', (int) $page->id()),
+            'title' => $translation?->title() ?? new Message('Page {id}', ['id' => (string) (int) $page->id()]),
             'locale' => $translation?->locale() ?? $this->site->defaultLocale,
             'url' => $translation === null ? null : $this->addresses->url($translation),
             'state' => $page->state(),

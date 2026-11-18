@@ -48,7 +48,7 @@ final readonly class AccountPictureHandler implements RequestHandlerInterface
                 }
                 $this->avatars->upload($user, $upload);
             } catch (AvatarException $exception) {
-                return $this->pages->page($request, $user, picture: AccountPages::picture()->withErrors(['picture' => $exception->getMessage()]));
+                return $this->pages->page($request, $user, picture: AccountPages::picture()->withErrors(['picture' => $exception->text()]));
             }
             $message = 'Your new picture has been saved.';
         }

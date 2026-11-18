@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Block;
 
+use SightPress\Core\Template\TranslatableText;
 use LogicException;
 
 /**
@@ -12,4 +13,5 @@ use LogicException;
  */
 final class BlockException extends LogicException
 {
+    use TranslatableText;
 }

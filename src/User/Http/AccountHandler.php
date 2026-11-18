@@ -57,8 +57,8 @@ final readonly class AccountHandler implements RequestHandlerInterface
         $displayName = $form->text('display_name');
         $user->rename($form->text('first_name'), $form->text('last_name'), $displayName === '' ? null : $displayName, $now);
         $user->changeTimezone($form->text('timezone'), $now);
-        if (array_key_exists('locale', $form->values())) {
-            $locale = $form->text('locale');
+        $locale = $form->has('locale') ? $form->text('locale') : '';
+        if ($locale !== '') {
             $user->changeLocale($locale === 'default' ? null : $locale, $now);
         }
         $after = [

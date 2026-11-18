@@ -66,7 +66,7 @@ final class ContactFixture
             new DefaultBlockFinder($this->blocks->types),
             $this->auth->validator(),
             $this->auth->limiters,
-            new ContactMailer($this->auth, $this->auth->templates, $this->pages->site),
+            new ContactMailer($this->auth, $this->auth->templates, $this->pages->site, $this->auth->translations),
             $this->auth->http,
         );
     }

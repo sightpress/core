@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media\Admin\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -47,7 +48,7 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
             'file',
             'File to upload',
             FieldType::File,
-            hint: $this->types->summary() . ' New files stay unpublished until an editor publishes them.',
+            hint: new Message('{types} New files stay unpublished until an editor publishes them.', ['types' => $this->types->summary()]),
             accept: $this->types->accept(),
         ));
     }
@@ -65,7 +66,8 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
         $form = $this->form();
         $error = $session->get(self::ERROR_KEY);
         $session->remove(self::ERROR_KEY);
-        if (is_string($error)) {
+        $error = Message::import($error);
+        if ($error !== null) {
             $form = $form->withErrors(['file' => $error]);
         }
 

@@ -387,3 +387,7 @@ input[type=file] { max-width: 100%; }
 /* "Last updated" under the content of a page */
 
 .page-updated { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--color-border); color: var(--color-text-muted); font-size: 0.9375rem; }
+
+/* Language switcher (I-3): each language in its own words; the current one is marked like a current menu entry. */
+.language-switcher ul { display: flex; flex-wrap: wrap; gap: var(--space-3); list-style: none; margin: 0; padding: 0; }
+.language-switcher a[aria-current="page"] { font-weight: 700; text-decoration-thickness: 0.15em; }

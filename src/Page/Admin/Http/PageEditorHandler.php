@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -110,12 +111,12 @@ final readonly class PageEditorHandler implements RequestHandlerInterface
             return $this->screen->render($request, $page, $locale, $form, $blocks, $errors, status: 422);
         } catch (PageException $exception) {
             // The form has checked the other fields already: what is left is about the address.
-            return $this->screen->render($request, $page, $locale, $form->withErrors(['slug' => $exception->getMessage()]), $blocks, status: 422);
+            return $this->screen->render($request, $page, $locale, $form->withErrors(['slug' => $exception->text()]), $blocks, status: 422);
         }
 
-        return $this->screens->redirect($request, PageAdmin::editPath((int) $page->id()) . ($locale === $this->site->defaultLocale ? '' : '?locale=' . rawurlencode($locale)), sprintf(
-            $page->state() === PageState::Published ? 'Saved “%s”. The changes are on the site now.' : 'Saved “%s”.',
-            $content->title,
+        return $this->screens->redirect($request, PageAdmin::editPath((int) $page->id()) . ($locale === $this->site->defaultLocale ? '' : '?locale=' . rawurlencode($locale)), new Message(
+            $page->state() === PageState::Published ? 'Saved “{title}”. The changes are on the site now.' : 'Saved “{title}”.',
+            ['title' => $content->title],
         ));
     }
 

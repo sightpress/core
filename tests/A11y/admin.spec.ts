@@ -31,11 +31,15 @@ test('the dashboard has landmarks, a skip link and the current screen marked', a
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'My account' })).toBeFocused();
   await page.keyboard.press('Tab');
+  await expect(page.getByLabel('Language', { exact: true })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Change language' })).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'Sign out' })).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(nav.getByRole('link', { name: 'Dashboard' })).toBeFocused();
 
-  for (let step = 0; step < 4; step++) {
+  for (let step = 0; step < 6; step++) {
     await page.keyboard.press('Shift+Tab');
   }
   await expect(page.getByRole('link', { name: 'Skip to main content' })).toBeFocused();

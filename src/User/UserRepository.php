@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\User;
 
+use SightPress\Core\Template\Message;
 use Doctrine\ORM\EntityManagerInterface;
 use SightPress\Core\User\Contract\Account;
 use SightPress\Core\Template\ViewerPreferences;
@@ -74,7 +75,7 @@ final readonly class UserRepository implements Accounts, AccountDirectory, Accou
     {
         $existing = $this->findByEmail($user->email());
         if ($existing !== null && $existing !== $user) {
-            throw new UserException(sprintf('Another account already uses %s.', $user->email()));
+            throw new UserException(new Message('Another account already uses {email}.', ['email' => $user->email()]));
         }
 
         $this->entityManager->persist($user);
@@ -94,7 +95,7 @@ final readonly class UserRepository implements Accounts, AccountDirectory, Accou
     public function saveAccount(Account $account): void
     {
         if (!$account instanceof User) {
-            throw new UserException(sprintf('Only accounts found here can be saved here, not a %s.', $account::class));
+            throw new UserException(new Message('Only accounts found here can be saved here, not a {class}.', ['class' => $account::class]));
         }
 
         $this->save($account);

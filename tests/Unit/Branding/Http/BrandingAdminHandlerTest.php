@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Branding\Http;
 
+use SightPress\Core\Tests\Support\Text;
 use Nyholm\Psr7\Stream;
 use Nyholm\Psr7\UploadedFile;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -75,21 +76,21 @@ final class BrandingAdminHandlerTest extends TestCase
     public function testUploadsDescribesAndResetsAPicture(): void
     {
         $uploaded = $this->handle('POST', ['asset' => 'share_image', 'action' => 'save', 'alt' => ['en-GB' => 'The river', 'pt-PT' => 'O rio']], $this->file(MediaFixture::jpeg(2400, 1260)));
-        self::assertSame('/admin/settings/branding#share_image', $uploaded->getHeaderLine('Location'));
-        self::assertSame(['Share picture: uploaded. The preview shows how it was cropped.'], Flash::take($this->session));
+        self::assertSame('/admin/settings/branding#share_image', Text::of($uploaded->getHeaderLine('Location')));
+        self::assertSame(['Share picture: uploaded. The preview shows how it was cropped.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         $state = $this->branding->service()->state();
-        self::assertSame(['The river', 'O rio', true], [$state->alt(BrandAsset::ShareImage), $state->alt(BrandAsset::ShareImage, 'pt-PT'), $state->isUploaded(BrandAsset::ShareImage)]);
+        self::assertSame(['The river', 'O rio', true], Text::of([$state->alt(BrandAsset::ShareImage), $state->alt(BrandAsset::ShareImage, 'pt-PT'), $state->isUploaded(BrandAsset::ShareImage)]));
         self::assertStringContainsString('Reset the share picture to the generated one', (string) $this->handle('GET')->getBody());
 
         $this->handle('POST', ['asset' => 'logo', 'action' => 'save', 'alt' => ['en-GB' => 'Riverside, in blue']]);
-        self::assertSame(['Logo: the text has been saved.'], Flash::take($this->session));
+        self::assertSame(['Logo: the text has been saved.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         $this->handle('POST', ['asset' => 'icon', 'action' => 'save'], $this->file(MediaFixture::png(512, 512)));
-        self::assertSame(['Icon: uploaded.'], Flash::take($this->session));
+        self::assertSame(['Icon: uploaded.'], Text::of(array_map(strval(...), Flash::take($this->session))));
 
         $this->handle('POST', ['asset' => 'share_image', 'action' => 'reset']);
-        self::assertSame(['Share picture: the generated picture is back.'], Flash::take($this->session));
+        self::assertSame(['Share picture: the generated picture is back.'], Text::of(array_map(strval(...), Flash::take($this->session))));
         self::assertFalse($this->branding->service()->state()->isUploaded(BrandAsset::ShareImage));
-        self::assertSame(['branding.share_image', 'branding.logo', 'branding.icon', 'branding.share_image'], array_map(static fn (object $e): string => $e instanceof SettingsChanged ? $e->keys[0] : '', $this->events->events));
+        self::assertSame(['branding.share_image', 'branding.logo', 'branding.icon', 'branding.share_image'], Text::of(array_map(static fn (object $e): string => $e instanceof SettingsChanged ? $e->keys[0] : '', $this->events->events)));
     }
 
     public function testExplainsARefusedUploadOnce(): void

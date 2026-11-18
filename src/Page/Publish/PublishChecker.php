@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Publish;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Block\Contract\BlockContexts;
 use SightPress\Core\Block\Contract\BlockRenderer;
 use SightPress\Core\Block\Contract\BlockValidator;
@@ -74,7 +75,7 @@ final readonly class PublishChecker
     {
         $locale = $translation->locale();
         if (!in_array($locale, $this->site->locales, true)) {
-            return [$this->error($locale, 'page.language', sprintf('The site isn\'t written in "%s" any more. Remove this language from the page, or add it to the site.', $locale), '', ['3.1.1'])];
+            return [$this->error($locale, 'page.language', new Message('The site isn\'t written in "{locale}" any more. Remove this language from the page, or add it to the site.', ['locale' => $locale]), '', ['3.1.1'])];
         }
 
         return [
@@ -133,14 +134,14 @@ final readonly class PublishChecker
         if ($description === null || trim($description) === '') {
             $issues[] = $this->warning($locale, 'seo.description_missing', 'Add a description for search engines: one or two sentences about the page.', '/description');
         } elseif (mb_strlen($description) > self::DESCRIPTION_MAX) {
-            $issues[] = $this->warning($locale, 'seo.description_long', sprintf('Search engines show about %d characters of the description; this one has %d. Shorten it.', self::DESCRIPTION_MAX, mb_strlen($description)), '/description');
+            $issues[] = $this->warning($locale, 'seo.description_long', new Message('Search engines show about {max} characters of the description; this one has {description}. Shorten it.', ['max' => (string) self::DESCRIPTION_MAX, 'description' => (string) mb_strlen($description)]), '/description');
         }
         $summary = $translation->summary();
         if ($summary === null || trim($summary) === '') {
             $issues[] = $this->warning($locale, 'seo.summary_missing', 'Add a summary: it is shown in lists of pages and read by AI search engines.', '/summary');
         }
         if ($this->pages->titleTaken($locale, $translation->title(), (int) $page->id())) {
-            $issues[] = $this->warning($locale, 'seo.title_duplicate', sprintf('Another page is also called "%s". Give this page a title of its own, so people can tell them apart in search results.', $translation->title()), '/title');
+            $issues[] = $this->warning($locale, 'seo.title_duplicate', new Message('Another page is also called "{title}". Give this page a title of its own, so people can tell them apart in search results.', ['title' => $translation->title()]), '/title');
         }
 
         return $issues;
@@ -149,12 +150,12 @@ final readonly class PublishChecker
     /**
      * @param list<string> $wcag
      */
-    private function error(string $locale, string $rule, string $message, string $pointer, array $wcag = []): PublishIssue
+    private function error(string $locale, string $rule, string|Message $message, string $pointer, array $wcag = []): PublishIssue
     {
         return new PublishIssue($locale, A11ySeverity::Error, PublishIssue::ACCESSIBILITY, $rule, $message, $pointer, $wcag);
     }
 
-    private function warning(string $locale, string $rule, string $message, string $pointer): PublishIssue
+    private function warning(string $locale, string $rule, string|Message $message, string $pointer): PublishIssue
     {
         return new PublishIssue($locale, A11ySeverity::Warning, PublishIssue::SEO, $rule, $message, $pointer);
     }

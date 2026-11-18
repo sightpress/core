@@ -6,6 +6,7 @@ namespace SightPress\Core\Admin\Contract;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SightPress\Core\Template\Message;
 
 /**
  * Renders admin screens inside the admin shell, for every module with screens under `/admin`.
@@ -25,5 +26,5 @@ interface AdminScreens
     /**
      * A 303 to an admin screen (Post/Redirect/Get), with an optional message for the next page's live region.
      */
-    public function redirect(ServerRequestInterface $request, string $path, ?string $message = null): ResponseInterface;
+    public function redirect(ServerRequestInterface $request, string $path, string|Message|null $message = null): ResponseInterface;
 }

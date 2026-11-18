@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Editor;
 
+use SightPress\Core\Template\Message;
 use SightPress\Core\Block\Contract\BlockSchema;
 use SightPress\Core\Media\Contract\MediaFile;
 use SightPress\Core\Media\Contract\MediaFormats;
@@ -17,7 +18,7 @@ use SightPress\Core\Media\Contract\MediaLibrary;
  */
 final class MediaChoices
 {
-    /** @var array<string, array<int, string>> */
+    /** @var array<string, array<int, string|Message>> */
     private array $byFormat = [];
 
     public function __construct(
@@ -29,7 +30,7 @@ final class MediaChoices
     /**
      * @param int|null $current the file chosen now, kept even when it isn't among the newest
      *
-     * @return array<int, string> file id => label
+     * @return array<int, string|Message> file id => label
      */
     public function for(string $format, ?int $current = null): array
     {
@@ -50,16 +51,16 @@ final class MediaChoices
         $choices = $this->byFormat[$format];
         if ($current !== null && !isset($choices[$current])) {
             $file = $this->library->file($current);
-            $choices[$current] = $file === null ? sprintf('File %d (no longer in the media library)', $current) : $this->label($file);
+            $choices[$current] = $file === null ? new Message('File {current} (no longer in the media library)', ['current' => (string) $current]) : $this->label($file);
         }
 
         return $choices;
     }
 
-    private function label(MediaFile $file): string
+    private function label(MediaFile $file): Message
     {
-        $label = sprintf('%s (%s)', $file->originalName(), $this->formats->label($file->mimeType()) ?? $file->mimeType());
+        $values = ['name' => $file->originalName(), 'type' => $this->formats->label($file->mimeType()) ?? $file->mimeType()];
 
-        return $file->isPublished() ? $label : $label . ', not published yet';
+        return $file->isPublished() ? new Message('{name} ({type})', $values) : new Message('{name} ({type}), not published yet', $values);
     }
 }

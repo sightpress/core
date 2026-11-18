@@ -22,7 +22,7 @@
         <tbody>
             {%- for language in languages %}
             <tr>
-                <th scope="row" lang="{{ language.code }}">{{ language.name }}</th>
+                <th scope="row">{{ t(language.name) }}</th>
                 <td>{{ language.code }}</td>
                 <td><code>{{ language.prefix }}</code></td>
                 <td>

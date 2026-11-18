@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Auth\Http;
 
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -72,17 +73,17 @@ final readonly class AuthPages
     /**
      * "You have tried to … too many times", with the wait in whole minutes.
      *
-     * @param positive-int $retryAfter seconds
+     * @param 'tried to sign in'|'tried a code'|'asked for a code' $what
+     * @param positive-int                                          $retryAfter seconds
      */
-    public static function tooManyAttempts(string $what, int $retryAfter): string
+    public static function tooManyAttempts(string $what, int $retryAfter): Message
     {
-        $minutes = (int) ceil($retryAfter / 60);
+        $minutes = ['minutes' => (int) ceil($retryAfter / 60)];
 
-        return sprintf(
-            'You have %s too many times. Wait %d %s and try again.',
-            $what,
-            $minutes,
-            $minutes === 1 ? 'minute' : 'minutes',
-        );
+        return match ($what) {
+            'tried to sign in' => new Message('You have tried to sign in too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.', $minutes),
+            'tried a code' => new Message('You have tried a code too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.', $minutes),
+            'asked for a code' => new Message('You have asked for a code too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.', $minutes),
+        };
     }
 }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Contact;
 
+use SightPress\Core\Template\Viewer;
+use SightPress\Core\Template\Translations;
+use SightPress\Core\Template\Message;
 use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Infrastructure\Mail\MailSender;
 use SightPress\Core\Page\Contract\PublicPage;
@@ -22,6 +25,7 @@ final readonly class ContactMailer
         private MailSender $mail,
         private TemplateRenderer $templates,
         private Site $site,
+        private Translations $translations,
     ) {
     }
 
@@ -30,9 +34,12 @@ final readonly class ContactMailer
      */
     public function send(ServerRequestInterface $request, PublicPage $page, array $data, string $name, string $email, string $message): void
     {
+        // Sent to the people who run the site: in the site's language.
+        $viewer = Viewer::recipient(null, $this->site);
+        $request = $request->withAttribute(Viewer::class, $viewer);
         $subject = is_string($data['subject'] ?? null) && trim($data['subject']) !== ''
             ? trim($data['subject'])
-            : sprintf('Message from the contact form on %s', $this->site->name);
+            : $this->translations->translate(new Message('Message from the contact form on {site}', ['site' => $this->site->name]), [], $viewer->locale);
         $uri = $request->getUri();
         $port = $uri->getPort() === null ? '' : ':' . $uri->getPort();
         $context = [

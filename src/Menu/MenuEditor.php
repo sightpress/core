@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Menu;
 
+use SightPress\Core\Template\Message;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Menu\Contract\MenuChanged;
@@ -67,7 +68,7 @@ final readonly class MenuEditor
     public function add(MenuName $menu, ?int $pageId, ?string $label = null, ?string $url = null, ?int $actorId = null, ?MenuItem $parent = null): MenuItem
     {
         if ($parent !== null && ($parent->menu() !== $menu || self::depth($parent) + 1 >= MenuItem::MAX_DEPTH)) {
-            throw new MenuException(sprintf('Menus can be at most %d levels deep.', MenuItem::MAX_DEPTH));
+            throw new MenuException(new Message('Menus can be at most {max} levels deep.', ['max' => (string) MenuItem::MAX_DEPTH]));
         }
         $item = new MenuItem($menu, $parent, $pageId, $label, $url);
         $item->place($parent, count($this->siblings($menu, $parent)));
@@ -113,7 +114,7 @@ final readonly class MenuEditor
         if (!$this->canIndent($item)) {
             throw new MenuException($index === 0
                 ? 'The first entry at a level can\'t be moved in: there is no entry before it to go under.'
-                : sprintf('Menus can be at most %d levels deep.', MenuItem::MAX_DEPTH));
+                : new Message('Menus can be at most {max} levels deep.', ['max' => (string) MenuItem::MAX_DEPTH]));
         }
         $oldParent = $item->parent();
         $parent = $siblings[$index - 1];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Page\Admin\Editor;
 
+use SightPress\Core\Tests\Support\Text;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
@@ -44,16 +45,16 @@ final class MediaChoicesTest extends TestCase
         $library = new CountingMediaLibrary($repository);
         $choices = new MediaChoices($library, new MediaTypes());
 
-        self::assertSame([$ids['photo.png'] => 'photo.png (PNG)'], $choices->for(BlockSchema::FORMAT_IMAGE));
-        self::assertSame([$ids['captions.vtt'] => 'captions.vtt (WebVTT captions)'], $choices->for(BlockSchema::FORMAT_CAPTIONS));
-        self::assertSame([$ids['report.pdf'] => 'report.pdf (PDF), not published yet', $ids['captions.vtt'] => 'captions.vtt (WebVTT captions)'], $choices->for(BlockSchema::FORMAT_DOCUMENT));
-        self::assertSame([$ids['talk.mp3']], array_keys($choices->for(BlockSchema::FORMAT_AUDIO)));
-        self::assertSame([$ids['clip.mp4']], array_keys($choices->for(BlockSchema::FORMAT_VIDEO)));
+        self::assertSame([$ids['photo.png'] => 'photo.png (PNG)'], Text::of($choices->for(BlockSchema::FORMAT_IMAGE)));
+        self::assertSame([$ids['captions.vtt'] => 'captions.vtt (WebVTT captions)'], Text::of($choices->for(BlockSchema::FORMAT_CAPTIONS)));
+        self::assertSame([$ids['report.pdf'] => 'report.pdf (PDF), not published yet', $ids['captions.vtt'] => 'captions.vtt (WebVTT captions)'], Text::of($choices->for(BlockSchema::FORMAT_DOCUMENT)));
+        self::assertSame([$ids['talk.mp3']], Text::of(array_keys($choices->for(BlockSchema::FORMAT_AUDIO))));
+        self::assertSame([$ids['clip.mp4']], Text::of(array_keys($choices->for(BlockSchema::FORMAT_VIDEO))));
         self::assertCount(5, $choices->for(BlockSchema::FORMAT_MEDIA));
-        self::assertSame([], $library->calls, 'lists come from choices(), not one file at a time');
+        self::assertSame([], Text::of($library->calls), 'lists come from choices(), not one file at a time');
 
-        self::assertSame('photo.png (PNG)', $choices->for(BlockSchema::FORMAT_VIDEO, $ids['photo.png'])[$ids['photo.png']], 'the chosen file is kept');
-        self::assertSame('File 999 (no longer in the media library)', $choices->for(BlockSchema::FORMAT_IMAGE, 999)[999]);
-        self::assertSame([$ids['photo.png'] => 'photo.png (PNG)'], $choices->for(BlockSchema::FORMAT_IMAGE, $ids['photo.png']));
+        self::assertSame('photo.png (PNG)', Text::of($choices->for(BlockSchema::FORMAT_VIDEO, $ids['photo.png'])[$ids['photo.png']]), 'the chosen file is kept');
+        self::assertSame('File 999 (no longer in the media library)', Text::of($choices->for(BlockSchema::FORMAT_IMAGE, 999)[999]));
+        self::assertSame([$ids['photo.png'] => 'photo.png (PNG)'], Text::of($choices->for(BlockSchema::FORMAT_IMAGE, $ids['photo.png'])));
     }
 }

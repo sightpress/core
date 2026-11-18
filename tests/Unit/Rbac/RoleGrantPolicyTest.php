@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Rbac;
 
+use SightPress\Core\Tests\Support\Text;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
@@ -42,9 +43,9 @@ final class RoleGrantPolicyTest extends TestCase
         $editor = new Actor(2, ['admin.access', 'user.invite']);
         $contributor = new Actor(3, ['admin.access']);
 
-        self::assertSame(['admin', 'editor', 'contributor', 'member', 'volunteer'], self::names($this->grants->grantableBy($admin)));
-        self::assertSame(['contributor'], self::names($this->grants->grantableBy($editor)));
-        self::assertSame([], self::names($this->grants->grantableBy($contributor)));
+        self::assertSame(['admin', 'editor', 'contributor', 'member', 'volunteer'], Text::of(self::names($this->grants->grantableBy($admin))));
+        self::assertSame(['contributor'], Text::of(self::names($this->grants->grantableBy($editor))));
+        self::assertSame([], Text::of(self::names($this->grants->grantableBy($contributor))));
         self::assertTrue($this->grants->canGrant($admin, 'admin'));
         self::assertFalse($this->grants->canGrant($admin, 'nobody'));
         self::assertTrue($this->grants->canGrant($editor, 'contributor'));
@@ -54,7 +55,7 @@ final class RoleGrantPolicyTest extends TestCase
             new RoleChoice('contributor', 'Contributor', 'Can write pages and send them for review, but not publish them.'),
             $this->grants->grantableBy($editor)[0],
         );
-        self::assertSame('A custom role: Volunteer.', $this->grants->find('volunteer')?->description);
+        self::assertSame('A custom role: Volunteer.', Text::of($this->grants->find('volunteer')?->description));
         self::assertNull($this->grants->find('nobody'));
     }
 
@@ -65,7 +66,7 @@ final class RoleGrantPolicyTest extends TestCase
         $this->grants->assign(7, 'contributor');
         $this->grants->assign(7, 'editor');
 
-        self::assertSame('editor', $this->grants->roleOf(7)?->name);
+        self::assertSame('editor', Text::of($this->grants->roleOf(7)?->name));
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('There is no role called "nobody".');
         $this->grants->assign(7, 'nobody');
@@ -73,15 +74,15 @@ final class RoleGrantPolicyTest extends TestCase
 
     public function testTellsTheRolesOfSeveralPeopleAtOnce(): void
     {
-        self::assertSame([], $this->grants->rolesOf([]));
+        self::assertSame([], Text::of($this->grants->rolesOf([])));
         $this->grants->assign(7, 'editor');
         $this->grants->assign(9, 'member');
 
         $roles = $this->grants->rolesOf([7, 8, 9, 7]);
 
-        self::assertSame([7, 9], array_keys($roles));
-        self::assertSame('editor', $roles[7]->name);
-        self::assertSame('Member', $roles[9]->label);
+        self::assertSame([7, 9], Text::of(array_keys($roles)));
+        self::assertSame('editor', Text::of($roles[7]->name));
+        self::assertSame('Member', Text::of($roles[9]->label));
     }
 
     public function testChangesSomeonesRoleWhenAllowedAndSaysSo(): void
@@ -92,8 +93,8 @@ final class RoleGrantPolicyTest extends TestCase
         $this->grants->change($admin, 7, 'editor');
         $this->grants->change($admin, 8, 'member');
 
-        self::assertSame('editor', $this->grants->roleOf(7)?->name);
-        self::assertEquals([new RoleChanged(7, 1, 'contributor', 'editor'), new RoleChanged(8, 1, null, 'member')], $this->events->events);
+        self::assertSame('editor', Text::of($this->grants->roleOf(7)?->name));
+        self::assertEquals([new RoleChanged(7, 1, 'contributor', 'editor'), new RoleChanged(8, 1, null, 'member')], Text::of($this->events->events));
     }
 
     public function testNobodyChangesTheirOwnRole(): void
@@ -110,10 +111,10 @@ final class RoleGrantPolicyTest extends TestCase
             $this->grants->change(new Actor(2, ['user.invite']), 7, 'admin');
             self::fail('An editor gave the admin role.');
         } catch (InvalidArgumentException $exception) {
-            self::assertSame('This person may not give the role "admin".', $exception->getMessage());
+            self::assertSame('This person may not give the role "admin".', Text::of($exception->getMessage()));
         }
         self::assertNull($this->grants->roleOf(7));
-        self::assertSame([], $this->events->events);
+        self::assertSame([], Text::of($this->events->events));
     }
 
     /**

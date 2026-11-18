@@ -57,10 +57,10 @@ final readonly class PageWorkflowHandler implements RequestHandlerInterface
             return $this->screen->render($request, $page, $locale, $this->screen->saved($locale, $page), $page->translation($locale)?->blocks() ?? [], refused: $blocked->report, status: 422);
         } catch (WorkflowException $exception) {
             if ($exception->forbidden) {
-                throw new HttpForbiddenException($request, $exception->getMessage());
+                throw new HttpForbiddenException($request, (string) $exception->text());
             }
 
-            return $this->screens->redirect($request, $edit, $exception->getMessage());
+            return $this->screens->redirect($request, $edit, $exception->text());
         }
 
         return $this->screens->redirect($request, $edit, match ($transition) {
