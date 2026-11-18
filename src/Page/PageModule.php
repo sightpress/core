@@ -64,6 +64,7 @@ final class PageModule implements ModuleInterface
         $services->autowire(PageIndexQuery::class, PageIndex::class, public: true);
         $services->autowire(PageMarkdown::class, MarkdownPages::class, public: true);
         $services->autowire(PublicPageHandler::class);
+        $services->autowire(PageRedirects::class, public: true);
         $services->autowire(PageEditor::class, public: true);
         $services->autowire(StarterContent::class, public: true);
         $services->autowire(PublishedPages::class, PublicPages::class, public: true);

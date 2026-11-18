@@ -1,0 +1,24 @@
+{#
+    Confirms deleting a page in the trash for good (/admin/pages/{id}/delete): what goes with it, then "Delete for
+    good" and "Keep it in the trash".
+    Context: `title`, `below` (pages under it), `action`, `cancel`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Delete “{title}” for good?', {title: title}) }}{% endblock %}
+{% block content %}
+<h1>{{ t('Delete “{title}” for good?', {title: title}) }}</h1>
+<ul>
+    <li>{{ t('The page, every translation and every older version of it are deleted. This can’t be undone.') }}</li>
+    {%- if below > 0 %}
+    <li>{{ below == 1 ? t('The page under it, which is in the trash too, is deleted with it.') : t('The {count} pages under it, which are in the trash too, are deleted with it.', {count: below}) }}</li>
+    {%- endif %}
+    <li>{{ t('Its address tells visitors and search engines that the page is gone. A new page can use the address again.') }}</li>
+</ul>
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <div class="page-editor__workflow">
+        <button type="submit" class="button button--danger">{{ t('Delete for good') }}</button>
+        <a href="{{ cancel }}">{{ t('Keep it in the trash') }}</a>
+    </div>
+</form>
+{% endblock %}

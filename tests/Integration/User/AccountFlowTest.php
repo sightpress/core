@@ -87,6 +87,8 @@ final class AccountFlowTest extends TestCase
             new FixedClock(new DateTimeImmutable('2026-11-16 23:30:00 UTC')),
             Services::get($container, \Psr\EventDispatcher\EventDispatcherInterface::class),
             Services::get($container, \SightPress\Core\Block\Contract\BlockValidator::class),
+            Services::get($container, \SightPress\Core\Page\PageRedirects::class),
+            Services::get($container, \SightPress\Core\Template\Translations::class),
         );
         $editor->create('en-GB', new PageContent('Opening hours'), authorId: $tokyo->id());
 

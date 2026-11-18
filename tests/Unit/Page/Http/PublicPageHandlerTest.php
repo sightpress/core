@@ -297,6 +297,43 @@ final class PublicPageHandlerTest extends TestCase
         self::assertStringContainsString('![A lighthouse at dusk]', (string) $this->get('https://demo.example/lighthouse.md')->getBody());
     }
 
+    public function testOldAddressesLeadToTheNewOnesAndDeletedOrTrashedPagesAreGone(): void
+    {
+        $pages = $this->fixture->pages;
+        $home = $pages->published('Welcome');
+        $pages->addresses()->setHome($home);
+        $about = $pages->published('About');
+        $team = $pages->published('Team', [], $about);
+        $pages->translated($about, 'pt-PT', new PageContent('Sobre'));
+        $pages->editor()->move($team, null, 9);
+        $redirects = $pages->redirects();
+        $redirects->add('en-GB', 'welcome-old', 'welcome');
+        $redirects->add('pt-PT', 'antigo', 'nada');
+        $redirects->gone('en-GB', 'deleted');
+
+        foreach ([
+            ['https://demo.example/about/team', 'https://demo.example/team'],
+            ['https://demo.example/about/team.md', 'https://demo.example/team.md'],
+            ['https://demo.example/welcome-old', 'https://demo.example/'],
+            ['https://demo.example/welcome-old.md', 'https://demo.example/index.md'],
+            ['https://demo.example/pt-pt/antigo', 'https://demo.example/pt-pt/nada'],
+        ] as [$old, $new]) {
+            $response = $this->get($old);
+            self::assertSame([301, $new], [$response->getStatusCode(), $response->getHeaderLine('Location')], $old);
+        }
+
+        $about->changeState(\SightPress\Core\Rbac\Contract\PageState::Trash, $pages->clock->now());
+        foreach (['https://demo.example/deleted', 'https://demo.example/about', 'https://demo.example/pt-pt/sobre'] as $gone) {
+            try {
+                $this->get($gone);
+                self::fail($gone . ' is gone');
+            } catch (\Slim\Exception\HttpGoneException) {
+            }
+        }
+        $this->expectException(HttpNotFoundException::class);
+        $this->get('https://demo.example/never-was');
+    }
+
     /**
      * @param array<string, string> $headers
      */
@@ -331,6 +368,7 @@ final class PublicPageHandlerTest extends TestCase
             new \SightPress\Core\Http\AcceptNegotiator(),
             new \SightPress\Core\Tenant\TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $config]),
             $this->fixture->blocks->texts($pages->site),
+            $pages->redirects(),
         );
     }
 }

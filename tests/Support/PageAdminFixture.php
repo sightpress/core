@@ -17,8 +17,11 @@ use SightPress\Core\Page\Admin\Editor\PageEditorScreen;
 use SightPress\Core\Page\Admin\Http\NewPageHandler;
 use SightPress\Core\Page\Admin\Http\PageEditorHandler;
 use SightPress\Core\Page\Admin\Http\PageListHandler;
+use SightPress\Core\Page\Admin\Http\PageOperationsHandler;
+use SightPress\Core\Page\Admin\Http\PagePurgeHandler;
 use SightPress\Core\Page\Admin\Http\PageTranslationHandler;
 use SightPress\Core\Page\Admin\Http\PageWorkflowHandler;
+use SightPress\Core\Page\Admin\Http\RedirectsHandler;
 use SightPress\Core\Page\Admin\PageAdmin;
 use SightPress\Core\Page\Admin\PageAdminModule;
 use SightPress\Core\Page\Publish\PublishChecker;
@@ -107,6 +110,7 @@ final class PageAdminFixture
             $this->blocks->contexts($this->pages->site),
             $choices,
             $this->pages->site,
+            $this->pages->repository(),
         );
     }
 
@@ -146,12 +150,27 @@ final class PageAdminFixture
         return new PageTranslationHandler($this->admin->shell(), $this->pageAdmin(), $this->screen(), $this->pages->editor(), $this->checks(), $this->authorizer(), $this->pages->site);
     }
 
+    public function operationsHandler(): PageOperationsHandler
+    {
+        return new PageOperationsHandler($this->admin->shell(), $this->pageAdmin(), $this->pages->editor(), $this->pages->repository(), $this->pages->addresses(), $this->authorizer(), $this->pages->site);
+    }
+
+    public function purgeHandler(): PagePurgeHandler
+    {
+        return new PagePurgeHandler($this->admin->shell(), $this->pageAdmin(), $this->pages->editor(), $this->pages->repository(), $this->authorizer(), $this->pages->site);
+    }
+
+    public function redirectsHandler(): RedirectsHandler
+    {
+        return new RedirectsHandler($this->admin->shell(), $this->admin->auth->validator(), $this->pages->redirects(), $this->pages->addresses(), $this->pages->site);
+    }
+
     /**
      * Runs a request through a handler as the person, with `{id}` set when given.
      *
      * @param array<string, mixed> $body
      */
-    public function handle(PageListHandler|NewPageHandler|PageEditorHandler|PageWorkflowHandler|PageTranslationHandler $handler, ?User $user, string $method, string $path, array $body = [], ?int $id = null): ResponseInterface
+    public function handle(\Psr\Http\Server\RequestHandlerInterface $handler, ?User $user, string $method, string $path, array $body = [], ?int $id = null): ResponseInterface
     {
         $request = $this->admin->request($user, $method, $path, $body, $this->session);
         if ($id !== null) {

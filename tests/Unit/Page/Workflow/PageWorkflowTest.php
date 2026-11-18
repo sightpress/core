@@ -201,17 +201,60 @@ final class PageWorkflowTest extends TestCase
         $this->workflow->apply($page, PageTransition::Submit, new Actor(3, self::EDITOR));
     }
 
+    public function testArchivesRestoresTrashesAndUntrashesKeepingTheTreeWhole(): void
+    {
+        $editor = new Actor(3, [...self::EDITOR, 'page.archive', 'page.delete']);
+        $about = $this->fixture->published('About');
+        $team = $this->fixture->published('Team', [], $about);
+
+        self::assertSame([PageTransition::Unpublish, PageTransition::Archive, PageTransition::Trash], $this->workflow->available($about, $editor));
+        $this->workflow->apply($about, PageTransition::Archive, $editor);
+        self::assertSame(PageState::Archived, $about->state());
+        self::assertSame([PageTransition::Restore, PageTransition::Trash], $this->workflow->available($about, $editor));
+
+        try {
+            $this->workflow->apply($about, PageTransition::Trash, $editor);
+            self::fail('A page with live pages under it stays out of the trash.');
+        } catch (WorkflowException $exception) {
+            self::assertSame('This page has pages under it. Move them somewhere else or put them in the trash first.', $exception->getMessage());
+        }
+        $this->workflow->apply($team, PageTransition::Trash, $editor);
+        $this->workflow->apply($about, PageTransition::Trash, $editor);
+        self::assertSame([PageState::Trash, PageState::Trash], [$about->state(), $team->state()]);
+        self::assertSame([PageTransition::Untrash], $this->workflow->available($team, $editor));
+
+        try {
+            $this->workflow->apply($team, PageTransition::Untrash, $editor);
+            self::fail('A page under a page in the trash stays there.');
+        } catch (WorkflowException $exception) {
+            self::assertSame('The page above this one is in the trash. Take that page out of the trash first.', $exception->getMessage());
+        }
+        $this->workflow->apply($about, PageTransition::Untrash, $editor);
+        $this->workflow->apply($team, PageTransition::Untrash, $editor);
+        self::assertSame([PageState::Draft, PageState::Draft], [$about->state(), $team->state()]);
+        $this->workflow->apply($about, PageTransition::Archive, $editor);
+        $this->workflow->apply($about, PageTransition::Restore, $editor);
+        self::assertSame(PageState::Draft, $about->state());
+
+        $steps = array_map(static fn (object $event): string => $event instanceof PageTransitioned ? $event->transition->value . ':' . $event->from->value . '>' . $event->to->value : '', $this->fixture->events);
+        self::assertSame(['archive:published>archived', 'trash:published>trash', 'trash:archived>trash', 'untrash:trash>draft', 'untrash:trash>draft', 'archive:draft>archived', 'restore:archived>draft'], array_values(array_filter($steps)));
+    }
+
     public function testDescribesEachStep(): void
     {
         self::assertSame(
             [
-                ['submit', 'draft', 'in_review', 'page.submit', 'Submit for review'],
-                ['reject', 'in_review', 'draft', 'page.reject', 'Send back to draft'],
-                ['approve', 'in_review', 'approved', 'page.approve', 'Approve'],
-                ['publish', 'approved', 'published', 'page.publish', 'Publish'],
-                ['unpublish', 'published', 'draft', 'page.unpublish', 'Unpublish'],
+                ['submit', ['draft'], 'in_review', 'page.submit', 'Submit for review', false],
+                ['reject', ['in_review'], 'draft', 'page.reject', 'Send back to draft', true],
+                ['approve', ['in_review'], 'approved', 'page.approve', 'Approve', false],
+                ['publish', ['approved'], 'published', 'page.publish', 'Publish', false],
+                ['unpublish', ['published'], 'draft', 'page.unpublish', 'Unpublish', true],
+                ['archive', ['draft', 'in_review', 'approved', 'published'], 'archived', 'page.archive', 'Archive', true],
+                ['restore', ['archived'], 'draft', 'page.restore', 'Restore as a draft', false],
+                ['trash', ['draft', 'in_review', 'approved', 'published', 'archived'], 'trash', 'page.trash', 'Put in the trash', true],
+                ['untrash', ['trash'], 'draft', 'page.untrash', 'Take out of the trash', false],
             ],
-            array_map(static fn (PageTransition $t): array => [$t->value, $t->fromState()->value, $t->toState()->value, $t->action()->value, $t->label()], PageTransition::cases()),
+            array_map(static fn (PageTransition $t): array => [$t->value, array_map(static fn ($state): string => $state->value, $t->fromStates()), $t->toState()->value, $t->action()->value, $t->label(), $t->isBackwards()], PageTransition::cases()),
         );
     }
 

@@ -105,6 +105,14 @@ final readonly class PageContent
     }
 
     /**
+     * The same content with another title and slug, for example for a copy of the page.
+     */
+    public function withTitle(string $title, string $slug): self
+    {
+        return new self($title, $slug, $this->summary, $this->description, $this->blocks, $this->socialImage, $this->seoTitle, $this->noindex, $this->canonicalUrl);
+    }
+
+    /**
      * The content as stored in a revision snapshot.
      *
      * @return array{title: string, slug: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string}

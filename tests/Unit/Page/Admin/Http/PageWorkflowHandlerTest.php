@@ -48,6 +48,10 @@ final class PageWorkflowHandlerTest extends TestCase
             [$this->editor, 'approve', PageState::Approved, 'Approved. It can be published now.'],
             [$this->editor, 'publish', PageState::Published, 'Published. Visitors can see the page now.'],
             [$this->editor, 'unpublish', PageState::Draft, 'Unpublished. Visitors can’t see the page any more; it is a draft again.'],
+            [$this->editor, 'archive', PageState::Archived, 'Archived. Visitors can’t see the page any more; it is kept with the archived pages.'],
+            [$this->editor, 'restore', PageState::Draft, 'Restored as a draft. Publish it again when it is ready.'],
+            [$this->editor, 'trash', PageState::Trash, 'Put in the trash. Its address now tells visitors the page is gone.'],
+            [$this->editor, 'untrash', PageState::Draft, 'Taken out of the trash as a draft. Publish it again when it is ready.'],
         ];
         foreach ($steps as [$user, $transition, $state, $message]) {
             $response = $this->send($user, ['transition' => $transition, 'comment' => 'Note']);

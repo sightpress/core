@@ -105,6 +105,40 @@ final class PageEditorHandlerTest extends TestCase
         self::assertStringContainsString('<form action="/admin/pages/' . $this->page->id() . '/workflow" method="post">', $html);
     }
 
+    public function testShowsThePlaceInTheSiteAndTheCopyAndDeleteButtons(): void
+    {
+        $child = $this->fixture->pages->editor()->create('en-GB', new PageContent('Holidays'), $this->page);
+        $sibling = $this->fixture->pages->editor()->create('en-GB', new PageContent('Winter'), $this->page);
+        $trashed = $this->fixture->pages->editor()->create('en-GB', new PageContent('Old'));
+        $trashed->changeState(\SightPress\Core\Rbac\Contract\PageState::Trash, new DateTimeImmutable());
+
+        $html = (string) $this->fixture->handle($this->fixture->editorHandler(), $this->editor, 'GET', '/admin/pages/x', id: (int) $sibling->id())->getBody();
+
+        self::assertStringContainsString('<h2 id="place-title">Place in the site</h2>', $html);
+        self::assertStringContainsString('The page is under: Opening hours', $html);
+        foreach (['up' => 'Move up', 'in' => 'Move under the page before it', 'out' => 'Move out to the level above'] as $value => $label) {
+            self::assertStringContainsString('<button type="submit" name="op" value="' . $value . '" class="button button--secondary">' . $label . '</button>', $html);
+        }
+        self::assertStringNotContainsString('value="down"', $html);
+        self::assertStringContainsString('<option value="top">The top level of the site</option>', $html);
+        self::assertStringContainsString('<option value="' . $child->id() . '">Under “Holidays” (/opening-hours/holidays)</option>', $html);
+        self::assertStringNotContainsString('Under “Old”', $html, 'not under a page in the trash');
+        self::assertStringNotContainsString('Under “Winter”', $html, 'not under itself');
+        self::assertStringContainsString('<form action="/admin/pages/' . $sibling->id() . '/operations" method="post">', $html);
+        self::assertStringContainsString('>Copy this page</button>', $html);
+        self::assertStringNotContainsString('Delete this page for good', $html);
+
+        $html = (string) $this->fixture->handle($this->fixture->editorHandler(), $this->editor, 'GET', '/admin/pages/x', id: (int) $this->page->id())->getBody();
+        self::assertStringContainsString('The page is at the top level of the site.', $html);
+        self::assertStringNotContainsString('Under “Holidays”', $html, 'not under its own subpages');
+
+        $html = (string) $this->fixture->handle($this->fixture->editorHandler(), $this->editor, 'GET', '/admin/pages/x', id: (int) $trashed->id())->getBody();
+        self::assertStringNotContainsString('Place in the site', $html);
+        self::assertStringNotContainsString('Copy this page', $html);
+        self::assertStringContainsString('<a href="/admin/pages/' . $trashed->id() . '/delete">Delete this page for good</a>', $html);
+        self::assertStringContainsString('<button type="submit" name="transition" value="untrash">Take out of the trash</button>', $html);
+    }
+
     public function testFallsBackWhenThereIsLittleToShow(): void
     {
         $page = $this->fixture->pages->editor()->create('en-GB', new PageContent('Bare'), null, (int) $this->editor->id());

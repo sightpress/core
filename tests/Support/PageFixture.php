@@ -10,6 +10,8 @@ use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\PageAddresses;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
+use SightPress\Core\Page\PageRedirects;
+use SightPress\Core\Template\Translations;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Page\PageRepository;
 use SightPress\Core\Tenant\OwnerType;
@@ -109,6 +111,19 @@ final class PageFixture implements EventDispatcherInterface
 
     public function editor(): PageEditor
     {
-        return new PageEditor($this->repository(), $this->site, $this->clock, $this, new BlockFixture($this->blockTypes, $this->database)->validator());
+        return new PageEditor($this->repository(), $this->site, $this->clock, $this, new BlockFixture($this->blockTypes, $this->database)->validator(), $this->redirects(), self::translations());
+    }
+
+    public function redirects(): PageRedirects
+    {
+        return new PageRedirects($this->database->entityManager, $this->repository(), $this->clock, $this);
+    }
+
+    /**
+     * Core's interface text catalogues.
+     */
+    public static function translations(): Translations
+    {
+        return Translations::fromDirectories([dirname(__DIR__, 2) . '/resources/translations']);
     }
 }

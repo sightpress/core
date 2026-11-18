@@ -164,10 +164,56 @@
         </div>
         <div class="page-editor__workflow">
             {%- for transition in transitions %}
-            <button type="submit" name="transition" value="{{ transition.value }}"{% if transition.value == 'reject' or transition.value == 'unpublish' %} class="button button--secondary"{% endif %}>{{ t(transition.label) }}</button>
+            <button type="submit" name="transition" value="{{ transition.value }}"{% if transition.danger %} class="button button--danger"{% elseif transition.backwards %} class="button button--secondary"{% endif %}>{{ t(transition.label) }}</button>
             {%- endfor %}
         </div>
     </form>
+    <p>{{ t('Archive takes the page off the site and keeps it. The trash keeps it too, until it is deleted for good; while it is there, its address tells visitors the page is gone.') }}</p>
+</section>
+{%- endif %}
+{%- if place %}
+<section class="admin-panel" aria-labelledby="place-title">
+    <h2 id="place-title">{{ t('Place in the site') }}</h2>
+    <p>{% if place.above is empty %}{{ t('The page is at the top level of the site.') }}{% else %}{{ t('The page is under: {pages}', {pages: place.above|join(' › ')}) }}{% endif %}</p>
+    <p>{{ t('Pages under it move with it. Links to its old address keep leading to it.') }}</p>
+    {%- if place.shifts is not empty %}
+    <form action="{{ operations_action }}" method="post">
+        {{ csrf_fields() }}
+        <div class="page-editor__workflow">
+            {%- for shift in place.shifts %}
+            <button type="submit" name="op" value="{{ shift.value }}" class="button button--secondary">{{ t(shift.label) }}</button>
+            {%- endfor %}
+        </div>
+    </form>
+    {%- endif %}
+    <form action="{{ operations_action }}" method="post">
+        {{ csrf_fields() }}
+        <div class="field">
+            <label for="move-parent">{{ t('Move to') }}</label>
+            <p class="field-hint" id="move-parent-hint">{{ t('The page goes to the end of the pages there.') }}</p>
+            <select id="move-parent" name="parent" aria-describedby="move-parent-hint">
+                {%- for value, label in place.parents %}
+                <option value="{{ value }}">{{ t(label) }}</option>
+                {%- endfor %}
+            </select>
+        </div>
+        <button type="submit" name="op" value="move" class="button button--secondary">{{ t('Move the page') }}</button>
+    </form>
+</section>
+{%- endif %}
+{%- if may_copy or delete_url %}
+<section class="admin-panel" aria-labelledby="more-title">
+    <h2 id="more-title">{{ t('Copy or delete') }}</h2>
+    {%- if may_copy %}
+    <form action="{{ operations_action }}" method="post">
+        {{ csrf_fields() }}
+        <p>{{ t('A copy is a new draft with the same text and blocks in every language, right after this page.') }}</p>
+        <button type="submit" name="op" value="copy" class="button button--secondary">{{ t('Copy this page') }}</button>
+    </form>
+    {%- endif %}
+    {%- if delete_url %}
+    <p><a href="{{ delete_url }}">{{ t('Delete this page for good') }}</a></p>
+    {%- endif %}
 </section>
 {%- endif %}
 {% endblock %}

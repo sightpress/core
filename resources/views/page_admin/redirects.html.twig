@@ -1,0 +1,59 @@
+{#
+    Redirects (/admin/redirects): a table of old addresses and where they lead ("Gone" for pages deleted for good),
+    each with a "Remove" button that names the address, then the form that adds one.
+    Context: `redirects` [{id, from, to, language, changed}], `languages` (more than one), `form`, `action`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Redirects') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Redirects') }}</h1>
+<p>{{ t('When a page moves or gets a new address, its old address leads to the new one, so links and bookmarks keep working. When a page is deleted for good, its old address tells visitors it is gone.') }}</p>
+<section class="admin-panel" aria-labelledby="redirects-title">
+    <h2 id="redirects-title">{{ redirects|length == 1 ? t('1 redirect') : t('{count} redirects', {count: redirects|length}) }}</h2>
+    {%- if redirects is empty %}
+    <p>{{ t('There are no redirects yet.') }}</p>
+    {%- else %}
+    <div class="table-wrap" role="region" aria-labelledby="redirects-caption" tabindex="0">
+    <table>
+        <caption id="redirects-caption" class="visually-hidden">{{ t('Old addresses and where they lead') }}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{ t('Old address') }}</th>
+                <th scope="col">{{ t('Leads to') }}</th>
+                {%- if languages %}<th scope="col">{{ t('Language') }}</th>{% endif %}
+                <th scope="col">{{ t('Changed') }}</th>
+                <th scope="col">{{ t('Actions') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%- for redirect in redirects %}
+            <tr>
+                <th scope="row"><code>{{ redirect.from }}</code></th>
+                <td>{% if redirect.to is null %}{{ t('Gone: the page was deleted') }}{% else %}<a href="{{ redirect.to }}"><code>{{ redirect.to }}</code></a>{% endif %}</td>
+                {%- if languages %}<td>{{ t(redirect.language) }}</td>{% endif %}
+                <td><time datetime="{{ redirect.changed|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ redirect.changed|user_datetime }}</time></td>
+                <td>
+                    <form action="{{ action }}" method="post">
+                        {{ csrf_fields() }}
+                        <input type="hidden" name="id" value="{{ redirect.id }}">
+                        <button type="submit" name="op" value="remove" class="button button--secondary">{{ t('Remove the redirect from {address}', {address: redirect.from}) }}</button>
+                    </form>
+                </td>
+            </tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+    </div>
+    {%- endif %}
+</section>
+<section class="admin-panel" aria-labelledby="add-redirect-title">
+    <h2 id="add-redirect-title">{{ t('Add a redirect') }}</h2>
+    {{ f.error_summary(form) }}
+    {{ f.start(form, action) }}
+        {{ f.field(form, 'from') }}
+        {{ f.field(form, 'to') }}
+        {{ f.submit(t('Add redirect')) }}
+    {{ f.end() }}
+</section>
+{% endblock %}

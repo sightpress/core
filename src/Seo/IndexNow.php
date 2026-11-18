@@ -6,7 +6,7 @@ namespace SightPress\Core\Seo;
 
 use Psr\Log\LoggerInterface;
 use SightPress\Core\Page\Contract\PageLinks;
-use SightPress\Core\Page\Contract\PageTransition;
+use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Page\Contract\PageTransitioned;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Tenant\Site;
@@ -17,7 +17,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * IndexNow (indexnow.org): when it is switched on in the site settings (off by default, D12, because it contacts
  * search engines), publishing or unpublishing a page tells the search engines that take part, so they look at
- * it again soon. Only in production. The site's key is made when it is first needed and served at {@see PATH}; a
+ * it again soon (and so does archiving or trashing a published page). Only in production. The site's key is made when it is first needed and served at {@see PATH}; a
  * failed ping is logged and never stops the page being published.
  */
 final readonly class IndexNow
@@ -61,7 +61,7 @@ final readonly class IndexNow
 
     public function __invoke(PageTransitioned $event): void
     {
-        if (!in_array($event->transition, [PageTransition::Publish, PageTransition::Unpublish], true)
+        if (($event->from !== PageState::Published && $event->to !== PageState::Published)
             || !$this->isOn()
             || !$this->config->environment->isProduction()) {
             return;

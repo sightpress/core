@@ -74,6 +74,8 @@ final class PageContentTest extends TestCase
         self::assertSame(['Meet us', true, 'https://example.org/original?a=1'], [$content->seoTitle, $content->noindex, $content->canonicalUrl]);
         $copy = $content->withBlocks([]);
         self::assertSame(['Meet us', true, 'https://example.org/original?a=1'], [$copy->seoTitle, $copy->noindex, $copy->canonicalUrl]);
+        $renamed = $content->withTitle('Copy of About', 'about-copy');
+        self::assertSame(['Copy of About', 'about-copy', 'Meet us', true], [$renamed->title, $renamed->slug, $renamed->seoTitle, $renamed->noindex]);
         self::assertNull(new PageContent('About', canonicalUrl: ' ')->canonicalUrl);
         foreach (['/about', 'ftp://example.org/x', 'https://', 'https://exa mple.org', 'https://example.org/' . str_repeat('a', 2000)] as $url) {
             try {

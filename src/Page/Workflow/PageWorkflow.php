@@ -20,9 +20,11 @@ use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
 
 /**
- * Moves pages through the workflow (ADR-0006): the state machine decides which steps exist from each state, the
- * authorizer (page voter) decides who may take them, and publishing needs the publish checks to find no errors
- * ({@see PublishChecker}). After a step is stored, {@see PageTransitioned} is dispatched.
+ * Moves pages through the workflow (ADR-0006, ADR-0027): the state machine decides which steps exist from each
+ * state, the authorizer (page voter) decides who may take them, and publishing needs the publish checks to find no
+ * errors ({@see PublishChecker}). The tree stays whole: a page goes in the trash only when every page under it is
+ * there already, and comes out of it only when the page above it isn't in the trash. After a step is stored,
+ * {@see PageTransitioned} is dispatched.
  *
  * Domain code and the admin use this service only, never the workflow library.
  */
@@ -39,10 +41,12 @@ final readonly class PageWorkflow
         private EventDispatcherInterface $events,
         private PublishChecker $checks,
     ) {
-        $transitions = array_map(
-            static fn (PageTransition $transition): Transition => new Transition($transition->value, $transition->fromState()->value, $transition->toState()->value),
-            PageTransition::cases(),
-        );
+        $transitions = [];
+        foreach (PageTransition::cases() as $transition) {
+            foreach ($transition->fromStates() as $from) {
+                $transitions[] = new Transition($transition->value, $from->value, $transition->toState()->value);
+            }
+        }
         $places = array_map(static fn (PageState $state): string => $state->value, PageState::cases());
         $this->machine = new StateMachine(new Definition($places, $transitions, PageState::Draft->value), new PageMarkingStore(), name: 'page');
     }
@@ -79,6 +83,7 @@ final readonly class PageWorkflow
         if (!$this->authorizer->can($actor, $transition->action()->value, $page)) {
             throw new WorkflowException(new Message('You don\'t have permission to do "{label}" on this page.', ['label' => Message::of($transition->label())]), true);
         }
+        $this->checkTree($page, $transition);
         if ($transition === PageTransition::Publish) {
             $report = $this->checks->check($page);
             if (!$report->canPublish()) {
@@ -101,6 +106,23 @@ final readonly class PageWorkflow
             $actor->userId,
             $comment === '' ? null : $comment,
         ));
+    }
+
+    /**
+     * @throws WorkflowException when the step would leave a page in the trash with pages in use under it
+     */
+    private function checkTree(Page $page, PageTransition $transition): void
+    {
+        if ($transition === PageTransition::Trash) {
+            foreach ($this->pages->descendants($page) as $below) {
+                if ($below->state() !== PageState::Trash) {
+                    throw new WorkflowException('This page has pages under it. Move them somewhere else or put them in the trash first.');
+                }
+            }
+        }
+        if ($transition === PageTransition::Untrash && $page->parent()?->state() === PageState::Trash) {
+            throw new WorkflowException('The page above this one is in the trash. Take that page out of the trash first.');
+        }
     }
 
     private static function describe(PageState $state): string

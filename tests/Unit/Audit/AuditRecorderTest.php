@@ -40,6 +40,9 @@ use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\UserRepository;
 
 #[CoversClass(AuditRecorder::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\PageCloned::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\PagePurged::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\RedirectChanged::class)]
 #[UsesNamespace('SightPress\Core')]
 final class AuditRecorderTest extends TestCase
 {
@@ -80,6 +83,16 @@ final class AuditRecorderTest extends TestCase
             new RoleChanged(999, 1, 'editor', 'admin'),
             new AccountChanged($user, $user, ['display_name', 'avatar']),
             new SettingsChanged(['site.name', 'site.contact_email', 'branding.logo', 'branding.icon', 'branding.share_image', 'site.default_locale', 'site.locales', 'site.default_timezone', 'acme.other'], 1),
+            new PageTransitioned($page, PageTransition::Archive, PageState::Published, PageState::Archived, 4),
+            new PageTransitioned($page, PageTransition::Restore, PageState::Archived, PageState::Draft, 4),
+            new PageTransitioned($page, PageTransition::Trash, PageState::Draft, PageState::Trash, 4),
+            new PageTransitioned($page, PageTransition::Untrash, PageState::Trash, PageState::Draft, 4),
+            new \SightPress\Core\Page\Contract\PageCloned($page, $page, 4),
+            new \SightPress\Core\Page\Contract\PagePurged(41, 'Old news', [41], 4),
+            new \SightPress\Core\Page\Contract\PagePurged(42, 'Archive', [42, 43, 44], 4),
+            new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::ADDED, 'pt-PT', 'antigo', 'novo', 4),
+            new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::REMOVED, 'en-GB', 'old', null, 4),
+            new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::REMOVED, 'en-GB', 'old', 'new', 4),
             new \stdClass(),
         ] as $event) {
             $recorder($event);
@@ -108,10 +121,23 @@ final class AuditRecorderTest extends TestCase
             'Changed the role of account 999 from editor to admin.',
             'Changed the display name, avatar of Zoë.',
             'Changed the site settings: Site name, Contact email address, Logo, Icon, Share picture, Main language, Languages, Time zone, acme.other.',
+            'Archived “About us”.',
+            'Restored “About us” as a draft.',
+            'Put “About us” in the trash.',
+            'Took “About us” out of the trash.',
+            'Copied “About us” as “About us”.',
+            'Deleted “Old news” for good.',
+            'Deleted “Archive” for good with the 2 pages under it.',
+            'Added a redirect from /antigo to /novo (European Portuguese).',
+            'Removed the “gone” answer of /old (British English).',
+            'Removed the redirect from /old to /new (British English).',
         ], array_map(static fn (AuditEntry $e): string => $e->summary, $entries));
         self::assertSame(['page.submit', 'page', (string) $page, 3, ['from' => 'draft', 'to' => 'in_review', 'comment' => 'Ready']], [$entries[3]->action, $entries[3]->entityType, $entries[3]->entityId, $entries[3]->actorId, $entries[3]->details]);
         self::assertSame(['settings', null], [$entries[20]->entityType, $entries[20]->entityId]);
         self::assertSame(['menu.moved_up', 'main'], [$entries[14]->action, $entries[14]->entityId]);
-        self::assertCount(12, AuditRecorder::EVENTS);
+        self::assertSame(['page.purged', 'page', '42', ['pages' => [42, 43, 44]]], [$entries[27]->action, $entries[27]->entityType, $entries[27]->entityId, $entries[27]->details]);
+        self::assertSame(['redirect.added', 'redirect', null, ['locale' => 'pt-PT', 'from' => 'antigo', 'to' => 'novo']], [$entries[28]->action, $entries[28]->entityType, $entries[28]->entityId, $entries[28]->details]);
+        self::assertSame(['page.cloned', ['source' => $page]], [$entries[25]->action, $entries[25]->details]);
+        self::assertCount(15, AuditRecorder::EVENTS);
     }
 }

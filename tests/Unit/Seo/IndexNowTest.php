@@ -52,18 +52,20 @@ final class IndexNowTest extends TestCase
         new IndexNowKeyHandler($this->indexNow('production'), new Psr17Factory())->handle(new ServerRequest('GET', '/indexnow-key.txt'));
     }
 
-    public function testTellsSearchEnginesAboutPublishedAndUnpublishedPagesInProduction(): void
+    public function testTellsSearchEnginesAboutPagesThatArePublishedOrTakenOffTheSiteInProduction(): void
     {
         $this->pages->database->settings()->set(IndexNow::SETTING, '1');
         $about = $this->pages->published('About');
         $indexNow = $this->indexNow('production');
 
-        foreach ([PageTransition::Publish, PageTransition::Unpublish, PageTransition::Submit] as $transition) {
-            $indexNow(new PageTransitioned((int) $about->id(), $transition, PageState::Approved, PageState::Published, 1));
-        }
+        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Publish, PageState::Approved, PageState::Published, 1));
+        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Unpublish, PageState::Published, PageState::Draft, 1));
+        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Submit, PageState::Draft, PageState::InReview, 1));
+        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Archive, PageState::InReview, PageState::Archived, 1));
+        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Trash, PageState::Published, PageState::Trash, 1));
         $indexNow(new PageTransitioned(999, PageTransition::Publish, PageState::Approved, PageState::Published, 1));
 
-        self::assertCount(2, $this->requests, 'publish and unpublish only, and only pages that exist');
+        self::assertCount(3, $this->requests, 'only steps to or from published, and only pages that exist');
         [$method, $url, $options] = $this->requests[0];
         self::assertSame(['POST', IndexNow::ENDPOINT], [$method, $url]);
         $key = $indexNow->key();

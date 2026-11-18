@@ -41,7 +41,8 @@ final class PageAdminModuleTest extends TestCase
         foreach ([
             PageAdmin::class, BlockData::class, BlockOperation::class, BlockFormView::class, MediaChoices::class,
             PageEditorScreen::class, PageListHandler::class, NewPageHandler::class, PageEditorHandler::class, PageWorkflowHandler::class,
-            \SightPress\Core\Page\Admin\Http\PageTranslationHandler::class,
+            \SightPress\Core\Page\Admin\Http\PageTranslationHandler::class, \SightPress\Core\Page\Admin\Http\PageOperationsHandler::class,
+            \SightPress\Core\Page\Admin\Http\PagePurgeHandler::class, \SightPress\Core\Page\Admin\Http\RedirectsHandler::class,
         ] as $class) {
             self::assertArrayHasKey($class, $registry->services());
         }
@@ -56,9 +57,13 @@ final class PageAdminModuleTest extends TestCase
             'page_admin.edit' => ['/admin/pages/{id:[0-9]+}', PageEditorHandler::class, ['GET', 'POST'], $admin],
             'page_admin.translations' => ['/admin/pages/{id:[0-9]+}/translations', \SightPress\Core\Page\Admin\Http\PageTranslationHandler::class, ['POST'], $admin],
             'page_admin.workflow' => ['/admin/pages/{id:[0-9]+}/workflow', PageWorkflowHandler::class, ['POST'], $admin],
+            'page_admin.operations' => ['/admin/pages/{id:[0-9]+}/operations', \SightPress\Core\Page\Admin\Http\PageOperationsHandler::class, ['POST'], $admin],
+            'page_admin.delete' => ['/admin/pages/{id:[0-9]+}/delete', \SightPress\Core\Page\Admin\Http\PagePurgeHandler::class, ['GET', 'POST'], $admin],
+            'page_admin.redirects' => ['/admin/redirects', \SightPress\Core\Page\Admin\Http\RedirectsHandler::class, ['GET', 'POST'], $admin],
         ], $routes);
         $menu = array_values(array_filter($registry->adminMenu(), static fn ($m) => $m->module === 'page_admin'));
         self::assertSame(['page_admin.list', 'Pages', 'page.edit.own', 10], [$menu[0]->item->id, $menu[0]->item->label, $menu[0]->item->permission, $menu[0]->item->position]);
+        self::assertSame(['page_admin.redirects', 'Redirects', 'page.edit.any', 15], [$menu[1]->item->id, $menu[1]->item->label, $menu[1]->item->permission, $menu[1]->item->position]);
         $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'page_admin'));
         self::assertFileExists($views[0]->item->directory . '/editor.html.twig');
     }

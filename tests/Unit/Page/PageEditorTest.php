@@ -16,6 +16,8 @@ use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
 use SightPress\Core\Page\PageException;
 use SightPress\Core\Page\PageRepository;
+use SightPress\Core\Page\PageShift;
+use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Tests\Support\PageFixture;
 
 #[CoversClass(PageEditor::class)]
@@ -23,6 +25,9 @@ use SightPress\Core\Tests\Support\PageFixture;
 #[CoversClass(PageSaved::class)]
 #[CoversClass(PageMoved::class)]
 #[CoversClass(\SightPress\Core\Page\Contract\TranslationPublished::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\PageCloned::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\PagePurged::class)]
+#[CoversClass(PageShift::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PageEditorTest extends TestCase
 {
@@ -294,6 +299,14 @@ final class PageEditorTest extends TestCase
     }
 
     /**
+     * @return array{?Page, ?string, int} the parent, the address and the position
+     */
+    private static function place(Page $page): array
+    {
+        return [$page->parent(), $page->translation('en-GB')?->path(), $page->position()];
+    }
+
+    /**
      * @return list<Page>
      */
     private function topLevel(string ...$slugs): array
@@ -375,5 +388,165 @@ final class PageEditorTest extends TestCase
 
         $this->expectExceptionMessage('The page isn\'t written in "pt-PT" yet.');
         $this->editor->publishTranslation($this->fixture->published('Contact'), 'pt-PT', true);
+    }
+
+    public function testOldAddressesOfPublishedPagesLeadToTheNewOnesInOneHop(): void
+    {
+        $about = $this->fixture->published('About');
+        $contact = $this->fixture->published('Contact');
+        $team = $this->fixture->published('Team', [], $about);
+        $this->fixture->translated($about, 'pt-PT', new PageContent('Sobre'));
+        $this->fixture->translated($team, 'pt-PT', new PageContent('Equipa'));
+        $this->fixture->translated($contact, 'pt-PT', new PageContent('Contacto'));
+        $people = $this->editor->create('en-GB', new PageContent('People'), $team);
+        $redirects = $this->fixture->redirects();
+
+        $this->editor->move($team, null, 9);
+
+        self::assertSame(['team', 'equipa', 'team/people'], [$team->translation('en-GB')?->path(), $team->translation('pt-PT')?->path(), $people->translation('en-GB')?->path()]);
+        self::assertSame('team', $redirects->find('en-GB', 'about/team')?->target());
+        self::assertSame('equipa', $redirects->find('pt-PT', 'sobre/equipa')?->target());
+        self::assertNull($redirects->find('en-GB', 'about/team/people'), 'a draft was never at its old address for visitors');
+
+        $this->editor->move($team, $contact, 0);
+        self::assertSame('contact/team', $redirects->find('en-GB', 'about/team')?->target(), 'chains collapse to one hop');
+        self::assertSame('contact/team', $redirects->find('en-GB', 'team')?->target());
+        self::assertSame('contacto/equipa', $redirects->find('pt-PT', 'sobre/equipa')?->target());
+
+        $this->editor->move($team, null, 9);
+        self::assertNull($redirects->find('en-GB', 'team'), 'the page took its old address back');
+        self::assertSame('team', $redirects->find('en-GB', 'about/team')?->target());
+        self::assertSame('team', $redirects->find('en-GB', 'contact/team')?->target());
+
+        $this->editor->save($about, 'en-GB', new PageContent('About us', 'about-us'));
+        self::assertSame('about-us', $redirects->find('en-GB', 'about')?->target());
+
+        $this->editor->create('en-GB', new PageContent('About again', 'about'));
+        self::assertNull($redirects->find('en-GB', 'about'), 'a new page on an old address wins');
+    }
+
+    public function testShiftsAPageOneStep(): void
+    {
+        [$a, $b, $c] = $this->topLevel('a', 'b', 'c');
+
+        $this->editor->shift($c, PageShift::Up, 4);
+        self::assertSame([0, 1, 2], [$a->position(), $c->position(), $b->position()]);
+        $this->editor->shift($c, PageShift::Down);
+        self::assertSame(2, $c->position());
+        $this->editor->shift($c, PageShift::In);
+        self::assertSame([$b, 'b/c', 0], self::place($c));
+        $this->editor->shift($c, PageShift::Out);
+        self::assertSame([null, 'c', 2], self::place($c));
+
+        foreach ([
+            [$a, PageShift::Up, 'The page is already the first one at its level.'],
+            [$c, PageShift::Down, 'The page is already the last one at its level.'],
+            [$a, PageShift::In, 'There is no page before this one to move it under.'],
+            [$a, PageShift::Out, 'The page is already at the top level.'],
+        ] as [$page, $shift, $message]) {
+            try {
+                $this->editor->shift($page, $shift);
+                self::fail('Expected ' . $shift->value . ' to be refused.');
+            } catch (PageException $exception) {
+                self::assertSame($message, $exception->getMessage());
+            }
+        }
+        self::assertSame(['Move up', 'Move down', 'Move under the page before it', 'Move out to the level above'], array_map(static fn (PageShift $shift): string => $shift->label(), PageShift::cases()));
+    }
+
+    public function testNeverMovesAPageUnderOneInTheTrash(): void
+    {
+        [$a, $b] = $this->topLevel('a', 'b');
+        $a->changeState(PageState::Trash, $this->fixture->clock->now());
+
+        $this->expectExceptionMessage('A page can\'t be moved under a page in the trash.');
+        $this->editor->move($b, $a, 0);
+    }
+
+    public function testCopiesAPageRightAfterItInEveryLanguage(): void
+    {
+        $about = $this->fixture->published('About', [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Hello', 'level' => 2]]]);
+        $contact = $this->fixture->published('Contact');
+        $this->fixture->translated($about, 'pt-PT', new PageContent('Sobre'));
+        $about->setLayout('home', $this->fixture->clock->now());
+        $about->setPublic(false, $this->fixture->clock->now());
+        $this->fixture->events = [];
+
+        $copy = $this->editor->copy($about, 6);
+        $again = $this->editor->copy($about, 6);
+
+        self::assertSame([PageState::Draft, 'home', false, 6], [$copy->state(), $copy->layout(), $copy->isPublic(), $copy->authorId()]);
+        self::assertSame(['Copy of About', 'about-copy', 'Cópia de Sobre', 'sobre-copy'], [$copy->translation('en-GB')?->title(), $copy->translation('en-GB')?->path(), $copy->translation('pt-PT')?->title(), $copy->translation('pt-PT')?->path()]);
+        self::assertSame($about->translation('en-GB')?->blocks(), $copy->translation('en-GB')?->blocks());
+        self::assertFalse($copy->translation('pt-PT')?->isDraft());
+        self::assertSame('about-copy-2', $again->translation('en-GB')?->slug());
+        self::assertSame([0, 1, 2, 3], [$about->position(), $again->position(), $copy->position(), $contact->position()]);
+        self::assertSame(1, $this->pages->lastRevisionNumber($copy));
+        self::assertEquals([
+            new PageCreated((int) $copy->id(), 'en-GB', 6),
+            new \SightPress\Core\Page\Contract\PageCloned((int) $copy->id(), (int) $about->id(), 6),
+        ], array_slice($this->fixture->events, 0, 2));
+        self::assertSame('Hello', $about->translation('en-GB')?->blocks()[0]['data']['text'] ?? null, 'the original doesn\'t change');
+    }
+
+    public function testCopiesKeepTheSlugShortAndNeedALanguageOfTheSite(): void
+    {
+        $long = $this->editor->create('en-GB', new PageContent('Long', str_repeat('a', 60)));
+        self::assertSame(str_repeat('a', 55) . '-copy', $this->editor->copy($long)->translation('en-GB')?->slug());
+
+        $welsh = new PageFixture($this->fixture->database, [], ['cy']);
+        $this->expectExceptionMessage('The page isn\'t written in any of the site\'s languages, so there is nothing to copy.');
+        $welsh->editor()->copy($long);
+    }
+
+    public function testDeletesATrashedBranchForGoodLeavingItsAddressesGone(): void
+    {
+        [$a, $b, $c] = $this->topLevel('a', 'b', 'c');
+        $child = $this->fixture->published('Child', [], $b);
+        $this->fixture->translated($b, 'pt-PT', new PageContent('Bê', 'be'));
+        $this->editor->save($b, 'en-GB', new PageContent('B', 'b'));
+        $redirects = $this->fixture->redirects();
+        $redirects->add('en-GB', 'old-b', 'b');
+        $this->fixture->events = [];
+
+        try {
+            $this->editor->purge($b, 5);
+            self::fail('Only pages in the trash are deleted.');
+        } catch (PageException $exception) {
+            self::assertSame('Only pages in the trash can be deleted for good, with every page under them.', $exception->getMessage());
+        }
+        $b->changeState(PageState::Trash, $this->fixture->clock->now());
+        try {
+            $this->editor->purge($b, 5);
+            self::fail('The pages under it must be in the trash too.');
+        } catch (PageException) {
+        }
+        $child->changeState(PageState::Trash, $this->fixture->clock->now());
+        $ids = [(int) $b->id(), (int) $child->id()];
+
+        $this->editor->purge($b, 5);
+
+        $this->fixture->database->entityManager->clear();
+        self::assertNull($this->pages->find($ids[0]));
+        self::assertNull($this->pages->find($ids[1]));
+        self::assertSame([0, 1], [$this->pages->find((int) $a->id())?->position(), $this->pages->find((int) $c->id())?->position()]);
+        foreach ([['en-GB', 'b'], ['pt-PT', 'be'], ['en-GB', 'b/child'], ['en-GB', 'old-b']] as [$locale, $path]) {
+            self::assertTrue($redirects->find($locale, $path)?->isGone(), $path . ' is gone');
+        }
+        self::assertEquals([new \SightPress\Core\Page\Contract\PagePurged($ids[0], 'B', $ids, 5)], $this->fixture->events);
+
+        $page = $this->editor->create('en-GB', new PageContent('New B', 'b'));
+        self::assertNull($redirects->find('en-GB', 'b'));
+        $nameless = new Page(null, 0, null, $this->fixture->clock->now());
+        $nameless->changeState(PageState::Trash, $this->fixture->clock->now());
+        $this->pages->add($nameless);
+        $this->pages->flush();
+        $nameless->placeInTree();
+        $this->pages->flush();
+        $this->editor->purge($nameless);
+        $last = end($this->fixture->events);
+        self::assertInstanceOf(\SightPress\Core\Page\Contract\PagePurged::class, $last);
+        self::assertSame('page ' . $nameless->id(), $last->title);
+        self::assertSame(2, $page->position());
     }
 }

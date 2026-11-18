@@ -21,7 +21,7 @@ use Slim\Exception\HttpForbiddenException;
 
 /**
  * `POST /admin/pages/{id}/workflow`: the workflow buttons of the editor (submit for review, send back, approve,
- * publish, unpublish), with an optional note for the next person. They act on the saved page. When the publish
+ * publish, unpublish, archive, restore, put in or take out of the trash), with an optional note for the next person. They act on the saved page. When the publish
  * checks stop publishing, the editor comes back with the list of problems, which gets focus.
  */
 final readonly class PageWorkflowHandler implements RequestHandlerInterface
@@ -69,6 +69,10 @@ final readonly class PageWorkflowHandler implements RequestHandlerInterface
             PageTransition::Approve => 'Approved. It can be published now.',
             PageTransition::Publish => 'Published. Visitors can see the page now.',
             PageTransition::Unpublish => 'Unpublished. Visitors can’t see the page any more; it is a draft again.',
+            PageTransition::Archive => 'Archived. Visitors can’t see the page any more; it is kept with the archived pages.',
+            PageTransition::Restore => 'Restored as a draft. Publish it again when it is ready.',
+            PageTransition::Trash => 'Put in the trash. Its address now tells visitors the page is gone.',
+            PageTransition::Untrash => 'Taken out of the trash as a draft. Publish it again when it is ready.',
         });
     }
 }

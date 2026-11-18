@@ -18,10 +18,13 @@ use SightPress\Core\Page\Contract\MarkdownAddress;
 use SightPress\Core\Page\Contract\MarkdownPages;
 use SightPress\Core\Page\Entity\PageTranslation;
 use SightPress\Core\Page\Contract\PublicPageRendering;
+use SightPress\Core\Page\Entity\PageRedirect;
 use SightPress\Core\Page\PageAddresses;
+use SightPress\Core\Page\PageRedirects;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\Contract\PageAction;
+use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Template\ViewerPreferences;
 use SightPress\Core\Tenant\LocaleCode;
@@ -29,6 +32,7 @@ use SightPress\Core\Tenant\LocaleFallback;
 use SightPress\Core\Template\Viewer;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\TenantConfig;
+use Slim\Exception\HttpGoneException;
 use Slim\Exception\HttpNotFoundException;
 use Twig\Environment;
 
@@ -38,7 +42,8 @@ use Twig\Environment;
  * signed in), in a translation that isn't a draft of its own; anything else is a 404, so nothing is given away about
  * drafts. Addresses that aren't the page's own
  * are moved permanently: `/about/` → `/about`, the home page's own path → `/`, any of the site's other domains → its
- * first one. Other modules add menus, `<head>` tags
+ * first one; old addresses of pages that moved lead to their new ones (redirects table, P-1). Pages in the trash, and
+ * pages deleted for good, are gone (410). Other modules add menus, `<head>` tags
  * and more through the {@see PublicPageRendering} event.
  *
  * Every page is also there as Markdown, at `/{path}.md` (`/index.md` for the home page) or for requests that prefer
@@ -66,6 +71,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         private AcceptNegotiator $negotiator,
         private TenantConfig $config,
         private MediaTexts $texts,
+        private PageRedirects $redirects,
     ) {
     }
 
@@ -94,8 +100,15 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         }
         [$locale, $localPath] = $this->addresses->split($pagePath === '' ? '/' : $pagePath);
         $translation = $this->addresses->findIn($locale, $localPath);
+        $redirect = $translation === null ? $this->redirects->find($locale, rawurldecode($localPath)) : null;
+        if ($redirect !== null) {
+            return $this->redirected($request, $redirect, $markdownPath);
+        }
         if ($translation === null || !$this->visible($translation, $actor)) {
             $fallback = $this->fallback($locale, $localPath, $translation, $actor);
+            if ($fallback === null && $translation?->page()->state() === PageState::Trash) {
+                throw new HttpGoneException($request);
+            }
             if ($fallback === null) {
                 throw new HttpNotFoundException($request);
             }
@@ -366,6 +379,22 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         $response->getBody()->write($body);
 
         return $response->withHeader('Content-Type', $type);
+    }
+
+    /**
+     * An old address: a permanent redirect (301) to where the page is now, or "gone" (410) when it was deleted.
+     *
+     * @throws HttpGoneException
+     */
+    private function redirected(ServerRequestInterface $request, PageRedirect $redirect, bool $markdown): ResponseInterface
+    {
+        $target = $redirect->target() ?? throw new HttpGoneException($request);
+        $translation = $this->addresses->findIn($redirect->locale(), $target);
+        $prefix = $this->addresses->prefixOf($redirect->locale());
+        $url = $translation === null ? $prefix . '/' . $target : $this->addresses->url($translation);
+        $home = $translation !== null && $this->addresses->isHome($translation->page());
+
+        return $this->moved($request->getUri()->withPath($markdown ? MarkdownAddress::of($url, $home) : $url)->__toString());
     }
 
     private function moved(string $location): ResponseInterface

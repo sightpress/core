@@ -167,6 +167,45 @@ final readonly class PageRepository
     }
 
     /**
+     * Deletes pages for good with their translations and revisions, and forgets them. Pages under others come first
+     * in the list (deepest first), so no page is ever left pointing to a deleted parent.
+     *
+     * @param list<Page> $pages
+     */
+    public function delete(array $pages): void
+    {
+        if ($pages === []) {
+            return;
+        }
+        $ids = array_map(static fn (Page $page): int => (int) $page->id(), $pages);
+        foreach ($pages as $page) {
+            foreach ($this->revisions($page) as $revision) {
+                $this->entityManager->detach($revision);
+            }
+        }
+        foreach ([PageRevision::class, PageTranslation::class] as $class) {
+            $this->entityManager->createQueryBuilder()
+                ->delete($class, 'x')
+                ->where('IDENTITY(x.page) IN (:ids)')
+                ->setParameter('ids', $ids)
+                ->getQuery()
+                ->execute();
+        }
+        foreach ($pages as $page) {
+            $this->entityManager->createQueryBuilder()
+                ->delete(Page::class, 'p')
+                ->where('p.id = :id')
+                ->setParameter('id', $page->id())
+                ->getQuery()
+                ->execute();
+            foreach ($page->translations() as $translation) {
+                $this->entityManager->detach($translation);
+            }
+            $this->entityManager->detach($page);
+        }
+    }
+
+    /**
      * Marks a new page or revision to be saved by the next {@see flush()}.
      */
     public function add(Page|PageRevision $entity): void

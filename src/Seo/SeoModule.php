@@ -6,6 +6,7 @@ namespace SightPress\Core\Seo;
 
 use SightPress\Core\Page\Contract\PageCreated;
 use SightPress\Core\Page\Contract\PageMoved;
+use SightPress\Core\Page\Contract\PagePurged;
 use SightPress\Core\Page\Contract\PageSaved;
 use SightPress\Core\Page\Contract\PageTransitioned;
 use SightPress\Core\Page\Contract\TranslationPublished;
@@ -53,7 +54,7 @@ final class SeoModule implements ModuleInterface
 
         $subscribers = $registrar->subscribers();
         $subscribers->listen(PublicPageRendering::class, SeoHead::class, SeoHead::PRIORITY);
-        foreach ([PageCreated::class, PageSaved::class, PageMoved::class, PageTransitioned::class, TranslationPublished::class, SettingsChanged::class] as $event) {
+        foreach ([PageCreated::class, PageSaved::class, PageMoved::class, PageTransitioned::class, TranslationPublished::class, PagePurged::class, SettingsChanged::class] as $event) {
             $subscribers->listen($event, SeoCachePurger::class);
         }
         $subscribers->listen(PageTransitioned::class, IndexNow::class);

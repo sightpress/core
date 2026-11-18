@@ -82,8 +82,8 @@ final readonly class PageListHandler implements RequestHandlerInterface
             'filtered' => $filtered,
             'filters' => ['state' => $state === null ? '' : $state->value, 'q' => $text, 'mine' => $mine],
             'states' => array_combine(
-                array_map(static fn (PageState $s): string => $s->value, [PageState::Draft, PageState::InReview, PageState::Approved, PageState::Published]),
-                array_map(PageAdmin::stateLabel(...), [PageState::Draft, PageState::InReview, PageState::Approved, PageState::Published]),
+                array_map(static fn (PageState $s): string => $s->value, PageState::cases()),
+                array_map(PageAdmin::stateLabel(...), PageState::cases()),
             ),
             'can_create' => $actor->has('page.create'),
             'total' => count(array_filter($nodes, static fn (array $node): bool => $node['open'])),

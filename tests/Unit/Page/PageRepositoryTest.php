@@ -106,6 +106,27 @@ final class PageRepositoryTest extends TestCase
         return $page;
     }
 
+    public function testDeletesPagesWithTheirTranslationsAndRevisions(): void
+    {
+        $about = $this->page(null, 0, 'about', 'about');
+        $team = $this->page($about, 0, 'team', 'about/team');
+        $contact = $this->page(null, 1, 'contact', 'contact');
+        $this->pages->add(new \SightPress\Core\Page\Entity\PageRevision($team, 1, null, $this->now));
+        $this->pages->flush();
+        $ids = [(int) $about->id(), (int) $team->id()];
+
+        $this->pages->delete([]);
+        $this->pages->delete([$team, $about]);
+        $this->pages->flush();
+
+        $this->database->entityManager->clear();
+        self::assertNull($this->pages->find($ids[0]));
+        self::assertNull($this->pages->find($ids[1]));
+        self::assertNull($this->pages->findByPath('en-GB', 'about/team'));
+        self::assertSame([$contact->id()], array_map(static fn (Page $p) => $p->id(), $this->pages->all()));
+        self::assertEquals(0, $this->database->entityManager->getConnection()->createQueryBuilder()->select('COUNT(*)')->from('page_revisions')->fetchOne());
+    }
+
     private function page(?Page $parent, int $position, string $slug, string $path): Page
     {
         $page = new Page($parent, $position, null, $this->now);

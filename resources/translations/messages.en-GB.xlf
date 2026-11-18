@@ -73,6 +73,12 @@
         <target>1 problem stops this page being published</target>
       </segment>
     </unit>
+    <unit id="fc631b71138916a9">
+      <segment>
+        <source>1 redirect</source>
+        <target>1 redirect</target>
+      </segment>
+    </unit>
     <unit id="12f9ee52c899e379">
       <segment>
         <source>2 starts a main part of the page, 3 a part of that, and so on. The page title is the only level 1.</source>
@@ -107,6 +113,12 @@
       <segment>
         <source>A WebVTT captions file (.vtt) from the media library.</source>
         <target>A WebVTT captions file (.vtt) from the media library.</target>
+      </segment>
+    </unit>
+    <unit id="b1e98924c22ab3b3">
+      <segment>
+        <source>A copy is a new draft with the same text and blocks in every language, right after this page.</source>
+        <target>A copy is a new draft with the same text and blocks in every language, right after this page.</target>
       </segment>
     </unit>
     <unit id="23c5290860776ab4">
@@ -173,6 +185,12 @@
       <segment>
         <source>A page can have at most {max} blocks.</source>
         <target>A page can have at most {max} blocks.</target>
+      </segment>
+    </unit>
+    <unit id="f31e2bb2e44b3885">
+      <segment>
+        <source>A page can't be moved under a page in the trash.</source>
+        <target>A page can't be moved under a page in the trash.</target>
       </segment>
     </unit>
     <unit id="bc35bed99e2dbdbf">
@@ -301,6 +319,12 @@
         <target>Add a page</target>
       </segment>
     </unit>
+    <unit id="7a50f485f104a87b">
+      <segment>
+        <source>Add a redirect</source>
+        <target>Add a redirect</target>
+      </segment>
+    </unit>
     <unit id="b09e4fcba1ad369f">
       <segment>
         <source>Add a transcript of what is said and shown, for people who can't see or hear the video.</source>
@@ -355,10 +379,22 @@
         <target>Add pictures, video, audio and files.</target>
       </segment>
     </unit>
+    <unit id="db0c533c72869324">
+      <segment>
+        <source>Add redirect</source>
+        <target>Add redirect</target>
+      </segment>
+    </unit>
     <unit id="a5fc2478b82afe6c">
       <segment>
         <source>Added a {label} block. It is {noun} {items} of {items2}.</source>
         <target>Added a {label} block. It is {noun} {items} of {items2}.</target>
+      </segment>
+    </unit>
+    <unit id="bccb6d49f2b4dea9">
+      <segment>
+        <source>Added the redirect: {from} now leads to {to}.</source>
+        <target>Added the redirect: {from} now leads to {to}.</target>
       </segment>
     </unit>
     <unit id="253f82797bf5a8fc">
@@ -457,6 +493,12 @@
         <target>An account without a password can't be activated; set a password first.</target>
       </segment>
     </unit>
+    <unit id="d0a8a14f54672f42">
+      <segment>
+        <source>An address can’t lead to itself.</source>
+        <target>An address can’t lead to itself.</target>
+      </segment>
+    </unit>
     <unit id="b37bb429ea8cb1b6">
       <segment>
         <source>An avatar needs a file path.</source>
@@ -517,16 +559,34 @@
         <target>Approved. It can be published now.</target>
       </segment>
     </unit>
+    <unit id="66f4804ee23ddc09">
+      <segment>
+        <source>Archive</source>
+        <target>Archive</target>
+      </segment>
+    </unit>
     <unit id="0e50b40628d605ce">
       <segment>
         <source>Archive pages</source>
         <target>Archive pages</target>
       </segment>
     </unit>
+    <unit id="d088a7d46bc0f576">
+      <segment>
+        <source>Archive takes the page off the site and keeps it. The trash keeps it too, until it is deleted for good; while it is there, its address tells visitors the page is gone.</source>
+        <target>Archive takes the page off the site and keeps it. The trash keeps it too, until it is deleted for good; while it is there, its address tells visitors the page is gone.</target>
+      </segment>
+    </unit>
     <unit id="bdb86505f8062d15">
       <segment>
         <source>Archived</source>
         <target>Archived</target>
+      </segment>
+    </unit>
+    <unit id="26297e8988d91780">
+      <segment>
+        <source>Archived. Visitors can’t see the page any more; it is kept with the archived pages.</source>
+        <target>Archived. Visitors can’t see the page any more; it is kept with the archived pages.</target>
       </segment>
     </unit>
     <unit id="7756faecccba93a2">
@@ -883,6 +943,30 @@
         <target>Continue</target>
       </segment>
     </unit>
+    <unit id="0b3d21bbc6052b7f">
+      <segment>
+        <source>Copied the page. This is the copy, a new draft: change its title and address before you publish it.</source>
+        <target>Copied the page. This is the copy, a new draft: change its title and address before you publish it.</target>
+      </segment>
+    </unit>
+    <unit id="5a8bef75de36ec3a">
+      <segment>
+        <source>Copy of {title}</source>
+        <target>Copy of {title}</target>
+      </segment>
+    </unit>
+    <unit id="cbe6256a35efe099">
+      <segment>
+        <source>Copy or delete</source>
+        <target>Copy or delete</target>
+      </segment>
+    </unit>
+    <unit id="afb6a848b5fe10b5">
+      <segment>
+        <source>Copy this page</source>
+        <target>Copy this page</target>
+      </segment>
+    </unit>
     <unit id="862d3b2696cfbc19">
       <segment>
         <source>Create my account</source>
@@ -943,6 +1027,12 @@
         <target>Deactivate {name}</target>
       </segment>
     </unit>
+    <unit id="1c92e637ec2ba65b">
+      <segment>
+        <source>Delete for good</source>
+        <target>Delete for good</target>
+      </segment>
+    </unit>
     <unit id="8dd26ec1bc9769ac">
       <segment>
         <source>Delete page</source>
@@ -967,6 +1057,12 @@
         <target>Delete this file</target>
       </segment>
     </unit>
+    <unit id="748f0b87fb9561d2">
+      <segment>
+        <source>Delete this page for good</source>
+        <target>Delete this page for good</target>
+      </segment>
+    </unit>
     <unit id="3cf8146e529f1e42">
       <segment>
         <source>Delete {name}</source>
@@ -977,6 +1073,18 @@
       <segment>
         <source>Delete {name}?</source>
         <target>Delete {name}?</target>
+      </segment>
+    </unit>
+    <unit id="2147ec2a251d4e35">
+      <segment>
+        <source>Delete “{title}” for good?</source>
+        <target>Delete “{title}” for good?</target>
+      </segment>
+    </unit>
+    <unit id="abd94902b6fc2c9c">
+      <segment>
+        <source>Deleted “{title}” for good. Its address now tells visitors the page is gone.</source>
+        <target>Deleted “{title}” for good. Its address now tells visitors the page is gone.</target>
       </segment>
     </unit>
     <unit id="f83c2abfde5a5fcb">
@@ -1145,6 +1253,18 @@
       <segment>
         <source>Enter the email address you sign in with. We will email you a 6-digit code to type on the next page.</source>
         <target>Enter the email address you sign in with. We will email you a 6-digit code to type on the next page.</target>
+      </segment>
+    </unit>
+    <unit id="650b71e57f1cb2cd">
+      <segment>
+        <source>Enter the new address</source>
+        <target>Enter the new address</target>
+      </segment>
+    </unit>
+    <unit id="856fd31a94582d00">
+      <segment>
+        <source>Enter the old address</source>
+        <target>Enter the old address</target>
       </segment>
     </unit>
     <unit id="62fd9988e2dff052">
@@ -1417,6 +1537,12 @@
         <target>Go to the home page</target>
       </segment>
     </unit>
+    <unit id="64096df084b65eb2">
+      <segment>
+        <source>Gone: the page was deleted</source>
+        <target>Gone: the page was deleted</target>
+      </segment>
+    </unit>
     <unit id="552163f3b9392634">
       <segment>
         <source>Google Search Console verification code</source>
@@ -1591,6 +1717,12 @@
         <target>It uses the saved translation: save your changes first. Visitors see it once the page itself is published.</target>
       </segment>
     </unit>
+    <unit id="bfbe1fb13cc82b61">
+      <segment>
+        <source>Its address tells visitors and search engines that the page is gone. A new page can use the address again.</source>
+        <target>Its address tells visitors and search engines that the page is gone. A new page can use the address again.</target>
+      </segment>
+    </unit>
     <unit id="7b9ba3c88cb71c0f">
       <segment>
         <source>Join {name}</source>
@@ -1601,6 +1733,12 @@
       <segment>
         <source>Keep alt text under 250 characters; put longer descriptions in the caption or the text.</source>
         <target>Keep alt text under 250 characters; put longer descriptions in the caption or the text.</target>
+      </segment>
+    </unit>
+    <unit id="e10d420c4c4eb093">
+      <segment>
+        <source>Keep it in the trash</source>
+        <target>Keep it in the trash</target>
       </segment>
     </unit>
     <unit id="b44c0be20c1245f2">
@@ -1685,6 +1823,12 @@
       <segment>
         <source>Layout</source>
         <target>Layout</target>
+      </segment>
+    </unit>
+    <unit id="a2d6cff71912b577">
+      <segment>
+        <source>Leads to</source>
+        <target>Leads to</target>
       </segment>
     </unit>
     <unit id="253f90712d048f07">
@@ -1879,10 +2023,46 @@
         <target>Move out</target>
       </segment>
     </unit>
+    <unit id="164d23997a54ea85">
+      <segment>
+        <source>Move out to the level above</source>
+        <target>Move out to the level above</target>
+      </segment>
+    </unit>
+    <unit id="7ac50626bdfbb937">
+      <segment>
+        <source>Move the page</source>
+        <target>Move the page</target>
+      </segment>
+    </unit>
+    <unit id="beb8194bc458f28d">
+      <segment>
+        <source>Move to</source>
+        <target>Move to</target>
+      </segment>
+    </unit>
+    <unit id="60108d663609dc26">
+      <segment>
+        <source>Move under the page before it</source>
+        <target>Move under the page before it</target>
+      </segment>
+    </unit>
     <unit id="c66feb5eb8f217c7">
       <segment>
         <source>Move up</source>
         <target>Move up</target>
+      </segment>
+    </unit>
+    <unit id="f50171a3584beba6">
+      <segment>
+        <source>Moved the page.</source>
+        <target>Moved the page.</target>
+      </segment>
+    </unit>
+    <unit id="e2ade256f2ac29c9">
+      <segment>
+        <source>Moved the page. Its address is now {url}; links to its old address still lead to it.</source>
+        <target>Moved the page. Its address is now {url}; links to its old address still lead to it.</target>
       </segment>
     </unit>
     <unit id="46b8a23abb6b155a">
@@ -1937,6 +2117,12 @@
       <segment>
         <source>Names the video for screen readers and search engines.</source>
         <target>Names the video for screen readers and search engines.</target>
+      </segment>
+    </unit>
+    <unit id="b71b5df47d4bef1e">
+      <segment>
+        <source>New address</source>
+        <target>New address</target>
       </segment>
     </unit>
     <unit id="3dd9df4441fb348f">
@@ -2071,6 +2257,18 @@
         <target>Nothing was changed.</target>
       </segment>
     </unit>
+    <unit id="3c168c860a3aeb02">
+      <segment>
+        <source>Old address</source>
+        <target>Old address</target>
+      </segment>
+    </unit>
+    <unit id="97086050289abe52">
+      <segment>
+        <source>Old addresses and where they lead</source>
+        <target>Old addresses and where they lead</target>
+      </segment>
+    </unit>
     <unit id="62f32f746e406534">
       <segment>
         <source>Older entries</source>
@@ -2117,6 +2315,12 @@
       <segment>
         <source>Only pages I wrote</source>
         <target>Only pages I wrote</target>
+      </segment>
+    </unit>
+    <unit id="fd85ba419bf7ca9a">
+      <segment>
+        <source>Only pages in the trash can be deleted for good, with every page under them.</source>
+        <target>Only pages in the trash can be deleted for good, with every page under them.</target>
       </segment>
     </unit>
     <unit id="2ec0b2fd72b24d55">
@@ -2215,6 +2419,12 @@
         <target>Pages that aren't published yet appear in the menu once they are.</target>
       </segment>
     </unit>
+    <unit id="efae72c331b8f8a1">
+      <segment>
+        <source>Pages under it move with it. Links to its old address keep leading to it.</source>
+        <target>Pages under it move with it. Links to its old address keep leading to it.</target>
+      </segment>
+    </unit>
     <unit id="e7cf3ef4f17c3999">
       <segment>
         <source>Password</source>
@@ -2255,6 +2465,12 @@
       <segment>
         <source>Pictures</source>
         <target>Pictures</target>
+      </segment>
+    </unit>
+    <unit id="c35256ef51cf771e">
+      <segment>
+        <source>Place in the site</source>
+        <target>Place in the site</target>
       </segment>
     </unit>
     <unit id="403976066d8cb25c">
@@ -2365,6 +2581,18 @@
         <target>Published. Visitors can see the page now.</target>
       </segment>
     </unit>
+    <unit id="7da44e404567a61d">
+      <segment>
+        <source>Put in the trash</source>
+        <target>Put in the trash</target>
+      </segment>
+    </unit>
+    <unit id="d7fa31e86b04c75a">
+      <segment>
+        <source>Put in the trash. Its address now tells visitors the page is gone.</source>
+        <target>Put in the trash. Its address now tells visitors the page is gone.</target>
+      </segment>
+    </unit>
     <unit id="8b331af35d290d45">
       <segment>
         <source>Put it under</source>
@@ -2407,6 +2635,12 @@
         <target>Recent activity</target>
       </segment>
     </unit>
+    <unit id="4340f2850559b250">
+      <segment>
+        <source>Redirects</source>
+        <target>Redirects</target>
+      </segment>
+    </unit>
     <unit id="c3812fc4acb861d5">
       <segment>
         <source>Remove</source>
@@ -2419,6 +2653,12 @@
         <target>Remove picture</target>
       </segment>
     </unit>
+    <unit id="0affa4054a7a7687">
+      <segment>
+        <source>Remove the redirect from {address}</source>
+        <target>Remove the redirect from {address}</target>
+      </segment>
+    </unit>
     <unit id="63f50b46a5ca0fac">
       <segment>
         <source>Remove {language}</source>
@@ -2429,6 +2669,12 @@
       <segment>
         <source>Remove {language}?</source>
         <target>Remove {language}?</target>
+      </segment>
+    </unit>
+    <unit id="fb5d97c6c68ea744">
+      <segment>
+        <source>Removed the redirect from {from}. That address now answers “not found”.</source>
+        <target>Removed the redirect from {from}. That address now answers “not found”.</target>
       </segment>
     </unit>
     <unit id="93356de6958c41d1">
@@ -2459,6 +2705,18 @@
       <segment>
         <source>Reset your password</source>
         <target>Reset your password</target>
+      </segment>
+    </unit>
+    <unit id="f92b45dfd4dd3011">
+      <segment>
+        <source>Restore as a draft</source>
+        <target>Restore as a draft</target>
+      </segment>
+    </unit>
+    <unit id="89a07cedf414734d">
+      <segment>
+        <source>Restored as a draft. Publish it again when it is ready.</source>
+        <target>Restored as a draft. Publish it again when it is ready.</target>
       </segment>
     </unit>
     <unit id="cb39572f09f71897">
@@ -3025,10 +3283,22 @@
         <target>System</target>
       </segment>
     </unit>
+    <unit id="a95064d8e4d03971">
+      <segment>
+        <source>Take out of the trash</source>
+        <target>Take out of the trash</target>
+      </segment>
+    </unit>
     <unit id="ab862303a4b6d360">
       <segment>
         <source>Take pages off the site and keep them.</source>
         <target>Take pages off the site and keep them.</target>
+      </segment>
+    </unit>
+    <unit id="0ee60b4da90c1a78">
+      <segment>
+        <source>Taken out of the trash as a draft. Publish it again when it is ready.</source>
+        <target>Taken out of the trash as a draft. Publish it again when it is ready.</target>
       </segment>
     </unit>
     <unit id="890ab358a55d7fce">
@@ -3073,6 +3343,12 @@
         <target>That menu entry isn't there any more.</target>
       </segment>
     </unit>
+    <unit id="6cce1aa9ed6ecca5">
+      <segment>
+        <source>That redirect would go round in a loop: the new address leads back to the old one.</source>
+        <target>That redirect would go round in a loop: the new address leads back to the old one.</target>
+      </segment>
+    </unit>
     <unit id="ce58ee2f8cb35bdd">
       <segment>
         <source>The address &quot;/{path}&quot; is already used by the page &quot;{title}&quot;. Choose another one.</source>
@@ -3107,6 +3383,12 @@
       <segment>
         <source>The address must start with https://, http://, mailto:, tel: or / (an address on this site).</source>
         <target>The address must start with https://, http://, mailto:, tel: or / (an address on this site).</target>
+      </segment>
+    </unit>
+    <unit id="fa4dce8a937a7920">
+      <segment>
+        <source>The address that should lead somewhere else, starting with a slash: for example /old-news, or /pt-pt/noticias for a page in Portuguese. No page may use it.</source>
+        <target>The address that should lead somewhere else, starting with a slash: for example /old-news, or /pt-pt/noticias for a page in Portuguese. No page may use it.</target>
       </segment>
     </unit>
     <unit id="22fe4386dd8cd11f">
@@ -3241,6 +3523,12 @@
         <target>The full addresses of the site’s profiles elsewhere (social networks, directories), one per line, each starting with https://. Search engines use them to know these profiles belong to the same owner.</target>
       </segment>
     </unit>
+    <unit id="d7ec6f3990007756">
+      <segment>
+        <source>The home page can’t be redirected. Enter the address of another page.</source>
+        <target>The home page can’t be redirected. Enter the address of another page.</target>
+      </segment>
+    </unit>
     <unit id="4acb9edde6123538">
       <segment>
         <source>The icon must be a square picture of at least {icon_min} × {icon_min} pixels. This one is {width} × {height} pixels.</source>
@@ -3301,10 +3589,28 @@
         <target>The main menu is at the top of every page of the site, the footer menu at the bottom. Menus can be three levels deep; visitors open the levels below with a button.</target>
       </segment>
     </unit>
+    <unit id="3b8e58b445ac7407">
+      <segment>
+        <source>The new address must be in the same language as the old one ({language}).</source>
+        <target>The new address must be in the same language as the old one ({language}).</target>
+      </segment>
+    </unit>
     <unit id="1d54593dd201420c">
       <segment>
         <source>The original address must be a full web address starting with https:// or http://.</source>
         <target>The original address must be a full web address starting with https:// or http://.</target>
+      </segment>
+    </unit>
+    <unit id="499824c7ae9bdc86">
+      <segment>
+        <source>The page &quot;{title}&quot; uses the address /{path}. Only addresses no page uses can be redirected.</source>
+        <target>The page &quot;{title}&quot; uses the address /{path}. Only addresses no page uses can be redirected.</target>
+      </segment>
+    </unit>
+    <unit id="099f2cfbc5a6385c">
+      <segment>
+        <source>The page above this one is in the trash. Take that page out of the trash first.</source>
+        <target>The page above this one is in the trash. Take that page out of the trash first.</target>
       </segment>
     </unit>
     <unit id="7a555406af0e0878">
@@ -3319,6 +3625,12 @@
         <target>The page does not accept this kind of request. Go back and try again.</target>
       </segment>
     </unit>
+    <unit id="2a8efed151f45bcd">
+      <segment>
+        <source>The page goes to the end of the pages there.</source>
+        <target>The page goes to the end of the pages there.</target>
+      </segment>
+    </unit>
     <unit id="b47243e627f0b9d7">
       <segment>
         <source>The page has not been saved.</source>
@@ -3331,16 +3643,46 @@
         <target>The page in each language of the site</target>
       </segment>
     </unit>
+    <unit id="e82f577c67fa7048">
+      <segment>
+        <source>The page is already at the top level.</source>
+        <target>The page is already at the top level.</target>
+      </segment>
+    </unit>
+    <unit id="d38d268ad4131086">
+      <segment>
+        <source>The page is already the first one at its level.</source>
+        <target>The page is already the first one at its level.</target>
+      </segment>
+    </unit>
+    <unit id="7e9681eaaebb82a8">
+      <segment>
+        <source>The page is already the last one at its level.</source>
+        <target>The page is already the last one at its level.</target>
+      </segment>
+    </unit>
     <unit id="71e431c30ab7ac7c">
       <segment>
         <source>The page is already written in &quot;{locale}&quot;. Change that translation instead.</source>
         <target>The page is already written in &quot;{locale}&quot;. Change that translation instead.</target>
       </segment>
     </unit>
+    <unit id="6e680b61bf12b805">
+      <segment>
+        <source>The page is at the top level of the site.</source>
+        <target>The page is at the top level of the site.</target>
+      </segment>
+    </unit>
     <unit id="bd8bb379611ed478">
       <segment>
         <source>The page is made of blocks, shown one after another. Each block below is a group of fields with buttons to move or remove it.</source>
         <target>The page is made of blocks, shown one after another. Each block below is a group of fields with buttons to move or remove it.</target>
+      </segment>
+    </unit>
+    <unit id="009a171795e95812">
+      <segment>
+        <source>The page is under: {pages}</source>
+        <target>The page is under: {pages}</target>
       </segment>
     </unit>
     <unit id="7027209938c80db2">
@@ -3355,10 +3697,22 @@
         <target>The page isn't written in &quot;{locale}&quot; yet.</target>
       </segment>
     </unit>
+    <unit id="eec295e7f87b1747">
+      <segment>
+        <source>The page isn't written in any of the site's languages, so there is nothing to copy.</source>
+        <target>The page isn't written in any of the site's languages, so there is nothing to copy.</target>
+      </segment>
+    </unit>
     <unit id="1f02ae3565967ed2">
       <segment>
         <source>The page starts as a draft: nobody else sees it until it is published.</source>
         <target>The page starts as a draft: nobody else sees it until it is published.</target>
+      </segment>
+    </unit>
+    <unit id="1b5e6ad66e3f3c70">
+      <segment>
+        <source>The page that was at /{path} has been deleted. Choose an address that is in use.</source>
+        <target>The page that was at /{path} has been deleted. Choose an address that is in use.</target>
       </segment>
     </unit>
     <unit id="ce591068bdf6a80e">
@@ -3367,10 +3721,22 @@
         <target>The page this one belongs to. Its address starts with that page’s address.</target>
       </segment>
     </unit>
+    <unit id="6df84bf6172f97cd">
+      <segment>
+        <source>The page under it, which is in the trash too, is deleted with it.</source>
+        <target>The page under it, which is in the trash too, is deleted with it.</target>
+      </segment>
+    </unit>
     <unit id="d6f8feb3000921f1">
       <segment>
         <source>The page you are looking for is no longer available.</source>
         <target>The page you are looking for is no longer available.</target>
+      </segment>
+    </unit>
+    <unit id="f20d71fe05a22a66">
+      <segment>
+        <source>The page, every translation and every older version of it are deleted. This can’t be undone.</source>
+        <target>The page, every translation and every older version of it are deleted. This can’t be undone.</target>
       </segment>
     </unit>
     <unit id="d3ef3d7557dbe39a">
@@ -3523,6 +3889,12 @@
         <target>The title must be {{ limit }} characters or fewer</target>
       </segment>
     </unit>
+    <unit id="22bce20a92c0eca2">
+      <segment>
+        <source>The top level of the site</source>
+        <target>The top level of the site</target>
+      </segment>
+    </unit>
     <unit id="dcfc4c4510532334">
       <segment>
         <source>The transcript is too long</source>
@@ -3557,6 +3929,12 @@
       <segment>
         <source>The website of {name}.</source>
         <target>The website of {name}.</target>
+      </segment>
+    </unit>
+    <unit id="4af90657959f0852">
+      <segment>
+        <source>The {count} pages under it, which are in the trash too, are deleted with it.</source>
+        <target>The {count} pages under it, which are in the trash too, are deleted with it.</target>
       </segment>
     </unit>
     <unit id="0ed13939e87c6efb">
@@ -3637,6 +4015,12 @@
         <target>There are no pages yet.</target>
       </segment>
     </unit>
+    <unit id="440049af580174d6">
+      <segment>
+        <source>There are no redirects yet.</source>
+        <target>There are no redirects yet.</target>
+      </segment>
+    </unit>
     <unit id="814df74d93882015">
       <segment>
         <source>There are no starter pages in {language} yet, so they are in {other}: translate them before you publish them.</source>
@@ -3665,6 +4049,12 @@
       <segment>
         <source>There is no block type &quot;{type}&quot; on this site. Remove the block or turn on the module that adds it.</source>
         <target>There is no block type &quot;{type}&quot; on this site. Remove the block or turn on the module that adds it.</target>
+      </segment>
+    </unit>
+    <unit id="3a2c5136716d5cdb">
+      <segment>
+        <source>There is no page before this one to move it under.</source>
+        <target>There is no page before this one to move it under.</target>
       </segment>
     </unit>
     <unit id="de410bbe2db097fe">
@@ -3803,6 +4193,12 @@
       <segment>
         <source>This page has been removed</source>
         <target>This page has been removed</target>
+      </segment>
+    </unit>
+    <unit id="409ac406d12d42ac">
+      <segment>
+        <source>This page has pages under it. Move them somewhere else or put them in the trash first.</source>
+        <target>This page has pages under it. Move them somewhere else or put them in the trash first.</target>
       </segment>
     </unit>
     <unit id="1e636a03b968c9da">
@@ -3965,6 +4361,12 @@
       <segment>
         <source>Type the first letters of its name to move through the list. Pages are then translated into it one by one; nothing is published in it until you publish each translation.</source>
         <target>Type the first letters of its name to move through the list. Pages are then translated into it one by one; nothing is published in it until you publish each translation.</target>
+      </segment>
+    </unit>
+    <unit id="e49f108da64a7341">
+      <segment>
+        <source>Under “{title}” ({url})</source>
+        <target>Under “{title}” ({url})</target>
       </segment>
     </unit>
     <unit id="1c6fff87c5ad9705">
@@ -4259,6 +4661,18 @@
       <segment>
         <source>When</source>
         <target>When</target>
+      </segment>
+    </unit>
+    <unit id="05bb6b9562c9c779">
+      <segment>
+        <source>When a page moves or gets a new address, its old address leads to the new one, so links and bookmarks keep working. When a page is deleted for good, its old address tells visitors it is gone.</source>
+        <target>When a page moves or gets a new address, its old address leads to the new one, so links and bookmarks keep working. When a page is deleted for good, its old address tells visitors it is gone.</target>
+      </segment>
+    </unit>
+    <unit id="d63aa45e24323b30">
+      <segment>
+        <source>Where it should lead, in the same language: for example /news.</source>
+        <target>Where it should lead, in the same language: for example /news.</target>
       </segment>
     </unit>
     <unit id="c17b94b8c9394d40">
@@ -4733,6 +5147,12 @@
       <segment>
         <source>{count} problems stop this page being published</source>
         <target>{count} problems stop this page being published</target>
+      </segment>
+    </unit>
+    <unit id="af83b6f76b1c8e02">
+      <segment>
+        <source>{count} redirects</source>
+        <target>{count} redirects</target>
       </segment>
     </unit>
     <unit id="1d52452666c4e0eb">

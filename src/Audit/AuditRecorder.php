@@ -11,12 +11,15 @@ use SightPress\Core\Media\Contract\MediaDeleted;
 use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Contract\MediaUploaded;
 use SightPress\Core\Menu\Contract\MenuChanged;
+use SightPress\Core\Page\Contract\PageCloned;
 use SightPress\Core\Page\Contract\PageCreated;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Contract\PageMoved;
+use SightPress\Core\Page\Contract\PagePurged;
 use SightPress\Core\Page\Contract\PageSaved;
 use SightPress\Core\Page\Contract\PageTransition;
 use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Core\Page\Contract\RedirectChanged;
 use SightPress\Core\Page\Contract\TranslationPublished;
 use SightPress\Core\Rbac\Contract\RoleChanged;
 use SightPress\Core\Site\Contract\SettingsChanged;
@@ -36,6 +39,7 @@ final readonly class AuditRecorder
     /** Events it writes an entry for. */
     public const array EVENTS = [
         PageCreated::class, PageSaved::class, PageMoved::class, PageTransitioned::class, TranslationPublished::class,
+        PageCloned::class, PagePurged::class, RedirectChanged::class,
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
         MenuChanged::class, RoleChanged::class, AccountChanged::class, SettingsChanged::class,
     ];
@@ -63,12 +67,23 @@ final readonly class AuditRecorder
                 PageTransition::Approve => 'Approved %s.',
                 PageTransition::Publish => 'Published %s.',
                 PageTransition::Unpublish => 'Unpublished %s.',
+                PageTransition::Archive => 'Archived %s.',
+                PageTransition::Restore => 'Restored %s as a draft.',
+                PageTransition::Trash => 'Put %s in the trash.',
+                PageTransition::Untrash => 'Took %s out of the trash.',
             }, $this->page($event->pageId)), array_filter(['from' => $event->from->value, 'to' => $event->to->value, 'comment' => $event->comment], static fn (?string $value): bool => $value !== null)),
             $event instanceof TranslationPublished => $this->entry($event->actorId, $event->published ? 'page.translation_published' : 'page.translation_drafted', 'page', $event->pageId, sprintf(
                 $event->published ? 'Published the %s translation of %s.' : 'Made the %s translation of %s a draft again.',
                 LocaleCode::describe($event->locale),
                 $this->page($event->pageId),
             ), ['locale' => $event->locale, 'revision' => $event->revision]),
+            $event instanceof PageCloned => $this->entry($event->clonedBy, 'page.cloned', 'page', $event->pageId, sprintf('Copied %s as %s.', $this->page($event->sourceId), $this->page($event->pageId)), ['source' => $event->sourceId]),
+            $event instanceof PagePurged => $this->entry($event->purgedBy, 'page.purged', 'page', $event->pageId, sprintf('Deleted “%s” for good%s.', $event->title, count($event->pageIds) > 1 ? sprintf(' with the %d pages under it', count($event->pageIds) - 1) : ''), ['pages' => $event->pageIds]),
+            $event instanceof RedirectChanged => $this->entry($event->actorId, 'redirect.' . $event->change, 'redirect', null, match (true) {
+                $event->change === RedirectChanged::ADDED => sprintf('Added a redirect from /%s to /%s (%s).', $event->from, (string) $event->to, LocaleCode::describe($event->locale)),
+                $event->to === null => sprintf('Removed the “gone” answer of /%s (%s).', $event->from, LocaleCode::describe($event->locale)),
+                default => sprintf('Removed the redirect from /%s to /%s (%s).', $event->from, $event->to, LocaleCode::describe($event->locale)),
+            }, ['locale' => $event->locale, 'from' => $event->from, 'to' => $event->to]),
             $event instanceof MediaUploaded => $this->entry($event->uploadedBy, 'media.uploaded', 'media', $event->mediaId, sprintf('Uploaded %s.', $this->file($event->mediaId)), ['kind' => $event->kind->value]),
             $event instanceof MediaChanged => $this->entry($event->changedBy, 'media.changed', 'media', $event->mediaId, sprintf('Changed the %s of %s.', self::words($event->fields), $this->file($event->mediaId)), ['fields' => $event->fields]),
             $event instanceof MediaDeleted => $this->entry($event->deletedBy, 'media.deleted', 'media', $event->mediaId, sprintf('Deleted “%s”.', $event->originalName), []),
