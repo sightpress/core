@@ -45,6 +45,7 @@ final class PageAdminModuleTest extends TestCase
             \SightPress\Core\Page\Admin\Http\PagePurgeHandler::class, \SightPress\Core\Page\Admin\Http\RedirectsHandler::class,
             \SightPress\Core\Page\Revision\RevisionHistory::class, \SightPress\Core\Page\Revision\RevisionDiff::class,
             \SightPress\Core\Page\Admin\Http\PageRevisionsHandler::class, \SightPress\Core\Page\Admin\Http\PageRevisionHandler::class,
+            \SightPress\Core\Page\Admin\Http\PageScheduleHandler::class,
         ] as $class) {
             self::assertArrayHasKey($class, $registry->services());
         }
@@ -63,6 +64,7 @@ final class PageAdminModuleTest extends TestCase
             'page_admin.delete' => ['/admin/pages/{id:[0-9]+}/delete', \SightPress\Core\Page\Admin\Http\PagePurgeHandler::class, ['GET', 'POST'], $admin],
             'page_admin.revisions' => ['/admin/pages/{id:[0-9]+}/revisions', \SightPress\Core\Page\Admin\Http\PageRevisionsHandler::class, ['GET'], $admin],
             'page_admin.revision' => ['/admin/pages/{id:[0-9]+}/revisions/{revision:[0-9]+}', \SightPress\Core\Page\Admin\Http\PageRevisionHandler::class, ['GET', 'POST'], $admin],
+            'page_admin.schedule' => ['/admin/pages/{id:[0-9]+}/schedule', \SightPress\Core\Page\Admin\Http\PageScheduleHandler::class, ['POST'], $admin],
             'page_admin.redirects' => ['/admin/redirects', \SightPress\Core\Page\Admin\Http\RedirectsHandler::class, ['GET', 'POST'], $admin],
         ], $routes);
         $menu = array_values(array_filter($registry->adminMenu(), static fn ($m) => $m->module === 'page_admin'));

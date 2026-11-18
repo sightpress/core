@@ -14,6 +14,7 @@ use SightPress\Core\Page\Migrations\Version20261116220000 as PageShareImage;
 use SightPress\Core\Page\Migrations\Version20261116230000 as PageSearchFields;
 use SightPress\Core\Page\Migrations\Version20261118100000 as PageTranslationDrafts;
 use SightPress\Core\Page\Migrations\Version20261118200000 as PageRedirectsTable;
+use SightPress\Core\Page\Migrations\Version20261118300000 as PageSchedule;
 use SightPress\Core\Media\Migrations\Version20261118100000 as MediaTranscripts;
 use SightPress\Core\People\Migrations\Version20261116180000 as InvitationsTable;
 use SightPress\Core\Rbac\Migrations\Version20261114120000 as RbacTables;
@@ -37,6 +38,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(PageTranslationDrafts::class)]
 #[CoversClass(MediaTranscripts::class)]
 #[CoversClass(PageRedirectsTable::class)]
+#[CoversClass(PageSchedule::class)]
 #[UsesNamespace('SightPress\Core')]
 final class MigrationsTest extends TestCase
 {
@@ -64,6 +66,7 @@ final class MigrationsTest extends TestCase
         self::assertContains('Add the draft column to page_translations.', $descriptions);
         self::assertContains('Add the transcripts column to media.', $descriptions);
         self::assertContains('Create the page_redirects table.', $descriptions);
+        self::assertContains('Add the publish_at, unpublish_at and scheduled_by columns to pages.', $descriptions);
         self::assertContains('Create the permissions, roles, role_permission and user_role tables.', $descriptions);
 
         $database->migrate('first');

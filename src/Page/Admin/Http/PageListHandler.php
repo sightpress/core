@@ -93,7 +93,7 @@ final readonly class PageListHandler implements RequestHandlerInterface
     /**
      * @param array<int, string> $names
      *
-     * @return array{page: Page, id: int, title: string|Message, locale: string, url: ?string, state: PageState, state_label: string, author: ?string, updated: \DateTimeImmutable, mine: bool, open: bool, home: bool}
+     * @return array{page: Page, id: int, title: string|Message, locale: string, url: ?string, state: PageState, state_label: string, author: ?string, updated: \DateTimeImmutable, publish_at: ?\DateTimeImmutable, unpublish_at: ?\DateTimeImmutable, mine: bool, open: bool, home: bool}
      */
     private function node(Page $page, Actor $actor, array $names): array
     {
@@ -110,6 +110,8 @@ final readonly class PageListHandler implements RequestHandlerInterface
             'state_label' => PageAdmin::stateLabel($page->state()),
             'author' => $author === null ? null : ($names[$author] ?? null),
             'updated' => $page->updatedAt(),
+            'publish_at' => $page->publishAt(),
+            'unpublish_at' => $page->unpublishAt(),
             'mine' => $actor->is($author),
             'open' => $this->authorizer->can($actor, PageAction::View->value, $page),
             'home' => $this->addresses->isHome($page),

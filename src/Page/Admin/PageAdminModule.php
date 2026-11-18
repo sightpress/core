@@ -16,6 +16,7 @@ use SightPress\Core\Page\Admin\Http\PageOperationsHandler;
 use SightPress\Core\Page\Admin\Http\PagePurgeHandler;
 use SightPress\Core\Page\Admin\Http\PageRevisionHandler;
 use SightPress\Core\Page\Admin\Http\PageRevisionsHandler;
+use SightPress\Core\Page\Admin\Http\PageScheduleHandler;
 use SightPress\Core\Page\Admin\Http\PageTranslationHandler;
 use SightPress\Core\Page\Admin\Http\PageWorkflowHandler;
 use SightPress\Core\Page\Admin\Http\RedirectsHandler;
@@ -67,7 +68,7 @@ final class PageAdminModule implements ModuleInterface
             PageEditorScreen::class, PageListHandler::class, NewPageHandler::class, PageEditorHandler::class,
             PageWorkflowHandler::class, PageTranslationHandler::class, PageOperationsHandler::class, PagePurgeHandler::class,
             RedirectsHandler::class, RevisionHistory::class, RevisionDiff::class, PageRevisionsHandler::class,
-            PageRevisionHandler::class,
+            PageRevisionHandler::class, PageScheduleHandler::class,
         ] as $class) {
             $services->autowire($class);
         }
@@ -83,6 +84,7 @@ final class PageAdminModule implements ModuleInterface
         $routes->add(new Route('page_admin.delete', $page . '/delete', PagePurgeHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('page_admin.revisions', $page . '/revisions', PageRevisionsHandler::class, middleware: [AdminAccessMiddleware::class]));
         $routes->add(new Route('page_admin.revision', $page . '/revisions/{' . PageRevisionHandler::NUMBER_ATTRIBUTE . ':[0-9]+}', PageRevisionHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('page_admin.schedule', $page . '/schedule', PageScheduleHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('page_admin.redirects', RedirectsHandler::PATH, RedirectsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('page_admin.list', 'Pages', 'page_admin.list', 'page.edit.own', position: 10));
         $registrar->adminMenu()->add(new AdminMenuItem('page_admin.redirects', 'Redirects', 'page_admin.redirects', RedirectsHandler::PERMISSION, position: 15));

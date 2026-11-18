@@ -12,6 +12,7 @@ use RuntimeException;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\Entity\PageRevision;
 use SightPress\Core\Page\PageContent;
+use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Page\PageRepository;
 use SightPress\Core\Tests\Support\CoreSiteDatabase;
 
@@ -149,5 +150,26 @@ final class PageRepositoryTest extends TestCase
         self::assertTrue($repository->titleTaken('en-GB', 'ABOUT US', (int) $other->id()));
         self::assertFalse($repository->titleTaken('en-GB', 'About us', (int) $about->id()));
         self::assertFalse($repository->titleTaken('pt-PT', 'About us', (int) $other->id()));
+    }
+
+    public function testFindsThePagesWhoseScheduledTimeHasCome(): void
+    {
+        $now = new \DateTimeImmutable('2026-12-01 09:00:00');
+        $early = $this->page(null, 0, 'early', 'early');
+        $late = $this->page(null, 1, 'late', 'late');
+        $draft = $this->page(null, 2, 'draft', 'draft');
+        $live = $this->page(null, 3, 'live', 'live');
+        $future = $this->page(null, 4, 'future', 'future');
+        foreach ([[$early, '-2 hours'], [$late, '-1 hour'], [$draft, '-1 hour'], [$future, '+1 hour']] as [$page, $offset]) {
+            $page->changeState($page === $draft ? PageState::Draft : PageState::Approved, $now);
+            $page->schedule($now->modify($offset), null, 1, $now);
+        }
+        $live->changeState(PageState::Published, $now);
+        $live->schedule(null, $now, 1, $now);
+        $this->pages->flush();
+
+        self::assertSame([$early, $late], $this->pages->duePublications($now));
+        self::assertSame([$live], $this->pages->dueUnpublications($now));
+        self::assertSame([], $this->pages->dueUnpublications($now->modify('-1 second')));
     }
 }

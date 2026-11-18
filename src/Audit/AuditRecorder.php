@@ -17,10 +17,12 @@ use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Contract\PageMoved;
 use SightPress\Core\Page\Contract\PagePurged;
 use SightPress\Core\Page\Contract\PageSaved;
+use SightPress\Core\Page\Contract\PageScheduled;
 use SightPress\Core\Page\Contract\PageTransition;
 use SightPress\Core\Page\Contract\PageTransitioned;
 use SightPress\Core\Page\Contract\RedirectChanged;
 use SightPress\Core\Page\Contract\RevisionRestored;
+use SightPress\Core\Page\Contract\ScheduledStepFailed;
 use SightPress\Core\Page\Contract\TranslationPublished;
 use SightPress\Core\Rbac\Contract\RoleChanged;
 use SightPress\Core\Site\Contract\SettingsChanged;
@@ -41,6 +43,7 @@ final readonly class AuditRecorder
     public const array EVENTS = [
         PageCreated::class, PageSaved::class, PageMoved::class, PageTransitioned::class, TranslationPublished::class,
         PageCloned::class, PagePurged::class, RedirectChanged::class, RevisionRestored::class,
+        PageScheduled::class, ScheduledStepFailed::class,
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
         MenuChanged::class, RoleChanged::class, AccountChanged::class, SettingsChanged::class,
     ];
@@ -81,6 +84,17 @@ final readonly class AuditRecorder
             $event instanceof PageCloned => $this->entry($event->clonedBy, 'page.cloned', 'page', $event->pageId, sprintf('Copied %s as %s.', $this->page($event->sourceId), $this->page($event->pageId)), ['source' => $event->sourceId]),
             $event instanceof PagePurged => $this->entry($event->purgedBy, 'page.purged', 'page', $event->pageId, sprintf('Deleted “%s” for good%s.', $event->title, count($event->pageIds) > 1 ? sprintf(' with the %d pages under it', count($event->pageIds) - 1) : ''), ['pages' => $event->pageIds]),
             $event instanceof RevisionRestored => $this->entry($event->restoredBy, 'page.revision_restored', 'page', $event->pageId, sprintf('Restored the %s text of %s from revision %d (now revision %d).', LocaleCode::describe($event->locale), $this->page($event->pageId), $event->restored, $event->revision), ['locale' => $event->locale, 'restored' => $event->restored, 'revision' => $event->revision]),
+            $event instanceof PageScheduled => $this->entry($event->actorId, 'page.scheduled', 'page', $event->pageId, $event->publishAt === null && $event->unpublishAt === null
+                ? sprintf('Cleared the schedule of %s.', $this->page($event->pageId))
+                : sprintf('Scheduled %s: %s.', $this->page($event->pageId), implode('; ', array_filter([
+                    $event->publishAt === null ? null : 'published at ' . $event->publishAt->format('Y-m-d H:i') . ' UTC',
+                    $event->unpublishAt === null ? null : 'taken off the site at ' . $event->unpublishAt->format('Y-m-d H:i') . ' UTC',
+                ]))), ['publish_at' => $event->publishAt?->format(DATE_ATOM), 'unpublish_at' => $event->unpublishAt?->format(DATE_ATOM)]),
+            $event instanceof ScheduledStepFailed => $this->entry($event->scheduledBy, 'page.schedule_failed', 'page', $event->pageId, sprintf(
+                $event->transition === PageTransition::Publish ? 'Couldn’t publish %s on schedule: %s.' : 'Couldn’t take %s off the site on schedule: %s.',
+                $this->page($event->pageId),
+                $event->reason,
+            ), ['transition' => $event->transition->value, 'reason' => $event->reason]),
             $event instanceof RedirectChanged => $this->entry($event->actorId, 'redirect.' . $event->change, 'redirect', null, match (true) {
                 $event->change === RedirectChanged::ADDED => sprintf('Added a redirect from /%s to /%s (%s).', $event->from, (string) $event->to, LocaleCode::describe($event->locale)),
                 $event->to === null => sprintf('Removed the “gone” answer of /%s (%s).', $event->from, LocaleCode::describe($event->locale)),

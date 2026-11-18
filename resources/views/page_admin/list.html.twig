@@ -79,6 +79,8 @@
     <a href="/admin/pages/{{ page.id }}" lang="{{ page.locale }}" data-page-title>{{ page.title }}</a>
     <span class="page-list__meta">
         {{- t(page.state_label) }}
+        {%- if page.publish_at %} · {{ t('To be published at {time}', {time: page.publish_at|user_datetime}) }}{% endif %}
+        {%- if page.unpublish_at %} · {{ t('To be taken off the site at {time}', {time: page.unpublish_at|user_datetime}) }}{% endif %}
         {%- if page.home %} · {{ t('Home page') }}{% endif %}
         {%- if page.url %} · <span class="page-list__url">{{ page.url }}</span>{% endif %}
         {%- if page.author %} · {{ page.mine ? t('Written by you') : t('Written by {name}', {name: page.author}) }}{% endif %}

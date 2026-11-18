@@ -143,6 +143,35 @@ final class PageTest extends TestCase
         self::assertSame([\SightPress\Core\Rbac\Contract\PageState::InReview, $later], [$page->state(), $page->updatedAt()]);
     }
 
+    public function testForgetsTheScheduleOnceItHappenedOrCantAnyMore(): void
+    {
+        $now = new DateTimeImmutable('2026-11-18 12:00:00');
+        $publish = new DateTimeImmutable('2026-12-01 09:00:00');
+        $unpublish = new DateTimeImmutable('2026-12-31 09:00:00');
+        $page = new Page(null, 0, null, $now);
+        self::assertSame([null, null, null], [$page->publishAt(), $page->unpublishAt(), $page->scheduledBy()]);
+
+        $page->schedule($publish, $unpublish, 4, $now);
+        self::assertSame([$publish, $unpublish, 4], [$page->publishAt(), $page->unpublishAt(), $page->scheduledBy()]);
+        $page->changeState(PageState::Approved, $now);
+        self::assertSame($publish, $page->publishAt(), 'approving keeps it');
+        $page->changeState(PageState::Published, $now);
+        self::assertSame([null, $unpublish, 4], [$page->publishAt(), $page->unpublishAt(), $page->scheduledBy()]);
+        $page->changeState(PageState::Published, $now);
+        self::assertSame($unpublish, $page->unpublishAt(), 'staying published keeps the end time');
+        $page->changeState(PageState::Draft, $now);
+        self::assertSame([null, null, null], [$page->publishAt(), $page->unpublishAt(), $page->scheduledBy()]);
+
+        $page->schedule($publish, null, 4, $now);
+        $page->changeState(PageState::Archived, $now);
+        self::assertSame([null, null], [$page->publishAt(), $page->scheduledBy()]);
+        $page->schedule(null, $unpublish, 5, $now);
+        $page->changeState(PageState::Trash, $now);
+        self::assertNull($page->unpublishAt());
+        $page->schedule(null, null, 5, $now);
+        self::assertNull($page->scheduledBy());
+    }
+
     public function testSnapshotsEverythingARevisionKeeps(): void
     {
         $parent = self::withId(new Page(null, 0, null, $this->now), 3);

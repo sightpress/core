@@ -17,6 +17,7 @@ use SightPress\Core\Site\Command\EnableSiteCommand;
 use SightPress\Core\Site\Command\ListSitesCommand;
 use SightPress\Core\Site\Command\MigrateSitesCommand;
 use SightPress\Core\Site\Command\PurgeSiteCommand;
+use SightPress\Core\Site\Command\RunScheduleCommand;
 use SightPress\Core\Site\Command\UpgradeRegistryCommand;
 use SightPress\Core\Site\Contract\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteLanguages;
@@ -59,6 +60,7 @@ final class SiteModule implements ModuleInterface
             AddSiteLocaleCommand::class,
             RemoveSiteLocaleCommand::class,
             DefaultSiteLocaleCommand::class,
+            RunScheduleCommand::class,
         ] as $command) {
             $registrar->commands()->add($command);
         }

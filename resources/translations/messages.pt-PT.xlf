@@ -607,6 +607,12 @@
         <target>Arquivada</target>
       </segment>
     </unit>
+    <unit id="a2821b2db245a6ad">
+      <segment state="initial">
+        <source>Archived pages and pages in the trash can’t be scheduled. Restore the page first.</source>
+        <target>Não é possível agendar páginas arquivadas nem páginas no lixo. Reponha primeiro a página.</target>
+      </segment>
+    </unit>
     <unit id="26297e8988d91780">
       <segment>
         <source>Archived. Visitors can’t see the page any more; it is kept with the archived pages.</source>
@@ -877,6 +883,18 @@
         <target>Escolha uma imagem para carregar.</target>
       </segment>
     </unit>
+    <unit id="1e8947e8f96744b1">
+      <segment state="initial">
+        <source>Choose a time to publish that is still to come.</source>
+        <target>Escolha uma hora de publicação que ainda não tenha passado.</target>
+      </segment>
+    </unit>
+    <unit id="d85244f463db1fbb">
+      <segment state="initial">
+        <source>Choose a time to take the page off the site that is still to come.</source>
+        <target>Escolha uma hora para retirar a página do site que ainda não tenha passado.</target>
+      </segment>
+    </unit>
     <unit id="aef4076f194a6de6">
       <segment>
         <source>Choose an option</source>
@@ -917,6 +935,12 @@
       <segment>
         <source>Choosing a layout</source>
         <target>Escolher um esquema</target>
+      </segment>
+    </unit>
+    <unit id="fee2ded83187a9e2">
+      <segment state="initial">
+        <source>Clear the schedule</source>
+        <target>Limpar o agendamento</target>
       </segment>
     </unit>
     <unit id="7d9eb7acb13e2462">
@@ -2353,6 +2377,12 @@
         <target>Nada fica guardado enquanto não guardar. Os botões que adicionam, movem ou removem blocos não guardam.</target>
       </segment>
     </unit>
+    <unit id="55c3c9caedc2db55">
+      <segment state="initial">
+        <source>Nothing is scheduled.</source>
+        <target>Não há nada agendado.</target>
+      </segment>
+    </unit>
     <unit id="54ca5460e9428a6b">
       <segment>
         <source>Nothing was changed.</source>
@@ -2435,6 +2465,12 @@
       <segment>
         <source>Only part of the file arrived. Try uploading it again.</source>
         <target>Só chegou parte do ficheiro. Tente carregá-lo outra vez.</target>
+      </segment>
+    </unit>
+    <unit id="2be0a1438645073f">
+      <segment state="initial">
+        <source>Only people who may publish pages can schedule them.</source>
+        <target>Só quem pode publicar páginas as pode agendar.</target>
       </segment>
     </unit>
     <unit id="410c3aa8a88771e1">
@@ -2645,6 +2681,12 @@
       <segment>
         <source>Publish</source>
         <target>Publicar</target>
+      </segment>
+    </unit>
+    <unit id="d565aa2b9736d56f">
+      <segment state="initial">
+        <source>Publish at</source>
+        <target>Publicar em</target>
       </segment>
     </unit>
     <unit id="2c7e0065e1ef4398">
@@ -2917,6 +2959,12 @@
         <target>Guarde a página antes de a tornar a página inicial.</target>
       </segment>
     </unit>
+    <unit id="0012e3ae2afd4d6b">
+      <segment state="initial">
+        <source>Save the schedule</source>
+        <target>Guardar o agendamento</target>
+      </segment>
+    </unit>
     <unit id="21b7401d6131b7af">
       <segment>
         <source>Save the {thing}</source>
@@ -2963,6 +3011,30 @@
       <segment>
         <source>Say where the link goes, for example "Read the annual report" instead of "Read more".</source>
         <target>Diga para onde vai a ligação, por exemplo "Ler o relatório anual" em vez de "Ler mais".</target>
+      </segment>
+    </unit>
+    <unit id="f4830a1dae298044">
+      <segment state="initial">
+        <source>Schedule</source>
+        <target>Agendamento</target>
+      </segment>
+    </unit>
+    <unit id="5d94565d1b8626d4">
+      <segment state="initial">
+        <source>Scheduled: the page is published at {publish} ({timezone} time).</source>
+        <target>Agendado: a página é publicada a {publish} (hora de {timezone}).</target>
+      </segment>
+    </unit>
+    <unit id="1d04cb57ca966418">
+      <segment state="initial">
+        <source>Scheduled: the page is published at {publish} and taken off the site at {unpublish} ({timezone} time).</source>
+        <target>Agendado: a página é publicada a {publish} e retirada do site a {unpublish} (hora de {timezone}).</target>
+      </segment>
+    </unit>
+    <unit id="ceeaec8e38489030">
+      <segment state="initial">
+        <source>Scheduled: the page is taken off the site at {unpublish} ({timezone} time).</source>
+        <target>Agendado: a página é retirada do site a {unpublish} (hora de {timezone}).</target>
       </segment>
     </unit>
     <unit id="5c9cb044218cba64">
@@ -3439,6 +3511,12 @@
         <target>Sistema</target>
       </segment>
     </unit>
+    <unit id="5e9bc768ca88a1de">
+      <segment state="initial">
+        <source>Take off the site at</source>
+        <target>Retirar do site em</target>
+      </segment>
+    </unit>
     <unit id="a95064d8e4d03971">
       <segment>
         <source>Take out of the trash</source>
@@ -3781,6 +3859,12 @@
         <target>A página acima desta ainda não está escrita em "{locale}". Traduza-a primeiro.</target>
       </segment>
     </unit>
+    <unit id="c313ad012c735b61">
+      <segment state="initial">
+        <source>The page becomes a draft again at this time, if it is published then.</source>
+        <target>A página volta a ser um rascunho a esta hora, se nessa altura estiver publicada.</target>
+      </segment>
+    </unit>
     <unit id="88f2e744f2e6d707">
       <segment>
         <source>The page does not accept this kind of request. Go back and try again.</source>
@@ -3797,6 +3881,12 @@
       <segment>
         <source>The page has not been saved.</source>
         <target>A página não foi guardada.</target>
+      </segment>
+    </unit>
+    <unit id="c7838b00264080b3">
+      <segment state="initial">
+        <source>The page has to be approved: it is published at this time, or as soon as it is approved after it. For example 2026-12-01 09:00.</source>
+        <target>A página tem de estar aprovada: é publicada a esta hora, ou logo que for aprovada depois dela. Por exemplo 2026-12-01 09:00.</target>
       </segment>
     </unit>
     <unit id="e8d631db7222ce03">
@@ -3841,6 +3931,12 @@
         <target>A página é feita de blocos, mostrados uns a seguir aos outros. Cada bloco abaixo é um grupo de campos com botões para o mover ou remover.</target>
       </segment>
     </unit>
+    <unit id="c685a19521dcaf8a">
+      <segment state="initial">
+        <source>The page is published already, so it can only get a time to be taken off the site.</source>
+        <target>A página já está publicada, por isso só pode ter uma hora para ser retirada do site.</target>
+      </segment>
+    </unit>
     <unit id="009a171795e95812">
       <segment>
         <source>The page is under: {pages}</source>
@@ -3869,6 +3965,12 @@
       <segment>
         <source>The page isn’t written in this language yet, so it has no versions in it.</source>
         <target>A página ainda não está escrita neste idioma, por isso não tem versões nele.</target>
+      </segment>
+    </unit>
+    <unit id="bdca58a62a129392">
+      <segment state="initial">
+        <source>The page must be taken off the site after it is published.</source>
+        <target>A página tem de ser retirada do site depois de ser publicada.</target>
       </segment>
     </unit>
     <unit id="1f02ae3565967ed2">
@@ -3935,6 +4037,12 @@
       <segment>
         <source>The previews show your changes. Save the page to keep them.</source>
         <target>As pré-visualizações mostram as suas alterações. Guarde a página para as manter.</target>
+      </segment>
+    </unit>
+    <unit id="c0777e9323b4e004">
+      <segment state="initial">
+        <source>The schedule is cleared: nothing happens to the page on its own.</source>
+        <target>O agendamento foi limpo: nada acontece à página por si só.</target>
       </segment>
     </unit>
     <unit id="82471aa3707f336a">
@@ -4441,6 +4549,12 @@
         <target>Fuso horário</target>
       </segment>
     </unit>
+    <unit id="0e4d5811f6f7df35">
+      <segment state="initial">
+        <source>Times are in your time zone, {timezone}. Leave a field empty for no time. The page is published and taken off the site within a minute of the time.</source>
+        <target>As horas estão no seu fuso horário, {timezone}. Deixe um campo vazio para não ter hora. A página é publicada e retirada do site até um minuto depois da hora.</target>
+      </segment>
+    </unit>
     <unit id="7e8cd2056da73a7f">
       <segment>
         <source>Title</source>
@@ -4469,6 +4583,18 @@
       <segment>
         <source>To accept, go to the sign-in page of {site}, choose “Accept an invitation”, and type your email address and this invitation code:</source>
         <target>Para aceitar, vá à página de início de sessão de {site}, escolha “Aceitar um convite” e escreva o seu endereço de email e este código de convite:</target>
+      </segment>
+    </unit>
+    <unit id="4c7174118f9c2e57">
+      <segment state="initial">
+        <source>To be published at {time}</source>
+        <target>A publicar a {time}</target>
+      </segment>
+    </unit>
+    <unit id="8ff1d3e1197535a4">
+      <segment state="initial">
+        <source>To be taken off the site at {time}</source>
+        <target>A retirar do site a {time}</target>
       </segment>
     </unit>
     <unit id="802600d124464157">
@@ -5305,6 +5431,12 @@
         <target>não mostrada até a página ser publicada</target>
       </segment>
     </unit>
+    <unit id="6c73e8d9203a7d29">
+      <segment state="initial">
+        <source>once it is approved: if it is approved later, as soon as it is approved.</source>
+        <target>depois de aprovada: se for aprovada mais tarde, logo que for aprovada.</target>
+      </segment>
+    </unit>
     <unit id="ab8d5cdca43cc8eb">
       <segment>
         <source>opens in a new tab</source>
@@ -5465,6 +5597,18 @@
       <segment>
         <source>{field} must be {{ limit }} characters or fewer</source>
         <target>{field} pode ter no máximo {{ limit }} caracteres</target>
+      </segment>
+    </unit>
+    <unit id="c86d92998be6905d">
+      <segment state="initial">
+        <source>{field}: enter a date and time, for example 2026-12-01 09:00.</source>
+        <target>{field}: introduza uma data e uma hora, por exemplo 2026-12-01 09:00.</target>
+      </segment>
+    </unit>
+    <unit id="2c3910817b0edafb">
+      <segment state="initial">
+        <source>{field}: that time doesn’t exist in your time zone, because the clocks go forward then. Choose another time.</source>
+        <target>{field}: essa hora não existe no seu fuso horário, porque os relógios adiantam nessa altura. Escolha outra hora.</target>
       </segment>
     </unit>
     <unit id="1c088992cac55ea3">

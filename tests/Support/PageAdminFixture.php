@@ -21,6 +21,7 @@ use SightPress\Core\Page\Admin\Http\PageOperationsHandler;
 use SightPress\Core\Page\Admin\Http\PagePurgeHandler;
 use SightPress\Core\Page\Admin\Http\PageRevisionHandler;
 use SightPress\Core\Page\Admin\Http\PageRevisionsHandler;
+use SightPress\Core\Page\Admin\Http\PageScheduleHandler;
 use SightPress\Core\Page\Admin\Http\PageTranslationHandler;
 use SightPress\Core\Page\Admin\Http\PageWorkflowHandler;
 use SightPress\Core\Page\Admin\Http\RedirectsHandler;
@@ -177,6 +178,16 @@ final class PageAdminFixture
     public function revisionHandler(): PageRevisionHandler
     {
         return new PageRevisionHandler($this->admin->shell(), $this->pageAdmin(), new RevisionHistory($this->pages->repository()), new RevisionDiff($this->blocks->types), $this->pages->editor(), $this->authorizer(), $this->admin->auth->users, $this->pages->site);
+    }
+
+    public function pageSchedule(): \SightPress\Core\Page\Schedule\PageSchedule
+    {
+        return new \SightPress\Core\Page\Schedule\PageSchedule($this->pages->repository(), $this->workflow(), $this->admin->auth->database->roles(), $this->pages->clock, $this->pages, $this->pages->site);
+    }
+
+    public function scheduleHandler(): PageScheduleHandler
+    {
+        return new PageScheduleHandler($this->admin->shell(), $this->pageAdmin(), $this->pageSchedule(), $this->authorizer(), $this->pages->site);
     }
 
     /**

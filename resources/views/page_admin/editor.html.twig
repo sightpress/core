@@ -172,6 +172,44 @@
     <p>{{ t('Archive takes the page off the site and keeps it. The trash keeps it too, until it is deleted for good; while it is there, its address tells visitors the page is gone.') }}</p>
 </section>
 {%- endif %}
+{%- if schedule %}
+<section class="admin-panel" aria-labelledby="schedule-title">
+    <h2 id="schedule-title">{{ t('Schedule') }}</h2>
+    <ul>
+        {%- if schedule.publish_at %}
+        <li>{{ t('To be published at {time}', {time: schedule.publish_at|user_datetime}) }}{% if not schedule.approved %} {{ t('once it is approved: if it is approved later, as soon as it is approved.') }}{% endif %}</li>
+        {%- endif %}
+        {%- if schedule.unpublish_at %}
+        <li>{{ t('To be taken off the site at {time}', {time: schedule.unpublish_at|user_datetime}) }}</li>
+        {%- endif %}
+        {%- if not schedule.publish_at and not schedule.unpublish_at %}
+        <li>{{ t('Nothing is scheduled.') }}</li>
+        {%- endif %}
+    </ul>
+    <form action="{{ schedule.action }}" method="post">
+        {{ csrf_fields() }}
+        <p id="schedule-hint">{{ t('Times are in your time zone, {timezone}. Leave a field empty for no time. The page is published and taken off the site within a minute of the time.', {timezone: schedule.timezone}) }}</p>
+        {%- if not schedule.published %}
+        <div class="field">
+            <label for="schedule-publish">{{ t('Publish at') }} {{ t('(optional)') }}</label>
+            <p class="field-hint" id="schedule-publish-hint">{{ t('The page has to be approved: it is published at this time, or as soon as it is approved after it. For example 2026-12-01 09:00.') }}</p>
+            <input type="datetime-local" id="schedule-publish" name="publish_at" value="{{ schedule.publish_value }}" aria-describedby="schedule-hint schedule-publish-hint">
+        </div>
+        {%- endif %}
+        <div class="field">
+            <label for="schedule-unpublish">{{ t('Take off the site at') }} {{ t('(optional)') }}</label>
+            <p class="field-hint" id="schedule-unpublish-hint">{{ t('The page becomes a draft again at this time, if it is published then.') }}</p>
+            <input type="datetime-local" id="schedule-unpublish" name="unpublish_at" value="{{ schedule.unpublish_value }}" aria-describedby="schedule-hint schedule-unpublish-hint">
+        </div>
+        <div class="page-editor__workflow">
+            <button type="submit" name="op" value="save" class="button button--secondary">{{ t('Save the schedule') }}</button>
+            {%- if schedule.publish_at or schedule.unpublish_at %}
+            <button type="submit" name="op" value="clear" class="button button--secondary">{{ t('Clear the schedule') }}</button>
+            {%- endif %}
+        </div>
+    </form>
+</section>
+{%- endif %}
 {%- if place %}
 <section class="admin-panel" aria-labelledby="place-title">
     <h2 id="place-title">{{ t('Place in the site') }}</h2>

@@ -21,6 +21,7 @@ use SightPress\Core\Http\Form\Form;
 use SightPress\Core\Page\Admin\Http\PageOperationsHandler;
 use SightPress\Core\Page\Admin\Http\PagePurgeHandler;
 use SightPress\Core\Page\Admin\Http\PageRevisionsHandler;
+use SightPress\Core\Page\Admin\Http\PageScheduleHandler;
 use SightPress\Core\Page\Admin\Http\PageTranslationHandler;
 use SightPress\Core\Page\Admin\PageAdmin;
 use SightPress\Core\Page\Contract\PageTransition;
@@ -31,6 +32,8 @@ use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageRepository;
 use SightPress\Core\Page\PageShift;
 use SightPress\Core\Page\Publish\PublishChecker;
+use SightPress\Core\Page\Schedule\LocalTime;
+use SightPress\Core\Page\Schedule\PageSchedule;
 use SightPress\Core\Page\Workflow\PageWorkflow;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\Contract\Authorizer;
@@ -174,11 +177,35 @@ final readonly class PageEditorScreen
             'may_publish' => $actor->has('page.publish'),
             'report_focus' => $refused !== null,
             'operations_action' => PageOperationsHandler::path((int) $page->id()),
+            'schedule' => $actor->has(PageSchedule::PERMISSION) && !in_array($page->state(), [PageState::Archived, PageState::Trash], true) ? $this->schedule($request, $page) : null,
             'may_copy' => $actor->has('page.create') && $page->state() !== PageState::Trash,
             'place' => PageOperationsHandler::mayMove($actor) && $page->state() !== PageState::Trash ? $this->place($page) : null,
             'revisions_url' => $translation === null ? null : PageRevisionsHandler::path((int) $page->id(), $locale, $this->site->defaultLocale),
             'delete_url' => $this->authorizer->can($actor, PageAction::Purge->value, $page) ? PagePurgeHandler::path((int) $page->id()) : null,
         ], $status);
+    }
+
+    /**
+     * The "Schedule" section: what is scheduled, and the form's values in the person's time zone (or what they typed,
+     * when the schedule handler sent them back with a problem).
+     *
+     * @return array{action: string, timezone: string, published: bool, approved: bool, publish_at: ?\DateTimeImmutable, unpublish_at: ?\DateTimeImmutable, publish_value: string, unpublish_value: string}
+     */
+    private function schedule(ServerRequestInterface $request, Page $page): array
+    {
+        $timezone = PageScheduleHandler::timezone($request, $this->site);
+        $typed = $request->getQueryParams();
+
+        return [
+            'action' => PageScheduleHandler::path((int) $page->id()),
+            'timezone' => $timezone,
+            'published' => $page->state() === PageState::Published,
+            'approved' => $page->state() === PageState::Approved,
+            'publish_at' => $page->publishAt(),
+            'unpublish_at' => $page->unpublishAt(),
+            'publish_value' => is_string($typed['publish_at'] ?? null) ? mb_substr($typed['publish_at'], 0, 32) : LocalTime::field($page->publishAt(), $timezone),
+            'unpublish_value' => is_string($typed['unpublish_at'] ?? null) ? mb_substr($typed['unpublish_at'], 0, 32) : LocalTime::field($page->unpublishAt(), $timezone),
+        ];
     }
 
     /**

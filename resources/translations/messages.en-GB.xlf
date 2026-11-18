@@ -607,6 +607,12 @@
         <target>Archived</target>
       </segment>
     </unit>
+    <unit id="a2821b2db245a6ad">
+      <segment>
+        <source>Archived pages and pages in the trash can’t be scheduled. Restore the page first.</source>
+        <target>Archived pages and pages in the trash can’t be scheduled. Restore the page first.</target>
+      </segment>
+    </unit>
     <unit id="26297e8988d91780">
       <segment>
         <source>Archived. Visitors can’t see the page any more; it is kept with the archived pages.</source>
@@ -877,6 +883,18 @@
         <target>Choose a picture to upload.</target>
       </segment>
     </unit>
+    <unit id="1e8947e8f96744b1">
+      <segment>
+        <source>Choose a time to publish that is still to come.</source>
+        <target>Choose a time to publish that is still to come.</target>
+      </segment>
+    </unit>
+    <unit id="d85244f463db1fbb">
+      <segment>
+        <source>Choose a time to take the page off the site that is still to come.</source>
+        <target>Choose a time to take the page off the site that is still to come.</target>
+      </segment>
+    </unit>
     <unit id="aef4076f194a6de6">
       <segment>
         <source>Choose an option</source>
@@ -917,6 +935,12 @@
       <segment>
         <source>Choosing a layout</source>
         <target>Choosing a layout</target>
+      </segment>
+    </unit>
+    <unit id="fee2ded83187a9e2">
+      <segment>
+        <source>Clear the schedule</source>
+        <target>Clear the schedule</target>
       </segment>
     </unit>
     <unit id="7d9eb7acb13e2462">
@@ -2353,6 +2377,12 @@
         <target>Nothing is kept until you save. The buttons that add, move or remove blocks don’t save.</target>
       </segment>
     </unit>
+    <unit id="55c3c9caedc2db55">
+      <segment>
+        <source>Nothing is scheduled.</source>
+        <target>Nothing is scheduled.</target>
+      </segment>
+    </unit>
     <unit id="54ca5460e9428a6b">
       <segment>
         <source>Nothing was changed.</source>
@@ -2435,6 +2465,12 @@
       <segment>
         <source>Only part of the file arrived. Try uploading it again.</source>
         <target>Only part of the file arrived. Try uploading it again.</target>
+      </segment>
+    </unit>
+    <unit id="2be0a1438645073f">
+      <segment>
+        <source>Only people who may publish pages can schedule them.</source>
+        <target>Only people who may publish pages can schedule them.</target>
       </segment>
     </unit>
     <unit id="410c3aa8a88771e1">
@@ -2645,6 +2681,12 @@
       <segment>
         <source>Publish</source>
         <target>Publish</target>
+      </segment>
+    </unit>
+    <unit id="d565aa2b9736d56f">
+      <segment>
+        <source>Publish at</source>
+        <target>Publish at</target>
       </segment>
     </unit>
     <unit id="2c7e0065e1ef4398">
@@ -2917,6 +2959,12 @@
         <target>Save the page before making it the home page.</target>
       </segment>
     </unit>
+    <unit id="0012e3ae2afd4d6b">
+      <segment>
+        <source>Save the schedule</source>
+        <target>Save the schedule</target>
+      </segment>
+    </unit>
     <unit id="21b7401d6131b7af">
       <segment>
         <source>Save the {thing}</source>
@@ -2963,6 +3011,30 @@
       <segment>
         <source>Say where the link goes, for example &quot;Read the annual report&quot; instead of &quot;Read more&quot;.</source>
         <target>Say where the link goes, for example &quot;Read the annual report&quot; instead of &quot;Read more&quot;.</target>
+      </segment>
+    </unit>
+    <unit id="f4830a1dae298044">
+      <segment>
+        <source>Schedule</source>
+        <target>Schedule</target>
+      </segment>
+    </unit>
+    <unit id="5d94565d1b8626d4">
+      <segment>
+        <source>Scheduled: the page is published at {publish} ({timezone} time).</source>
+        <target>Scheduled: the page is published at {publish} ({timezone} time).</target>
+      </segment>
+    </unit>
+    <unit id="1d04cb57ca966418">
+      <segment>
+        <source>Scheduled: the page is published at {publish} and taken off the site at {unpublish} ({timezone} time).</source>
+        <target>Scheduled: the page is published at {publish} and taken off the site at {unpublish} ({timezone} time).</target>
+      </segment>
+    </unit>
+    <unit id="ceeaec8e38489030">
+      <segment>
+        <source>Scheduled: the page is taken off the site at {unpublish} ({timezone} time).</source>
+        <target>Scheduled: the page is taken off the site at {unpublish} ({timezone} time).</target>
       </segment>
     </unit>
     <unit id="5c9cb044218cba64">
@@ -3439,6 +3511,12 @@
         <target>System</target>
       </segment>
     </unit>
+    <unit id="5e9bc768ca88a1de">
+      <segment>
+        <source>Take off the site at</source>
+        <target>Take off the site at</target>
+      </segment>
+    </unit>
     <unit id="a95064d8e4d03971">
       <segment>
         <source>Take out of the trash</source>
@@ -3781,6 +3859,12 @@
         <target>The page above this one isn't written in &quot;{locale}&quot; yet. Translate it first.</target>
       </segment>
     </unit>
+    <unit id="c313ad012c735b61">
+      <segment>
+        <source>The page becomes a draft again at this time, if it is published then.</source>
+        <target>The page becomes a draft again at this time, if it is published then.</target>
+      </segment>
+    </unit>
     <unit id="88f2e744f2e6d707">
       <segment>
         <source>The page does not accept this kind of request. Go back and try again.</source>
@@ -3797,6 +3881,12 @@
       <segment>
         <source>The page has not been saved.</source>
         <target>The page has not been saved.</target>
+      </segment>
+    </unit>
+    <unit id="c7838b00264080b3">
+      <segment>
+        <source>The page has to be approved: it is published at this time, or as soon as it is approved after it. For example 2026-12-01 09:00.</source>
+        <target>The page has to be approved: it is published at this time, or as soon as it is approved after it. For example 2026-12-01 09:00.</target>
       </segment>
     </unit>
     <unit id="e8d631db7222ce03">
@@ -3841,6 +3931,12 @@
         <target>The page is made of blocks, shown one after another. Each block below is a group of fields with buttons to move or remove it.</target>
       </segment>
     </unit>
+    <unit id="c685a19521dcaf8a">
+      <segment>
+        <source>The page is published already, so it can only get a time to be taken off the site.</source>
+        <target>The page is published already, so it can only get a time to be taken off the site.</target>
+      </segment>
+    </unit>
     <unit id="009a171795e95812">
       <segment>
         <source>The page is under: {pages}</source>
@@ -3869,6 +3965,12 @@
       <segment>
         <source>The page isn’t written in this language yet, so it has no versions in it.</source>
         <target>The page isn’t written in this language yet, so it has no versions in it.</target>
+      </segment>
+    </unit>
+    <unit id="bdca58a62a129392">
+      <segment>
+        <source>The page must be taken off the site after it is published.</source>
+        <target>The page must be taken off the site after it is published.</target>
       </segment>
     </unit>
     <unit id="1f02ae3565967ed2">
@@ -3935,6 +4037,12 @@
       <segment>
         <source>The previews show your changes. Save the page to keep them.</source>
         <target>The previews show your changes. Save the page to keep them.</target>
+      </segment>
+    </unit>
+    <unit id="c0777e9323b4e004">
+      <segment>
+        <source>The schedule is cleared: nothing happens to the page on its own.</source>
+        <target>The schedule is cleared: nothing happens to the page on its own.</target>
       </segment>
     </unit>
     <unit id="82471aa3707f336a">
@@ -4441,6 +4549,12 @@
         <target>Time zone</target>
       </segment>
     </unit>
+    <unit id="0e4d5811f6f7df35">
+      <segment>
+        <source>Times are in your time zone, {timezone}. Leave a field empty for no time. The page is published and taken off the site within a minute of the time.</source>
+        <target>Times are in your time zone, {timezone}. Leave a field empty for no time. The page is published and taken off the site within a minute of the time.</target>
+      </segment>
+    </unit>
     <unit id="7e8cd2056da73a7f">
       <segment>
         <source>Title</source>
@@ -4469,6 +4583,18 @@
       <segment>
         <source>To accept, go to the sign-in page of {site}, choose “Accept an invitation”, and type your email address and this invitation code:</source>
         <target>To accept, go to the sign-in page of {site}, choose “Accept an invitation”, and type your email address and this invitation code:</target>
+      </segment>
+    </unit>
+    <unit id="4c7174118f9c2e57">
+      <segment>
+        <source>To be published at {time}</source>
+        <target>To be published at {time}</target>
+      </segment>
+    </unit>
+    <unit id="8ff1d3e1197535a4">
+      <segment>
+        <source>To be taken off the site at {time}</source>
+        <target>To be taken off the site at {time}</target>
       </segment>
     </unit>
     <unit id="802600d124464157">
@@ -5305,6 +5431,12 @@
         <target>not shown until the page is published</target>
       </segment>
     </unit>
+    <unit id="6c73e8d9203a7d29">
+      <segment>
+        <source>once it is approved: if it is approved later, as soon as it is approved.</source>
+        <target>once it is approved: if it is approved later, as soon as it is approved.</target>
+      </segment>
+    </unit>
     <unit id="ab8d5cdca43cc8eb">
       <segment>
         <source>opens in a new tab</source>
@@ -5465,6 +5597,18 @@
       <segment>
         <source>{field} must be {{ limit }} characters or fewer</source>
         <target>{field} must be {{ limit }} characters or fewer</target>
+      </segment>
+    </unit>
+    <unit id="c86d92998be6905d">
+      <segment>
+        <source>{field}: enter a date and time, for example 2026-12-01 09:00.</source>
+        <target>{field}: enter a date and time, for example 2026-12-01 09:00.</target>
+      </segment>
+    </unit>
+    <unit id="2c3910817b0edafb">
+      <segment>
+        <source>{field}: that time doesn’t exist in your time zone, because the clocks go forward then. Choose another time.</source>
+        <target>{field}: that time doesn’t exist in your time zone, because the clocks go forward then. Choose another time.</target>
       </segment>
     </unit>
     <unit id="1c088992cac55ea3">

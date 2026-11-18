@@ -59,6 +59,15 @@ final class Page implements PageSubject
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $updatedAt;
 
+    #[ORM\Column(name: 'publish_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $publishAt = null;
+
+    #[ORM\Column(name: 'unpublish_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $unpublishAt = null;
+
+    #[ORM\Column(name: 'scheduled_by', type: Types::INTEGER, nullable: true)]
+    private ?int $scheduledBy = null;
+
     /** @var Collection<string, PageTranslation> */
     #[ORM\OneToMany(targetEntity: PageTranslation::class, mappedBy: 'page', cascade: ['persist'], orphanRemoval: true, indexBy: 'locale')]
     private Collection $translations;
@@ -254,7 +263,56 @@ final class Page implements PageSubject
      */
     public function changeState(PageState $state, DateTimeImmutable $now): void
     {
+        $from = $this->state;
         $this->state = $state;
+        $this->updatedAt = $now;
+        // A schedule that has happened, or no longer can, is forgotten.
+        $gone = in_array($state, [PageState::Archived, PageState::Trash], true);
+        if ($gone || $state === PageState::Published) {
+            $this->publishAt = null;
+        }
+        if ($gone || ($from === PageState::Published && $state !== PageState::Published)) {
+            $this->unpublishAt = null;
+        }
+        if ($this->publishAt === null && $this->unpublishAt === null) {
+            $this->scheduledBy = null;
+        }
+    }
+
+    /**
+     * When `schedule:run` publishes the page (once it is approved), in UTC.
+     */
+    public function publishAt(): ?DateTimeImmutable
+    {
+        return $this->publishAt;
+    }
+
+    /**
+     * When `schedule:run` takes the page off the site (while it is published), in UTC.
+     */
+    public function unpublishAt(): ?DateTimeImmutable
+    {
+        return $this->unpublishAt;
+    }
+
+    /**
+     * Who set the schedule: `schedule:run` publishes with their permissions at the time it runs.
+     */
+    public function scheduledBy(): ?int
+    {
+        return $this->scheduledBy;
+    }
+
+    /**
+     * Sets or clears when the page is published and taken off the site.
+     *
+     * @internal for {@see \SightPress\Core\Page\Schedule\PageSchedule}
+     */
+    public function schedule(?DateTimeImmutable $publishAt, ?DateTimeImmutable $unpublishAt, ?int $by, DateTimeImmutable $now): void
+    {
+        $this->publishAt = $publishAt;
+        $this->unpublishAt = $unpublishAt;
+        $this->scheduledBy = $publishAt === null && $unpublishAt === null ? null : $by;
         $this->updatedAt = $now;
     }
 

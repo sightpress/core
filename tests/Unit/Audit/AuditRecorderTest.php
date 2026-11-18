@@ -44,6 +44,8 @@ use SightPress\Core\User\UserRepository;
 #[CoversClass(\SightPress\Core\Page\Contract\PagePurged::class)]
 #[CoversClass(\SightPress\Core\Page\Contract\RedirectChanged::class)]
 #[CoversClass(\SightPress\Core\Page\Contract\RevisionRestored::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\PageScheduled::class)]
+#[CoversClass(\SightPress\Core\Page\Contract\ScheduledStepFailed::class)]
 #[UsesNamespace('SightPress\Core')]
 final class AuditRecorderTest extends TestCase
 {
@@ -95,6 +97,11 @@ final class AuditRecorderTest extends TestCase
             new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::REMOVED, 'en-GB', 'old', null, 4),
             new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::REMOVED, 'en-GB', 'old', 'new', 4),
             new \SightPress\Core\Page\Contract\RevisionRestored($page, 'pt-PT', 2, 5, 4),
+            new \SightPress\Core\Page\Contract\PageScheduled($page, new \DateTimeImmutable('2026-12-01 09:00:00'), new \DateTimeImmutable('2026-12-31 18:00:00'), 4),
+            new \SightPress\Core\Page\Contract\PageScheduled($page, null, new \DateTimeImmutable('2026-12-31 18:00:00'), 4),
+            new \SightPress\Core\Page\Contract\PageScheduled($page, null, null, 4),
+            new \SightPress\Core\Page\Contract\ScheduledStepFailed($page, PageTransition::Publish, 'the publish checks found errors', 4),
+            new \SightPress\Core\Page\Contract\ScheduledStepFailed($page, PageTransition::Unpublish, 'no permission', null),
             new \stdClass(),
         ] as $event) {
             $recorder($event);
@@ -134,6 +141,11 @@ final class AuditRecorderTest extends TestCase
             'Removed the “gone” answer of /old (British English).',
             'Removed the redirect from /old to /new (British English).',
             'Restored the European Portuguese text of “About us” from revision 2 (now revision 5).',
+            'Scheduled “About us”: published at 2026-12-01 09:00 UTC; taken off the site at 2026-12-31 18:00 UTC.',
+            'Scheduled “About us”: taken off the site at 2026-12-31 18:00 UTC.',
+            'Cleared the schedule of “About us”.',
+            'Couldn’t publish “About us” on schedule: the publish checks found errors.',
+            'Couldn’t take “About us” off the site on schedule: no permission.',
         ], array_map(static fn (AuditEntry $e): string => $e->summary, $entries));
         self::assertSame(['page.submit', 'page', (string) $page, 3, ['from' => 'draft', 'to' => 'in_review', 'comment' => 'Ready']], [$entries[3]->action, $entries[3]->entityType, $entries[3]->entityId, $entries[3]->actorId, $entries[3]->details]);
         self::assertSame(['settings', null], [$entries[20]->entityType, $entries[20]->entityId]);
@@ -142,6 +154,8 @@ final class AuditRecorderTest extends TestCase
         self::assertSame(['redirect.added', 'redirect', null, ['locale' => 'pt-PT', 'from' => 'antigo', 'to' => 'novo']], [$entries[28]->action, $entries[28]->entityType, $entries[28]->entityId, $entries[28]->details]);
         self::assertSame(['page.cloned', ['source' => $page]], [$entries[25]->action, $entries[25]->details]);
         self::assertSame(['page.revision_restored', 4, ['locale' => 'pt-PT', 'restored' => 2, 'revision' => 5]], [$entries[31]->action, $entries[31]->actorId, $entries[31]->details]);
-        self::assertCount(16, AuditRecorder::EVENTS);
+        self::assertSame(['page.scheduled', ['publish_at' => '2026-12-01T09:00:00+00:00', 'unpublish_at' => '2026-12-31T18:00:00+00:00']], [$entries[32]->action, $entries[32]->details]);
+        self::assertSame(['page.schedule_failed', null, ['transition' => 'unpublish', 'reason' => 'no permission']], [$entries[36]->action, $entries[36]->actorId, $entries[36]->details]);
+        self::assertCount(18, AuditRecorder::EVENTS);
     }
 }

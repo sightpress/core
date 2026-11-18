@@ -47,6 +47,7 @@ final class SiteModuleTest extends TestCase
                 \SightPress\Core\Site\Command\AddSiteLocaleCommand::class,
                 \SightPress\Core\Site\Command\RemoveSiteLocaleCommand::class,
                 \SightPress\Core\Site\Command\DefaultSiteLocaleCommand::class,
+                \SightPress\Core\Site\Command\RunScheduleCommand::class,
             ],
             array_map(static fn ($registered) => $registered->item, $registry->commands()),
         );

@@ -46,5 +46,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0026](0026-interface-text-translations.md) | Interface text is translated from XLIFF catalogues, with messages instead of built sentences | Proposed |
 | [0027](0027-page-operations-and-redirects.md) | Page operations: archive and trash steps, a redirects table and "gone" addresses | Proposed |
 | [0028](0028-page-revisions-compared-and-restored.md) | Page revisions: versions per language, a word-by-word comparison and restoring without publishing | Proposed |
+| [0029](0029-scheduled-publishing-and-schedule-run.md) | Scheduled publishing and `schedule:run`, the one command for jobs at a set time | Proposed |
 
 When an ADR's status changes, update it here too.

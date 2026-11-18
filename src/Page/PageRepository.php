@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace SightPress\Core\Page;
 
 use Closure;
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\Entity\PageRevision;
 use SightPress\Core\Page\Entity\PageTranslation;
+use SightPress\Core\Rbac\Contract\PageState;
 
 /**
  * The site's pages, in the site's own database. Lists come with their translations in the same query.
@@ -151,6 +154,48 @@ final readonly class PageRepository
     public function revision(Page $page, int $number): ?PageRevision
     {
         return $this->entityManager->getRepository(PageRevision::class)->findOneBy(['page' => $page, 'number' => $number]);
+    }
+
+    /**
+     * Approved pages whose publishing time has come, earliest first.
+     *
+     * @return list<Page>
+     */
+    public function duePublications(DateTimeImmutable $now): array
+    {
+        return $this->due('publishAt', PageState::Approved, $now);
+    }
+
+    /**
+     * Published pages whose end time has come, earliest first.
+     *
+     * @return list<Page>
+     */
+    public function dueUnpublications(DateTimeImmutable $now): array
+    {
+        return $this->due('unpublishAt', PageState::Published, $now);
+    }
+
+    /**
+     * @param 'publishAt'|'unpublishAt' $field
+     *
+     * @return list<Page>
+     */
+    private function due(string $field, PageState $state, DateTimeImmutable $now): array
+    {
+        /** @var list<Page> */
+        return $this->entityManager->createQueryBuilder()
+            ->select('p', 't')
+            ->from(Page::class, 'p')
+            ->leftJoin('p.translations', 't')
+            ->where('p.state = :state')
+            ->andWhere('p.' . $field . ' <= :now')
+            ->setParameter('state', $state)
+            ->setParameter('now', $now, Types::DATETIME_IMMUTABLE)
+            ->orderBy('p.' . $field, 'ASC')
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     public function lastRevisionNumber(Page $page): int
