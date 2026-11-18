@@ -54,7 +54,7 @@ final class UserModuleTest extends TestCase
             \Psr\Clock\ClockInterface::class => new \SightPress\Core\Tests\Support\FixedClock(),
         ])->build()));
         self::assertSame(
-            ['user.account' => ['/account', ['GET', 'POST']], 'user.account.picture' => ['/account/picture', ['POST']], 'user.account.language' => ['/account/language', ['POST']], 'user.account.picture.remove' => ['/account/picture/remove', ['POST']], 'user.avatar' => ['/avatars/{file}', ['GET', 'HEAD']]],
+            ['user.account' => ['/account', ['GET', 'POST']], 'user.account.picture' => ['/account/picture', ['POST']], 'user.account.language' => ['/account/language', ['POST']], 'user.account.preferences' => ['/account/preferences', ['POST']], 'user.account.picture.remove' => ['/account/picture/remove', ['POST']], 'user.avatar' => ['/avatars/{file}', ['GET', 'HEAD']]],
             Text::of(array_combine(
                 array_map(static fn ($r) => $r->item->name, $registry->routes()),
                 array_map(static fn ($r) => [$r->item->path, $r->item->methods], $registry->routes()),

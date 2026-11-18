@@ -1,7 +1,9 @@
 {#
-    My account (/account): the signed-in person's details and profile picture, in the site's theme. Two forms; after
-    a refused one, the error summary at the top gets focus and the <title> starts with "Error:".
-    Context: `user`, `avatar_url`, `avatar_uploaded`, `details`, `picture`, `failed` (the form that was refused).
+    My account (/account): the signed-in person's details, sign-in details (links to change the password and the email
+    address, each on its own page), profile picture and, for people who use the admin panel, admin preferences, in the
+    site's theme. After a refused form, the error summary at the top gets focus and the <title> starts with "Error:".
+    Context: `user`, `avatar_url`, `avatar_uploaded`, `details`, `picture`, `admin_preferences` (null for people
+    without admin access), `failed` (the form that was refused).
 #}
 {% extends 'layouts/default.html.twig' %}
 {% import 'form/macros.html.twig' as f %}
@@ -11,7 +13,6 @@
 {%- if failed %}{{ f.error_summary(failed) }}{% endif %}
 <section class="account-section" aria-labelledby="account-details-title">
     <h2 id="account-details-title">{{ t('Your details') }}</h2>
-    <p>{{ t('Email address:') }} {{ user.email }}</p>
     {{ f.start(details, '/account') }}
         {{ f.field(details, 'first_name') }}
         {{ f.field(details, 'last_name') }}
@@ -22,6 +23,14 @@
         {%- endif %}
         {{ f.submit(t('Save details')) }}
     {{ f.end() }}
+</section>
+<section class="account-section" aria-labelledby="account-sign-in-title">
+    <h2 id="account-sign-in-title">{{ t('Signing in') }}</h2>
+    <p>{{ t('Email address:') }} {{ user.email }}</p>
+    <ul>
+        <li><a href="/account/email">{{ t('Change your email address') }}</a></li>
+        <li><a href="/account/password">{{ t('Change your password') }}</a></li>
+    </ul>
 </section>
 <section class="account-section" aria-labelledby="account-picture-title">
     <h2 id="account-picture-title">{{ t('Profile picture') }}</h2>
@@ -40,6 +49,17 @@
     </form>
     {%- endif %}
 </section>
+{%- if admin_preferences %}
+<section class="account-section" aria-labelledby="account-preferences-title">
+    <h2 id="account-preferences-title">{{ t('Admin preferences') }}</h2>
+    <p>{{ t('How the admin panel is shown to you. They don’t change the site your visitors see.') }}</p>
+    {{ f.start(admin_preferences, '/account/preferences') }}
+        {{ f.field(admin_preferences, 'reduced_motion') }}
+        {{ f.field(admin_preferences, 'larger_text') }}
+        {{ f.submit(t('Save preferences')) }}
+    {{ f.end() }}
+</section>
+{%- endif %}
 <p>
     {%- if can('admin.access') %}<a href="/admin">{{ t('Go to the admin panel') }}</a> · {% endif -%}
     <a href="/logout">{{ t('Sign out') }}</a>

@@ -49,6 +49,21 @@ final class AdminShellTest extends TestCase
         self::assertStringContainsString('<form action="/logout" method="post">', $html);
         self::assertMatchesRegularExpression('#<div class="messages" role="status">\s*<p>Your changes have been saved.</p>#', $html);
         self::assertSame([], array_map(strval(...), Flash::take($session)));
+        self::assertMatchesRegularExpression('#<html lang="en-GB" dir="ltr">#', $html, 'no admin preferences, no classes');
+    }
+
+    public function testTheAdminPreferencesBecomeClassesOnTheRootElement(): void
+    {
+        $ada = $this->admin->auth->user();
+        $render = fn (\SightPress\Core\Template\ViewerPreferences $preferences): string => (string) $this->admin->shell()->render(
+            $this->admin->request($ada)->withAttribute(\SightPress\Core\Template\ViewerPreferences::class, $preferences),
+            '@admin/dashboard.html.twig',
+            ['drafts' => null, 'reviews' => null, 'activity' => []],
+        )->getBody();
+
+        self::assertStringContainsString('<html lang="en-GB" dir="ltr" class="admin-reduced-motion admin-larger-text">', $render(new \SightPress\Core\Template\ViewerPreferences(reducedMotion: true, largerText: true)));
+        self::assertStringContainsString('<html lang="en-GB" dir="ltr" class="admin-larger-text">', $render(new \SightPress\Core\Template\ViewerPreferences(largerText: true)));
+        self::assertStringContainsString('<html lang="en-GB" dir="ltr">', $render(new \SightPress\Core\Template\ViewerPreferences()));
     }
 
     public function testPutsTheNumberOfErrorsInTheTitle(): void

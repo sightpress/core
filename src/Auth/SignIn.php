@@ -12,6 +12,7 @@ use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\User\Contract\Account;
 use SightPress\Core\User\Contract\Accounts;
+use Symfony\Component\RateLimiter\LimiterInterface;
 
 /**
  * Checks an email address and password, and starts and ends signed-in sessions.
@@ -38,11 +39,7 @@ final readonly class SignIn
 
     public function attempt(ServerRequestInterface $request, string $email, #[SensitiveParameter] string $password): SignInResult
     {
-        $address = $request->getServerParams()['REMOTE_ADDR'] ?? null;
-        $limiter = $this->limiters->limiter(
-            'sign_in',
-            mb_strtolower(trim($email)) . '|' . (is_string($address) ? $address : 'unknown'),
-        );
+        $limiter = $this->limiter($request, $email);
         $limit = $limiter->consume();
         if (!$limit->isAccepted()) {
             return SignInResult::throttled(
@@ -69,6 +66,25 @@ final readonly class SignIn
             $account->setPasswordHash($this->hasher->hash($password), $this->clock->now());
             $this->accounts->saveAccount($account);
         }
+
+        return SignInResult::signedIn($account);
+    }
+
+    /**
+     * Checks the password of someone already signed in, before they change their password or email address. Wrong
+     * tries count towards the same `sign_in` limit as signing in, so it can't be used to guess passwords faster.
+     */
+    public function confirmPassword(ServerRequestInterface $request, Account $account, #[SensitiveParameter] string $password): SignInResult
+    {
+        $limiter = $this->limiter($request, $account->email());
+        $limit = $limiter->consume();
+        if (!$limit->isAccepted()) {
+            return SignInResult::throttled(RateLimiters::secondsUntil($limit->getRetryAfter()));
+        }
+        if (!$this->hasher->verify($password, $account->passwordHash())) {
+            return SignInResult::wrongCredentials();
+        }
+        $limiter->reset();
 
         return SignInResult::signedIn($account);
     }
@@ -113,6 +129,13 @@ final readonly class SignIn
         $user = $session->get(self::SESSION_USER);
 
         return $session->get(self::SESSION_SITE) === $this->site->id && is_int($user) ? $user : null;
+    }
+
+    private function limiter(ServerRequestInterface $request, string $email): LimiterInterface
+    {
+        $address = $request->getServerParams()['REMOTE_ADDR'] ?? null;
+
+        return $this->limiters->limiter('sign_in', mb_strtolower(trim($email)) . '|' . (is_string($address) ? $address : 'unknown'));
     }
 
     private static function stamp(Account $account): string

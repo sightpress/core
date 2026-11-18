@@ -111,6 +111,26 @@ final class UserTest extends TestCase
         $user->changeTimezone('Nowhere', $this->now);
     }
 
+    public function testTheEmailAddressAndAdminPreferencesChange(): void
+    {
+        $user = $this->user();
+        self::assertFalse($user->adminReducedMotion());
+        self::assertFalse($user->adminLargerText());
+
+        $later = $this->now->modify('+1 day');
+        $user->changeEmail(' New@Example.org ', $later);
+        $user->changeAdminPreferences(true, false, $later);
+        self::assertSame('new@example.org', $user->email());
+        self::assertTrue($user->adminReducedMotion());
+        self::assertFalse($user->adminLargerText());
+        self::assertEquals($later, $user->updatedAt());
+        $user->changeAdminPreferences(false, true, $later);
+        self::assertSame([false, true], [$user->adminReducedMotion(), $user->adminLargerText()]);
+
+        $this->expectException(UserException::class);
+        $user->changeEmail('not an address', $later);
+    }
+
     public function testSettingAPasswordActivatesAPendingAccount(): void
     {
         $user = $this->user();

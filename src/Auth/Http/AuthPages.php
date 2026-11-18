@@ -12,6 +12,9 @@ use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Tenant\Site;
+use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Core\User\Contract\Account;
+use SightPress\Core\User\Contract\Accounts;
 
 /**
  * Renders the sign-in pages with the site's name and any waiting flash messages, and answers with redirects.
@@ -52,6 +55,24 @@ final readonly class AuthPages
     }
 
     /**
+     * The account signed in to this site, or null for a visitor.
+     */
+    public static function signedIn(ServerRequestInterface $request, Accounts $accounts): ?Account
+    {
+        $id = Actor::fromRequest($request)->userId;
+
+        return $id === null ? null : $accounts->findAccount($id);
+    }
+
+    /**
+     * Sends a visitor to sign in, and back to this page afterwards.
+     */
+    public function signInFirst(string $return): ResponseInterface
+    {
+        return $this->redirect('/login?' . http_build_query(['return' => $return]));
+    }
+
+    /**
      * The form fields from the request body.
      *
      * @return array<mixed>
@@ -73,8 +94,8 @@ final readonly class AuthPages
     /**
      * "You have tried to … too many times", with the wait in whole minutes.
      *
-     * @param 'tried to sign in'|'tried a code'|'asked for a code' $what
-     * @param positive-int                                          $retryAfter seconds
+     * @param 'tried to sign in'|'tried a code'|'asked for a code'|'typed your password' $what
+     * @param positive-int                                                                $retryAfter seconds
      */
     public static function tooManyAttempts(string $what, int $retryAfter): Message
     {
@@ -84,6 +105,7 @@ final readonly class AuthPages
             'tried to sign in' => new Message('You have tried to sign in too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.', $minutes),
             'tried a code' => new Message('You have tried a code too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.', $minutes),
             'asked for a code' => new Message('You have asked for a code too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.', $minutes),
+            'typed your password' => new Message('You have typed a wrong password too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.', $minutes),
         };
     }
 }

@@ -125,6 +125,10 @@ final class UserRepositoryTest extends TestCase
             public function setPasswordHash(string $hash, DateTimeImmutable $now): void
             {
             }
+
+            public function changeEmail(string $email, DateTimeImmutable $now): void
+            {
+            }
         });
     }
 
@@ -136,6 +140,8 @@ final class UserRepositoryTest extends TestCase
         $users->save($user);
 
         self::assertEquals(new \SightPress\Core\Template\ViewerPreferences('pt-BR', 'America/Sao_Paulo'), $users->preferencesOf((int) $user->id()));
+        $user->changeAdminPreferences(true, true, new \DateTimeImmutable());
+        self::assertEquals(new \SightPress\Core\Template\ViewerPreferences('pt-BR', 'America/Sao_Paulo', reducedMotion: true, largerText: true), $users->preferencesOf((int) $user->id()));
         self::assertNull($users->preferencesOf(999));
     }
 

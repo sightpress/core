@@ -31,6 +31,7 @@ use SightPress\Core\User\Http\AccountPictureHandler;
 #[CoversClass(AccountHandler::class)]
 #[CoversClass(\SightPress\Core\User\Http\AccountLanguageHandler::class)]
 #[CoversClass(AccountPictureHandler::class)]
+#[CoversClass(\SightPress\Core\User\Http\AccountPreferencesHandler::class)]
 #[CoversClass(AccountChanged::class)]
 #[UsesNamespace('SightPress\Core')]
 final class AccountHandlersTest extends TestCase implements EventDispatcherInterface
@@ -87,6 +88,39 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
         self::assertStringContainsString('<input type="file" id="picture-picture" accept="image/jpeg,image/png,image/webp" name="picture"', $html);
         self::assertStringNotContainsString('Remove picture', $html);
         self::assertStringNotContainsString('Go to the admin panel', $html, 'members never see a link to the admin');
+        self::assertStringContainsString('<a href="/account/email">Change your email address</a>', $html);
+        self::assertStringContainsString('<a href="/account/password">Change your password</a>', $html);
+        self::assertStringNotContainsString('Admin preferences', $html, 'only for people who use the admin panel');
+    }
+
+    public function testPeopleWhoUseTheAdminChooseLessMotionAndLargerText(): void
+    {
+        $ada = $this->auth->user('ada@example.org', 'editor');
+        $handler = new \SightPress\Core\User\Http\AccountPreferencesHandler($this->pages(), $this->auth->validator(), $this->auth->users, $this->auth->clock, $this);
+
+        $html = (string) $this->details($ada)->getBody();
+        self::assertStringContainsString('<h2 id="account-preferences-title">Admin preferences</h2>', $html);
+        self::assertStringContainsString('<form id="admin-preferences" action="/account/preferences" method="post"', $html);
+        self::assertStringContainsString('Reduce motion', $html);
+        self::assertStringContainsString('Larger text', $html);
+
+        $response = $handler->handle($this->request($ada, 'POST', ['reduced_motion' => '1']));
+        self::assertSame([303, '/account'], [$response->getStatusCode(), $response->getHeaderLine('Location')]);
+        self::assertSame(['Your admin preferences have been saved.'], Text::of(array_map(strval(...), Flash::take($this->session))));
+        self::assertSame([true, false], [$ada->adminReducedMotion(), $ada->adminLargerText()]);
+        self::assertSame([['admin_preferences']], Text::of($this->changedFields()));
+        self::assertMatchesRegularExpression('#id="admin-preferences-reduced-motion" value="1" checked#', (string) $this->details($ada)->getBody());
+
+        $handler->handle($this->request($ada, 'POST', ['reduced_motion' => '1']));
+        self::assertSame(['You didn’t change anything.'], Text::of(array_map(strval(...), Flash::take($this->session))));
+        self::assertCount(1, $this->events);
+
+        $handler->handle($this->request($ada, 'POST', ['larger_text' => '1']));
+        self::assertSame([false, true], [$ada->adminReducedMotion(), $ada->adminLargerText()]);
+        self::assertSame(303, $handler->handle($this->request(null, 'POST'))->getStatusCode(), 'visitors are sent to sign in');
+
+        $this->expectException(\Slim\Exception\HttpForbiddenException::class);
+        $handler->handle($this->request($this->member(), 'POST', ['larger_text' => '1']));
     }
 
     public function testSavesNewNamesMakesTheAvatarAgainAndSaysSo(): void

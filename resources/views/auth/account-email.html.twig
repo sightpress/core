@@ -1,0 +1,20 @@
+{#
+    "Change your email address" (/account/email), from My account: the new address and the current password. A code
+    goes to the new address; nothing changes until it is typed on the next page. Never indexed.
+    Context: `title`, `form`, `email`, `action`.
+#}
+{% extends '@auth/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t(title) }}{% endblock %}
+{% block content %}
+<h1>{{ t(title) }}</h1>
+<p>{{ t('You sign in with {email} now.', {'email': email}) }}</p>
+<p>{{ t('We email a 6-digit code to the new address. Your address changes only once you type that code here. Then we tell your old address about the change.') }}</p>
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    {{ f.field(form, 'new_email') }}
+    {{ f.field(form, 'current_password') }}
+    {{ f.submit(t('Send the code')) }}
+{{ f.end() }}
+<p><a href="/account">{{ t('Back to My account') }}</a></p>
+{% endblock %}

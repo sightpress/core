@@ -1,0 +1,11 @@
+{% autoescape false %}
+{{ t('Hello {name},', {name: name}) }}
+
+{{ t('The email address of your account on {site} is now {email}. From now on you sign in with that address, and our emails go there.', {site: site_name, email: new_email}) }}
+
+{{ t('If you made this change, you don’t need to do anything.') }}
+
+{{ t('If you didn’t, someone else may know your password. Contact the people who run {site} straight away.', {site: site_name}) }}
+
+{{ t('We never send links in our emails.') }}
+{% endautoescape %}

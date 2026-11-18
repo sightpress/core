@@ -66,6 +66,7 @@ final readonly class AdminShell implements AdminScreens
                 'error_count' => $form instanceof Form ? count($form->errors()) : 0,
                 'admin_languages' => $this->languages($viewer->locale),
                 'admin_language' => $this->translations->catalogueLocale($viewer->locale),
+                'admin_display' => self::display($request),
             ], $status)
             ->withHeader('Cache-Control', 'no-store')
             ->withHeader('X-Robots-Tag', 'noindex, nofollow');
@@ -80,6 +81,19 @@ final readonly class AdminShell implements AdminScreens
         return $this->responses->createResponse(303)
             ->withHeader('Location', $path)
             ->withHeader('Cache-Control', 'no-store');
+    }
+
+    /**
+     * The classes on `<html>` for the person's admin preferences (*My account*): plain CSS, no script needed.
+     */
+    private static function display(ServerRequestInterface $request): string
+    {
+        $own = $request->getAttribute(ViewerPreferences::class);
+        if (!$own instanceof ViewerPreferences) {
+            return '';
+        }
+
+        return implode(' ', array_keys(array_filter(['admin-reduced-motion' => $own->reducedMotion, 'admin-larger-text' => $own->largerText])));
     }
 
     /**

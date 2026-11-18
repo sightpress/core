@@ -451,6 +451,12 @@
         <target>Admin</target>
       </segment>
     </unit>
+    <unit id="271b132636c601e0">
+      <segment>
+        <source>Admin preferences</source>
+        <target>Admin preferences</target>
+      </segment>
+    </unit>
     <unit id="1c8f1ef3aa6c5c32">
       <segment>
         <source>All fields are needed unless they say “optional”. After this, we email you a 6-digit code to type on the next page.</source>
@@ -685,6 +691,12 @@
         <target>Avatar colour &quot;{color}&quot; must be written as #rrggbb in lower case.</target>
       </segment>
     </unit>
+    <unit id="6740b83446d19bbe">
+      <segment>
+        <source>Back to My account</source>
+        <target>Back to My account</target>
+      </segment>
+    </unit>
     <unit id="d378c5c1d5622eff">
       <segment>
         <source>Back to media</source>
@@ -901,6 +913,18 @@
         <target>Change your details in My account</target>
       </segment>
     </unit>
+    <unit id="36c0a5cff6831c23">
+      <segment>
+        <source>Change your email address</source>
+        <target>Change your email address</target>
+      </segment>
+    </unit>
+    <unit id="8a6a1da8ec839127">
+      <segment>
+        <source>Change your password</source>
+        <target>Change your password</target>
+      </segment>
+    </unit>
     <unit id="2a6141e43be0c212">
       <segment>
         <source>Changed</source>
@@ -1033,6 +1057,12 @@
         <target>Confirm my email address</target>
       </segment>
     </unit>
+    <unit id="00ba842307fb745d">
+      <segment>
+        <source>Confirm my new email address</source>
+        <target>Confirm my new email address</target>
+      </segment>
+    </unit>
     <unit id="b835b7d6ded7051e">
       <segment>
         <source>Confirm your email address</source>
@@ -1145,6 +1175,12 @@
       <segment>
         <source>Created the starter pages in {language} as drafts: {pages}. Publish each translation from its page’s editor when it is ready.</source>
         <target>Created the starter pages in {language} as drafts: {pages}. Publish each translation from its page’s editor when it is ready.</target>
+      </segment>
+    </unit>
+    <unit id="72ed2bd767cef627">
+      <segment>
+        <source>Current password</source>
+        <target>Current password</target>
       </segment>
     </unit>
     <unit id="67b696468610b879">
@@ -1807,6 +1843,12 @@
         <target>How do I choose a layout?</target>
       </segment>
     </unit>
+    <unit id="c51fdf4ab9c884e1">
+      <segment>
+        <source>How the admin panel is shown to you. They don’t change the site your visitors see.</source>
+        <target>How the admin panel is shown to you. They don’t change the site your visitors see.</target>
+      </segment>
+    </unit>
     <unit id="ed3bcecc81cdaa19">
       <segment>
         <source>If it was you, sign in with your email address and password. If you have forgotten your password, choose “Forgot your password?” on the sign-in page.</source>
@@ -1817,6 +1859,12 @@
       <segment>
         <source>If it wasn’t you, you can ignore this email. Your account and your password stay as they are.</source>
         <target>If it wasn’t you, you can ignore this email. Your account and your password stay as they are.</target>
+      </segment>
+    </unit>
+    <unit id="6bc71647ef1c73a3">
+      <segment>
+        <source>If it wasn’t you, you can ignore this email: nothing changes until the code is typed.</source>
+        <target>If it wasn’t you, you can ignore this email: nothing changes until the code is typed.</target>
       </segment>
     </unit>
     <unit id="7945af1636674d68">
@@ -1837,16 +1885,34 @@
         <target>If this address can be used for a new account, we have emailed it a 6-digit code. The code works for {duration}, and only once.</target>
       </segment>
     </unit>
+    <unit id="6c70099fd49f4f16">
+      <segment>
+        <source>If this address can be used, we have emailed it a 6-digit code. The code works for {duration}, and only once.</source>
+        <target>If this address can be used, we have emailed it a 6-digit code. The code works for {duration}, and only once.</target>
+      </segment>
+    </unit>
     <unit id="5833a166f25ae09d">
       <segment>
         <source>If you did not ask for this, you can ignore this email: nothing changes until the code is used.</source>
         <target>If you did not ask for this, you can ignore this email: nothing changes until the code is used.</target>
       </segment>
     </unit>
+    <unit id="adbb88f873f59bfc">
+      <segment>
+        <source>If you didn’t, someone else may know your password. Contact the people who run {site} straight away.</source>
+        <target>If you didn’t, someone else may know your password. Contact the people who run {site} straight away.</target>
+      </segment>
+    </unit>
     <unit id="9e8e69a6a9eb04dd">
       <segment>
         <source>If you look after this server, create a site and link this address to it.</source>
         <target>If you look after this server, create a site and link this address to it.</target>
+      </segment>
+    </unit>
+    <unit id="161162a1c5b5abf7">
+      <segment>
+        <source>If you made this change, you don’t need to do anything.</source>
+        <target>If you made this change, you don’t need to do anything.</target>
       </segment>
     </unit>
     <unit id="321c2c005347bbd2">
@@ -2033,6 +2099,12 @@
       <segment>
         <source>Languages:</source>
         <target>Languages:</target>
+      </segment>
+    </unit>
+    <unit id="13b3946395824ca9">
+      <segment>
+        <source>Larger text</source>
+        <target>Larger text</target>
       </segment>
     </unit>
     <unit id="7b4888049459f04a">
@@ -2377,6 +2449,12 @@
         <target>New address</target>
       </segment>
     </unit>
+    <unit id="bb0d06f56708ee27">
+      <segment>
+        <source>New email address</source>
+        <target>New email address</target>
+      </segment>
+    </unit>
     <unit id="38c1c4457cd164cc">
       <segment>
         <source>New here?</source>
@@ -2417,6 +2495,12 @@
       <segment>
         <source>No</source>
         <target>No</target>
+      </segment>
+    </unit>
+    <unit id="1ed60049108c1eca">
+      <segment>
+        <source>No animations, sliding or smooth scrolling in the admin panel, even if your device doesn’t ask for less motion.</source>
+        <target>No animations, sliding or smooth scrolling in the admin panel, even if your device doesn’t ask for less motion.</target>
       </segment>
     </unit>
     <unit id="930a2568e5cf1826">
@@ -2977,6 +3061,12 @@
         <target>Redirects</target>
       </segment>
     </unit>
+    <unit id="297ef4c79b4b21dd">
+      <segment>
+        <source>Reduce motion</source>
+        <target>Reduce motion</target>
+      </segment>
+    </unit>
     <unit id="c3812fc4acb861d5">
       <segment>
         <source>Remove</source>
@@ -3137,6 +3227,12 @@
       <segment>
         <source>Save page</source>
         <target>Save page</target>
+      </segment>
+    </unit>
+    <unit id="089e57e38f9325bd">
+      <segment>
+        <source>Save preferences</source>
+        <target>Save preferences</target>
       </segment>
     </unit>
     <unit id="7f3a3b142814581a">
@@ -3329,6 +3425,12 @@
       <segment>
         <source>Send messages to</source>
         <target>Send messages to</target>
+      </segment>
+    </unit>
+    <unit id="08cead9eaba5a707">
+      <segment>
+        <source>Send the code</source>
+        <target>Send the code</target>
       </segment>
     </unit>
     <unit id="f4b9e6a08daff608">
@@ -3535,6 +3637,12 @@
         <target>Signed in as {name}</target>
       </segment>
     </unit>
+    <unit id="824a1d703ce676bb">
+      <segment>
+        <source>Signing in</source>
+        <target>Signing in</target>
+      </segment>
+    </unit>
     <unit id="475f9dc4e4ff83bb">
       <segment>
         <source>Site default ({language})</source>
@@ -3563,6 +3671,12 @@
       <segment>
         <source>Skip to main content</source>
         <target>Skip to main content</target>
+      </segment>
+    </unit>
+    <unit id="83d507bdc77c1b5d">
+      <segment>
+        <source>So we know it is you.</source>
+        <target>So we know it is you.</target>
       </segment>
     </unit>
     <unit id="b88b435f3a4f318e">
@@ -3799,6 +3913,12 @@
         <target>Text</target>
       </segment>
     </unit>
+    <unit id="48633c28dfe16424">
+      <segment>
+        <source>Text in the admin panel is a quarter larger. Your browser’s zoom still works on top of it.</source>
+        <target>Text in the admin panel is a quarter larger. Your browser’s zoom still works on top of it.</target>
+      </segment>
+    </unit>
     <unit id="ce4191854e091b93">
       <segment>
         <source>Text in {language}</source>
@@ -3923,6 +4043,18 @@
       <segment>
         <source>The details of {original_name} have been saved.</source>
         <target>The details of {original_name} have been saved.</target>
+      </segment>
+    </unit>
+    <unit id="94b96b695999790e">
+      <segment>
+        <source>The email address of your account on {site} has changed</source>
+        <target>The email address of your account on {site} has changed</target>
+      </segment>
+    </unit>
+    <unit id="f1c4c6c380315cc7">
+      <segment>
+        <source>The email address of your account on {site} is now {email}. From now on you sign in with that address, and our emails go there.</source>
+        <target>The email address of your account on {site} is now {email}. From now on you sign in with that address, and our emails go there.</target>
       </segment>
     </unit>
     <unit id="2304168ff1f66751">
@@ -5185,6 +5317,12 @@
         <target>Visitors can see it now.</target>
       </segment>
     </unit>
+    <unit id="52b53d31e55600c5">
+      <segment>
+        <source>Wait {retry_after}, then ask again. The code we sent before still works.</source>
+        <target>Wait {retry_after}, then ask again. The code we sent before still works.</target>
+      </segment>
+    </unit>
     <unit id="cf1f703c161d6b4e">
       <segment>
         <source>Wait {retry_after}, then send a new code. The code we sent before still works.</source>
@@ -5201,6 +5339,18 @@
       <segment>
         <source>Warning:</source>
         <target>Warning:</target>
+      </segment>
+    </unit>
+    <unit id="40bf29c01cc69791">
+      <segment>
+        <source>We email a 6-digit code to the new address. Your address changes only once you type that code here. Then we tell your old address about the change.</source>
+        <target>We email a 6-digit code to the new address. Your address changes only once you type that code here. Then we tell your old address about the change.</target>
+      </segment>
+    </unit>
+    <unit id="caa17f04b5a52473">
+      <segment>
+        <source>We email a code to this address to check it is yours.</source>
+        <target>We email a code to this address to check it is yours.</target>
       </segment>
     </unit>
     <unit id="5d6b2c9ef1ef2a01">
@@ -5449,6 +5599,12 @@
         <target>You are editing it now.</target>
       </segment>
     </unit>
+    <unit id="974211c59013dad1">
+      <segment>
+        <source>You asked to sign in to {site} with this email address from now on. To confirm it is yours, type this code on the page that asks for it:</source>
+        <target>You asked to sign in to {site} with this email address from now on. To confirm it is yours, type this code on the page that asks for it:</target>
+      </segment>
+    </unit>
     <unit id="4a4b1e51aa69b57e">
       <segment>
         <source>You can change it later.</source>
@@ -5539,6 +5695,12 @@
         <target>You have tried to sign in too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</target>
       </segment>
     </unit>
+    <unit id="72d271b68bc80f4d">
+      <segment>
+        <source>You have typed a wrong password too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</source>
+        <target>You have typed a wrong password too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</target>
+      </segment>
+    </unit>
     <unit id="c40382596d108085">
       <segment>
         <source>You haven’t confirmed your email address yet. Type the code we emailed you, or send a new one.</source>
@@ -5549,6 +5711,18 @@
       <segment>
         <source>You need to sign in before you can see this page.</source>
         <target>You need to sign in before you can see this page.</target>
+      </segment>
+    </unit>
+    <unit id="5444419c5f5b64d7">
+      <segment>
+        <source>You sign in with {email} now.</source>
+        <target>You sign in with {email} now.</target>
+      </segment>
+    </unit>
+    <unit id="86a135ff23acad25">
+      <segment>
+        <source>You stay signed in here. Everywhere else, including devices where you chose “Keep me signed in”, you are signed out.</source>
+        <target>You stay signed in here. Everywhere else, including devices where you chose “Keep me signed in”, you are signed out.</target>
       </segment>
     </unit>
     <unit id="88ef35011933b42c">
@@ -5581,6 +5755,12 @@
         <target>Your code to confirm your email address for {site}</target>
       </segment>
     </unit>
+    <unit id="b45f372ddff20381">
+      <segment>
+        <source>Your code to confirm your new email address for {site}</source>
+        <target>Your code to confirm your new email address for {site}</target>
+      </segment>
+    </unit>
     <unit id="3db3caccf4b17206">
       <segment>
         <source>Your code to reset your password for {site}</source>
@@ -5611,6 +5791,12 @@
         <target>Your email address is confirmed and your account is ready. Sign in with {email} and your password.</target>
       </segment>
     </unit>
+    <unit id="7d1073a221c2dc46">
+      <segment>
+        <source>Your email address is now {email}. Sign in with it from now on.</source>
+        <target>Your email address is now {email}. Sign in with it from now on.</target>
+      </segment>
+    </unit>
     <unit id="7a057bd996a32915">
       <segment>
         <source>Your message</source>
@@ -5627,6 +5813,12 @@
       <segment>
         <source>Your password has been changed. Sign in with your new password.</source>
         <target>Your password has been changed. Sign in with your new password.</target>
+      </segment>
+    </unit>
+    <unit id="dacba6c94cdc71f1">
+      <segment>
+        <source>Your password has been changed. You are still signed in here, and signed out everywhere else.</source>
+        <target>Your password has been changed. You are still signed in here, and signed out everywhere else.</target>
       </segment>
     </unit>
     <unit id="12bdb14f867be0fd">

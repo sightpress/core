@@ -16,6 +16,7 @@ use SightPress\Core\Http\Form\Form;
 use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\User\Avatar\AvatarService;
@@ -27,11 +28,15 @@ use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * The *My account* page (`/account`) of every signed-in person, members included: rendered by the site's theme, not
- * the admin. Builds its two forms (details, picture), finds the signed-in user and answers with pages and redirects.
+ * the admin. Builds its forms (details, picture and, for people who use the admin panel, admin preferences), links
+ * to changing the password and the email address, finds the signed-in user and answers with pages and redirects.
  */
 final readonly class AccountPages
 {
     public const string PATH = '/account';
+
+    /** The permission that opens the admin panel, and so offers the admin preferences. */
+    public const string ADMIN_ACCESS = AdminAccessMiddleware::PERMISSION;
 
     public function __construct(
         private TemplateRenderer $templates,
@@ -103,6 +108,21 @@ final readonly class AccountPages
     }
 
     /**
+     * Less motion and larger text in the admin panel, ticked as the person last saved them.
+     */
+    public static function adminPreferences(User $user): Form
+    {
+        return Form::create(
+            'admin-preferences',
+            new Field('reduced_motion', 'Reduce motion', FieldType::Checkbox, hint: 'No animations, sliding or smooth scrolling in the admin panel, even if your device doesn’t ask for less motion.', required: false),
+            new Field('larger_text', 'Larger text', FieldType::Checkbox, hint: 'Text in the admin panel is a quarter larger. Your browser’s zoom still works on top of it.', required: false),
+        )->withValues([
+            'reduced_motion' => $user->adminReducedMotion() ? '1' : '',
+            'larger_text' => $user->adminLargerText() ? '1' : '',
+        ]);
+    }
+
+    /**
      * @param ?Form $details the details form as sent, when it has errors
      * @param ?Form $picture the picture form as sent, when it has errors
      */
@@ -118,6 +138,7 @@ final readonly class AccountPages
             'avatar_uploaded' => $user->avatarKind() === AvatarKind::Uploaded,
             'details' => $details ?? $this->details($user),
             'picture' => $picture ?? self::picture(),
+            'admin_preferences' => Actor::fromRequest($request)->has(self::ADMIN_ACCESS) ? self::adminPreferences($user) : null,
             'failed' => $failed,
         ];
         if ($failed !== null) {

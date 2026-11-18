@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="{{ current_locale() }}" dir="{{ text_direction(current_locale()) }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ t(subject) }}</title>
+</head>
+<body style="margin:0;padding:24px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:18px;line-height:1.5;color:#1a1a1f;background:#ffffff;">
+<p>{{ t('Hello {name},', {name: name}) }}</p>
+<p>{{ t('You asked to sign in to {site} with this email address from now on. To confirm it is yours, type this code on the page that asks for it:', {site: site_name}) }}</p>
+{% include '@auth/email/code.html.twig' %}
+<p>{{ t('If it wasn’t you, you can ignore this email: nothing changes until the code is typed.') }}</p>
+</body>
+</html>

@@ -22,6 +22,7 @@ export const ADMIN_SITES = {
   signup: 'http://127.0.0.1:8079',
   visibility: 'http://127.0.0.1:8078',
   menuentries: 'http://127.0.0.1:8077',
+  profile: 'http://127.0.0.1:8076',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

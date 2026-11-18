@@ -138,6 +138,6 @@ final readonly class UserRepository implements Accounts, AccountDirectory, Accou
     {
         $user = $this->find($userId);
 
-        return $user === null ? null : new ViewerPreferences($user->locale(), $user->timezone());
+        return $user === null ? null : new ViewerPreferences($user->locale(), $user->timezone(), $user->adminReducedMotion(), $user->adminLargerText());
     }
 }

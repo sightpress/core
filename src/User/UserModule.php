@@ -25,6 +25,7 @@ use SightPress\Core\User\Http\AccountHandler;
 use SightPress\Core\User\Http\AccountLanguageHandler;
 use SightPress\Core\User\Http\AccountPages;
 use SightPress\Core\User\Http\AccountPictureHandler;
+use SightPress\Core\User\Http\AccountPreferencesHandler;
 use SightPress\Core\User\Http\AvatarFileHandler;
 use SightPress\Core\User\Provisioning\CreateFirstAdmin;
 use SightPress\Module\Access\Permission;
@@ -37,7 +38,8 @@ use SightPress\Module\ModuleRequirement;
 /**
  * People with an account on a site: the `users` table, the repository, the first admin's account on a new site,
  * avatars (generated initials or an uploaded picture, served from `/avatars/`) and the *My account* page
- * (`/account`) where everyone, members included, changes their names, picture, time zone and language. Always on.
+ * (`/account`) where everyone, members included, changes their names, picture, time zone and language, and people
+ * who use the admin panel its motion and text size. Always on.
  */
 final class UserModule implements ModuleInterface
 {
@@ -66,7 +68,7 @@ final class UserModule implements ModuleInterface
             Services::get($c, FilesystemOperator::class),
             Services::get($c, ClockInterface::class),
         ));
-        foreach ([AccountPages::class, AccountHandler::class, AccountPictureHandler::class, AvatarFileHandler::class, AccountLanguageHandler::class] as $class) {
+        foreach ([AccountPages::class, AccountHandler::class, AccountPictureHandler::class, AvatarFileHandler::class, AccountLanguageHandler::class, AccountPreferencesHandler::class] as $class) {
             $registrar->services()->autowire($class);
         }
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/user');
@@ -74,6 +76,7 @@ final class UserModule implements ModuleInterface
         $routes->add(new Route('user.account', AccountPages::PATH, AccountHandler::class, ['GET', 'POST']));
         $routes->add(new Route('user.account.picture', '/account/picture', AccountPictureHandler::class, ['POST']));
         $routes->add(new Route('user.account.language', AccountLanguageHandler::PATH, AccountLanguageHandler::class, ['POST']));
+        $routes->add(new Route('user.account.preferences', AccountPreferencesHandler::PATH, AccountPreferencesHandler::class, ['POST']));
         $routes->add(new Route('user.account.picture.remove', AccountPictureHandler::REMOVE_PATH, AccountPictureHandler::class, ['POST']));
         $routes->add(new Route(
             'user.avatar',

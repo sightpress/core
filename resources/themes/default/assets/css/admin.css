@@ -158,3 +158,18 @@
 .diff__mark { font-weight: 700; }
 .diff del { text-decoration: line-through; background: var(--color-error-surface); color: var(--color-text); }
 .diff ins { text-decoration: underline; background: var(--color-success-surface); color: var(--color-text); }
+
+/*
+ * Admin preferences from My account, as classes on <html> (no script needed). Larger text scales every rem-based
+ * size; less motion does what prefers-reduced-motion: reduce does in site.css, whatever the device says.
+ */
+html.admin-larger-text { font-size: 125%; }
+html.admin-reduced-motion { scroll-behavior: auto; }
+html.admin-reduced-motion *,
+html.admin-reduced-motion *::before,
+html.admin-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}

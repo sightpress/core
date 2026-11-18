@@ -451,6 +451,12 @@
         <target>Administração</target>
       </segment>
     </unit>
+    <unit id="271b132636c601e0">
+      <segment>
+        <source>Admin preferences</source>
+        <target>Preferências da administração</target>
+      </segment>
+    </unit>
     <unit id="1c8f1ef3aa6c5c32">
       <segment state="initial">
         <source>All fields are needed unless they say “optional”. After this, we email you a 6-digit code to type on the next page.</source>
@@ -685,6 +691,12 @@
         <target>A cor do avatar "{color}" tem de ser escrita como #rrggbb em minúsculas.</target>
       </segment>
     </unit>
+    <unit id="6740b83446d19bbe">
+      <segment>
+        <source>Back to My account</source>
+        <target>Voltar a A minha conta</target>
+      </segment>
+    </unit>
     <unit id="d378c5c1d5622eff">
       <segment>
         <source>Back to media</source>
@@ -901,6 +913,18 @@
         <target>Altere os seus dados em A minha conta</target>
       </segment>
     </unit>
+    <unit id="36c0a5cff6831c23">
+      <segment>
+        <source>Change your email address</source>
+        <target>Alterar o seu endereço de email</target>
+      </segment>
+    </unit>
+    <unit id="8a6a1da8ec839127">
+      <segment>
+        <source>Change your password</source>
+        <target>Alterar a sua palavra-passe</target>
+      </segment>
+    </unit>
     <unit id="2a6141e43be0c212">
       <segment>
         <source>Changed</source>
@@ -1033,6 +1057,12 @@
         <target>Confirmar o meu endereço de email</target>
       </segment>
     </unit>
+    <unit id="00ba842307fb745d">
+      <segment>
+        <source>Confirm my new email address</source>
+        <target>Confirmar o meu novo endereço de email</target>
+      </segment>
+    </unit>
     <unit id="b835b7d6ded7051e">
       <segment state="initial">
         <source>Confirm your email address</source>
@@ -1145,6 +1175,12 @@
       <segment>
         <source>Created the starter pages in {language} as drafts: {pages}. Publish each translation from its page’s editor when it is ready.</source>
         <target>As páginas iniciais foram criadas em {language} como rascunhos: {pages}. Publique cada tradução no editor da página quando estiver pronta.</target>
+      </segment>
+    </unit>
+    <unit id="72ed2bd767cef627">
+      <segment>
+        <source>Current password</source>
+        <target>Palavra-passe atual</target>
       </segment>
     </unit>
     <unit id="67b696468610b879">
@@ -1807,6 +1843,12 @@
         <target>Como escolho um esquema?</target>
       </segment>
     </unit>
+    <unit id="c51fdf4ab9c884e1">
+      <segment>
+        <source>How the admin panel is shown to you. They don’t change the site your visitors see.</source>
+        <target>Como a administração lhe é mostrada. Não alteram o site que os seus visitantes veem.</target>
+      </segment>
+    </unit>
     <unit id="ed3bcecc81cdaa19">
       <segment state="initial">
         <source>If it was you, sign in with your email address and password. If you have forgotten your password, choose “Forgot your password?” on the sign-in page.</source>
@@ -1817,6 +1859,12 @@
       <segment state="initial">
         <source>If it wasn’t you, you can ignore this email. Your account and your password stay as they are.</source>
         <target>Se não foi o próprio, pode ignorar este email. A sua conta e a sua palavra-passe ficam como estão.</target>
+      </segment>
+    </unit>
+    <unit id="6bc71647ef1c73a3">
+      <segment>
+        <source>If it wasn’t you, you can ignore this email: nothing changes until the code is typed.</source>
+        <target>Se não foi você, pode ignorar este email: nada muda até o código ser escrito.</target>
       </segment>
     </unit>
     <unit id="7945af1636674d68">
@@ -1837,16 +1885,34 @@
         <target>Se este endereço puder ser usado numa conta nova, enviámos-lhe por email um código de 6 dígitos. O código funciona durante {duration} e só uma vez.</target>
       </segment>
     </unit>
+    <unit id="6c70099fd49f4f16">
+      <segment>
+        <source>If this address can be used, we have emailed it a 6-digit code. The code works for {duration}, and only once.</source>
+        <target>Se este endereço puder ser usado, enviámos-lhe por email um código de 6 dígitos. O código funciona durante {duration}, e só uma vez.</target>
+      </segment>
+    </unit>
     <unit id="5833a166f25ae09d">
       <segment>
         <source>If you did not ask for this, you can ignore this email: nothing changes until the code is used.</source>
         <target>Se não pediu isto, pode ignorar este email: nada muda enquanto o código não for usado.</target>
       </segment>
     </unit>
+    <unit id="adbb88f873f59bfc">
+      <segment>
+        <source>If you didn’t, someone else may know your password. Contact the people who run {site} straight away.</source>
+        <target>Se não foi você, outra pessoa pode saber a sua palavra-passe. Contacte de imediato as pessoas que gerem {site}.</target>
+      </segment>
+    </unit>
     <unit id="9e8e69a6a9eb04dd">
       <segment>
         <source>If you look after this server, create a site and link this address to it.</source>
         <target>Se é responsável por este servidor, crie um site e associe-lhe este endereço.</target>
+      </segment>
+    </unit>
+    <unit id="161162a1c5b5abf7">
+      <segment>
+        <source>If you made this change, you don’t need to do anything.</source>
+        <target>Se fez esta alteração, não precisa de fazer nada.</target>
       </segment>
     </unit>
     <unit id="321c2c005347bbd2">
@@ -2033,6 +2099,12 @@
       <segment>
         <source>Languages:</source>
         <target>Idiomas:</target>
+      </segment>
+    </unit>
+    <unit id="13b3946395824ca9">
+      <segment>
+        <source>Larger text</source>
+        <target>Texto maior</target>
       </segment>
     </unit>
     <unit id="7b4888049459f04a">
@@ -2377,6 +2449,12 @@
         <target>Novo endereço</target>
       </segment>
     </unit>
+    <unit id="bb0d06f56708ee27">
+      <segment>
+        <source>New email address</source>
+        <target>Novo endereço de email</target>
+      </segment>
+    </unit>
     <unit id="38c1c4457cd164cc">
       <segment state="initial">
         <source>New here?</source>
@@ -2417,6 +2495,12 @@
       <segment>
         <source>No</source>
         <target>Não</target>
+      </segment>
+    </unit>
+    <unit id="1ed60049108c1eca">
+      <segment>
+        <source>No animations, sliding or smooth scrolling in the admin panel, even if your device doesn’t ask for less motion.</source>
+        <target>Sem animações, deslizes nem deslocamento suave na administração, mesmo que o seu dispositivo não peça menos movimento.</target>
       </segment>
     </unit>
     <unit id="930a2568e5cf1826">
@@ -2977,6 +3061,12 @@
         <target>Redirecionamentos</target>
       </segment>
     </unit>
+    <unit id="297ef4c79b4b21dd">
+      <segment>
+        <source>Reduce motion</source>
+        <target>Reduzir o movimento</target>
+      </segment>
+    </unit>
     <unit id="c3812fc4acb861d5">
       <segment>
         <source>Remove</source>
@@ -3137,6 +3227,12 @@
       <segment>
         <source>Save page</source>
         <target>Guardar a página</target>
+      </segment>
+    </unit>
+    <unit id="089e57e38f9325bd">
+      <segment>
+        <source>Save preferences</source>
+        <target>Guardar as preferências</target>
       </segment>
     </unit>
     <unit id="7f3a3b142814581a">
@@ -3329,6 +3425,12 @@
       <segment>
         <source>Send messages to</source>
         <target>Enviar mensagens para</target>
+      </segment>
+    </unit>
+    <unit id="08cead9eaba5a707">
+      <segment>
+        <source>Send the code</source>
+        <target>Enviar o código</target>
       </segment>
     </unit>
     <unit id="f4b9e6a08daff608">
@@ -3535,6 +3637,12 @@
         <target>Sessão iniciada como {name}</target>
       </segment>
     </unit>
+    <unit id="824a1d703ce676bb">
+      <segment>
+        <source>Signing in</source>
+        <target>Iniciar sessão</target>
+      </segment>
+    </unit>
     <unit id="475f9dc4e4ff83bb">
       <segment>
         <source>Site default ({language})</source>
@@ -3563,6 +3671,12 @@
       <segment>
         <source>Skip to main content</source>
         <target>Saltar para o conteúdo principal</target>
+      </segment>
+    </unit>
+    <unit id="83d507bdc77c1b5d">
+      <segment>
+        <source>So we know it is you.</source>
+        <target>Para sabermos que é você.</target>
       </segment>
     </unit>
     <unit id="b88b435f3a4f318e">
@@ -3799,6 +3913,12 @@
         <target>Texto</target>
       </segment>
     </unit>
+    <unit id="48633c28dfe16424">
+      <segment>
+        <source>Text in the admin panel is a quarter larger. Your browser’s zoom still works on top of it.</source>
+        <target>O texto da administração fica um quarto maior. O zoom do seu navegador continua a funcionar além disso.</target>
+      </segment>
+    </unit>
     <unit id="ce4191854e091b93">
       <segment state="initial">
         <source>Text in {language}</source>
@@ -3923,6 +4043,18 @@
       <segment>
         <source>The details of {original_name} have been saved.</source>
         <target>Os detalhes de {original_name} foram guardados.</target>
+      </segment>
+    </unit>
+    <unit id="94b96b695999790e">
+      <segment>
+        <source>The email address of your account on {site} has changed</source>
+        <target>O endereço de email da sua conta em {site} foi alterado</target>
+      </segment>
+    </unit>
+    <unit id="f1c4c6c380315cc7">
+      <segment>
+        <source>The email address of your account on {site} is now {email}. From now on you sign in with that address, and our emails go there.</source>
+        <target>O endereço de email da sua conta em {site} é agora {email}. A partir de agora, inicia sessão com esse endereço e os nossos emails vão para lá.</target>
       </segment>
     </unit>
     <unit id="2304168ff1f66751">
@@ -5185,6 +5317,12 @@
         <target>Os visitantes já a podem ver.</target>
       </segment>
     </unit>
+    <unit id="52b53d31e55600c5">
+      <segment>
+        <source>Wait {retry_after}, then ask again. The code we sent before still works.</source>
+        <target>Aguarde {retry_after} e depois peça outra vez. O código que enviámos antes continua a funcionar.</target>
+      </segment>
+    </unit>
     <unit id="cf1f703c161d6b4e">
       <segment>
         <source>Wait {retry_after}, then send a new code. The code we sent before still works.</source>
@@ -5201,6 +5339,18 @@
       <segment>
         <source>Warning:</source>
         <target>Aviso:</target>
+      </segment>
+    </unit>
+    <unit id="40bf29c01cc69791">
+      <segment>
+        <source>We email a 6-digit code to the new address. Your address changes only once you type that code here. Then we tell your old address about the change.</source>
+        <target>Enviamos um código de 6 dígitos por email para o novo endereço. O seu endereço só muda quando escrever esse código aqui. Depois avisamos o endereço antigo da alteração.</target>
+      </segment>
+    </unit>
+    <unit id="caa17f04b5a52473">
+      <segment>
+        <source>We email a code to this address to check it is yours.</source>
+        <target>Enviamos um código por email para este endereço para confirmar que é seu.</target>
       </segment>
     </unit>
     <unit id="5d6b2c9ef1ef2a01">
@@ -5449,6 +5599,12 @@
         <target>Está a editá-la agora.</target>
       </segment>
     </unit>
+    <unit id="974211c59013dad1">
+      <segment>
+        <source>You asked to sign in to {site} with this email address from now on. To confirm it is yours, type this code on the page that asks for it:</source>
+        <target>Pediu para iniciar sessão em {site} com este endereço de email a partir de agora. Para confirmar que é seu, escreva este código na página que o pede:</target>
+      </segment>
+    </unit>
     <unit id="4a4b1e51aa69b57e">
       <segment>
         <source>You can change it later.</source>
@@ -5539,6 +5695,12 @@
         <target>Tentou iniciar sessão demasiadas vezes. Aguarde {minutes, plural, one {# minuto} other {# minutos}} e tente outra vez.</target>
       </segment>
     </unit>
+    <unit id="72d271b68bc80f4d">
+      <segment>
+        <source>You have typed a wrong password too many times. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</source>
+        <target>Escreveu uma palavra-passe errada demasiadas vezes. Aguarde {minutes, plural, one {# minuto} other {# minutos}} e tente outra vez.</target>
+      </segment>
+    </unit>
     <unit id="c40382596d108085">
       <segment state="initial">
         <source>You haven’t confirmed your email address yet. Type the code we emailed you, or send a new one.</source>
@@ -5549,6 +5711,18 @@
       <segment>
         <source>You need to sign in before you can see this page.</source>
         <target>Tem de iniciar sessão para ver esta página.</target>
+      </segment>
+    </unit>
+    <unit id="5444419c5f5b64d7">
+      <segment>
+        <source>You sign in with {email} now.</source>
+        <target>Neste momento, inicia sessão com {email}.</target>
+      </segment>
+    </unit>
+    <unit id="86a135ff23acad25">
+      <segment>
+        <source>You stay signed in here. Everywhere else, including devices where you chose “Keep me signed in”, you are signed out.</source>
+        <target>Continua com a sessão iniciada aqui. Em todos os outros sítios, incluindo os dispositivos onde escolheu “Manter a sessão iniciada”, a sessão é terminada.</target>
       </segment>
     </unit>
     <unit id="88ef35011933b42c">
@@ -5581,6 +5755,12 @@
         <target>O seu código para confirmar o seu endereço de email em {site}</target>
       </segment>
     </unit>
+    <unit id="b45f372ddff20381">
+      <segment>
+        <source>Your code to confirm your new email address for {site}</source>
+        <target>O seu código para confirmar o seu novo endereço de email em {site}</target>
+      </segment>
+    </unit>
     <unit id="3db3caccf4b17206">
       <segment>
         <source>Your code to reset your password for {site}</source>
@@ -5611,6 +5791,12 @@
         <target>O seu endereço de email está confirmado e a sua conta está pronta. Inicie sessão com {email} e a sua palavra-passe.</target>
       </segment>
     </unit>
+    <unit id="7d1073a221c2dc46">
+      <segment>
+        <source>Your email address is now {email}. Sign in with it from now on.</source>
+        <target>O seu endereço de email é agora {email}. A partir de agora, inicie sessão com ele.</target>
+      </segment>
+    </unit>
     <unit id="7a057bd996a32915">
       <segment>
         <source>Your message</source>
@@ -5627,6 +5813,12 @@
       <segment>
         <source>Your password has been changed. Sign in with your new password.</source>
         <target>A sua palavra-passe foi alterada. Inicie sessão com a nova palavra-passe.</target>
+      </segment>
+    </unit>
+    <unit id="dacba6c94cdc71f1">
+      <segment>
+        <source>Your password has been changed. You are still signed in here, and signed out everywhere else.</source>
+        <target>A sua palavra-passe foi alterada. Continua com a sessão iniciada aqui e a sessão foi terminada em todos os outros sítios.</target>
       </segment>
     </unit>
     <unit id="12bdb14f867be0fd">

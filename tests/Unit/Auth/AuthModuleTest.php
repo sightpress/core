@@ -63,6 +63,9 @@ final class AuthModuleTest extends TestCase
             'auth.password' => '/login/password GET,POST',
             'auth.register' => '/register GET,POST',
             'auth.register.code' => '/register/code GET,POST',
+            'auth.account.password' => '/account/password GET,POST',
+            'auth.account.email' => '/account/email GET,POST',
+            'auth.account.email.code' => '/account/email/code GET,POST',
         ], $routes);
         $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'auth'));
         self::assertSame('auth', $views[0]->item->namespace);

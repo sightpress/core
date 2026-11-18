@@ -41,6 +41,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(MediaTranscripts::class)]
 #[CoversClass(PageRedirectsTable::class)]
 #[CoversClass(PageSchedule::class)]
+#[CoversClass(\SightPress\Core\User\Migrations\Version20261118500000::class)]
 #[UsesNamespace('SightPress\Core')]
 final class MigrationsTest extends TestCase
 {
@@ -69,6 +70,7 @@ final class MigrationsTest extends TestCase
         self::assertContains('Add the transcripts column to media.', $descriptions);
         self::assertContains('Create the page_redirects table.', $descriptions);
         self::assertContains('Add the publish_at, unpublish_at and scheduled_by columns to pages.', $descriptions);
+        self::assertContains('Add the admin_reduced_motion and admin_larger_text columns to users.', $descriptions);
         self::assertContains('Create the permissions, roles, role_permission and user_role tables.', $descriptions);
 
         $database->migrate('first');

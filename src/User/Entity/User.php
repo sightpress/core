@@ -67,6 +67,12 @@ final class User implements Account
     #[ORM\Column(type: Types::STRING, length: 35, nullable: true)]
     private ?string $locale = null;
 
+    #[ORM\Column(name: 'admin_reduced_motion', type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $adminReducedMotion = false;
+
+    #[ORM\Column(name: 'admin_larger_text', type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $adminLargerText = false;
+
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $createdAt;
 
@@ -177,6 +183,22 @@ final class User implements Account
         return $this->locale;
     }
 
+    /**
+     * Whether the admin panel should keep still for this person: no animations, transitions or smooth scrolling.
+     */
+    public function adminReducedMotion(): bool
+    {
+        return $this->adminReducedMotion;
+    }
+
+    /**
+     * Whether the admin panel should show its text larger for this person.
+     */
+    public function adminLargerText(): bool
+    {
+        return $this->adminLargerText;
+    }
+
     public function avatarPath(): ?string
     {
         return $this->avatarPath;
@@ -219,6 +241,25 @@ final class User implements Account
     public function changeLocale(?string $locale, DateTimeImmutable $now): void
     {
         $this->locale = self::checkLocale($locale);
+        $this->updatedAt = $now;
+    }
+
+    /**
+     * A new sign-in address, once a code proved the person can read it.
+     */
+    public function changeEmail(string $email, DateTimeImmutable $now): void
+    {
+        $this->email = self::checkEmail($email);
+        $this->updatedAt = $now;
+    }
+
+    /**
+     * How the admin panel is shown to this person.
+     */
+    public function changeAdminPreferences(bool $reducedMotion, bool $largerText, DateTimeImmutable $now): void
+    {
+        $this->adminReducedMotion = $reducedMotion;
+        $this->adminLargerText = $largerText;
         $this->updatedAt = $now;
     }
 

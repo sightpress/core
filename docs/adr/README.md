@@ -50,5 +50,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0030](0030-self-registration-with-an-emailed-code.md) | Self-registration with an emailed code, an `unverified` account status and a sign-up role contract | Proposed |
 | [0031](0031-members-only-visibility.md) | Members-only visibility: a site setting, a gate before the routes and "open to everyone" computed once | Proposed |
 | [0032](0032-menu-entries-per-language-and-for-members.md) | Menu entries per language and for members, links that follow moved pages | Proposed |
+| [0033](0033-profile-password-email-and-admin-preferences.md) | Profile: password and email address changed from My account, and admin preferences as classes | Proposed |
 
 When an ADR's status changes, update it here too.

@@ -8,11 +8,12 @@
     - flash `messages` sit at the top of <main> in a polite live region.
 
     Screens extend this template and fill `title` and `content` (which starts with the screen's <h1>).
-    Context from AdminScreens: `site_name`, `messages`, `admin_nav`, `admin_user_name`, `error_count`.
+    Context from AdminScreens: `site_name`, `messages`, `admin_nav`, `admin_user_name`, `error_count`, `admin_display`
+    (classes on <html> for the person's admin preferences: `admin-reduced-motion`, `admin-larger-text`).
 #}
 {%- set lang = current_locale() -%}
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{{ text_direction(lang) }}">
+<html lang="{{ lang }}" dir="{{ text_direction(lang) }}"{% if admin_display|default('') %} class="{{ admin_display }}"{% endif %}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

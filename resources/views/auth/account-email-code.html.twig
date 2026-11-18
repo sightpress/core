@@ -1,0 +1,15 @@
+{#
+    "Confirm your new email address" (/account/email/code), like the other code pages: the shared
+    @auth/code-entry.html.twig form, with "Send a new code". Never indexed.
+    Context: `title`, `form`, `action`, `valid_for`.
+#}
+{% extends '@auth/layout.html.twig' %}
+{% block title %}{{ t(title) }}{% endblock %}
+{% block content %}
+<h1>{{ t(title) }}</h1>
+<p>{{ t('If this address can be used, we have emailed it a 6-digit code. The code works for {duration}, and only once.', {duration: valid_for}) }}</p>
+<p>{{ t('We never send links. Type the code here, on this site.') }}</p>
+{% include '@auth/code-entry.html.twig' with {'submit': t('Confirm my new email address'), 'resend': true} %}
+<p><a href="/account/email">{{ t('Use another email address') }}</a></p>
+<p><a href="/account">{{ t('Back to My account') }}</a></p>
+{% endblock %}
