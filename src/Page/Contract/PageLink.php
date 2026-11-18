@@ -6,7 +6,8 @@ namespace SightPress\Core\Page\Contract;
 
 /**
  * A page as a link: its title in one locale, its address on the site (`/about`, `/pt-pt/sobre`, `/` for the home
- * page), its depth in the tree (0 at the top) and whether everyone may read it (published and public).
+ * page), its depth in the tree (0 at the top), whether everyone may read it (published and public) and whether search
+ * engines may list it (also not `noindex` and not a copy of another page): only those are `hreflang` alternates.
  */
 final readonly class PageLink
 {
@@ -16,6 +17,7 @@ final readonly class PageLink
         public string $url,
         public int $depth,
         public bool $public,
+        public bool $indexable = false,
     ) {
     }
 }

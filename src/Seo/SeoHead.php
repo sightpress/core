@@ -14,8 +14,8 @@ use SightPress\Core\Tenant\Site;
 /**
  * What search engines read in the `<head>` of every public page: the `<title>` ({@see SeoMeta::title()}), the meta
  * description ({@see SeoMeta::description()}; the social tags use it too), the canonical address, the Markdown
- * version (for pages search engines may index), `hreflang`
- * alternates when the site has more than one language, the robots rules ({@see RobotsPolicy}, also sent as
+ * version (for pages search engines may index), `hreflang` alternates when the site has more than one language (the
+ * same set as the sitemap, with `x-default`, the Markdown version of each and `og:locale:alternate`), the robots rules ({@see RobotsPolicy}, also sent as
  * `X-Robots-Tag`), and the page's schema.org nodes: a `WebPage` that is part of the site's `WebSite`, its
  * `BreadcrumbList`, and the nodes the blocks give (videos, for example). Runs before the branding module's tags.
  */
@@ -57,23 +57,34 @@ final readonly class SeoHead
                 $tags[] = self::tag('meta', ['name' => $name, 'content' => $code]);
             }
         }
-        if ($event->public && !$event->noindex && $event->canonicalOverride === null) {
+        $indexable = $event->public && !$event->noindex && $event->canonicalOverride === null;
+        if ($indexable) {
             $tags[] = self::tag('link', ['rel' => 'alternate', 'type' => 'text/markdown', 'href' => $base . MarkdownAddress::of($event->url, $event->home)]);
         }
-        if (count($this->site->locales) > 1 && $event->canonicalOverride === null) {
-            $alternates = [];
+        // The same set of languages as the sitemap: only real translations search engines may list, each pointing at
+        // all the others and at itself, with x-default for the default language.
+        $alternates = [];
+        if ($indexable && count($this->site->locales) > 1) {
             foreach ($this->site->locales as $locale) {
-                $link = $this->pages->find([$event->pageId], $locale)[$event->pageId] ?? null;
-                if ($link !== null && $link->public) {
-                    $alternates[$locale] = $base . $link->url;
+                $link = $locale === $event->locale ? null : ($this->pages->find([$event->pageId], $locale)[$event->pageId] ?? null);
+                if ($locale === $event->locale) {
+                    $alternates[$locale] = $event->url;
+                } elseif ($link !== null && $link->indexable) {
+                    $alternates[$locale] = $link->url;
                 }
             }
-            if (count($alternates) > 1) {
-                foreach ($alternates as $locale => $href) {
-                    $tags[] = self::tag('link', ['rel' => 'alternate', 'hreflang' => $locale, 'href' => $href]);
-                }
-                if (isset($alternates[$this->site->defaultLocale])) {
-                    $tags[] = self::tag('link', ['rel' => 'alternate', 'hreflang' => 'x-default', 'href' => $alternates[$this->site->defaultLocale]]);
+        }
+        if (count($alternates) > 1) {
+            foreach ($alternates as $locale => $url) {
+                $tags[] = self::tag('link', ['rel' => 'alternate', 'hreflang' => $locale, 'href' => $base . $url]);
+            }
+            if (isset($alternates[$this->site->defaultLocale])) {
+                $tags[] = self::tag('link', ['rel' => 'alternate', 'hreflang' => 'x-default', 'href' => $base . $alternates[$this->site->defaultLocale]]);
+            }
+            foreach ($alternates as $locale => $url) {
+                if ($locale !== $event->locale) {
+                    $tags[] = self::tag('link', ['rel' => 'alternate', 'type' => 'text/markdown', 'hreflang' => $locale, 'href' => $base . MarkdownAddress::of($url, $event->home)]);
+                    $tags[] = self::tag('meta', ['property' => 'og:locale:alternate', 'content' => str_replace('-', '_', $locale)]);
                 }
             }
         }

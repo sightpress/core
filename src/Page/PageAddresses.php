@@ -53,11 +53,29 @@ final class PageAddresses
     public function find(string $url): ?PageTranslation
     {
         [$locale, $path] = $this->split($url);
+
+        return $this->findIn($locale, $path);
+    }
+
+    /**
+     * The page translation at a page path (without slashes at either end, `''` for the home page) in one locale,
+     * whatever its state.
+     */
+    public function findIn(string $locale, string $path): ?PageTranslation
+    {
         if ($path === '') {
             return $this->home()?->translation($locale);
         }
 
         return $this->pages->findByPath($locale, rawurldecode($path));
+    }
+
+    /**
+     * The address part of a locale: `''` for the site's default locale, otherwise `/` and the lower-case locale.
+     */
+    public function prefixOf(string $locale): string
+    {
+        return $this->prefix($locale);
     }
 
     /**

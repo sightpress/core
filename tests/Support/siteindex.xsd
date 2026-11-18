@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The sitemap index format of sitemaps.org (protocol 0.9, https://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd),
+     written out for SeoTest: a <sitemapindex> of <sitemap> entries, each with a <loc> and an optional <lastmod>. -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.sitemaps.org/schemas/sitemap/0.9"
+            xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+            elementFormDefault="qualified">
+  <xsd:element name="sitemapindex">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="sitemap" type="tSitemap" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:complexType name="tSitemap">
+    <xsd:all>
+      <xsd:element name="loc" type="tLoc"/>
+      <xsd:element name="lastmod" type="tLastmod" minOccurs="0"/>
+    </xsd:all>
+  </xsd:complexType>
+  <xsd:simpleType name="tLoc">
+    <xsd:restriction base="xsd:anyURI">
+      <xsd:minLength value="12"/>
+      <xsd:maxLength value="2048"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="tLastmod">
+    <xsd:union memberTypes="xsd:date xsd:dateTime"/>
+  </xsd:simpleType>
+</xsd:schema>

@@ -85,18 +85,33 @@ final class SeoTest extends TestCase
 
         $response = $browser->request('GET', '/sitemap.xml');
         self::assertSame('application/xml; charset=utf-8', $response->getHeaderLine('Content-Type'));
-        $xml = (string) $response->getBody();
+        $index = (string) $response->getBody();
         $document = new DOMDocument();
-        $document->loadXML($xml);
-        self::assertTrue($document->schemaValidate(dirname(__DIR__, 2) . '/Support/sitemap-with-alternates.xsd'), $xml);
-        self::assertSame(['https://example.org/', 'https://example.org/pt-pt', 'https://example.org/about', 'https://example.org/about/team'], $this->locations($xml));
-        self::assertStringContainsString('<xhtml:link rel="alternate" hreflang="pt-PT" href="https://example.org/pt-pt"/>', $xml);
-        self::assertMatchesRegularExpression('#<lastmod>\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\+00:00</lastmod>#', $xml);
+        $document->loadXML($index);
+        self::assertTrue($document->schemaValidate(dirname(__DIR__, 2) . '/Support/siteindex.xsd'), $index);
+        self::assertSame(['https://example.org/sitemap-en-gb.xml', 'https://example.org/sitemap-pt-pt.xml'], $this->locations($index));
+
+        $byLocale = [];
+        foreach (['en-gb', 'pt-pt'] as $locale) {
+            $xml = (string) $browser->request('GET', '/sitemap-' . $locale . '.xml')->getBody();
+            $document = new DOMDocument();
+            $document->loadXML($xml);
+            self::assertTrue($document->schemaValidate(dirname(__DIR__, 2) . '/Support/sitemap-with-alternates.xsd'), $xml);
+            $byLocale[$locale] = $xml;
+        }
+        self::assertSame(['https://example.org/', 'https://example.org/about', 'https://example.org/about/team'], $this->locations($byLocale['en-gb']));
+        self::assertSame(['https://example.org/pt-pt'], $this->locations($byLocale['pt-pt']));
+        foreach ($byLocale as $xml) {
+            self::assertStringContainsString('<xhtml:link rel="alternate" hreflang="pt-PT" href="https://example.org/pt-pt"/>', $xml);
+            self::assertStringContainsString('<xhtml:link rel="alternate" hreflang="x-default" href="https://example.org/"/>', $xml);
+        }
+        self::assertMatchesRegularExpression('#<lastmod>\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\+00:00</lastmod>#', $byLocale['en-gb']);
+        self::assertSame(404, $browser->request('GET', '/sitemap-fr-fr.xml')->getStatusCode());
 
         $container = $this->site?->container() ?? self::fail();
         $this->pages['plans']->changeState(PageState::Published, new DateTimeImmutable());
         Services::get($container, PageEditor::class)->save($this->pages['plans'], 'en-GB', new PageContent('Plans', 'plans', 'What comes next.'));
-        self::assertContains('https://example.org/plans', $this->locations((string) $browser->request('GET', '/sitemap.xml')->getBody()), 'the cached sitemap was refreshed');
+        self::assertContains('https://example.org/plans', $this->locations((string) $browser->request('GET', '/sitemap-en-gb.xml')->getBody()), 'the cached sitemap was refreshed');
 
         $robots = (string) $browser->request('GET', '/robots.txt')->getBody();
         self::assertStringContainsString("User-agent: *\nDisallow: /admin\n", $robots);

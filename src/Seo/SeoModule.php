@@ -59,6 +59,7 @@ final class SeoModule implements ModuleInterface
         $subscribers->listen(PageTransitioned::class, IndexNow::class);
         $registrar->commands()->add(CheckSeoCommand::class);
         $registrar->routes()->add(new Route('seo.sitemap', SeoFileHandler::SITEMAP, SeoFileHandler::class, ['GET', 'HEAD']));
+        $registrar->routes()->add(new Route('seo.sitemap_locale', SeoFileHandler::LOCALE_SITEMAP, SeoFileHandler::class, ['GET', 'HEAD']));
         $registrar->routes()->add(new Route('seo.robots', SeoFileHandler::ROBOTS, SeoFileHandler::class, ['GET', 'HEAD']));
         $registrar->routes()->add(new Route('seo.llms', SeoFileHandler::LLMS, SeoFileHandler::class, ['GET', 'HEAD']));
         $registrar->routes()->add(new Route('seo.llms_full', SeoFileHandler::LLMS_FULL, SeoFileHandler::class, ['GET', 'HEAD']));

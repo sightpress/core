@@ -177,7 +177,7 @@ final class PublicPageHandlerTest extends TestCase
         $members->setPublic(false, $this->fixture->pages->clock->now());
         $this->fixture->pages->repository()->flush();
 
-        foreach (['/draft', '/missing', '/members', '/pt-pt'] as $path) {
+        foreach (['/draft', '/missing', '/members', '/fr/members', '/pt-pt/draft', '/pt-pt/missing'] as $path) {
             try {
                 $this->get('https://demo.example' . $path);
                 self::fail('Expected a 404 for ' . $path);
@@ -185,6 +185,9 @@ final class PublicPageHandlerTest extends TestCase
                 $this->addToAssertionCount(1);
             }
         }
+
+        $untranslated = $this->get('https://demo.example/pt-pt');
+        self::assertSame([302, 'https://demo.example/', 'en-GB'], [$untranslated->getStatusCode(), $untranslated->getHeaderLine('Location'), $untranslated->getHeaderLine('Content-Language')], 'the home page falls back to the default language');
 
         $signedIn = $this->get('https://demo.example/members', [], new Actor(7));
         self::assertSame(200, $signedIn->getStatusCode());
@@ -208,15 +211,73 @@ final class PublicPageHandlerTest extends TestCase
         $about = $this->fixture->pages->published('About us');
         $this->fixture->pages->editor()->translate($about, 'pt-PT', 'en-GB');
 
-        try {
-            $this->get('https://demo.example/pt-pt/about-us');
-            self::fail('visitors don\'t see a draft translation');
-        } catch (\Slim\Exception\HttpNotFoundException) {
-            self::assertSame(200, $this->get('https://demo.example/about-us')->getStatusCode());
-        }
+        $visitor = $this->get('https://demo.example/pt-pt/about-us');
+        self::assertSame([302, 'https://demo.example/about-us'], [$visitor->getStatusCode(), $visitor->getHeaderLine('Location')], 'visitors are sent to the published language');
         $editor = new Actor(3, ['page.edit.any']);
         $preview = $this->get('https://demo.example/pt-pt/about-us', [], $editor);
         self::assertSame(['200', 'private, no-cache'], [(string) $preview->getStatusCode(), $preview->getHeaderLine('Cache-Control')]);
+    }
+
+    public function testAPageNotYetInTheAskedLanguageIsATemporaryRedirectToTheClosestOne(): void
+    {
+        $this->fixture->pages->published('Welcome');
+        $about = $this->fixture->pages->published('About us');
+        $this->fixture->pages->translated($about, 'pt-PT', new PageContent('Sobre nós', 'sobre'));
+        $team = $this->fixture->pages->published('Team', [], $about);
+
+        $markdown = $this->get('https://demo.example/pt-pt/about-us/team.md');
+        self::assertSame('https://demo.example/about-us/team.md', $markdown->getHeaderLine('Location'), 'the address in another language finds the page');
+        self::assertSame(['<https://demo.example/about-us/team>; rel="alternate"; hreflang="en-GB"', '<https://demo.example/about-us/team>; rel="alternate"; hreflang="x-default"'], $markdown->getHeader('Link'));
+        $fallback = $this->get('https://demo.example/pt-pt/about-us?x=1');
+        self::assertSame([302, 'https://demo.example/pt-pt/sobre', 'pt-PT'], [$fallback->getStatusCode(), $fallback->getHeaderLine('Location'), $fallback->getHeaderLine('Content-Language')]);
+        self::assertSame([
+            '<https://demo.example/about-us>; rel="alternate"; hreflang="en-GB"',
+            '<https://demo.example/pt-pt/sobre>; rel="alternate"; hreflang="pt-PT"',
+            '<https://demo.example/about-us>; rel="alternate"; hreflang="x-default"',
+        ], $fallback->getHeader('Link'));
+        self::assertSame('public, max-age=300', $fallback->getHeaderLine('Cache-Control'));
+        self::assertSame('private, no-cache', $this->get('https://demo.example/pt-pt/about-us', [], new Actor(3))->getHeaderLine('Cache-Control'));
+        unset($team);
+    }
+
+    public function testTheLanguagePartIsWrittenInLowerCaseAndNotAtAllForTheDefault(): void
+    {
+        $this->fixture->pages->published('Welcome');
+        $about = $this->fixture->pages->published('About us');
+        $this->fixture->pages->translated($about, 'pt-PT', new PageContent('Sobre nós', 'sobre'));
+
+        foreach (['/PT-PT/sobre' => '/pt-pt/sobre', '/Pt-pt' => '/pt-pt', '/en-gb/about-us' => '/about-us', '/EN-GB' => '/'] as $from => $to) {
+            $response = $this->get('https://demo.example' . $from);
+            self::assertSame([301, 'https://demo.example' . $to], [$response->getStatusCode(), $response->getHeaderLine('Location')], $from);
+        }
+    }
+
+    public function testTheHomePageIsInTheVisitorsLanguageOnlyAtTheTopAddress(): void
+    {
+        $home = $this->fixture->pages->published('Welcome');
+        $about = $this->fixture->pages->published('About us');
+        $this->fixture->pages->translated($home, 'pt-PT', new PageContent('Bem-vindo', 'inicio'));
+
+        $sent = $this->get('https://demo.example/', ['Accept-Language' => 'pt-BR,pt;q=0.9,en;q=0.5']);
+        self::assertSame([302, 'https://demo.example/pt-pt', 'Accept-Language, Cookie', 'private, no-cache'], [$sent->getStatusCode(), $sent->getHeaderLine('Location'), $sent->getHeaderLine('Vary'), $sent->getHeaderLine('Cache-Control')]);
+        $english = $this->get('https://demo.example/', ['Accept-Language' => 'en-US,en;q=0.9']);
+        self::assertSame([200, 'Accept, Accept-Language'], [$english->getStatusCode(), $english->getHeaderLine('Vary')]);
+        self::assertSame(200, $this->get('https://demo.example/', ['Accept-Language' => 'pt-PT', 'Referer' => 'https://demo.example/pt-pt'])->getStatusCode(), 'links on the site are followed');
+        self::assertSame(200, $this->get('https://demo.example/', ['Accept-Language' => 'fr, *'])->getStatusCode());
+        self::assertSame(200, $this->get('https://demo.example/about-us', ['Accept-Language' => 'pt-PT'])->getStatusCode(), 'only the top address is negotiated');
+        $own = $this->fixture->auth->request('GET', 'https://demo.example/')->withAttribute(\SightPress\Core\Template\ViewerPreferences::class, new \SightPress\Core\Template\ViewerPreferences('pt-PT'));
+        self::assertSame('https://demo.example/pt-pt', $this->handler()->handle($own)->getHeaderLine('Location'), 'a signed-in person\'s own language wins');
+        $home->setPublic(false, $this->fixture->pages->clock->now());
+        $this->fixture->pages->repository()->flush();
+        try {
+            $this->get('https://demo.example/', ['Accept-Language' => 'pt-PT']);
+            self::fail('a members-only home page is never negotiated');
+        } catch (HttpNotFoundException) {
+            $home->setPublic(true, $this->fixture->pages->clock->now());
+        }
+        $english = $this->fixture->auth->request('GET', 'https://demo.example/')->withAttribute(\SightPress\Core\Template\ViewerPreferences::class, new \SightPress\Core\Template\ViewerPreferences('en-GB'))->withHeader('Accept-Language', 'pt-PT');
+        self::assertSame(200, $this->handler()->handle($english)->getStatusCode());
+        unset($about);
     }
 
     public function testAltTextLeftEmptyComesFromTheMediaLibraryInThePagesLanguage(): void

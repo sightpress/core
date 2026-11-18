@@ -64,4 +64,18 @@ final class PageAddressesTest extends TestCase
 
         new PageFixture()->addresses()->setHome(new Page(null, 0, null, new DateTimeImmutable()));
     }
+
+    public function testFindsAPageInALanguageAndWritesTheLanguagePart(): void
+    {
+        $fixture = new PageFixture();
+        $home = $fixture->published('Welcome');
+        $about = $fixture->published('About');
+        $fixture->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre'));
+        $addresses = $fixture->addresses();
+
+        self::assertSame($home, $addresses->findIn('en-GB', '')?->page());
+        self::assertSame('Sobre', $addresses->findIn('pt-PT', 'sobre')?->title());
+        self::assertNull($addresses->findIn('pt-PT', 'about'));
+        self::assertSame(['', '/pt-pt'], [$addresses->prefixOf('en-GB'), $addresses->prefixOf('pt-PT')]);
+    }
 }

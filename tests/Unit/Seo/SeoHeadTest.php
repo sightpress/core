@@ -88,8 +88,23 @@ final class SeoHeadTest extends TestCase
         self::assertStringContainsString('<link rel="alternate" hreflang="en-GB" href="https://demo.example/about">', $head);
         self::assertStringContainsString('<link rel="alternate" hreflang="pt-PT" href="https://demo.example/pt-pt/sobre">', $head);
         self::assertStringContainsString('<link rel="alternate" hreflang="x-default" href="https://demo.example/about">', $head);
+        self::assertStringContainsString('<link rel="alternate" type="text/markdown" hreflang="en-GB" href="https://demo.example/about.md">', $head);
+        self::assertStringContainsString('<meta property="og:locale:alternate" content="en_GB">', $head);
+        self::assertStringNotContainsString('content="pt_PT"', $head, 'the page\'s own locale is not an alternate');
         self::assertStringContainsString('"itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://demo.example/pt-pt"}', $head);
         self::assertStringNotContainsString('name="description"', $head, 'nothing to describe it with');
+    }
+
+    public function testATranslationSearchEnginesShouldntListIsNoAlternate(): void
+    {
+        $this->pages->published('Welcome');
+        $about = $this->pages->published('About');
+        $this->pages->translated($about, 'pt-PT', new PageContent('Sobre', 'sobre', null, null, [], null, null, true));
+
+        $event = $this->event((int) $about->id(), '/about', 'About', []);
+        $this->head('production')($event);
+
+        self::assertStringNotContainsString('hreflang', $event->head(), 'the sitemap leaves the noindex translation out too');
     }
 
     public function testFrontPagesCopiesAndPagesOutOfSearch(): void

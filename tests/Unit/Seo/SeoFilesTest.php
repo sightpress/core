@@ -87,17 +87,28 @@ final class SeoFilesTest extends TestCase
         $files = $this->files('production', $cache);
 
         $sitemap = $files->sitemap('https://demo.example/');
-        self::assertStringContainsString('<loc>https://demo.example/</loc>', $sitemap);
-        self::assertStringContainsString('<lastmod>2026-11-14T12:00:00+00:00</lastmod>', $sitemap);
-        self::assertStringContainsString('<xhtml:link rel="alternate" hreflang="pt-PT" href="https://demo.example/pt-pt/sobre"/>', $sitemap);
-        self::assertSame(2, substr_count($sitemap, 'hreflang="en-GB"'), 'both languages of About list both; Home has none');
+        self::assertStringContainsString('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">', $sitemap);
+        self::assertStringContainsString("<loc>https://demo.example/sitemap-en-gb.xml</loc>\n  <lastmod>2026-11-14T12:00:00+00:00</lastmod>", $sitemap);
+        self::assertStringContainsString('<loc>https://demo.example/sitemap-pt-pt.xml</loc>', $sitemap);
+        $english = (string) $files->localeSitemap('https://demo.example', 'en-GB');
+        $portuguese = (string) $files->localeSitemap('https://demo.example', 'PT-pt');
+        self::assertStringContainsString('<loc>https://demo.example/</loc>', $english);
+        self::assertStringNotContainsString('<loc>https://demo.example/pt-pt/sobre</loc>', $english);
+        self::assertStringContainsString('<loc>https://demo.example/pt-pt/sobre</loc>', $portuguese);
+        foreach ([$english, $portuguese] as $one) {
+            self::assertStringContainsString('<xhtml:link rel="alternate" hreflang="pt-PT" href="https://demo.example/pt-pt/sobre"/>', $one);
+            self::assertStringContainsString('<xhtml:link rel="alternate" hreflang="en-GB" href="https://demo.example/about"/>', $one);
+            self::assertStringContainsString('<xhtml:link rel="alternate" hreflang="x-default" href="https://demo.example/about"/>', $one);
+        }
+        self::assertSame(1, substr_count($english, 'hreflang="en-GB"'), 'Home has no alternates');
+        self::assertNull($files->localeSitemap('https://demo.example', 'fr-FR'));
         $robots = $files->robots('https://demo.example');
         self::assertSame("User-agent: *\nDisallow: /admin\nDisallow: /account\nDisallow: /login\nDisallow: /logout\nDisallow: /contact-form\nAllow: /\n\nSitemap: https://demo.example/sitemap.xml\n", $robots);
 
         $this->pages->published('Later');
         self::assertSame($sitemap, $files->sitemap('https://demo.example'), 'cached');
         new SeoCachePurger($files)(new \stdClass());
-        self::assertStringContainsString('/later</loc>', $files->sitemap('https://demo.example'));
+        self::assertStringContainsString('/later</loc>', (string) $files->localeSitemap('https://demo.example', 'en-GB'));
         self::assertStringContainsString('Disallow: /', $this->files('staging', new ArrayAdapter())->robots('https://demo.example'));
     }
 
@@ -111,8 +122,8 @@ final class SeoFilesTest extends TestCase
 
         self::assertSame(
             "# Demo\n\n> The library by the river.\n\nEvery page of this website is also available as Markdown: add `.md` to its address (`/index.md` for the home page).\n\n"
-            . "## Pages (en-GB)\n\n- [Home](https://demo.example/index.md): The library by the river.\n- [About \\[us\\]](https://demo.example/about-us.md)\n\n"
-            . "## Pages (pt-PT)\n\n- [Sobre](https://demo.example/pt-pt/sobre.md): Quem somos.\n\n"
+            . "## Pages in British English (en-GB)\n\n- [Home](https://demo.example/index.md): The library by the river.\n- [About \\[us\\]](https://demo.example/about-us.md)\n\n"
+            . "## Pages in European Portuguese (pt-PT)\n\n- [Sobre](https://demo.example/pt-pt/sobre.md): Quem somos.\n\n"
             . "## Optional\n\n- [Full text of every page](https://demo.example/llms-full.txt): all the pages above in one Markdown file\n",
             $files->llms('https://demo.example'),
         );
@@ -173,7 +184,20 @@ final class SeoFilesTest extends TestCase
         $sitemap = $handler->handle(new ServerRequest('GET', 'https://www.demo.example:8443/sitemap.xml'));
         self::assertSame('application/xml; charset=utf-8', $sitemap->getHeaderLine('Content-Type'));
         self::assertSame('public, max-age=3600', $sitemap->getHeaderLine('Cache-Control'));
-        self::assertStringContainsString('<loc>https://demo.example:8443/</loc>', (string) $sitemap->getBody());
+        self::assertStringContainsString('<loc>https://demo.example:8443/sitemap-en-gb.xml</loc>', (string) $sitemap->getBody());
+        $english = $handler->handle(new ServerRequest('GET', 'https://demo.example:8443/sitemap-en-gb.xml'));
+        self::assertSame('application/xml; charset=utf-8', $english->getHeaderLine('Content-Type'));
+        self::assertStringContainsString('<loc>https://demo.example:8443/</loc>', (string) $english->getBody());
+        foreach (['/sitemap-fr-fr.xml', '/sitemap-x.xml'] as $missing) {
+            try {
+                $handler->handle(new ServerRequest('GET', 'https://demo.example' . $missing));
+                self::fail($missing);
+            } catch (\Slim\Exception\HttpNotFoundException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+        $single = new SeoFileHandler($this->files('production', new ArrayAdapter(), site: PageFixture::site(['en-GB'])), PageFixture::site(['en-GB']), new Psr17Factory());
+        self::assertStringContainsString('<urlset', (string) $single->handle(new ServerRequest('GET', 'https://demo.example/sitemap.xml'))->getBody());
         $robots = $handler->handle(new ServerRequest('GET', 'https://demo.example/robots.txt'));
         self::assertSame('text/plain; charset=utf-8', $robots->getHeaderLine('Content-Type'));
         self::assertStringEndsWith("Sitemap: https://demo.example/sitemap.xml\n", (string) $robots->getBody());
@@ -189,7 +213,7 @@ final class SeoFilesTest extends TestCase
         $config = new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => 'production']);
         $files = new SeoFiles($this->index(), $this->policy('production'), $this->pages->site, $config, $this->aiCrawlers(), $this->documents(), $this->pages->database->settings());
 
-        self::assertStringContainsString('<loc>https://demo.example/</loc>', $files->sitemap('https://demo.example'));
+        self::assertStringContainsString('<loc>https://demo.example/</loc>', (string) $files->localeSitemap('https://demo.example', 'en-GB'));
         self::assertDirectoryExists($config->cacheDir . '/seo-' . $this->pages->site->id);
         $files->purge();
     }
@@ -204,9 +228,9 @@ final class SeoFilesTest extends TestCase
         return new RobotsPolicy(new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]));
     }
 
-    private function files(string $environment, ArrayAdapter $cache, ?MarkdownPages $documents = null): SeoFiles
+    private function files(string $environment, ArrayAdapter $cache, ?MarkdownPages $documents = null, ?\SightPress\Core\Tenant\Site $site = null): SeoFiles
     {
-        return new SeoFiles($this->index(), $this->policy($environment), $this->pages->site, new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]), $this->aiCrawlers(), $documents ?? $this->documents(), $this->pages->database->settings(), $cache);
+        return new SeoFiles($this->index(), $this->policy($environment), $site ?? $this->pages->site, new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]), $this->aiCrawlers(), $documents ?? $this->documents(), $this->pages->database->settings(), $cache);
     }
 
     private function aiCrawlers(): AiCrawlerPolicy

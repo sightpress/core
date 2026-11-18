@@ -11,6 +11,7 @@ use SightPress\Core\Page\Contract\MarkdownPages;
 use SightPress\Core\Page\Contract\PageIndex;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\TenantConfig;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -48,9 +49,40 @@ final class SeoFiles
         $this->cache = $cache;
     }
 
+    /**
+     * The sitemap: with one language, every page; with more, an index of one sitemap per language
+     * ({@see localeSitemap()}).
+     */
     public function sitemap(string $baseUrl): string
     {
-        return $this->cached('sitemap', $baseUrl, fn (string $base): string => $this->buildSitemap($base));
+        if (count($this->site->locales) < 2) {
+            return $this->cached('sitemap', $baseUrl, fn (string $base): string => $this->buildSitemap($base, null));
+        }
+
+        return $this->cached('sitemap-index', $baseUrl, fn (string $base): string => $this->buildSitemapIndex($base));
+    }
+
+    /**
+     * The sitemap of one of the site's languages (`/sitemap-pt-pt.xml`): its pages, each with every translation as an
+     * alternate (itself included) and `x-default`. Null for a language the site doesn't have.
+     */
+    public function localeSitemap(string $baseUrl, string $locale): ?string
+    {
+        foreach ($this->site->locales as $own) {
+            if (strtolower($own) === strtolower($locale)) {
+                return $this->cached('sitemap-' . strtolower($own), $baseUrl, fn (string $base): string => $this->buildSitemap($base, $own));
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Address of the sitemap of a language.
+     */
+    public static function sitemapPath(string $locale): string
+    {
+        return '/sitemap-' . strtolower($locale) . '.xml';
     }
 
     public function robots(string $baseUrl): string
@@ -103,13 +135,40 @@ final class SeoFiles
         $this->cache()->clear();
     }
 
-    private function buildSitemap(string $base): string
+    private function buildSitemapIndex(string $base): string
     {
-        $pages = $this->indexable();
+        $latest = [];
+        foreach ($this->indexable() as $page) {
+            $latest[$page->locale] = max($latest[$page->locale] ?? $page->updatedAt, $page->updatedAt);
+        }
+        $xml = new XMLWriter();
+        $xml->openMemory();
+        $xml->setIndent(true);
+        $xml->startDocument('1.0', 'UTF-8');
+        $xml->startElement('sitemapindex');
+        $xml->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+        foreach ($this->site->locales as $locale) {
+            $xml->startElement('sitemap');
+            $xml->writeElement('loc', $base . self::sitemapPath($locale));
+            if (isset($latest[$locale])) {
+                $xml->writeElement('lastmod', $latest[$locale]->setTimezone(new DateTimeZone('UTC'))->format(DATE_W3C));
+            }
+            $xml->endElement();
+        }
+        $xml->endElement();
+        $xml->endDocument();
+
+        return $xml->outputMemory();
+    }
+
+    private function buildSitemap(string $base, ?string $only): string
+    {
+        $all = $this->indexable();
         $languages = [];
-        foreach ($pages as $page) {
+        foreach ($all as $page) {
             $languages[$page->id][$page->locale] = $base . $page->url;
         }
+        $pages = $only === null ? $all : array_values(array_filter($all, static fn (IndexedPage $page): bool => $page->locale === $only));
         $xml = new XMLWriter();
         $xml->openMemory();
         $xml->setIndent(true);
@@ -121,8 +180,12 @@ final class SeoFiles
             $xml->startElement('url');
             $xml->writeElement('loc', $base . $page->url);
             $xml->writeElement('lastmod', $page->updatedAt->setTimezone(new DateTimeZone('UTC'))->format(DATE_W3C));
-            if (count($languages[$page->id]) > 1) {
-                foreach ($languages[$page->id] as $locale => $href) {
+            $alternates = $languages[$page->id];
+            if (count($alternates) > 1) {
+                if (isset($alternates[$this->site->defaultLocale])) {
+                    $alternates['x-default'] = $alternates[$this->site->defaultLocale];
+                }
+                foreach ($alternates as $locale => $href) {
                     $xml->startElement('xhtml:link');
                     $xml->writeAttribute('rel', 'alternate');
                     $xml->writeAttribute('hreflang', $locale);
@@ -174,7 +237,7 @@ final class SeoFiles
         }
         foreach ($byLocale as $locale => $localePages) {
             $lines[] = '';
-            $lines[] = count($byLocale) > 1 ? sprintf('## Pages (%s)', $locale) : '## Pages';
+            $lines[] = count($byLocale) > 1 ? sprintf('## Pages in %s (%s)', LocaleCode::describe($locale), $locale) : '## Pages';
             $lines[] = '';
             foreach ($localePages as $page) {
                 $notes = $page->description ?? $page->summary;

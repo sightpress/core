@@ -29,16 +29,17 @@ final class PageLinkQueryTest extends TestCase
         $links = new PageLinkQuery($fixture->database->entityManager, $fixture->addresses());
 
         self::assertEquals([
-            (int) $home->id() => new PageLink((int) $home->id(), 'Welcome', '/', 0, true),
-            (int) $team->id() => new PageLink((int) $team->id(), 'Team', '/about/team', 1, true),
+            (int) $home->id() => new PageLink((int) $home->id(), 'Welcome', '/', 0, true, true),
+            (int) $team->id() => new PageLink((int) $team->id(), 'Team', '/about/team', 1, true, true),
         ], $links->find([(int) $team->id(), (int) $home->id(), (int) $team->id(), 999], 'en-GB'));
         self::assertSame([], $links->find([], 'en-GB'));
-        self::assertEquals([new PageLink((int) $about->id(), 'Sobre', '/pt-pt/sobre', 0, true)], array_values($links->find([(int) $about->id(), (int) $team->id()], 'pt-PT')));
+        self::assertEquals([new PageLink((int) $about->id(), 'Sobre', '/pt-pt/sobre', 0, true, true)], array_values($links->find([(int) $about->id(), (int) $team->id()], 'pt-PT')));
 
         self::assertSame(
             ['Welcome', 'Draft', 'About', 'Team'],
             array_map(static fn (PageLink $link): string => $link->title, $links->all('en-GB')),
         );
         self::assertFalse($links->all('en-GB')[1]->public);
+        self::assertFalse($links->all('en-GB')[1]->indexable);
     }
 }

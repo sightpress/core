@@ -60,6 +60,14 @@ export default defineConfig({
       stdout: 'ignore',
       stderr: 'ignore',
     },
+    // A second copy of the starter site, also in Portuguese and Hebrew, for the translations (translations.spec.ts).
+    {
+      command: 'SIGHTPRESS_A11Y_SITE=translated php -S 127.0.0.1:8084 tests/A11y/starter/index.php',
+      url: 'http://127.0.0.1:8084/',
+      reuseExistingServer: !process.env.CI,
+      stdout: 'ignore',
+      stderr: 'ignore',
+    },
     // One copy of the admin test site per spec file (tests/A11y/support/admin-site.ts), so specs never reset each
     // other's site.
     ...Object.entries({ admin: 8096, account: 8095, people: 8094, media: 8093, menus: 8092, pages: 8089, settings: 8088, languages: 8085 }).map(([copy, port]) => ({

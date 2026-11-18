@@ -20,8 +20,8 @@ use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\UserRepository;
 
 /**
- * Site languages through the whole kernel (I-1): an admin adds Spanish, translates a page into it from English (a
- * draft nobody else sees), publishes the translation, removes Spanish (its page answers 404 and leaves the sitemap,
+ * Site languages through the whole kernel (I-1, I-2): an admin adds Spanish, translates a page into it from English
+ * (a draft: visitors are sent to the English page), publishes the translation, removes Spanish (its page answers 404 and leaves the sitemap,
  * the person who chose Spanish gets English) and adds it again, which brings the translation back.
  */
 #[CoversNothing]
@@ -71,14 +71,16 @@ final class SiteLanguagesFlowTest extends TestCase
 
         $started = $ada->submit('/admin/pages/' . $this->about, ['op' => 'translate', 'locale' => 'es', 'from' => 'en-GB'], '/admin/pages/' . $this->about . '/translations');
         self::assertSame('/admin/pages/' . $this->about . '?locale=es', $started->getHeaderLine('Location'));
-        self::assertSame(404, $visitor->request('GET', '/es/about')->getStatusCode(), 'a draft translation is not public');
+        $draft = $visitor->request('GET', '/es/about');
+        self::assertSame([302, 'https://example.org/about'], [$draft->getStatusCode(), $draft->getHeaderLine('Location')], 'a draft translation is not public: visitors get the English page');
         self::assertSame(200, $ada->request('GET', '/es/about')->getStatusCode(), 'its editors can look at it');
-        self::assertStringNotContainsString('/es/about', (string) $visitor->request('GET', '/sitemap.xml')->getBody());
+        self::assertStringNotContainsString('/es/about', (string) $visitor->request('GET', '/sitemap-es.xml')->getBody());
 
         $ada->submit('/admin/pages/' . $this->about . '?locale=es', ['op' => 'publish', 'locale' => 'es'], '/admin/pages/' . $this->about . '/translations');
         self::assertSame(200, $visitor->request('GET', '/es/about')->getStatusCode());
         self::assertStringContainsString('hreflang="es"', (string) $visitor->request('GET', '/about')->getBody());
-        self::assertStringContainsString('<loc>https://example.org/es/about</loc>', (string) $visitor->request('GET', '/sitemap.xml')->getBody());
+        self::assertStringContainsString('<loc>https://example.org/sitemap-es.xml</loc>', (string) $visitor->request('GET', '/sitemap.xml')->getBody());
+        self::assertStringContainsString('<loc>https://example.org/es/about</loc>', (string) $visitor->request('GET', '/sitemap-es.xml')->getBody());
 
         $users = Services::get($this->site->container(), UserRepository::class);
         $bea = new User('bea@example.org', 'Bea', 'Ruiz', 'UTC', new DateTimeImmutable(), locale: 'es');
@@ -87,7 +89,8 @@ final class SiteLanguagesFlowTest extends TestCase
         self::assertStringContainsString('Remove Spanish?', $confirm);
         self::assertSame(303, $ada->submit('/admin/settings/languages/remove?locale=es', ['locale' => 'es'], '/admin/settings/languages/remove')->getStatusCode());
         self::assertSame(404, $visitor->request('GET', '/es/about')->getStatusCode());
-        self::assertStringNotContainsString('/es/about', (string) $visitor->request('GET', '/sitemap.xml')->getBody());
+        self::assertStringNotContainsString('sitemap-es.xml', (string) $visitor->request('GET', '/sitemap.xml')->getBody());
+        self::assertSame(404, $visitor->request('GET', '/sitemap-es.xml')->getStatusCode());
         self::assertStringNotContainsString('hreflang="es"', (string) $visitor->request('GET', '/about')->getBody());
         self::assertNull(Services::get($this->site->container(), UserRepository::class)->findByEmail('bea@example.org')?->locale());
 
