@@ -91,12 +91,12 @@ test('nothing private can be indexed', async ({ request }) => {
 // Every kind of admin screen each role reaches by following links; a screen that drops out of the crawl fails here.
 const SCREENS: Record<'admin' | 'editor' | 'contributor', string[]> = {
   admin: [
-    '/account', '/admin', '/admin/audit', '/admin/media', '/admin/media/{id}', '/admin/media/{id}/delete', '/admin/menus',
+    '/account', '/admin', '/admin/audit', '/admin/media', '/admin/media/{id}', '/admin/media/{id}/delete', '/admin/menus', '/admin/menus/{id}',
     '/admin/pages', '/admin/pages/new', '/admin/pages/{id}', '/admin/pages/{id}/revisions', '/admin/pages/{id}/revisions/{id}', '/admin/redirects', '/admin/settings', '/admin/settings/branding', '/admin/settings/languages', '/admin/settings/sign-up',
     '/admin/users', '/admin/users/invite', '/admin/users/{id}',
   ],
   editor: [
-    '/account', '/admin', '/admin/media', '/admin/media/{id}', '/admin/media/{id}/delete', '/admin/menus', '/admin/pages',
+    '/account', '/admin', '/admin/media', '/admin/media/{id}', '/admin/media/{id}/delete', '/admin/menus', '/admin/menus/{id}', '/admin/pages',
     '/admin/pages/new', '/admin/pages/{id}', '/admin/pages/{id}/revisions', '/admin/pages/{id}/revisions/{id}', '/admin/redirects', '/admin/users/invite',
   ],
   contributor: ['/account', '/admin', '/admin/media', '/admin/media/{id}', '/admin/pages', '/admin/pages/new', '/admin/pages/{id}', '/admin/pages/{id}/revisions', '/admin/pages/{id}/revisions/{id}'],

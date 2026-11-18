@@ -21,6 +21,7 @@ export const ADMIN_SITES = {
   schedule: 'http://127.0.0.1:8081',
   signup: 'http://127.0.0.1:8079',
   visibility: 'http://127.0.0.1:8078',
+  menuentries: 'http://127.0.0.1:8077',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

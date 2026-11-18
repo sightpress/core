@@ -12,7 +12,8 @@ use SightPress\Core\Menu\MenuException;
 
 /**
  * One entry of a menu: a page of the site (shown with the page's title in the visitor's language, unless it has a
- * label of its own) or a link with a label. Entries can be nested up to {@see MAX_DEPTH} levels.
+ * label of its own in that language) or a link with a label (in each language, or its main one). An entry can be for
+ * signed-in members only. Entries can be nested up to {@see MAX_DEPTH} levels.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'menu_items')]
@@ -38,6 +39,13 @@ final class MenuItem
     #[ORM\Column(type: Types::STRING, length: self::URL_MAX_LENGTH, nullable: true)]
     private ?string $url;
 
+    /** @var array<string, string>|null the entry's text in other languages, locale => text */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $labels = null;
+
+    #[ORM\Column(name: 'members_only', type: Types::BOOLEAN)]
+    private bool $membersOnly = false;
+
     /**
      * @param ?int $pageId a page of the site; pages live in another module's table, so there is no foreign key
      */
@@ -52,17 +60,13 @@ final class MenuItem
         ?string $label,
         ?string $url,
     ) {
-        $label = $label === null ? null : trim((string) preg_replace('/\s+/u', ' ', $label));
-        $this->label = $label === '' ? null : $label;
+        $this->label = self::text($label);
         $this->url = $url === null || trim($url) === '' ? null : trim($url);
         if (($this->pageId === null) === ($this->url === null)) {
             throw new MenuException('A menu entry is either a page or a link.');
         }
         if ($this->url !== null && $this->label === null) {
             throw new MenuException('Give the link a label.');
-        }
-        if ($this->label !== null && mb_strlen($this->label) > self::LABEL_MAX_LENGTH) {
-            throw new MenuException(new Message('The label must be {max} characters or fewer.', ['max' => (string) self::LABEL_MAX_LENGTH]));
         }
         if ($this->url !== null && (strlen($this->url) > self::URL_MAX_LENGTH || !self::isLink($this->url))) {
             throw new MenuException('The address must start with https://, http://, mailto:, tel: or / (an address on this site).');
@@ -105,12 +109,81 @@ final class MenuItem
     }
 
     /**
+     * The entry's own text in a language: its text in that language, else (in the site's main language, or for a
+     * link) its main text. Null means a page entry shows the page's title in that language.
+     */
+    public function labelIn(string $locale, string $mainLocale): ?string
+    {
+        $own = $this->labels[$locale] ?? null;
+        if ($own !== null) {
+            return $own;
+        }
+
+        return $locale === $mainLocale || $this->pageId === null ? $this->label : null;
+    }
+
+    /**
+     * @return array<string, string> the entry's text in other languages, locale => text
+     */
+    public function labels(): array
+    {
+        return $this->labels ?? [];
+    }
+
+    /**
+     * Whether only signed-in members see the entry.
+     */
+    public function isMembersOnly(): bool
+    {
+        return $this->membersOnly;
+    }
+
+    /**
+     * Changes the entry's text (in the main language and in others; empty texts are dropped) and who sees it.
+     *
+     * @param array<string, string|null> $labels locale => text
+     */
+    public function describe(?string $label, array $labels, bool $membersOnly): void
+    {
+        $label = self::text($label);
+        if ($this->url !== null && $label === null) {
+            throw new MenuException('Give the link a label.');
+        }
+        $texts = [];
+        foreach ($labels as $locale => $text) {
+            $text = self::text($text);
+            if ($text !== null) {
+                $texts[$locale] = $text;
+            }
+        }
+        ksort($texts);
+        $this->label = $label;
+        $this->labels = $texts === [] ? null : $texts;
+        $this->membersOnly = $membersOnly;
+    }
+
+    /**
      * @internal for {@see \SightPress\Core\Menu\MenuEditor}
      */
     public function place(?MenuItem $parent, int $position): void
     {
         $this->parent = $parent;
         $this->position = $position;
+    }
+
+    /**
+     * A text with its spaces tidied, or null when empty.
+     *
+     * @throws MenuException when it is too long
+     */
+    private static function text(?string $text): ?string
+    {
+        $text = $text === null ? '' : trim((string) preg_replace('/\s+/u', ' ', $text));
+        if (mb_strlen($text) > self::LABEL_MAX_LENGTH) {
+            throw new MenuException(new Message('The label must be {max} characters or fewer.', ['max' => (string) self::LABEL_MAX_LENGTH]));
+        }
+
+        return $text === '' ? null : $text;
     }
 
     private static function isLink(string $url): bool

@@ -709,6 +709,12 @@
         <target>Back to site settings</target>
       </segment>
     </unit>
+    <unit id="5c4d5eb34d2a9564">
+      <segment>
+        <source>Back to the menus</source>
+        <target>Back to the menus</target>
+      </segment>
+    </unit>
     <unit id="600ce10f1e2c8681">
       <segment>
         <source>Back to the page</source>
@@ -817,6 +823,12 @@
         <target>Captions</target>
       </segment>
     </unit>
+    <unit id="c0bf75bd78bf9572">
+      <segment>
+        <source>Change</source>
+        <target>Change</target>
+      </segment>
+    </unit>
     <unit id="009ed110badf6e7b">
       <segment>
         <source>Change language</source>
@@ -857,6 +869,12 @@
       <segment>
         <source>Change the main and footer menus.</source>
         <target>Change the main and footer menus.</target>
+      </segment>
+    </unit>
+    <unit id="772294ff1dc42ad3">
+      <segment>
+        <source>Change the menu entry “{name}”</source>
+        <target>Change the menu entry “{name}”</target>
       </segment>
     </unit>
     <unit id="39979d6654fc1bcd">
@@ -1421,6 +1439,12 @@
       <segment>
         <source>Enter {field}</source>
         <target>Enter {field}</target>
+      </segment>
+    </unit>
+    <unit id="8c6fb4358f42a12e">
+      <segment>
+        <source>Entries for members-only pages are already hidden from people who aren’t signed in.</source>
+        <target>Entries for members-only pages are already hidden from people who aren’t signed in.</target>
       </segment>
     </unit>
     <unit id="0f37fca8fbb91800">
@@ -2035,6 +2059,18 @@
         <target>Leads to</target>
       </segment>
     </unit>
+    <unit id="c32357f21677b7c3">
+      <segment>
+        <source>Leave it empty to show the page’s title in this language.</source>
+        <target>Leave it empty to show the page’s title in this language.</target>
+      </segment>
+    </unit>
+    <unit id="949a7c60426d2f13">
+      <segment>
+        <source>Leave it empty to show the text in the main language.</source>
+        <target>Leave it empty to show the text in the main language.</target>
+      </segment>
+    </unit>
     <unit id="253f90712d048f07">
       <segment>
         <source>Leave it empty to use the site’s share image.</source>
@@ -2617,6 +2653,12 @@
         <target>Only roles that are safe to give to people you don’t know are listed. “Member” can read members-only pages and nothing more.</target>
       </segment>
     </unit>
+    <unit id="0e4335838d1926ab">
+      <segment>
+        <source>Only show this entry to members who are signed in</source>
+        <target>Only show this entry to members who are signed in</target>
+      </segment>
+    </unit>
     <unit id="410c3aa8a88771e1">
       <segment>
         <source>Only tick this on a device that only you use.</source>
@@ -3109,6 +3151,12 @@
         <target>Save sign-up settings</target>
       </segment>
     </unit>
+    <unit id="abdc1b19de61f956">
+      <segment>
+        <source>Save the entry</source>
+        <target>Save the entry</target>
+      </segment>
+    </unit>
     <unit id="7b015c0fcf9fe632">
       <segment>
         <source>Save the page before making it the home page.</source>
@@ -3167,6 +3215,12 @@
       <segment>
         <source>Say where the link goes, for example &quot;Read the annual report&quot; instead of &quot;Read more&quot;.</source>
         <target>Say where the link goes, for example &quot;Read the annual report&quot; instead of &quot;Read more&quot;.</target>
+      </segment>
+    </unit>
+    <unit id="1dffc51a4f01f54b">
+      <segment>
+        <source>Say where the link goes, for example “Opening hours”.</source>
+        <target>Say where the link goes, for example “Opening hours”.</target>
       </segment>
     </unit>
     <unit id="f4830a1dae298044">
@@ -3743,6 +3797,12 @@
       <segment>
         <source>Text</source>
         <target>Text</target>
+      </segment>
+    </unit>
+    <unit id="ce4191854e091b93">
+      <segment>
+        <source>Text in {language}</source>
+        <target>Text in {language}</target>
       </segment>
     </unit>
     <unit id="7d411f3bc7c16dc4">
@@ -4591,6 +4651,12 @@
         <target>This captions file isn't in WebVTT format: its first line must be &quot;WEBVTT&quot;.</target>
       </segment>
     </unit>
+    <unit id="72bddb0bcaa9ede4">
+      <segment>
+        <source>This entry is a link to {address}.</source>
+        <target>This entry is a link to {address}.</target>
+      </segment>
+    </unit>
     <unit id="28296a2e534db16a">
       <segment>
         <source>This entry is already at the top level.</source>
@@ -4607,6 +4673,12 @@
       <segment>
         <source>This entry is already the last at its level.</source>
         <target>This entry is already the last at its level.</target>
+      </segment>
+    </unit>
+    <unit id="181dc9690cb80bc6">
+      <segment>
+        <source>This entry leads to a page of the site.</source>
+        <target>This entry leads to a page of the site.</target>
       </segment>
     </unit>
     <unit id="2dc3dd7634a13089">
@@ -5683,6 +5755,12 @@
         <target>logo</target>
       </segment>
     </unit>
+    <unit id="289d6f22d275a3d9">
+      <segment>
+        <source>not shown in these languages until the page is published in them: {languages}</source>
+        <target>not shown in these languages until the page is published in them: {languages}</target>
+      </segment>
+    </unit>
     <unit id="7c8d64b8ae424a67">
       <segment>
         <source>not shown until the page is published</source>
@@ -5693,6 +5771,12 @@
       <segment>
         <source>once it is approved: if it is approved later, as soon as it is approved.</source>
         <target>once it is approved: if it is approved later, as soon as it is approved.</target>
+      </segment>
+    </unit>
+    <unit id="5fa6c1e8dd75f69d">
+      <segment>
+        <source>only shown to members who are signed in</source>
+        <target>only shown to members who are signed in</target>
       </segment>
     </unit>
     <unit id="ab8d5cdca43cc8eb">
@@ -5903,6 +5987,12 @@
       <segment>
         <source>{item} has been added to the {label}.</source>
         <target>{item} has been added to the {label}.</target>
+      </segment>
+    </unit>
+    <unit id="903480726f3714e9">
+      <segment>
+        <source>{item} has been changed.</source>
+        <target>{item} has been changed.</target>
       </segment>
     </unit>
     <unit id="2ef556d642f8dbaf">

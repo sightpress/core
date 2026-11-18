@@ -132,6 +132,25 @@ final class MenuAdminHandlerTest extends TestCase
         self::assertSame(['That menu entry isn\'t there any more.'], array_map(strval(...), Flash::take($this->session)));
     }
 
+    public function testEachEntrySaysWhoSeesItAndWhichLanguagesItIsMissingIn(): void
+    {
+        $about = $this->pages->published('About');
+        $club = $this->pages->published('Book club');
+        $this->pages->translated($club, 'pt-PT', new PageContent('Clube do livro', 'clube'));
+        $this->pages->editor()->create('en-GB', new PageContent('Draft'));
+        $aboutEntry = $this->menus->add(MenuName::Main, (int) $about->id());
+        $this->menus->add(MenuName::Main, (int) $club->id());
+        $link = $this->menus->add(MenuName::Footer, null, 'Forum', 'https://forum.example');
+        $this->menus->describe($link, 'Forum', [], true);
+
+        $html = (string) $this->handle('GET')->getBody();
+
+        self::assertStringContainsString('Page: / – not shown in these languages until the page is published in them: European Portuguese', $html);
+        self::assertStringContainsString('Page: /book-club</span>', $html);
+        self::assertStringContainsString('Link: https://forum.example – only shown to members who are signed in', $html);
+        self::assertStringContainsString('<a href="/admin/menus/' . $aboutEntry->id() . '" class="menu-editor__edit">Change<span class="visually-hidden"> About</span></a>', $html);
+    }
+
     /**
      * @param array<string, string> $body
      */

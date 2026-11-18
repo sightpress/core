@@ -5,7 +5,8 @@
     message in the live region and `autofocus` on the same button (`focus`); when that button is gone (the entry is
     now first, last, or as deep as it can go), on the opposite one, else on the entry; after a removal, on the menu's
     heading. Then two forms add a page or a link.
-    Context: `menus`, `trees` (menu => nodes {id, label, link, page, hidden, moves, children}), `page_form` (null
+    Context: `menus`, `trees` (menu => nodes {id, label, link, page, hidden, members_only, missing (language names),
+    edit, moves, children}), `page_form` (null
     without pages), `link_form`, `focus`, `action`.
 #}
 {% extends '@admin/layout.html.twig' %}
@@ -64,7 +65,10 @@
                     <span class="menu-editor__details">
                         {%- if node.page %}{{ t('Page') }}{% else %}{{ t('Link') }}{% endif %}{% if node.link %}: {{ node.link }}{% endif %}
                         {%- if node.hidden %} – {{ t('not shown until the page is published') }}{% endif -%}
+                        {%- if node.members_only %} – {{ t('only shown to members who are signed in') }}{% endif -%}
+                        {%- if node.missing is not empty %} – {{ t('not shown in these languages until the page is published in them: {languages}', {languages: node.missing|map(l => t(l))|join(', ')}) }}{% endif -%}
                     </span>
+                    <a href="{{ node.edit }}" class="menu-editor__edit">{{ t('Change') }}<span class="visually-hidden"> {{ node.label }}</span></a>
                 </p>
                 <form action="{{ action }}" method="post" class="menu-editor__actions">
                     {{ csrf_fields() }}

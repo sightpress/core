@@ -7,6 +7,7 @@ namespace SightPress\Core\Page;
 use SightPress\Core\Page\Contract\MarkdownPages;
 use SightPress\Core\Page\Contract\PageIndex;
 use SightPress\Core\Page\Contract\StarterContent;
+use SightPress\Core\Page\Contract\MovedAddresses;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Contract\PageOverview;
 use SightPress\Core\Page\Http\PublicPageHandler;
@@ -68,6 +69,7 @@ final class PageModule implements ModuleInterface
         $services->autowire(PageMarkdown::class, MarkdownPages::class, public: true);
         $services->autowire(PublicPageHandler::class);
         $services->autowire(PageRedirects::class, public: true);
+        $services->autowire(RedirectedAddresses::class, MovedAddresses::class, public: true);
         $services->autowire(PageEditor::class, public: true);
         $services->autowire(StarterContent::class, public: true);
         $services->autowire(PublishedPages::class, PublicPages::class, public: true);

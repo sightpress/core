@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Media\Migrations\Version20261116120000 as MediaTable;
 use SightPress\Core\Menu\Migrations\Version20261116210000 as MenuTable;
+use SightPress\Core\Menu\Migrations\Version20261118400000 as MenuLabels;
 use SightPress\Core\Page\Migrations\Version20261116130000 as PageTables;
 use SightPress\Core\Page\Migrations\Version20261116220000 as PageShareImage;
 use SightPress\Core\Page\Migrations\Version20261116230000 as PageSearchFields;
@@ -32,6 +33,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(PageTables::class)]
 #[CoversClass(InvitationsTable::class)]
 #[CoversClass(MenuTable::class)]
+#[CoversClass(MenuLabels::class)]
 #[CoversClass(\SightPress\Core\Audit\Migrations\Version20261117120000::class)]
 #[CoversClass(PageShareImage::class)]
 #[CoversClass(PageSearchFields::class)]

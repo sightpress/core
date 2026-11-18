@@ -121,6 +121,34 @@ final class MenuEditorTest extends TestCase
         self::assertNull($this->menus->find(999));
     }
 
+    public function testChangesAnEntrysTextsAndWhoSeesIt(): void
+    {
+        $item = $this->menus->add(MenuName::Footer, null, 'Hours', '/hours');
+
+        $this->menus->describe($item, 'Opening hours', ['pt-PT' => 'Horário'], true, 3);
+
+        $this->database->entityManager->clear();
+        $saved = $this->menus->find((int) $item->id());
+        self::assertSame(['Opening hours', ['pt-PT' => 'Horário'], true], [$saved?->label(), $saved?->labels(), $saved?->isMembersOnly()]);
+        self::assertEquals(new MenuChanged(MenuName::Footer, MenuChanged::CHANGED, (int) $item->id(), null, '/hours', 3), $this->last());
+    }
+
+    public function testForgetsTheEntriesOfPagesDeletedForGood(): void
+    {
+        $a = $this->menus->add(MenuName::Main, 1);
+        $b = $this->menus->add(MenuName::Main, 2);
+        $this->menus->add(MenuName::Main, 3, parent: $b);
+        $this->menus->add(MenuName::Footer, 2);
+
+        self::assertSame(0, $this->menus->forgetPages([]));
+        self::assertSame(3, $this->menus->forgetPages([2, 3, 99], 4));
+
+        self::assertSame([$a], array_map(static fn (MenuNode $node) => $node->item, $this->menus->tree(MenuName::Main)));
+        self::assertSame([], $this->menus->tree(MenuName::Footer));
+        self::assertSame(MenuChanged::REMOVED, $this->last()->change);
+        self::assertSame(4, $this->last()->actorId);
+    }
+
     private function assertRefused(callable $change, string $message): void
     {
         try {

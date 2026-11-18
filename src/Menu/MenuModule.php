@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace SightPress\Core\Menu;
 
 use SightPress\Core\Menu\Http\MenuAdminHandler;
+use SightPress\Core\Menu\Http\MenuItemHandler;
 use SightPress\Core\Menu\Provisioning\DemoMenu;
 use SightPress\Core\Menu\Provisioning\StarterMenus;
+use SightPress\Core\Page\Contract\PagePurged;
 use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
@@ -51,13 +53,17 @@ final class MenuModule implements ModuleInterface
         $services->autowire(MenuEditor::class, public: true);
         $services->autowire(PublicMenus::class);
         $services->autowire(MenuAdminHandler::class);
+        $services->autowire(MenuItemHandler::class);
+        $services->autowire(ForgetPurgedPages::class);
         $services->autowire(StarterMenus::class);
         $services->autowire(DemoMenu::class);
 
         $registrar->subscribers()->listen(PublicPageRendering::class, PublicMenus::class);
         $registrar->subscribers()->listen(SiteProvisioning::class, StarterMenus::class, StarterMenus::PRIORITY);
         $registrar->subscribers()->listen(SiteProvisioning::class, DemoMenu::class, DemoMenu::PRIORITY);
+        $registrar->subscribers()->listen(PagePurged::class, ForgetPurgedPages::class);
         $registrar->routes()->add(new Route('menu.admin', MenuAdminHandler::PATH, MenuAdminHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $registrar->routes()->add(new Route('menu.item', MenuAdminHandler::PATH . '/{' . MenuItemHandler::ID_ATTRIBUTE . ':[0-9]+}', MenuItemHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('menu.admin', 'Menus', 'menu.admin', MenuAdminHandler::PERMISSION, position: 35));
     }
 }

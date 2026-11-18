@@ -80,6 +80,41 @@ final readonly class MenuEditor
     }
 
     /**
+     * Changes an entry's text in each language and who sees it.
+     *
+     * @param array<string, string|null> $labels locale => text
+     *
+     * @throws MenuException when a link has no text or a text is too long
+     */
+    public function describe(MenuItem $item, ?string $label, array $labels, bool $membersOnly, ?int $actorId = null): void
+    {
+        $item->describe($label, $labels, $membersOnly);
+        $this->entityManager->flush();
+        $this->changed($item, MenuChanged::CHANGED, $actorId);
+    }
+
+    /**
+     * Removes the entries of pages that were deleted for good (each like {@see remove()}).
+     *
+     * @param list<int> $pageIds
+     *
+     * @return int how many entries were removed
+     */
+    public function forgetPages(array $pageIds, ?int $actorId = null): int
+    {
+        if ($pageIds === []) {
+            return 0;
+        }
+        /** @var list<MenuItem> $items */
+        $items = $this->entityManager->getRepository(MenuItem::class)->findBy(['pageId' => $pageIds], ['id' => 'DESC']);
+        foreach ($items as $item) {
+            $this->remove($item, $actorId);
+        }
+
+        return count($items);
+    }
+
+    /**
      * Removes an entry; the entries under it take its place.
      */
     public function remove(MenuItem $item, ?int $actorId = null): void

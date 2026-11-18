@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Menu\Contract;
 
 /**
- * A menu was changed: an entry was added, removed or moved. For the audit log.
+ * A menu was changed: an entry was added, removed, moved or changed (its texts, or who sees it). For the audit log.
  */
 final readonly class MenuChanged
 {
@@ -15,6 +15,7 @@ final readonly class MenuChanged
     public const string MOVED_DOWN = 'moved_down';
     public const string INDENTED = 'indented';
     public const string OUTDENTED = 'outdented';
+    public const string CHANGED = 'changed';
 
     /**
      * @param string   $change  one of the constants

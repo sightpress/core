@@ -91,6 +91,7 @@ final readonly class PageLinkQuery implements PageLinks
             $page->depth(),
             $public,
             $public && !$translation->isNoindex() && $translation->canonicalUrl() === null,
+            $translation->isPublished(),
         );
     }
 }

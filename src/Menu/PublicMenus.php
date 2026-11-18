@@ -5,39 +5,49 @@ declare(strict_types=1);
 namespace SightPress\Core\Menu;
 
 use SightPress\Core\Menu\Contract\MenuName;
+use SightPress\Core\Page\Contract\MovedAddresses;
 use SightPress\Core\Page\Contract\PageLink;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Contract\PublicPageRendering;
+use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Tenant\Site;
 
 /**
- * Puts the menus and the breadcrumbs on every page of the public site (three queries: the two menus, then every
- * page they and the breadcrumbs need). A menu entry for a page shows the page's title in the visitor's language (or
- * its own label); entries for pages that aren't published and public, or not written in that language, are left
- * out with the entries under them. The entry for the page being read is marked `current`.
+ * Puts the menus and the breadcrumbs on every page of the public site, in the page's language (three queries: the
+ * two menus, then every page they and the breadcrumbs need).
+ *
+ * A menu entry shows its own text in that language, else — for a page — the page's title in it (a link falls back to
+ * its main text). An entry is left out, with the entries under it, when the visitor can't open what it leads to: a
+ * page that isn't published in that language, a members-only page (or a page of a members-only site) for someone who
+ * isn't signed in, an entry marked for members only, or a link to an address whose page was deleted. Links to an
+ * address of the site whose page moved lead to its new address. The entry for the page being read is `current`
+ * (`aria-current="page"`), in every language.
  */
 final readonly class PublicMenus
 {
     public function __construct(
         private MenuEditor $menus,
         private PageLinks $pages,
+        private MovedAddresses $addresses,
         private Site $site,
     ) {
     }
 
     public function __invoke(PublicPageRendering $event): void
     {
+        $signedIn = Actor::fromRequest($event->request)->isSignedIn();
         $main = $this->menus->tree(MenuName::Main);
         $footer = $this->menus->tree(MenuName::Footer);
         $links = $this->pages->find([...MenuNode::pageIds($main), ...MenuNode::pageIds($footer), ...$event->ancestorIds], $event->locale);
+        $readable = array_filter($links, static fn (PageLink $link): bool => $link->public || ($signedIn && $link->published));
 
-        $event->set('main_menu', $this->entries($main, $links, $event->url));
-        $event->set('footer_menu', $this->entries($footer, $links, $event->url));
+        $event->set('main_menu', $this->entries($main, $readable, $event->url, $event->locale, $signedIn));
+        $event->set('footer_menu', $this->entries($footer, $readable, $event->url, $event->locale, $signedIn));
         if (!$event->home) {
             $crumbs = [['label' => null, 'url' => $event->locale === $this->site->defaultLocale ? '/' : '/' . strtolower($event->locale)]];
             foreach ($event->ancestorIds as $id) {
-                if (isset($links[$id]) && $links[$id]->public) {
-                    $crumbs[] = ['label' => $links[$id]->title, 'url' => $links[$id]->url];
+                if (isset($readable[$id])) {
+                    $crumbs[] = ['label' => $readable[$id]->title, 'url' => $readable[$id]->url];
                 }
             }
             $crumbs[] = ['label' => $event->title, 'url' => $event->url];
@@ -47,26 +57,34 @@ final readonly class PublicMenus
 
     /**
      * @param list<MenuNode>       $nodes
-     * @param array<int, PageLink> $links
+     * @param array<int, PageLink> $links the pages the visitor may open, in the page's language
      *
      * @return list<array<string, mixed>> {label, url, current, children}
      */
-    private function entries(array $nodes, array $links, string $current): array
+    private function entries(array $nodes, array $links, string $current, string $locale, bool $signedIn): array
     {
         $entries = [];
         foreach ($nodes as $node) {
             $item = $node->item;
+            if ($item->isMembersOnly() && !$signedIn) {
+                continue;
+            }
+            $label = $item->labelIn($locale, $this->site->defaultLocale);
             $pageId = $item->pageId();
             if ($pageId !== null) {
                 $link = $links[$pageId] ?? null;
-                if ($link === null || !$link->public) {
+                if ($link === null) {
                     continue;
                 }
-                [$label, $url] = [$item->label() ?? $link->title, $link->url];
+                [$label, $url] = [$label ?? $link->title, $link->url];
             } else {
-                [$label, $url] = [(string) $item->label(), (string) $item->url()];
+                $url = $this->addresses->follow((string) $item->url());
+                if ($url === null) {
+                    continue;
+                }
+                $label = (string) $label;
             }
-            $entries[] = ['label' => $label, 'url' => $url, 'current' => $url === $current, 'children' => $this->entries($node->children, $links, $current)];
+            $entries[] = ['label' => $label, 'url' => $url, 'current' => $url === $current, 'children' => $this->entries($node->children, $links, $current, $locale, $signedIn)];
         }
 
         return $entries;

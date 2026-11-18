@@ -22,6 +22,7 @@ use SightPress\Core\Menu\MenuNode;
 use SightPress\Core\Page\Contract\PageLink;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Core\Template\LanguageName;
 use SightPress\Core\Tenant\Site;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpForbiddenException;
@@ -31,7 +32,9 @@ use Symfony\Component\Validator\Constraints\Length;
  * `/admin/menus`: the main and footer menus as nested lists, each entry with buttons to move it up, down, in (under
  * the entry before it) or out, and to remove it; and two forms to add a page or a link. Every change is a POST
  * that comes back here (Post/Redirect/Get) with a message in the live region and focus on the same button of the
- * entry that moved (or on the entry, when that button is gone). Needs `menu.manage`.
+ * entry that moved (or on the entry, when that button is gone). Each entry says in words when it is for members
+ * only, and which of the site's languages its page isn't published in yet (it is left out of the menu there); its
+ * "Change" link opens {@see MenuItemHandler}. Needs `menu.manage`.
  */
 final readonly class MenuAdminHandler implements RequestHandlerInterface
 {
@@ -39,7 +42,8 @@ final readonly class MenuAdminHandler implements RequestHandlerInterface
 
     public const string PERMISSION = 'menu.manage';
 
-    private const string FOCUS = 'menu_admin.focus';
+    /** Where the next showing of the menus puts focus, kept in the session. */
+    public const string FOCUS = 'menu_admin.focus';
 
     private const array MOVES = ['up', 'down', 'in', 'out', 'remove'];
 
@@ -144,22 +148,30 @@ final readonly class MenuAdminHandler implements RequestHandlerInterface
     }
 
     /**
-     * @return list<array<string, mixed>> {id, label, link, page, hidden, moves, children}
+     * @return list<array<string, mixed>> {id, label, link, page, hidden, members_only, missing, edit, moves, children}
      */
     private function nodes(MenuName $menu): array
     {
         $tree = $this->menus->tree($menu);
+        $ids = MenuNode::pageIds($tree);
+        $others = [];
+        foreach ($this->site->locales as $locale) {
+            if ($locale !== $this->site->defaultLocale) {
+                $others[$locale] = $this->pages->find($ids, $locale);
+            }
+        }
 
-        return $this->view($tree, $this->pages->find(MenuNode::pageIds($tree), $this->site->defaultLocale), 0);
+        return $this->view($tree, $this->pages->find($ids, $this->site->defaultLocale), $others, 0);
     }
 
     /**
-     * @param list<MenuNode>       $nodes
-     * @param array<int, PageLink> $links
+     * @param list<MenuNode>                      $nodes
+     * @param array<int, PageLink>                $links  in the main language
+     * @param array<string, array<int, PageLink>> $others in each other language
      *
      * @return list<array<string, mixed>>
      */
-    private function view(array $nodes, array $links, int $depth): array
+    private function view(array $nodes, array $links, array $others, int $depth): array
     {
         $built = [];
         foreach ($nodes as $index => $node) {
@@ -182,9 +194,15 @@ final readonly class MenuAdminHandler implements RequestHandlerInterface
                 'label' => $item->label() ?? $link->title ?? new Message('Missing page (#{page_id})', ['page_id' => (string) (int) $item->pageId()]),
                 'link' => $item->url() ?? $link?->url,
                 'page' => $item->pageId() !== null,
-                'hidden' => $item->pageId() !== null && $link?->public !== true,
+                'hidden' => $item->pageId() !== null && $link?->published !== true,
+                'members_only' => $item->isMembersOnly(),
+                'missing' => $item->pageId() === null ? [] : array_values(array_map(
+                    static fn (string $locale): LanguageName => new LanguageName($locale),
+                    array_keys(array_filter($others, static fn (array $found): bool => ($found[(int) $item->pageId()] ?? null)?->published !== true)),
+                )),
+                'edit' => MenuItemHandler::path((int) $item->id()),
                 'moves' => [...$moves, 'remove'],
-                'children' => $this->view($node->children, $links, $depth + 1),
+                'children' => $this->view($node->children, $links, $others, $depth + 1),
             ];
         }
 

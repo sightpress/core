@@ -43,6 +43,39 @@ final class MenuItemTest extends TestCase
         self::assertSame('Footer menu', MenuName::Footer->label());
     }
 
+    public function testAnEntryHasItsTextInEachLanguageAndMayBeForMembersOnly(): void
+    {
+        $page = new MenuItem(MenuName::Main, null, 4, null, null);
+        self::assertSame([], $page->labels());
+        self::assertFalse($page->isMembersOnly());
+        self::assertNull($page->labelIn('pt-PT', 'en-GB'), 'the page title then');
+
+        $page->describe(' Our team ', ['pt-PT' => " A nossa\n equipa ", 'es' => '  ', 'de' => null], true);
+        self::assertSame('Our team', $page->label());
+        self::assertSame(['pt-PT' => 'A nossa equipa'], $page->labels());
+        self::assertTrue($page->isMembersOnly());
+        self::assertSame('Our team', $page->labelIn('en-GB', 'en-GB'));
+        self::assertSame('A nossa equipa', $page->labelIn('pt-PT', 'en-GB'));
+        self::assertNull($page->labelIn('es', 'en-GB'));
+
+        $page->describe(null, [], false);
+        self::assertNull($page->label());
+        self::assertSame([], $page->labels());
+
+        $link = new MenuItem(MenuName::Footer, null, null, 'Hours', '/hours');
+        self::assertSame('Hours', $link->labelIn('es', 'en-GB'), 'a link falls back to its main text');
+        foreach ([[null, 'Give the link a label.'], [str_repeat('x', 101), 'The label must be 100 characters or fewer.']] as [$label, $message]) {
+            try {
+                $link->describe($label, [], false);
+                self::fail('Accepted ' . var_export($label, true));
+            } catch (MenuException $exception) {
+                self::assertSame($message, $exception->getMessage());
+            }
+        }
+        $this->expectException(MenuException::class);
+        $link->describe('Hours', ['pt-PT' => str_repeat('x', 101)], false);
+    }
+
     #[DataProvider('links')]
     public function testLinksMustBeSafeAddresses(string $url, bool $valid): void
     {

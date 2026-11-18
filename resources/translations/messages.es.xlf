@@ -709,6 +709,12 @@
         <target>Volver a la configuración del sitio</target>
       </segment>
     </unit>
+    <unit id="5c4d5eb34d2a9564">
+      <segment state="initial">
+        <source>Back to the menus</source>
+        <target>Volver a los menús</target>
+      </segment>
+    </unit>
     <unit id="600ce10f1e2c8681">
       <segment>
         <source>Back to the page</source>
@@ -817,6 +823,12 @@
         <target>Subtítulos</target>
       </segment>
     </unit>
+    <unit id="c0bf75bd78bf9572">
+      <segment state="initial">
+        <source>Change</source>
+        <target>Cambiar</target>
+      </segment>
+    </unit>
     <unit id="009ed110badf6e7b">
       <segment>
         <source>Change language</source>
@@ -857,6 +869,12 @@
       <segment>
         <source>Change the main and footer menus.</source>
         <target>Cambiar el menú principal y el del pie de página.</target>
+      </segment>
+    </unit>
+    <unit id="772294ff1dc42ad3">
+      <segment state="initial">
+        <source>Change the menu entry “{name}”</source>
+        <target>Cambiar la entrada de menú “{name}”</target>
       </segment>
     </unit>
     <unit id="39979d6654fc1bcd">
@@ -1421,6 +1439,12 @@
       <segment>
         <source>Enter {field}</source>
         <target>Escribe {field}</target>
+      </segment>
+    </unit>
+    <unit id="8c6fb4358f42a12e">
+      <segment state="initial">
+        <source>Entries for members-only pages are already hidden from people who aren’t signed in.</source>
+        <target>Las entradas de páginas solo para miembros ya se ocultan a quien no ha iniciado sesión.</target>
       </segment>
     </unit>
     <unit id="0f37fca8fbb91800">
@@ -2035,6 +2059,18 @@
         <target>Lleva a</target>
       </segment>
     </unit>
+    <unit id="c32357f21677b7c3">
+      <segment state="initial">
+        <source>Leave it empty to show the page’s title in this language.</source>
+        <target>Déjalo vacío para mostrar el título de la página en este idioma.</target>
+      </segment>
+    </unit>
+    <unit id="949a7c60426d2f13">
+      <segment state="initial">
+        <source>Leave it empty to show the text in the main language.</source>
+        <target>Déjalo vacío para mostrar el texto en el idioma principal.</target>
+      </segment>
+    </unit>
     <unit id="253f90712d048f07">
       <segment>
         <source>Leave it empty to use the site’s share image.</source>
@@ -2617,6 +2653,12 @@
         <target>Solo aparecen los roles que es seguro dar a personas que no conoces. “Miembro” puede leer las páginas solo para miembros y nada más.</target>
       </segment>
     </unit>
+    <unit id="0e4335838d1926ab">
+      <segment state="initial">
+        <source>Only show this entry to members who are signed in</source>
+        <target>Mostrar esta entrada solo a miembros que han iniciado sesión</target>
+      </segment>
+    </unit>
     <unit id="410c3aa8a88771e1">
       <segment>
         <source>Only tick this on a device that only you use.</source>
@@ -3109,6 +3151,12 @@
         <target>Guardar la configuración del registro</target>
       </segment>
     </unit>
+    <unit id="abdc1b19de61f956">
+      <segment state="initial">
+        <source>Save the entry</source>
+        <target>Guardar la entrada</target>
+      </segment>
+    </unit>
     <unit id="7b015c0fcf9fe632">
       <segment>
         <source>Save the page before making it the home page.</source>
@@ -3167,6 +3215,12 @@
       <segment>
         <source>Say where the link goes, for example "Read the annual report" instead of "Read more".</source>
         <target>Di adónde lleva el enlace, por ejemplo "Leer el informe anual" en lugar de "Leer más".</target>
+      </segment>
+    </unit>
+    <unit id="1dffc51a4f01f54b">
+      <segment state="initial">
+        <source>Say where the link goes, for example “Opening hours”.</source>
+        <target>Di adónde lleva el enlace, por ejemplo “Horario”.</target>
       </segment>
     </unit>
     <unit id="f4830a1dae298044">
@@ -3743,6 +3797,12 @@
       <segment>
         <source>Text</source>
         <target>Texto</target>
+      </segment>
+    </unit>
+    <unit id="ce4191854e091b93">
+      <segment state="initial">
+        <source>Text in {language}</source>
+        <target>Texto en {language}</target>
       </segment>
     </unit>
     <unit id="7d411f3bc7c16dc4">
@@ -4591,6 +4651,12 @@
         <target>Este archivo de subtítulos no está en formato WebVTT: su primera línea debe ser "WEBVTT".</target>
       </segment>
     </unit>
+    <unit id="72bddb0bcaa9ede4">
+      <segment state="initial">
+        <source>This entry is a link to {address}.</source>
+        <target>Esta entrada es un enlace a {address}.</target>
+      </segment>
+    </unit>
     <unit id="28296a2e534db16a">
       <segment>
         <source>This entry is already at the top level.</source>
@@ -4607,6 +4673,12 @@
       <segment>
         <source>This entry is already the last at its level.</source>
         <target>Esta entrada ya es la última de su nivel.</target>
+      </segment>
+    </unit>
+    <unit id="181dc9690cb80bc6">
+      <segment state="initial">
+        <source>This entry leads to a page of the site.</source>
+        <target>Esta entrada lleva a una página del sitio.</target>
       </segment>
     </unit>
     <unit id="2dc3dd7634a13089">
@@ -5683,6 +5755,12 @@
         <target>logotipo</target>
       </segment>
     </unit>
+    <unit id="289d6f22d275a3d9">
+      <segment state="initial">
+        <source>not shown in these languages until the page is published in them: {languages}</source>
+        <target>no aparece en estos idiomas hasta que la página se publique en ellos: {languages}</target>
+      </segment>
+    </unit>
     <unit id="7c8d64b8ae424a67">
       <segment>
         <source>not shown until the page is published</source>
@@ -5693,6 +5771,12 @@
       <segment state="initial">
         <source>once it is approved: if it is approved later, as soon as it is approved.</source>
         <target>una vez aprobada: si se aprueba más tarde, en cuanto se apruebe.</target>
+      </segment>
+    </unit>
+    <unit id="5fa6c1e8dd75f69d">
+      <segment state="initial">
+        <source>only shown to members who are signed in</source>
+        <target>solo aparece a miembros que han iniciado sesión</target>
       </segment>
     </unit>
     <unit id="ab8d5cdca43cc8eb">
@@ -5903,6 +5987,12 @@
       <segment>
         <source>{item} has been added to the {label}.</source>
         <target>Se ha añadido {item} al {label}.</target>
+      </segment>
+    </unit>
+    <unit id="903480726f3714e9">
+      <segment state="initial">
+        <source>{item} has been changed.</source>
+        <target>Se ha cambiado {item}.</target>
       </segment>
     </unit>
     <unit id="2ef556d642f8dbaf">

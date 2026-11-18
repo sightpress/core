@@ -1,0 +1,20 @@
+{#
+    Change a menu entry (/admin/menus/{id}): what it leads to, its text in each of the site's languages and whether
+    only signed-in members see it. Errors go to the error summary, which gets focus.
+    Context: `form`, `action`, `name`, `page` (true for a page entry), `address` (a link's address), `back`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Change the menu entry “{name}”', {name: name}) }}{% endblock %}
+{% block content %}
+<p><a href="{{ back }}">{{ t('Back to the menus') }}</a></p>
+<h1>{{ t('Change the menu entry “{name}”', {name: name}) }}</h1>
+<p>{{ page ? t('This entry leads to a page of the site.') : t('This entry is a link to {address}.', {address: address}) }}</p>
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    {%- for field in form.fields %}
+    {{ f.field(form, field.name) }}
+    {%- endfor %}
+    {{ f.submit(t('Save the entry')) }}
+{{ f.end() }}
+{% endblock %}
