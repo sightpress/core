@@ -37,7 +37,7 @@ final class AssistantModuleTest extends TestCase
     {
         $manifest = new AssistantModule()->manifest();
         self::assertSame(['assistant', false, false], [$manifest->id, $manifest->required, $manifest->enabledByDefault]);
-        self::assertSame(['site', 'rbac'], array_map(static fn ($requirement) => $requirement->moduleId, $manifest->requires));
+        self::assertSame(['site', 'rbac', 'admin', 'page'], array_map(static fn ($requirement) => $requirement->moduleId, $manifest->requires));
 
         $candidates = array_values(array_filter(CoreModules::candidates(), static fn ($candidate) => $candidate->module instanceof AssistantModule));
         self::assertSame('AI assistant', $candidates[0]->about['assistant']->name);

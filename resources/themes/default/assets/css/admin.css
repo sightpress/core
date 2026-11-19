@@ -184,3 +184,12 @@ html.admin-reduced-motion *::after {
 .analytics-arrow { display: inline-block; min-width: 1.25em; }
 .analytics-table { margin-bottom: var(--space-2); }
 .analytics-csv { margin-bottom: var(--space-5); }
+
+/* AI assistant (A-3): the panel, its suggestion and the Suggest buttons under fields. */
+.assistant-suggest { margin-block: calc(-1 * var(--space-2)) var(--space-4); }
+.assistant-status:empty, .assistant-error:empty { display: none; }
+.assistant-error { color: var(--color-error); font-weight: 700; }
+.assistant-suggestion { border-inline-start: 0.25rem solid var(--color-primary); padding-inline-start: var(--space-3); margin-block: var(--space-4); }
+.assistant-suggestion__text p, .assistant-suggestion > p { max-width: 70ch; }
+.assistant-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); margin-block: var(--space-3); }
+.assistant-actions form, .assistant-actions p { margin: 0; }

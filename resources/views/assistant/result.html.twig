@@ -1,0 +1,57 @@
+{#
+    The assistant's answer without JavaScript (A-3): the suggestion under the screen's <h1>, notes (cut short, budget
+    nearly used up), then "Insert" (when it is for a field), "Try again" (asks again with the same question) and
+    "Discard" (goes back). When there is no answer, what went wrong in the error summary style, with "Try again".
+    Context: see AssistantAskHandler (`heading`, `ask`, `text`, `lang`, `notes`, `error`, `action`,
+    `insert_action`).
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t(heading) }}{% endblock %}
+{% block content %}
+<h1>{{ t(heading) }}</h1>
+{%- if error %}
+<section class="error-summary" aria-labelledby="assistant-error-title" tabindex="-1" autofocus>
+    <h2 id="assistant-error-title">{{ t('The assistant couldn’t help') }}</h2>
+    <p>{{ t(error) }}</p>
+</section>
+{%- else %}
+{%- if ask.question and not ask.field %}
+<p><strong>{{ t('Your question:') }}</strong> {{ ask.question }}</p>
+{%- endif %}
+<div class="assistant-suggestion"{% if lang %} lang="{{ lang }}"{% endif %}>
+    {%- for paragraph in text|split("\n\n") %}
+    <p>{{ paragraph|nl2br }}</p>
+    {%- endfor %}
+</div>
+{%- for note in notes %}
+<p class="field-hint">{{ t(note) }}</p>
+{%- endfor %}
+<p class="field-hint">{{ t('This is a suggestion: check it before you use it.') }}</p>
+{%- endif %}
+<div class="assistant-actions">
+    {%- if not error and ask.field %}
+    <form action="{{ insert_action }}" method="post">
+        {{ csrf_fields() }}
+        {{ _self.ask_fields(ask) }}
+        <input type="hidden" name="text" value="{{ text }}">
+        <button type="submit">{{ t('Insert') }}</button>
+    </form>
+    {%- endif %}
+    <form action="{{ action }}" method="post">
+        {{ csrf_fields() }}
+        {{ _self.ask_fields(ask) }}
+        {%- if ask.question %}<input type="hidden" name="question" value="{{ ask.question }}">{% endif %}
+        {%- if ask.share %}<input type="hidden" name="share" value="1">{% endif %}
+        <button type="submit" class="button button--secondary">{{ t('Try again') }}</button>
+    </form>
+    <p><a href="{{ ask.return }}">{{ error ? t('Go back') : t('Discard and go back') }}</a></p>
+</div>
+{% endblock %}
+{% macro ask_fields(ask) %}
+        {%- if ask.field %}<input type="hidden" name="field" value="{{ ask.field }}">{% endif %}
+        {%- if ask.target %}<input type="hidden" name="target" value="{{ ask.target }}">{% endif %}
+        {%- if ask.pageId %}<input type="hidden" name="page" value="{{ ask.pageId }}">{% endif %}
+        {%- if ask.locale %}<input type="hidden" name="locale" value="{{ ask.locale }}">{% endif %}
+        {%- if ask.screen %}<input type="hidden" name="screen" value="{{ ask.screen }}">{% endif %}
+        <input type="hidden" name="return" value="{{ ask.return }}">
+{% endmacro %}

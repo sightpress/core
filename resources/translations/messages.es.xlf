@@ -265,6 +265,12 @@
         <target>Un vídeo de la biblioteca multimedia.</target>
       </segment>
     </unit>
+    <unit id="ab6eb4ac63b58418">
+      <segment state="initial">
+        <source>AI assistant</source>
+        <target>Asistente de IA</target>
+      </segment>
+    </unit>
     <unit id="29b725a37e648efe">
       <segment>
         <source>AI crawlers</source>
@@ -275,6 +281,12 @@
       <segment state="initial">
         <source>AI search and assistants</source>
         <target>Búsqueda y asistentes de IA</target>
+      </segment>
+    </unit>
+    <unit id="b535945fa809a3b1">
+      <segment state="initial">
+        <source>AI service</source>
+        <target>Servicio de IA</target>
       </segment>
     </unit>
     <unit id="168ba07ea02b143f">
@@ -463,6 +475,12 @@
         <target>Dirección del original</target>
       </segment>
     </unit>
+    <unit id="a18055fc2ecba4e9">
+      <segment state="initial">
+        <source>Address of the service</source>
+        <target>Dirección del servicio</target>
+      </segment>
+    </unit>
     <unit id="a8376f3cdce8decc">
       <segment>
         <source>Address: {url}</source>
@@ -491,6 +509,12 @@
       <segment>
         <source>Admin preferences</source>
         <target>Preferencias de la administración</target>
+      </segment>
+    </unit>
+    <unit id="238c47ef762aae5f">
+      <segment state="initial">
+        <source>Admins always may.</source>
+        <target>Los administradores siempre pueden.</target>
       </segment>
     </unit>
     <unit id="1c8f1ef3aa6c5c32">
@@ -719,6 +743,12 @@
       <segment>
         <source>Archived. Visitors can’t see the page any more; it is kept with the archived pages.</source>
         <target>Archivada. Los visitantes ya no ven la página; se conserva con las páginas archivadas.</target>
+      </segment>
+    </unit>
+    <unit id="b8c209cdead61a09">
+      <segment state="initial">
+        <source>Ask</source>
+        <target>Preguntar</target>
       </segment>
     </unit>
     <unit id="7756faecccba93a2">
@@ -1039,6 +1069,12 @@
         <target>Elige un archivo para subir.</target>
       </segment>
     </unit>
+    <unit id="a6d269081b119281">
+      <segment state="initial">
+        <source>Choose a model of {service}.</source>
+        <target>Elige un modelo de {service}.</target>
+      </segment>
+    </unit>
     <unit id="833b8512168fcc88">
       <segment>
         <source>Choose a new password</source>
@@ -1061,6 +1097,12 @@
       <segment state="initial">
         <source>Choose a time to take the page off the site that is still to come.</source>
         <target>Elige una hora para retirar la página del sitio que todavía no haya pasado.</target>
+      </segment>
+    </unit>
+    <unit id="266d00a3653f5472">
+      <segment state="initial">
+        <source>Choose an AI service.</source>
+        <target>Elige un servicio de IA.</target>
       </segment>
     </unit>
     <unit id="aef4076f194a6de6">
@@ -1235,6 +1277,18 @@
       <segment>
         <source>Copied the page. This is the copy, a new draft: change its title and address before you publish it.</source>
         <target>Página copiada. Esta es la copia, un nuevo borrador: cambie el título y la dirección antes de publicarla.</target>
+      </segment>
+    </unit>
+    <unit id="d249818eccabb507">
+      <segment state="initial">
+        <source>Copied.</source>
+        <target>Copiado.</target>
+      </segment>
+    </unit>
+    <unit id="e21f935f11d7e966">
+      <segment state="initial">
+        <source>Copy</source>
+        <target>Copiar</target>
       </segment>
     </unit>
     <unit id="5a8bef75de36ec3a">
@@ -1501,6 +1555,18 @@
         <target>Directo o desconocido</target>
       </segment>
     </unit>
+    <unit id="eb1a70e39274bb76">
+      <segment state="initial">
+        <source>Discard</source>
+        <target>Descartar</target>
+      </segment>
+    </unit>
+    <unit id="7d45eec54cee5555">
+      <segment state="initial">
+        <source>Discard and go back</source>
+        <target>Descartar y volver</target>
+      </segment>
+    </unit>
     <unit id="2b7f6a84de917e38">
       <segment>
         <source>Display name</source>
@@ -1535,6 +1601,12 @@
       <segment>
         <source>Draft</source>
         <target>Borrador</target>
+      </segment>
+    </unit>
+    <unit id="6656d0af00def6fe">
+      <segment state="initial">
+        <source>Each person may ask 20 times every 10 minutes.</source>
+        <target>Cada persona puede preguntar 20 veces cada 10 minutos.</target>
       </segment>
     </unit>
     <unit id="35af95f5d792f7ff">
@@ -1651,6 +1723,18 @@
         <target>Escribe el código de 6 cifras</target>
       </segment>
     </unit>
+    <unit id="6b71de0d6d5fcab4">
+      <segment state="initial">
+        <source>Enter the address of the service, starting with https://.</source>
+        <target>Escribe la dirección del servicio, empezando por https://.</target>
+      </segment>
+    </unit>
+    <unit id="8386dc374e8b31d7">
+      <segment state="initial">
+        <source>Enter the budget as a whole number of tokens, such as 200000, or leave it empty.</source>
+        <target>Escribe el presupuesto como un número entero de tokens, como 200000, o déjalo vacío.</target>
+      </segment>
+    </unit>
     <unit id="2b10ccd5ca679294">
       <segment>
         <source>Enter the email address you sign in with. We will email you a 6-digit code to type on the next page.</source>
@@ -1667,6 +1751,12 @@
       <segment state="initial">
         <source>Enter the last day as a date, for example 2026-11-30</source>
         <target>Escribe el último día como fecha, por ejemplo 2026-11-30</target>
+      </segment>
+    </unit>
+    <unit id="a74a8897ad357be1">
+      <segment state="initial">
+        <source>Enter the name of the model to use with {service}.</source>
+        <target>Escribe el nombre del modelo que se usará con {service}.</target>
       </segment>
     </unit>
     <unit id="650b71e57f1cb2cd">
@@ -1909,6 +1999,12 @@
         <target>Por ejemplo, qué has cambiado o qué hay que corregir. Como máximo 1000 caracteres.</target>
       </segment>
     </unit>
+    <unit id="c84cd8462f4d60e7">
+      <segment state="initial">
+        <source>For example: How do I add a page to the main menu?</source>
+        <target>Por ejemplo: ¿Cómo añado una página al menú principal?</target>
+      </segment>
+    </unit>
     <unit id="aced5d34227b06ea">
       <segment>
         <source>For the account {email}.</source>
@@ -1997,6 +2093,12 @@
       <segment>
         <source>Given to search engines with the site’s details, so people can reach you. Leave it empty to keep it private.</source>
         <target>Se da a los buscadores con los datos del sitio, para que puedan contactar contigo. Déjalo vacío para mantenerlo privado.</target>
+      </segment>
+    </unit>
+    <unit id="6aadac2f2b7a6b8e">
+      <segment state="initial">
+        <source>Go back</source>
+        <target>Volver</target>
       </segment>
     </unit>
     <unit id="6c19b783fd6796e5">
@@ -2105,6 +2207,12 @@
       <segment>
         <source>How do I choose a layout?</source>
         <target>¿Cómo elijo un diseño?</target>
+      </segment>
+    </unit>
+    <unit id="b5efac4b0a381ce5">
+      <segment state="initial">
+        <source>How many tokens (pieces of words, sent and received) the site may use each month. Leave it empty to use your organisation’s budget ({tokens, plural, =0 {no limit} other {# tokens}}); 0 means no limit.</source>
+        <target>Cuántos tokens (fragmentos de palabras, enviados y recibidos) puede usar el sitio cada mes. Déjalo vacío para usar el presupuesto de tu organización ({tokens, plural, =0 {sin límite} other {# tokens}}); 0 significa sin límite.</target>
       </segment>
     </unit>
     <unit id="c51fdf4ab9c884e1">
@@ -2245,6 +2353,18 @@
         <target>Información:</target>
       </segment>
     </unit>
+    <unit id="8aa318eb7eaa233a">
+      <segment state="initial">
+        <source>Insert</source>
+        <target>Insertar</target>
+      </segment>
+    </unit>
+    <unit id="2d07115209d2ad32">
+      <segment state="initial">
+        <source>Inserted. Check it, then save.</source>
+        <target>Insertado. Revísalo y guarda.</target>
+      </segment>
+    </unit>
     <unit id="bdc60ce300748bda">
       <segment>
         <source>Invitations not yet accepted</source>
@@ -2281,6 +2401,12 @@
         <target>Tampoco aparece en el mapa del sitio ni en llms.txt.</target>
       </segment>
     </unit>
+    <unit id="82b00fea495ff029">
+      <segment state="initial">
+        <source>It reads the saved page, so save your changes first.</source>
+        <target>Lee la página guardada, así que guarda antes tus cambios.</target>
+      </segment>
+    </unit>
     <unit id="ce88e3d0735abde8">
       <segment>
         <source>It uses the saved translation: save your changes first. Visitors see it once the page itself is published.</source>
@@ -2297,6 +2423,12 @@
       <segment>
         <source>Its address tells visitors and search engines that the page is gone. A new page can use the address again.</source>
         <target>Su dirección indica a los visitantes y a los buscadores que la página ya no existe. Una página nueva puede volver a usar la dirección.</target>
+      </segment>
+    </unit>
+    <unit id="50ae2a552f982ddc">
+      <segment state="initial">
+        <source>Its answers are suggestions: check them before you use them.</source>
+        <target>Sus respuestas son sugerencias: revísalas antes de usarlas.</target>
       </segment>
     </unit>
     <unit id="0c2b2aaa884b8c3b">
@@ -2363,6 +2495,12 @@
       <segment state="initial">
         <source>Keeping analytics</source>
         <target>Guardar las estadísticas</target>
+      </segment>
+    </unit>
+    <unit id="288aa61a84464274">
+      <segment state="initial">
+        <source>Kept on this site: when the assistant was used, by whom, for what, with which service and model, and how many tokens. Never the question, the page text or the answer.</source>
+        <target>Se guarda en este sitio: cuándo se usó el asistente, quién, para qué, con qué servicio y modelo, y cuántos tokens. Nunca la pregunta, el texto de la página ni la respuesta.</target>
       </segment>
     </unit>
     <unit id="f5387f9bb6ed7031">
@@ -2483,6 +2621,12 @@
       <segment>
         <source>Leads to</source>
         <target>Lleva a</target>
+      </segment>
+    </unit>
+    <unit id="c3623ec52b01ef67">
+      <segment state="initial">
+        <source>Leave it empty to keep the saved key. The key is stored encrypted and never shown again.</source>
+        <target>Déjalo vacío para mantener la clave guardada. La clave se guarda cifrada y no se vuelve a mostrar.</target>
       </segment>
     </unit>
     <unit id="c32357f21677b7c3">
@@ -2719,6 +2863,36 @@
         <target>Mistral AI</target>
       </segment>
     </unit>
+    <unit id="5e2c614c23f02239">
+      <segment state="initial">
+        <source>Model</source>
+        <target>Modelo</target>
+      </segment>
+    </unit>
+    <unit id="a3c3370cc7323c71">
+      <segment state="initial">
+        <source>Model name</source>
+        <target>Nombre del modelo</target>
+      </segment>
+    </unit>
+    <unit id="3d26cf6faa936b42">
+      <segment state="initial">
+        <source>Models of the chosen service. Bigger models write better and cost more.</source>
+        <target>Modelos del servicio elegido. Los modelos más grandes escriben mejor y cuestan más.</target>
+      </segment>
+    </unit>
+    <unit id="6ebf03ac3c1f03c9">
+      <segment state="initial">
+        <source>Monthly budget in tokens</source>
+        <target>Presupuesto mensual en tokens</target>
+      </segment>
+    </unit>
+    <unit id="3fbcac3055fdb11b">
+      <segment state="initial">
+        <source>Months start on the 1st, in UTC. From 80% everyone who asks is warned; at 100% the assistant stops until the next month.</source>
+        <target>Los meses empiezan el día 1, en UTC. A partir del 80 % se avisa a quien pregunte; al 100 % el asistente se detiene hasta el mes siguiente.</target>
+      </segment>
+    </unit>
     <unit id="0dd4488018f09f19">
       <segment state="initial">
         <source>Months to keep analytics for</source>
@@ -2849,6 +3023,12 @@
       <segment>
         <source>Needs: {modules}.</source>
         <target>Necesita: {modules}.</target>
+      </segment>
+    </unit>
+    <unit id="e520a082286bb152">
+      <segment state="initial">
+        <source>New API key</source>
+        <target>Nueva clave de API</target>
       </segment>
     </unit>
     <unit id="b71b5df47d4bef1e">
@@ -3019,6 +3199,12 @@
         <target>No publicado</target>
       </segment>
     </unit>
+    <unit id="a5a7fcacf6b4c27c">
+      <segment state="initial">
+        <source>Not ready yet.</source>
+        <target>Todavía no está listo.</target>
+      </segment>
+    </unit>
     <unit id="3bbe7ecfd73d004a">
       <segment>
         <source>Not yet changeable</source>
@@ -3077,6 +3263,12 @@
       <segment state="initial">
         <source>Nothing is scheduled.</source>
         <target>No hay nada programado.</target>
+      </segment>
+    </unit>
+    <unit id="cef81ee0299d17cd">
+      <segment state="initial">
+        <source>Nothing is sent to the AI service until someone asks for a suggestion.</source>
+        <target>No se envía nada al servicio de IA hasta que alguien pide una sugerencia.</target>
       </segment>
     </unit>
     <unit id="54ca5460e9428a6b">
@@ -3167,6 +3359,18 @@
       <segment>
         <source>Only editors and admins can publish or unpublish files.</source>
         <target>Solo los editores y los administradores pueden publicar o despublicar archivos.</target>
+      </segment>
+    </unit>
+    <unit id="97914033e8910ee8">
+      <segment state="initial">
+        <source>Only for services that need it: the address of the service’s API, starting with https://, for example https://ai.example.org/v1.</source>
+        <target>Solo para los servicios que la necesitan: la dirección de la API del servicio, empezando por https://, por ejemplo https://ai.example.org/v1.</target>
+      </segment>
+    </unit>
+    <unit id="6b719edf8927ac09">
+      <segment state="initial">
+        <source>Only for {services}: the name of the model, as the service writes it.</source>
+        <target>Solo para {services}: el nombre del modelo, tal como lo escribe el servicio.</target>
       </segment>
     </unit>
     <unit id="7ef521d189ebb075">
@@ -3601,6 +3805,12 @@
         <target>Lista para publicar, con sugerencias</target>
       </segment>
     </unit>
+    <unit id="2e4a0471b4a35c58">
+      <segment state="initial">
+        <source>Ready: people can ask {service} ({model}).</source>
+        <target>Listo: se puede preguntar a {service} ({model}).</target>
+      </segment>
+    </unit>
     <unit id="6cb44b56336af70b">
       <segment>
         <source>Recent activity</source>
@@ -3623,6 +3833,12 @@
       <segment>
         <source>Remove</source>
         <target>Quitar</target>
+      </segment>
+    </unit>
+    <unit id="81c45fd9b904308a">
+      <segment state="initial">
+        <source>Remove key</source>
+        <target>Quitar la clave</target>
       </segment>
     </unit>
     <unit id="1bc6f23b53041b45">
@@ -3805,6 +4021,12 @@
         <target>Guardar la configuración del registro</target>
       </segment>
     </unit>
+    <unit id="b77a601ad9a0749d">
+      <segment state="initial">
+        <source>Save the AI service</source>
+        <target>Guardar el servicio de IA</target>
+      </segment>
+    </unit>
     <unit id="abdc1b19de61f956">
       <segment state="initial">
         <source>Save the entry</source>
@@ -3815,6 +4037,12 @@
       <segment>
         <source>Save the page before making it the home page.</source>
         <target>Guarda la página antes de convertirla en la página de inicio.</target>
+      </segment>
+    </unit>
+    <unit id="316976ffad84c912">
+      <segment state="initial">
+        <source>Save the page first: the assistant reads the saved page.</source>
+        <target>Guarda primero la página: el asistente lee la página guardada.</target>
       </segment>
     </unit>
     <unit id="0012e3ae2afd4d6b">
@@ -3829,10 +4057,22 @@
         <target>Guardar el {thing}</target>
       </segment>
     </unit>
+    <unit id="f9574f5958b6d216">
+      <segment state="initial">
+        <source>Save who may use it</source>
+        <target>Guardar quién puede usarlo</target>
+      </segment>
+    </unit>
     <unit id="b5c120b316c237a0">
       <segment>
         <source>Saved</source>
         <target>Guardada</target>
+      </segment>
+    </unit>
+    <unit id="b34bd62706256b28">
+      <segment state="initial">
+        <source>Saved API key: {key}</source>
+        <target>Clave de API guardada: {key}</target>
       </segment>
     </unit>
     <unit id="275d9bcb5e334ece">
@@ -4057,6 +4297,12 @@
         <target>Envía un mensaje a {name}.</target>
       </segment>
     </unit>
+    <unit id="95299f33ebab0600">
+      <segment state="initial">
+        <source>Sends a tiny request to the service, to check that the key and the model work. It counts towards the budget, like any other use.</source>
+        <target>Envía una petición muy pequeña al servicio para comprobar que la clave y el modelo funcionan. Cuenta para el presupuesto, como cualquier otro uso.</target>
+      </segment>
+    </unit>
     <unit id="9b397c96d4fd4cc4">
       <segment>
         <source>Sent back to draft. The writer can change it and send it again.</source>
@@ -4067,6 +4313,12 @@
       <segment>
         <source>Sent for review. The editors have been told by email.</source>
         <target>Enviada a revisión. Se ha avisado a los editores por correo.</target>
+      </segment>
+    </unit>
+    <unit id="6af9519745928e76">
+      <segment state="initial">
+        <source>Sent: the question, and the page the person chooses to share or asks a suggestion for. Never lists of people, email addresses, the audit log or other pages.</source>
+        <target>Se envía: la pregunta y la página que la persona decide compartir o para la que pide una sugerencia. Nunca listas de personas, direcciones de correo, el registro de auditoría ni otras páginas.</target>
       </segment>
     </unit>
     <unit id="4e4116871bf1515d">
@@ -4091,6 +4343,12 @@
       <segment>
         <source>Setup codes work for 7 days, and only once. If yours no longer works, ask the person who set up the site for a new one.</source>
         <target>Los códigos de configuración funcionan durante 7 días y solo una vez. Si el tuyo ya no funciona, pide otro a quien configuró el sitio.</target>
+      </segment>
+    </unit>
+    <unit id="e38fa3b6888d6cbe">
+      <segment state="initial">
+        <source>Share this page with the assistant</source>
+        <target>Compartir esta página con el asistente</target>
       </segment>
     </unit>
     <unit id="39397661fc8e9eeb">
@@ -4303,6 +4561,12 @@
         <target>Mapa del sitio</target>
       </segment>
     </unit>
+    <unit id="c9dd40231ada84fb">
+      <segment state="initial">
+        <source>Sites that use it share your organisation’s key.</source>
+        <target>Los sitios que lo usan comparten la clave de tu organización.</target>
+      </segment>
+    </unit>
     <unit id="1af851907331c0ed">
       <segment>
         <source>Size</source>
@@ -4495,6 +4759,42 @@
         <target>Hecho:</target>
       </segment>
     </unit>
+    <unit id="ed5d3380fb350219">
+      <segment state="initial">
+        <source>Suggest a description</source>
+        <target>Sugerir una descripción</target>
+      </segment>
+    </unit>
+    <unit id="d4e399045d0515de">
+      <segment state="initial">
+        <source>Suggest a summary</source>
+        <target>Sugerir un resumen</target>
+      </segment>
+    </unit>
+    <unit id="7835f1a5ea0ba311">
+      <segment state="initial">
+        <source>Suggest a title for search results</source>
+        <target>Sugerir un título para los resultados de búsqueda</target>
+      </segment>
+    </unit>
+    <unit id="59c7aa05a8bbf375">
+      <segment state="initial">
+        <source>Suggestion discarded.</source>
+        <target>Sugerencia descartada.</target>
+      </segment>
+    </unit>
+    <unit id="74d3c4b8d2a5e5de">
+      <segment state="initial">
+        <source>Suggestion for “{field}”</source>
+        <target>Sugerencia para «{field}»</target>
+      </segment>
+    </unit>
+    <unit id="c35b39d3477d7213">
+      <segment state="initial">
+        <source>Suggestion ready</source>
+        <target>Sugerencia lista</target>
+      </segment>
+    </unit>
     <unit id="ab970ed3d5c22fe1">
       <segment>
         <source>Suggestion:</source>
@@ -4567,6 +4867,18 @@
         <target>Condiciones de uso</target>
       </segment>
     </unit>
+    <unit id="5bcf311b19d80c56">
+      <segment state="initial">
+        <source>Test connection</source>
+        <target>Probar la conexión</target>
+      </segment>
+    </unit>
+    <unit id="94c9182777d93dd2">
+      <segment state="initial">
+        <source>Testing the connection…</source>
+        <target>Probando la conexión…</target>
+      </segment>
+    </unit>
     <unit id="71988c4d8e0803ba">
       <segment>
         <source>Text</source>
@@ -4633,16 +4945,34 @@
         <target>El servicio de IA ya no ofrece el modelo elegido. Un administrador puede elegir otro en la pantalla del asistente de IA.</target>
       </segment>
     </unit>
+    <unit id="d6600a0e36288a35">
+      <segment state="initial">
+        <source>The AI service handles what it receives under its own terms. Check them, and where it processes data, before you choose it.</source>
+        <target>El servicio de IA trata lo que recibe según sus propias condiciones. Revísalas, y dónde trata los datos, antes de elegirlo.</target>
+      </segment>
+    </unit>
     <unit id="d84d9acb77ffe044">
       <segment state="initial">
         <source>The AI service is getting too many requests right now. Try again in a minute.</source>
         <target>El servicio de IA está recibiendo demasiadas peticiones ahora mismo. Inténtelo dentro de un minuto.</target>
       </segment>
     </unit>
+    <unit id="cc92bd9a16a06cbf">
+      <segment state="initial">
+        <source>The AI service is saved.</source>
+        <target>El servicio de IA está guardado.</target>
+      </segment>
+    </unit>
     <unit id="989d7f2941abfa80">
       <segment state="initial">
         <source>The AI service took too long to answer. Try again, perhaps with less text.</source>
         <target>El servicio de IA ha tardado demasiado en responder. Inténtelo de nuevo, quizá con menos texto.</target>
+      </segment>
+    </unit>
+    <unit id="5451891c775c24ae">
+      <segment state="initial">
+        <source>The API key is removed.</source>
+        <target>Se ha quitado la clave de API.</target>
       </segment>
     </unit>
     <unit id="1345dd71533f7ba8">
@@ -4729,16 +5059,82 @@
         <target>El texto alternativo parece un nombre de archivo. Describe lo que muestra la imagen.</target>
       </segment>
     </unit>
+    <unit id="4dd98d157b43be20">
+      <segment state="initial">
+        <source>The answer was cut short because it was too long. Check its end.</source>
+        <target>La respuesta se cortó porque era demasiado larga. Revisa el final.</target>
+      </segment>
+    </unit>
     <unit id="2ecb0f15e8d1f8d8">
       <segment state="initial">
         <source>The assistant can’t do that.</source>
         <target>El asistente no puede hacer eso.</target>
       </segment>
     </unit>
+    <unit id="eeb3da1bbb820077">
+      <segment state="initial">
+        <source>The assistant couldn’t be reached. Try again.</source>
+        <target>No se pudo contactar con el asistente. Inténtalo de nuevo.</target>
+      </segment>
+    </unit>
+    <unit id="ceb92cf155cf8031">
+      <segment state="initial">
+        <source>The assistant couldn’t help</source>
+        <target>El asistente no ha podido ayudar</target>
+      </segment>
+    </unit>
     <unit id="ba1560054155c30f">
       <segment state="initial">
         <source>The assistant couldn’t use what was sent.</source>
         <target>El asistente no ha podido usar lo que se envió.</target>
+      </segment>
+    </unit>
+    <unit id="8334d085f7eb6739">
+      <segment state="initial">
+        <source>The assistant isn’t ready yet, so the test will say what is missing.</source>
+        <target>El asistente todavía no está listo, así que la prueba dirá qué falta.</target>
+      </segment>
+    </unit>
+    <unit id="7c79db80e3f0bf10">
+      <segment state="initial">
+        <source>The assistant suggests summaries, descriptions for search engines, alt text and drafts, and answers questions about the site, using an AI service you choose with your own API key. Its suggestions are never used until a person checks them.</source>
+        <target>El asistente sugiere resúmenes, descripciones para buscadores, textos alternativos y borradores, y responde preguntas sobre el sitio, con un servicio de IA que eliges con tu propia clave de API. Sus sugerencias nunca se usan hasta que una persona las revisa.</target>
+      </segment>
+    </unit>
+    <unit id="cbcdde3f7c1e4f02">
+      <segment state="initial">
+        <source>The assistant’s address can’t be found: there is no server called {host}.</source>
+        <target>No se encuentra la dirección del asistente: no hay ningún servidor llamado {host}.</target>
+      </segment>
+    </unit>
+    <unit id="204783073bab970a">
+      <segment state="initial">
+        <source>The assistant’s address must be a full web address, such as https://ai.example.org/v1.</source>
+        <target>La dirección del asistente debe ser una dirección web completa, como https://ai.example.org/v1.</target>
+      </segment>
+    </unit>
+    <unit id="bc3c70266776ddf6">
+      <segment state="initial">
+        <source>The assistant’s address must not contain a user name or password. Put the key in the key field instead.</source>
+        <target>La dirección del asistente no debe contener un nombre de usuario ni una contraseña. Pon la clave en el campo de la clave.</target>
+      </segment>
+    </unit>
+    <unit id="00651c12287184d9">
+      <segment state="initial">
+        <source>The assistant’s address must start with https://, so the key and your content are encrypted on the way.</source>
+        <target>La dirección del asistente debe empezar por https://, para que la clave y tu contenido viajen cifrados.</target>
+      </segment>
+    </unit>
+    <unit id="9b0ee7c96af36d41">
+      <segment state="initial">
+        <source>The assistant’s address {host} is on a private or local network, which isn’t allowed. Your hosting provider can allow it with the tenant setting assistant.allow_private_hosts.</source>
+        <target>La dirección del asistente {host} está en una red privada o local, y eso no está permitido. Tu proveedor de alojamiento puede permitirlo con el ajuste de la organización assistant.allow_private_hosts.</target>
+      </segment>
+    </unit>
+    <unit id="932fa73e870dc008">
+      <segment state="initial">
+        <source>The assistant’s answer</source>
+        <target>La respuesta del asistente</target>
       </segment>
     </unit>
     <unit id="77f41740ef3dc355">
@@ -4775,6 +5171,18 @@
       <segment>
         <source>The code works for {duration}, and only once.</source>
         <target>El código funciona durante {duration} y solo una vez.</target>
+      </segment>
+    </unit>
+    <unit id="389c7d9b5c1e6c32">
+      <segment state="initial">
+        <source>The connection didn’t work. {reason}</source>
+        <target>La conexión no ha funcionado. {reason}</target>
+      </segment>
+    </unit>
+    <unit id="559a271b696405e9">
+      <segment state="initial">
+        <source>The connection works: {service} answered.</source>
+        <target>La conexión funciona: {service} ha respondido.</target>
       </segment>
     </unit>
     <unit id="cb57aed060802f3b">
@@ -5341,6 +5749,12 @@
         <target>No se ha podido usar la sugerencia: no tenía la forma esperada o contenía algo que no está permitido. Inténtelo de nuevo.</target>
       </segment>
     </unit>
+    <unit id="f631f232668330d4">
+      <segment state="initial">
+        <source>The suggestion is in “{field}”. Check it, then save.</source>
+        <target>La sugerencia está en «{field}». Revísala y guarda.</target>
+      </segment>
+    </unit>
     <unit id="6af642e51eefed35">
       <segment>
         <source>The system</source>
@@ -5605,6 +6019,12 @@
         <target>Todavía no hay nada que mostrar.</target>
       </segment>
     </unit>
+    <unit id="a61973a4cfa5621b">
+      <segment state="initial">
+        <source>There was no key to remove.</source>
+        <target>No había ninguna clave que quitar.</target>
+      </segment>
+    </unit>
     <unit id="de410bbe2db097fe">
       <segment>
         <source>These buttons use the saved page. Save your changes first.</source>
@@ -5705,6 +6125,12 @@
       <segment>
         <source>This heading jumps from level {heading} to level {level}. Use level {heading2}, or add the missing level before it.</source>
         <target>Este encabezado salta del nivel {heading} al nivel {level}. Usa el nivel {heading2} o añade antes el nivel que falta.</target>
+      </segment>
+    </unit>
+    <unit id="e84eb1f4667bd986">
+      <segment state="initial">
+        <source>This is a suggestion: check it before you use it.</source>
+        <target>Es una sugerencia: revísala antes de usarla.</target>
       </segment>
     </unit>
     <unit id="33bc174e7b9cebca">
@@ -5809,10 +6235,22 @@
         <target>Esta búsqueda busca en las páginas en {language}. Para buscar en otro idioma, elígelo en la lista de idiomas.</target>
       </segment>
     </unit>
+    <unit id="414d7df4d6236f85">
+      <segment state="initial">
+        <source>This site has no API key of its own.</source>
+        <target>Este sitio no tiene una clave de API propia.</target>
+      </segment>
+    </unit>
     <unit id="2ee7a41edf141f30">
       <segment state="initial">
         <source>This site has used all of its AI assistant budget for this month. It starts again on the 1st, or an admin can raise it on the AI assistant screen.</source>
         <target>Este sitio ha usado todo el presupuesto del asistente de IA de este mes. Vuelve a empezar el día 1, o un administrador puede aumentarlo en la pantalla del asistente de IA.</target>
+      </segment>
+    </unit>
+    <unit id="8cf01f0f05ffd0b4">
+      <segment state="initial">
+        <source>This site has used {percent}% of this month’s AI assistant budget.</source>
+        <target>Este sitio ha usado el {percent} % del presupuesto del asistente de IA de este mes.</target>
       </segment>
     </unit>
     <unit id="1aca1ffa176218b1">
@@ -5953,6 +6391,12 @@
         <target>Traducciones</target>
       </segment>
     </unit>
+    <unit id="d8b8392e2c542950">
+      <segment state="initial">
+        <source>Try again</source>
+        <target>Intentar de nuevo</target>
+      </segment>
+    </unit>
     <unit id="d49e7a43789a5e16">
       <segment>
         <source>Try again in {minutes} minutes.</source>
@@ -5987,6 +6431,12 @@
       <segment>
         <source>Turn on {name}</source>
         <target>Activar {name}</target>
+      </segment>
+    </unit>
+    <unit id="8d0d125ec978ffe3">
+      <segment state="initial">
+        <source>Turn the AI assistant off on the Features screen</source>
+        <target>Desactivar el asistente de IA en la pantalla Funciones</target>
       </segment>
     </unit>
     <unit id="343703c9ce238b71">
@@ -6047,6 +6497,12 @@
       <segment>
         <source>Type the first letters of its name to move through the list. Pages are then translated into it one by one; nothing is published in it until you publish each translation.</source>
         <target>Escribe las primeras letras de su nombre para moverte por la lista. Después las páginas se traducen a él una a una; no se publica nada en ese idioma hasta que publiques cada traducción.</target>
+      </segment>
+    </unit>
+    <unit id="7a44e34c1705259a">
+      <segment state="initial">
+        <source>Type your question for the assistant.</source>
+        <target>Escribe tu pregunta para el asistente.</target>
       </segment>
     </unit>
     <unit id="e49f108da64a7341">
@@ -6185,6 +6641,18 @@
       <segment>
         <source>Use {{ limit }} characters or fewer.</source>
         <target>Usa {{ limit }} caracteres o menos.</target>
+      </segment>
+    </unit>
+    <unit id="11698f07668d5fc7">
+      <segment state="initial">
+        <source>Used this month: {used, number} of {limit, number} tokens ({percent}%).</source>
+        <target>Usado este mes: {used, number} de {limit, number} tokens ({percent} %).</target>
+      </segment>
+    </unit>
+    <unit id="4300dc44421da781">
+      <segment state="initial">
+        <source>Used this month: {used, number} tokens. There is no monthly limit.</source>
+        <target>Usado este mes: {used, number} tokens. No hay límite mensual.</target>
       </segment>
     </unit>
     <unit id="dd167905de0defca">
@@ -6439,6 +6907,12 @@
         <target>¿Qué pasa con mis datos?</target>
       </segment>
     </unit>
+    <unit id="babbc0434735cf01">
+      <segment state="initial">
+        <source>What is sent, and what is kept</source>
+        <target>Qué se envía y qué se guarda</target>
+      </segment>
+    </unit>
     <unit id="038026723cc44e89">
       <segment state="initial">
         <source>What it read</source>
@@ -6547,6 +7021,24 @@
         <target>Quién ha cambiado qué, y cuándo. Las entradas no se pueden cambiar ni quitar.</target>
       </segment>
     </unit>
+    <unit id="0737764e3e43f4f9">
+      <segment state="initial">
+        <source>Who may use it, and how much</source>
+        <target>Quién puede usarlo y cuánto</target>
+      </segment>
+    </unit>
+    <unit id="17dace7bec20c706">
+      <segment state="initial">
+        <source>Who may use the assistant</source>
+        <target>Quién puede usar el asistente</target>
+      </segment>
+    </unit>
+    <unit id="59f91933bcba1ba2">
+      <segment state="initial">
+        <source>Who may use the assistant and its budget are saved.</source>
+        <target>Se han guardado quién puede usar el asistente y su presupuesto.</target>
+      </segment>
+    </unit>
     <unit id="17504041d9653eb7">
       <segment>
         <source>Who {name} is and what they do.</source>
@@ -6569,6 +7061,12 @@
       <segment>
         <source>Words that were taken out are shown as “[removed: …]” and crossed out; words that were put in are shown as “[added: …]” and underlined.</source>
         <target>Las palabras quitadas aparecen como «[quitado: …]» y tachadas; las palabras añadidas aparecen como «[añadido: …]» y subrayadas.</target>
+      </segment>
+    </unit>
+    <unit id="6a7c277bdc6e499a">
+      <segment state="initial">
+        <source>Working on it…</source>
+        <target>Trabajando en ello…</target>
       </segment>
     </unit>
     <unit id="f3a99956c6874fc4">
@@ -6841,10 +7339,28 @@
         <target>Tu nombre</target>
       </segment>
     </unit>
+    <unit id="530d6263cb558743">
+      <segment state="initial">
+        <source>Your organisation chooses the AI service for every site, so it can’t be changed here.</source>
+        <target>Tu organización elige el servicio de IA para todos los sitios, así que no se puede cambiar aquí.</target>
+      </segment>
+    </unit>
     <unit id="29bc2ec9acdfc86a">
       <segment>
         <source>Your organisation chose this for every site, so it can’t be changed here.</source>
         <target>Tu organización lo ha elegido para todos los sitios, así que no se puede cambiar aquí.</target>
+      </segment>
+    </unit>
+    <unit id="7ebda9958344d118">
+      <segment state="initial">
+        <source>Your organisation chose this service.</source>
+        <target>Tu organización eligió este servicio.</target>
+      </segment>
+    </unit>
+    <unit id="09e6c9ec857cb49e">
+      <segment state="initial">
+        <source>Your organisation’s choice: {service} ({model}).</source>
+        <target>La elección de tu organización: {service} ({model}).</target>
       </segment>
     </unit>
     <unit id="c4f7329ffbd542ee">
@@ -6881,6 +7397,18 @@
       <segment>
         <source>Your password must include {missing}.</source>
         <target>La contraseña debe incluir {missing}.</target>
+      </segment>
+    </unit>
+    <unit id="22ae3f97a92d0e66">
+      <segment state="initial">
+        <source>Your question</source>
+        <target>Tu pregunta</target>
+      </segment>
+    </unit>
+    <unit id="1dc01311d234c46f">
+      <segment state="initial">
+        <source>Your question:</source>
+        <target>Tu pregunta:</target>
       </segment>
     </unit>
     <unit id="aedb9d526ca4a40a">
@@ -7019,6 +7547,12 @@
       <segment>
         <source>logo</source>
         <target>logotipo</target>
+      </segment>
+    </unit>
+    <unit id="b4927b2af79d6ca1">
+      <segment state="initial">
+        <source>no model chosen</source>
+        <target>ningún modelo elegido</target>
       </segment>
     </unit>
     <unit id="29624390582393d0">

@@ -7,6 +7,7 @@ namespace SightPress\Core\Page\Admin\Http;
 use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ResponseInterface;
+use SightPress\Core\Assistant\Contract\AssistantInsert;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Admin\Contract\AdminScreens;
@@ -68,7 +69,13 @@ final readonly class PageEditorHandler implements RequestHandlerInterface
             throw new HttpNotFoundException($request, 'This site isn’t written in that language.');
         }
         if ($request->getMethod() !== 'POST') {
-            return $this->screen->render($request, $page, $locale, $this->screen->saved($locale, $page), $page->translation($locale)?->blocks() ?? []);
+            $form = $this->screen->saved($locale, $page);
+            $inserted = AssistantInsert::take(Session::fromRequest($request), $request->getUri()->getPath());
+            if ($inserted !== null && in_array($inserted['field'], PageEditorScreen::SUGGESTED_FIELDS, true)) {
+                $form = $form->withValues([$inserted['field'] => $inserted['text']]);
+            }
+
+            return $this->screen->render($request, $page, $locale, $form, $page->translation($locale)?->blocks() ?? []);
         }
         if (!$this->authorizer->can($actor, PageAction::Edit->value, $page)) {
             throw new HttpForbiddenException($request, 'You can’t change this page now.');

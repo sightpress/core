@@ -16,6 +16,7 @@ use SightPress\Core\Block\Contract\InvalidBlocks;
 use SightPress\Core\Block\Contract\BlockSchema;
 use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Core\Http\Form\Field;
+use SightPress\Core\Infrastructure\Assistant\AssistantAccess;
 use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
 use SightPress\Core\Page\Admin\Http\PageOperationsHandler;
@@ -56,6 +57,9 @@ use Symfony\Component\Validator\Constraints\Length;
  */
 final readonly class PageEditorScreen
 {
+    /** The fields an AI assistant Suggest button can fill (when the assistant is on and its task is there). */
+    public const array SUGGESTED_FIELDS = ['summary', 'seo_title', 'description'];
+
     /** Choices of the share image are `media-12`: a select's values can't be bare numbers. */
     public const string MEDIA_PREFIX = 'media-';
 
@@ -85,6 +89,7 @@ final readonly class PageEditorScreen
         private PageRepository $pages,
         private SiteSettings $settings,
         private EnabledModules $modules,
+        private AssistantAccess $assistant,
     ) {
     }
 
@@ -208,6 +213,8 @@ final readonly class PageEditorScreen
             'place' => PageOperationsHandler::mayMove($actor) && $page->state() !== PageState::Trash ? $this->place($page) : null,
             'revisions_url' => $translation === null ? null : PageRevisionsHandler::path((int) $page->id(), $locale, $this->site->defaultLocale),
             'delete_url' => $this->authorizer->can($actor, PageAction::Purge->value, $page) ? PagePurgeHandler::path((int) $page->id()) : null,
+            'assistant' => $editable ? $this->assistant->panel($actor, PageAdmin::editPath((int) $page->id()) . ($locale === $this->site->defaultLocale ? '' : '?locale=' . rawurlencode($locale)), (int) $page->id(), $locale, self::SUGGESTED_FIELDS) : null,
+            'assistant_screen' => 'page_editor',
         ], $status);
     }
 

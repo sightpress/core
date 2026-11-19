@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Support;
 
+use SightPress\Core\Tests\Support\Assistant\NoAssistant;
 use Psr\Http\Message\ResponseInterface;
 use SightPress\Core\Block\Type\GalleryBlock;
 use SightPress\Core\Http\Session\Session;
@@ -124,6 +125,7 @@ final class PageAdminFixture
             $this->pages->repository(),
             $this->pages->database->settings(),
             self::modules(...$this->modules),
+            NoAssistant::access(),
         );
     }
 

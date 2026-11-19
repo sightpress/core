@@ -114,7 +114,7 @@ final class AssistantHttpTest extends TestCase
             self::fail('Expected a failure.');
         } catch (AssistantException $exception) {
             self::assertSame(AssistantFailure::Unavailable, $exception->failure);
-            self::assertStringStartsWith('Fake AI: The assistant\'s address can\'t be found', $exception->getMessage());
+            self::assertStringStartsWith('Fake AI: The assistant’s address can’t be found', $exception->getMessage());
         }
         self::assertSame(0, $client->getRequestsCount());
     }

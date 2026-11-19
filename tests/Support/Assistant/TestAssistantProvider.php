@@ -1,0 +1,84 @@
+<?php
+
+declare(strict_types=1);
+
+namespace SightPress\Core\Tests\Support\Assistant;
+
+use SightPress\Module\Assistant\AssistantConnection;
+use SightPress\Module\Assistant\AssistantFailure;
+use SightPress\Module\Assistant\AssistantMessage;
+use SightPress\Module\Assistant\AssistantProvider;
+use SightPress\Module\Assistant\AssistantRequest;
+use SightPress\Module\Assistant\AssistantResponse;
+use SightPress\Module\Assistant\ProviderCapabilities;
+use SightPress\Module\Assistant\TokenUsage;
+use SightPress\Module\Exception\AssistantException;
+
+/**
+ * "Test AI": answers on the server, without a network, from what the request asks for. The first answer in
+ * {@see ANSWERS} whose words are in the request wins; a key that ends in `0000` is refused like a wrong key, and a
+ * question with `[[busy]]` in it finds the service busy, and one with `[[long]]` gets an answer cut short.
+ */
+final class TestAssistantProvider implements AssistantProvider
+{
+    public const string ID = 'test_ai';
+
+    /** Words in the request => the answer. */
+    public const array ANSWERS = [
+        'connection test' => 'OK',
+        'TEST TASK summary' => 'When the library is open, and the days it is closed.',
+        'TEST TASK seo_meta' => 'Opening hours of Riverside Library',
+        'main menu' => 'Open Menus in the admin panel, choose the main menu, then add the page to it.',
+    ];
+
+    public function id(): string
+    {
+        return self::ID;
+    }
+
+    public function label(): string
+    {
+        return 'Test AI';
+    }
+
+    public function description(): string
+    {
+        return 'A pretend AI service for tests. Nothing leaves the server.';
+    }
+
+    public function models(): array
+    {
+        return ['test-small', 'test-vision'];
+    }
+
+    public function needsBaseUrl(): bool
+    {
+        return false;
+    }
+
+    public function capabilities(string $model): ProviderCapabilities
+    {
+        return new ProviderCapabilities(vision: $model === 'test-vision');
+    }
+
+    public function complete(AssistantRequest $request, AssistantConnection $connection): AssistantResponse
+    {
+        if (str_ends_with($connection->apiKey, '0000')) {
+            throw new AssistantException(AssistantFailure::InvalidKey, 'Test AI: 401');
+        }
+        $asked = implode("\n", array_map(static fn (AssistantMessage $message): string => $message->text, $request->messages));
+        if (str_contains($asked, '[[busy]]')) {
+            throw new AssistantException(AssistantFailure::RateLimited, 'Test AI: 429');
+        }
+        if (str_contains($asked, '[[long]]')) {
+            return new AssistantResponse('The first part of a long answer', $request->model, new TokenUsage(100, 20), truncated: true);
+        }
+        foreach (self::ANSWERS as $words => $answer) {
+            if (str_contains($asked, $words)) {
+                return new AssistantResponse($answer, $request->model, new TokenUsage(120, 30));
+            }
+        }
+
+        return new AssistantResponse('I can help with writing and running this website.', $request->model, new TokenUsage(100, 20));
+    }
+}

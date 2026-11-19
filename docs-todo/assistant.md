@@ -1,4 +1,4 @@
-# AI assistant (A-2)
+# AI assistant (A-2, A-3)
 
 The AI assistant gives suggestions from an AI service the site chooses, with its own API key ("bring your own key"):
 summaries, descriptions for search engines, alt text, drafts and answers to questions. It is an optional feature,
@@ -68,3 +68,25 @@ the same service inherits that key unless it enters its own.
 Wrong key, no credit left, too many requests, too slow, model no longer offered, the service declined, an unusable
 answer, or the service can't be reached: each has its own message saying what to do. The console prints the same
 messages.
+
+## The AI assistant screen (A-3)
+
+**Site settings → AI assistant** (`/admin/assistant`, admins). Turn the assistant on first on the **Features** screen.
+
+1. **Status** says whether it is ready, or what is missing.
+2. **AI service**: choose a service (each one says what it is), its model, and paste the API key into **New API key**.
+   Only its last four characters are shown afterwards; **Remove key** deletes it. A service without a model list (an
+   OpenAI-compatible server) needs the model's name and the service's address.
+3. **Test connection** sends a tiny request and says whether it worked.
+4. **Who may use it, and how much**: tick the roles (admins always may) and set a monthly budget in tokens (empty =
+   the organisation's; 0 = no limit). This month's use is shown above.
+5. **What is sent, and what is kept** explains the privacy side in plain words.
+
+## Asking the assistant (A-3)
+
+- **Dashboard and page editor**: "Ask the assistant" has a question box. On the page editor, tick **Share this page
+  with the assistant** to let it read the saved page.
+- **Suggest buttons** under *Summary*, *Title in search results* and *Description for search engines* ask for a
+  suggestion for that field, from the saved page (save first).
+- The suggestion appears under its own heading. **Insert** puts it in the field (not saved yet), **Copy** copies it,
+  **Try again** asks again, **Discard** removes it. Without JavaScript the same buttons are on a page of their own.

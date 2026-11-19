@@ -15,6 +15,8 @@
  *
  * The `features` copy (F-2) also has two optional modules of a test package: "Events" (on, with an event in its table)
  * and "acme.calendar" (off, needs Events).
+ * The `assistant` copy (A-3) has the AI assistant on with the pretend "Test AI" service of a test package (nothing
+ * leaves the server); `/_test/assistant` chooses it with a key, so the assistant is ready.
  *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
@@ -29,6 +31,7 @@ use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\MigratorConfiguration;
 use SightPress\Core\Analytics\AnalyticsRollup;
 use SightPress\Core\Analytics\AnalyticsStore;
+use SightPress\Core\Assistant\AssistantSettings;
 use SightPress\Core\Auth\PasswordHasher;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
@@ -41,6 +44,8 @@ use SightPress\Core\Module\ModuleCandidate;
 use SightPress\Core\Tenant\TenantConfigLoader;
 use SightPress\Core\Tests\Support\Modules\CalendarModule;
 use SightPress\Core\Tests\Support\Modules\EventsModule;
+use SightPress\Core\Tests\Support\Modules\TestAssistantModule;
+use SightPress\Core\Tenant\SiteModules;
 use SightPress\Core\Page\Contract\PageTransition;
 use SightPress\Core\Page\Contract\StarterContent;
 use SightPress\Core\Page\PageContent;
@@ -141,6 +146,18 @@ if (!is_file($project . '/config/sites.php')) {
     if ($kernel->modules()->has(EventsModule::ID)) {
         Services::get($site, Connection::class)->insert('acme_event', ['title' => 'Book fair']);
     }
+    if ($kernel->modules()->has(TestAssistantModule::ID)) {
+        $demo = Services::get($kernel->container(), SiteRepository::class)->find('demo') ?? throw new LogicException('No site.');
+        Services::get($kernel->container(), SiteModules::class)->turnOn($demo, 'assistant', null);
+    }
+}
+
+if ($path === '/_test/assistant') {
+    $kernel = boot($project, $environment);
+    Services::get(site($kernel), AssistantSettings::class)->connect('test_ai', 'test-small', null, 'sk-test-a11y-5f2b', null);
+    http_response_code(204);
+
+    return;
 }
 
 if ($path === '/_test/invitation') {
@@ -254,6 +271,12 @@ $kernel->run();
  */
 function boot(string $project, array $environment): Kernel
 {
+    if (basename($project) === 'sightpress-a11y-assistant') {
+        return Kernel::fromConfig(new TenantConfigLoader()->load($project, $environment), [
+            ...CoreModules::candidates(),
+            new ModuleCandidate(new TestAssistantModule(), 'acme/test-ai'),
+        ]);
+    }
     if (basename($project) !== 'sightpress-a11y-features') {
         return Kernel::boot($project, $environment);
     }

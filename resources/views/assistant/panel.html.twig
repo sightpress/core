@@ -1,0 +1,55 @@
+{#
+    "Ask the assistant" (A-3), on the dashboard and the page editor, for people who may use the assistant
+    (Infrastructure\Assistant\AssistantAccess::panel()). An <aside> named by its heading, with:
+    - the question form (and, on the page editor, "Share this page"), which posts to /admin/assistant/ask;
+    - #assistant-suggest, an empty form the Suggest buttons of the page's fields send (their `form` attribute), so
+      they work inside the editor's own form;
+    - a polite live region (#assistant-status) for "Working on it…" and "Suggestion ready", an alert region for
+      errors, and #assistant-result, where js/assistant.js puts the suggestion under its own heading (never in a live
+      region). Without JavaScript, the forms go to a page with the answer.
+    Context: `assistant` from AssistantAccess::panel(), `assistant_screen` (dashboard, page_editor).
+#}
+<aside class="admin-panel assistant-panel" aria-labelledby="assistant-panel-title" id="assistant-panel"
+    data-working="{{ t('Working on it…') }}" data-failed="{{ t('The assistant couldn’t be reached. Try again.') }}"
+    data-insert="{{ t('Insert') }}" data-copy="{{ t('Copy') }}" data-copied="{{ t('Copied.') }}" data-retry="{{ t('Try again') }}" data-discard="{{ t('Discard') }}"
+    data-inserted="{{ t('Inserted. Check it, then save.') }}" data-discarded="{{ t('Suggestion discarded.') }}">
+    <h2 id="assistant-panel-title">{{ t('Ask the assistant') }}</h2>
+    <p class="field-hint">{{ t('Its answers are suggestions: check them before you use them.') }}</p>
+    {%- if assistant.ask %}
+    <form action="/admin/assistant/ask" method="post" class="assistant-ask" data-assistant-ask>
+        {{ csrf_fields() }}
+        {{ _self.hidden(assistant, assistant_screen) }}
+        <div class="field">
+            <label for="assistant-question">{{ t('Your question') }}</label>
+            <textarea id="assistant-question" name="question" rows="3" aria-describedby="assistant-question-hint"></textarea>
+            <p class="field-hint" id="assistant-question-hint">{{ t('For example: How do I add a page to the main menu?') }}</p>
+        </div>
+        {%- if assistant.page %}
+        <div class="field field--checkbox">
+            <input type="checkbox" id="assistant-share" name="share" value="1" aria-describedby="assistant-share-hint">
+            <label for="assistant-share">{{ t('Share this page with the assistant') }}</label>
+            <p class="field-hint" id="assistant-share-hint">{{ t('It reads the saved page, so save your changes first.') }}</p>
+        </div>
+        {%- endif %}
+        <button type="submit">{{ t('Ask') }}</button>
+    </form>
+    {%- endif %}
+    {%- if assistant.suggest is not empty %}
+    <form action="/admin/assistant/ask" method="post" id="assistant-suggest" data-assistant-ask>
+        {{ csrf_fields() }}
+        {{ _self.hidden(assistant, assistant_screen) }}
+    </form>
+    {%- endif %}
+    <p class="assistant-status" id="assistant-status" role="status"></p>
+    <div class="assistant-error" id="assistant-error" role="alert"></div>
+    <div class="assistant-result" id="assistant-result"></div>
+</aside>
+{% macro hidden(assistant, screen) %}
+        <input type="hidden" name="screen" value="{{ screen }}">
+        <input type="hidden" name="return" value="{{ assistant.return }}">
+        {%- if assistant.page %}
+        <input type="hidden" name="page" value="{{ assistant.page }}">
+        <input type="hidden" name="locale" value="{{ assistant.locale }}">
+        <input type="hidden" name="target_prefix" value="{{ assistant.locale|lower }}">
+        {%- endif %}
+{% endmacro %}

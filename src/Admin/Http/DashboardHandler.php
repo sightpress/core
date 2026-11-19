@@ -6,6 +6,7 @@ namespace SightPress\Core\Admin\Http;
 
 use Psr\Log\LoggerInterface;
 use SightPress\Core\Admin\AdminShell;
+use SightPress\Core\Infrastructure\Assistant\AssistantAccess;
 use SightPress\Core\Infrastructure\Dashboard\DashboardWidgets;
 use Throwable;
 use Psr\Http\Message\ResponseInterface;
@@ -20,7 +21,8 @@ use SightPress\Core\User\Contract\AccountDirectory;
 
 /**
  * `/admin`: the dashboard. People who manage the settings first see the server settings that stop uploads or
- * saves from working ({@see ServerLimitsCheck}); then the widgets of the site's modules the person may see (for
+ * saves from working ({@see ServerLimitsCheck}); then "Ask the assistant" while the AI assistant is on and the
+ * person may use it; then the widgets of the site's modules the person may see (for
  * example analytics' "Last 7 days"); then people who write pages see their drafts, people who publish see the pages
  * waiting for review, and everyone sees the latest changes with who made them.
  */
@@ -37,6 +39,7 @@ final readonly class DashboardHandler implements RequestHandlerInterface
         private AdminShell $shell,
         private DashboardWidgets $widgets,
         private LoggerInterface $logger,
+        private AssistantAccess $assistant,
     ) {
     }
 
@@ -56,6 +59,8 @@ final readonly class DashboardHandler implements RequestHandlerInterface
         return $this->screens->render($request, '@admin/dashboard.html.twig', [
             'server_problems' => $actor->has('settings.manage') ? $this->check->problems() : [],
             'widgets' => $this->widgets($request, $actor),
+            'assistant' => $this->assistant->panel($actor, '/admin'),
+            'assistant_screen' => 'dashboard',
             'drafts' => $actor->has('page.create') && $actor->userId !== null
                 ? $this->pages->draftsBy($actor->userId, self::LIST_LENGTH)
                 : null,

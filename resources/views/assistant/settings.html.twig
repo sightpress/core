@@ -1,0 +1,113 @@
+{#
+    The AI assistant screen (/admin/assistant, A-3): whether it is ready, the service (radios with what each one is
+    in plain words, the model, the address, a write-only key), "Test connection" (its result in the live region
+    #assistant-test-result, filled by js/assistant.js, or in the messages after a reload), who may use it and the
+    monthly budget, and what is sent and kept. Every part is its own form with its own button.
+    Context: see AssistantSettingsHandler.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('AI assistant') }}{% endblock %}
+{% block content %}
+<h1>{{ t('AI assistant') }}</h1>
+<p>{{ t('The assistant suggests summaries, descriptions for search engines, alt text and drafts, and answers questions about the site, using an AI service you choose with your own API key. Its suggestions are never used until a person checks them.') }}</p>
+{{ f.error_summary(service) }}
+{{ f.error_summary(limits) }}
+<section class="admin-panel" aria-labelledby="assistant-status-title">
+    <h2 id="assistant-status-title">{{ t('Status') }}</h2>
+    {%- if ready %}
+    <p>{{ t('Ready: people can ask {service} ({model}).', {service: current.provider, model: current.model}) }}{% if current.from_organisation %} {{ t('Your organisation chose this service.') }}{% endif %}</p>
+    {%- else %}
+    <p>{{ t('Not ready yet.') }} {{ t(problem) }}</p>
+    {%- endif %}
+    <p><a href="/admin/features#feature-assistant">{{ t('Turn the AI assistant off on the Features screen') }}</a></p>
+</section>
+
+<section class="admin-panel" aria-labelledby="assistant-service-title">
+    <h2 id="assistant-service-title">{{ t('AI service') }}</h2>
+    {%- if organisation %}
+    <p>{{ t('Your organisation’s choice: {service} ({model}).', {service: organisation.provider, model: organisation.model ?? t('no model chosen')}) }}{% if organisation.has_key %} {{ t('Sites that use it share your organisation’s key.') }}{% endif %}</p>
+    {%- endif %}
+    {%- if not may_choose %}
+    <p>{{ t('Your organisation chooses the AI service for every site, so it can’t be changed here.') }}</p>
+    {%- else %}
+    {{ f.start(service, action) }}
+        <input type="hidden" name="op" value="service">
+        {%- set chosen = service.value('provider') %}
+        {%- set provider_error = service.error('provider') %}
+        <div class="field{% if provider_error is not null %} field--error{% endif %}">
+            <fieldset{% if provider_error is not null %} aria-describedby="{{ service.fieldId('provider') }}-error"{% endif %}>
+                <legend>{{ t('AI service') }}</legend>
+                {%- if provider_error is not null %}
+                <p class="field-error" id="{{ service.fieldId('provider') }}-error"><span class="visually-hidden">{{ t('Error:') }}</span> {{ t(provider_error) }}</p>
+                {%- endif %}
+                {%- for provider in providers %}
+                {%- set option_id = service.optionId('provider', loop.index0) %}
+                <div class="field-option">
+                    <input type="radio" id="{{ option_id }}" name="provider" value="{{ provider.id }}" aria-describedby="{{ option_id }}-hint"{% if chosen == provider.id %} checked{% endif %}{% if provider_error is not null %} aria-invalid="true"{% endif %}>
+                    <label for="{{ option_id }}">{{ t(provider.label) }}</label>
+                    <p class="field-hint" id="{{ option_id }}-hint">{{ t(provider.description) }}</p>
+                </div>
+                {%- endfor %}
+            </fieldset>
+        </div>
+        {{ f.field(service, 'model') }}
+        {{ f.field(service, 'custom_model') }}
+        {{ f.field(service, 'base_url') }}
+        <p id="assistant-saved-key">{% if masked_key %}{{ t('Saved API key: {key}', {key: masked_key}) }}{% else %}{{ t('This site has no API key of its own.') }}{% endif %}</p>
+        {{ f.field(service, 'key') }}
+        {{ f.submit(t('Save the AI service')) }}
+    {{ f.end() }}
+    {%- if masked_key %}
+    <form action="{{ action }}" method="post">
+        {{ csrf_fields() }}
+        <input type="hidden" name="op" value="remove_key">
+        <button type="submit" class="button button--secondary">{{ t('Remove key') }}</button>
+    </form>
+    {%- endif %}
+    {%- endif %}
+</section>
+
+<section class="admin-panel" aria-labelledby="assistant-test-title">
+    <h2 id="assistant-test-title" tabindex="-1">{{ t('Test connection') }}</h2>
+    <p>{{ t('Sends a tiny request to the service, to check that the key and the model work. It counts towards the budget, like any other use.') }}</p>
+    <form action="{{ test_action }}" method="post" data-assistant-test="assistant-test-result" data-working="{{ t('Testing the connection…') }}">
+        {{ csrf_fields() }}
+        <button type="submit" class="button button--secondary"{% if not ready %} aria-describedby="assistant-test-not-ready"{% endif %}>{{ t('Test connection') }}</button>
+        {%- if not ready %}
+        <p class="field-hint" id="assistant-test-not-ready">{{ t('The assistant isn’t ready yet, so the test will say what is missing.') }}</p>
+        {%- endif %}
+    </form>
+    <p id="assistant-test-result" class="assistant-status" role="status"></p>
+</section>
+
+<section class="admin-panel" aria-labelledby="assistant-limits-title">
+    <h2 id="assistant-limits-title" tabindex="-1">{{ t('Who may use it, and how much') }}</h2>
+    <p>
+        {%- if budget.limit > 0 %}
+        {{ t('Used this month: {used, number} of {limit, number} tokens ({percent}%).', {used: budget.used, limit: budget.limit, percent: budget.percent}) }}
+        {%- else %}
+        {{ t('Used this month: {used, number} tokens. There is no monthly limit.', {used: budget.used}) }}
+        {%- endif %}
+        {{ t('Months start on the 1st, in UTC. From 80% everyone who asks is warned; at 100% the assistant stops until the next month.') }}
+    </p>
+    {{ f.start(limits, action) }}
+        <input type="hidden" name="op" value="limits">
+        {{ f.field(limits, 'roles') }}
+        {{ f.field(limits, 'budget') }}
+        {{ f.submit(t('Save who may use it')) }}
+    {{ f.end() }}
+</section>
+
+<section class="admin-panel" aria-labelledby="assistant-privacy-title">
+    <h2 id="assistant-privacy-title">{{ t('What is sent, and what is kept') }}</h2>
+    <ul>
+        <li>{{ t('Nothing is sent to the AI service until someone asks for a suggestion.') }}</li>
+        <li>{{ t('Sent: the question, and the page the person chooses to share or asks a suggestion for. Never lists of people, email addresses, the audit log or other pages.') }}</li>
+        <li>{{ t('The AI service handles what it receives under its own terms. Check them, and where it processes data, before you choose it.') }}</li>
+        <li>{{ t('Kept on this site: when the assistant was used, by whom, for what, with which service and model, and how many tokens. Never the question, the page text or the answer.') }}</li>
+        <li>{{ t('Each person may ask 20 times every 10 minutes.') }}</li>
+    </ul>
+</section>
+{% endblock %}
+{% block scripts %}{{ parent() }}<script src="{{ asset('js/assistant.js') }}" defer></script>{% endblock %}

@@ -10,6 +10,8 @@
       the live region and `autofocus` on the block, or on the same button where it moved (`focus`);
     - rich text is a textarea of HTML with a preview below it (a <details>), as it will be saved;
     - errors of the fields and of the blocks are in the error summary at the top, which gets focus;
+    - with the AI assistant on, Suggest buttons under the summary, the title in search results and the description,
+      and "Ask the assistant" after the form (@assistant/panel.html.twig, outside the form);
     - then the publish checks of the saved page (linking to the fields) and the workflow buttons.
 
     Context: see PageEditorScreen::render().
@@ -122,8 +124,11 @@
     <fieldset class="admin-panel">
         <legend>{{ t('Search & AI') }}</legend>
         {{ f.field(form, 'summary') }}
+        {%- if assistant %}{% include '@assistant/suggest.html.twig' with {field: 'summary', target: form.fieldId('summary'), label: t('Suggest a summary')} %}{% endif %}
         {{ f.field(form, 'seo_title') }}
+        {%- if assistant %}{% include '@assistant/suggest.html.twig' with {field: 'seo_title', target: form.fieldId('seo_title'), label: t('Suggest a title for search results')} %}{% endif %}
         {{ f.field(form, 'description') }}
+        {%- if assistant %}{% include '@assistant/suggest.html.twig' with {field: 'description', target: form.fieldId('description'), label: t('Suggest a description')} %}{% endif %}
         <p class="character-count" id="{{ form.fieldId('description') }}-count" data-count-for="{{ form.fieldId('description') }}" data-count-max="{{ description_max }}" aria-live="polite">{{ t('{count} characters. Search engines show about {max}.', {count: description_length, max: description_max}) }}</p>
         {%- if form.has('social_image') %}
         {{ f.field(form, 'social_image') }}
@@ -150,6 +155,9 @@
         <button type="submit" name="op" value="save">{{ t('Save page') }}</button>
     </div>
 {{ f.end() }}
+{%- if assistant %}
+{% include '@assistant/panel.html.twig' %}
+{%- endif %}
 {%- else %}
 <p>{{ t('You can’t change this page now: it is {state}. You can still view it and use the buttons below.', {state: t(state)|lower}) }}</p>
 {%- endif %}
@@ -260,7 +268,7 @@
 </section>
 {%- endif %}
 {% endblock %}
-{% block scripts %}{{ parent() }}<script src="{{ asset('js/page-admin.js') }}" defer></script>{% endblock %}
+{% block scripts %}{{ parent() }}<script src="{{ asset('js/page-admin.js') }}" defer></script>{% if assistant %}<script src="{{ asset('js/assistant.js') }}" defer></script>{% endif %}{% endblock %}
 
 {% macro block_list(list, focus) %}
     {%- import _self as e %}

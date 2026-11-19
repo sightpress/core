@@ -3,6 +3,9 @@
 {% block content %}
 <h1>{{ t('Dashboard') }}</h1>
 {% include '@admin/server-problems.html.twig' %}
+{%- if assistant ?? null %}
+{% include '@assistant/panel.html.twig' %}
+{%- endif %}
 {%- for widget in widgets ?? [] %}
 <section class="admin-panel admin-widget" aria-labelledby="dashboard-widget-{{ widget.id|replace({'.': '-'}) }}">
     <h2 id="dashboard-widget-{{ widget.id|replace({'.': '-'}) }}">{{ t(widget.title) }}</h2>
@@ -49,6 +52,7 @@
     {%- endif %}
 </section>
 {% endblock %}
+{% block scripts %}{{ parent() }}{% if assistant ?? null %}<script src="{{ asset('js/assistant.js') }}" defer></script>{% endif %}{% endblock %}
 {% macro pages(pages) %}
     <ul class="admin-list">
         {%- for page in pages %}

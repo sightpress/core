@@ -27,6 +27,7 @@ use SightPress\Core\Infrastructure\Event\ListenerProvider;
 use SightPress\Core\Module\ModulePolicy;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Infrastructure\Dashboard\DashboardWidgets;
+use SightPress\Core\Infrastructure\Assistant\AssistantAccess;
 use SightPress\Core\Infrastructure\Assistant\AssistantExtensions;
 use SightPress\Core\Infrastructure\Search\SearchExtensions;
 use SightPress\Core\Module\SiteModuleStore;
@@ -171,6 +172,10 @@ final class SiteContainerFactory
                 Services::get($container, ModuleRegistry::class),
             )),
             AssistantExtensions::class => factory(static fn (ContainerInterface $container): AssistantExtensions => new AssistantExtensions(
+                $container,
+                Services::get($container, ModuleRegistry::class),
+            )),
+            AssistantAccess::class => factory(static fn (ContainerInterface $container): AssistantAccess => new AssistantAccess(
                 $container,
                 Services::get($container, ModuleRegistry::class),
             )),

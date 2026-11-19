@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Assistant;
 
+use SightPress\Core\Assistant\Admin\AssistantAskHandler;
+use SightPress\Core\Assistant\Admin\AssistantInsertHandler;
+use SightPress\Core\Assistant\Admin\AssistantReplies;
+use SightPress\Core\Assistant\Admin\AssistantSettingsHandler;
+use SightPress\Core\Assistant\Admin\AssistantTestHandler;
 use SightPress\Core\Assistant\Command\AskAssistantCommand;
 use SightPress\Core\Assistant\Command\AssistantUsageCommand;
 use SightPress\Core\Assistant\Command\DisableAssistantCommand;
@@ -19,18 +24,22 @@ use SightPress\Core\Assistant\Provider\OpenAiCompatibleProvider;
 use SightPress\Core\Assistant\Provider\OpenAiProvider;
 use SightPress\Core\Assistant\Provider\ProviderModels;
 use SightPress\Core\Assistant\Task\AskTask;
+use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Access\Permission;
+use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\ModuleRequirement;
+use SightPress\Module\Routing\Route;
 
 /**
  * The optional AI assistant (ADR-0010, ADR-0040, D13–D16): off by default, bring your own key. Core's providers
  * (Anthropic, OpenAI, Mistral and any OpenAI-compatible service) and tasks are registered like a module's would
  * be; {@see Assistant} runs a task for a person within their permissions, rate limit and the site's monthly budget,
- * and only ever returns a suggestion. `site:assistant:set|disable|test|usage` and `assistant:ask` work from the
- * console.
+ * and only ever returns a suggestion. Admins set it up on `/admin/assistant`; people ask on the dashboard and the page
+ * editor (the panel and Suggest buttons, shown through `Infrastructure\Assistant\AssistantAccess`).
+ * `site:assistant:set|disable|test|usage` and `assistant:ask` work from the console.
  */
 final class AssistantModule implements ModuleInterface
 {
@@ -45,7 +54,7 @@ final class AssistantModule implements ModuleInterface
         return new ModuleManifest(
             self::ID,
             '0.1.0',
-            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('rbac', '^0.1')],
+            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('rbac', '^0.1'), new ModuleRequirement('admin', '^0.1'), new ModuleRequirement('page', '^0.1')],
             enabledByDefault: false,
         );
     }
@@ -77,6 +86,17 @@ final class AssistantModule implements ModuleInterface
         }
         $services->autowire(AskTask::class);
         $assistant->addTask(AskTask::class);
+
+        $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/assistant');
+        foreach ([AssistantReplies::class, AssistantSettingsHandler::class, AssistantTestHandler::class, AssistantAskHandler::class, AssistantInsertHandler::class] as $class) {
+            $services->autowire($class);
+        }
+        $routes = $registrar->routes();
+        $routes->add(new Route('assistant.settings', AssistantSettingsHandler::PATH, AssistantSettingsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('assistant.test', AssistantTestHandler::PATH, AssistantTestHandler::class, ['POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('assistant.ask', AssistantAskHandler::PATH, AssistantAskHandler::class, ['POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('assistant.insert', AssistantInsertHandler::PATH, AssistantInsertHandler::class, ['POST'], [AdminAccessMiddleware::class]));
+        $registrar->adminMenu()->add(new AdminMenuItem('assistant.settings', 'AI assistant', 'assistant.settings', self::MANAGE, 'admin.settings', 20));
 
         foreach ([SetAssistantCommand::class, DisableAssistantCommand::class, TestAssistantCommand::class, AssistantUsageCommand::class, AskAssistantCommand::class] as $command) {
             $registrar->commands()->add($command);

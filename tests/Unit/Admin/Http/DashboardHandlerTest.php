@@ -15,6 +15,7 @@ use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageOverviewQuery;
 use SightPress\Core\Rbac\Contract\PageState;
+use SightPress\Core\Tests\Support\Assistant\NoAssistant;
 use SightPress\Core\Tests\Support\AdminFixture;
 use SightPress\Core\Tests\Support\Dashboard\FakeWidgets;
 use SightPress\Core\Tests\Support\PageFixture;
@@ -122,6 +123,7 @@ final class DashboardHandlerTest extends TestCase
             $this->admin->shell(),
             FakeWidgets::widgets(),
             $widgets->logger(),
+            NoAssistant::access(),
         );
 
         return (string) $handler->handle($this->admin->request($user))->getBody();

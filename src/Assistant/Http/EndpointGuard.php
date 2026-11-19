@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Assistant\Http;
 
+use SightPress\Core\Assistant\AssistantError;
+use SightPress\Core\Template\Message;
 use SightPress\Core\Tenant\Environment;
 use SightPress\Core\Tenant\TenantConfig;
 
@@ -27,10 +29,20 @@ final readonly class EndpointGuard
      */
     public function problem(string $url): ?string
     {
+        $reason = $this->reason($url);
+
+        return $reason === null ? null : AssistantError::english($reason);
+    }
+
+    /**
+     * Why the assistant may not use the address, to show in the person's language, or null when it may.
+     */
+    public function reason(string $url): ?Message
+    {
         try {
             $this->check($url);
         } catch (EndpointRefused $refused) {
-            return $refused->getMessage();
+            return $refused->reason;
         }
 
         return null;
@@ -47,26 +59,26 @@ final readonly class EndpointGuard
         $scheme = strtolower((string) ($parts['scheme'] ?? ''));
         $host = strtolower(trim((string) ($parts['host'] ?? ''), '[]'));
         if ($parts === false || $host === '' || !in_array($scheme, ['https', 'http'], true)) {
-            throw new EndpointRefused('The assistant\'s address must be a full web address, such as https://ai.example.org/v1.');
+            throw new EndpointRefused(new Message('The assistant’s address must be a full web address, such as https://ai.example.org/v1.'));
         }
         if (isset($parts['user']) || isset($parts['pass'])) {
-            throw new EndpointRefused('The assistant\'s address must not contain a user name or password. Put the key in the key field instead.');
+            throw new EndpointRefused(new Message('The assistant’s address must not contain a user name or password. Put the key in the key field instead.'));
         }
         if ($scheme === 'http' && $this->config->environment !== Environment::Dev) {
-            throw new EndpointRefused('The assistant\'s address must start with https://, so the key and your content are encrypted on the way.');
+            throw new EndpointRefused(new Message('The assistant’s address must start with https://, so the key and your content are encrypted on the way.'));
         }
         if ($this->config->assistant->allowPrivateHosts) {
             return [];
         }
         $addresses = $this->resolver->addresses($host);
         if ($addresses === []) {
-            throw new EndpointRefused(sprintf('The assistant\'s address can\'t be found: there is no server called %s.', $host));
+            throw new EndpointRefused(new Message('The assistant’s address can’t be found: there is no server called {host}.', ['host' => $host]));
         }
         foreach ($addresses as $address) {
             if (!self::isPublic($address)) {
-                throw new EndpointRefused(sprintf(
-                    'The assistant\'s address %s is on a private or local network, which isn\'t allowed. Your hosting provider can allow it with the tenant setting assistant.allow_private_hosts.',
-                    $host,
+                throw new EndpointRefused(new Message(
+                    'The assistant’s address {host} is on a private or local network, which isn’t allowed. Your hosting provider can allow it with the tenant setting assistant.allow_private_hosts.',
+                    ['host' => $host],
                 ));
             }
         }

@@ -1,0 +1,11 @@
+{#
+    A Suggest button for a field of a screen that shows the assistant panel: it sends the panel's #assistant-suggest
+    form (so it can sit inside the screen's own form) with the field's name; js/assistant.js puts the suggestion in
+    the panel, and "Insert" fills the field with the id `target` and moves focus back to it.
+    Context: `assistant`, `field` (summary, seo_title, description, alt), `target`, `label`.
+#}
+{%- if assistant and assistant.suggest[field] is defined %}
+<p class="assistant-suggest">
+    <button type="submit" form="assistant-suggest" name="field" value="{{ field }}" class="button button--secondary" data-assistant-target="{{ target }}">{{ label }}</button>
+</p>
+{%- endif %}
