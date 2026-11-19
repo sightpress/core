@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.2.0](https://github.com/sightpress/core/compare/0.1.0...0.2.0) (2026-11-19)
+
+
+### Features
+
+* change your password, email address and admin preferences on My account (U-3) ([#70](https://github.com/sightpress/core/issues/70)) ([ce3f588](https://github.com/sightpress/core/commit/ce3f588b61cf8f61c05c248f2d0a9ca9804be37e))
+* copy, archive, trash and move pages, with redirects that keep old addresses working (P-1) ([#63](https://github.com/sightpress/core/issues/63)) ([2546d6f](https://github.com/sightpress/core/commit/2546d6fda932a533780c2612d2ef3a43d61cd3e1))
+* give menu entries their text in every language, members-only entries and links that follow moved pages (MN-1) ([#69](https://github.com/sightpress/core/issues/69)) ([844cef0](https://github.com/sightpress/core/commit/844cef04b0bfd9c45c0308914d0cdcb41fd2b9dd))
+* index the site's published pages for site search, kept up to date as pages and media change, with site:search commands (SR-1) ([#72](https://github.com/sightpress/core/issues/72)) ([734e683](https://github.com/sightpress/core/commit/734e6837ca7cb857612d9c8edef5854c9d901c1a))
+* let admins choose a site's languages and translate pages as drafts of their own (I-1) ([#58](https://github.com/sightpress/core/issues/58)) ([dad846a](https://github.com/sightpress/core/commit/dad846a2511a688fee61fee6b5a7d32f774f49ff))
+* let admins turn optional features on or off per site, keeping their data, on a Features screen and with site:module commands (F-2) ([#71](https://github.com/sightpress/core/issues/71)) ([506d355](https://github.com/sightpress/core/commit/506d355033354498e219a4c8b14ed1033bc9a911))
+* let people create their own account, confirmed with an emailed code, when the site allows it (U-1) ([#67](https://github.com/sightpress/core/issues/67)) ([5939980](https://github.com/sightpress/core/commit/593998039e75d8886b3c67436c6aed58277657d3))
+* make a whole site or single pages readable by signed-in members only, with sign-in and back (U-2) ([#68](https://github.com/sightpress/core/issues/68)) ([0a9f562](https://github.com/sightpress/core/commit/0a9f562993702c64822f3bee87ffa65c9d04f38d))
+* publish and unpublish pages at a set time with one schedule:run that other modules add jobs to (P-3) ([#66](https://github.com/sightpress/core/issues/66)) ([04bf60b](https://github.com/sightpress/core/commit/04bf60bac79cc2db7dddb116b4a1d9ef5766b608))
+* put a search form on every page and show the results with marked extracts, in every language (SR-2) ([#73](https://github.com/sightpress/core/issues/73)) ([33b6d5a](https://github.com/sightpress/core/commit/33b6d5a44066974fd3ee67d2920a81cca5902e0a))
+* require module-interface 0.4 and record search, dashboard and assistant registrations (MI-0.4) ([#56](https://github.com/sightpress/core/issues/56)) ([c83fffe](https://github.com/sightpress/core/commit/c83fffe6d7954344e909f2d094ea201d268300ec))
+* route every language with fallbacks, reciprocal hreflang and a sitemap per language (I-2) ([#59](https://github.com/sightpress/core/issues/59)) ([168a2a4](https://github.com/sightpress/core/commit/168a2a4c3ffc55d09168a2b67caf0e5ab7b36e4e))
+* show the older versions of a page per language, compare them word by word and restore one without publishing (P-2) ([#65](https://github.com/sightpress/core/issues/65)) ([a87a2e4](https://github.com/sightpress/core/commit/a87a2e4c83d8ba3ff5784f5aeca08f526559fd15))
+* translate the admin panel, site texts and emails, starting with European Portuguese and Spanish (I-3) ([#60](https://github.com/sightpress/core/issues/60)) ([c817ffc](https://github.com/sightpress/core/commit/c817ffc11e33fe9f8ba9936aab5f415fe1bae738))
+* write the starter pages in every language of a new site, and as drafts for a language added later (I-4) ([#61](https://github.com/sightpress/core/issues/61)) ([812bf61](https://github.com/sightpress/core/commit/812bf610ee6797bdd1e5d7d47d6697e95b1b66e6))
+
+
+### Documentation
+
+* add a code of conduct and a contributing guide ([#74](https://github.com/sightpress/core/issues/74)) ([c40ad07](https://github.com/sightpress/core/commit/c40ad07b5817233ca0583f55c05cb862b3707621))
+* record the pt-PT and es catalogue review before 0.2.0 ([#62](https://github.com/sightpress/core/issues/62)) ([14f9dfd](https://github.com/sightpress/core/commit/14f9dfd92e30af0c18bc4b83bde93ae613b5aa2f))
+
 ## 0.1.0 (2026-11-17)
 
 
