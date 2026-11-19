@@ -45,6 +45,14 @@ export default defineConfig({
       stdout: 'ignore',
       stderr: 'ignore',
     },
+    // A copy of the demo site for site search (search.spec.ts), so its rate limit never touches the other specs.
+    {
+      command: 'SIGHTPRESS_A11Y_SITE=search php -S 127.0.0.1:8074 tests/A11y/demo/index.php',
+      url: 'http://127.0.0.1:8074/',
+      reuseExistingServer: !process.env.CI,
+      stdout: 'ignore',
+      stderr: 'ignore',
+    },
     // A second copy of the demo site, with its test mailbox, for the journeys from start to finish (journeys.spec.ts).
     {
       command: 'SIGHTPRESS_A11Y_SITE=journeys php -S 127.0.0.1:8086 tests/A11y/demo/index.php',

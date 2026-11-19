@@ -16,6 +16,7 @@ use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Core\Branding\Http\ManifestHandler;
 use SightPress\Core\Branding\Provisioning\DefaultBranding;
 use SightPress\Core\Page\Contract\PublicPageRendering;
+use SightPress\Core\Page\Contract\PublicScreenRendering;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
@@ -67,5 +68,6 @@ final class BrandingModule implements ModuleInterface
         $routes->add(new Route('branding.manifest', ManifestHandler::PATH, ManifestHandler::class, ['GET', 'HEAD']));
         $routes->add(new Route('branding.admin', BrandingAdminHandler::PATH, BrandingAdminHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('branding.admin', 'Branding', 'branding.admin', BrandingAdminHandler::PERMISSION, 'admin.settings', 10));
+        $registrar->subscribers()->listen(PublicScreenRendering::class, BrandingHead::class);
     }
 }

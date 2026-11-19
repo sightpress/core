@@ -3,14 +3,16 @@
 
     - `lang` and `dir` come from `locale` (the page's language) or else the viewer's language;
     - a "Skip to main content" link is the first thing to tab to;
-    - landmarks: <header> (banner), <nav aria-label> for each menu, <main id="content">, <footer> (content info);
+    - landmarks: <header> (banner), <nav aria-label> for each menu, the site's <search> form, <main id="content">,
+      <footer> (content info);
     - flash `messages` sit at the top of <main> in a polite live region.
 
     Context (all optional): `site_name`, `branding_logo` ({url, alt, width, height}: an uploaded logo shown instead
     of the name), `locale`, `main_menu` and `footer_menu` (lists of {label, url, current,
     children}; up to three levels), `breadcrumbs` (list of {label, url}, the last one the current page; a null label is the home page, "Home"),
     `languages` (the page in each published language: {code, name, url, current}, for the language switcher),
-    `home_url` (the home page in the page's language), `messages` (list of texts), `form` (its errors put "Error: " in front of the <title>), `document_title` (the
+    `home_url` (the home page in the page's language), `search_action` (where the header's search form searches, while
+    site search is on), `messages` (list of texts), `form` (its errors put "Error: " in front of the <title>), `document_title` (the
     whole <title>, set by the SEO module; otherwise the page's title and the site name).
 
     Submenus of the main menu are nested lists, all shown without JavaScript; js/site.js turns them into disclosure
@@ -54,6 +56,9 @@
         <nav class="menu menu--main" aria-label="{{ t('Main') }}" data-submenu-label="{{ t('Show the pages under') }}">
             {{ _self.menu(main_menu, 'main-menu') }}
         </nav>
+        {%- endif %}
+        {%- if search_action is defined and search_action %}
+        {% include 'partials/search-form.html.twig' with {action: search_action, id: 'site-search'} only %}
         {%- endif %}
     </div>
 </header>

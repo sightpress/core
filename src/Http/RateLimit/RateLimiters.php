@@ -28,6 +28,7 @@ final class RateLimiters
         'verification_check' => ['policy' => 'sliding_window', 'limit' => 10, 'interval' => '15 minutes'],
         'contact_form' => ['policy' => 'sliding_window', 'limit' => 5, 'interval' => '10 minutes'],
         'registration' => ['policy' => 'sliding_window', 'limit' => 10, 'interval' => '1 hour'],
+        'search' => ['policy' => 'sliding_window', 'limit' => 30, 'interval' => '1 minute'],
     ];
 
     /** @var array<string, RateLimiterFactory> */

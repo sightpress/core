@@ -52,8 +52,12 @@ final readonly class RouteInstaller
         }
     }
 
+    /**
+     * Whether a route's path is one placeholder that can take any address (`/{path:.+}`, the public pages), so routes
+     * that start with a placeholder but have more to them (`/{locale}/search`) still come before it.
+     */
     private static function catchesAll(string $path): bool
     {
-        return str_starts_with($path, '/{');
+        return preg_match('#^/\{[^/{}]*(?:\{[^}]*\}[^/{}]*)*\}$#', $path) === 1;
     }
 }

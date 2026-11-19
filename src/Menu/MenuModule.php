@@ -10,6 +10,7 @@ use SightPress\Core\Menu\Provisioning\DemoMenu;
 use SightPress\Core\Menu\Provisioning\StarterMenus;
 use SightPress\Core\Page\Contract\PagePurged;
 use SightPress\Core\Page\Contract\PublicPageRendering;
+use SightPress\Core\Page\Contract\PublicScreenRendering;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Admin\AdminMenuItem;
@@ -65,5 +66,6 @@ final class MenuModule implements ModuleInterface
         $registrar->routes()->add(new Route('menu.admin', MenuAdminHandler::PATH, MenuAdminHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->routes()->add(new Route('menu.item', MenuAdminHandler::PATH . '/{' . MenuItemHandler::ID_ATTRIBUTE . ':[0-9]+}', MenuItemHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('menu.admin', 'Menus', 'menu.admin', MenuAdminHandler::PERMISSION, position: 35));
+        $registrar->subscribers()->listen(PublicScreenRendering::class, PublicMenus::class);
     }
 }

@@ -937,6 +937,12 @@
         <target>Mudar o idioma principal muda os endereços das páginas no idioma principal antigo e no novo. As ligações para os endereços antigos deixam de funcionar.</target>
       </segment>
     </unit>
+    <unit id="ae2a4621d7caadbb">
+      <segment state="initial">
+        <source>Check the spelling of each word.</source>
+        <target>Verifique a ortografia de cada palavra.</target>
+      </segment>
+    </unit>
     <unit id="56705b8191556193">
       <segment>
         <source>Choose a file from the media library.</source>
@@ -1987,6 +1993,12 @@
         <target>No lixo</target>
       </segment>
     </unit>
+    <unit id="76d6aad1a2a03c8f">
+      <segment state="initial">
+        <source>In:</source>
+        <target>Em:</target>
+      </segment>
+    </unit>
     <unit id="32c719e3b25887fd">
       <segment>
         <source>Information:</source>
@@ -2611,10 +2623,22 @@
         <target>Nenhum ficheiro escolhido</target>
       </segment>
     </unit>
+    <unit id="4489a8209ffd75b3">
+      <segment state="initial">
+        <source>No page has every word you searched for, so these pages have some of them.</source>
+        <target>Nenhuma página tem todas as palavras que pesquisou, por isso estas páginas têm algumas delas.</target>
+      </segment>
+    </unit>
     <unit id="14497643bcf60e60">
       <segment>
         <source>No pages are waiting for review.</source>
         <target>Não há páginas à espera de revisão.</target>
+      </segment>
+    </unit>
+    <unit id="27f5f1fa7f855ce8">
+      <segment state="initial">
+        <source>No results for “{query}”</source>
+        <target>Sem resultados para “{query}”</target>
       </segment>
     </unit>
     <unit id="784a72084c4e3246">
@@ -3451,6 +3475,12 @@
         <target>Os leitores de ecrã já dizem que é uma imagem. Comece pelo que mostra.</target>
       </segment>
     </unit>
+    <unit id="49c266baaaa70981">
+      <segment state="initial">
+        <source>Search</source>
+        <target>Pesquisar</target>
+      </segment>
+    </unit>
     <unit id="8e3c69d784ac8e8b">
       <segment>
         <source>Search &amp; AI</source>
@@ -3461,6 +3491,24 @@
       <segment>
         <source>Search engines show about {max} characters of the description; this one has {description}. Shorten it.</source>
         <target>Os motores de pesquisa mostram cerca de {max} caracteres da descrição; esta tem {description}. Encurte-a.</target>
+      </segment>
+    </unit>
+    <unit id="6ea8f7433c6c0626">
+      <segment state="initial">
+        <source>Search for</source>
+        <target>Pesquisar por</target>
+      </segment>
+    </unit>
+    <unit id="e4c251355f0a809e">
+      <segment state="initial">
+        <source>Search results pages</source>
+        <target>Páginas de resultados da pesquisa</target>
+      </segment>
+    </unit>
+    <unit id="ce970a2013d00e8a">
+      <segment state="initial">
+        <source>Search this site</source>
+        <target>Pesquisar neste site</target>
       </segment>
     </unit>
     <unit id="3048b5ea49603392">
@@ -5047,6 +5095,12 @@
         <target>Esta imagem tem {size} × {size2} píxeis, mais de {_000_000} milhões de píxeis. Reduza-a e carregue-a outra vez.</target>
       </segment>
     </unit>
+    <unit id="c7df7a533bf8915c">
+      <segment state="initial">
+        <source>This searches the pages in {language}. To search in another language, choose it in the list of languages.</source>
+        <target>Esta pesquisa procura nas páginas em {language}. Para pesquisar noutra língua, escolha-a na lista de línguas.</target>
+      </segment>
+    </unit>
     <unit id="1aca1ffa176218b1">
       <segment state="initial">
         <source>This site is for its members. Sign in to read it.</source>
@@ -5087,6 +5141,12 @@
       <segment state="initial">
         <source>Times are in your time zone, {timezone}. Leave a field empty for no time. The page is published and taken off the site within a minute of the time.</source>
         <target>As horas estão no seu fuso horário, {timezone}. Deixe um campo vazio para não ter hora. A página é publicada e retirada do site até um minuto depois da hora.</target>
+      </segment>
+    </unit>
+    <unit id="3838a4d8cb8c5ccc">
+      <segment state="initial">
+        <source>Tips</source>
+        <target>Sugestões</target>
       </segment>
     </unit>
     <unit id="7e8cd2056da73a7f">
@@ -5143,6 +5203,12 @@
         <target>Demasiados pedidos</target>
       </segment>
     </unit>
+    <unit id="f5006e8afc6dd735">
+      <segment state="initial">
+        <source>Too many searches</source>
+        <target>Demasiadas pesquisas</target>
+      </segment>
+    </unit>
     <unit id="721164f0dc7096a8">
       <segment>
         <source>Transcript</source>
@@ -5177,6 +5243,12 @@
       <segment>
         <source>Try again in {minutes} minutes.</source>
         <target>Tente outra vez dentro de {minutes} minutos.</target>
+      </segment>
+    </unit>
+    <unit id="dcc253137d58ac22">
+      <segment state="initial">
+        <source>Try fewer words, or other words that mean the same.</source>
+        <target>Experimente menos palavras, ou outras palavras com o mesmo significado.</target>
       </segment>
     </unit>
     <unit id="4a828c6e9972981c">
@@ -5237,6 +5309,12 @@
       <segment>
         <source>Type of block to add here</source>
         <target>Tipo de bloco a adicionar aqui</target>
+      </segment>
+    </unit>
+    <unit id="f2c58c086d34f3df">
+      <segment state="initial">
+        <source>Type one or more words, then choose Search.</source>
+        <target>Escreva uma ou mais palavras e escolha Pesquisar.</target>
       </segment>
     </unit>
     <unit id="ac60345e79847ef3">
@@ -5779,6 +5857,12 @@
         <target>Pode alterá-lo mais tarde.</target>
       </segment>
     </unit>
+    <unit id="4da00046f3053ff8">
+      <segment state="initial">
+        <source>You can type the start of the last word: “librar” also finds “library”.</source>
+        <target>Pode escrever só o início da última palavra: “bibliot” também encontra “biblioteca”.</target>
+      </segment>
+    </unit>
     <unit id="55184fa2cf345fe1">
       <segment>
         <source>You can upload pictures ({pictures}), video ({video}), audio ({audio}) and documents ({documents}).</source>
@@ -5831,6 +5915,12 @@
       <segment>
         <source>You have no drafts.</source>
         <target>Não tem rascunhos.</target>
+      </segment>
+    </unit>
+    <unit id="6b4d6f14d4a87ad7">
+      <segment state="initial">
+        <source>You have searched many times in a short while. Wait {minutes, plural, one {# minute} other {# minutes}}, then search again.</source>
+        <target>Fez muitas pesquisas em pouco tempo. Aguarde {minutes, plural, one {# minuto} other {# minutos}} e pesquise de novo.</target>
       </segment>
     </unit>
     <unit id="c0f5c7fe2cfe8049">
@@ -6233,6 +6323,12 @@
       <segment>
         <source>{count, plural, one {# minute} other {# minutes}}</source>
         <target>{count, plural, one {# minuto} other {# minutos}}</target>
+      </segment>
+    </unit>
+    <unit id="a929ed33cd715967">
+      <segment state="initial">
+        <source>{count, plural, one {# result} other {# results}} for “{query}”</source>
+        <target>{count, plural, one {# resultado} other {# resultados}} para “{query}”</target>
       </segment>
     </unit>
     <unit id="5b5dd96d193eeb89">

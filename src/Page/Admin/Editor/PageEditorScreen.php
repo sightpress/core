@@ -42,6 +42,7 @@ use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Site\Contract\SiteVisibility;
+use SightPress\Core\Search\Contract\SearchPage;
 use SightPress\Core\Tenant\EnabledModules;
 use SightPress\Core\Tenant\Site;
 use Symfony\Component\Validator\Constraints\Length;
@@ -65,7 +66,7 @@ final readonly class PageEditorScreen
     /** The checkbox shown while the site's search module is on (SR-1). */
     public const string EXCLUDE_FROM_SEARCH = 'exclude_from_site_search';
 
-    private const string SEARCH_MODULE = 'search';
+    private const string SEARCH_MODULE = SearchPage::MODULE;
 
     public function __construct(
         private AdminScreens $screens,

@@ -9,6 +9,7 @@ use SightPress\Core\Page\Contract\MovedAddresses;
 use SightPress\Core\Page\Contract\PageLink;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Contract\PublicPageRendering;
+use SightPress\Core\Page\Contract\PublicScreenRendering;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Tenant\Site;
 
@@ -33,19 +34,24 @@ final readonly class PublicMenus
     ) {
     }
 
-    public function __invoke(PublicPageRendering $event): void
+    /**
+     * The menus and, below the home page, the breadcrumb: on a page, the pages above it; on another public screen
+     * (search results), the home page then the screen.
+     */
+    public function __invoke(PublicPageRendering|PublicScreenRendering $event): void
     {
         $signedIn = Actor::fromRequest($event->request)->isSignedIn();
+        $ancestors = $event instanceof PublicPageRendering ? $event->ancestorIds : [];
         $main = $this->menus->tree(MenuName::Main);
         $footer = $this->menus->tree(MenuName::Footer);
-        $links = $this->pages->find([...MenuNode::pageIds($main), ...MenuNode::pageIds($footer), ...$event->ancestorIds], $event->locale);
+        $links = $this->pages->find([...MenuNode::pageIds($main), ...MenuNode::pageIds($footer), ...$ancestors], $event->locale);
         $readable = array_filter($links, static fn (PageLink $link): bool => $link->public || ($signedIn && $link->published));
 
         $event->set('main_menu', $this->entries($main, $readable, $event->url, $event->locale, $signedIn));
         $event->set('footer_menu', $this->entries($footer, $readable, $event->url, $event->locale, $signedIn));
-        if (!$event->home) {
+        if ($event instanceof PublicScreenRendering || !$event->home) {
             $crumbs = [['label' => null, 'url' => $event->locale === $this->site->defaultLocale ? '/' : '/' . strtolower($event->locale)]];
-            foreach ($event->ancestorIds as $id) {
+            foreach ($ancestors as $id) {
                 if (isset($readable[$id])) {
                     $crumbs[] = ['label' => $readable[$id]->title, 'url' => $readable[$id]->url];
                 }

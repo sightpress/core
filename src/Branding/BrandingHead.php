@@ -8,6 +8,9 @@ use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Contract\MediaUrlGenerator;
 use SightPress\Core\Page\Contract\PublicPageRendering;
+use SightPress\Core\Page\Contract\PublicScreenRendering;
+use SightPress\Core\Search\Contract\SearchPage;
+use SightPress\Core\Tenant\EnabledModules;
 use SightPress\Core\Tenant\OwnerType;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
@@ -18,7 +21,8 @@ use SightPress\Core\Tenant\Site;
  * and Twitter card tags, with the page's own share image when it has one (else the site's), always as an absolute,
  * versioned address; and the schema.org nodes of who runs the site (an `Organization` or a `Person`, with the logo)
  * and of the `WebSite`, which other nodes can refer to by `@id`. An uploaded logo replaces the site's name at the top
- * of the page (`branding_logo`).
+ * of the page (`branding_logo`). While site search is on, the `WebSite` says how to search it (`SearchAction`). On a
+ * public screen that isn't a page ({@see PublicScreenRendering}) only the icons and the logo are added.
  */
 final readonly class BrandingHead
 {
@@ -28,10 +32,14 @@ final readonly class BrandingHead
         private MediaLibrary $media,
         private MediaUrlGenerator $urls,
         private SiteSettings $settings,
+        private EnabledModules $modules,
     ) {
     }
 
-    public function __invoke(PublicPageRendering $event): void
+    /**
+     * On a page, everything; on another public screen (search results), only the icons and the logo.
+     */
+    public function __invoke(PublicPageRendering|PublicScreenRendering $event): void
     {
         $state = $this->branding->state();
         if ($state->version === '') {
@@ -39,9 +47,6 @@ final readonly class BrandingHead
         }
         $base = rtrim($event->baseUrl, '/');
         $file = static fn (string $path): string => $base . $path . '?v=' . rawurlencode($state->version);
-        $name = $this->site->name;
-        $description = $event->metaDescription();
-
         $tags = [
             ['link', ['rel' => 'icon', 'href' => $file('/favicon.ico'), 'sizes' => '32x32']],
         ];
@@ -51,7 +56,15 @@ final readonly class BrandingHead
         $tags[] = ['link', ['rel' => 'apple-touch-icon', 'href' => $file('/apple-touch-icon.png')]];
         $tags[] = ['link', ['rel' => 'manifest', 'href' => '/site.webmanifest']];
         $tags[] = ['meta', ['name' => 'theme-color', 'content' => BrandColours::BACKGROUND]];
+        if ($event instanceof PublicScreenRendering) {
+            $event->addHead(implode("\n", array_map(static fn (array $tag): string => self::tag($tag[0], $tag[1]), $tags)));
+            $this->logo($event, $state, $file);
 
+            return;
+        }
+
+        $name = $this->site->name;
+        $description = $event->metaDescription();
         [$image, $width, $height, $alt] = $this->shareImage($event, $state, $file);
         foreach ([
             'og:type' => $event->home ? 'website' : 'article',
@@ -83,12 +96,21 @@ final readonly class BrandingHead
             json_encode($this->graph($base, $state, $file), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP),
         );
         $event->addHead(implode("\n", $html));
+        $this->logo($event, $state, $file);
+    }
 
+    /**
+     * An uploaded logo, shown instead of the site's name.
+     *
+     * @param callable(string): string $file
+     */
+    private function logo(PublicPageRendering|PublicScreenRendering $event, BrandingState $state, callable $file): void
+    {
         $logo = $state->asset(BrandAsset::Logo);
         if ($logo !== null && $state->isUploaded(BrandAsset::Logo)) {
             $event->set('branding_logo', [
                 'url' => $file('/branding/' . $logo['file']),
-                'alt' => $state->alt(BrandAsset::Logo, $event->locale) ?? $name,
+                'alt' => $state->alt(BrandAsset::Logo, $event->locale) ?? $this->site->name,
                 'width' => $logo['width'],
                 'height' => $logo['height'],
             ]);
@@ -145,7 +167,25 @@ final readonly class BrandingHead
 
         return ['@context' => 'https://schema.org', '@graph' => [
             $owner,
-            ['@type' => 'WebSite', '@id' => $base . '/#website', 'name' => $this->site->name, 'url' => $base . '/', 'inLanguage' => $this->site->defaultLocale, 'publisher' => ['@id' => $owner['@id']]],
+            ['@type' => 'WebSite', '@id' => $base . '/#website', 'name' => $this->site->name, 'url' => $base . '/', 'inLanguage' => $this->site->defaultLocale, 'publisher' => ['@id' => $owner['@id']]] + $this->searchAction($base),
+        ]];
+    }
+
+    /**
+     * How to search the site, while site search is on (schema.org `SearchAction`).
+     *
+     * @return array<string, mixed>
+     */
+    private function searchAction(string $base): array
+    {
+        if (!$this->modules->has(SearchPage::MODULE)) {
+            return [];
+        }
+
+        return ['potentialAction' => [
+            '@type' => 'SearchAction',
+            'target' => ['@type' => 'EntryPoint', 'urlTemplate' => $base . SearchPage::PATH . '?' . SearchPage::QUERY . '={search_term_string}'],
+            'query-input' => 'required name=search_term_string',
         ]];
     }
 

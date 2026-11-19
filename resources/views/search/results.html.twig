@@ -1,0 +1,9 @@
+{#
+    Site search's results page (SR-2) in the theme's `search` layout. Search engines are asked not to list it, and
+    to follow its links. `head` is HTML the modules listening to PublicScreenRendering escaped, so it is printed as
+    it is.
+    Context: what SearchHandler gives the layout (`title`, `query`, `total`, `results`, `pagination`, `state` …).
+#}
+{% extends 'layouts/search.html.twig' %}
+{% block head %}<meta name="robots" content="{{ robots }}">
+{{ head|raw }}{% endblock %}

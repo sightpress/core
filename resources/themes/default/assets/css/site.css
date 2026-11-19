@@ -391,3 +391,26 @@ input[type=file] { max-width: 100%; }
 /* Language switcher (I-3): each language in its own words; the current one is marked like a current menu entry. */
 .language-switcher ul { display: flex; flex-wrap: wrap; gap: var(--space-3); list-style: none; margin: 0; padding: 0; }
 .language-switcher a[aria-current="page"] { font-weight: 700; text-decoration-thickness: 0.15em; }
+
+/* Site search (SR-2): the form in the header and on the results page, then the results. The label stays visible;
+   the input and the button sit side by side and wrap at narrow widths or large text. */
+.search-form form { margin: 0; }
+.search-form label { display: block; font-weight: 700; margin-bottom: var(--space-1); }
+.search-form__row { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: stretch; }
+.search-form__row input[type=search] { flex: 1 1 12rem; width: auto; max-width: 100%; min-width: 0; }
+.search-form__row .button { flex: none; }
+.site-header .search-form { flex: 1 1 18rem; max-width: 28rem; }
+.site-header .search-form label { font-size: var(--font-size-small); }
+.search-page .search-form { margin-block: var(--space-4); }
+.search-note { padding: var(--space-3); border-inline-start: 0.25rem solid var(--color-info); background: var(--color-info-surface); }
+.search-results { padding-inline-start: var(--space-5); }
+.search-result { margin-block: var(--space-4); }
+.search-result__title { font-size: var(--font-size-h3); margin-bottom: var(--space-1); }
+.search-result__trail { margin: 0 0 var(--space-1); color: var(--color-text-muted); font-size: var(--font-size-small); }
+.search-result__extract { margin: 0; }
+.search-tips li + li { margin-top: var(--space-1); }
+
+@media (forced-colors: active) {
+  .search-note { border-color: CanvasText; }
+  mark { forced-color-adjust: none; background: Mark; color: MarkText; }
+}

@@ -1,8 +1,26 @@
-# Site search (SR-1)
+# Site search (SR-1, SR-2)
 
 Site search finds a site's published pages, in the language being read. It is an optional feature, on by default for
 new sites; admins turn it off or on on the **Features** screen or with `site:module:disable|enable <site> search`.
 ADR-0011, ADR-0035.
+
+## The search form and the results page
+
+- Every page of the public site has a search form in its header: **Search this site**, a search box and a
+  **Search** button. It searches in the language of the page being read.
+- The results page is `/search?q=…` (`/pt-pt/search?q=…` for another language of the site). Its title and heading say
+  what was searched for and how many results there are, for example "3 results for “opening hours”", so screen
+  readers announce it when the page opens. The results are a numbered list: each has its title as a link (a level 2
+  heading), where it is on the site ("In: About us › Team") and a short extract with the matched words in bold and
+  underlined. Ten results a page, with links to the other pages ("Search results pages").
+- When nothing was found, or nothing was typed, the page says so and gives tips. The language switcher leads to the
+  same search in the site's other languages.
+- People who search a lot in a short while (more than 30 searches a minute) are asked to wait, on a page that says
+  for how many minutes.
+- Search engines are asked not to list the results pages, and to follow their links. The results pages are never in
+  the sitemap or `llms.txt`, and have no canonical address. The site tells search engines how to search it
+  (`SearchAction` in its schema.org data).
+- With search turned off, the form, the results page (404) and the `SearchAction` are all gone.
 
 ## What is found
 

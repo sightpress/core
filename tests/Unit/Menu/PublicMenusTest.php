@@ -13,6 +13,7 @@ use SightPress\Core\Menu\Contract\MenuName;
 use SightPress\Core\Menu\MenuEditor;
 use SightPress\Core\Menu\PublicMenus;
 use SightPress\Core\Page\Contract\PublicPageRendering;
+use SightPress\Core\Page\Contract\PublicScreenRendering;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageLinkQuery;
 use SightPress\Core\Page\RedirectedAddresses;
@@ -65,6 +66,20 @@ final class PublicMenusTest extends TestCase
         $front = $this->event((int) $home->id(), 'en-GB', '/', 'Welcome', [], true);
         $listener($front);
         self::assertArrayNotHasKey('breadcrumbs', $front->variables());
+    }
+
+    public function testAScreenThatIsNotAPageGetsTheMenusAndABreadcrumbFromHome(): void
+    {
+        $pages = new PageFixture();
+        $about = $pages->published('About');
+        $menus = new MenuEditor($pages->database->entityManager, new RecordingEvents());
+        $menus->add(MenuName::Main, (int) $about->id());
+        $screen = new PublicScreenRendering(new ServerRequest('GET', '/pt-pt/search'), 'pt-PT', '/pt-pt/search', 'https://demo.example', 'Pesquisa');
+
+        $this->listener($pages, $menus)($screen);
+
+        self::assertSame([], self::entries($screen, 'main_menu'), 'About isn\'t written in Portuguese');
+        self::assertSame([['label' => null, 'url' => '/pt-pt'], ['label' => 'Pesquisa', 'url' => '/pt-pt/search']], self::entries($screen, 'breadcrumbs'));
     }
 
     public function testMembersSeeMembersEntriesAndVisitorsDont(): void
@@ -124,7 +139,7 @@ final class PublicMenusTest extends TestCase
     /**
      * @return list<array<string, mixed>>
      */
-    private static function entries(PublicPageRendering $event, string $name): array
+    private static function entries(PublicPageRendering|PublicScreenRendering $event, string $name): array
     {
         $entries = $event->variables()[$name] ?? null;
         self::assertIsArray($entries);

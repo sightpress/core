@@ -64,6 +64,7 @@ final class RouteInstallerTest extends TestCase
             new ModuleCandidate(new FakeModule('acme', register: static function (ModuleRegistrar $r): void {
                 $r->routes()->add(new Route('acme.pages', '/{name:.+}', HelloHandler::class));
                 $r->routes()->add(new Route('acme.hello', '/hello/{name}', HelloHandler::class, middleware: [FirstMiddleware::class]));
+                $r->routes()->add(new Route('acme.localised', '/{name:[a-z]{2}(?:-[a-z]{2})?}/hello', HelloHandler::class, middleware: [FirstMiddleware::class]));
             }), 'sightpress/core'),
         ])->resolve(new ModuleSelection()));
         $app = new App(new Psr17Factory(), new Container());
@@ -73,6 +74,7 @@ final class RouteInstallerTest extends TestCase
 
         self::assertSame('first,hello ada', (string) $app->handle(new ServerRequest('GET', '/hello/ada'))->getBody());
         self::assertSame('hello about/team', (string) $app->handle(new ServerRequest('GET', '/about/team'))->getBody());
+        self::assertSame('first,hello pt-pt', (string) $app->handle(new ServerRequest('GET', '/pt-pt/hello'))->getBody(), 'more than a placeholder: before the catch-all');
     }
 }
 

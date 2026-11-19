@@ -44,7 +44,12 @@ final class SearchModuleTest extends TestCase
         self::assertTrue($registry->services()[SearchIndex::class]->item->public);
         self::assertTrue($registry->services()[SiteSearch::class]->item->public);
         $listeners = array_map(static fn ($l) => [$l->item->event, $l->item->listener], array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'search')));
-        self::assertCount(11, $listeners);
+        self::assertCount(12, $listeners);
+        self::assertContains([\SightPress\Core\Page\Contract\PublicPageRendering::class, \SightPress\Core\Search\Http\SearchFormListener::class], $listeners);
+        $routes = array_values(array_filter($registry->routes(), static fn ($r) => $r->module === 'search'));
+        self::assertSame(['search.results' => '/search', 'search.results_locale' => '/{locale:[a-z]{2,3}(?:-[a-z0-9]{2,8})*}/search'], array_combine(array_map(static fn ($r) => $r->item->name, $routes), array_map(static fn ($r) => $r->item->path, $routes)));
+        $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'search'));
+        self::assertFileExists($views[0]->item->directory . '/results.html.twig');
         self::assertContains([PageTransitioned::class, SearchIndexer::class], $listeners);
         self::assertContains([PagePurged::class, SearchIndexer::class], $listeners);
         self::assertContains([ScheduleDue::class, SearchReindexJob::class], $listeners);

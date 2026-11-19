@@ -15,6 +15,7 @@ use SightPress\Core\Http\Security\CspNonce;
 use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\OriginMediaUrlGenerator;
 use SightPress\Core\Page\Contract\PublicPageRendering;
+use SightPress\Core\Page\Contract\PublicScreenRendering;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Tenant\OwnerType;
 use SightPress\Core\Tests\Support\BlockFixture;
@@ -108,13 +109,35 @@ final class BrandingHeadTest extends TestCase
         $listener($notAPicture);
         self::assertStringContainsString('share.jpg', $notAPicture->head());
 
+        $screen = new PublicScreenRendering(new ServerRequest('GET', 'https://demo.example/search'), 'en-GB', '/search', 'https://demo.example', 'Search');
+        $listener($screen);
+        self::assertStringContainsString('<link rel="apple-touch-icon" href="https://demo.example/apple-touch-icon.png' . $v . '">', $screen->head());
+        self::assertStringNotContainsString('og:', $screen->head(), 'a screen that isn\'t a page has no sharing tags');
+        self::assertStringNotContainsString('ld+json', $screen->head());
+        $logo = $screen->variables()['branding_logo'] ?? null;
+        self::assertIsArray($logo);
+        self::assertSame('Ada’s workshop', $logo['alt'] ?? null);
+
         $branding->reset(BrandAsset::Logo);
         $plain = $this->event(home: false, description: null);
         $listener($plain);
         self::assertArrayNotHasKey('branding_logo', $plain->variables());
+        $listener($bare = new PublicScreenRendering(new ServerRequest('GET', 'https://demo.example/search'), 'en-GB', '/search', 'https://demo.example', 'Search'));
+        self::assertArrayNotHasKey('branding_logo', $bare->variables());
     }
 
-    private function listener(OwnerType $owner = OwnerType::Organization, bool $regenerate = false): BrandingHead
+    public function testTheWebSiteSaysHowToSearchItWhileSearchIsOn(): void
+    {
+        $listener = $this->listener(modules: ['search']);
+        $listener($event = $this->event(home: true, description: null));
+
+        self::assertStringContainsString('"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://demo.example/search?q={search_term_string}"},"query-input":"required name=search_term_string"}', $event->head());
+    }
+
+    /**
+     * @param list<string> $modules the site's modules that are on (site search adds a SearchAction)
+     */
+    private function listener(OwnerType $owner = OwnerType::Organization, bool $regenerate = false, array $modules = []): BrandingHead
     {
         $this->fixture = new BrandingFixture('Riverside Library', $owner);
         if ($regenerate) {
@@ -122,7 +145,7 @@ final class BrandingHeadTest extends TestCase
         }
         $blocks = new BlockFixture([], $this->fixture->database);
 
-        return new BrandingHead($this->fixture->service(), $this->fixture->site, $blocks->media(), new OriginMediaUrlGenerator(), $this->fixture->database->settings());
+        return new BrandingHead($this->fixture->service(), $this->fixture->site, $blocks->media(), new OriginMediaUrlGenerator(), $this->fixture->database->settings(), \SightPress\Core\Tests\Support\PageAdminFixture::modules(...$modules));
     }
 
     private function event(bool $home, ?string $description, ?int $socialImage = null): PublicPageRendering

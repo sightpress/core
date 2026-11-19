@@ -10,11 +10,15 @@ use SightPress\Core\Page\Contract\PageMoved;
 use SightPress\Core\Page\Contract\PagePurged;
 use SightPress\Core\Page\Contract\PageSaved;
 use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Page\Contract\TranslationPublished;
 use SightPress\Core\Search\Analysis\TextAnalyzers;
 use SightPress\Core\Search\Command\ReindexSearchCommand;
 use SightPress\Core\Search\Command\SearchCommand;
 use SightPress\Core\Search\Command\SearchStatusCommand;
+use SightPress\Core\Search\Contract\SearchPage;
+use SightPress\Core\Search\Http\SearchFormListener;
+use SightPress\Core\Search\Http\SearchHandler;
 use SightPress\Core\Site\Contract\LocaleRemoved;
 use SightPress\Core\Site\Contract\ScheduleDue;
 use SightPress\Core\Site\Contract\SettingsChanged;
@@ -23,16 +27,18 @@ use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\ModuleRequirement;
+use SightPress\Module\Routing\Route;
 
 /**
  * Site search (ADR-0011, D18, D22, D23): an index of the site's published pages, and of what other modules add
  * through `search()`, in the site database ({@see DatabaseSearchBackend}) or in the back-end a module puts in its
- * place; kept up to date as pages and media change ({@see SearchIndexer}); `site:search:reindex`, `site:search:status`
- * and `site:search`. Optional, on by default.
+ * place; kept up to date as pages and media change ({@see SearchIndexer}); the search form in the header of every
+ * public page and the results page ({@see SearchHandler}); `site:search:reindex`, `site:search:status` and
+ * `site:search`. Optional, on by default.
  */
 final class SearchModule implements ModuleInterface
 {
-    public const string ID = 'search';
+    public const string ID = SearchPage::MODULE;
 
     /** @var list<class-string> */
     private const array CHANGES = [
@@ -68,12 +74,19 @@ final class SearchModule implements ModuleInterface
         }
         $services->autowire(SearchIndex::class, public: true);
         $services->autowire(SiteSearch::class, public: true);
+        $services->autowire(SearchHandler::class);
+        $services->autowire(SearchFormListener::class);
+        $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/search');
+        $routes = $registrar->routes();
+        $routes->add(new Route('search.results', SearchHandler::PATH, SearchHandler::class, ['GET', 'HEAD']));
+        $routes->add(new Route('search.results_locale', SearchHandler::LOCALE_PATH, SearchHandler::class, ['GET', 'HEAD']));
 
         $subscribers = $registrar->subscribers();
         foreach (self::CHANGES as $event) {
             $subscribers->listen($event, SearchIndexer::class);
         }
         $subscribers->listen(ScheduleDue::class, SearchReindexJob::class);
+        $subscribers->listen(PublicPageRendering::class, SearchFormListener::class);
 
         foreach ([ReindexSearchCommand::class, SearchStatusCommand::class, SearchCommand::class] as $command) {
             $registrar->commands()->add($command);

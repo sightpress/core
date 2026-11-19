@@ -45,6 +45,9 @@ final class BrandingModuleTest extends TestCase
         $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'branding'));
         self::assertSame([SiteProvisioning::class, DefaultBranding::class, 50], [$listeners[1]->item->event, $listeners[1]->item->listener, $listeners[1]->item->priority]);
         self::assertSame([SettingsChanged::class, RenameListener::class], [$listeners[2]->item->event, $listeners[2]->item->listener]);
+        $last = end($listeners);
+        self::assertNotFalse($last);
+        self::assertSame([\SightPress\Core\Page\Contract\PublicScreenRendering::class, \SightPress\Core\Branding\BrandingHead::class], [$last->item->event, $last->item->listener]);
         $menu = array_values(array_filter($registry->adminMenu(), static fn ($m) => $m->module === 'branding'));
         self::assertSame(['branding.admin', 'settings.manage', 'admin.settings'], [$menu[0]->item->id, $menu[0]->item->permission, $menu[0]->item->parent]);
     }

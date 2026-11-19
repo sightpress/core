@@ -12,7 +12,8 @@
  * `/_test/reset` starts again from a fresh site.
  *
  * Copies: the environment variable SIGHTPRESS_A11Y_SITE names a copy with its own folder (default `demo`, the crawl's
- * site on port 8087; `journeys` on port 8086 for tests/A11y/journeys.spec.ts), so specs never reset each other's site.
+ * site on port 8087; `journeys` on port 8086 for tests/A11y/journeys.spec.ts; `search` on port 8074 for
+ * tests/A11y/search.spec.ts), so specs never reset each other's site. Its search index is built after site:create.
  * The site's address uses the port it is served on.
  *
  * Test mailbox: instead of sending email, the site keeps every message in its folder. `/_test/mail?to=…` answers
@@ -82,6 +83,11 @@ if (!is_file($project . '/config/sites.php')) {
     ]), $output = new BufferedOutput());
     if ($status !== 0) {
         throw new RuntimeException('site:create failed: ' . $output->fetch());
+    }
+    // The demo pages are published by site:create without the workflow: index them for site search (SR-1) now,
+    // instead of waiting for schedule:run.
+    if ($console->run(new ArrayInput(['command' => 'site:search:reindex', 'slug' => 'demo']), $output) !== 0) {
+        throw new RuntimeException('site:search:reindex failed: ' . $output->fetch());
     }
     $site = Services::get($kernel->container(), SiteRepository::class)->find('demo') ?? throw new LogicException('No site.');
     $users = Services::get(Services::get($kernel->container(), SiteContainerFactory::class)->forSite($site), UserRepository::class);

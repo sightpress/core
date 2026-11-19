@@ -38,6 +38,9 @@ final class MenuModuleTest extends TestCase
         self::assertTrue($registry->services()[MenuEditor::class]->item->public);
         $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'menu'));
         self::assertSame([PublicPageRendering::class, PublicMenus::class], [$listeners[0]->item->event, $listeners[0]->item->listener]);
+        $last = end($listeners);
+        self::assertNotFalse($last);
+        self::assertSame([\SightPress\Core\Page\Contract\PublicScreenRendering::class, PublicMenus::class], [$last->item->event, $last->item->listener]);
         self::assertSame([\SightPress\Core\Site\Contract\SiteProvisioning::class, \SightPress\Core\Menu\Provisioning\StarterMenus::class, -10], [$listeners[1]->item->event, $listeners[1]->item->listener, $listeners[1]->item->priority]);
         $routes = array_values(array_filter($registry->routes(), static fn ($r) => $r->module === 'menu'));
         self::assertSame('/admin/menus', $routes[0]->item->path);
