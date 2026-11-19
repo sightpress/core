@@ -31,6 +31,10 @@ final readonly class TenantConfig
      * @param non-empty-string $mailerDsn         `MAILER_DSN`: how email is sent; `null://null` (nothing is sent) when unset
      * @param non-empty-string $mailFrom          sender address of every email
      * @param non-empty-string $mailFromName      sender name of every email
+     * @param array<string, bool> $moduleDefaults `modules.defaults`: module id => whether new sites start with it on,
+     *                                            in place of the module's own default
+     * @param array<string, bool> $moduleLocks    `modules.locked`: module id => on or off for every site; the sites'
+     *                                            admins can't change it ("Set by your organisation")
      */
     public function __construct(
         public string $projectDir,
@@ -49,6 +53,8 @@ final readonly class TenantConfig
         #[SensitiveParameter] public string $mailerDsn = 'null://null',
         public string $mailFrom = 'no-reply@localhost',
         public string $mailFromName = 'SightPress',
+        public array $moduleDefaults = [],
+        public array $moduleLocks = [],
     ) {
     }
 
@@ -69,6 +75,7 @@ final readonly class TenantConfig
         $log = self::section($config, 'log');
         $session = self::section($config, 'session');
         $mail = self::section($config, 'mail');
+        $modules = self::section($config, 'modules');
         $dsn = trim($environment['MAILER_DSN'] ?? '');
 
         return new self(
@@ -88,6 +95,8 @@ final readonly class TenantConfig
             mailerDsn: $dsn === '' ? 'null://null' : $dsn,
             mailFrom: self::email($mail),
             mailFromName: self::string($mail, 'from_name', 'mail.from_name', 'SightPress'),
+            moduleDefaults: self::switches($modules, 'defaults'),
+            moduleLocks: self::switches($modules, 'locked'),
         );
     }
 
@@ -120,6 +129,30 @@ final readonly class TenantConfig
         }
 
         return $value;
+    }
+
+    /**
+     * `modules.defaults` or `modules.locked`: module ids, each true (on) or false (off). Whether the modules exist is
+     * checked when the kernel loads them ({@see \SightPress\Core\Module\ModulePolicy}).
+     *
+     * @param array<mixed> $modules
+     *
+     * @return array<string, bool>
+     */
+    private static function switches(array $modules, string $key): array
+    {
+        $switches = self::section($modules, $key);
+        foreach ($switches as $id => $on) {
+            if (!is_string($id) || !is_bool($on)) {
+                throw new TenantConfigException(sprintf(
+                    'Tenant setting "modules.%s" must list module ids, each set to true (on) or false (off), for example [\'acme.events\' => false].',
+                    $key,
+                ));
+            }
+        }
+
+        /** @var array<string, bool> $switches */
+        return $switches;
     }
 
     /**

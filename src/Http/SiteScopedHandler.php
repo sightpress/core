@@ -19,10 +19,13 @@ final readonly class SiteScopedHandler implements RequestHandlerInterface
 {
     /**
      * @param class-string<RequestHandlerInterface> $handler
+     * @param string|null                           $module  the module that registered the route: when it is off for the
+     *                                                       request's site, the route answers 404 (ADR-0034)
      */
     public function __construct(
         private string $handler,
         private ContainerInterface $tenant,
+        private ?string $module = null,
     ) {
     }
 
@@ -34,6 +37,7 @@ final readonly class SiteScopedHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $container = SiteContext::fromRequest($request)->container ?? $this->tenant;
+        ModuleGate::check($request, $this->module);
 
         return Services::get($container, $this->handler)->handle($request);
     }

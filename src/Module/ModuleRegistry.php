@@ -113,6 +113,46 @@ final class ModuleRegistry
     }
 
     /**
+     * Whether a module registered here, so it is on.
+     */
+    public function has(string $module): bool
+    {
+        return isset($this->requires[$module]);
+    }
+
+    /**
+     * What only the given modules registered, for a site that has some optional modules off (ADR-0034): routes,
+     * listeners, admin menu entries, settings, migrations and the rest of the other modules are left out.
+     *
+     * @param list<string> $modules ids of the modules that are on
+     */
+    public function only(array $modules): self
+    {
+        $on = array_fill_keys($modules, true);
+
+        $copy = clone $this;
+        $copy->requires = array_intersect_key($this->requires, $on);
+        $copy->services = self::keep($this->services, $on);
+        $copy->routes = self::keep($this->routes, $on);
+        $copy->routePaths = array_filter($this->routePaths, static fn (string $name): bool => isset($copy->routes[$name]));
+        $copy->blockTypes = self::keep($this->blockTypes, $on);
+        $copy->permissions = self::keep($this->permissions, $on);
+        $copy->migrations = self::keep($this->migrations, $on);
+        $copy->adminMenu = self::keep($this->adminMenu, $on);
+        $copy->views = self::keep($this->views, $on);
+        $copy->listeners = array_values(self::keep($this->listeners, $on));
+        $copy->commands = self::keep($this->commands, $on);
+        $copy->settings = self::keep($this->settings, $on);
+        $copy->searchProviders = self::keep($this->searchProviders, $on);
+        $copy->searchBackend = $this->searchBackend !== null && isset($on[$this->searchBackend->module]) ? $this->searchBackend : null;
+        $copy->dashboardWidgets = self::keep($this->dashboardWidgets, $on);
+        $copy->assistantProviders = self::keep($this->assistantProviders, $on);
+        $copy->assistantTasks = self::keep($this->assistantTasks, $on);
+
+        return $copy;
+    }
+
+    /**
      * @param non-empty-string $module
      */
     public function addService(string $module, ServiceDefinition $service): void
@@ -438,6 +478,20 @@ final class ModuleRegistry
                 $serviceId,
                 $service->module,
             ));
+    }
+
+    /**
+     * @template TKey of array-key
+     * @template TItem
+     *
+     * @param array<TKey, Registered<TItem>> $registered
+     * @param array<string, true>            $on
+     *
+     * @return array<TKey, Registered<TItem>>
+     */
+    private static function keep(array $registered, array $on): array
+    {
+        return array_filter($registered, static fn (Registered $item): bool => isset($on[$item->module]));
     }
 
     /**

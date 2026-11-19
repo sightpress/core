@@ -1237,6 +1237,18 @@
         <target>Delete pages for good.</target>
       </segment>
     </unit>
+    <unit id="e526a8813edd989f">
+      <segment>
+        <source>Delete the data of {name}</source>
+        <target>Delete the data of {name}</target>
+      </segment>
+    </unit>
+    <unit id="21c7d2699be6cea6">
+      <segment>
+        <source>Delete the data of {name}?</source>
+        <target>Delete the data of {name}?</target>
+      </segment>
+    </unit>
     <unit id="8314cd6e5b4d1c92">
       <segment>
         <source>Delete this file</source>
@@ -1265,6 +1277,12 @@
       <segment>
         <source>Delete “{title}” for good?</source>
         <target>Delete “{title}” for good?</target>
+      </segment>
+    </unit>
+    <unit id="9138fbe730ee5b23">
+      <segment>
+        <source>Deleted the data of {name}. Turning it on again starts afresh.</source>
+        <target>Deleted the data of {name}. Turning it on again starts afresh.</target>
       </segment>
     </unit>
     <unit id="abd94902b6fc2c9c">
@@ -1543,6 +1561,12 @@
         <target>Everything in it was new.</target>
       </segment>
     </unit>
+    <unit id="a0b5cf3a55b6fa2e">
+      <segment>
+        <source>Everything it adds disappears from the site and the admin panel: its pages answer “not found”.</source>
+        <target>Everything it adds disappears from the site and the admin panel: its pages answer “not found”.</target>
+      </segment>
+    </unit>
     <unit id="6ad9fd6476cd8173">
       <segment>
         <source>Everything said and shown, as text, for people who can't watch or hear the video.</source>
@@ -1559,6 +1583,18 @@
       <segment>
         <source>Everything that is said, and other sounds that matter, for people who can’t hear it. Pages with this file show a link to it.</source>
         <target>Everything that is said, and other sounds that matter, for people who can’t hear it. Pages with this file show a link to it.</target>
+      </segment>
+    </unit>
+    <unit id="679069c8c890967f">
+      <segment>
+        <source>Everything {name} stored for this site is deleted for good. This can’t be undone.</source>
+        <target>Everything {name} stored for this site is deleted for good. This can’t be undone.</target>
+      </segment>
+    </unit>
+    <unit id="5697d03daef4de9c">
+      <segment>
+        <source>Features</source>
+        <target>Features</target>
       </segment>
     </unit>
     <unit id="50009ce1da4d15e1">
@@ -2011,6 +2047,12 @@
         <target>Its address tells visitors and search engines that the page is gone. A new page can use the address again.</target>
       </segment>
     </unit>
+    <unit id="0c2b2aaa884b8c3b">
+      <segment>
+        <source>Its data is kept. Turn it on again to bring it back as it was.</source>
+        <target>Its data is kept. Turn it on again to bring it back as it was.</target>
+      </segment>
+    </unit>
     <unit id="7b9ba3c88cb71c0f">
       <segment>
         <source>Join {name}</source>
@@ -2041,6 +2083,12 @@
         <target>Keep the comment to {max} characters or fewer.</target>
       </segment>
     </unit>
+    <unit id="d8f07ee9ed837434">
+      <segment>
+        <source>Keep the data</source>
+        <target>Keep the data</target>
+      </segment>
+    </unit>
     <unit id="15911fa03c012569">
       <segment>
         <source>Keep the file and go back</source>
@@ -2051,6 +2099,12 @@
       <segment>
         <source>Keep {language}</source>
         <target>Keep {language}</target>
+      </segment>
+    </unit>
+    <unit id="53831fd539b8d821">
+      <segment>
+        <source>Keep {name} on</source>
+        <target>Keep {name} on</target>
       </segment>
     </unit>
     <unit id="f5387f9bb6ed7031">
@@ -2237,6 +2291,12 @@
       <segment>
         <source>Make {language} the main language</source>
         <target>Make {language} the main language</target>
+      </segment>
+    </unit>
+    <unit id="030856514c451a9a">
+      <segment>
+        <source>Manage features</source>
+        <target>Manage features</target>
       </segment>
     </unit>
     <unit id="bf716741d3106585">
@@ -2443,6 +2503,12 @@
         <target>Names the video for screen readers and search engines.</target>
       </segment>
     </unit>
+    <unit id="c92a259cd8977d57">
+      <segment>
+        <source>Needs: {modules}.</source>
+        <target>Needs: {modules}.</target>
+      </segment>
+    </unit>
     <unit id="b71b5df47d4bef1e">
       <segment>
         <source>New address</source>
@@ -2629,6 +2695,18 @@
         <target>Nothing was changed.</target>
       </segment>
     </unit>
+    <unit id="ca7981b46ecf2c17">
+      <segment>
+        <source>Off</source>
+        <target>Off</target>
+      </segment>
+    </unit>
+    <unit id="dbd7ce8cc0210a74">
+      <segment>
+        <source>Off, set by your organisation</source>
+        <target>Off, set by your organisation</target>
+      </segment>
+    </unit>
     <unit id="3c168c860a3aeb02">
       <segment>
         <source>Old address</source>
@@ -2651,6 +2729,18 @@
       <segment>
         <source>Older versions</source>
         <target>Older versions</target>
+      </segment>
+    </unit>
+    <unit id="130011756125313c">
+      <segment>
+        <source>On</source>
+        <target>On</target>
+      </segment>
+    </unit>
+    <unit id="a209774b23c5a7d2">
+      <segment>
+        <source>On, set by your organisation</source>
+        <target>On, set by your organisation</target>
       </segment>
     </unit>
     <unit id="aa65b02fe490ea39">
@@ -3811,6 +3901,12 @@
         <target>Status</target>
       </segment>
     </unit>
+    <unit id="755c8b2a9fb11446">
+      <segment>
+        <source>Status:</source>
+        <target>Status:</target>
+      </segment>
+    </unit>
     <unit id="dc961a2e2d05d2c2">
       <segment>
         <source>Stay signed in and go to the home page</source>
@@ -4687,6 +4783,12 @@
         <target>There are no open invitations.</target>
       </segment>
     </unit>
+    <unit id="d0a569f34e8c3f7d">
+      <segment>
+        <source>There are no optional features to turn on or off. Features installed later are listed here.</source>
+        <target>There are no optional features to turn on or off. Features installed later are listed here.</target>
+      </segment>
+    </unit>
     <unit id="df8a1676f61cc666">
       <segment>
         <source>There are no pages yet.</source>
@@ -4727,6 +4829,12 @@
       <segment>
         <source>There is no block type &quot;{type}&quot; on this site. Remove the block or turn on the module that adds it.</source>
         <target>There is no block type &quot;{type}&quot; on this site. Remove the block or turn on the module that adds it.</target>
+      </segment>
+    </unit>
+    <unit id="abcc061706d883df">
+      <segment>
+        <source>There is no optional feature “{id}”.</source>
+        <target>There is no optional feature “{id}”.</target>
       </segment>
     </unit>
     <unit id="3a2c5136716d5cdb">
@@ -5057,6 +5165,48 @@
       <segment>
         <source>Try again in {minutes} minutes.</source>
         <target>Try again in {minutes} minutes.</target>
+      </segment>
+    </unit>
+    <unit id="4a828c6e9972981c">
+      <segment>
+        <source>Turn off {name}</source>
+        <target>Turn off {name}</target>
+      </segment>
+    </unit>
+    <unit id="9ec8ca6f35a92d51">
+      <segment>
+        <source>Turn off {name} before you delete its data.</source>
+        <target>Turn off {name} before you delete its data.</target>
+      </segment>
+    </unit>
+    <unit id="855e3180196a5084">
+      <segment>
+        <source>Turn off {name}?</source>
+        <target>Turn off {name}?</target>
+      </segment>
+    </unit>
+    <unit id="3eca6f78ebc714da">
+      <segment>
+        <source>Turn on {name}</source>
+        <target>Turn on {name}</target>
+      </segment>
+    </unit>
+    <unit id="343703c9ce238b71">
+      <segment>
+        <source>Turn the site’s optional features on and off, and delete their data.</source>
+        <target>Turn the site’s optional features on and off, and delete their data.</target>
+      </segment>
+    </unit>
+    <unit id="ac99f7b8c6a0c806">
+      <segment>
+        <source>Turn the site’s optional features on or off. Turning one off hides everything it adds, on the site and in the admin panel, and keeps its data, so turning it on again brings it back.</source>
+        <target>Turn the site’s optional features on or off. Turning one off hides everything it adds, on the site and in the admin panel, and keeps its data, so turning it on again brings it back.</target>
+      </segment>
+    </unit>
+    <unit id="72392f24d7f0c64b">
+      <segment>
+        <source>Turning it on again later starts afresh, with no data.</source>
+        <target>Turning it on again later starts afresh, with no data.</target>
       </segment>
     </unit>
     <unit id="baaddf70fb5d432b">
@@ -5497,6 +5647,12 @@
         <target>When a page moves or gets a new address, its old address leads to the new one, so links and bookmarks keep working. When a page is deleted for good, its old address tells visitors it is gone.</target>
       </segment>
     </unit>
+    <unit id="f7f2b2d1d0bc41a3">
+      <segment>
+        <source>When it is off:</source>
+        <target>When it is off:</target>
+      </segment>
+    </unit>
     <unit id="acf02ada6cba251b">
       <segment>
         <source>When this is off, only people you invite can join. When it is on, the sign-in page has a “Create an account” link, and people confirm their email address with a code before they can sign in.</source>
@@ -5807,6 +5963,12 @@
       <segment>
         <source>Your name</source>
         <target>Your name</target>
+      </segment>
+    </unit>
+    <unit id="29bc2ec9acdfc86a">
+      <segment>
+        <source>Your organisation chose this for every site, so it can’t be changed here.</source>
+        <target>Your organisation chose this for every site, so it can’t be changed here.</target>
       </segment>
     </unit>
     <unit id="c4f7329ffbd542ee">
@@ -6205,6 +6367,12 @@
         <target>{locale} is now the main language. Its pages have addresses without a language part.</target>
       </segment>
     </unit>
+    <unit id="fc9c8ae2c85be5e3">
+      <segment>
+        <source>{modules} needs it: turn that off first to turn this off.</source>
+        <target>{modules} needs it: turn that off first to turn this off.</target>
+      </segment>
+    </unit>
     <unit id="4e77984ccffff99d">
       <segment>
         <source>{name} ({code})</source>
@@ -6241,10 +6409,40 @@
         <target>{name} has been uploaded. Describe it below, so everyone can understand it.</target>
       </segment>
     </unit>
+    <unit id="426caf70848039ca">
+      <segment>
+        <source>{name} has no data to delete.</source>
+        <target>{name} has no data to delete.</target>
+      </segment>
+    </unit>
     <unit id="1ca6e358d78e465e">
       <segment>
         <source>{name} is already in the library, so it wasn’t added again. Here it is.</source>
         <target>{name} is already in the library, so it wasn’t added again. Here it is.</target>
+      </segment>
+    </unit>
+    <unit id="56c04276fde4878e">
+      <segment>
+        <source>{name} is off. Its data is kept: turn it on again to bring it back.</source>
+        <target>{name} is off. Its data is kept: turn it on again to bring it back.</target>
+      </segment>
+    </unit>
+    <unit id="da4dc353b2f6dc8f">
+      <segment>
+        <source>{name} is on.</source>
+        <target>{name} is on.</target>
+      </segment>
+    </unit>
+    <unit id="066bdaa8793d50ae">
+      <segment>
+        <source>{name} is set by your organisation, so it can’t be changed for this site.</source>
+        <target>{name} is set by your organisation, so it can’t be changed for this site.</target>
+      </segment>
+    </unit>
+    <unit id="c90811603d702279">
+      <segment>
+        <source>{name} needs {required}, which is off. Turn on {required} first.</source>
+        <target>{name} needs {required}, which is off. Turn on {required} first.</target>
       </segment>
     </unit>
     <unit id="2fd65f207c10d95e">
@@ -6271,10 +6469,28 @@
         <target>{name} signed up but hasn’t typed the code we emailed them yet, so they can’t sign in. If they don’t, the account is removed a week after they signed up.</target>
       </segment>
     </unit>
+    <unit id="e643b2e9ec533969">
+      <segment>
+        <source>{name} was already off.</source>
+        <target>{name} was already off.</target>
+      </segment>
+    </unit>
+    <unit id="29b77acedb5b86d1">
+      <segment>
+        <source>{name} was already on.</source>
+        <target>{name} was already on.</target>
+      </segment>
+    </unit>
     <unit id="c9acb770441c8e6d">
       <segment>
         <source>{name} won’t be able to sign in, and is signed out straight away. Their pages stay. You can reactivate the account later.</source>
         <target>{name} won’t be able to sign in, and is signed out straight away. Their pages stay. You can reactivate the account later.</target>
+      </segment>
+    </unit>
+    <unit id="58c83f3da7c2d08d">
+      <segment>
+        <source>{needer} needs {name}, so {name} can’t be turned off while {needer} is on. Turn off {needer} first.</source>
+        <target>{needer} needs {name}, so {name} can’t be turned off while {needer} is on. Turn off {needer} first.</target>
       </segment>
     </unit>
     <unit id="026619bd5685dbd1">
@@ -6341,6 +6557,24 @@
       <segment>
         <source>“Translate” copies the page’s text and blocks into a new draft translation, for you to translate. The page in the other language doesn’t change. A new translation stays a draft until it is published on its own.</source>
         <target>“Translate” copies the page’s text and blocks into a new draft translation, for you to translate. The page in the other language doesn’t change. A new translation stays a draft until it is published on its own.</target>
+      </segment>
+    </unit>
+    <unit id="f9a7925449efef54">
+      <segment>
+        <source>“{id}” is not an optional module. Choose from: {modules}.</source>
+        <target>“{id}” is not an optional module. Choose from: {modules}.</target>
+      </segment>
+    </unit>
+    <unit id="fbb4d4c61d86a14d">
+      <segment>
+        <source>“{id}” is not an optional module. This install has none: every module is always on.</source>
+        <target>“{id}” is not an optional module. This install has none: every module is always on.</target>
+      </segment>
+    </unit>
+    <unit id="84da3b0ff4e57f2b">
+      <segment>
+        <source>“{id}” is set by your organisation to be on for every site.</source>
+        <target>“{id}” is set by your organisation to be on for every site.</target>
       </segment>
     </unit>
     <unit id="36d747060c7fe568">

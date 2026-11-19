@@ -56,6 +56,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 #[UsesNamespace('SightPress\Core\Branding')]
 #[UsesNamespace('SightPress\Core\Seo')]
 #[UsesNamespace('SightPress\Core\Audit')]
+#[UsesNamespace('SightPress\Core\Feature')]
 final class KernelTest extends TestCase
 {
     private ?TestProject $project = null;
@@ -179,7 +180,7 @@ final class KernelTest extends TestCase
 
     public function testTheKernelBootsThroughTheModuleLoader(): void
     {
-        $config = new TenantConfigLoader()->load($this->project(sites: ['demo' => SiteFixture::entry()])->path(), []);
+        $config = new TenantConfigLoader()->load($this->project(sites: ['demo' => SiteFixture::entry()])->path(), ['APP_SECRET' => SiteFixture::SECRET]);
         $module = new FakeModule('acme.hello', register: static function (ModuleRegistrar $r): void {
             $r->routes()->add(new Route('hello.show', '/hello', HelloHandler::class));
             $r->commands()->add(ExampleCommand::class);
@@ -222,7 +223,7 @@ final class KernelTest extends TestCase
 
         $kernel = Kernel::boot($project->path(), []);
 
-        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'audit', 'acme.example'], $kernel->modules()->modules());
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'audit', 'acme.example'], $kernel->modules()->modules());
         self::assertTrue($kernel->console()->has('site:registry:check'));
         self::assertNotSame('', Kernel::contractVersion());
     }

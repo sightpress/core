@@ -32,6 +32,8 @@ use SightPress\Core\Access\PermissionCatalogue;
 use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
 use SightPress\Core\Module\CoreModules;
+use SightPress\Core\Module\ModuleCatalogue;
+use SightPress\Core\Module\ModulePolicy;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleServices;
 use SightPress\Core\Navigation\AdminNavigation;
@@ -65,11 +67,13 @@ final class CoreServices
     /**
      * @return array<string, mixed>
      */
-    public static function definitions(TenantConfig $config, ModuleRegistry $modules): array
+    public static function definitions(TenantConfig $config, ModuleRegistry $modules, ModulePolicy $policy): array
     {
         return [
             TenantConfig::class => $config,
             ModuleRegistry::class => $modules,
+            ModulePolicy::class => $policy,
+            ModuleCatalogue::class => $policy->catalogue(),
             ClockInterface::class => autowire(SystemClock::class),
             SessionStore::class => autowire(FileSessionStore::class)
                 ->constructorParameter('directory', $config->sessionPath)
@@ -81,7 +85,8 @@ final class CoreServices
                 $config->adminLocale,
             )),
             TemplateExtension::class => autowire()
-                ->constructorParameter('defaultViewer', new Viewer($config->adminLocale, $config->defaultTimezone)),
+                ->constructorParameter('defaultViewer', new Viewer($config->adminLocale, $config->defaultTimezone))
+                ->constructorParameter('modules', $modules),
             Environment::class => factory(static fn (ContainerInterface $container): Environment => new TwigFactory()->create(
                 Services::get($container, TemplatePaths::class),
                 $modules,
@@ -121,6 +126,8 @@ final class CoreServices
                 $config,
                 CoreModules::entityPaths(),
                 ModuleServices::definitions($modules, []),
+                $modules,
+                $policy,
             )),
             PermissionCatalogue::class => factory(static fn (): PermissionCatalogue => PermissionCatalogue::fromRegistry($modules)),
             AdminNavigation::class => factory(static fn (): AdminNavigation => AdminNavigation::fromRegistry($modules)),

@@ -29,12 +29,13 @@ use SightPress\Core\Rbac\Contract\RoleChanged;
 use SightPress\Core\Site\Contract\SettingsChanged;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\Site;
+use SightPress\Core\Tenant\SiteModuleChanged;
 use SightPress\Core\User\Contract\AccountChanged;
 use SightPress\Core\User\Contract\Accounts;
 
 /**
- * Writes an audit log entry for each change to pages (and so their blocks), media, menus, people, roles and site
- * settings, from the events the modules dispatch. Each entry has a sentence a person can read ("Published
+ * Writes an audit log entry for each change to pages (and so their blocks), media, menus, people, roles, site
+ * settings and features, from the events the modules dispatch. Each entry has a sentence a person can read ("Published
  * “About us”.") and the facts as data. It records who and what, never the values of settings, passwords or the text
  * of pages, and no IP addresses.
  */
@@ -47,6 +48,7 @@ final readonly class AuditRecorder
         PageScheduled::class, ScheduledStepFailed::class,
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
         MenuChanged::class, RoleChanged::class, AccountChanged::class, AccountRegistered::class, SettingsChanged::class,
+        SiteModuleChanged::class,
     ];
 
     public function __construct(
@@ -110,6 +112,11 @@ final readonly class AuditRecorder
             $event instanceof AccountRegistered => $this->entry($event->userId, 'user.registered', 'user', $event->userId, $event->refusedRole === null
                 ? sprintf('%s signed up and confirmed their email address, with the “%s” role.', $this->person($event->userId), $event->role)
                 : sprintf('%s signed up and confirmed their email address. The sign-up role “%s” isn’t safe for people who sign up, so they got “%s” instead.', $this->person($event->userId), $event->refusedRole, $event->role), array_filter(['role' => $event->role, 'refused_role' => $event->refusedRole], static fn (?string $value): bool => $value !== null)),
+            $event instanceof SiteModuleChanged => $this->entry($event->actorId, 'feature.' . $event->change, 'feature', $event->moduleId, sprintf(match ($event->change) {
+                SiteModuleChanged::ENABLED => 'Turned on %s.',
+                SiteModuleChanged::DISABLED => 'Turned off %s.',
+                SiteModuleChanged::DATA_DELETED => 'Deleted the data of %s.',
+            }, $event->name), ['module' => $event->moduleId]),
             $event instanceof SettingsChanged => $this->entry($event->actorId, 'settings.changed', 'settings', null, sprintf('Changed the site settings: %s.', implode(', ', array_map($this->setting(...), $event->keys))), ['keys' => $event->keys]),
             default => null,
         };

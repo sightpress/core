@@ -108,6 +108,23 @@ final class ModuleRegistryTest extends TestCase
         self::assertSame(ExampleDashboardWidget::class, $registry->dashboardWidgets()[0]->item);
         self::assertSame(ExampleAssistantProvider::class, $registry->assistantProviders()[0]->item);
         self::assertSame([ExampleAssistantTask::class], array_map(static fn (Registered $r) => $r->item, $registry->assistantTasks()));
+
+        self::assertTrue($registry->has('acme.events'));
+        self::assertFalse($registry->has('acme.other'));
+        $without = $registry->only(['user']);
+        self::assertSame(['user'], $without->modules());
+        self::assertFalse($without->has('acme.events'));
+        self::assertSame([[], [], [], [], [], [], [], [], [], [], [], [], [], []], [
+            $without->services(), $without->routes(), $without->blockTypes(), $without->permissions(), $without->migrations(),
+            $without->adminMenu(), $without->views(), $without->listeners(), $without->commands(), $without->settings(),
+            $without->searchProviders(), $without->dashboardWidgets(), $without->assistantProviders(), $without->assistantTasks(),
+        ]);
+        self::assertNull($without->searchBackend());
+        $without->addRoute('user', new Route('events.again', '/events', CallbackHandler::class));
+        self::assertSame(['events.again'], array_map(static fn (Registered $r) => $r->item->name, $without->routes()), 'the paths of left-out routes are free');
+        $with = $registry->only(['user', 'acme.events']);
+        self::assertSame([2, ExampleSearchBackend::class], [count($with->routes()), $with->searchBackend()?->item]);
+        self::assertCount(2, $registry->routes(), 'the registry itself is unchanged');
     }
 
     public function testCoreKeepsItsSearchBackEndUnlessAModuleReplacesIt(): void

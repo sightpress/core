@@ -1,0 +1,22 @@
+{#
+    Confirms deleting an off feature's data for good (/admin/features/delete-data), then "Delete the data" and
+    "Keep the data".
+    Context: `feature` (FeatureState), `action`, `cancel`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Delete the data of {name}?', {name: feature.name}) }}{% endblock %}
+{% block content %}
+<h1>{{ t('Delete the data of {name}?', {name: feature.name}) }}</h1>
+<ul>
+    <li>{{ t('Everything {name} stored for this site is deleted for good. This can’t be undone.', {name: feature.name}) }}</li>
+    <li>{{ t('Turning it on again later starts afresh, with no data.') }}</li>
+</ul>
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <input type="hidden" name="module" value="{{ feature.id }}">
+    <div class="page-editor__workflow">
+        <button type="submit" class="button button--danger">{{ t('Delete the data of {name}', {name: feature.name}) }}</button>
+        <a href="{{ cancel }}">{{ t('Keep the data') }}</a>
+    </div>
+</form>
+{% endblock %}

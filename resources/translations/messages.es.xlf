@@ -1237,6 +1237,18 @@
         <target>Eliminar páginas definitivamente.</target>
       </segment>
     </unit>
+    <unit id="e526a8813edd989f">
+      <segment>
+        <source>Delete the data of {name}</source>
+        <target>Eliminar los datos de {name}</target>
+      </segment>
+    </unit>
+    <unit id="21c7d2699be6cea6">
+      <segment>
+        <source>Delete the data of {name}?</source>
+        <target>¿Eliminar los datos de {name}?</target>
+      </segment>
+    </unit>
     <unit id="8314cd6e5b4d1c92">
       <segment>
         <source>Delete this file</source>
@@ -1265,6 +1277,12 @@
       <segment>
         <source>Delete “{title}” for good?</source>
         <target>¿Eliminar «{title}» para siempre?</target>
+      </segment>
+    </unit>
+    <unit id="9138fbe730ee5b23">
+      <segment>
+        <source>Deleted the data of {name}. Turning it on again starts afresh.</source>
+        <target>Se han eliminado los datos de {name}. Si vuelves a activarla, empieza de cero.</target>
       </segment>
     </unit>
     <unit id="abd94902b6fc2c9c">
@@ -1543,6 +1561,12 @@
         <target>Todo en ella era nuevo.</target>
       </segment>
     </unit>
+    <unit id="a0b5cf3a55b6fa2e">
+      <segment>
+        <source>Everything it adds disappears from the site and the admin panel: its pages answer “not found”.</source>
+        <target>Todo lo que añade desaparece del sitio y del panel de administración: sus páginas responden «no encontrada».</target>
+      </segment>
+    </unit>
     <unit id="6ad9fd6476cd8173">
       <segment>
         <source>Everything said and shown, as text, for people who can't watch or hear the video.</source>
@@ -1559,6 +1583,18 @@
       <segment>
         <source>Everything that is said, and other sounds that matter, for people who can’t hear it. Pages with this file show a link to it.</source>
         <target>Todo lo que se dice, y otros sonidos que importan, para quien no puede oírlo. Las páginas con este archivo muestran un enlace a la transcripción.</target>
+      </segment>
+    </unit>
+    <unit id="679069c8c890967f">
+      <segment>
+        <source>Everything {name} stored for this site is deleted for good. This can’t be undone.</source>
+        <target>Todo lo que {name} guardó para este sitio se elimina para siempre. No se puede deshacer.</target>
+      </segment>
+    </unit>
+    <unit id="5697d03daef4de9c">
+      <segment>
+        <source>Features</source>
+        <target>Funciones</target>
       </segment>
     </unit>
     <unit id="50009ce1da4d15e1">
@@ -2011,6 +2047,12 @@
         <target>Su dirección indica a los visitantes y a los buscadores que la página ya no existe. Una página nueva puede volver a usar la dirección.</target>
       </segment>
     </unit>
+    <unit id="0c2b2aaa884b8c3b">
+      <segment>
+        <source>Its data is kept. Turn it on again to bring it back as it was.</source>
+        <target>Sus datos se conservan. Vuelve a activarla para recuperarla tal como estaba.</target>
+      </segment>
+    </unit>
     <unit id="7b9ba3c88cb71c0f">
       <segment>
         <source>Join {name}</source>
@@ -2041,6 +2083,12 @@
         <target>El comentario puede tener como máximo {max} caracteres.</target>
       </segment>
     </unit>
+    <unit id="d8f07ee9ed837434">
+      <segment>
+        <source>Keep the data</source>
+        <target>Conservar los datos</target>
+      </segment>
+    </unit>
     <unit id="15911fa03c012569">
       <segment>
         <source>Keep the file and go back</source>
@@ -2051,6 +2099,12 @@
       <segment>
         <source>Keep {language}</source>
         <target>Conservar el {language}</target>
+      </segment>
+    </unit>
+    <unit id="53831fd539b8d821">
+      <segment>
+        <source>Keep {name} on</source>
+        <target>Mantener {name} activada</target>
       </segment>
     </unit>
     <unit id="f5387f9bb6ed7031">
@@ -2237,6 +2291,12 @@
       <segment>
         <source>Make {language} the main language</source>
         <target>Hacer del {language} el idioma principal</target>
+      </segment>
+    </unit>
+    <unit id="030856514c451a9a">
+      <segment>
+        <source>Manage features</source>
+        <target>Gestionar funciones</target>
       </segment>
     </unit>
     <unit id="bf716741d3106585">
@@ -2443,6 +2503,12 @@
         <target>Da nombre al vídeo para lectores de pantalla y buscadores.</target>
       </segment>
     </unit>
+    <unit id="c92a259cd8977d57">
+      <segment>
+        <source>Needs: {modules}.</source>
+        <target>Necesita: {modules}.</target>
+      </segment>
+    </unit>
     <unit id="b71b5df47d4bef1e">
       <segment>
         <source>New address</source>
@@ -2629,6 +2695,18 @@
         <target>No se ha cambiado nada.</target>
       </segment>
     </unit>
+    <unit id="ca7981b46ecf2c17">
+      <segment>
+        <source>Off</source>
+        <target>Desactivada</target>
+      </segment>
+    </unit>
+    <unit id="dbd7ce8cc0210a74">
+      <segment>
+        <source>Off, set by your organisation</source>
+        <target>Desactivada, lo ha decidido tu organización</target>
+      </segment>
+    </unit>
     <unit id="3c168c860a3aeb02">
       <segment>
         <source>Old address</source>
@@ -2651,6 +2729,18 @@
       <segment>
         <source>Older versions</source>
         <target>Versiones anteriores</target>
+      </segment>
+    </unit>
+    <unit id="130011756125313c">
+      <segment>
+        <source>On</source>
+        <target>Activada</target>
+      </segment>
+    </unit>
+    <unit id="a209774b23c5a7d2">
+      <segment>
+        <source>On, set by your organisation</source>
+        <target>Activada, lo ha decidido tu organización</target>
       </segment>
     </unit>
     <unit id="aa65b02fe490ea39">
@@ -3811,6 +3901,12 @@
         <target>Estado</target>
       </segment>
     </unit>
+    <unit id="755c8b2a9fb11446">
+      <segment>
+        <source>Status:</source>
+        <target>Estado:</target>
+      </segment>
+    </unit>
     <unit id="dc961a2e2d05d2c2">
       <segment>
         <source>Stay signed in and go to the home page</source>
@@ -4687,6 +4783,12 @@
         <target>No hay invitaciones abiertas.</target>
       </segment>
     </unit>
+    <unit id="d0a569f34e8c3f7d">
+      <segment>
+        <source>There are no optional features to turn on or off. Features installed later are listed here.</source>
+        <target>No hay funciones opcionales que activar o desactivar. Las que se instalen más adelante aparecerán aquí.</target>
+      </segment>
+    </unit>
     <unit id="df8a1676f61cc666">
       <segment>
         <source>There are no pages yet.</source>
@@ -4727,6 +4829,12 @@
       <segment>
         <source>There is no block type "{type}" on this site. Remove the block or turn on the module that adds it.</source>
         <target>No hay ningún tipo de bloque "{type}" en este sitio. Quita el bloque o activa el módulo que lo añade.</target>
+      </segment>
+    </unit>
+    <unit id="abcc061706d883df">
+      <segment>
+        <source>There is no optional feature “{id}”.</source>
+        <target>No existe ninguna función opcional «{id}».</target>
       </segment>
     </unit>
     <unit id="3a2c5136716d5cdb">
@@ -5057,6 +5165,48 @@
       <segment>
         <source>Try again in {minutes} minutes.</source>
         <target>Inténtalo de nuevo dentro de {minutes} minutos.</target>
+      </segment>
+    </unit>
+    <unit id="4a828c6e9972981c">
+      <segment>
+        <source>Turn off {name}</source>
+        <target>Desactivar {name}</target>
+      </segment>
+    </unit>
+    <unit id="9ec8ca6f35a92d51">
+      <segment>
+        <source>Turn off {name} before you delete its data.</source>
+        <target>Desactiva {name} antes de eliminar sus datos.</target>
+      </segment>
+    </unit>
+    <unit id="855e3180196a5084">
+      <segment>
+        <source>Turn off {name}?</source>
+        <target>¿Desactivar {name}?</target>
+      </segment>
+    </unit>
+    <unit id="3eca6f78ebc714da">
+      <segment>
+        <source>Turn on {name}</source>
+        <target>Activar {name}</target>
+      </segment>
+    </unit>
+    <unit id="343703c9ce238b71">
+      <segment>
+        <source>Turn the site’s optional features on and off, and delete their data.</source>
+        <target>Activar y desactivar las funciones opcionales del sitio y eliminar sus datos.</target>
+      </segment>
+    </unit>
+    <unit id="ac99f7b8c6a0c806">
+      <segment>
+        <source>Turn the site’s optional features on or off. Turning one off hides everything it adds, on the site and in the admin panel, and keeps its data, so turning it on again brings it back.</source>
+        <target>Activa o desactiva las funciones opcionales del sitio. Desactivar una oculta todo lo que añade, en el sitio y en el panel de administración, y conserva sus datos, así que al volver a activarla vuelve tal como estaba.</target>
+      </segment>
+    </unit>
+    <unit id="72392f24d7f0c64b">
+      <segment>
+        <source>Turning it on again later starts afresh, with no data.</source>
+        <target>Si la vuelves a activar más adelante, empieza de cero, sin datos.</target>
       </segment>
     </unit>
     <unit id="baaddf70fb5d432b">
@@ -5497,6 +5647,12 @@
         <target>Cuando una página se mueve o cambia de dirección, la dirección antigua lleva a la nueva, así que los enlaces y los marcadores siguen funcionando. Cuando una página se elimina para siempre, su dirección antigua indica a los visitantes que ya no existe.</target>
       </segment>
     </unit>
+    <unit id="f7f2b2d1d0bc41a3">
+      <segment>
+        <source>When it is off:</source>
+        <target>Cuando está desactivada:</target>
+      </segment>
+    </unit>
     <unit id="acf02ada6cba251b">
       <segment state="initial">
         <source>When this is off, only people you invite can join. When it is on, the sign-in page has a “Create an account” link, and people confirm their email address with a code before they can sign in.</source>
@@ -5807,6 +5963,12 @@
       <segment>
         <source>Your name</source>
         <target>Tu nombre</target>
+      </segment>
+    </unit>
+    <unit id="29bc2ec9acdfc86a">
+      <segment>
+        <source>Your organisation chose this for every site, so it can’t be changed here.</source>
+        <target>Tu organización lo ha elegido para todos los sitios, así que no se puede cambiar aquí.</target>
       </segment>
     </unit>
     <unit id="c4f7329ffbd542ee">
@@ -6205,6 +6367,12 @@
         <target>{locale} es ahora el idioma principal. Sus páginas tienen direcciones sin la parte del idioma.</target>
       </segment>
     </unit>
+    <unit id="fc9c8ae2c85be5e3">
+      <segment>
+        <source>{modules} needs it: turn that off first to turn this off.</source>
+        <target>{modules} la necesita: desactívala primero para desactivar esta.</target>
+      </segment>
+    </unit>
     <unit id="4e77984ccffff99d">
       <segment>
         <source>{name} ({code})</source>
@@ -6241,10 +6409,40 @@
         <target>Se ha subido {name}. Descríbelo abajo, para que todo el mundo pueda entenderlo.</target>
       </segment>
     </unit>
+    <unit id="426caf70848039ca">
+      <segment>
+        <source>{name} has no data to delete.</source>
+        <target>{name} no tiene datos que eliminar.</target>
+      </segment>
+    </unit>
     <unit id="1ca6e358d78e465e">
       <segment>
         <source>{name} is already in the library, so it wasn’t added again. Here it is.</source>
         <target>{name} ya está en la biblioteca, así que no se ha vuelto a añadir. Aquí está.</target>
+      </segment>
+    </unit>
+    <unit id="56c04276fde4878e">
+      <segment>
+        <source>{name} is off. Its data is kept: turn it on again to bring it back.</source>
+        <target>{name} está desactivada. Sus datos se conservan: vuelve a activarla para recuperarla.</target>
+      </segment>
+    </unit>
+    <unit id="da4dc353b2f6dc8f">
+      <segment>
+        <source>{name} is on.</source>
+        <target>{name} está activada.</target>
+      </segment>
+    </unit>
+    <unit id="066bdaa8793d50ae">
+      <segment>
+        <source>{name} is set by your organisation, so it can’t be changed for this site.</source>
+        <target>{name} la decide tu organización, así que no se puede cambiar para este sitio.</target>
+      </segment>
+    </unit>
+    <unit id="c90811603d702279">
+      <segment>
+        <source>{name} needs {required}, which is off. Turn on {required} first.</source>
+        <target>{name} necesita {required}, que está desactivada. Activa {required} primero.</target>
       </segment>
     </unit>
     <unit id="2fd65f207c10d95e">
@@ -6271,10 +6469,28 @@
         <target>{name} se ha registrado pero aún no ha escrito el código que le enviamos por correo, así que no puede iniciar sesión. Si no lo hace, la cuenta se borra una semana después del registro.</target>
       </segment>
     </unit>
+    <unit id="e643b2e9ec533969">
+      <segment>
+        <source>{name} was already off.</source>
+        <target>{name} ya estaba desactivada.</target>
+      </segment>
+    </unit>
+    <unit id="29b77acedb5b86d1">
+      <segment>
+        <source>{name} was already on.</source>
+        <target>{name} ya estaba activada.</target>
+      </segment>
+    </unit>
     <unit id="c9acb770441c8e6d">
       <segment>
         <source>{name} won’t be able to sign in, and is signed out straight away. Their pages stay. You can reactivate the account later.</source>
         <target>{name} no podrá iniciar sesión y se cerrará su sesión enseguida. Sus páginas se quedan. Puedes reactivar la cuenta más tarde.</target>
+      </segment>
+    </unit>
+    <unit id="58c83f3da7c2d08d">
+      <segment>
+        <source>{needer} needs {name}, so {name} can’t be turned off while {needer} is on. Turn off {needer} first.</source>
+        <target>{needer} necesita {name}, así que {name} no se puede desactivar mientras {needer} esté activada. Desactiva {needer} primero.</target>
       </segment>
     </unit>
     <unit id="026619bd5685dbd1">
@@ -6341,6 +6557,24 @@
       <segment>
         <source>“Translate” copies the page’s text and blocks into a new draft translation, for you to translate. The page in the other language doesn’t change. A new translation stays a draft until it is published on its own.</source>
         <target>«Traducir» copia el texto y los bloques de la página en una nueva traducción en borrador, para que la traduzcas. La página en el otro idioma no cambia. Una traducción nueva sigue siendo un borrador hasta que se publica por sí misma.</target>
+      </segment>
+    </unit>
+    <unit id="f9a7925449efef54">
+      <segment>
+        <source>“{id}” is not an optional module. Choose from: {modules}.</source>
+        <target>«{id}» no es un módulo opcional. Elige entre: {modules}.</target>
+      </segment>
+    </unit>
+    <unit id="fbb4d4c61d86a14d">
+      <segment>
+        <source>“{id}” is not an optional module. This install has none: every module is always on.</source>
+        <target>«{id}» no es un módulo opcional. Esta instalación no tiene ninguno: todos los módulos están siempre activos.</target>
+      </segment>
+    </unit>
+    <unit id="84da3b0ff4e57f2b">
+      <segment>
+        <source>“{id}” is set by your organisation to be on for every site.</source>
+        <target>«{id}» lo ha decidido tu organización: está activado en todos los sitios.</target>
       </segment>
     </unit>
     <unit id="36d747060c7fe568">

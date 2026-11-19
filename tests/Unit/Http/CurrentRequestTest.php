@@ -30,6 +30,16 @@ final class CurrentRequestTest extends TestCase
         $current->get();
     }
 
+    public function testFindsTheRequestOrNullOutsideOne(): void
+    {
+        $current = new CurrentRequest();
+        self::assertNull($current->find());
+
+        $request = new ServerRequest('GET', '/one');
+        $current->swap($request);
+        self::assertSame($request, $current->find());
+    }
+
     public function testPermissionsComeFromTheRequestAndAnonymousHoldsNone(): void
     {
         $request = new ServerRequest('GET', '/');

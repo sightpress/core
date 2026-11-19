@@ -19,7 +19,16 @@ final readonly class LoadedModule
         public ModuleInterface $module,
         public ModuleManifest $manifest,
         public string $source,
+        public ?ModuleAbout $about = null,
     ) {
+    }
+
+    /**
+     * The module's name for people: from {@see ModuleAbout}, otherwise its id.
+     */
+    public function name(): string
+    {
+        return $this->about->name ?? $this->manifest->id;
     }
 
     /**

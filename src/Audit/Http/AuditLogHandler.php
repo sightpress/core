@@ -43,6 +43,7 @@ final readonly class AuditLogHandler implements RequestHandlerInterface
         'menu' => 'Menus',
         'user' => 'People',
         'settings' => 'Site settings',
+        'feature' => 'Features',
     ];
 
     public function __construct(

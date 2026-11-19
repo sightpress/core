@@ -31,6 +31,7 @@ use SightPress\Core\Module\ComposerModuleDiscovery;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleCandidate;
 use SightPress\Core\Module\ModuleLoader;
+use SightPress\Core\Module\ModulePolicy;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\Module\ModuleServices;
@@ -74,22 +75,24 @@ final readonly class Kernel
 
     /**
      * @param list<ModuleCandidate>|null $modules   null discovers core's modules and those installed with Composer
-     * @param ModuleSelection            $selection which optional modules are on
+     * @param ModuleSelection|null       $selection which modules the tenant registers; null registers every installed
+     *                                              module except those `modules.locked` turns off, and each site then
+     *                                              turns its optional modules on or off (ADR-0034)
      */
     public static function fromConfig(
         TenantConfig $config,
         ?array $modules = null,
-        ModuleSelection $selection = new ModuleSelection(),
+        ?ModuleSelection $selection = null,
     ): self {
         $modules ??= [
             ...CoreModules::candidates(),
             ...ComposerModuleDiscovery::forProject($config->projectDir)->candidates(),
         ];
-        $registry = ModuleRegistry::register(
-            new ModuleLoader(self::contractVersion())->catalogue($modules)->resolve($selection),
-        );
+        $catalogue = new ModuleLoader(self::contractVersion())->catalogue($modules);
+        $policy = ModulePolicy::fromConfig($catalogue, $config);
+        $registry = ModuleRegistry::register($catalogue->resolve($selection ?? $policy->tenantSelection()));
 
-        $core = CoreServices::definitions($config, $registry);
+        $core = CoreServices::definitions($config, $registry, $policy);
         $container = new ContainerBuilder()
             ->useAutowiring(true)
             ->useAttributes(false)
@@ -114,7 +117,7 @@ final readonly class Kernel
         $app->add(NoSiteConfiguredMiddleware::class);
         $app->add(ErrorHandlingMiddleware::class);
         $app->add(SecurityHeadersMiddleware::class);
-        new RouteInstaller($container)->install($app, $registry);
+        new RouteInstaller($container, $policy)->install($app, $registry);
 
         return new self($config, $container, $app, $registry);
     }

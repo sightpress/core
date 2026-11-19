@@ -45,6 +45,7 @@ use Twig\Error\RuntimeError;
 #[UsesClass(Translations::class)]
 #[UsesClass(Viewer::class)]
 #[UsesClass(TextDirection::class)]
+#[UsesClass(\SightPress\Core\Infrastructure\Container\Services::class)]
 #[UsesNamespace('SightPress\Core\Module')]
 #[UsesNamespace('SightPress\Core\Template')]
 #[UsesNamespace('SightPress\Core\Tenant')]
@@ -76,6 +77,7 @@ final class TemplatingTest extends TestCase
             {{ when|user_date }} / {{ when|user_datetime('short') }}
             <html lang="{{ current_locale() }}" dir="{{ text_direction(current_locale()) }}"> {{ text_direction('ar') }}
             [{{ t(none) }}{{ t('') }}] {{ current_path() }}
+            modules: {{ module_enabled('acme') ? 'acme' : 'no acme' }} {{ module_enabled('acme.other') ? 'other' : 'no other' }}
             {% macro nonce() %}{{ csp_nonce() }}{% endmacro %}{{ _self.nonce() }}
             TWIG);
 
@@ -118,6 +120,23 @@ final class TemplatingTest extends TestCase
         self::assertStringContainsString('<html lang="en-GB" dir="ltr"> rtl', $html);
         self::assertStringContainsString('[] /admin/pages?state=draft', $html, 'nothing to translate is nothing');
         self::assertStringEndsWith('abc+/=', trim($html), 'csp_nonce() works inside macros');
+        self::assertStringContainsString('modules: acme no other', $html);
+    }
+
+    public function testModuleEnabledFollowsTheSiteOfTheRequest(): void
+    {
+        $site = new \SightPress\Core\Tests\Support\ArrayContainer([ModuleRegistry::class => ModuleRegistry::register([])]);
+        $request = $this->request->withAttribute(\SightPress\Core\Tenant\SiteContext::class, new \SightPress\Core\Tenant\SiteContext(\SightPress\Core\Tests\Support\SiteFixture::site(), $site));
+        $html = $this->renderer(withFunctions: true)->render($request, 'functions.twig', [
+            'title' => 't',
+            'name' => 'n',
+            'when' => new DateTimeImmutable('2026-07-01 23:30:00 UTC'),
+            'none' => null,
+        ]);
+        self::assertStringContainsString('modules: no acme no other', $html, 'acme is off for this site');
+
+        $extension = new TemplateExtension(new CurrentRequest(), new AssetUrls('/assets/', '1'), Translations::fromDirectories([]), new DateFormatter(), new Viewer('en-GB', 'UTC'));
+        self::assertFalse($extension->moduleEnabled('acme'), 'outside a request and without the modules, nothing is on');
     }
 
     public function testAnonymousVisitorsGetTheDefaults(): void
@@ -178,6 +197,7 @@ final class TemplatingTest extends TestCase
             Translations::fromDirectories([]),
             new DateFormatter(),
             new Viewer('en-GB', 'UTC'),
+            $registry,
         );
         $paths = $withFunctions
             ? new TemplatePaths([], $d)

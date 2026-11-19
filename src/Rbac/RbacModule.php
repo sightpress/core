@@ -11,6 +11,7 @@ use SightPress\Core\Rbac\Contract\RoleGrants;
 use SightPress\Core\Rbac\Contract\SignUpRoles;
 use SightPress\Core\Rbac\Provisioning\SeedRoles;
 use SightPress\Core\Site\Contract\SiteProvisioning;
+use SightPress\Core\Tenant\SiteModuleChanged;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
@@ -49,6 +50,8 @@ final class RbacModule implements ModuleInterface
         $registrar->services()->autowire(RoleGrantPolicy::class, RoleGrants::class, public: true);
         $registrar->services()->autowire(RbacSeeder::class, public: true);
         $registrar->subscribers()->listen(SiteProvisioning::class, SeedRoles::class, SiteProvisioning::ROLES);
+        $registrar->services()->autowire(SeedOnModuleEnabled::class);
+        $registrar->subscribers()->listen(SiteModuleChanged::class, SeedOnModuleEnabled::class);
         $registrar->services()->factory(
             Authorizer::class,
             static fn (): Authorizer => new VoterAuthorizer([new PageVoter()]),

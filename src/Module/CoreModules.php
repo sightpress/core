@@ -10,6 +10,7 @@ use SightPress\Core\Auth\AuthModule;
 use SightPress\Core\Block\BlockModule;
 use SightPress\Core\Branding\BrandingModule;
 use SightPress\Core\Contact\ContactModule;
+use SightPress\Core\Feature\FeatureModule;
 use SightPress\Core\Media\Admin\MediaAdminModule;
 use SightPress\Core\Media\MediaModule;
 use SightPress\Core\Menu\MenuModule;
@@ -50,6 +51,7 @@ final class CoreModules
             new ModuleCandidate(new MenuModule(), 'sightpress/core'),
             new ModuleCandidate(new BrandingModule(), 'sightpress/core'),
             new ModuleCandidate(new SeoModule(), 'sightpress/core'),
+            new ModuleCandidate(new FeatureModule(), 'sightpress/core'),
             new ModuleCandidate(new AuditModule(), 'sightpress/core'),
         ];
     }

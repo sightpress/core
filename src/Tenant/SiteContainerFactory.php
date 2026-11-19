@@ -24,7 +24,11 @@ use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Database\DatabaseDsn;
 use SightPress\Core\Infrastructure\Event\EventDispatcher;
 use SightPress\Core\Infrastructure\Event\ListenerProvider;
+use SightPress\Core\Module\ModulePolicy;
 use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Core\Module\SiteModuleStore;
+use SightPress\Core\Navigation\AdminNavigation;
+use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
@@ -55,6 +59,7 @@ final class SiteContainerFactory
         FilesystemOperator::class,
         ListenerProviderInterface::class,
         EventDispatcherInterface::class,
+        SiteModuleStore::class,
     ];
 
 
@@ -65,6 +70,8 @@ final class SiteContainerFactory
      * @param list<string>         $entityPaths    folders with entity classes (attribute mapping)
      * @param array<string, mixed> $moduleServices PHP-DI definitions of the services modules registered; each site
      *                                             gets its own instances, built against its own database
+     * @param ModuleRegistry|null  $modules        what every module the tenant loaded registered; with $policy, each
+     *                                             site gets only what its modules that are on registered (ADR-0034)
      */
     public function __construct(
         private readonly ContainerInterface $tenant,
@@ -72,6 +79,8 @@ final class SiteContainerFactory
         private readonly TenantConfig $config,
         private readonly array $entityPaths = [],
         private readonly array $moduleServices = [],
+        private readonly ?ModuleRegistry $modules = null,
+        private readonly ?ModulePolicy $policy = null,
     ) {
     }
 
@@ -112,6 +121,7 @@ final class SiteContainerFactory
 
         return [
             ...$this->moduleServices,
+            ...$this->moduleDefinitions(),
             // The name, default language and time zone the site's admins chose win over the registry. A site whose
             // database isn't ready yet (while it is being created) keeps the registry's values.
             Site::class => factory(static function (ContainerInterface $container) use ($site): Site {
@@ -152,6 +162,37 @@ final class SiteContainerFactory
             )),
             EventDispatcherInterface::class => factory(static fn (ContainerInterface $container): EventDispatcherInterface => new EventDispatcher(
                 Services::get($container, ListenerProviderInterface::class),
+            )),
+        ];
+    }
+
+    /**
+     * The site's own view of the modules (ADR-0034): what its modules that are on registered, read from its
+     * `site_module` choices when the container first needs it, and the admin navigation and settings built from
+     * that, so listeners, routes, menu entries and settings of modules that are off are left out.
+     *
+     * @return array<string, mixed>
+     */
+    private function moduleDefinitions(): array
+    {
+        $modules = $this->modules;
+        $policy = $this->policy;
+        if ($modules === null || $policy === null) {
+            return [];
+        }
+
+        return [
+            SiteModuleStore::class => factory(static fn (ContainerInterface $container): SiteModuleStore => new SiteModuleStore(
+                Services::get($container, Connection::class),
+            )),
+            ModuleRegistry::class => factory(static fn (ContainerInterface $container): ModuleRegistry => $modules->only(
+                $policy->onIds($policy->selection(Services::get($container, SiteModuleStore::class)->choices())),
+            )),
+            AdminNavigation::class => factory(static fn (ContainerInterface $container): AdminNavigation => AdminNavigation::fromRegistry(
+                Services::get($container, ModuleRegistry::class),
+            )),
+            SettingCatalogue::class => factory(static fn (ContainerInterface $container): SettingCatalogue => SettingCatalogue::fromRegistry(
+                Services::get($container, ModuleRegistry::class),
             )),
         ];
     }

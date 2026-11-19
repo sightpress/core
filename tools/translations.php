@@ -46,7 +46,7 @@ const TEXT_ARGUMENTS = [
     'Message' => [0, 'text'],
     'PageException' => [0], 'MediaException' => [0], 'MenuException' => [0], 'UserException' => [0],
     'BrandingException' => [0], 'WorkflowException' => [0], 'SiteLanguageException' => [0], 'BlockException' => [0],
-    'AccountException' => [0], 'AvatarException' => [0],
+    'AccountException' => [0], 'AvatarException' => [0], 'SiteModuleException' => [0],
     'ErrorPage' => [1, 2, 'title', 'paragraphs', 'links'],
     'RoleChoice' => [2, 'description'],
     'OperationResult' => [1, 'message'],

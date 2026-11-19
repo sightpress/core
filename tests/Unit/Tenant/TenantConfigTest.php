@@ -156,6 +156,26 @@ final class TenantConfigTest extends TestCase
             '/srv',
             'Tenant setting "timezone" is not valid ("Mars/Olympus")',
         ];
+        yield 'module switch' => [
+            ['modules' => ['locked' => ['acme.events' => 'on']]],
+            [],
+            '/srv',
+            'Tenant setting "modules.locked" must list module ids, each set to true (on) or false (off)',
+        ];
+        yield 'module list' => [
+            ['modules' => ['defaults' => [true]]],
+            [],
+            '/srv',
+            'Tenant setting "modules.defaults" must list module ids',
+        ];
+    }
+
+    public function testReadsTheModuleDefaultsAndLocks(): void
+    {
+        $config = TenantConfig::fromArray(['modules' => ['defaults' => ['acme.events' => false], 'locked' => ['analytics' => true]]], '/srv');
+
+        self::assertSame([['acme.events' => false], ['analytics' => true]], [$config->moduleDefaults, $config->moduleLocks]);
+        self::assertSame([[], []], [TenantConfig::fromArray([], '/srv')->moduleDefaults, TenantConfig::fromArray([], '/srv')->moduleLocks]);
     }
 
     /**

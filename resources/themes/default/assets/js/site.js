@@ -1,8 +1,15 @@
 // SightPress default theme. Pages work without this script; it only adds to them:
 // - submenus of the main menu become disclosure buttons (without the script every level is shown);
-// - invoker buttons (`commandfor` / `command="show-modal"` and `"close"` on a <dialog>) for browsers without them.
+// - invoker buttons (`commandfor` / `command="show-modal"` and `"close"` on a <dialog>) for browsers without them;
+// - a screen that comes back at a heading after a change (`/admin/features#feature-…`) moves focus to it, so screen
+//   readers start there (without the script the page still scrolls to it and Tab continues from it).
 (() => {
   'use strict';
+
+  const target = window.location.hash.length > 1 ? document.getElementById(decodeURIComponent(window.location.hash.slice(1))) : null;
+  if (target instanceof HTMLElement && /^H[1-6]$/.test(target.tagName) && target.getAttribute('tabindex') === '-1') {
+    target.focus();
+  }
 
   // Main menu: a button after each link that has a submenu shows and hides it. Its name says what it controls
   // ("Show the pages under About"); `aria-expanded` says whether it is open. Escape closes the submenu that has

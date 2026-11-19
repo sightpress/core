@@ -22,6 +22,7 @@ use SightPress\Core\Tests\Support\SiteFixture;
 
 #[CoversClass(SiteScopedHandler::class)]
 #[CoversClass(SiteScopedMiddleware::class)]
+#[CoversClass(\SightPress\Core\Http\ModuleGate::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
 #[UsesNamespace('SightPress\Core\Infrastructure')]
 final class SiteScopedRoutingTest extends TestCase

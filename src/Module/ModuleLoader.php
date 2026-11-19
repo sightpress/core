@@ -83,6 +83,6 @@ final readonly class ModuleLoader
             }
         }
 
-        return new LoadedModule($candidate->module, $manifest, $candidate->source);
+        return new LoadedModule($candidate->module, $manifest, $candidate->source, $candidate->about[$manifest->id] ?? null);
     }
 }

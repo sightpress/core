@@ -21,6 +21,7 @@ use stdClass;
 #[CoversClass(ComposerModuleDiscovery::class)]
 #[CoversClass(CoreModules::class)]
 #[UsesClass(ModuleCandidate::class)]
+#[UsesClass(\SightPress\Core\Module\ModuleAbout::class)]
 #[UsesClass(\SightPress\Core\Site\SiteModule::class)]
 #[UsesClass(\SightPress\Core\User\UserModule::class)]
 #[UsesClass(\SightPress\Core\Rbac\RbacModule::class)]
@@ -38,6 +39,7 @@ use stdClass;
 #[UsesClass(\SightPress\Core\Media\Admin\MediaAdminModule::class)]
 #[UsesClass(\SightPress\Core\Page\Admin\PageAdminModule::class)]
 #[UsesClass(\SightPress\Core\Audit\AuditModule::class)]
+#[UsesClass(\SightPress\Core\Feature\FeatureModule::class)]
 final class ComposerModuleDiscoveryTest extends TestCase
 {
     private TemporaryDirectory $project;
@@ -56,7 +58,7 @@ final class ComposerModuleDiscoveryTest extends TestCase
     {
         $candidates = CoreModules::candidates();
 
-        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'audit'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'audit'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
         self::assertSame('sightpress/core', $candidates[0]->source);
         foreach (CoreModules::entityPaths() as $path) {
             self::assertDirectoryExists($path);
@@ -82,7 +84,10 @@ final class ComposerModuleDiscoveryTest extends TestCase
             [
                 'name' => 'acme/more',
                 'require' => ['sightpress/module-interface' => '^0.2 || ^1.0'],
-                'extra' => ['sightpress' => ['module' => [ExampleModule::class, ExampleModule::class]]],
+                'extra' => ['sightpress' => [
+                    'module' => [ExampleModule::class, ExampleModule::class],
+                    'features' => ['acme.example' => ['name' => 'Example', 'description' => 'Shows an example.'], 'acme.bad' => 'text', 7 => []],
+                ]],
             ],
             ['name' => 'acme/other', 'extra' => ['branch-alias' => []]],
         ]);
@@ -95,6 +100,9 @@ final class ComposerModuleDiscoveryTest extends TestCase
         self::assertSame('^0.2', $candidates[0]->contractConstraint);
         self::assertSame('acme/more', $candidates[2]->source);
         self::assertSame('^0.2 || ^1.0', $candidates[2]->contractConstraint);
+        self::assertSame([], $candidates[0]->about);
+        self::assertSame(['acme.example'], array_keys($candidates[2]->about));
+        self::assertSame(['Example', 'Shows an example.'], [$candidates[2]->about['acme.example']->name, $candidates[2]->about['acme.example']->description]);
     }
 
     public function testAnUnreadableFileSaysToReinstall(): void

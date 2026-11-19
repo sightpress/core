@@ -105,6 +105,9 @@ final class AuditRecorderTest extends TestCase
             new \SightPress\Core\Auth\Contract\AccountRegistered($user, 'member'),
             new \SightPress\Core\Auth\Contract\AccountRegistered($user, 'member', 'editor'),
             new SettingsChanged(['people.registration', 'rbac.registration_role', 'site.visibility'], 1),
+            new \SightPress\Core\Tenant\SiteModuleChanged('acme.events', 'Events', \SightPress\Core\Tenant\SiteModuleChanged::ENABLED, 1),
+            new \SightPress\Core\Tenant\SiteModuleChanged('acme.events', 'Events', \SightPress\Core\Tenant\SiteModuleChanged::DISABLED, 1),
+            new \SightPress\Core\Tenant\SiteModuleChanged('acme.events', 'Events', \SightPress\Core\Tenant\SiteModuleChanged::DATA_DELETED, null),
             new \stdClass(),
         ] as $event) {
             $recorder($event);
@@ -152,6 +155,9 @@ final class AuditRecorderTest extends TestCase
             'Zoë signed up and confirmed their email address, with the “member” role.',
             'Zoë signed up and confirmed their email address. The sign-up role “editor” isn’t safe for people who sign up, so they got “member” instead.',
             'Changed the site settings: Let anyone create an account, Role of people who sign up, Who can read the site.',
+            'Turned on Events.',
+            'Turned off Events.',
+            'Deleted the data of Events.',
         ], array_map(static fn (AuditEntry $e): string => $e->summary, $entries));
         self::assertSame(['page.submit', 'page', (string) $page, 3, ['from' => 'draft', 'to' => 'in_review', 'comment' => 'Ready']], [$entries[3]->action, $entries[3]->entityType, $entries[3]->entityId, $entries[3]->actorId, $entries[3]->details]);
         self::assertSame(['settings', null], [$entries[20]->entityType, $entries[20]->entityId]);
@@ -164,6 +170,7 @@ final class AuditRecorderTest extends TestCase
         self::assertSame(['page.schedule_failed', null, ['transition' => 'unpublish', 'reason' => 'no permission']], [$entries[36]->action, $entries[36]->actorId, $entries[36]->details]);
         self::assertSame(['user.registered', 'user', (string) $user, $user, ['role' => 'member']], [$entries[37]->action, $entries[37]->entityType, $entries[37]->entityId, $entries[37]->actorId, $entries[37]->details]);
         self::assertSame(['role' => 'member', 'refused_role' => 'editor'], $entries[38]->details);
-        self::assertCount(19, AuditRecorder::EVENTS);
+        self::assertSame(['feature.data_deleted', 'feature', 'acme.events', null, ['module' => 'acme.events']], [$entries[42]->action, $entries[42]->entityType, $entries[42]->entityId, $entries[42]->actorId, $entries[42]->details]);
+        self::assertCount(20, AuditRecorder::EVENTS);
     }
 }

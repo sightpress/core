@@ -10,7 +10,8 @@ use SightPress\Module\ModuleInterface;
 
 /**
  * Finds external modules in the project's installed Composer packages: a package declares its module class(es) in
- * `extra.sightpress.module` (a class name or a list of them) and must require `sightpress/module-interface`.
+ * `extra.sightpress.module` (a class name or a list of them) and must require `sightpress/module-interface`. It may
+ * describe its optional modules for the *Features* screen in `extra.sightpress.features` ({@see ModuleAbout}).
  */
 final readonly class ComposerModuleDiscovery
 {
@@ -92,9 +93,17 @@ final readonly class ComposerModuleDiscovery
             ));
         }
 
+        $about = [];
+        $features = $sightpress['features'] ?? [];
+        foreach (is_array($features) ? $features : [] as $id => $entry) {
+            if (is_string($id) && is_array($entry)) {
+                $about[$id] = ModuleAbout::fromArray($entry, $id);
+            }
+        }
+
         $candidates = [];
         foreach ($classes as $class) {
-            $candidates[] = new ModuleCandidate($this->instantiate($class, $name), $name, $constraint);
+            $candidates[] = new ModuleCandidate($this->instantiate($class, $name), $name, $constraint, $about);
         }
 
         return $candidates;

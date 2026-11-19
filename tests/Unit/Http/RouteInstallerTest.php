@@ -31,6 +31,7 @@ use Slim\App;
 #[UsesClass(\SightPress\Core\Http\SiteScopedMiddleware::class)]
 #[UsesClass(\SightPress\Core\Infrastructure\Container\Services::class)]
 #[UsesClass(\SightPress\Core\Tenant\SiteContext::class)]
+#[UsesClass(\SightPress\Core\Http\ModuleGate::class)]
 final class RouteInstallerTest extends TestCase
 {
     public function testModuleRoutesAnswerThroughTheirMiddlewareInOrder(): void

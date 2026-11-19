@@ -9,6 +9,9 @@ use SightPress\Core\Http\Csrf\CsrfTokens;
 use SightPress\Core\Http\CurrentRequest;
 use SightPress\Core\Http\Security\CspNonce;
 use SightPress\Core\Http\Security\GrantedPermissions;
+use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Core\Tenant\SiteContext;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -24,6 +27,7 @@ use Twig\TwigFunction;
  * - `current_locale()`: the viewer's language, for example `en-GB`;
  * - `current_path()`: the path and query of the page being shown;
  * - `text_direction(locale)`: `rtl` for right-to-left scripts, otherwise `ltr`;
+ * - `module_enabled(id)`: whether a module is on for the site being shown (ADR-0034);
  * - `value|user_datetime(style)` and `value|user_date(style)`: a UTC date in the viewer's time zone and language.
  */
 final class TemplateExtension extends AbstractExtension
@@ -34,6 +38,7 @@ final class TemplateExtension extends AbstractExtension
         private readonly Translations $translations,
         private readonly DateFormatter $dates,
         private readonly Viewer $defaultViewer,
+        private readonly ?ModuleRegistry $modules = null,
     ) {
     }
 
@@ -48,6 +53,7 @@ final class TemplateExtension extends AbstractExtension
             new TwigFunction('current_locale', $this->currentLocale(...)),
             new TwigFunction('text_direction', TextDirection::of(...)),
             new TwigFunction('current_path', $this->currentPath(...)),
+            new TwigFunction('module_enabled', $this->moduleEnabled(...)),
         ];
     }
 
@@ -104,6 +110,20 @@ final class TemplateExtension extends AbstractExtension
         $uri = $this->request->get()->getUri();
 
         return $uri->getPath() . ($uri->getQuery() === '' ? '' : '?' . $uri->getQuery());
+    }
+
+    /**
+     * Whether a module is on for the site of the request being handled; without a site, whether the tenant loaded it.
+     */
+    public function moduleEnabled(string $module): bool
+    {
+        $request = $this->request->find();
+        $site = $request === null ? null : SiteContext::fromRequest($request);
+        if ($site !== null) {
+            return Services::get($site->container, ModuleRegistry::class)->has($module);
+        }
+
+        return $this->modules?->has($module) ?? false;
     }
 
     public function currentLocale(): string

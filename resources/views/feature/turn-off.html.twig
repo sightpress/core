@@ -1,0 +1,26 @@
+{#
+    Confirms turning a feature off (/admin/features/turn-off): what that does and that its data is kept, then
+    "Turn off …" and "Keep … on".
+    Context: `feature` (FeatureState), `action`, `cancel`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Turn off {name}?', {name: feature.name}) }}{% endblock %}
+{% block content %}
+<h1>{{ t('Turn off {name}?', {name: feature.name}) }}</h1>
+<ul>
+    {%- if feature.whenOff %}
+    <li>{{ feature.whenOff }}</li>
+    {%- endif %}
+    <li>{{ t('Everything it adds disappears from the site and the admin panel: its pages answer “not found”.') }}</li>
+    <li>{{ t('Its data is kept. Turn it on again to bring it back as it was.') }}</li>
+</ul>
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <input type="hidden" name="module" value="{{ feature.id }}">
+    <input type="hidden" name="confirm" value="1">
+    <div class="page-editor__workflow">
+        <button type="submit" class="button button--danger">{{ t('Turn off {name}', {name: feature.name}) }}</button>
+        <a href="{{ cancel }}">{{ t('Keep {name} on', {name: feature.name}) }}</a>
+    </div>
+</form>
+{% endblock %}

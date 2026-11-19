@@ -21,6 +21,14 @@ final class CurrentRequest
     }
 
     /**
+     * The request being handled, or null outside a request (for example an email sent from the command line).
+     */
+    public function find(): ?ServerRequestInterface
+    {
+        return $this->request;
+    }
+
+    /**
      * Sets the current request and returns the one it replaces.
      */
     public function swap(?ServerRequestInterface $request): ?ServerRequestInterface

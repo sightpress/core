@@ -16,11 +16,13 @@ final readonly class ModuleCandidate
      *                                                  name, used in error messages
      * @param non-empty-string|null $contractConstraint the package's constraint on `sightpress/module-interface`;
      *                                                  null for core's own modules
+     * @param array<string, ModuleAbout> $about by module id: what the *Features* screen says about it
      */
     public function __construct(
         public ModuleInterface $module,
         public string $source,
         public ?string $contractConstraint = null,
+        public array $about = [],
     ) {
     }
 }

@@ -12,6 +12,7 @@ use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Database\DatabaseDsn;
 use SightPress\Core\Infrastructure\Database\DatabaseDsnException;
 use SightPress\Core\Infrastructure\Database\DatabaseProvisioner;
+use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Logging\LoggerFactory;
 use SightPress\Core\Site\Contract\FirstAdmin;
 use SightPress\Core\Site\Contract\SiteProvisioning;
@@ -19,7 +20,8 @@ use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\OwnerType;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
-use SightPress\Core\Tenant\SiteMigrator;
+use SightPress\Core\Tenant\SiteModuleException;
+use SightPress\Core\Tenant\SiteModules;
 use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Tenant\SiteStatus;
 use SightPress\Core\Tenant\SiteStorage;
@@ -33,7 +35,7 @@ use Throwable;
 
 /**
  * `site:create <slug>`: asks for what is missing (the database piece by piece), checks everything it was given, gets the database ready (creating it with `--create-db`),
- * runs the migrations, lets every module set the site up ({@see SiteProvisioning}: first admin, roles, setup
+ * runs the migrations of the modules that are on for it (all optional ones but those `--without` names), lets every module set the site up ({@see SiteProvisioning}: first admin, roles, setup
  * code, and later starter pages and branding), and only then adds the site to the registry, enabled. A database
  * address is never printed with its user name or password.
  */
@@ -43,12 +45,11 @@ final readonly class CreateSiteCommand implements Command
         private SiteRepository $sites,
         private SecretBox $secretBox,
         private DatabaseProvisioner $databases,
-        private SiteMigrator $migrator,
         private SiteContainerFactory $containers,
-        private EventDispatcherInterface $events,
         private ClockInterface $clock,
         private TenantConfig $config,
         private LoggerFactory $loggers,
+        private SiteModules $modules,
     ) {
     }
 
@@ -143,6 +144,13 @@ final readonly class CreateSiteCommand implements Command
             new CommandParameter('admin-first-name', 'First name of the first admin:', $option, true, label: 'First admin\'s first name'),
             new CommandParameter('admin-last-name', 'Last name of the first admin:', $option, true, label: 'First admin\'s last name'),
             new CommandParameter(
+                'without',
+                'Optional modules (features) the site starts with off, separated by commas, for example analytics. Its admins can turn them on later.',
+                $option,
+                label: 'Features left off',
+                normalise: $this->without(...),
+            ),
+            new CommandParameter(
                 'with-demo-content',
                 'Add demo content for trying SightPress out? That is a page with every kind of block, its media files and an account for each role.',
                 CommandParameterType::Flag,
@@ -173,11 +181,13 @@ final readonly class CreateSiteCommand implements Command
         }
 
         try {
-            $versions = $this->migrator->migrate($site);
+            $versions = $this->modules->start($site, self::leftOff($input->option('without')));
             $output->line(sprintf('Ran %s.', self::migrations(count($versions))));
 
-            $provisioning = new SiteProvisioning($site, $this->containers->forSite($site), $admin, $url, $input->flag('with-demo-content'));
-            $this->events->dispatch($provisioning);
+            // The site's own dispatcher: modules that are off for it don't set it up.
+            $services = $this->containers->forSite($site);
+            $provisioning = new SiteProvisioning($site, $services, $admin, $url, $input->flag('with-demo-content'));
+            Services::get($services, EventDispatcherInterface::class)->dispatch($provisioning);
             $this->sites->save($site);
         } catch (Throwable $exception) {
             $output->error(sprintf(
@@ -328,6 +338,29 @@ final readonly class CreateSiteCommand implements Command
         }
 
         return $email;
+    }
+
+    /**
+     * Module ids joined by ", ": each one must be an optional module the tenant didn't lock on.
+     */
+    private function without(string $value): string
+    {
+        $ids = self::leftOff(mb_strtolower($value));
+        try {
+            $this->modules->checkLeftOff($ids);
+        } catch (SiteModuleException $exception) {
+            throw new InvalidArgumentException($exception->getMessage(), previous: $exception);
+        }
+
+        return implode(', ', $ids);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function leftOff(?string $without): array
+    {
+        return array_values(array_unique(array_filter(array_map(trim(...), explode(',', $without ?? '')), static fn (string $id): bool => $id !== '')));
     }
 
     private static function migrations(int $count): string

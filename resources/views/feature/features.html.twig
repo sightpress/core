@@ -1,0 +1,54 @@
+{#
+    The site's optional features (/admin/features, ADR-0034): each one is a section under its own <h2> (the id
+    `anchor`, focused after a change, so the screen comes back where the person was), with what it does, its status
+    in words, what turning it off does, and one button in its own form: "Turn on …" (posts here) or "Turn off …"
+    (posts to the confirmation page). A feature the organisation set has no button; an off feature with data has a
+    link to delete it.
+    Context: `features` [{feature: FeatureState, anchor, has_data}], `action`, `turn_off`, `delete_data`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Features') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Features') }}</h1>
+<p>{{ t('Turn the site’s optional features on or off. Turning one off hides everything it adds, on the site and in the admin panel, and keeps its data, so turning it on again brings it back.') }}</p>
+{%- for item in features %}
+{%- set feature = item.feature %}
+<section class="admin-panel feature" aria-labelledby="{{ item.anchor }}">
+    <h2 id="{{ item.anchor }}" tabindex="-1">{{ feature.name }}</h2>
+    {%- if feature.description %}
+    <p>{{ feature.description }}</p>
+    {%- endif %}
+    <p class="feature__status"><strong>{{ t('Status:') }}</strong>
+        {% if feature.locked %}{{ feature.on ? t('On, set by your organisation') : t('Off, set by your organisation') }}{% else %}{{ feature.on ? t('On') : t('Off') }}{% endif %}</p>
+    {%- if feature.whenOff %}
+    <p><strong>{{ t('When it is off:') }}</strong> {{ feature.whenOff }}</p>
+    {%- endif %}
+    {%- if feature.requires is not empty %}
+    <p>{{ t('Needs: {modules}.', {modules: feature.requires|join(', ')}) }}</p>
+    {%- endif %}
+    {%- if feature.locked %}
+    <p>{{ t('Your organisation chose this for every site, so it can’t be changed here.') }}</p>
+    {%- elseif feature.on %}
+    {%- if feature.neededBy is not empty %}
+    <p>{{ t('{modules} needs it: turn that off first to turn this off.', {modules: feature.neededBy|join(', ')}) }}</p>
+    {%- else %}
+    <form action="{{ turn_off }}" method="post" class="feature__action">
+        {{ csrf_fields() }}
+        <input type="hidden" name="module" value="{{ feature.id }}">
+        <button type="submit" class="button button--secondary">{{ t('Turn off {name}', {name: feature.name}) }}</button>
+    </form>
+    {%- endif %}
+    {%- else %}
+    <form action="{{ action }}" method="post" class="feature__action">
+        {{ csrf_fields() }}
+        <button type="submit" name="on" value="{{ feature.id }}" class="button">{{ t('Turn on {name}', {name: feature.name}) }}</button>
+    </form>
+    {%- if item.has_data %}
+    <p><a href="{{ delete_data }}?module={{ feature.id|url_encode }}">{{ t('Delete the data of {name}', {name: feature.name}) }}</a></p>
+    {%- endif %}
+    {%- endif %}
+</section>
+{%- else %}
+<p>{{ t('There are no optional features to turn on or off. Features installed later are listed here.') }}</p>
+{%- endfor %}
+{% endblock %}

@@ -12,6 +12,9 @@
  * Test mailbox: the site keeps every email it would send in its folder, and `/_test/mail?to=…` answers with the
  * latest one to that address as JSON (to, subject, text, html), or 404.
  *
+ * The `features` copy (F-2) also has two optional modules of a test package: "Events" (on, with an event in its table)
+ * and "acme.calendar" (off, needs Events).
+ *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
  */
@@ -29,6 +32,12 @@ use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Mail\MailSender;
 use SightPress\Core\Infrastructure\Migration\MigrationConfigurationFactory;
 use SightPress\Core\Kernel;
+use SightPress\Core\Module\CoreModules;
+use SightPress\Core\Module\ModuleAbout;
+use SightPress\Core\Module\ModuleCandidate;
+use SightPress\Core\Tenant\TenantConfigLoader;
+use SightPress\Core\Tests\Support\Modules\CalendarModule;
+use SightPress\Core\Tests\Support\Modules\EventsModule;
 use SightPress\Core\Page\Contract\PageTransition;
 use SightPress\Core\Page\Contract\StarterContent;
 use SightPress\Core\Page\PageContent;
@@ -84,7 +93,7 @@ if (!is_file($project . '/config/sites.php')) {
         'created_at' => '2026-11-16T09:00:00Z',
     ]]], true) . ';');
 
-    $kernel = Kernel::boot($project, $environment);
+    $kernel = boot($project, $environment);
     $site = site($kernel);
     $dependencies = DependencyFactory::fromConnection(
         new ExistingConfiguration(new MigrationConfigurationFactory()->create($kernel->modules())),
@@ -126,10 +135,13 @@ if (!is_file($project . '/config/sites.php')) {
         new Actor($contributor, $roles->permissionNamesOf($contributor)),
     );
     $editor->create('en-GB', new PageContent('Volunteer with us'), authorId: $people['editor'] ?? null);
+    if ($kernel->modules()->has(EventsModule::ID)) {
+        Services::get($site, Connection::class)->insert('acme_event', ['title' => 'Book fair']);
+    }
 }
 
 if ($path === '/_test/invitation') {
-    $kernel = Kernel::boot($project, $environment);
+    $kernel = boot($project, $environment);
     $query = static fn (string $name): ?string => is_string($_GET[$name] ?? null) && $_GET[$name] !== '' ? $_GET[$name] : null;
     $ada = Services::get(site($kernel), UserRepository::class)->findByEmail('ada@example.org');
     [, $code] = Services::get(site($kernel), Invitations::class)->create(
@@ -146,7 +158,7 @@ if ($path === '/_test/invitation') {
 }
 
 if ($path === '/_test/starter') {
-    $kernel = Kernel::boot($project, $environment);
+    $kernel = boot($project, $environment);
     Services::get(site($kernel), StarterContent::class)->create('Ada Lovelace', 'http://127.0.0.1', 'ada@example.org', null);
     http_response_code(204);
 
@@ -172,7 +184,7 @@ if ($path === '/_test/mail') {
     return;
 }
 
-$kernel = Kernel::boot($project, $environment);
+$kernel = boot($project, $environment);
 $container = $kernel->container();
 if (!$container instanceof DI\Container) {
     throw new LogicException('The kernel container can\'t be changed.');
@@ -194,6 +206,23 @@ $container->set(MailSender::class, new readonly class ($mailbox) implements Mail
     }
 });
 $kernel->run();
+
+/**
+ * @param array<string, string> $environment
+ */
+function boot(string $project, array $environment): Kernel
+{
+    if (basename($project) !== 'sightpress-a11y-features') {
+        return Kernel::boot($project, $environment);
+    }
+    $about = [EventsModule::ID => ModuleAbout::fromArray(EventsModule::ABOUT, EventsModule::ID)];
+
+    return Kernel::fromConfig(new TenantConfigLoader()->load($project, $environment), [
+        ...CoreModules::candidates(),
+        new ModuleCandidate(new EventsModule(), 'acme/events', '*', $about),
+        new ModuleCandidate(new CalendarModule(), 'acme/events', '*', $about),
+    ]);
+}
 
 function site(Kernel $kernel): Psr\Container\ContainerInterface
 {
