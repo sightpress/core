@@ -6,7 +6,7 @@
             "page": "Getting started",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/getting-started/",
-            "text": "This guide shows you how to run SightPress on your own computer, create your first website and sign in to its admin\npanel, so that you can try it out. You don't need to know how to program. It takes about 30 minutes, most of which is\nwaiting for downloads.\n\n!!! note \"What you can try today\"\n\n    This is the first version of SightPress. You can create a website with ready-made pages, write and publish pages,\n    upload pictures and other files, invite people and change the site's settings. Running SightPress on a public\n    server is not covered yet.",
+            "text": "This guide shows you how to run SightPress on your own computer, create your first website and sign in to its admin\npanel, so that you can try it out. You don't need to know how to program. It takes about 30 minutes, most of which is\nwaiting for downloads.\n\n!!! note \"What you can try today\"\n\n    You can create a website with ready-made pages, write, schedule and publish pages, translate them into other\n    languages, upload pictures and other files, invite people or let them sign up, make pages members-only, search\n    the website, read its visitor statistics, turn features on or off, and set up an optional AI assistant with your\n    own key. Running SightPress on a public server is not covered yet.",
             "needs": []
         },
         {
@@ -70,7 +70,7 @@
             "page": "Getting started",
             "heading": "Step 7: create your first website",
             "url": "https://docs.sightpress.org/latest/getting-started/#step-7-create-your-first-website",
-            "text": "1. In the second terminal window, type this command on one line. Change the e-mail address and the names to your\n   own if you like. (You can also type just `docker compose run --rm --no-deps php bin/sightpress site:create` and\n   answer one question at a time: see [Create a website](how-to/create-a-site.md).)\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:create demo --domain=localhost --db=sqlite:////app/sites/demo.sqlite --url=http://localhost:8080 --owner-type=organization --locale=en-GB --name=\"Riverside Library\" --admin-email=ada@example.org --admin-first-name=Ada --admin-last-name=Lovelace\n    ```\n\n2. After a few seconds, you should see lines like these:\n\n    ```text\n    Getting the SQLite file /app/sites/demo.sqlite ready…\n    Ran 13 database migrations.\n    Created the account of the first admin, Ada Lovelace (ada@example.org).\n    Set up the roles admin, editor, contributor and member.\n    Gave the first admin the admin role.\n    Give the setup code 388 641 to ada@example.org. They go to http://localhost:8080/login/setup, type their email address and the code, and choose their password. The code works once, for 7 days.\n    Made the site's icons, wordmark and share image from its name; replace them with site:branding:set.\n    Published the starter pages: Welcome to Riverside Library, About us, Contact us, Privacy notice, Terms of use, Accessibility statement.\n    Added 5 starter pages to the main and footer menus.\n    The site \"demo\" is read",
+            "text": "1. In the second terminal window, type this command on one line. Change the e-mail address and the names to your\n   own if you like. (You can also type just `docker compose run --rm --no-deps php bin/sightpress site:create` and\n   answer one question at a time: see [Create a website](how-to/create-a-site.md).)\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:create demo --domain=localhost --db=sqlite:////app/sites/demo.sqlite --url=http://localhost:8080 --owner-type=organization --locale=en-GB --name=\"Riverside Library\" --admin-email=ada@example.org --admin-first-name=Ada --admin-last-name=Lovelace\n    ```\n\n2. After a few seconds, you should see lines like these:\n\n    ```text\n    Getting the SQLite file /app/sites/demo.sqlite ready…\n    Ran 25 database migrations.\n    Created the account of the first admin, Ada Lovelace (ada@example.org).\n    Set up the roles admin, editor, contributor and member.\n    Gave the first admin the admin role.\n    Give the setup code 388 641 to ada@example.org. They go to http://localhost:8080/login/setup, type their email address and the code, and choose their password. The code works once, for 7 days.\n    Made the site's icons, wordmark and share image from its name; replace them with site:branding:set.\n    Published the starter pages in British English: Welcome to Riverside Library, About us, Contact us, Privacy notice, Terms of use, Accessibility statement.\n    Added 5 starter pages to the main and footer menus.\n    The ",
             "needs": [
                 "settings.manage"
             ]
@@ -80,7 +80,7 @@
             "page": "Getting started",
             "heading": "Step 8: choose your password and sign in",
             "url": "https://docs.sightpress.org/latest/getting-started/#step-8-choose-your-password-and-sign-in",
-            "text": "1. In your browser, go to <http://localhost:8080/login/setup>. You should see the heading **Set up your account**.\n2. In **Email address**, type the address you used, for example `ada@example.org`.\n3. In **6-digit code**, type the setup code. You can type it with or without the space.\n4. Choose **Continue**. You should see the heading **Choose your password**.\n5. In **New password**, type a password of at least 12 characters. A few unrelated words make a strong password\n   that is easy to remember.\n6. Choose **Set password**. You should see the sign-in page with the message \"Your password has been set. Sign in\n   with it now.\"\n7. Type your e-mail address and your new password, then choose **Sign in**.\n8. You should see the admin panel's **Dashboard**. The browser tab says \"Dashboard - Admin - Riverside Library\".\n   The admin menu has the links Dashboard, Pages, Media, Menus, People, Invite someone, Site settings, Branding and\n   Audit log.\n\nSightPress never sends links to sign in or to set a password. It always gives you a code to type on the website\ninstead. See [Codes we send you](how-to/codes-we-send-you.md).",
+            "text": "1. In your browser, go to <http://localhost:8080/login/setup>. You should see the heading **Set up your account**.\n2. In **Email address**, type the address you used, for example `ada@example.org`.\n3. In **6-digit code**, type the setup code. You can type it with or without the space.\n4. Choose **Continue**. You should see the heading **Choose your password**.\n5. In **New password**, type a password of at least 12 characters. A few unrelated words make a strong password\n   that is easy to remember.\n6. Choose **Set password**. You should see the sign-in page with the message \"Your password has been set. Sign in\n   with it now.\"\n7. Type your e-mail address and your new password, then choose **Sign in**.\n8. You should see the admin panel's **Dashboard**. The browser tab says \"Dashboard - Admin - Riverside Library\".\n   The admin menu has links such as Dashboard, Pages, Analytics, Redirects, Media, Menus, People, Invite someone,\n   Site settings, Features and Audit log.\n\nSightPress never sends links to sign in or to set a password. It always gives you a code to type on the website\ninstead. See [Codes we send you](how-to/codes-we-send-you.md).",
             "needs": [
                 "audit.view",
                 "settings.manage"
@@ -115,8 +115,80 @@
             "page": "Getting started",
             "heading": "What to do next",
             "url": "https://docs.sightpress.org/latest/getting-started/#what-to-do-next",
-            "text": "The [how-to guides](how-to/index.md) show you how to write and publish pages, invite people and run SightPress in the\nbackground. The reference pages explain [roles](reference/roles-and-permissions.md), [blocks](reference/blocks.md),\n[search and AI visibility](reference/search-and-ai.md) and the [command line tool](reference/command-line.md).",
+            "text": "The [how-to guides](how-to/index.md) show you how to write and publish pages, add a language and translate a page,\nschedule, move or restore pages, make a site members-only, let people sign up, turn features on or off, search the\nwebsite, read its analytics, set up the AI assistant and run SightPress in the background. To move an older\ninstallation to this version, see [Update SightPress](how-to/update-sightpress.md).\n\nTo start your website in more than one language, give `site:create` a list in `--locale`, for example\n`--locale=en-GB,pt-PT`: every starter page is then written in each language. See\n[Add a language and translate a page](how-to/add-a-language.md) to add one later, and\n[Turn features on or off](how-to/turn-features-on-or-off.md) to choose the optional features.\n\nYou can help improve SightPress without being a developer: see [Report a problem](how-to/report-a-problem.md) and\nthe other guides under *Help improve SightPress*.\n\nThe reference pages explain [roles](reference/roles-and-permissions.md), [blocks](reference/blocks.md),\n[search and AI visibility](reference/search-and-ai.md) and the [command line tool](reference/command-line.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "6096a95476ab",
+            "page": "Add a language and translate a page",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-language/",
+            "text": "A website can be written in several languages. Each page then has one **translation** per language, with its own\ntitle, address and content. Visitors read the page in their language, and search engines are told which pages are\ntranslations of each other.\n\nYou need to be an **admin** to add a language, and an **editor** or **admin** to publish a translation. Contributors\ncan write translations; an editor publishes them.",
             "needs": []
+        },
+        {
+            "id": "2478f96940e4",
+            "page": "Add a language and translate a page",
+            "heading": "Add a language",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-language/#add-a-language",
+            "text": "1. Sign in to the admin panel, for example at <http://localhost:8080/admin>.\n2. Choose **Site settings** in the admin menu, then **Change the languages**. You should see the heading\n   **Languages** and a table of the languages of the site, the main language first.\n3. Under **Add a language**, in **Language to add**, choose the language, for example **Spanish (es)**. You can type\n   the first letters of its name to move through the list.\n4. Choose **Add language**. You should see the message \"Added Spanish. Translate pages into it from each page’s\n   editor.\" and Spanish in the table.\n\nPages in the **main language** have addresses without a language part, such as `/about`. Pages in the other languages\nstart with the language code in lower case, such as `/es/about`.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "7c056f783d60",
+            "page": "Add a language and translate a page",
+            "heading": "Start with the ready-made pages",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-language/#start-with-the-ready-made-pages",
+            "text": "New websites come with six starter pages (home, About, Contact, Privacy, Terms and Accessibility). To get them in the\nnew language too:\n\n1. On the **Languages** screen, choose **Create the starter pages in Spanish**.\n2. Each starter page gets a Spanish translation, as a **draft**. Nothing is published until you publish each\n   translation (see below).\n\nWhen SightPress has no ready-made text in that language, the drafts are written in British English for you to\ntranslate, and a message says so.",
+            "needs": []
+        },
+        {
+            "id": "e86843d6f72c",
+            "page": "Add a language and translate a page",
+            "heading": "Translate a page",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-language/#translate-a-page",
+            "text": "1. Choose **Pages** in the admin menu, then the page, for example **About us**.\n2. In the page editor, go to the **Translations** section. It lists each language of the site with the state of the\n   page in it: *Not written yet*, *Draft*, *Draft translation*, *Published*, or *Drafted by the AI assistant, not\n   checked yet*.\n3. Next to Spanish, choose **Translate into Spanish from British English**. This copies the title, address and\n   blocks into a new Spanish draft and opens it. The British English page doesn't change.\n4. Translate the title, the address (for example `sobre-nosotros`), the summary and every block, then choose\n   **Save page**.\n\n!!! tip \"Let the AI assistant draft it\"\n\n    If the AI assistant is on, **Draft a translation into Spanish with the AI assistant** writes a first draft for\n    you, block by block. It is marked *Drafted by the AI assistant, not checked yet* until a person saves a change or\n    chooses **I checked this translation**, and can't be published before that. See\n    [Use the AI assistant](use-the-ai-assistant.md).",
+            "needs": []
+        },
+        {
+            "id": "2ead60d60e38",
+            "page": "Add a language and translate a page",
+            "heading": "Publish the translation",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-language/#publish-the-translation",
+            "text": "1. In the Spanish translation's editor, choose **Publish this translation**. The same checks run as for any page:\n   for example, every picture needs a description in Spanish.\n2. If a check fails, a list at the top says what to fix. Fix it, save, and publish again.\n3. You should see the message \"Published the Spanish translation. Visitors can see it now.\" and **Published** next\n   to Spanish in the **Translations** section.\n\nVisitors see a translation only when both the page and the translation are published. A draft translation is not\nin the menus, the sitemap or the language links that search engines read.",
+            "needs": []
+        },
+        {
+            "id": "ce33b8ce0525",
+            "page": "Add a language and translate a page",
+            "heading": "Check it on the website",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-language/#check-it-on-the-website",
+            "text": "1. Go to the page in its new language, for example <http://localhost:8080/es/sobre-nosotros>.\n2. You should see the page in Spanish. The menus use the Spanish titles, and the language switcher lists each\n   language in its own words, such as \"Español\".\n3. Someone whose browser asks for a language when they open the home page is taken to the home page in that\n   language, or the closest one: for example Brazilian Portuguese to European Portuguese, and otherwise the main\n   language.\n\nPictures can have their description, caption and transcript in each language: open the picture in **Media** and\nfill in the fields for each language. When a language has none, the main language's text is used, never nothing.",
+            "needs": [
+                "media.upload"
+            ]
+        },
+        {
+            "id": "9ed594e16037",
+            "page": "Add a language and translate a page",
+            "heading": "Change the main language or remove a language",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-language/#change-the-main-language-or-remove-a-language",
+            "text": "- **Make Spanish the main language** changes the addresses of the pages in the old and the new main language. Links\n  to their old addresses stop working, so do this early, before the website is public.\n- **Remove Spanish** asks you to confirm on its own page. The Spanish translations are **kept** but can't be read.\n  Adding Spanish again brings them back. People who chose Spanish for their emails get the main language instead.",
+            "needs": []
+        },
+        {
+            "id": "f908c19b9cbf",
+            "page": "Add a language and translate a page",
+            "heading": "With the command line tool",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-language/#with-the-command-line-tool",
+            "text": "In the `skeleton` folder, replace `demo` with the short name of your website:\n\n```sh\ndocker compose run --rm --no-deps php bin/sightpress site:locale:add demo es\ndocker compose run --rm --no-deps php bin/sightpress site:locale:default demo es\ndocker compose run --rm --no-deps php bin/sightpress site:locale:remove demo es --yes\n```\n\nWithout `--yes`, `site:locale:remove` only explains what would happen. To start a website in several languages, give\n`site:create` a list, such as `--locale=en-GB,pt-PT,es`: every starter page is then written in each of them.",
+            "needs": [
+                "settings.manage"
+            ]
         },
         {
             "id": "7c4c69cfd709",
@@ -148,6 +220,38 @@
             "heading": "Who can reach these ports",
             "url": "https://docs.sightpress.org/latest/how-to/change-the-ports/#who-can-reach-these-ports",
             "text": "Every port listens only on your own computer (the address `127.0.0.1`, also called `localhost`). Other computers on\nyour network can't reach SightPress.",
+            "needs": []
+        },
+        {
+            "id": "d200c49ec6bd",
+            "page": "Change your email address or password",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/change-your-email-or-password/",
+            "text": "Everyone with an account on a website, members included, can change their own details on **My account**.",
+            "needs": []
+        },
+        {
+            "id": "9df88e2ea722",
+            "page": "Change your email address or password",
+            "heading": "Open My account",
+            "url": "https://docs.sightpress.org/latest/how-to/change-your-email-or-password/#open-my-account",
+            "text": "Sign in, then choose **My account**: in the admin panel it is a link in the header; on the website, go to `/account`,\nfor example <http://localhost:8080/account>.\n\nOn *My account* you can also change your name, display name, time zone, language (on websites in several languages)\nand profile picture. People who use the admin panel can choose **Reduce motion** and **Larger text** there.",
+            "needs": []
+        },
+        {
+            "id": "fd3113c8f3f4",
+            "page": "Change your email address or password",
+            "heading": "Change your password",
+            "url": "https://docs.sightpress.org/latest/how-to/change-your-email-or-password/#change-your-password",
+            "text": "1. On *My account*, choose **Change your password**.\n2. In **Current password**, type the password you use now.\n3. In **New password**, type a new one. The rules are written under the field.\n4. Choose **Change password**. You should see \"Your password has been changed. You are still signed in here, and\n   signed out everywhere else.\"\n\nIf the current password is wrong, a message at the top of the page says so. After five wrong tries in 15 minutes,\nyou have to wait, as when signing in.",
+            "needs": []
+        },
+        {
+            "id": "219fa56832d9",
+            "page": "Change your email address or password",
+            "heading": "Change your email address",
+            "url": "https://docs.sightpress.org/latest/how-to/change-your-email-or-password/#change-your-email-address",
+            "text": "1. On *My account*, choose **Change your email address**.\n2. Type the **New email address** and your **Current password**, then choose **Send the code**.\n3. We email a 6-digit code to the **new** address. The email has no link.\n4. Type the code on the next page and choose **Confirm my new email address**. You should see \"Your email address is\n   now …. Sign in with it from now on.\"\n\nYour old address gets an email saying that the address was changed, with the new one partly hidden and no link.\nUntil you type the code, nothing changes. See [Codes we send you](codes-we-send-you.md).\n\nEvery change is written to the website's audit log, without the passwords.",
             "needs": []
         },
         {
@@ -327,7 +431,7 @@
             "page": "How-to guides",
             "heading": "Your website",
             "url": "https://docs.sightpress.org/latest/how-to/#your-website",
-            "text": "- [Create a website](create-a-site.md) with the command line tool, and give its first admin a setup code.\n- [Write and publish a page](write-and-publish-a-page.md), from a draft through review to the public website.\n- [Turn features on or off](turn-features-on-or-off.md) for one website, and delete a feature's data.\n- [Search your website](search-your-website.md) from any page, and leave a page out of the search.\n- [See who visits your website](see-who-visits-your-website.md): the Analytics screen, its charts and tables, and\n  what is and isn't counted.",
+            "text": "- [Create a website](create-a-site.md) with the command line tool, and give its first admin a setup code.\n- [Write and publish a page](write-and-publish-a-page.md), from a draft through review to the public website.\n- [Schedule a page](schedule-a-page.md) to be published, or taken off the website, at a set time.\n- [Restore an older version of a page](restore-an-older-version.md), and see what changed, word by word.\n- [Move or rename a page without breaking links](move-or-rename-a-page.md), and look after the redirects.\n- [Put a page in the trash and get it back](put-a-page-in-the-trash.md), archive it, copy it or delete it for good.\n- [Add a language and translate a page](add-a-language.md).\n- [Make a website or a page members-only](make-a-site-members-only.md).\n- [Let people sign up](let-people-sign-up.md) for an account, confirmed with an emailed code.\n- [Turn features on or off](turn-features-on-or-off.md) for one website, and delete a feature's data.\n- [Search your website](search-your-website.md) from any page, and leave a page out of the search.\n- [See who visits your website](see-who-visits-your-website.md): the Analytics screen, its charts and tables, and\n  what is and isn't counted.",
             "needs": [
                 "analytics.view"
             ]
@@ -335,13 +439,21 @@
         {
             "id": "89904c223c4f",
             "page": "How-to guides",
-            "heading": "Running SightPress",
-            "url": "https://docs.sightpress.org/latest/how-to/#running-sightpress",
-            "text": "- [Fix upload size limits](fix-upload-size-limits.md): what the admin warning means, and how to let larger files in.\n- [Run SightPress in the background](run-in-the-background.md), so that you can close the terminal.\n- [Change the ports SightPress uses](change-the-ports.md), if another program already uses them.\n- [Start a database server](start-a-database.md): MySQL, MariaDB or PostgreSQL.",
+            "heading": "Your account",
+            "url": "https://docs.sightpress.org/latest/how-to/#your-account",
+            "text": "- [Change your email address or password](change-your-email-or-password.md) on *My account*.",
             "needs": []
         },
         {
             "id": "e3f287f52e2b",
+            "page": "How-to guides",
+            "heading": "Running SightPress",
+            "url": "https://docs.sightpress.org/latest/how-to/#running-sightpress",
+            "text": "- [Update SightPress](update-sightpress.md) to a newer version, keeping every website.\n\n- [Fix upload size limits](fix-upload-size-limits.md): what the admin warning means, and how to let larger files in.\n- [Run SightPress in the background](run-in-the-background.md), so that you can close the terminal.\n- [Change the ports SightPress uses](change-the-ports.md), if another program already uses them.\n- [Start a database server](start-a-database.md): MySQL, MariaDB or PostgreSQL.",
+            "needs": []
+        },
+        {
+            "id": "92b78d648880",
             "page": "How-to guides",
             "heading": "Checking the built-in tools",
             "url": "https://docs.sightpress.org/latest/how-to/#checking-the-built-in-tools",
@@ -349,7 +461,7 @@
             "needs": []
         },
         {
-            "id": "92b78d648880",
+            "id": "cda0e301e255",
             "page": "How-to guides",
             "heading": "Signing in",
             "url": "https://docs.sightpress.org/latest/how-to/#signing-in",
@@ -357,7 +469,15 @@
             "needs": []
         },
         {
-            "id": "cda0e301e255",
+            "id": "e11d505d677d",
+            "page": "How-to guides",
+            "heading": "Help improve SightPress",
+            "url": "https://docs.sightpress.org/latest/how-to/#help-improve-sightpress",
+            "text": "You don't need to be a developer for any of these. Everyone who takes part follows our\n[Code of Conduct](https://github.com/sightpress/docs/blob/main/CODE_OF_CONDUCT.md).\n\n- [Report a problem](report-a-problem.md), including accessibility barriers, with or without a GitHub account.\n- [Translate SightPress](translate-sightpress.md) into a language you speak fluently.\n- [Review the interface](review-the-interface.md) as a sighted person, and describe a screenshot in words.\n- [Test with assistive technology](test-with-assistive-technology.md) before each release.",
+            "needs": []
+        },
+        {
+            "id": "cc0dc33c6d50",
             "page": "How-to guides",
             "heading": "Reference",
             "url": "https://docs.sightpress.org/latest/how-to/#reference",
@@ -367,12 +487,121 @@
             ]
         },
         {
-            "id": "e11d505d677d",
+            "id": "2444bb9da8ac",
             "page": "How-to guides",
             "heading": "Coming later",
             "url": "https://docs.sightpress.org/latest/how-to/#coming-later",
             "text": "Putting SightPress on a public server is not covered yet. A guide will appear here when it is ready.",
             "needs": []
+        },
+        {
+            "id": "41c8884e7898",
+            "page": "Let people sign up",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/let-people-sign-up/",
+            "text": "By default only people you invite can have an account on your website. You can also let anyone create their own\naccount. They confirm their email address with a 6-digit code before they can sign in.\n\nYou need to be an **admin**.",
+            "needs": []
+        },
+        {
+            "id": "491f99affa3f",
+            "page": "Let people sign up",
+            "heading": "Turn sign-up on",
+            "url": "https://docs.sightpress.org/latest/how-to/let-people-sign-up/#turn-sign-up-on",
+            "text": "1. Choose **Site settings** in the admin menu, then **Change who can sign up**.\n2. Tick **Let anyone create an account**.\n3. In **Role of people who sign up**, keep **Member** unless you have a reason to change it. Members can read\n   members-only pages and nothing more. Only roles that are safe to give to people you don't know are listed: never\n   editor or admin.\n4. Choose **Save sign-up settings**. You should see \"The sign-up settings have been saved.\"\n\nThe sign-in page now shows \"New here?\" with a **Create an account** link.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "7e8079b0b994",
+            "page": "Let people sign up",
+            "heading": "Try it as a new person",
+            "url": "https://docs.sightpress.org/latest/how-to/let-people-sign-up/#try-it-as-a-new-person",
+            "text": "1. Sign out, or open a private browser window, and go to the sign-in page, for example\n   <http://localhost:8080/login>.\n2. Choose **Create an account**. Fill in your first name, last name, an optional display name, your email address,\n   your time zone (your browser's is already chosen) and a password. On a website in several languages, choose your\n   language too.\n3. Choose **Create my account**. You should see the heading **Confirm your email address**.\n4. Open the email. While you try SightPress on your computer, it is in the test inbox: see\n   [Open the test e-mail inbox](open-the-test-email-inbox.md). It has a 6-digit code and **no link**.\n5. Type the code in **6-digit code** and choose **Confirm my email address**. You should see \"Your email address is\n   confirmed and your account is ready.\"\n6. Sign in with your email address and password.\n\nThe code works once, for 15 minutes. **Send a new code** sends another one, at most once a minute. See\n[Codes we send you](codes-we-send-you.md).",
+            "needs": []
+        },
+        {
+            "id": "061784129097",
+            "page": "Let people sign up",
+            "heading": "What keeps it safe",
+            "url": "https://docs.sightpress.org/latest/how-to/let-people-sign-up/#what-keeps-it-safe",
+            "text": "- An account can't sign in until its email address is confirmed. Accounts that are never confirmed are removed after\n  a week.\n- If someone signs up with an address that already has an account, the page looks exactly the same, so nobody can find\n  out who has an account. The owner of the address gets an email saying someone tried, with no link.\n- A hidden field catches most automated sign-ups, and each place can send at most 10 sign-up forms an hour. There are\n  no picture puzzles.\n- Every new account and every change to these settings is written to the **Audit log**.\n\nTo turn sign-up off again, untick **Let anyone create an account**. Accounts that were already made are kept.",
+            "needs": [
+                "audit.view"
+            ]
+        },
+        {
+            "id": "3802b90aac45",
+            "page": "Make a website or a page members-only",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/make-a-site-members-only/",
+            "text": "A **members-only** page can only be read by people who have an account on the website and are signed in. You can\nmake a single page members-only, or the whole website.\n\nYou need to be an **admin** to change the whole website, and an **editor** or **admin** to change a page.",
+            "needs": []
+        },
+        {
+            "id": "0102b6a05faa",
+            "page": "Make a website or a page members-only",
+            "heading": "Make one page members-only",
+            "url": "https://docs.sightpress.org/latest/how-to/make-a-site-members-only/#make-one-page-members-only",
+            "text": "1. Choose **Pages** in the admin menu, then the page.\n2. In **About the page**, under **Who can read this page**, choose **Members only: people with an account on the\n   site, once they sign in**.\n3. Choose **Save page**.\n4. Check: sign out, or open a private browser window, and go to the page. You should see the sign-in page. After\n   signing in, you are taken back to the page.\n\nA members-only page is left out of search engines, the sitemap, `llms.txt` and site search for visitors who aren't\nsigned in. In the menus, it only appears for people who are signed in.\n\nTo show a menu entry only to members, for example a link to a members' forum, choose **Menus**, then **Change** next\nto the entry, and tick **Only show this entry to members who are signed in**.",
+            "needs": [
+                "menu.manage"
+            ]
+        },
+        {
+            "id": "7c3e098cc7c9",
+            "page": "Make a website or a page members-only",
+            "heading": "Make the whole website members-only",
+            "url": "https://docs.sightpress.org/latest/how-to/make-a-site-members-only/#make-the-whole-website-members-only",
+            "text": "1. Choose **Site settings** in the admin menu.\n2. Under **Who can read the site**, choose **Only people with an account, once they sign in. Search engines and AI\n   services can’t read any page.**\n3. Choose **Save settings**. You should see \"The settings have been saved.\"\n4. Check: in a private browser window, go to any page of the website. You should see the sign-in page with the\n   message \"This site is for its members. Sign in to read it.\"\n\nOn a members-only website:\n\n- People who aren't signed in can still sign in, create an account (if you let them, see\n  [Let people sign up](let-people-sign-up.md)), reset a forgotten password and accept an invitation.\n- Search engines and AI services can't read anything: the sitemap and `llms.txt` are empty, and every page asks not\n  to be listed.\n- Every signed-in person, whatever their role, can read every published page.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "7e61e43cb209",
+            "page": "Make a website or a page members-only",
+            "heading": "Who can read what",
+            "url": "https://docs.sightpress.org/latest/how-to/make-a-site-members-only/#who-can-read-what",
+            "text": "| | Visitors who aren't signed in | Members (signed in) | Editors and admins |\n| --- | --- | --- | --- |\n| Pages for everyone, on a public website | Yes | Yes | Yes |\n| Members-only pages | No: asked to sign in | Yes | Yes |\n| Any page of a members-only website | No: asked to sign in | Yes | Yes |\n| Drafts, older versions, archived pages | No | No | Yes |\n| The admin panel | No | No | Yes |\n\nTo give people accounts, invite them from **Invite someone** in the admin menu, or let them sign up themselves.",
+            "needs": [
+                "user.invite"
+            ]
+        },
+        {
+            "id": "c7b109424055",
+            "page": "Move or rename a page without breaking links",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/move-or-rename-a-page/",
+            "text": "When a published page gets a new address, or moves somewhere else on the website, SightPress remembers its old\naddress. Anyone who follows an old link or bookmark is taken to the new address, and search engines are told that the\npage has moved for good. You don't need to do anything for this to happen.\n\nYou need to be an **editor** or **admin**.",
+            "needs": []
+        },
+        {
+            "id": "e7c29cf1dd11",
+            "page": "Move or rename a page without breaking links",
+            "heading": "Give a page a new address",
+            "url": "https://docs.sightpress.org/latest/how-to/move-or-rename-a-page/#give-a-page-a-new-address",
+            "text": "1. Choose **Pages** in the admin menu, then the page.\n2. In **Address**, type the new last part of the address, for example `opening-times` instead of `hours`. Use\n   lower-case letters, digits and hyphens.\n3. Choose **Save page**.\n4. Check: open the old address, for example <http://localhost:8080/hours>. You should land on\n   <http://localhost:8080/opening-times>.\n\nPages under it move with it: `/hours/holidays` becomes `/opening-times/holidays`, and its old address leads there\ntoo.",
+            "needs": []
+        },
+        {
+            "id": "6a0e1f4f0631",
+            "page": "Move or rename a page without breaking links",
+            "heading": "Move a page somewhere else on the website",
+            "url": "https://docs.sightpress.org/latest/how-to/move-or-rename-a-page/#move-a-page-somewhere-else-on-the-website",
+            "text": "In the page editor, the **Place in the site** section has these buttons:\n\n- **Move up** and **Move down** change the order of pages at the same level, for example in a menu of pages.\n- **Move under the page before it** puts the page one level down, under the page just above it.\n- **Move out to the level above** puts the page one level up.\n- **Move to**: choose **The top level of the site** or any other page in the list, then choose **Move the page**.\n\nAfter each move, a message says where the page is now, and focus stays in the section. Pages under it move with it,\nand every old address leads to the new one.",
+            "needs": []
+        },
+        {
+            "id": "df60581325d4",
+            "page": "Move or rename a page without breaking links",
+            "heading": "See and change the redirects",
+            "url": "https://docs.sightpress.org/latest/how-to/move-or-rename-a-page/#see-and-change-the-redirects",
+            "text": "1. Choose **Redirects** in the admin menu. You should see the table **Old addresses and where they lead**, with each\n   **Old address**, its **Language** and where it **Leads to**. A page that was deleted for good shows \"Gone: the\n   page was deleted\".\n2. To stop an old address leading anywhere, choose **Remove the redirect from** followed by that address.\n3. To add your own, for example for a page from an old website, fill in **Old address** (such as `/old-news`) and\n   **New address** (such as `/news`) under **Add a redirect**, then choose **Add redirect**. The new address must be\n   in the same language.\n\nA few rules keep this tidy:\n\n- If a page moves twice, its oldest address leads straight to the newest one, never through a chain.\n- A redirect that would go round in a circle is refused.\n- A new page that uses an old address wins: the redirect stops and visitors see the new page.\n\nThe **Pages not found** report on the *Analytics* screen lists addresses people asked for that don't exist, with a\nlink to add a redirect for each. See [See who visits your website](see-who-visits-your-website.md).",
+            "needs": [
+                "analytics.view",
+                "page.edit.any"
+            ]
         },
         {
             "id": "f1f0510e4ef7",
@@ -388,6 +617,168 @@
             "heading": "",
             "url": "https://docs.sightpress.org/latest/how-to/open-the-test-email-inbox/",
             "text": "When SightPress runs on your computer, it never sends real e-mail. Every message goes to a test inbox called\nMailpit instead, so you can read it without anything leaving your computer. This guide shows you how to open it.\n\n1. Start SightPress (see [Getting started](../getting-started.md)).\n2. In your web browser, go to <http://localhost:8025>.\n3. You should see the Mailpit inbox. It is empty for now, with a message saying there are no messages.\n\nSightPress sends e-mail when:\n\n- someone forgets their password and asks for a code;\n- someone is invited to help with a website;\n- a page is sent for review: every editor and admin is told;\n- a visitor sends a message with a contact form.\n\nEach of these messages appears here a moment later. Choose a message to read it.\n\nThe inbox only gets messages when your `.env` file has the line `MAILER_DSN=smtp://mailpit:1025`. The file you copied\nfrom `.env.example` in [Getting started](../getting-started.md) already has it. Without it, SightPress sends nothing.\n\nIf you changed `MAILPIT_UI_PORT` in your `.env` file, use that number instead of `8025`.",
+            "needs": []
+        },
+        {
+            "id": "5af3530b6613",
+            "page": "Put a page in the trash and get it back",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/put-a-page-in-the-trash/",
+            "text": "You can take a page off the website in two ways, and both keep it so you can bring it back:\n\n- **Archive** keeps the page out of sight. Visitors who open its address are told the page isn't found.\n- **Put in the trash** is for pages you want to get rid of. Visitors who open its address are told the page is\n  **gone**, so search engines drop it. A page stays in the trash until someone deletes it for good.\n\nYou need to be an **editor** or **admin**.",
+            "needs": []
+        },
+        {
+            "id": "992841292ca7",
+            "page": "Put a page in the trash and get it back",
+            "heading": "Archive a page",
+            "url": "https://docs.sightpress.org/latest/how-to/put-a-page-in-the-trash/#archive-a-page",
+            "text": "1. Choose **Pages** in the admin menu, then the page.\n2. Choose **Archive**. You should see \"Archived. Visitors can’t see the page any more; it is kept with the archived\n   pages.\"\n3. To bring it back, open it again and choose **Restore as a draft**. It comes back as a draft: publish it again when\n   it is ready.",
+            "needs": []
+        },
+        {
+            "id": "ab1fe76c819d",
+            "page": "Put a page in the trash and get it back",
+            "heading": "Put a page in the trash",
+            "url": "https://docs.sightpress.org/latest/how-to/put-a-page-in-the-trash/#put-a-page-in-the-trash",
+            "text": "1. Open the page in the editor.\n2. Choose **Put in the trash**. You should see \"Put in the trash. Its address now tells visitors the page is gone.\"\n\nA page with pages under it can only go in the trash once those pages are in the trash already, so nothing is left\nwithout a page above it.",
+            "needs": []
+        },
+        {
+            "id": "50ffe942b298",
+            "page": "Put a page in the trash and get it back",
+            "heading": "Find a page in the trash and get it back",
+            "url": "https://docs.sightpress.org/latest/how-to/put-a-page-in-the-trash/#find-a-page-in-the-trash-and-get-it-back",
+            "text": "1. Choose **Pages** in the admin menu.\n2. In the **State** filter, choose **In the trash**, then choose **Show pages**. You should see only the pages in the trash.\n3. Open the page and choose **Take out of the trash**. You should see \"Restored as a draft. Publish it again when it\n   is ready.\"\n\nA page comes out of the trash as a draft, and only when the page above it isn't in the trash.",
+            "needs": []
+        },
+        {
+            "id": "19292397a67e",
+            "page": "Put a page in the trash and get it back",
+            "heading": "Delete a page for good",
+            "url": "https://docs.sightpress.org/latest/how-to/put-a-page-in-the-trash/#delete-a-page-for-good",
+            "text": "This can't be undone.\n\n1. Open a page that is in the trash.\n2. Choose **Delete this page for good**. A page asks you to confirm, and lists what goes with it: the pages under it,\n   every translation and every older version.\n3. Choose **Delete for good** to go ahead, or **Keep it in the trash** to go back.\n\nIts address then tells visitors and search engines that the page is gone, until a new page uses the address. Menu\nentries that pointed to it are removed.",
+            "needs": []
+        },
+        {
+            "id": "d1489543bfaf",
+            "page": "Put a page in the trash and get it back",
+            "heading": "Copy a page",
+            "url": "https://docs.sightpress.org/latest/how-to/put-a-page-in-the-trash/#copy-a-page",
+            "text": "**Copy this page** makes a new draft right after the page, in every language it is written in, titled \"Copy of …\",\nwith `-copy` added to its address. The pages under it aren't copied. The copy opens in the editor.\n\nEvery step on this page is written to the website’s audit log, which admins can read.",
+            "needs": []
+        },
+        {
+            "id": "1e53b8971679",
+            "page": "Report a problem",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/report-a-problem/",
+            "text": "If something in SightPress doesn't work, shows an error, or stops you from doing something with your keyboard,\nscreen reader, zoom or colour settings, please tell us. You don't need to know which part of SightPress is at fault.",
+            "needs": []
+        },
+        {
+            "id": "e68c2eaaa0a8",
+            "page": "Report a problem",
+            "heading": "What to tell us",
+            "url": "https://docs.sightpress.org/latest/how-to/report-a-problem/#what-to-tell-us",
+            "text": "Whichever way you report it, these help us most:\n\n1. What you were trying to do, for example \"publish a page in Spanish\".\n2. What happened. Copy any error message as text.\n3. What you expected to happen.\n4. The SightPress version, if you know it, and your browser and operating system.\n5. For an **accessibility barrier**: your assistive technology and its version, if you use one, and what was\n   announced or what happened.\n\nAccessibility barriers are always treated as bugs, never as feature requests.",
+            "needs": []
+        },
+        {
+            "id": "5f2ae72c9100",
+            "page": "Report a problem",
+            "heading": "Report it by email (no GitHub account needed)",
+            "url": "https://docs.sightpress.org/latest/how-to/report-a-problem/#report-it-by-email-no-github-account-needed",
+            "text": "1. Write an email to <contribute@sightpress.org>, in any format that suits you: text, a voice recording or a\n   document. Write in your own words; imperfect English is welcome.\n2. A maintainer replies within 5 working days, adds the report to GitHub for you, and tells you what happens next.",
+            "needs": []
+        },
+        {
+            "id": "387e07f0aa97",
+            "page": "Report a problem",
+            "heading": "Report it on GitHub",
+            "url": "https://docs.sightpress.org/latest/how-to/report-a-problem/#report-it-on-github",
+            "text": "If you have a GitHub account:\n\n1. Go to [open an issue in SightPress core](https://github.com/sightpress/core/issues/new/choose). If the problem is\n   in this documentation, use [the docs issues](https://github.com/sightpress/docs/issues/new/choose) instead; if you\n   aren't sure, use core and we'll move it.\n2. Choose **Report a problem**, or **Report an accessibility barrier**. Each form says which fields are required, in\n   words.\n3. Fill in the form and choose **Submit new issue**.\n\nA maintainer replies, asks for anything that is missing and labels the issue.",
+            "needs": []
+        },
+        {
+            "id": "8a5200b02717",
+            "page": "Report a problem",
+            "heading": "Security problems",
+            "url": "https://docs.sightpress.org/latest/how-to/report-a-problem/#security-problems",
+            "text": "Never report a security problem in public. Email <security@sightpress.org>, or use **Report a vulnerability** on the\n*Security* tab of the repository on GitHub. We acknowledge every report within 5 working days.",
+            "needs": []
+        },
+        {
+            "id": "2d2ef60b1380",
+            "page": "Report a problem",
+            "heading": "Problems with people",
+            "url": "https://docs.sightpress.org/latest/how-to/report-a-problem/#problems-with-people",
+            "text": "To report behaviour that breaks the\n[Code of Conduct](https://github.com/sightpress/docs/blob/main/CODE_OF_CONDUCT.md), email\n<conduct@sightpress.org>. Reports are confidential.",
+            "needs": []
+        },
+        {
+            "id": "4c3cd1f0cc51",
+            "page": "Restore an older version of a page",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/restore-an-older-version/",
+            "text": "Every time a page is saved, SightPress keeps a version of it. You can see who saved each version and when, read what\nchanged, word by word, and bring an older version back. Restoring never publishes anything.\n\nYou need to be able to change the page: a **contributor** for your own drafts, or an **editor** or **admin**.",
+            "needs": []
+        },
+        {
+            "id": "a016291f785a",
+            "page": "Restore an older version of a page",
+            "heading": "See the older versions",
+            "url": "https://docs.sightpress.org/latest/how-to/restore-an-older-version/#see-the-older-versions",
+            "text": "1. Choose **Pages** in the admin menu, then the page.\n2. Next to the page's state, choose **Older versions**. You should see a table of versions, newest first: the\n   version number, when it was saved (in your own time zone), who saved it, and the state the page was in then.\n   \"The system\" means a change made from the command line or on a schedule.\n\nOn a website in several languages, each translation has its own versions. Links at the top of the screen lead to the\nversions in each language.",
+            "needs": []
+        },
+        {
+            "id": "0d36519ebed4",
+            "page": "Restore an older version of a page",
+            "heading": "See what changed",
+            "url": "https://docs.sightpress.org/latest/how-to/restore-an-older-version/#see-what-changed",
+            "text": "1. Choose a version number, for example **Version 3**. You should see what changed since the version before it: first\n   the details of the page (title, address, summary, search fields), then each block, under a heading that says\n   whether it was changed, added, removed or has no changes.\n2. Inside a field, words that were taken out read \"[removed: …]\" and are crossed out; words that were put in read\n   \"[added: …]\" and are underlined.\n\nThe words \"removed\" and \"added\" are always written out, so the comparison reads the same with a screen reader, in\nhigh contrast mode and without colours.",
+            "needs": []
+        },
+        {
+            "id": "45ba7cc27df1",
+            "page": "Restore an older version of a page",
+            "heading": "Bring a version back",
+            "url": "https://docs.sightpress.org/latest/how-to/restore-an-older-version/#bring-a-version-back",
+            "text": "1. On the version's screen, choose **Restore version 3** (with that version's number).\n2. You should see \"Restored version 3 as version 5. Nothing was published: the page is still a draft.\" The newer\n   versions stay in the list, so you can change your mind.\n\nRestoring brings back the title, address, search fields and blocks. It doesn't change the layout, who can read the\npage or its place on the website.\n\n**While the page is published, restoring is refused**, because visitors would see the old text straight away. Choose\n**Unpublish** first (or make that translation a draft), restore the version, check it, and publish again.\n\nA version with a block that no longer exists can't be restored: copy what you need from it instead.",
+            "needs": []
+        },
+        {
+            "id": "8c5e69293287",
+            "page": "Review the interface",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/review-the-interface/",
+            "text": "SightPress is led by blind people. Sighted reviewers help us check what is hard to check without sight. You don't\nneed to know anything about design or code: if something looks wrong to you, it probably is.",
+            "needs": []
+        },
+        {
+            "id": "d3fb03552aa7",
+            "page": "Review the interface",
+            "heading": "What to check",
+            "url": "https://docs.sightpress.org/latest/how-to/review-the-interface/#what-to-check",
+            "text": "Go through a few screens of the admin panel and of a website (see [Getting started](../getting-started.md) to run\nyour own) and look for these:\n\n1. **Contrast.** Is any text, icon or border hard to see? Check in light mode, in dark mode, and with a high\n   contrast theme (on Windows, *Settings → Accessibility → Contrast themes*).\n2. **Focus.** Press <kbd>Tab</kbd> again and again. Can you always see where you are?\n3. **Zoom.** Zoom the browser to 200% and to 400% (<kbd>Ctrl</kbd> and <kbd>+</kbd>, or <kbd>Cmd</kbd> and\n   <kbd>+</kbd> on a Mac). Is any text cut off or on top of other text? Do you have to scroll sideways to read a line?\n4. **Small screens.** Make the window very narrow, about the width of a small phone. Does everything still fit?\n5. **Spacing.** Is anything squashed together or badly lined up?\n6. **Pictures.** Do the icons, the generated profile pictures, the sharing images and the charts look right? Are\n   the screenshots in the documentation up to date?\n7. **Labels.** Does the text you see on a button or a field match what it does? A screen reader announces the same\n   words, so they must make sense on their own.\n8. **Colour alone.** Is any information shown only by colour, such as red for an error, without words?",
+            "needs": []
+        },
+        {
+            "id": "1d4fad4769c0",
+            "page": "Review the interface",
+            "heading": "How to describe a screenshot",
+            "url": "https://docs.sightpress.org/latest/how-to/review-the-interface/#how-to-describe-a-screenshot",
+            "text": "A screenshot helps, but whoever reads your report may be blind. Always add a text description:\n\n- say which screen it is and what you were doing, for example \"The Analytics screen, in dark mode, at 200% zoom\";\n- say what is wrong and where, for example \"The legend of the visits chart overlaps the last bar label\";\n- say what you expected, for example \"The legend should be below the chart\".\n\nIf you can't describe it, say so: we'll ask someone sighted to look.",
+            "needs": [
+                "analytics.view"
+            ]
+        },
+        {
+            "id": "af15cdde8abd",
+            "page": "Review the interface",
+            "heading": "Send your review",
+            "url": "https://docs.sightpress.org/latest/how-to/review-the-interface/#send-your-review",
+            "text": "On GitHub, [open an issue](https://github.com/sightpress/core/issues/new/choose) and choose **Interface review**.\nThe form asks for the screen, your browser, zoom level and colour mode, what looks wrong, and a description of any\nscreenshot. Without a GitHub account, email the same to <contribute@sightpress.org>.",
             "needs": []
         },
         {
@@ -428,6 +819,54 @@
             "heading": "Stop SightPress",
             "url": "https://docs.sightpress.org/latest/how-to/run-in-the-background/#stop-sightpress",
             "text": "Type:\n\n```sh\ndocker compose --profile \"*\" down\n```\n\nYou should see lines ending with `Removed`. The `--profile \"*\"` part also stops a database server if you started\none. Your settings and stored files are kept for next time.\n\n!!! tip \"Shortcuts for macOS and Linux\"\n\n    If the `make` program is installed, you can type `make up` to start SightPress in the background and\n    `make down` to stop it. Type `make` on its own to list every shortcut.",
+            "needs": []
+        },
+        {
+            "id": "92a099b68eef",
+            "page": "Schedule a page",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/schedule-a-page/",
+            "text": "A page can be published at a set time, and taken off the website again at another time, without anyone being there\nto press a button. This is useful for an event page that should appear on Monday morning, or a notice that should\ndisappear when an offer ends.\n\nYou need to be an **editor** or **admin**: people who may publish pages.",
+            "needs": []
+        },
+        {
+            "id": "6e06af3896e4",
+            "page": "Schedule a page",
+            "heading": "Before you start",
+            "url": "https://docs.sightpress.org/latest/how-to/schedule-a-page/#before-you-start",
+            "text": "SightPress does what is scheduled once a minute, with a helper called the **scheduler**. When you start SightPress\nwith `docker compose up` (see [Getting started](../getting-started.md)), the scheduler starts too. To see what it\ndoes, type `docker compose logs -f scheduler` in the `skeleton` folder.",
+            "needs": []
+        },
+        {
+            "id": "2dec96980c69",
+            "page": "Schedule a page",
+            "heading": "Publish a page at a set time",
+            "url": "https://docs.sightpress.org/latest/how-to/schedule-a-page/#publish-a-page-at-a-set-time",
+            "text": "1. Write the page and take it through review until it is **Approved** (see\n   [Write and publish a page](write-and-publish-a-page.md)). Only an approved page can be published on schedule.\n2. In the page editor, go to the **Schedule** section. It says \"Nothing is scheduled.\" and shows **your time zone**\n   above the fields. Change your time zone on *My account* if it is wrong.\n3. In **Publish at**, choose the day and time.\n4. Choose **Save the schedule**. You should see a message such as \"Scheduled: the page is published at 1 Dec 2026,\n   09:00 (Europe/London time).\"\n5. In the page list, the page shows \"Approved · To be published at 1 Dec 2026, 09:00\".\n\nWithin a minute of that time, the page is published.",
+            "needs": []
+        },
+        {
+            "id": "ddc5d2ac2ba2",
+            "page": "Schedule a page",
+            "heading": "Take a page off the website at a set time",
+            "url": "https://docs.sightpress.org/latest/how-to/schedule-a-page/#take-a-page-off-the-website-at-a-set-time",
+            "text": "1. In the **Schedule** section, choose a time in **Take off the site at**.\n2. Choose **Save the schedule**.\n\nAt that time the page becomes a draft again, if it is published then.",
+            "needs": []
+        },
+        {
+            "id": "d74004484ce4",
+            "page": "Schedule a page",
+            "heading": "Change or clear the schedule",
+            "url": "https://docs.sightpress.org/latest/how-to/schedule-a-page/#change-or-clear-the-schedule",
+            "text": "Change the times and choose **Save the schedule** again, or choose **Clear the schedule** to remove both times.\nArchiving a page or putting it in the trash clears its schedule too.",
+            "needs": []
+        },
+        {
+            "id": "9b033daa9f23",
+            "page": "Schedule a page",
+            "heading": "If something goes wrong",
+            "url": "https://docs.sightpress.org/latest/how-to/schedule-a-page/#if-something-goes-wrong",
+            "text": "- **A time in the past**, an end before the start, or a time that doesn't exist (the night the clocks go forward) is\n  explained, and the form keeps what you typed.\n- The page is published **as the person who scheduled it**: the same publish checks run. If a check fails, or that\n  person may no longer publish, nothing is published, the audit log says why, and the time is cleared so that\n  you can fix the page and schedule it again.\n- If the computer or server was off at the time, the page is published as soon as the scheduler runs again.\n\nWhoever runs SightPress on a server sets the scheduler up once; see the [command line reference](../reference/command-line.md#things-that-happen-at-a-set-time).",
             "needs": []
         },
         {
@@ -605,6 +1044,70 @@
             "needs": []
         },
         {
+            "id": "3809e7f139b4",
+            "page": "Test with assistive technology",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/test-with-assistive-technology/",
+            "text": "If you use a screen reader, a magnifier, a braille display, voice control or switch access, you can tell us how\nSightPress works with it before each release. Your experience matters more than any automatic test.",
+            "needs": []
+        },
+        {
+            "id": "32ca03339780",
+            "page": "Test with assistive technology",
+            "heading": "Before each release",
+            "url": "https://docs.sightpress.org/latest/how-to/test-with-assistive-technology/#before-each-release",
+            "text": "Before each new version, we post a **Testers wanted** discussion on\n[GitHub Discussions](https://github.com/sightpress/core/discussions). It lists the new and changed screens, and how\nto try them. Reply there to say you're taking part, or email <contribute@sightpress.org>.",
+            "needs": []
+        },
+        {
+            "id": "4dde4faf21bb",
+            "page": "Test with assistive technology",
+            "heading": "How to test",
+            "url": "https://docs.sightpress.org/latest/how-to/test-with-assistive-technology/#how-to-test",
+            "text": "1. Run SightPress on your own computer, as in [Getting started](../getting-started.md), and create a website.\n2. Go through the screens listed in the discussion, with the technology you use every day, in the way you normally\n   work. For example: sign in, write and publish a page, translate it, search the website, read the analytics.\n3. Note anything that stops you, slows you down or surprises you: something not announced, announced twice or\n   announced wrongly; focus that jumps or gets lost; a control you can't reach or operate; a chart or table you can't\n   understand.\n4. Note what worked well too. It tells us what to keep.\n\nWe test ourselves with NVDA and Firefox on Windows and VoiceOver and Safari on macOS. Other combinations, such as\nJAWS, Narrator, TalkBack, VoiceOver on iOS, Orca, ZoomText or Dragon, are especially welcome.",
+            "needs": []
+        },
+        {
+            "id": "5083bb7df593",
+            "page": "Test with assistive technology",
+            "heading": "Report what you found",
+            "url": "https://docs.sightpress.org/latest/how-to/test-with-assistive-technology/#report-what-you-found",
+            "text": "For each problem, [report an accessibility barrier](report-a-problem.md): the task, your assistive technology and its\nversion, your browser and operating system, what happened and what you expected. Accessibility barriers are always\ntreated as bugs.\n\nYou never need to explain or prove a disability to take part.",
+            "needs": []
+        },
+        {
+            "id": "0ab03baee918",
+            "page": "Translate SightPress",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/translate-sightpress/",
+            "text": "The admin panel, the website screens (sign-in, search, error pages) and the emails can be translated. Each language\nis one file. You need to be fluent in the language; you don't need to be a developer.",
+            "needs": []
+        },
+        {
+            "id": "64234be4c48b",
+            "page": "Translate SightPress",
+            "heading": "What is translated today",
+            "url": "https://docs.sightpress.org/latest/how-to/translate-sightpress/#what-is-translated-today",
+            "text": "- **British English** (`en-GB`): the source language, and the language used when a text has no translation.\n- **European Portuguese** (`pt-PT`) and **Spanish** (`es`): complete and reviewed.\n\nRegional variants are separate languages: for example Brazilian Portuguese (`pt-BR`) is not European Portuguese, and\nLatin American Spanish (`es-419`) is not Spanish from Spain.",
+            "needs": []
+        },
+        {
+            "id": "62f2c58984da",
+            "page": "Translate SightPress",
+            "heading": "Translate into a new language, or fix a translation",
+            "url": "https://docs.sightpress.org/latest/how-to/translate-sightpress/#translate-into-a-new-language-or-fix-a-translation",
+            "text": "1. Download the source file,\n   [messages.en-GB.xlf](https://github.com/sightpress/core/blob/main/resources/translations/messages.en-GB.xlf), and an\n   existing translation as an example, such as\n   [messages.es.xlf](https://github.com/sightpress/core/blob/main/resources/translations/messages.es.xlf).\n2. Open it in a translation tool that reads XLIFF 2.0 files, such as Poedit, OmegaT or Virtaal, or in a text\n   editor. Each text is a `<source>`; write your translation in the `<target>` next to it.\n3. Keep the words in curly brackets, such as `{name}` or `{count}`, exactly as they are: SightPress puts a name or a\n   number there. Keep any HTML such as `<strong>` too.\n4. Use the words people use every day, as the English does. Short sentences are better than long ones.\n5. Send the file:\n    - by email to <contribute@sightpress.org>, saying which language it is; or\n    - as a pull request to the [core repository](https://github.com/sightpress/core), if you know GitHub. The file\n      goes in `resources/translations/messages.<code>.xlf`, for example `messages.fr.xlf`.",
+            "needs": []
+        },
+        {
+            "id": "45a246bf8a52",
+            "page": "Translate SightPress",
+            "heading": "What happens next",
+            "url": "https://docs.sightpress.org/latest/how-to/translate-sightpress/#what-happens-next",
+            "text": "- A second fluent speaker reviews every new language, and every new text, before it is released.\n- Right-to-left languages, such as Arabic and Hebrew, also get a visual check of every screen.\n- New texts that still need a review are marked `state=\"initial\"` in the file. Reviewing them is a good first task.\n\nTranslating the documentation is not possible yet: it is written in British English only.",
+            "needs": []
+        },
+        {
             "id": "c87b2af8bda0",
             "page": "Try the command line tool",
             "heading": "",
@@ -726,6 +1229,58 @@
                 "analytics.view",
                 "assistant.manage",
                 "module.manage"
+            ]
+        },
+        {
+            "id": "d09d6ab93d23",
+            "page": "Update SightPress",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/",
+            "text": "This guide shows you how to move an installation to a newer version of SightPress, keeping every website, page,\naccount, menu and setting. It is written for **0.1 to 0.3**, the first update with new database tables.\n\n!!! warning \"Make a copy first\"\n\n    Before you update, make a copy of the `skeleton` folder, including the `sites` folder and the `.env` file, and of\n    every website's database if it isn't an SQLite file in `sites`. Without the `APP_SECRET` from `.env`, SightPress\n    can't open the websites' databases.",
+            "needs": []
+        },
+        {
+            "id": "7b51367aad84",
+            "page": "Update SightPress",
+            "heading": "Update",
+            "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/#update",
+            "text": "Type these commands in the `skeleton` folder.\n\n1. Stop SightPress: press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the window where it runs, or type `docker compose down`.\n2. Get the new skeleton:\n\n    ```sh\n    git pull\n    ```\n\n    If Git says that your changes to `config/tenant.php` or another file would be overwritten, see\n    [New settings in 0.3](#new-settings-in-03) and copy the new parts in by hand.\n\n3. Get the new version of SightPress itself:\n\n    ```sh\n    docker compose run --rm --no-deps php composer update\n    ```\n\n4. Update the database tables of every website:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:migrate --all\n    ```\n\n    You should see one line per website saying how many database migrations ran. One website failing doesn't stop\n    the others; run it again for that website once the problem is fixed.\n\n5. Build the search index of each website, replacing `demo` with its short name:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:search:reindex demo\n    ```\n\n6. Start SightPress again with `docker compose up`. The **scheduler** starts with it now (see below).\n7. Check: sign in to a website. The admin menu now has **Features**, **Analytics** and **Redirects**, and your pages,\n   people and menus are as they were.",
+            "needs": [
+                "analytics.view",
+                "module.manage",
+                "page.edit.any",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "12b310b6a6bc",
+            "page": "Update SightPress",
+            "heading": "What changes for your websites",
+            "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/#what-changes-for-your-websites",
+            "text": "- **Site search** and **Analytics** are **on** for every website after the update. Turn them off on the\n  [Features](turn-features-on-or-off.md) screen if you don't want them.\n- The **AI assistant** is **off**. Nothing is sent to any AI service until an admin sets it up; see\n  [Use the AI assistant](use-the-ai-assistant.md).\n- **Sign-up** is off and every website is still readable by everyone, as before.\n- The *Privacy notice* starter page of websites made before the update doesn't describe analytics. Add a section\n  about it yourself; [See who visits your website](see-who-visits-your-website.md) explains what is counted.",
+            "needs": [
+                "analytics.view",
+                "assistant.manage"
+            ]
+        },
+        {
+            "id": "bb02c450e8e4",
+            "page": "Update SightPress",
+            "heading": "New settings in 0.3",
+            "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/#new-settings-in-03",
+            "text": "- `.env` has a block of **upload limits** (`UPLOAD_MAX_SIZE`, `INPUT_MAX_SIZE` and others). Copy the block from\n  `.env.example`; without it, the recommended values are used. See [Fix upload size limits](fix-upload-size-limits.md).\n- `config/tenant.php` has two new sections: `modules`, which sets the features of every website (see\n  [Turn features on or off](turn-features-on-or-off.md#for-whoever-runs-the-installation)), and `uploads`, which\n  tells SightPress the web server's limit.\n- `docker-compose.yml` has a **scheduler** service, which publishes scheduled pages and keeps the analytics up to\n  date. It runs `bin/sightpress schedule:run` once a minute. On a server without Docker, add this line to the\n  crontab of the user that runs SightPress (`crontab -e`), with the path of your project:\n\n    ```text\n    * * * * * cd /var/www/my-site && php bin/sightpress schedule:run --no-interaction >> var/log/schedule.log 2>&1\n    ```\n\n    Run it in one place only per installation.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "a34b959c7c1c",
+            "page": "Update SightPress",
+            "heading": "If something goes wrong",
+            "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/#if-something-goes-wrong",
+            "text": "**A website shows an error page after the update**\n:   Its database tables are older than the code. Run `site:migrate` for it (step 4) and read the message it prints.\n\n**`composer update` fails**\n:   Check that you are in the `skeleton` folder and that SightPress is stopped, then try again. Your websites are\n    not changed until step 4.\n\n**Search finds nothing**\n:   Pages are added to the search index when they are published or changed. Run step 5 for that website to add\n    the pages that were already there.",
+            "needs": [
+                "settings.manage"
             ]
         },
         {
@@ -1120,6 +1675,26 @@
         {
             "id": "1f51a745a1b3",
             "page": "Command line reference",
+            "heading": "Languages",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#languages",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:locale:add <slug> <locale>` | Adds a language to the website, for example `site:locale:add demo pt-PT`. Pages are then translated into it from each page's editor. |\n| `site:locale:default <slug> <locale>` | Makes one of the website's languages the main one, whose pages have addresses without a language part. Warns that addresses change. |\n| `site:locale:remove <slug> <locale> [--yes]` | Removes a language. Without `--yes` it only explains what would happen. Its translations are kept, unreachable, and come back if the language is added again. The main language can't be removed. |\n\nSee [Add a language and translate a page](../how-to/add-a-language.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "5559c6a17fe7",
+            "page": "Command line reference",
+            "heading": "schedule:run",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#schedulerun",
+            "text": "```text\nschedule:run\n```\n\nDoes everything that is due on every website that is on: publishes and unpublishes scheduled pages, rolls up and\ndeletes old analytics, rebuilds search indexes that are out of date and removes sign-ups that were never confirmed.\nIt prints a line for each thing it did and a summary. Run it **once a minute**: the skeleton's `scheduler` service does\nthis in Docker; on a server, add a crontab line (see [Update SightPress](../how-to/update-sightpress.md#new-settings-in-03)).\nTwo runs never overlap: the second says \"Another run is still going; this one stops.\" A missed run catches up on the\nnext one. See [Schedule a page](../how-to/schedule-a-page.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "566582011da0",
+            "page": "Command line reference",
             "heading": "Features",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#features",
             "text": "| Command | What it does |\n| --- | --- |\n| `site:module:list <slug>` | Lists the website's optional features (modules): id, name and whether each one is on. |\n| `site:module:enable <slug> <module>` | Turns a feature on, after updating the website's database for it. Refused while a feature it needs is off. |\n| `site:module:disable <slug> <module> [--purge-data]` | Turns a feature off; its data is kept. Refused while a feature that is on needs it. `--purge-data` also deletes its data, for good. |\n\nFeatures the installation set in `config/tenant.php` (`modules.locked`) can't be changed. See\n[Turn features on or off](../how-to/turn-features-on-or-off.md).",
@@ -1128,7 +1703,7 @@
             ]
         },
         {
-            "id": "599849c8e07e",
+            "id": "b871576016ee",
             "page": "Command line reference",
             "heading": "Site search",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#site-search",
@@ -1138,7 +1713,7 @@
             ]
         },
         {
-            "id": "5559c6a17fe7",
+            "id": "abe79c1ab945",
             "page": "Command line reference",
             "heading": "Analytics",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#analytics",
@@ -1148,7 +1723,7 @@
             ]
         },
         {
-            "id": "566582011da0",
+            "id": "7885af705e36",
             "page": "Command line reference",
             "heading": "AI assistant",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#ai-assistant",
@@ -1158,7 +1733,7 @@
             ]
         },
         {
-            "id": "b871576016ee",
+            "id": "bd48f588b3e6",
             "page": "Command line reference",
             "heading": "Branding",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#branding",
@@ -1168,7 +1743,7 @@
             ]
         },
         {
-            "id": "abe79c1ab945",
+            "id": "4c92e481b257",
             "page": "Command line reference",
             "heading": "The site registry",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#the-site-registry",
@@ -1178,7 +1753,7 @@
             ]
         },
         {
-            "id": "bd48f588b3e6",
+            "id": "01df99a46768",
             "page": "Command line reference",
             "heading": "theme:validate",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#themevalidate",
@@ -1188,7 +1763,7 @@
             ]
         },
         {
-            "id": "4c92e481b257",
+            "id": "d75ce85b8132",
             "page": "Command line reference",
             "heading": "Database addresses",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#database-addresses",
