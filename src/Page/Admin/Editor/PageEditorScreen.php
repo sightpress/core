@@ -42,6 +42,7 @@ use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Site\Contract\SiteVisibility;
+use SightPress\Core\Tenant\EnabledModules;
 use SightPress\Core\Tenant\Site;
 use Symfony\Component\Validator\Constraints\Length;
 
@@ -61,6 +62,11 @@ final readonly class PageEditorScreen
     public const string EVERYONE = 'public';
     public const string MEMBERS = 'members';
 
+    /** The checkbox shown while the site's search module is on (SR-1). */
+    public const string EXCLUDE_FROM_SEARCH = 'exclude_from_site_search';
+
+    private const string SEARCH_MODULE = 'search';
+
     public function __construct(
         private AdminScreens $screens,
         private PageAdmin $admin,
@@ -77,6 +83,7 @@ final readonly class PageEditorScreen
         private Site $site,
         private PageRepository $pages,
         private SiteSettings $settings,
+        private EnabledModules $modules,
     ) {
     }
 
@@ -111,6 +118,9 @@ final readonly class PageEditorScreen
             new Field('noindex', 'Ask search engines and AI search engines not to list this page', FieldType::Checkbox, hint: 'It is then also left out of the sitemap and llms.txt.', required: false),
             new Field('canonical_url', 'Address of the original', FieldType::Url, hint: 'Only when this page is a copy of a page on another site: its full address, starting with https://.', required: false, constraints: [$length(PageContent::CANONICAL_MAX_LENGTH)]),
         ];
+        if ($this->modules->has(self::SEARCH_MODULE)) {
+            $fields[] = new Field(self::EXCLUDE_FROM_SEARCH, 'Leave this page out of the site’s own search', FieldType::Checkbox, hint: 'People searching this site won’t find it. Search engines still can, unless you also ask them not to list it.', required: false);
+        }
 
         return Form::create(strtolower($locale), ...$fields);
     }
@@ -136,6 +146,7 @@ final readonly class PageEditorScreen
             'social_image' => $translation->socialImage() === null ? '' : self::MEDIA_PREFIX . $translation->socialImage(),
             'noindex' => $translation->isNoindex() ? '1' : '',
             'canonical_url' => $translation->canonicalUrl() ?? '',
+            self::EXCLUDE_FROM_SEARCH => $translation->isExcludedFromSiteSearch() ? '1' : '',
         ]);
     }
 

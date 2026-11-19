@@ -11,6 +11,7 @@ use SightPress\Core\Page\PageAddresses;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
 use SightPress\Core\Page\PageRedirects;
+use SightPress\Core\Page\PageSearchDocuments;
 use SightPress\Core\Template\Translations;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Page\PageRepository;
@@ -112,6 +113,16 @@ final class PageFixture implements EventDispatcherInterface
     public function editor(): PageEditor
     {
         return new PageEditor($this->repository(), $this->site, $this->clock, $this, new BlockFixture($this->blockTypes, $this->database)->validator(), $this->redirects(), self::translations());
+    }
+
+    /**
+     * The pages as site search documents.
+     */
+    public function searchDocuments(): PageSearchDocuments
+    {
+        $blocks = new BlockFixture($this->blockTypes, $this->database);
+
+        return new PageSearchDocuments($this->database->entityManager, $this->repository(), $this->addresses(), $blocks->renderer(), $blocks->contexts($this->site), $blocks->texts($this->site), $this->site, $this->database->settings());
     }
 
     public function redirects(): PageRedirects

@@ -2215,6 +2215,12 @@
         <target>Deja este campo vacío</target>
       </segment>
     </unit>
+    <unit id="5cfb3d2a700d02b3">
+      <segment state="initial">
+        <source>Leave this page out of the site’s own search</source>
+        <target>Dejar esta página fuera del buscador del propio sitio</target>
+      </segment>
+    </unit>
     <unit id="6c5758b9fb72c5e0">
       <segment state="initial">
         <source>Let anyone create an account</source>
@@ -2951,6 +2957,12 @@
       <segment>
         <source>People</source>
         <target>Personas</target>
+      </segment>
+    </unit>
+    <unit id="5339be84531e8ddf">
+      <segment state="initial">
+        <source>People searching this site won’t find it. Search engines still can, unless you also ask them not to list it.</source>
+        <target>Quien busque en este sitio no la encontrará. Los buscadores sí podrán, a menos que también les pidas que no la muestren.</target>
       </segment>
     </unit>
     <unit id="738aa17fbf8f0e7b">

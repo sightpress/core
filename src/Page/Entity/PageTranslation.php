@@ -66,6 +66,9 @@ final class PageTranslation
     #[ORM\Column(name: 'canonical_url', type: Types::STRING, length: 2000, nullable: true)]
     private ?string $canonicalUrl = null;
 
+    #[ORM\Column(name: 'exclude_from_site_search', type: Types::BOOLEAN)]
+    private bool $excludeFromSiteSearch = false;
+
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $updatedAt;
 
@@ -164,6 +167,14 @@ final class PageTranslation
         return $this->canonicalUrl;
     }
 
+    /**
+     * Whether the site's own search leaves this translation out.
+     */
+    public function isExcludedFromSiteSearch(): bool
+    {
+        return $this->excludeFromSiteSearch;
+    }
+
     public function updatedAt(): DateTimeImmutable
     {
         return $this->updatedAt;
@@ -198,7 +209,7 @@ final class PageTranslation
 
     public function content(): PageContent
     {
-        return new PageContent($this->title, $this->slug, $this->summary, $this->description, $this->blocks, $this->socialImage, $this->seoTitle, $this->noindex, $this->canonicalUrl);
+        return new PageContent($this->title, $this->slug, $this->summary, $this->description, $this->blocks, $this->socialImage, $this->seoTitle, $this->noindex, $this->canonicalUrl, $this->excludeFromSiteSearch);
     }
 
     /**
@@ -217,6 +228,7 @@ final class PageTranslation
         $this->seoTitle = $content->seoTitle;
         $this->noindex = $content->noindex;
         $this->canonicalUrl = $content->canonicalUrl;
+        $this->excludeFromSiteSearch = $content->excludeFromSiteSearch;
         $this->updatedAt = $now;
     }
 
@@ -236,7 +248,7 @@ final class PageTranslation
     }
 
     /**
-     * @return array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string, draft: bool}
+     * @return array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string, exclude_from_site_search: bool, draft: bool}
      */
     public function snapshot(): array
     {
@@ -251,6 +263,7 @@ final class PageTranslation
             'seo_title' => $this->seoTitle,
             'noindex' => $this->noindex,
             'canonical_url' => $this->canonicalUrl,
+            'exclude_from_site_search' => $this->excludeFromSiteSearch,
             'draft' => $this->draft,
         ];
     }

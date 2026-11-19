@@ -62,7 +62,7 @@ final class RunScheduleCommandTest extends TestCase
         $this->register('off', SiteStatus::Disabled, SiteFixture::secretBox()->encrypt('sqlite:///x'));
 
         self::assertSame(Command::SUCCESS, $this->console());
-        self::assertMatchesRegularExpression('/^demo: Published “Concert” on schedule\.\nRan the schedule for 1 site at .+ UTC\.\n$/', $this->stdout);
+        self::assertMatchesRegularExpression('/^demo: Published “Concert” on schedule\.\ndemo: Site search: indexed \d+ documents\.\nRan the schedule for 1 site at .+ UTC\.\n$/', $this->stdout);
         self::assertSame(Command::SUCCESS, $this->console());
         self::assertStringStartsWith('Ran the schedule for 1 site', $this->stdout, 'nothing twice');
 

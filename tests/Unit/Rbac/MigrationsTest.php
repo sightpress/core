@@ -43,6 +43,8 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(PageSchedule::class)]
 #[CoversClass(\SightPress\Core\User\Migrations\Version20261118500000::class)]
 #[CoversClass(\SightPress\Core\Feature\Migrations\Version20261118600000::class)]
+#[CoversClass(\SightPress\Core\Page\Migrations\Version20261119100000::class)]
+#[CoversClass(\SightPress\Core\Search\Migrations\Version20261119110000::class)]
 #[UsesNamespace('SightPress\Core')]
 final class MigrationsTest extends TestCase
 {
@@ -51,7 +53,7 @@ final class MigrationsTest extends TestCase
         $database = new CoreSiteDatabase();
 
         self::assertSame(
-            ['audit_log', 'auth_remember_tokens', 'invitations', 'media', 'menu_items', 'migration_versions', 'page_redirects', 'page_revisions', 'page_translations', 'pages', 'permissions', 'role_permission', 'roles', 'site_module', 'site_settings', 'user_role', 'users', 'verification_code'],
+            ['audit_log', 'auth_remember_tokens', 'invitations', 'media', 'menu_items', 'migration_versions', 'page_redirects', 'page_revisions', 'page_translations', 'pages', 'permissions', 'role_permission', 'roles', 'search_document', 'search_posting', 'search_word', 'site_module', 'site_settings', 'user_role', 'users', 'verification_code'],
             $database->tables(),
         );
         $descriptions = array_map(
@@ -73,6 +75,8 @@ final class MigrationsTest extends TestCase
         self::assertContains('Add the publish_at, unpublish_at and scheduled_by columns to pages.', $descriptions);
         self::assertContains('Add the admin_reduced_motion and admin_larger_text columns to users.', $descriptions);
         self::assertContains('Create the permissions, roles, role_permission and user_role tables.', $descriptions);
+        self::assertContains('Add the exclude_from_site_search column to page_translations.', $descriptions);
+        self::assertContains('Create the search_document, search_posting and search_word tables.', $descriptions);
 
         $database->migrate('first');
 

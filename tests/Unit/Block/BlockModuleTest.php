@@ -41,6 +41,7 @@ use SightPress\Core\Module\ModuleSelection;
 #[UsesNamespace('SightPress\Core\Branding')]
 #[UsesNamespace('SightPress\Core\Seo')]
 #[UsesNamespace('SightPress\Core\Feature')]
+#[UsesNamespace('SightPress\Core\Search')]
 final class BlockModuleTest extends TestCase
 {
     public function testIsRequiredAndRegistersItsTypesAndServices(): void

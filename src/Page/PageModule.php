@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page;
 
+use Psr\Container\ContainerInterface;
+use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Page\Contract\MarkdownPages;
+use SightPress\Core\Page\Contract\SearchablePages;
 use SightPress\Core\Page\Contract\PageIndex;
 use SightPress\Core\Page\Contract\StarterContent;
 use SightPress\Core\Page\Contract\MovedAddresses;
@@ -81,6 +84,9 @@ final class PageModule implements ModuleInterface
         $services->autowire(DemoPages::class);
         $services->autowire(PageSchedule::class, public: true);
         $services->autowire(ScheduledPages::class);
+        $services->autowire(PageSearchDocuments::class);
+        $services->factory(SearchablePages::class, static fn (ContainerInterface $container): SearchablePages => Services::get($container, PageSearchDocuments::class), public: true);
+        $registrar->search()->addProvider(PageSearchDocuments::class);
 
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/page');
         $registrar->subscribers()->listen(PageTransitioned::class, ReviewRequestMailer::class);

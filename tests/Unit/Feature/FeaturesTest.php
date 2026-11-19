@@ -239,7 +239,7 @@ final class FeaturesTest extends TestCase
         $this->project = new TestProject();
         $this->kernel = Kernel::fromConfig(
             new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => 'test', 'APP_SECRET' => SiteFixture::SECRET]),
-            CoreModules::candidates(),
+            self::coreModules(),
         );
         self::assertSame(Command::INVALID, $this->create('demo', '--without', 'analytics'));
         self::assertStringContainsString('“analytics” is not an optional module. This install has none: every module is always on.', $this->stderr);
@@ -354,11 +354,21 @@ final class FeaturesTest extends TestCase
         $this->kernel = Kernel::fromConfig(
             new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => 'test', 'APP_SECRET' => SiteFixture::SECRET]),
             [
-                ...CoreModules::candidates(),
+                ...self::coreModules(),
                 new ModuleCandidate(new EventsModule(), 'acme/events', '*', $about),
                 new ModuleCandidate(new CalendarModule(), 'acme/events', '*', $about),
             ],
         );
+    }
+
+    /**
+     * Core's modules without its own optional ones (site search), so these tests only see the test modules.
+     *
+     * @return list<ModuleCandidate>
+     */
+    private static function coreModules(): array
+    {
+        return array_values(array_filter(CoreModules::candidates(), static fn (ModuleCandidate $candidate): bool => $candidate->module->manifest()->required));
     }
 
     private function create(string $slug, string ...$options): int

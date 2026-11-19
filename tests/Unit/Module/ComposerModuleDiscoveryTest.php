@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Module;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -20,6 +21,7 @@ use stdClass;
 
 #[CoversClass(ComposerModuleDiscovery::class)]
 #[CoversClass(CoreModules::class)]
+#[UsesNamespace('SightPress\Core\Search')]
 #[UsesClass(ModuleCandidate::class)]
 #[UsesClass(\SightPress\Core\Module\ModuleAbout::class)]
 #[UsesClass(\SightPress\Core\Site\SiteModule::class)]
@@ -58,7 +60,7 @@ final class ComposerModuleDiscoveryTest extends TestCase
     {
         $candidates = CoreModules::candidates();
 
-        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'audit'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'search', 'audit'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
         self::assertSame('sightpress/core', $candidates[0]->source);
         foreach (CoreModules::entityPaths() as $path) {
             self::assertDirectoryExists($path);

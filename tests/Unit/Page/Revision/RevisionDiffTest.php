@@ -37,7 +37,7 @@ final class RevisionDiffTest extends TestCase
     public function testComparesTheDetailsOfThePageWordByWord(): void
     {
         $old = self::translation(['title' => 'About us', 'summary' => 'Who we are', 'noindex' => true, 'social_image' => 4]);
-        $new = self::translation(['title' => 'About our team', 'path' => 'about-team', 'description' => 'Our people', 'draft' => true, 'social_image' => 5]);
+        $new = self::translation(['title' => 'About our team', 'path' => 'about-team', 'description' => 'Our people', 'draft' => true, 'social_image' => 5, 'exclude_from_site_search' => true]);
 
         $sections = $this->diff->compare($old, $new);
 
@@ -48,6 +48,7 @@ final class RevisionDiffTest extends TestCase
             ['Address', 'changed', [['removed', '/about'], ['added', '/about-team']]],
             ['Description for search engines', 'added', [['added', 'Our people']]],
             ['Picture shown when the page is shared', 'changed', [['removed', 'File number {id} of the media library'], ['added', 'File number {id} of the media library']]],
+            ['Leave this page out of the site’s own search', 'added', [['added', 'Yes']]],
             ['This translation is a draft of its own', 'added', [['added', 'Yes']]],
             ['Summary', 'removed', [['removed', 'Who we are']]],
             ['Ask search engines and AI search engines not to list this page', 'removed', [['removed', 'Yes']]],
@@ -156,7 +157,7 @@ final class RevisionDiffTest extends TestCase
      */
     private static function translation(array $fields): array
     {
-        return $fields + ['title' => 'About', 'slug' => 'about', 'path' => 'about', 'summary' => null, 'description' => null, 'blocks' => [], 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'draft' => false];
+        return $fields + ['title' => 'About', 'slug' => 'about', 'path' => 'about', 'summary' => null, 'description' => null, 'blocks' => [], 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'exclude_from_site_search' => false, 'draft' => false];
     }
 
     /**

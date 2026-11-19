@@ -8,6 +8,10 @@ use Psr\Http\Message\ResponseInterface;
 use SightPress\Core\Block\Type\GalleryBlock;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Media\MediaRepository;
+use SightPress\Core\Module\ModuleCandidate;
+use SightPress\Core\Module\ModuleLoader;
+use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\Media\MediaTypes;
 use SightPress\Core\Page\Admin\Editor\BlockData;
 use SightPress\Core\Page\Admin\Editor\BlockFormView;
@@ -34,6 +38,7 @@ use SightPress\Core\Page\Workflow\PageWorkflow;
 use SightPress\Core\Rbac\PageVoter;
 use SightPress\Core\Rbac\VoterAuthorizer;
 use SightPress\Core\Template\TemplatePaths;
+use SightPress\Core\Tenant\EnabledModules;
 use SightPress\Core\Theme\ThemeLoader;
 use SightPress\Core\Theme\ThemePageColours;
 use SightPress\Core\User\Entity\User;
@@ -54,8 +59,9 @@ final class PageAdminFixture
 
     /**
      * @param list<string> $locales the site's languages, the default first
+     * @param list<string> $modules the modules that are on, for screens that show more when they are
      */
-    public function __construct(array $locales = ['en-GB', 'pt-PT'])
+    public function __construct(array $locales = ['en-GB', 'pt-PT'], private readonly array $modules = ['search'])
     {
         $this->admin = new AdminFixture();
         $this->pages = new PageFixture($this->admin->auth->database, [new GalleryBlock()], $locales);
@@ -117,7 +123,18 @@ final class PageAdminFixture
             $this->pages->site,
             $this->pages->repository(),
             $this->pages->database->settings(),
+            self::modules(...$this->modules),
         );
+    }
+
+    /**
+     * Which modules the site has on, for screens that show something only while another module is on.
+     */
+    public static function modules(string ...$ids): EnabledModules
+    {
+        $candidates = array_map(static fn (string $id): ModuleCandidate => new ModuleCandidate(new FakeModule($id), 'sightpress/core'), $ids);
+
+        return new EnabledModules(ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue(array_values($candidates))->resolve(new ModuleSelection())));
     }
 
     public function listHandler(): PageListHandler

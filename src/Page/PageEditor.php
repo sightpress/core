@@ -169,6 +169,7 @@ final readonly class PageEditor
             is_string($kept['seo_title'] ?? null) ? $kept['seo_title'] : null,
             ($kept['noindex'] ?? false) === true,
             is_string($kept['canonical_url'] ?? null) ? $kept['canonical_url'] : null,
+            ($kept['exclude_from_site_search'] ?? false) === true,
         );
         $saved = $this->save($page, $locale, $content, $restoredBy);
         $this->events->dispatch(new RevisionRestored((int) $page->id(), $locale, $revision->number(), $saved->number(), $restoredBy));

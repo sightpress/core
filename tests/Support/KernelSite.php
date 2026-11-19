@@ -14,6 +14,7 @@ use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Migration\MigrationConfigurationFactory;
 use SightPress\Core\Kernel;
 use SightPress\Core\Module\CoreModules;
+use SightPress\Core\Module\ModuleCandidate;
 use SightPress\Core\Rbac\RbacSeeder;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
@@ -32,9 +33,10 @@ final class KernelSite
 
     /**
      * @param list<string> $domains
-     * @param list<string> $locales the first one is the default
+     * @param list<string>          $locales      the first one is the default
+     * @param list<ModuleCandidate> $extraModules modules installed next to core's
      */
-    public function __construct(string $name, array $domains = ['example.org'], string $environment = 'test', array $locales = ['en-GB'])
+    public function __construct(string $name, array $domains = ['example.org'], string $environment = 'test', array $locales = ['en-GB'], array $extraModules = [])
     {
         $this->project = new TestProject();
         $dsn = TestDatabases::dsn($name, $this->project->path());
@@ -49,7 +51,7 @@ final class KernelSite
         ], true) . ';');
         $this->kernel = Kernel::fromConfig(
             new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment, 'APP_SECRET' => SiteFixture::SECRET]),
-            CoreModules::candidates(),
+            [...CoreModules::candidates(), ...$extraModules],
         );
 
         $container = $this->container();

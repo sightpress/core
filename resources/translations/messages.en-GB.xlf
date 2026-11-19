@@ -2215,6 +2215,12 @@
         <target>Leave this field empty</target>
       </segment>
     </unit>
+    <unit id="5cfb3d2a700d02b3">
+      <segment>
+        <source>Leave this page out of the site’s own search</source>
+        <target>Leave this page out of the site’s own search</target>
+      </segment>
+    </unit>
     <unit id="6c5758b9fb72c5e0">
       <segment>
         <source>Let anyone create an account</source>
@@ -2951,6 +2957,12 @@
       <segment>
         <source>People</source>
         <target>People</target>
+      </segment>
+    </unit>
+    <unit id="5339be84531e8ddf">
+      <segment>
+        <source>People searching this site won’t find it. Search engines still can, unless you also ask them not to list it.</source>
+        <target>People searching this site won’t find it. Search engines still can, unless you also ask them not to list it.</target>
       </segment>
     </unit>
     <unit id="738aa17fbf8f0e7b">

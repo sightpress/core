@@ -257,6 +257,31 @@ final class PageEditorHandlerTest extends TestCase
         self::assertSame('Horário', Text::of($this->page->translation('pt-PT')?->title()));
     }
 
+    public function testLeavesAPageOutOfSiteSearchWhileSearchIsOn(): void
+    {
+        self::assertStringContainsString('Leave this page out of the site’s own search', $this->get($this->editor));
+
+        $this->post($this->editor, $this->body(['exclude_from_site_search' => '1']));
+        self::assertTrue($this->page->translation('en-GB')?->isExcludedFromSiteSearch());
+        self::assertStringContainsString('<input type="checkbox" id="en-gb-exclude-from-site-search" value="1" checked name="exclude_from_site_search"', $this->get($this->editor));
+        $this->post($this->editor, $this->body([]));
+        self::assertFalse($this->page->translation('en-GB')?->isExcludedFromSiteSearch(), 'unticked');
+    }
+
+    public function testKeepsThePagesSearchChoiceWhileSearchIsOff(): void
+    {
+        $this->fixture = new PageAdminFixture(modules: []);
+        $this->editor = $this->fixture->admin->auth->user('bea@example.org', 'editor');
+        $this->page = $this->fixture->pages->editor()->create('en-GB', new PageContent('Opening hours', 'hours', excludeFromSiteSearch: true), null, (int) $this->editor->id());
+
+        self::assertStringNotContainsString('exclude_from_site_search', $this->get($this->editor));
+        $this->post($this->editor, $this->body(['exclude_from_site_search' => '']));
+        self::assertTrue($this->page->translation('en-GB')?->isExcludedFromSiteSearch());
+
+        $this->fixture->handle($this->fixture->editorHandler(), $this->editor, 'POST', '/admin/pages/x?locale=pt-PT', $this->body(['title' => 'Horário']), (int) $this->page->id());
+        self::assertFalse($this->page->translation('pt-PT')?->isExcludedFromSiteSearch(), 'a new translation starts in search');
+    }
+
     public function testExplainsWhyThePageCantBeSaved(): void
     {
         $tooLong = $this->post($this->editor, $this->body(['title' => str_repeat('x', 201)]));

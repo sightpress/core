@@ -69,7 +69,7 @@ final class PageTranslationTest extends TestCase
         ]);
         self::assertEquals(new PageContent('Team', 'team', 'Who', 'Desc', $blocks), $translation->content());
         self::assertSame(
-            ['title' => 'Team', 'slug' => 'team', 'path' => 'about/team', 'summary' => 'Who', 'description' => 'Desc', 'blocks' => $blocks, 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'draft' => false],
+            ['title' => 'Team', 'slug' => 'team', 'path' => 'about/team', 'summary' => 'Who', 'description' => 'Desc', 'blocks' => $blocks, 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'exclude_from_site_search' => false, 'draft' => false],
             $translation->snapshot(),
         );
         self::assertNull($translation->socialImage());
@@ -79,6 +79,11 @@ final class PageTranslationTest extends TestCase
         $translation->rewrite(new PageContent('Team', 'team', null, null, [], null, 'Our team', true, 'https://example.org/team'), 'about/team', $this->now);
         self::assertSame(['Our team', true, 'https://example.org/team'], [$translation->seoTitle(), $translation->isNoindex(), $translation->canonicalUrl()]);
         self::assertEquals(new PageContent('Team', 'team', null, null, [], null, 'Our team', true, 'https://example.org/team'), $translation->content());
+        self::assertFalse($translation->isExcludedFromSiteSearch());
+        $translation->rewrite(new PageContent('Team', 'team', excludeFromSiteSearch: true), 'about/team', $this->now);
+        self::assertTrue($translation->isExcludedFromSiteSearch());
+        self::assertTrue($translation->content()->excludeFromSiteSearch);
+        self::assertTrue($translation->snapshot()['exclude_from_site_search']);
     }
 
     public function testRefusesALocaleThatIsNotACode(): void

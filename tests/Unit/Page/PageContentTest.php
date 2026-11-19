@@ -35,6 +35,7 @@ final class PageContentTest extends TestCase
                 'seo_title' => null,
                 'noindex' => false,
                 'canonical_url' => null,
+                'exclude_from_site_search' => false,
             ],
             $content->toArray(),
         );
@@ -69,13 +70,14 @@ final class PageContentTest extends TestCase
 
     public function testKeepsWhatSearchEnginesGet(): void
     {
-        $content = new PageContent('About', null, null, null, [], null, '  Meet  us ', true, ' https://example.org/original?a=1 ');
+        $content = new PageContent('About', null, null, null, [], null, '  Meet  us ', true, ' https://example.org/original?a=1 ', true);
 
-        self::assertSame(['Meet us', true, 'https://example.org/original?a=1'], [$content->seoTitle, $content->noindex, $content->canonicalUrl]);
+        self::assertSame(['Meet us', true, 'https://example.org/original?a=1', true], [$content->seoTitle, $content->noindex, $content->canonicalUrl, $content->excludeFromSiteSearch]);
         $copy = $content->withBlocks([]);
-        self::assertSame(['Meet us', true, 'https://example.org/original?a=1'], [$copy->seoTitle, $copy->noindex, $copy->canonicalUrl]);
+        self::assertSame(['Meet us', true, 'https://example.org/original?a=1', true], [$copy->seoTitle, $copy->noindex, $copy->canonicalUrl, $copy->excludeFromSiteSearch]);
         $renamed = $content->withTitle('Copy of About', 'about-copy');
-        self::assertSame(['Copy of About', 'about-copy', 'Meet us', true], [$renamed->title, $renamed->slug, $renamed->seoTitle, $renamed->noindex]);
+        self::assertSame(['Copy of About', 'about-copy', 'Meet us', true, true], [$renamed->title, $renamed->slug, $renamed->seoTitle, $renamed->noindex, $renamed->excludeFromSiteSearch]);
+        self::assertTrue($content->toArray()['exclude_from_site_search']);
         self::assertNull(new PageContent('About', canonicalUrl: ' ')->canonicalUrl);
         foreach (['/about', 'ftp://example.org/x', 'https://', 'https://exa mple.org', 'https://example.org/' . str_repeat('a', 2000)] as $url) {
             try {

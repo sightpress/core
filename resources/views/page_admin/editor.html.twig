@@ -129,6 +129,9 @@
         {{ f.field(form, 'social_image') }}
         {%- endif %}
         {{ f.field(form, 'noindex') }}
+        {%- if form.has('exclude_from_site_search') %}
+        {{ f.field(form, 'exclude_from_site_search') }}
+        {%- endif %}
         {{ f.field(form, 'canonical_url') }}
         <section class="search-preview" id="search-preview" aria-labelledby="search-preview-title" tabindex="-1"{% if focus == 'search-preview' %} autofocus{% endif %}>
             <h2 id="search-preview-title">{{ t('How a search result could look') }}</h2>

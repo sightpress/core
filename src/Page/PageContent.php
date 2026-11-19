@@ -47,11 +47,15 @@ final readonly class PageContent
     /** The address of the original when this page copies another one (absolute, `https://` or `http://`). */
     public ?string $canonicalUrl;
 
+    /** Whether the site's own search leaves the page out (separately from {@see $noindex}). */
+    public bool $excludeFromSiteSearch;
+
     /**
      * @param string|null $slug        null makes one from the title ({@see Slug::fromText()})
      * @param list<mixed> $blocks
      * @param int|null    $socialImage  media id of the page's own share image
      * @param string|null $canonicalUrl the original's address, when this page copies another one
+     * @param bool        $excludeFromSiteSearch whether the site's own search leaves the page out
      */
     public function __construct(
         string $title,
@@ -63,6 +67,7 @@ final readonly class PageContent
         ?string $seoTitle = null,
         bool $noindex = false,
         ?string $canonicalUrl = null,
+        bool $excludeFromSiteSearch = false,
     ) {
         $title = self::singleLine($title);
         if ($title === '') {
@@ -92,6 +97,7 @@ final readonly class PageContent
             throw new PageException('The original address must be a full web address starting with https:// or http://.');
         }
         $this->canonicalUrl = $canonicalUrl;
+        $this->excludeFromSiteSearch = $excludeFromSiteSearch;
     }
 
     /**
@@ -101,7 +107,7 @@ final readonly class PageContent
      */
     public function withBlocks(array $blocks): self
     {
-        return new self($this->title, $this->slug, $this->summary, $this->description, $blocks, $this->socialImage, $this->seoTitle, $this->noindex, $this->canonicalUrl);
+        return new self($this->title, $this->slug, $this->summary, $this->description, $blocks, $this->socialImage, $this->seoTitle, $this->noindex, $this->canonicalUrl, $this->excludeFromSiteSearch);
     }
 
     /**
@@ -109,13 +115,13 @@ final readonly class PageContent
      */
     public function withTitle(string $title, string $slug): self
     {
-        return new self($title, $slug, $this->summary, $this->description, $this->blocks, $this->socialImage, $this->seoTitle, $this->noindex, $this->canonicalUrl);
+        return new self($title, $slug, $this->summary, $this->description, $this->blocks, $this->socialImage, $this->seoTitle, $this->noindex, $this->canonicalUrl, $this->excludeFromSiteSearch);
     }
 
     /**
      * The content as stored in a revision snapshot.
      *
-     * @return array{title: string, slug: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string}
+     * @return array{title: string, slug: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string, exclude_from_site_search: bool}
      */
     public function toArray(): array
     {
@@ -129,6 +135,7 @@ final readonly class PageContent
             'seo_title' => $this->seoTitle,
             'noindex' => $this->noindex,
             'canonical_url' => $this->canonicalUrl,
+            'exclude_from_site_search' => $this->excludeFromSiteSearch,
         ];
     }
 

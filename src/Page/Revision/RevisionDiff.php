@@ -119,6 +119,7 @@ final readonly class RevisionDiff
             'social_image' => [new Message('Picture shown when the page is shared'), is_int($image) ? new Message('File number {id} of the media library', ['id' => $image]) : null],
             'noindex' => [new Message('Ask search engines and AI search engines not to list this page'), ($snapshot['noindex'] ?? false) === true ? new Message('Yes') : null],
             'canonical_url' => [new Message('Address of the original'), self::text($snapshot['canonical_url'] ?? null)],
+            'exclude_from_site_search' => [new Message('Leave this page out of the site’s own search'), ($snapshot['exclude_from_site_search'] ?? false) === true ? new Message('Yes') : null],
             'draft' => [new Message('This translation is a draft of its own'), ($snapshot['draft'] ?? false) === true ? new Message('Yes') : null],
         ];
         $details = [];

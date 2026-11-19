@@ -97,6 +97,8 @@ final readonly class PageEditorHandler implements RequestHandlerInterface
                 $form->text('seo_title'),
                 $form->text('noindex') === '1',
                 $form->text('canonical_url'),
+                // While search is off the checkbox isn't on the form, and the page keeps its choice.
+                $form->has(PageEditorScreen::EXCLUDE_FROM_SEARCH) ? $form->text(PageEditorScreen::EXCLUDE_FROM_SEARCH) === '1' : ($page->translation($locale)?->isExcludedFromSiteSearch() ?? false),
             );
             if ($form->text('layout') !== $page->layout()) {
                 $page->setLayout($form->text('layout'), $this->clock->now());

@@ -38,6 +38,7 @@ use stdClass;
 #[UsesNamespace('SightPress\Core\Tenant')]
 #[UsesNamespace('SightPress\Core\Module')]
 #[UsesNamespace('SightPress\Core\Infrastructure\Event')]
+#[UsesNamespace('SightPress\Core\Infrastructure\Search')]
 final class SiteContainerFactoryTest extends TestCase
 {
     private TemporaryDirectory $directory;
@@ -202,6 +203,26 @@ final class SiteContainerFactoryTest extends TestCase
 
         self::assertSame(['demo', 'blog'], $event->getArrayCopy());
         self::assertContains(\Psr\EventDispatcher\EventDispatcherInterface::class, SiteContainerFactory::SITE_SERVICES);
+    }
+
+    public function testEachSiteSeesTheSearchProvidersAndModulesOfItsOwnModules(): void
+    {
+        $module = new \SightPress\Core\Tests\Support\FakeModule('acme.events', register: static function (\SightPress\Module\ModuleRegistrar $r): void {
+            $r->search()->addProvider(\SightPress\Core\Tests\Support\Search\FakeSearchProvider::class);
+        });
+        $registry = \SightPress\Core\Module\ModuleRegistry::register(
+            new \SightPress\Core\Module\ModuleLoader('0.2.0')->catalogue([new \SightPress\Core\Module\ModuleCandidate($module, 'acme/events')])->resolve(new \SightPress\Core\Module\ModuleSelection()),
+        );
+        $tenant = new Container();
+        $tenant->set(\SightPress\Core\Module\ModuleRegistry::class, $registry);
+        $factory = new SiteContainerFactory($tenant, SiteFixture::secretBox(), TenantConfig::fromArray([], '/srv/app'), [], [
+            \SightPress\Core\Tests\Support\Search\FakeSearchProvider::class => \DI\autowire(),
+        ]);
+        $site = $factory->forSite(SiteFixture::site('demo'));
+
+        self::assertSame(['acme.events'], array_keys(Services::get($site, \SightPress\Core\Infrastructure\Search\SearchExtensions::class)->providers()));
+        self::assertTrue(Services::get($site, \SightPress\Core\Tenant\EnabledModules::class)->has('acme.events'));
+        self::assertFalse(Services::get($site, \SightPress\Core\Tenant\EnabledModules::class)->has('search'));
     }
 
     public function testEachSiteKeepsItsFilesInItsOwnFolderCreatedOnFirstWrite(): void

@@ -16,7 +16,7 @@ test('an admin turns a feature off by keyboard, after confirming, and on again',
   await expect(page).toHaveTitle('Features - Admin - Riverside Library');
   await expect(page.getByRole('navigation', { name: 'Admin' }).getByRole('link', { name: 'Features' })).toHaveAttribute('aria-current', 'page');
   await expect(page.getByRole('heading', { level: 2, name: 'Events' })).toBeVisible();
-  await expect(page.getByText('Status: On', { exact: true })).toBeVisible();
+  await expect(page.locator('section', { has: page.getByRole('heading', { level: 2, name: 'Events' }) }).getByText('Status: On', { exact: true })).toBeVisible();
   await expectNoViolations(page);
   expect((await request.get(`${SITE}/events`)).status()).toBe(200);
 

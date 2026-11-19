@@ -58,7 +58,8 @@
     "symfony/translation": "^8",
     "symfony/validator": "^8",
     "symfony/workflow": "^8",
-    "twig/twig": "^3"
+    "twig/twig": "^3",
+    "wamania/php-stemmer": "^4"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3",

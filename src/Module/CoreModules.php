@@ -18,6 +18,7 @@ use SightPress\Core\Page\Admin\PageAdminModule;
 use SightPress\Core\Page\PageModule;
 use SightPress\Core\People\PeopleModule;
 use SightPress\Core\Rbac\RbacModule;
+use SightPress\Core\Search\SearchModule;
 use SightPress\Core\Seo\SeoModule;
 use SightPress\Core\Site\SiteModule;
 use SightPress\Core\Theme\ThemeModule;
@@ -52,6 +53,11 @@ final class CoreModules
             new ModuleCandidate(new BrandingModule(), 'sightpress/core'),
             new ModuleCandidate(new SeoModule(), 'sightpress/core'),
             new ModuleCandidate(new FeatureModule(), 'sightpress/core'),
+            new ModuleCandidate(new SearchModule(), 'sightpress/core', about: [SearchModule::ID => new ModuleAbout(
+                'Site search',
+                'A search box on every page of the site, which finds its published pages in the language being read. Members-only pages are only found by people who are signed in.',
+                'The search box and the search page are removed. The search index is kept, and is brought up to date when search is turned on again.',
+            )]),
             new ModuleCandidate(new AuditModule(), 'sightpress/core'),
         ];
     }
