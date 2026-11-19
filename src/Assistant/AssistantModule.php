@@ -9,6 +9,7 @@ use SightPress\Core\Assistant\Admin\AssistantInsertHandler;
 use SightPress\Core\Assistant\Admin\AssistantReplies;
 use SightPress\Core\Assistant\Admin\AssistantSettingsHandler;
 use SightPress\Core\Assistant\Admin\AssistantTestHandler;
+use SightPress\Core\Assistant\Admin\AssistantTranslateHandler;
 use SightPress\Core\Assistant\Command\AskAssistantCommand;
 use SightPress\Core\Assistant\Command\AssistantUsageCommand;
 use SightPress\Core\Assistant\Command\DisableAssistantCommand;
@@ -33,6 +34,7 @@ use SightPress\Core\Assistant\Task\Prompts;
 use SightPress\Core\Assistant\Task\RewriteTask;
 use SightPress\Core\Assistant\Task\SeoMetaTask;
 use SightPress\Core\Assistant\Task\SummaryTask;
+use SightPress\Core\Assistant\Task\TranslateTask;
 use SightPress\Core\Block\Contract\RichText;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Access\Permission;
@@ -97,19 +99,20 @@ final class AssistantModule implements ModuleInterface
         $services->autowire(Prompts::class);
         $services->autowire(HelpIndex::class);
         $services->autowire(RichText::class);
-        foreach ([AskTask::class, SummaryTask::class, SeoMetaTask::class, RewriteTask::class, DraftPageTask::class, ExplainCheckTask::class, AltTextTask::class, HelpTask::class] as $task) {
+        foreach ([AskTask::class, SummaryTask::class, SeoMetaTask::class, RewriteTask::class, DraftPageTask::class, ExplainCheckTask::class, AltTextTask::class, HelpTask::class, TranslateTask::class] as $task) {
             $services->autowire($task);
             $assistant->addTask($task);
         }
 
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/assistant');
-        foreach ([AssistantReplies::class, AssistantSettingsHandler::class, AssistantTestHandler::class, AssistantAskHandler::class, AssistantInsertHandler::class] as $class) {
+        foreach ([AssistantReplies::class, AssistantSettingsHandler::class, AssistantTestHandler::class, AssistantAskHandler::class, AssistantInsertHandler::class, AssistantTranslateHandler::class] as $class) {
             $services->autowire($class);
         }
         $routes = $registrar->routes();
         $routes->add(new Route('assistant.settings', AssistantSettingsHandler::PATH, AssistantSettingsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('assistant.test', AssistantTestHandler::PATH, AssistantTestHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('assistant.ask', AssistantAskHandler::PATH, AssistantAskHandler::class, ['POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('assistant.translate', AssistantTranslateHandler::PATH, AssistantTranslateHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('assistant.insert', AssistantInsertHandler::PATH, AssistantInsertHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('assistant.settings', 'AI assistant', 'assistant.settings', self::MANAGE, 'admin.settings', 20));
 

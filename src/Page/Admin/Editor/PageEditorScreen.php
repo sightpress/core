@@ -203,6 +203,7 @@ final readonly class PageEditorScreen
             'translations' => $this->translations($page, $locale),
             'translations_action' => PageTranslationHandler::path((int) $page->id()),
             'draft_translation' => $translation?->isDraft() === true,
+            'machine_drafted' => $translation?->isMachineDrafted() === true,
             'current_has_translation' => $translation !== null,
             'is_main_locale' => $locale === $this->site->defaultLocale,
             'may_publish' => $actor->has('page.publish'),
@@ -311,6 +312,7 @@ final readonly class PageEditorScreen
                 'name' => new LanguageName($locale),
                 'status' => match (true) {
                     $translation === null => 'Not written yet',
+                    $translation->isMachineDrafted() => 'Drafted by the AI assistant, not checked yet',
                     $translation->isPublished() => 'Published',
                     $translation->isDraft() => 'Draft translation',
                     default => 'Draft',

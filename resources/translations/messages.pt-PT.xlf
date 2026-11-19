@@ -1615,6 +1615,18 @@
         <target>Rascunho</target>
       </segment>
     </unit>
+    <unit id="5a8a8e27cae0f487">
+      <segment state="initial">
+        <source>Draft a translation</source>
+        <target>Redigir uma tradução</target>
+      </segment>
+    </unit>
+    <unit id="bb7acd7c66036ab6">
+      <segment state="initial">
+        <source>Draft a translation into {language} with the AI assistant</source>
+        <target>Redigir uma tradução para {language} com o assistente de IA</target>
+      </segment>
+    </unit>
     <unit id="85e5f89b57788752">
       <segment state="initial">
         <source>Draft of the page</source>
@@ -1625,6 +1637,12 @@
       <segment state="initial">
         <source>Draft this page</source>
         <target>Redigir esta página</target>
+      </segment>
+    </unit>
+    <unit id="5362454d6ad85d46">
+      <segment state="initial">
+        <source>Drafted by the AI assistant, not checked yet</source>
+        <target>Redigida pelo assistente de IA, ainda não verificada</target>
       </segment>
     </unit>
     <unit id="6656d0af00def6fe">
@@ -2285,6 +2303,12 @@
       <segment state="initial">
         <source>I checked the alt text: it describes the picture</source>
         <target>Verifiquei o texto alternativo: descreve a imagem</target>
+      </segment>
+    </unit>
+    <unit id="3d99faf28df0b97d">
+      <segment state="initial">
+        <source>I checked this translation</source>
+        <target>Verifiquei esta tradução</target>
       </segment>
     </unit>
     <unit id="ed3bcecc81cdaa19">
@@ -3865,6 +3889,12 @@
         <target>Reativar {name}</target>
       </segment>
     </unit>
+    <unit id="6683c9229ab2464d">
+      <segment state="initial">
+        <source>Read it and change what needs changing. Saving the page, or choosing “I checked this translation”, says a person checked it; until then it can’t be published.</source>
+        <target>Leia-a e altere o que for preciso. Guardar a página, ou escolher «Verifiquei esta tradução», indica que uma pessoa a verificou; até lá não pode ser publicada.</target>
+      </segment>
+    </unit>
     <unit id="83b3b277abbf82ba">
       <segment>
         <source>Read the guide</source>
@@ -5065,6 +5095,18 @@
         <target>Esse redirecionamento ficaria em círculo: o novo endereço leva de volta ao antigo.</target>
       </segment>
     </unit>
+    <unit id="5a2235ded2686a2f">
+      <segment state="initial">
+        <source>The AI assistant drafted the {language} translation. Read it and change what needs changing, then save it or choose “I checked this translation”. It can’t be published before.</source>
+        <target>O assistente de IA redigiu a tradução para {language}. Leia-a e altere o que for preciso; depois guarde-a ou escolha «Verifiquei esta tradução». Antes disso não pode ser publicada.</target>
+      </segment>
+    </unit>
+    <unit id="09e07ee54fb3c9d8">
+      <segment state="initial">
+        <source>The AI assistant drafted this translation, and nobody has checked it yet.</source>
+        <target>O assistente de IA redigiu esta tradução e ainda ninguém a verificou.</target>
+      </segment>
+    </unit>
     <unit id="1c50c6147e75a1b9">
       <segment state="initial">
         <source>The AI assistant suggested this alt text. Pages that show it can’t be published until someone checks it.</source>
@@ -5231,6 +5273,12 @@
       <segment state="initial">
         <source>The assistant couldn’t be reached. Try again.</source>
         <target>Não foi possível contactar o assistente. Tente novamente.</target>
+      </segment>
+    </unit>
+    <unit id="449702e997d63fd3">
+      <segment state="initial">
+        <source>The assistant couldn’t draft the translation. {reason}</source>
+        <target>O assistente não conseguiu redigir a tradução. {reason}</target>
       </segment>
     </unit>
     <unit id="ceb92cf155cf8031">
@@ -5971,10 +6019,22 @@
         <target>A transcrição é demasiado longa</target>
       </segment>
     </unit>
+    <unit id="761476a0ff478a0e">
+      <segment state="initial">
+        <source>The translation can’t be started: the page changed, or you can’t change it now.</source>
+        <target>Não é possível começar a tradução: a página mudou ou não a pode alterar agora.</target>
+      </segment>
+    </unit>
     <unit id="bece0f39ee3543aa">
       <segment>
         <source>The translations are kept. Add {language} again to bring them back as they were.</source>
         <target>As traduções ficam guardadas. Adicione {language} outra vez para as recuperar como estavam.</target>
+      </segment>
+    </unit>
+    <unit id="faddea156dd2c1a9">
+      <segment state="initial">
+        <source>The translation’s blocks didn’t pass the checks, so it wasn’t saved. Try again.</source>
+        <target>Os blocos da tradução não passaram as verificações, por isso não foi guardada. Tente novamente.</target>
       </segment>
     </unit>
     <unit id="84e91fdf4a44672e">
@@ -6059,6 +6119,12 @@
       <segment>
         <source>The {name} translation is a draft again. Visitors can’t see it.</source>
         <target>A tradução em {name} voltou a ser um rascunho. Os visitantes não a podem ver.</target>
+      </segment>
+    </unit>
+    <unit id="282f20ea63144cd5">
+      <segment state="initial">
+        <source>The {name} translation is checked. It can be published now.</source>
+        <target>A tradução para {name} está verificada. Já pode ser publicada.</target>
       </segment>
     </unit>
     <unit id="b078685d781f2206">
@@ -6367,6 +6433,12 @@
         <target>Esta página tem páginas abaixo dela. Mova-as para outro lado ou ponha-as primeiro no lixo.</target>
       </segment>
     </unit>
+    <unit id="878b2fc4d54a52c7">
+      <segment state="initial">
+        <source>This page is too long for the assistant to translate in one go. Start the translation with “Translate”, then ask for parts of it with “Rewrite text”.</source>
+        <target>Esta página é demasiado longa para o assistente a traduzir de uma vez. Comece a tradução com «Traduzir» e depois peça partes com «Reescrever texto».</target>
+      </segment>
+    </unit>
     <unit id="1e636a03b968c9da">
       <segment>
         <source>This picture can't be read. It may be damaged; save it again and try the new file.</source>
@@ -6551,6 +6623,12 @@
       <segment>
         <source>Translate into {language} from {source}</source>
         <target>Traduzir para {language} a partir de {source}</target>
+      </segment>
+    </unit>
+    <unit id="cee482edac4ccd74">
+      <segment state="initial">
+        <source>Translation drafted by the AI assistant, not checked yet:</source>
+        <target>Tradução redigida pelo assistente de IA, ainda não verificada:</target>
       </segment>
     </unit>
     <unit id="266a41b90d4f831e">

@@ -14,6 +14,7 @@ use SightPress\Core\Page\Migrations\Version20261116130000 as PageTables;
 use SightPress\Core\Page\Migrations\Version20261116220000 as PageShareImage;
 use SightPress\Core\Page\Migrations\Version20261116230000 as PageSearchFields;
 use SightPress\Core\Page\Migrations\Version20261118100000 as PageTranslationDrafts;
+use SightPress\Core\Page\Migrations\Version20261120200000 as PageMachineDrafted;
 use SightPress\Core\Page\Migrations\Version20261118200000 as PageRedirectsTable;
 use SightPress\Core\Page\Migrations\Version20261118300000 as PageSchedule;
 use SightPress\Core\Media\Migrations\Version20261118100000 as MediaTranscripts;
@@ -39,6 +40,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(PageShareImage::class)]
 #[CoversClass(PageSearchFields::class)]
 #[CoversClass(PageTranslationDrafts::class)]
+#[CoversClass(PageMachineDrafted::class)]
 #[CoversClass(MediaTranscripts::class)]
 #[CoversClass(MediaAltSuggested::class)]
 #[CoversClass(PageRedirectsTable::class)]

@@ -79,7 +79,12 @@ final readonly class PublishChecker
             return [$this->error($locale, 'page.language', new Message('The site isn\'t written in "{locale}" any more. Remove this language from the page, or add it to the site.', ['locale' => $locale]), '', ['3.1.1'])];
         }
 
+        $machine = $translation->isMachineDrafted()
+            ? [$this->error($locale, 'translation.machine_drafted', 'The AI assistant drafted this translation, and nobody has checked it yet. Read it and change what needs changing, then save it or choose “I checked this translation”.', '/title')]
+            : [];
+
         return [
+            ...$machine,
             ...$this->blocks($translation),
             ...$this->seo($page, $translation),
         ];

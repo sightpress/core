@@ -102,7 +102,7 @@ final readonly class PageRevisionsHandler implements RequestHandlerInterface
     /**
      * @param list<RevisionVersion> $versions
      *
-     * @return list<array{number: int, saved: \DateTimeImmutable, by: ?string, by_note: ?Message, state: ?string, first: bool, url: string}>
+     * @return list<array{number: int, saved: \DateTimeImmutable, by: ?string, by_note: ?Message, state: ?string, machine: bool, first: bool, url: string}>
      */
     private function rows(array $versions, int $id, string $locale): array
     {
@@ -114,6 +114,7 @@ final readonly class PageRevisionsHandler implements RequestHandlerInterface
             'by' => $names[$version->revision->savedBy() ?? 0] ?? null,
             'by_note' => self::byNote($version->revision->savedBy(), $names),
             'state' => $version->state === null ? null : PageAdmin::stateLabel($version->state),
+            'machine' => (RevisionHistory::translation($version->revision, $locale)['machine_drafted'] ?? false) === true,
             'first' => $version->previous === null,
             'url' => PageRevisionHandler::path($id, $version->revision->number(), $locale, $this->site->defaultLocale),
         ], $versions);

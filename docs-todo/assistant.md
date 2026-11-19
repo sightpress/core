@@ -1,4 +1,4 @@
-# AI assistant (A-2 … A-5)
+# AI assistant (A-2 … A-6)
 
 The AI assistant gives suggestions from an AI service the site chooses, with its own API key ("bring your own key"):
 summaries, descriptions for search engines, alt text, drafts and answers to questions. It is an optional feature,
@@ -122,3 +122,15 @@ with a link to read more. It never points you to screens your role can't open (a
 For maintainers: the documentation is copied into `resources/assistant/help-index.json` by
 `php tools/assistant-help-index.php <docs>/docs` (add `--check` to see whether it is up to date). The *Help index*
 workflow does it whenever the release pull request changes and opens a pull request with the new file.
+
+## Draft a translation (A-6)
+
+On a page written in more than one language, the **Translations** section has **Draft a translation into <language>
+with the AI assistant** for each language the page isn't written in yet. The assistant translates the words only:
+the blocks, pictures and links stay as they are. The new translation opens in the editor as a draft, with a notice:
+"The AI assistant drafted this translation, and nobody has checked it yet."
+
+It can't be published until a person has read it: either save it from the editor (after changing what needs
+changing) or choose **I checked this translation**. Until then the page list and the page's versions say
+"drafted by the AI assistant, not checked yet". Very long pages (over 60,000 characters) are refused: start them with
+**Translate** and use **Rewrite text** for parts.

@@ -88,6 +88,18 @@ final readonly class PageTranslationHandler implements RequestHandlerInterface
 
             return $this->screens->redirect($request, $edit, new Message('Started the {name} translation as a copy of the {from} page. Translate the text, then publish the translation.', ['name' => $name, 'from' => new LanguageName($from)]));
         }
+        if ($op === 'confirm') {
+            if (!$this->authorizer->can($actor, PageAction::Edit->value, $page)) {
+                throw new HttpForbiddenException($request, 'You can’t change this page now.');
+            }
+            if ($page->translation($locale) === null) {
+                throw new HttpBadRequestException($request, 'The page isn’t written in that language yet.');
+            }
+
+            return $this->screens->redirect($request, $edit, $this->editor->confirmTranslation($page, $locale, $actor->userId)
+                ? new Message('The {name} translation is checked. It can be published now.', ['name' => $name])
+                : 'Nothing was changed.');
+        }
         if ($op !== 'publish' && $op !== 'draft') {
             throw new HttpBadRequestException($request, 'Choose one of the translation buttons.');
         }

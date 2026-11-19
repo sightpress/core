@@ -647,8 +647,10 @@
             "page": "Turn features on or off",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/",
-            "text": "Some parts of SightPress are optional **features**, for example site search or visitor statistics. Each website has\nits own: an admin can turn a feature off for one website and keep it on for the others. Turning a feature off hides\neverything it adds, on the website and in the admin panel, and **keeps its data**, so turning it on again brings it\nback as it was.\n\nYou need to be an **admin** of the website. Editors, contributors and members don't see the *Features* screen.\n\n!!! note \"Optional features in this version\"\n\n    This version of SightPress has one optional feature of its own: **Site search** (see\n    [Search your website](search-your-website.md)). Statistics and the AI assistant arrive in later versions.\n    Features installed as extra packages show up on the screen too.",
+            "text": "Some parts of SightPress are optional **features**, for example site search or visitor statistics. Each website has\nits own: an admin can turn a feature off for one website and keep it on for the others. Turning a feature off hides\neverything it adds, on the website and in the admin panel, and **keeps its data**, so turning it on again brings it\nback as it was.\n\nYou need to be an **admin** of the website. Editors, contributors and members don't see the *Features* screen.\n\n!!! note \"Optional features in this version\"\n\n    This version of SightPress has three optional features of its own: **Site search** (see\n    [Search your website](search-your-website.md)), **Analytics** (see\n    [See who visits your website](see-who-visits-your-website.md)), both on for new websites, and the\n    **AI assistant** (see [Use the AI assistant](use-the-ai-assistant.md)), off for new websites. Features installed\n    as extra packages show up on the screen too.",
             "needs": [
+                "analytics.view",
+                "assistant.manage",
                 "module.manage"
             ]
         },
@@ -659,6 +661,8 @@
             "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#see-the-features-of-a-website",
             "text": "1. Sign in to the admin panel of the website, for example `http://localhost:8080/admin`.\n2. In the admin menu, choose **Features**.\n3. You should see one section for each optional feature, with its name as a heading, what it does, its **Status**\n   (\"On\" or \"Off\") and what happens when it is off.\n\nA feature that says **\"set by your organisation\"** was chosen for every website by whoever runs your SightPress\ninstallation. It has no button, and it can't be changed from the website.",
             "needs": [
+                "analytics.view",
+                "assistant.manage",
                 "module.manage"
             ]
         },
@@ -669,6 +673,8 @@
             "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#turn-a-feature-off",
             "text": "1. On the *Features* screen, find the feature and choose **Turn off** followed by its name, for example\n   **Turn off Events**.\n2. A page asks you to confirm and says what will happen. Choose **Turn off …** again to go ahead, or\n   **Keep … on** to go back without changing anything.\n3. You are back on the *Features* screen, at the feature's heading. A message at the top says that it is off and that\n   its data is kept. Screen readers read the message out.\n4. Check: the pages the feature added now answer \"not found\", and its screens have left the admin menu.\n\nIf another feature needs this one, SightPress refuses and names that feature: turn that one off first.",
             "needs": [
+                "analytics.view",
+                "assistant.manage",
                 "module.manage"
             ]
         },
@@ -679,6 +685,8 @@
             "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#turn-a-feature-on",
             "text": "1. On the *Features* screen, choose **Turn on** followed by the feature's name.\n2. You are back at the feature's heading, with the message \"… is on.\"\n3. Check: its pages and screens are back, with the data they had before.\n\nIf the feature needs another feature that is off, SightPress refuses and names the feature to turn on first.",
             "needs": [
+                "analytics.view",
+                "assistant.manage",
                 "module.manage"
             ]
         },
@@ -689,6 +697,8 @@
             "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#delete-a-features-data",
             "text": "This removes everything the feature stored for the website, **for good**. You can only do it while the feature is off.\n\n1. Turn the feature off (see above).\n2. Under the feature, choose **Delete the data of …**. The link only appears when there is data to delete.\n3. A page asks you to confirm. Choose **Delete the data of …** to go ahead, or **Keep the data** to go back.\n4. The message says the data was deleted. Turning the feature on again later starts afresh, with no data.\n\nEvery change on this screen is written to the website's **Audit log**, with who made it and when.",
             "needs": [
+                "analytics.view",
+                "assistant.manage",
                 "audit.view",
                 "module.manage"
             ]
@@ -700,6 +710,8 @@
             "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#with-the-command-line-tool",
             "text": "The same can be done in a terminal, in the `skeleton` folder. Replace `demo` with the short name of your website and\n`acme.events` with the feature's id, which the first command shows.\n\n1. List the features of a website and whether each one is on:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:module:list demo\n    ```\n\n2. Turn one on, or off:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:module:enable demo acme.events\n    docker compose run --rm --no-deps php bin/sightpress site:module:disable demo acme.events\n    ```\n\n3. Turn one off and delete its data for good:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:module:disable demo acme.events --purge-data\n    ```\n\nWhen you create a website, `site:create demo --without=acme.events` starts it with that feature off.",
             "needs": [
+                "analytics.view",
+                "assistant.manage",
                 "module.manage",
                 "settings.manage"
             ]
@@ -711,7 +723,128 @@
             "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#for-whoever-runs-the-installation",
             "text": "In `config/tenant.php`, the `modules` section changes the features of **every** website:\n\n- `defaults` says which features new websites start with, for example `'defaults' => ['analytics' => false]`.\n  Websites that already exist keep what they have.\n- `locked` turns a feature on or off for every website, for example `'locked' => ['analytics' => false]`. Admins then\n  see \"set by your organisation\" and can't change it, and neither can the command line tool.",
             "needs": [
+                "analytics.view",
+                "assistant.manage",
                 "module.manage"
+            ]
+        },
+        {
+            "id": "c8712c408566",
+            "page": "Use the AI assistant",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/",
+            "text": "The AI assistant suggests text for your website: summaries, descriptions for search engines, alt text for pictures,\ndrafts of pages and translations. It also answers questions about using SightPress. It uses an AI service you\nchoose, with **your own key** from that service, so you pay the service directly for what you use.\n\nThe assistant only ever **suggests**. Nothing it writes is used until a person inserts it and saves. Alt text and\ntranslations it writes are marked until a person has checked them, and pages that use them can't be published\nbefore that.\n\nThe AI assistant is an optional feature, **off** for new websites. Nothing is sent to any AI service until an admin\nsets it up and someone asks for a suggestion.",
+            "needs": []
+        },
+        {
+            "id": "20ba6b1ef4b7",
+            "page": "Use the AI assistant",
+            "heading": "Before you start",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#before-you-start",
+            "text": "- You need to be an **admin** of the website to turn the assistant on and set it up.\n- You need an **API key** from one of the AI services SightPress works with: Anthropic (Claude), OpenAI (GPT),\n  Mistral AI, or a service or your own server that works like OpenAI's. Each service's website explains how to get\n  a key and what it costs. Check where the service processes data before you choose it: Mistral AI, for example,\n  processes it in the EU.",
+            "needs": []
+        },
+        {
+            "id": "d418a9f2891e",
+            "page": "Use the AI assistant",
+            "heading": "Turn the assistant on",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#turn-the-assistant-on",
+            "text": "1. Sign in to the admin panel, for example at `http://localhost:8080/admin`.\n2. In the admin menu, choose **Features**.\n3. Find **AI assistant** and choose **Turn on AI assistant**.\n4. You should see that its status is now \"On\". A new screen appears in the admin menu under **Site settings**:\n   **AI assistant**.\n\nSee [Turn features on or off](turn-features-on-or-off.md) for more about features.",
+            "needs": [
+                "assistant.manage",
+                "module.manage",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "1682ccaf101d",
+            "page": "Use the AI assistant",
+            "heading": "Choose the service and enter your key",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#choose-the-service-and-enter-your-key",
+            "text": "1. In the admin menu, choose **Site settings**, then **AI assistant**.\n2. Under **Status** you should see \"Not ready yet\", followed by what is missing.\n3. Under **AI service**, choose a service. Each one says what it is.\n4. Choose a **Model**. Bigger models write better and cost more. For an OpenAI-compatible service, type the\n   **Model name** and the **Address of the service** instead (it must start with `https://`).\n5. Paste your key into **New API key** and choose **Save the AI service**.\n6. You should see \"The AI service is saved.\" Under **Status** it now says \"Ready\", and the page shows only the last\n   four characters of your key, for example \"Saved API key: ••••1234\". The key is stored encrypted and never shown\n   again. To change it, paste a new one; to delete it, choose **Remove key**.\n7. Choose **Test connection**. You should see \"The connection works\", or what went wrong (for example a key the\n   service didn't accept).\n\nIf your organisation chooses the AI service for every website, this screen shows its choice and you can't change\nit.",
+            "needs": [
+                "assistant.manage",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "d86a6b7e5d94",
+            "page": "Use the AI assistant",
+            "heading": "Choose who may use it, and a budget",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#choose-who-may-use-it-and-a-budget",
+            "text": "1. On the same screen, under **Who may use it, and how much**, tick the roles that may ask the assistant. Admins\n   always may.\n2. In **Monthly budget in tokens**, enter how many tokens (pieces of words, sent and received) the website may use\n   each month. Leave it empty to use your organisation's budget; enter 0 for no limit.\n3. Choose **Save who may use it**. The screen shows how much has been used this month.\n\nMonths start on the 1st. From 80% of the budget, everyone who asks is warned; at 100% the assistant stops until the\nnext month. Each person can ask 20 times every 10 minutes.",
+            "needs": [
+                "assistant.manage"
+            ]
+        },
+        {
+            "id": "164ee89394a8",
+            "page": "Use the AI assistant",
+            "heading": "Ask a question",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#ask-a-question",
+            "text": "1. On the **Dashboard** (or at the end of a page's editor), find **Ask the assistant**.\n2. Type your question in **Your question**, for example \"How do I add a page to the main menu?\", and choose\n   **Ask**.\n3. You should hear or see \"Working on it…\", then \"Suggestion ready\". The answer appears under its own heading,\n   which gets focus. It ends with a link to the part of this documentation it used.\n\nThe assistant only tells you about screens your role can use. If something needs an admin, it says so.\n\nOn a page's editor you can tick **Share this page with the assistant** to ask about the page itself. It reads the\nsaved page, so save your changes first.",
+            "needs": []
+        },
+        {
+            "id": "0fa4e511f4a3",
+            "page": "Use the AI assistant",
+            "heading": "Get a suggestion for a field",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#get-a-suggestion-for-a-field",
+            "text": "On a page's editor, under **Summary**, **Title in search results** and **Description for search engines**, there is a\n**Suggest** button.\n\n1. Save the page first: the assistant reads the saved page.\n2. Choose, for example, **Suggest a summary**.\n3. The suggestion appears in **Ask the assistant**, under its own heading, which gets focus.\n4. Choose **Insert** to put it in the field (focus goes back to the field), **Copy** to copy it, **Try again** for\n   another one, or **Discard**.\n5. Check the text, change it if needed, and choose **Save page**.\n\nWithout JavaScript, the same buttons open a page with the suggestion; **Insert** takes you back to the field with\nthe text in it.",
+            "needs": []
+        },
+        {
+            "id": "00eb45080dc6",
+            "page": "Use the AI assistant",
+            "heading": "Rewrite text, draft a page, or explain a check",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#rewrite-text-draft-a-page-or-explain-a-check",
+            "text": "- **Rewrite text** (in every **Ask the assistant**): paste some text, choose **Make it** simpler, shorter, friendlier\n  or more formal, and choose **Rewrite**. Copy the result into your page.\n- **Draft this page** (on a page's editor): say what the page should be about and choose **Draft this page**.\n  Choose **Add to the end of the page**: the headings and text are added to the page's blocks, not yet saved.\n  Things to check or fill in are in [square brackets].\n- **Explain this** (next to each publish check on a page's editor): the assistant explains what the check means\n  and how to fix it.",
+            "needs": []
+        },
+        {
+            "id": "e5d51b15d0f6",
+            "page": "Use the AI assistant",
+            "heading": "Alt text for pictures",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#alt-text-for-pictures",
+            "text": "The assistant can describe pictures only with a model that can see pictures (most listed models can).\n\n1. In the admin menu, choose **Media** and open a picture.\n2. Under the alt text field, choose **Suggest alt text**.\n3. Choose **Insert**, check the text, and choose **Save details**.\n4. You should see \"The AI assistant suggested this alt text.\" Pages that show this text can't be published until\n   someone checks it.\n5. When the text describes the picture well, tick **I checked the alt text: it describes the picture** and choose\n   **Save details**. Changing the text and saving it counts as checking it too.",
+            "needs": [
+                "media.upload"
+            ]
+        },
+        {
+            "id": "935899397ee5",
+            "page": "Use the AI assistant",
+            "heading": "Draft a translation",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#draft-a-translation",
+            "text": "On a website in more than one language:\n\n1. Open a page's editor. In the **Translations** section, choose **Draft a translation into** followed by the\n   language, **with the AI assistant**.\n2. The new translation opens in the editor, with a notice: \"The AI assistant drafted this translation, and nobody\n   has checked it yet.\" Its blocks, pictures and links are the same as the original's; only the words are\n   translated.\n3. Read it and change what needs changing. Then save the page, or choose **I checked this translation**.\n4. Only then can the translation be published. Until then the list of pages and the page's older versions say\n   \"drafted by the AI assistant, not checked yet\".",
+            "needs": []
+        },
+        {
+            "id": "aefee3a2b518",
+            "page": "Use the AI assistant",
+            "heading": "What is sent, and what is kept",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#what-is-sent-and-what-is-kept",
+            "text": "- Sent to the AI service: your question, and the page or picture you ask a suggestion for. Never lists of people,\n  email addresses, the audit log or other pages.\n- Kept on your website: when the assistant was used, by whom, for what, with which service and model, and how many\n  tokens. Never the question, the page text or the answer.\n- The AI service handles what it receives under its own terms.",
+            "needs": []
+        },
+        {
+            "id": "52361f38d655",
+            "page": "Use the AI assistant",
+            "heading": "Turn the assistant off",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#turn-the-assistant-off",
+            "text": "On the **Features** screen, choose **Turn off AI assistant**. The panel, the Suggest buttons and the AI assistant\nscreen disappear. The settings, the key and the record of what was used are kept, so turning it on again brings\neverything back.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "72bf13667032",
+            "page": "Use the AI assistant",
+            "heading": "From the command line",
+            "url": "https://docs.sightpress.org/latest/how-to/use-the-ai-assistant/#from-the-command-line",
+            "text": "Whoever runs your SightPress installation can set the assistant up with `site:assistant:set`, test it with\n`site:assistant:test`, see what was used with `site:assistant:usage` and turn it off with\n`site:assistant:disable`. See the [command line reference](../reference/command-line.md#ai-assistant).",
+            "needs": [
+                "settings.manage"
             ]
         },
         {
@@ -1017,6 +1150,16 @@
         {
             "id": "566582011da0",
             "page": "Command line reference",
+            "heading": "AI assistant",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#ai-assistant",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:assistant:set <slug> --provider=<id> --model=<model> [--base-url=<address>] [--key-stdin]` | Chooses the AI service (`anthropic`, `openai`, `mistral` or `openai_compatible`) and model. With `--key-stdin` it reads the API key from standard input, so it never appears in the shell history: `printf %s \"$KEY\" \\| bin/sightpress site:assistant:set …`. |\n| `site:assistant:test <slug>` | Sends a tiny request and says whether the service answered. |\n| `site:assistant:usage <slug> [--month=YYYY-MM]` | Shows the tokens used this month (or another), per task, and the budget. |\n| `site:assistant:disable <slug> [--remove-key]` | Turns the assistant off for the website, and removes its key with `--remove-key`. |\n| `assistant:ask <slug> \"<question>\"` | Asks the assistant a question from the console. |\n\nThey refuse a website with the assistant turned off; turn it on with `site:module:enable <slug> assistant`. See\n[Use the AI assistant](../how-to/use-the-ai-assistant.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "b871576016ee",
+            "page": "Command line reference",
             "heading": "Branding",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#branding",
             "text": "| Command | What it does |\n| --- | --- |\n| `site:branding:set <slug> [--logo=] [--logo-alt=] [--icon=] [--share-image=] [--share-image-alt=]` | Uses picture files for the logo (SVG, PNG, JPEG or WebP, from 1:1 to 8:1 wide), the icon (a square PNG, JPEG or WebP of at least 512 × 512 pixels) or the share image (PNG, JPEG or WebP of 1200 × 630 pixels, or larger with the same proportions). The `-alt` options say what the picture shows, for screen readers; the default is the website's name. |\n| `site:branding:reset <slug> [--logo] [--icon] [--share-image]` | Goes back to the generated logo, icon or share image; all three unless you name some. |\n| `site:branding:regenerate <slug>` | Makes the generated pictures again from the website's name, for example after renaming it. Uploaded pictures stay. |\n\nAdmins can do the same in the admin panel, under **Branding**.",
@@ -1025,7 +1168,7 @@
             ]
         },
         {
-            "id": "b871576016ee",
+            "id": "abe79c1ab945",
             "page": "Command line reference",
             "heading": "The site registry",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#the-site-registry",
@@ -1035,7 +1178,7 @@
             ]
         },
         {
-            "id": "7885af705e36",
+            "id": "bd48f588b3e6",
             "page": "Command line reference",
             "heading": "theme:validate",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#themevalidate",
@@ -1045,7 +1188,7 @@
             ]
         },
         {
-            "id": "bd48f588b3e6",
+            "id": "4c92e481b257",
             "page": "Command line reference",
             "heading": "Database addresses",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#database-addresses",

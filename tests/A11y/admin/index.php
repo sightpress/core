@@ -17,7 +17,8 @@
  * and "acme.calendar" (off, needs Events).
  * The `assistant` copy (A-3) has the AI assistant on with the pretend "Test AI" service of a test package (nothing
  * leaves the server); `/_test/assistant` chooses it with a key and a model that sees pictures, so the assistant is
- * ready, and `/_test/picture` adds a picture to the media library and answers with its id.
+ * ready, and `/_test/picture` adds a picture to the media library and answers with its id. The `translate` copy
+ * (A-6) is the same, written in British English and European Portuguese.
  *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
@@ -98,7 +99,7 @@ if (!is_file($project . '/config/sites.php')) {
         'db_dsn' => new SecretBox(SECRET)->encrypt('sqlite:///' . $project . '/demo.sqlite'),
         'storage' => ['adapter' => 'local'],
         'default_locale' => 'en-GB',
-        'locales' => ['en-GB'],
+        'locales' => basename($project) === 'sightpress-a11y-translate' ? ['en-GB', 'pt-PT'] : ['en-GB'],
         'default_timezone' => 'Europe/London',
         'created_at' => '2026-11-16T09:00:00Z',
     ]]], true) . ';');
@@ -287,7 +288,7 @@ $kernel->run();
  */
 function boot(string $project, array $environment): Kernel
 {
-    if (basename($project) === 'sightpress-a11y-assistant') {
+    if (in_array(basename($project), ['sightpress-a11y-assistant', 'sightpress-a11y-translate'], true)) {
         return Kernel::fromConfig(new TenantConfigLoader()->load($project, $environment), [
             ...CoreModules::candidates(),
             new ModuleCandidate(new TestAssistantModule(), 'acme/test-ai'),

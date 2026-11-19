@@ -34,7 +34,7 @@
             <th scope="row"><a href="{{ row.url }}">{{ row.first ? t('Version {number} (the first)', {number: row.number}) : t('Version {number}', {number: row.number}) }}</a>{% if loop.first %} {{ t('(the current one)') }}{% endif %}</th>
             <td><time datetime="{{ row.saved|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ row.saved|user_datetime }}</time></td>
             <td>{{ row.by ?? t(row.by_note) }}</td>
-            <td>{{ row.state ? t(row.state) : t('Not known') }}</td>
+            <td>{{ row.state ? t(row.state) : t('Not known') }}{% if row.machine %} · {{ t('Drafted by the AI assistant, not checked yet') }}{% endif %}</td>
         </tr>
         {%- endfor %}
     </tbody>

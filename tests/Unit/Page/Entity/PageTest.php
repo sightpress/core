@@ -187,8 +187,8 @@ final class PageTest extends TestCase
                 'public' => true,
                 'state' => 'draft',
                 'translations' => [
-                    'en-GB' => ['title' => 'About', 'slug' => 'about', 'path' => 'home/about', 'summary' => null, 'description' => 'Who we are', 'blocks' => [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Hi']]], 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'exclude_from_site_search' => false, 'draft' => false],
-                    'pt-PT' => ['title' => 'Sobre', 'slug' => 'sobre', 'path' => 'inicio/sobre', 'summary' => 'Resumo', 'description' => null, 'blocks' => [], 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'exclude_from_site_search' => false, 'draft' => false],
+                    'en-GB' => ['title' => 'About', 'slug' => 'about', 'path' => 'home/about', 'summary' => null, 'description' => 'Who we are', 'blocks' => [['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Hi']]], 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'exclude_from_site_search' => false, 'draft' => false, 'machine_drafted' => false],
+                    'pt-PT' => ['title' => 'Sobre', 'slug' => 'sobre', 'path' => 'inicio/sobre', 'summary' => 'Resumo', 'description' => null, 'blocks' => [], 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'exclude_from_site_search' => false, 'draft' => false, 'machine_drafted' => false],
                 ],
             ],
             $page->snapshot(),

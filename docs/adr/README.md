@@ -61,5 +61,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0041](0041-assistant-panel-suggest-buttons-and-insert.md) | AI assistant: the settings screen, the panel, Suggest buttons and Insert without JavaScript | Proposed |
 | [0042](0042-assistant-drafting-tasks-and-unchecked-alt-text.md) | AI assistant: drafting tasks, checked output, and alt text that needs a person | Proposed |
 | [0043](0043-assistant-help-from-the-documentation.md) | AI assistant: help answered from the documentation | Proposed |
+| [0044](0044-assistant-drafted-translations.md) | AI assistant: translations drafted by the assistant, checked by a person | Proposed |
 
 When an ADR's status changes, update it here too.

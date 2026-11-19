@@ -33,7 +33,8 @@ final class HelpIndexBuilder
         'Features screen' => 'module.manage', 'Analytics screen' => 'analytics.view', 'People screen' => 'user.manage',
         'Menus screen' => 'menu.manage', 'Audit log' => 'audit.view', 'Site settings' => 'settings.manage',
         'AI assistant screen' => 'assistant.manage',
-        'bin/sightpress' => 'settings.manage',
+        'bin/sightpress' => 'settings.manage', '`site:' => 'settings.manage', '`assistant:' => 'settings.manage',
+        'Monthly budget' => 'assistant.manage', 'Test connection' => 'assistant.manage',
     ];
 
     /**

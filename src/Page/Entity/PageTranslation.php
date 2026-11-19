@@ -75,6 +75,9 @@ final class PageTranslation
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $draft = false;
 
+    #[ORM\Column(name: 'machine_drafted', type: Types::BOOLEAN)]
+    private bool $machineDrafted = false;
+
     public function __construct(
         #[ORM\ManyToOne(targetEntity: Page::class, inversedBy: 'translations')]
         #[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
@@ -189,6 +192,23 @@ final class PageTranslation
     }
 
     /**
+     * Whether the AI assistant drafted it and no person has edited it or said they checked it yet (A-6): until then it
+     * can't be published.
+     */
+    public function isMachineDrafted(): bool
+    {
+        return $this->machineDrafted;
+    }
+
+    /**
+     * @internal for {@see \SightPress\Core\Page\PageEditor}
+     */
+    public function setMachineDrafted(bool $machineDrafted): void
+    {
+        $this->machineDrafted = $machineDrafted;
+    }
+
+    /**
      * Whether visitors can read it: the page is published and this translation isn't a draft.
      */
     public function isPublished(): bool
@@ -265,6 +285,7 @@ final class PageTranslation
             'canonical_url' => $this->canonicalUrl,
             'exclude_from_site_search' => $this->excludeFromSiteSearch,
             'draft' => $this->draft,
+            'machine_drafted' => $this->machineDrafted,
         ];
     }
 

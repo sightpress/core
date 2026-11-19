@@ -26,6 +26,7 @@ export const ADMIN_SITES = {
   features: 'http://127.0.0.1:8075',
   analytics: 'http://127.0.0.1:8072',
   assistant: 'http://127.0.0.1:8071',
+  translate: 'http://127.0.0.1:8070',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

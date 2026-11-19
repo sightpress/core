@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Http;
 
+use SightPress\Core\Template\LanguageName;
 use SightPress\Core\Template\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -93,7 +94,7 @@ final readonly class PageListHandler implements RequestHandlerInterface
     /**
      * @param array<int, string> $names
      *
-     * @return array{page: Page, id: int, title: string|Message, locale: string, url: ?string, state: PageState, state_label: string, author: ?string, updated: \DateTimeImmutable, publish_at: ?\DateTimeImmutable, unpublish_at: ?\DateTimeImmutable, mine: bool, open: bool, home: bool}
+     * @return array{page: Page, id: int, title: string|Message, locale: string, url: ?string, state: PageState, state_label: string, author: ?string, updated: \DateTimeImmutable, publish_at: ?\DateTimeImmutable, unpublish_at: ?\DateTimeImmutable, mine: bool, open: bool, home: bool, machine: list<LanguageName>}
      */
     private function node(Page $page, Actor $actor, array $names): array
     {
@@ -115,6 +116,7 @@ final readonly class PageListHandler implements RequestHandlerInterface
             'mine' => $actor->is($author),
             'open' => $this->authorizer->can($actor, PageAction::View->value, $page),
             'home' => $this->addresses->isHome($page),
+            'machine' => array_values(array_map(static fn (PageTranslation $translation): LanguageName => new LanguageName($translation->locale()), array_filter($page->translations(), static fn (PageTranslation $translation): bool => $translation->isMachineDrafted()))),
         ];
     }
 

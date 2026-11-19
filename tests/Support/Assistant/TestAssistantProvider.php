@@ -17,7 +17,8 @@ use SightPress\Module\Exception\AssistantException;
 /**
  * "Test AI": answers on the server, without a network, from what the request asks for. The first answer in
  * {@see ANSWERS} whose words are in the request wins; a key that ends in `0000` is refused like a wrong key, and a
- * question with `[[busy]]` in it finds the service busy, and one with `[[long]]` gets an answer cut short.
+ * question with `[[busy]]` in it finds the service busy, and one with `[[long]]` gets an answer cut short. A
+ * translation puts "Tradução: " before each plain text and keeps HTML as it is.
  */
 final class TestAssistantProvider implements AssistantProvider
 {
@@ -76,6 +77,14 @@ final class TestAssistantProvider implements AssistantProvider
         }
         if (str_contains($asked, '[[long]]')) {
             return new AssistantResponse('The first part of a long answer', $request->model, new TokenUsage(100, 20), truncated: true);
+        }
+        if (str_contains($asked, 'You translate the texts of a web page') && preg_match('#<data name="texts">\n(.*)\n</data>#s', $asked, $texts) === 1) {
+            $segments = json_decode($texts[1], true);
+
+            return new AssistantResponse((string) json_encode(['segments' => array_map(
+                static fn (mixed $text): string => is_string($text) && preg_match('/<[a-z]/i', $text) !== 1 ? 'Tradução: ' . $text : (is_string($text) ? $text : ''),
+                is_array($segments) ? $segments : [],
+            )], JSON_UNESCAPED_UNICODE), $request->model, new TokenUsage(300, 300));
         }
         foreach (self::ANSWERS as $words => $answer) {
             if (str_contains($asked, $words)) {

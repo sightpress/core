@@ -115,6 +115,47 @@ final readonly class PageEditor
     }
 
     /**
+     * Adds a translation the AI assistant drafted (A-6), as a draft marked as such: it can't be published until a
+     * person edits it or says they checked it ({@see confirmTranslation()}).
+     *
+     * @throws PageException when the page is already written in `$locale`, or the address is taken
+     * @throws InvalidBlocks when a block doesn't pass the checks
+     */
+    public function draftTranslation(Page $page, string $locale, PageContent $content, ?int $savedBy = null): PageRevision
+    {
+        $this->checkLocale($locale);
+        if ($page->translation($locale) !== null) {
+            throw new PageException(new Message('The page is already written in "{locale}". Change that translation instead.', ['locale' => $locale]));
+        }
+
+        return $this->write($page, $locale, $content, $savedBy, true, true);
+    }
+
+    /**
+     * A person says they checked a translation the AI assistant drafted: it can be published from now on.
+     *
+     * @return bool whether anything changed
+     *
+     * @throws PageException when the page isn't written in `$locale`
+     */
+    public function confirmTranslation(Page $page, string $locale, ?int $by = null): bool
+    {
+        $this->checkLocale($locale);
+        $translation = $page->translation($locale) ?? throw new PageException(new Message('The page isn\'t written in "{locale}" yet.', ['locale' => $locale]));
+        if (!$translation->isMachineDrafted()) {
+            return false;
+        }
+        $revision = $this->pages->transaction(function () use ($page, $translation, $by): PageRevision {
+            $translation->setMachineDrafted(false);
+
+            return $this->revise($page, $by);
+        });
+        $this->events->dispatch(new PageSaved((int) $page->id(), $locale, $revision->number(), $by));
+
+        return true;
+    }
+
+    /**
      * Publishes a translation on its own (visitors read it once the page is published), or makes it a draft again.
      *
      * @return bool whether anything changed
@@ -177,7 +218,10 @@ final readonly class PageEditor
         return $saved;
     }
 
-    private function write(Page $page, string $locale, PageContent $content, ?int $savedBy, bool $draft): PageRevision
+    /**
+     * @param bool $machine whether the AI assistant drafted it (A-6); anything else a person writes clears that
+     */
+    private function write(Page $page, string $locale, PageContent $content, ?int $savedBy, bool $draft, bool $machine = false): PageRevision
     {
         $this->checkLocale($locale);
         $content = $content->withBlocks($this->blocks->validate($content->blocks)->blocks);
@@ -187,11 +231,11 @@ final readonly class PageEditor
         $below = $oldPath !== null && $oldPath !== $path ? $this->translationsBelow($page, $locale) : [];
         $before = self::addresses([...$below, ...($page->translation($locale) === null ? [] : [$page->translation($locale)])]);
 
-        $revision = $this->pages->transaction(function () use ($page, $locale, $content, $path, $oldPath, $below, $savedBy, $draft, $before): PageRevision {
+        $revision = $this->pages->transaction(function () use ($page, $locale, $content, $path, $oldPath, $below, $savedBy, $draft, $before, $machine): PageRevision {
             foreach ($below as $translation) {
                 $translation->rebase((string) $oldPath, $path);
             }
-            $page->write($locale, $content, $path, $this->clock->now(), $draft);
+            $page->write($locale, $content, $path, $this->clock->now(), $draft)->setMachineDrafted($machine);
             $revision = $this->revise($page, $savedBy);
             if ($oldPath === null) {
                 $this->redirects->claim($locale, $path);

@@ -161,6 +161,28 @@ test('an editor drafts a page, adds the draft, and asks about a publish check', 
   await expectNoViolations(page);
 });
 
+test('the assistant drafts a translation, which can’t be published until someone checks it', async ({ page }) => {
+  const site = ADMIN_SITES.translate;
+  await page.request.get(`${site}/_test/reset`);
+  expect((await page.request.get(`${site}/login`)).status()).toBe(200);
+  expect((await page.request.get(`${site}/_test/assistant`)).status()).toBe(204);
+  await signIn(page, site, 'bea@example.org', '/admin/pages');
+  const href = await page.getByRole('link', { name: 'Volunteer with us' }).getAttribute('href');
+  await page.goto(`${site}${href}`);
+  await page.getByRole('button', { name: 'Draft a translation into European Portuguese with the AI assistant' }).press('Enter');
+  await expect(page).toHaveURL(`${site}${href}?locale=pt-PT#machine-drafted`);
+  await expect(page.getByRole('status').first()).toContainText('The AI assistant drafted the European Portuguese translation.');
+  await expect(page.locator('#machine-drafted')).toContainText('The AI assistant drafted this translation, and nobody has checked it yet.');
+  await expect(page.getByLabel('Title', { exact: true })).toHaveValue('Tradução: Volunteer with us');
+  await expectNoViolations(page);
+
+  await page.getByRole('button', { name: 'Publish this translation' }).press('Enter');
+  await expect(page.getByRole('region', { name: /stops this page being published/ })).toContainText('The AI assistant drafted this translation, and nobody has checked it yet.');
+  await page.getByRole('button', { name: 'I checked this translation', exact: true }).press('Enter');
+  await expect(page.getByRole('status').first()).toHaveText('The European Portuguese translation is checked. It can be published now.');
+  await expect(page.locator('#machine-drafted')).toHaveCount(0);
+});
+
 test('the screens pass axe in forced colours and at 320 px', async ({ page }) => {
   await ready(page);
   await signIn(page, SITE, 'ada@example.org', '/admin/assistant');

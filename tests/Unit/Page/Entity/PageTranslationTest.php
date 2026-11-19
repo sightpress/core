@@ -69,7 +69,7 @@ final class PageTranslationTest extends TestCase
         ]);
         self::assertEquals(new PageContent('Team', 'team', 'Who', 'Desc', $blocks), $translation->content());
         self::assertSame(
-            ['title' => 'Team', 'slug' => 'team', 'path' => 'about/team', 'summary' => 'Who', 'description' => 'Desc', 'blocks' => $blocks, 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'exclude_from_site_search' => false, 'draft' => false],
+            ['title' => 'Team', 'slug' => 'team', 'path' => 'about/team', 'summary' => 'Who', 'description' => 'Desc', 'blocks' => $blocks, 'social_image' => null, 'seo_title' => null, 'noindex' => false, 'canonical_url' => null, 'exclude_from_site_search' => false, 'draft' => false, 'machine_drafted' => false],
             $translation->snapshot(),
         );
         self::assertNull($translation->socialImage());

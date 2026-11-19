@@ -27,10 +27,10 @@ final readonly class AssistantAccess
     ];
 
     /** The tasks the panel's own forms offer, in their order. */
-    public const array PANEL_TASKS = ['ask', 'rewrite', 'draft_page', 'explain_check'];
+    public const array PANEL_TASKS = ['ask', 'rewrite', 'draft_page', 'explain_check', 'translate'];
 
     /** Panel tasks only offered on a page's screen. */
-    public const array PAGE_TASKS = ['draft_page', 'explain_check'];
+    public const array PAGE_TASKS = ['draft_page', 'explain_check', 'translate'];
 
     public function __construct(
         private ContainerInterface $container,

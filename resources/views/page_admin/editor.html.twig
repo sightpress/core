@@ -83,6 +83,17 @@
                         {%- endif %}
                     </form>
                     {%- endif %}
+                    {%- if editable and (assistant ?? null) and 'translate' in assistant.tasks %}
+                    {%- for code, name in row.sources|slice(0, 1, true) %}
+                    <form action="/admin/assistant/translate" method="post" class="translations__copy">
+                        {{ csrf_fields() }}
+                        <input type="hidden" name="page" value="{{ page.id }}">
+                        <input type="hidden" name="from" value="{{ code }}">
+                        <input type="hidden" name="to" value="{{ row.code }}">
+                        <button type="submit" class="button button--secondary">{{ t('Draft a translation into {language} with the AI assistant', {language: row.name}) }}</button>
+                    </form>
+                    {%- endfor %}
+                    {%- endif %}
                     <a href="{{ row.url }}">{{ t('Write the {language} translation from scratch', {language: row.name}) }}</a>
                     {%- endif %}
                 </td>
@@ -92,6 +103,18 @@
     </table>
     </div>
     <p>{{ t('“Translate” copies the page’s text and blocks into a new draft translation, for you to translate. The page in the other language doesn’t change. A new translation stays a draft until it is published on its own.') }}</p>
+    {%- if machine_drafted %}
+    <div class="assistant-machine-draft" id="machine-drafted">
+        <p><strong>{{ t('The AI assistant drafted this translation, and nobody has checked it yet.') }}</strong> {{ t('Read it and change what needs changing. Saving the page, or choosing “I checked this translation”, says a person checked it; until then it can’t be published.') }}</p>
+        {%- if editable %}
+        <form action="{{ translations_action }}" method="post">
+            {{ csrf_fields() }}
+            <input type="hidden" name="locale" value="{{ locale }}">
+            <button type="submit" name="op" value="confirm" class="button button--secondary">{{ t('I checked this translation') }}</button>
+        </form>
+        {%- endif %}
+    </div>
+    {%- endif %}
     {%- if may_publish and draft_translation %}
     <form action="{{ translations_action }}" method="post">
         {{ csrf_fields() }}
