@@ -1,6 +1,6 @@
 # 0040 — AI assistant: providers over the shared HTTP client, keys, budget and limits
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-20
 
 ## Context

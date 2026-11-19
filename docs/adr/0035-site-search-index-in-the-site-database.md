@@ -1,6 +1,6 @@
 # 0035 — Site search: an index in the site database, kept up to date by events
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-19
 
 ## Context

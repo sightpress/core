@@ -1,6 +1,6 @@
 # 0033 — Profile: password and email address changed from My account, and admin preferences as classes
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context

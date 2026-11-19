@@ -1,6 +1,6 @@
 # 0028 — Page revisions: versions per language, a word-by-word comparison and restoring without publishing
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context

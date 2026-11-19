@@ -1,6 +1,6 @@
 # 0023 — Search, dashboard and AI assistant contracts (`module-interface` 0.4)
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-17
 
 ## Context

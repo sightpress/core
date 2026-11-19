@@ -140,7 +140,7 @@
       </segment>
     </unit>
     <unit id="b4fc1d0646a6062b">
-      <segment state="initial">
+      <segment>
         <source>A day in the site’s time zone, for example 2026-11-01.</source>
         <target>Un día en la zona horaria del sitio, por ejemplo 2026-11-01.</target>
       </segment>
@@ -224,7 +224,7 @@
       </segment>
     </unit>
     <unit id="cb536a66236af162">
-      <segment state="initial">
+      <segment>
         <source>A page that was deleted (number {id})</source>
         <target>Una página que se borró (número {id})</target>
       </segment>
@@ -266,7 +266,7 @@
       </segment>
     </unit>
     <unit id="ab6eb4ac63b58418">
-      <segment state="initial">
+      <segment>
         <source>AI assistant</source>
         <target>Asistente de IA</target>
       </segment>
@@ -278,19 +278,19 @@
       </segment>
     </unit>
     <unit id="73bb930a7cba65c9">
-      <segment state="initial">
+      <segment>
         <source>AI search and assistants</source>
         <target>Búsqueda y asistentes de IA</target>
       </segment>
     </unit>
     <unit id="b535945fa809a3b1">
-      <segment state="initial">
+      <segment>
         <source>AI service</source>
         <target>Servicio de IA</target>
       </segment>
     </unit>
     <unit id="168ba07ea02b143f">
-      <segment state="initial">
+      <segment>
         <source>AI training</source>
         <target>Entrenamiento de IA</target>
       </segment>
@@ -314,7 +314,7 @@
       </segment>
     </unit>
     <unit id="9f13a3596bf77089">
-      <segment state="initial">
+      <segment>
         <source>About this check</source>
         <target>Sobre esta comprobación</target>
       </segment>
@@ -338,7 +338,7 @@
       </segment>
     </unit>
     <unit id="64cff1319d2fd2cb">
-      <segment state="initial">
+      <segment>
         <source>Action</source>
         <target>Acción</target>
       </segment>
@@ -440,7 +440,7 @@
       </segment>
     </unit>
     <unit id="1b588cbf7539b8b0">
-      <segment state="initial">
+      <segment>
         <source>Add to the end of the page</source>
         <target>Añadir al final de la página</target>
       </segment>
@@ -488,7 +488,7 @@
       </segment>
     </unit>
     <unit id="a18055fc2ecba4e9">
-      <segment state="initial">
+      <segment>
         <source>Address of the service</source>
         <target>Dirección del servicio</target>
       </segment>
@@ -500,7 +500,7 @@
       </segment>
     </unit>
     <unit id="8c59f43289679098">
-      <segment state="initial">
+      <segment>
         <source>Addresses people asked for that don’t exist. A redirect can send them to the right page.</source>
         <target>Direcciones solicitadas que no existen. Una redirección puede llevar a la gente a la página correcta.</target>
       </segment>
@@ -524,19 +524,19 @@
       </segment>
     </unit>
     <unit id="238c47ef762aae5f">
-      <segment state="initial">
+      <segment>
         <source>Admins always may.</source>
         <target>Los administradores siempre pueden.</target>
       </segment>
     </unit>
     <unit id="1c8f1ef3aa6c5c32">
-      <segment state="initial">
+      <segment>
         <source>All fields are needed unless they say “optional”. After this, we email you a 6-digit code to type on the next page.</source>
         <target>Todos los campos son necesarios salvo los que dicen “opcional”. Después te enviaremos por correo un código de 6 cifras para escribirlo en la página siguiente.</target>
       </segment>
     </unit>
     <unit id="a224df49a9b43f14">
-      <segment state="initial">
+      <segment>
         <source>All of them: {label}, with {amount}.</source>
         <target>Todos: {label}, con {amount}.</target>
       </segment>
@@ -566,7 +566,7 @@
       </segment>
     </unit>
     <unit id="e77fea936d3e0118">
-      <segment state="initial">
+      <segment>
         <source>Already have an account?</source>
         <target>¿Ya tienes una cuenta?</target>
       </segment>
@@ -614,7 +614,7 @@
       </segment>
     </unit>
     <unit id="45205edbabe40b0c">
-      <segment state="initial">
+      <segment>
         <source>An account without a password can't wait for its email address to be confirmed; set a password first.</source>
         <target>Una cuenta sin contraseña no puede esperar a que se confirme su dirección de correo; pon primero una contraseña.</target>
       </segment>
@@ -632,19 +632,19 @@
       </segment>
     </unit>
     <unit id="94c116ee118a7299">
-      <segment state="initial">
+      <segment>
         <source>Analytics</source>
         <target>Estadísticas</target>
       </segment>
     </unit>
     <unit id="847065d2d10dea96">
-      <segment state="initial">
+      <segment>
         <source>Analytics are now kept for {count, plural, one {# month} other {# months}}.</source>
         <target>Las estadísticas se guardan ahora durante {count, plural, one {# mes} other {# meses}}.</target>
       </segment>
     </unit>
     <unit id="e49a9cb18844c7d0">
-      <segment state="initial">
+      <segment>
         <source>Another OpenAI-compatible service</source>
         <target>Otro servicio compatible con OpenAI</target>
       </segment>
@@ -662,7 +662,7 @@
       </segment>
     </unit>
     <unit id="118c19cacd3f8327">
-      <segment state="initial">
+      <segment>
         <source>Anthropic (Claude)</source>
         <target>Anthropic (Claude)</target>
       </segment>
@@ -680,13 +680,13 @@
       </segment>
     </unit>
     <unit id="54541bddff4a28db">
-      <segment state="initial">
+      <segment>
         <source>Anyone can create an account.</source>
         <target>Cualquiera puede crear una cuenta.</target>
       </segment>
     </unit>
     <unit id="8c4122da16487ec0">
-      <segment state="initial">
+      <segment>
         <source>Anyone can create an account. New accounts get the “{role}” role once they confirm their email address.</source>
         <target>Cualquiera puede crear una cuenta. Las cuentas nuevas reciben el rol “{role}” cuando confirman su dirección de correo.</target>
       </segment>
@@ -746,7 +746,7 @@
       </segment>
     </unit>
     <unit id="a2821b2db245a6ad">
-      <segment state="initial">
+      <segment>
         <source>Archived pages and pages in the trash can’t be scheduled. Restore the page first.</source>
         <target>No se pueden programar páginas archivadas ni páginas en la papelera. Restaura primero la página.</target>
       </segment>
@@ -758,7 +758,7 @@
       </segment>
     </unit>
     <unit id="b8c209cdead61a09">
-      <segment state="initial">
+      <segment>
         <source>Ask</source>
         <target>Preguntar</target>
       </segment>
@@ -770,13 +770,13 @@
       </segment>
     </unit>
     <unit id="e4bfd92189feaa52">
-      <segment state="initial">
+      <segment>
         <source>Ask the AI assistant for suggestions, which they check before using.</source>
         <target>Pedir sugerencias al asistente de IA, que revisan antes de usarlas.</target>
       </segment>
     </unit>
     <unit id="ae207dbb7b681953">
-      <segment state="initial">
+      <segment>
         <source>Ask the assistant</source>
         <target>Preguntar al asistente</target>
       </segment>
@@ -842,7 +842,7 @@
       </segment>
     </unit>
     <unit id="5c4d5eb34d2a9564">
-      <segment state="initial">
+      <segment>
         <source>Back to the menus</source>
         <target>Volver a los menús</target>
       </segment>
@@ -866,7 +866,7 @@
       </segment>
     </unit>
     <unit id="34030c9d46e7cc79">
-      <segment state="initial">
+      <segment>
         <source>Bar chart: {title}</source>
         <target>Gráfico de barras: {title}</target>
       </segment>
@@ -962,7 +962,7 @@
       </segment>
     </unit>
     <unit id="c0bf75bd78bf9572">
-      <segment state="initial">
+      <segment>
         <source>Change</source>
         <target>Cambiar</target>
       </segment>
@@ -1010,7 +1010,7 @@
       </segment>
     </unit>
     <unit id="772294ff1dc42ad3">
-      <segment state="initial">
+      <segment>
         <source>Change the menu entry “{name}”</source>
         <target>Cambiar la entrada de menú “{name}”</target>
       </segment>
@@ -1028,7 +1028,7 @@
       </segment>
     </unit>
     <unit id="f08f3adc13b0b353">
-      <segment state="initial">
+      <segment>
         <source>Change who can sign up</source>
         <target>Cambiar quién puede registrarse</target>
       </segment>
@@ -1064,7 +1064,7 @@
       </segment>
     </unit>
     <unit id="ae2a4621d7caadbb">
-      <segment state="initial">
+      <segment>
         <source>Check the spelling of each word.</source>
         <target>Comprueba cómo has escrito cada palabra.</target>
       </segment>
@@ -1082,7 +1082,7 @@
       </segment>
     </unit>
     <unit id="a6d269081b119281">
-      <segment state="initial">
+      <segment>
         <source>Choose a model of {service}.</source>
         <target>Elige un modelo de {service}.</target>
       </segment>
@@ -1100,19 +1100,19 @@
       </segment>
     </unit>
     <unit id="1e8947e8f96744b1">
-      <segment state="initial">
+      <segment>
         <source>Choose a time to publish that is still to come.</source>
         <target>Elige una hora de publicación que todavía no haya pasado.</target>
       </segment>
     </unit>
     <unit id="d85244f463db1fbb">
-      <segment state="initial">
+      <segment>
         <source>Choose a time to take the page off the site that is still to come.</source>
         <target>Elige una hora para retirar la página del sitio que todavía no haya pasado.</target>
       </segment>
     </unit>
     <unit id="266d00a3653f5472">
-      <segment state="initial">
+      <segment>
         <source>Choose an AI service.</source>
         <target>Elige un servicio de IA.</target>
       </segment>
@@ -1124,19 +1124,19 @@
       </segment>
     </unit>
     <unit id="784eef53e0e9b2b7">
-      <segment state="initial">
+      <segment>
         <source>Choose at most {days} days</source>
         <target>Elige como máximo {days} días</target>
       </segment>
     </unit>
     <unit id="17dc80bfc7f35d00">
-      <segment state="initial">
+      <segment>
         <source>Choose how long analytics are kept, and delete them.</source>
         <target>Elegir durante cuánto tiempo se guardan las estadísticas, y borrarlas.</target>
       </segment>
     </unit>
     <unit id="8b878d589548c118">
-      <segment state="initial">
+      <segment>
         <source>Choose how many months to keep analytics for, from 1 to 25.</source>
         <target>Elige durante cuántos meses guardar las estadísticas, de 1 a 25.</target>
       </segment>
@@ -1148,7 +1148,7 @@
       </segment>
     </unit>
     <unit id="47ce55e426f2e51d">
-      <segment state="initial">
+      <segment>
         <source>Choose the AI service, its key, the monthly budget and who may use the assistant.</source>
         <target>Elegir el servicio de IA, su clave, el presupuesto mensual y quién puede usar el asistente.</target>
       </segment>
@@ -1184,7 +1184,7 @@
       </segment>
     </unit>
     <unit id="fee2ded83187a9e2">
-      <segment state="initial">
+      <segment>
         <source>Clear the schedule</source>
         <target>Borrar la programación</target>
       </segment>
@@ -1220,13 +1220,13 @@
       </segment>
     </unit>
     <unit id="76ed42d22129dc35">
-      <segment state="initial">
+      <segment>
         <source>Computer</source>
         <target>Ordenador</target>
       </segment>
     </unit>
     <unit id="2a6df3aac68bec4c">
-      <segment state="initial">
+      <segment>
         <source>Confirm my email address</source>
         <target>Confirmar mi dirección de correo</target>
       </segment>
@@ -1238,7 +1238,7 @@
       </segment>
     </unit>
     <unit id="b835b7d6ded7051e">
-      <segment state="initial">
+      <segment>
         <source>Confirm your email address</source>
         <target>Confirma tu dirección de correo</target>
       </segment>
@@ -1292,13 +1292,13 @@
       </segment>
     </unit>
     <unit id="d249818eccabb507">
-      <segment state="initial">
+      <segment>
         <source>Copied.</source>
         <target>Copiado.</target>
       </segment>
     </unit>
     <unit id="e21f935f11d7e966">
-      <segment state="initial">
+      <segment>
         <source>Copy</source>
         <target>Copiar</target>
       </segment>
@@ -1322,25 +1322,25 @@
       </segment>
     </unit>
     <unit id="da5e97d033f7b483">
-      <segment state="initial">
+      <segment>
         <source>Counted on this site’s own server, without cookies or anything that identifies a visitor. Days run from midnight to midnight in the site’s time zone ({zone}).</source>
         <target>Contadas en el propio servidor del sitio, sin cookies ni nada que identifique a quien visita. Los días van de medianoche a medianoche en la zona horaria del sitio ({zone}).</target>
       </segment>
     </unit>
     <unit id="a8697d67ebda3089">
-      <segment state="initial">
+      <segment>
         <source>Counting goes on from now; turn analytics off on the Features screen to stop it.</source>
         <target>El recuento continúa desde ahora; desactiva las estadísticas en la pantalla Funciones para detenerlo.</target>
       </segment>
     </unit>
     <unit id="86033f75a4c0876a">
-      <segment state="initial">
+      <segment>
         <source>Create an account</source>
         <target>Crear una cuenta</target>
       </segment>
     </unit>
     <unit id="8d064ad73095ab23">
-      <segment state="initial">
+      <segment>
         <source>Create an account on {site}</source>
         <target>Crear una cuenta en {site}</target>
       </segment>
@@ -1400,13 +1400,13 @@
       </segment>
     </unit>
     <unit id="8f2364e11b8be3ff">
-      <segment state="initial">
+      <segment>
         <source>Day</source>
         <target>Día</target>
       </segment>
     </unit>
     <unit id="69c0958d3dd51da9">
-      <segment state="initial">
+      <segment>
         <source>Days to show</source>
         <target>Días que mostrar</target>
       </segment>
@@ -1424,13 +1424,13 @@
       </segment>
     </unit>
     <unit id="da14333eef1f260d">
-      <segment state="initial">
+      <segment>
         <source>Delete all analytics data?</source>
         <target>¿Borrar todos los datos de las estadísticas?</target>
       </segment>
     </unit>
     <unit id="27dbfd8bd8ca11b9">
-      <segment state="initial">
+      <segment>
         <source>Delete analytics data</source>
         <target>Borrar los datos de las estadísticas</target>
       </segment>
@@ -1502,7 +1502,7 @@
       </segment>
     </unit>
     <unit id="7b012ebb327bec4d">
-      <segment state="initial">
+      <segment>
         <source>Deleted all of the site’s analytics. Counting goes on from now.</source>
         <target>Se han borrado todas las estadísticas del sitio. El recuento continúa desde ahora.</target>
       </segment>
@@ -1544,13 +1544,13 @@
       </segment>
     </unit>
     <unit id="6ba0bdeccb426d7b">
-      <segment state="initial">
+      <segment>
         <source>Device</source>
         <target>Dispositivo</target>
       </segment>
     </unit>
     <unit id="4ba5121d4d1be174">
-      <segment state="initial">
+      <segment>
         <source>Devices</source>
         <target>Dispositivos</target>
       </segment>
@@ -1562,19 +1562,19 @@
       </segment>
     </unit>
     <unit id="da5c205078cc8a47">
-      <segment state="initial">
+      <segment>
         <source>Direct or unknown</source>
         <target>Directo o desconocido</target>
       </segment>
     </unit>
     <unit id="eb1a70e39274bb76">
-      <segment state="initial">
+      <segment>
         <source>Discard</source>
         <target>Descartar</target>
       </segment>
     </unit>
     <unit id="7d45eec54cee5555">
-      <segment state="initial">
+      <segment>
         <source>Discard and go back</source>
         <target>Descartar y volver</target>
       </segment>
@@ -1604,7 +1604,7 @@
       </segment>
     </unit>
     <unit id="92a7ac37eba8d3a8">
-      <segment state="initial">
+      <segment>
         <source>Download {name} as a CSV file</source>
         <target>Descargar {name} en un archivo CSV</target>
       </segment>
@@ -1616,37 +1616,37 @@
       </segment>
     </unit>
     <unit id="5a8a8e27cae0f487">
-      <segment state="initial">
+      <segment>
         <source>Draft a translation</source>
         <target>Redactar una traducción</target>
       </segment>
     </unit>
     <unit id="bb7acd7c66036ab6">
-      <segment state="initial">
+      <segment>
         <source>Draft a translation into {language} with the AI assistant</source>
         <target>Redactar una traducción al {language} con el asistente de IA</target>
       </segment>
     </unit>
     <unit id="85e5f89b57788752">
-      <segment state="initial">
+      <segment>
         <source>Draft of the page</source>
         <target>Borrador de la página</target>
       </segment>
     </unit>
     <unit id="c9da8ae30597b162">
-      <segment state="initial">
+      <segment>
         <source>Draft this page</source>
         <target>Redactar esta página</target>
       </segment>
     </unit>
     <unit id="5362454d6ad85d46">
-      <segment state="initial">
+      <segment>
         <source>Drafted by the AI assistant, not checked yet</source>
         <target>Redactada por el asistente de IA, sin revisar todavía</target>
       </segment>
     </unit>
     <unit id="6656d0af00def6fe">
-      <segment state="initial">
+      <segment>
         <source>Each person may ask 20 times every 10 minutes.</source>
         <target>Cada persona puede preguntar 20 veces cada 10 minutos.</target>
       </segment>
@@ -1700,7 +1700,7 @@
       </segment>
     </unit>
     <unit id="96ac7e5ca168b001">
-      <segment state="initial">
+      <segment>
         <source>Emails from the site are written in this language.</source>
         <target>Los correos del sitio se escriben en este idioma.</target>
       </segment>
@@ -1766,13 +1766,13 @@
       </segment>
     </unit>
     <unit id="6b71de0d6d5fcab4">
-      <segment state="initial">
+      <segment>
         <source>Enter the address of the service, starting with https://.</source>
         <target>Escribe la dirección del servicio, empezando por https://.</target>
       </segment>
     </unit>
     <unit id="8386dc374e8b31d7">
-      <segment state="initial">
+      <segment>
         <source>Enter the budget as a whole number of tokens, such as 200000, or leave it empty.</source>
         <target>Escribe el presupuesto como un número entero de tokens, como 200000, o déjalo vacío.</target>
       </segment>
@@ -1784,19 +1784,19 @@
       </segment>
     </unit>
     <unit id="c17a9bae1cc6c147">
-      <segment state="initial">
+      <segment>
         <source>Enter the first day as a date, for example 2026-11-01</source>
         <target>Escribe el primer día como fecha, por ejemplo 2026-11-01</target>
       </segment>
     </unit>
     <unit id="8e29950b1843810b">
-      <segment state="initial">
+      <segment>
         <source>Enter the last day as a date, for example 2026-11-30</source>
         <target>Escribe el último día como fecha, por ejemplo 2026-11-30</target>
       </segment>
     </unit>
     <unit id="a74a8897ad357be1">
-      <segment state="initial">
+      <segment>
         <source>Enter the name of the model to use with {service}.</source>
         <target>Escribe el nombre del modelo que se usará con {service}.</target>
       </segment>
@@ -1826,7 +1826,7 @@
       </segment>
     </unit>
     <unit id="8c6fb4358f42a12e">
-      <segment state="initial">
+      <segment>
         <source>Entries for members-only pages are already hidden from people who aren’t signed in.</source>
         <target>Las entradas de páginas solo para miembros ya se ocultan a quien no ha iniciado sesión.</target>
       </segment>
@@ -1844,7 +1844,7 @@
       </segment>
     </unit>
     <unit id="f4defa4125df0a9e">
-      <segment state="initial">
+      <segment>
         <source>Every figure counted since {day} is deleted for good. This can’t be undone.</source>
         <target>Todas las cifras contadas desde el {day} se borran para siempre. No se puede deshacer.</target>
       </segment>
@@ -1862,7 +1862,7 @@
       </segment>
     </unit>
     <unit id="da2e5dc515b188dc">
-      <segment state="initial">
+      <segment>
         <source>Everyone</source>
         <target>Todo el mundo</target>
       </segment>
@@ -1880,7 +1880,7 @@
       </segment>
     </unit>
     <unit id="c5a7f6c989faa6c1">
-      <segment state="initial">
+      <segment>
         <source>Everyone. Pages marked for members only still need an account.</source>
         <target>Todo el mundo. Las páginas marcadas solo para miembros siguen necesitando una cuenta.</target>
       </segment>
@@ -1928,13 +1928,13 @@
       </segment>
     </unit>
     <unit id="7c2b4d48f037a331">
-      <segment state="initial">
+      <segment>
         <source>Explain this</source>
         <target>Explicar</target>
       </segment>
     </unit>
     <unit id="4fd45b788d809b6f">
-      <segment state="initial">
+      <segment>
         <source>Explain this check</source>
         <target>Explicar esta comprobación</target>
       </segment>
@@ -2012,7 +2012,7 @@
       </segment>
     </unit>
     <unit id="6c0f6d250287a580">
-      <segment state="initial">
+      <segment>
         <source>First day</source>
         <target>Primer día</target>
       </segment>
@@ -2054,7 +2054,7 @@
       </segment>
     </unit>
     <unit id="c84cd8462f4d60e7">
-      <segment state="initial">
+      <segment>
         <source>For example: How do I add a page to the main menu?</source>
         <target>Por ejemplo: ¿Cómo añado una página al menú principal?</target>
       </segment>
@@ -2078,13 +2078,13 @@
       </segment>
     </unit>
     <unit id="95ac01723575479f">
-      <segment state="initial">
+      <segment>
         <source>Found nothing</source>
         <target>Sin resultados</target>
       </segment>
     </unit>
     <unit id="c041489798782fc9">
-      <segment state="initial">
+      <segment>
         <source>Friendlier</source>
         <target>Más cercano</target>
       </segment>
@@ -2096,7 +2096,7 @@
       </segment>
     </unit>
     <unit id="e12e17fc314d11c3">
-      <segment state="initial">
+      <segment>
         <source>From 1 to 25. Figures older than this are deleted within the hour. 25 months keeps two full years to compare.</source>
         <target>De 1 a 25. Las cifras más antiguas se borran en menos de una hora. 25 meses guardan dos años completos para comparar.</target>
       </segment>
@@ -2156,7 +2156,7 @@
       </segment>
     </unit>
     <unit id="6aadac2f2b7a6b8e">
-      <segment state="initial">
+      <segment>
         <source>Go back</source>
         <target>Volver</target>
       </segment>
@@ -2234,7 +2234,7 @@
       </segment>
     </unit>
     <unit id="d8f4834f78e25343">
-      <segment state="initial">
+      <segment>
         <source>Help with SightPress</source>
         <target>Ayuda con SightPress</target>
       </segment>
@@ -2276,7 +2276,7 @@
       </segment>
     </unit>
     <unit id="b5efac4b0a381ce5">
-      <segment state="initial">
+      <segment>
         <source>How many tokens (pieces of words, sent and received) the site may use each month. Leave it empty to use your organisation’s budget ({tokens, plural, =0 {no limit} other {# tokens}}); 0 means no limit.</source>
         <target>Cuántos tokens (fragmentos de palabras, enviados y recibidos) puede usar el sitio cada mes. Déjalo vacío para usar el presupuesto de tu organización ({tokens, plural, =0 {sin límite} other {# tokens}}); 0 significa sin límite.</target>
       </segment>
@@ -2294,31 +2294,31 @@
       </segment>
     </unit>
     <unit id="5d8635002ed93771">
-      <segment state="initial">
+      <segment>
         <source>I checked the alt text in {language}: it describes the picture</source>
         <target>He revisado el texto alternativo en {language}: describe la imagen</target>
       </segment>
     </unit>
     <unit id="a8fb2ab87639daad">
-      <segment state="initial">
+      <segment>
         <source>I checked the alt text: it describes the picture</source>
         <target>He revisado el texto alternativo: describe la imagen</target>
       </segment>
     </unit>
     <unit id="3d99faf28df0b97d">
-      <segment state="initial">
+      <segment>
         <source>I checked this translation</source>
         <target>He revisado esta traducción</target>
       </segment>
     </unit>
     <unit id="ed3bcecc81cdaa19">
-      <segment state="initial">
+      <segment>
         <source>If it was you, sign in with your email address and password. If you have forgotten your password, choose “Forgot your password?” on the sign-in page.</source>
         <target>Si has sido tú, inicia sesión con tu dirección de correo y tu contraseña. Si has olvidado la contraseña, elige “¿Has olvidado tu contraseña?” en la página de inicio de sesión.</target>
       </segment>
     </unit>
     <unit id="1646ec7e94017f5b">
-      <segment state="initial">
+      <segment>
         <source>If it wasn’t you, you can ignore this email. Your account and your password stay as they are.</source>
         <target>Si no has sido tú, puedes ignorar este correo. Tu cuenta y tu contraseña siguen como estaban.</target>
       </segment>
@@ -2330,7 +2330,7 @@
       </segment>
     </unit>
     <unit id="7945af1636674d68">
-      <segment state="initial">
+      <segment>
         <source>If it wasn’t you, you can ignore this email: the account can’t be used until the code is typed, and it is removed after a week.</source>
         <target>Si no has sido tú, puedes ignorar este correo: la cuenta no se puede usar hasta que se escriba el código, y se borra al cabo de una semana.</target>
       </segment>
@@ -2342,7 +2342,7 @@
       </segment>
     </unit>
     <unit id="0541782fa7b744b8">
-      <segment state="initial">
+      <segment>
         <source>If this address can be used for a new account, we have emailed it a 6-digit code. The code works for {duration}, and only once.</source>
         <target>Si esta dirección se puede usar para una cuenta nueva, le hemos enviado por correo un código de 6 cifras. El código funciona durante {duration} y solo una vez.</target>
       </segment>
@@ -2426,7 +2426,7 @@
       </segment>
     </unit>
     <unit id="76d6aad1a2a03c8f">
-      <segment state="initial">
+      <segment>
         <source>In:</source>
         <target>En:</target>
       </segment>
@@ -2438,13 +2438,13 @@
       </segment>
     </unit>
     <unit id="8aa318eb7eaa233a">
-      <segment state="initial">
+      <segment>
         <source>Insert</source>
         <target>Insertar</target>
       </segment>
     </unit>
     <unit id="2d07115209d2ad32">
-      <segment state="initial">
+      <segment>
         <source>Inserted. Check it, then save.</source>
         <target>Insertado. Revísalo y guarda.</target>
       </segment>
@@ -2486,7 +2486,7 @@
       </segment>
     </unit>
     <unit id="82b00fea495ff029">
-      <segment state="initial">
+      <segment>
         <source>It reads the saved page, so save your changes first.</source>
         <target>Lee la página guardada, así que guarda antes tus cambios.</target>
       </segment>
@@ -2510,7 +2510,7 @@
       </segment>
     </unit>
     <unit id="50ae2a552f982ddc">
-      <segment state="initial">
+      <segment>
         <source>Its answers are suggestions: check them before you use them.</source>
         <target>Sus respuestas son sugerencias: revísalas antes de usarlas.</target>
       </segment>
@@ -2576,13 +2576,13 @@
       </segment>
     </unit>
     <unit id="999e8b32c3bd26f0">
-      <segment state="initial">
+      <segment>
         <source>Keeping analytics</source>
         <target>Guardar las estadísticas</target>
       </segment>
     </unit>
     <unit id="288aa61a84464274">
-      <segment state="initial">
+      <segment>
         <source>Kept on this site: when the assistant was used, by whom, for what, with which service and model, and how many tokens. Never the question, the page text or the answer.</source>
         <target>Se guarda en este sitio: cuándo se usó el asistente, quién, para qué, con qué servicio y modelo, y cuántos tokens. Nunca la pregunta, el texto de la página ni la respuesta.</target>
       </segment>
@@ -2624,7 +2624,7 @@
       </segment>
     </unit>
     <unit id="71e3c208c5992f36">
-      <segment state="initial">
+      <segment>
         <source>Languages of the pages read</source>
         <target>Idiomas de las páginas leídas</target>
       </segment>
@@ -2654,31 +2654,31 @@
       </segment>
     </unit>
     <unit id="b77eef699049a981">
-      <segment state="initial">
+      <segment>
         <source>Last 12 months</source>
         <target>Últimos 12 meses</target>
       </segment>
     </unit>
     <unit id="f8f03fb441b8b4ae">
-      <segment state="initial">
+      <segment>
         <source>Last 30 days</source>
         <target>Últimos 30 días</target>
       </segment>
     </unit>
     <unit id="0603deca4fcb660f">
-      <segment state="initial">
+      <segment>
         <source>Last 7 days</source>
         <target>Últimos 7 días</target>
       </segment>
     </unit>
     <unit id="9902d7ae89e288fb">
-      <segment state="initial">
+      <segment>
         <source>Last 90 days</source>
         <target>Últimos 90 días</target>
       </segment>
     </unit>
     <unit id="a4e24bc476c85773">
-      <segment state="initial">
+      <segment>
         <source>Last day</source>
         <target>Último día</target>
       </segment>
@@ -2708,19 +2708,19 @@
       </segment>
     </unit>
     <unit id="c3623ec52b01ef67">
-      <segment state="initial">
+      <segment>
         <source>Leave it empty to keep the saved key. The key is stored encrypted and never shown again.</source>
         <target>Déjalo vacío para mantener la clave guardada. La clave se guarda cifrada y no se vuelve a mostrar.</target>
       </segment>
     </unit>
     <unit id="c32357f21677b7c3">
-      <segment state="initial">
+      <segment>
         <source>Leave it empty to show the page’s title in this language.</source>
         <target>Déjalo vacío para mostrar el título de la página en este idioma.</target>
       </segment>
     </unit>
     <unit id="949a7c60426d2f13">
-      <segment state="initial">
+      <segment>
         <source>Leave it empty to show the text in the main language.</source>
         <target>Déjalo vacío para mostrar el texto en el idioma principal.</target>
       </segment>
@@ -2744,13 +2744,13 @@
       </segment>
     </unit>
     <unit id="5cfb3d2a700d02b3">
-      <segment state="initial">
+      <segment>
         <source>Leave this page out of the site’s own search</source>
         <target>Dejar esta página fuera del buscador del propio sitio</target>
       </segment>
     </unit>
     <unit id="6c5758b9fb72c5e0">
-      <segment state="initial">
+      <segment>
         <source>Let anyone create an account</source>
         <target>Dejar que cualquiera cree una cuenta</target>
       </segment>
@@ -2762,13 +2762,13 @@
       </segment>
     </unit>
     <unit id="2b4003d1fed60aec">
-      <segment state="initial">
+      <segment>
         <source>Line chart of {what} on {day}</source>
         <target>Gráfico de líneas de {what} el {day}</target>
       </segment>
     </unit>
     <unit id="84eae198d2d2f3b0">
-      <segment state="initial">
+      <segment>
         <source>Line chart of {what} per day, {from} to {to}</source>
         <target>Gráfico de líneas de {what} por día, del {from} al {to}</target>
       </segment>
@@ -2822,7 +2822,7 @@
       </segment>
     </unit>
     <unit id="4ce7dbfb92847f55">
-      <segment state="initial">
+      <segment>
         <source>Make it</source>
         <target>Hacerlo</target>
       </segment>
@@ -2846,7 +2846,7 @@
       </segment>
     </unit>
     <unit id="ef9d2e359eb78112">
-      <segment state="initial">
+      <segment>
         <source>Manage analytics</source>
         <target>Gestionar estadísticas</target>
       </segment>
@@ -2876,7 +2876,7 @@
       </segment>
     </unit>
     <unit id="532d662ad96d7ce2">
-      <segment state="initial">
+      <segment>
         <source>Manage the AI assistant</source>
         <target>Gestionar el asistente de IA</target>
       </segment>
@@ -2894,7 +2894,7 @@
       </segment>
     </unit>
     <unit id="394fc6ce7fde03da">
-      <segment state="initial">
+      <segment>
         <source>Members only: people with an account on the site, once they sign in</source>
         <target>Solo miembros: personas con cuenta en el sitio, una vez que inician sesión</target>
       </segment>
@@ -2948,49 +2948,49 @@
       </segment>
     </unit>
     <unit id="f1fff94a8e8008bf">
-      <segment state="initial">
+      <segment>
         <source>Mistral AI</source>
         <target>Mistral AI</target>
       </segment>
     </unit>
     <unit id="5e2c614c23f02239">
-      <segment state="initial">
+      <segment>
         <source>Model</source>
         <target>Modelo</target>
       </segment>
     </unit>
     <unit id="a3c3370cc7323c71">
-      <segment state="initial">
+      <segment>
         <source>Model name</source>
         <target>Nombre del modelo</target>
       </segment>
     </unit>
     <unit id="3d26cf6faa936b42">
-      <segment state="initial">
+      <segment>
         <source>Models of the chosen service. Bigger models write better and cost more.</source>
         <target>Modelos del servicio elegido. Los modelos más grandes escriben mejor y cuestan más.</target>
       </segment>
     </unit>
     <unit id="6ebf03ac3c1f03c9">
-      <segment state="initial">
+      <segment>
         <source>Monthly budget in tokens</source>
         <target>Presupuesto mensual en tokens</target>
       </segment>
     </unit>
     <unit id="3fbcac3055fdb11b">
-      <segment state="initial">
+      <segment>
         <source>Months start on the 1st, in UTC. From 80% everyone who asks is warned; at 100% the assistant stops until the next month.</source>
         <target>Los meses empiezan el día 1, en UTC. A partir del 80 % se avisa a quien pregunte; al 100 % el asistente se detiene hasta el mes siguiente.</target>
       </segment>
     </unit>
     <unit id="0dd4488018f09f19">
-      <segment state="initial">
+      <segment>
         <source>Months to keep analytics for</source>
         <target>Meses durante los que guardar las estadísticas</target>
       </segment>
     </unit>
     <unit id="0d37cbe284f022d3">
-      <segment state="initial">
+      <segment>
         <source>More formal</source>
         <target>Más formal</target>
       </segment>
@@ -3122,7 +3122,7 @@
       </segment>
     </unit>
     <unit id="e520a082286bb152">
-      <segment state="initial">
+      <segment>
         <source>New API key</source>
         <target>Nueva clave de API</target>
       </segment>
@@ -3140,7 +3140,7 @@
       </segment>
     </unit>
     <unit id="38c1c4457cd164cc">
-      <segment state="initial">
+      <segment>
         <source>New here?</source>
         <target>¿Eres nuevo?</target>
       </segment>
@@ -3182,7 +3182,7 @@
       </segment>
     </unit>
     <unit id="e877797d8fee2371">
-      <segment state="initial">
+      <segment>
         <source>No AI service is chosen yet.</source>
         <target>Aún no se ha elegido ningún servicio de IA.</target>
       </segment>
@@ -3230,19 +3230,19 @@
       </segment>
     </unit>
     <unit id="13372952d2764b91">
-      <segment state="initial">
+      <segment>
         <source>No model is chosen yet.</source>
         <target>Aún no se ha elegido ningún modelo.</target>
       </segment>
     </unit>
     <unit id="3d032462499467e1">
-      <segment state="initial">
+      <segment>
         <source>No one searched the site in these days.</source>
         <target>Nadie buscó en el sitio en estos días.</target>
       </segment>
     </unit>
     <unit id="4489a8209ffd75b3">
-      <segment state="initial">
+      <segment>
         <source>No page has every word you searched for, so these pages have some of them.</source>
         <target>Ninguna página tiene todas las palabras que has buscado, así que estas páginas tienen algunas.</target>
       </segment>
@@ -3254,7 +3254,7 @@
       </segment>
     </unit>
     <unit id="27f5f1fa7f855ce8">
-      <segment state="initial">
+      <segment>
         <source>No results for “{query}”</source>
         <target>No hay resultados para «{query}»</target>
       </segment>
@@ -3296,7 +3296,7 @@
       </segment>
     </unit>
     <unit id="a5a7fcacf6b4c27c">
-      <segment state="initial">
+      <segment>
         <source>Not ready yet.</source>
         <target>Todavía no está listo.</target>
       </segment>
@@ -3320,19 +3320,19 @@
       </segment>
     </unit>
     <unit id="193f946fab59977b">
-      <segment state="initial">
+      <segment>
         <source>Nothing counted in these days.</source>
         <target>Nada contado en estos días.</target>
       </segment>
     </unit>
     <unit id="15bb4e6ede2c515e">
-      <segment state="initial">
+      <segment>
         <source>Nothing has been counted in the last 7 days yet.</source>
         <target>Todavía no se ha contado nada en los últimos 7 días.</target>
       </segment>
     </unit>
     <unit id="9f20df5e74ceecb1">
-      <segment state="initial">
+      <segment>
         <source>Nothing has been counted yet, so there is nothing to delete.</source>
         <target>Todavía no se ha contado nada, así que no hay nada que borrar.</target>
       </segment>
@@ -3356,13 +3356,13 @@
       </segment>
     </unit>
     <unit id="55c3c9caedc2db55">
-      <segment state="initial">
+      <segment>
         <source>Nothing is scheduled.</source>
         <target>No hay nada programado.</target>
       </segment>
     </unit>
     <unit id="cef81ee0299d17cd">
-      <segment state="initial">
+      <segment>
         <source>Nothing is sent to the AI service until someone asks for a suggestion.</source>
         <target>No se envía nada al servicio de IA hasta que alguien pide una sugerencia.</target>
       </segment>
@@ -3374,7 +3374,7 @@
       </segment>
     </unit>
     <unit id="bd82cf16699be29e">
-      <segment state="initial">
+      <segment>
         <source>Number</source>
         <target>Número</target>
       </segment>
@@ -3458,13 +3458,13 @@
       </segment>
     </unit>
     <unit id="97914033e8910ee8">
-      <segment state="initial">
+      <segment>
         <source>Only for services that need it: the address of the service’s API, starting with https://, for example https://ai.example.org/v1.</source>
         <target>Solo para los servicios que la necesitan: la dirección de la API del servicio, empezando por https://, por ejemplo https://ai.example.org/v1.</target>
       </segment>
     </unit>
     <unit id="6b719edf8927ac09">
-      <segment state="initial">
+      <segment>
         <source>Only for {services}: the name of the model, as the service writes it.</source>
         <target>Solo para {services}: el nombre del modelo, tal como lo escribe el servicio.</target>
       </segment>
@@ -3494,37 +3494,37 @@
       </segment>
     </unit>
     <unit id="2be0a1438645073f">
-      <segment state="initial">
+      <segment>
         <source>Only people who may publish pages can schedule them.</source>
         <target>Solo quien puede publicar páginas puede programarlas.</target>
       </segment>
     </unit>
     <unit id="59ab8025f478fa24">
-      <segment state="initial">
+      <segment>
         <source>Only people with an account, once they sign in. Search engines and AI services can’t read any page.</source>
         <target>Solo personas con cuenta, una vez que inician sesión. Los buscadores y los servicios de IA no pueden leer ninguna página.</target>
       </segment>
     </unit>
     <unit id="c9f4abc0d13a9df7">
-      <segment state="initial">
+      <segment>
         <source>Only people you invite can join.</source>
         <target>Solo pueden unirse las personas que invites.</target>
       </segment>
     </unit>
     <unit id="d03eabd8c489aa20">
-      <segment state="initial">
+      <segment>
         <source>Only people you invite can join. Nobody can create an account on their own.</source>
         <target>Solo pueden unirse las personas que invites. Nadie puede crear una cuenta por su cuenta.</target>
       </segment>
     </unit>
     <unit id="cc54070c82dbba3a">
-      <segment state="initial">
+      <segment>
         <source>Only roles that are safe to give to people you don’t know are listed. “Member” can read members-only pages and nothing more.</source>
         <target>Solo aparecen los roles que es seguro dar a personas que no conoces. “Miembro” puede leer las páginas solo para miembros y nada más.</target>
       </segment>
     </unit>
     <unit id="0e4335838d1926ab">
-      <segment state="initial">
+      <segment>
         <source>Only show this entry to members who are signed in</source>
         <target>Mostrar esta entrada solo a miembros que han iniciado sesión</target>
       </segment>
@@ -3566,19 +3566,19 @@
       </segment>
     </unit>
     <unit id="9e75c58da7eb3ede">
-      <segment state="initial">
+      <segment>
         <source>OpenAI (GPT)</source>
         <target>OpenAI (GPT)</target>
       </segment>
     </unit>
     <unit id="f97e9da0e3b879f0">
-      <segment state="initial">
+      <segment>
         <source>Other</source>
         <target>Otros</target>
       </segment>
     </unit>
     <unit id="40ebe450389476a2">
-      <segment state="initial">
+      <segment>
         <source>Other days</source>
         <target>Otros días</target>
       </segment>
@@ -3602,7 +3602,7 @@
       </segment>
     </unit>
     <unit id="fbd70afd774a1ec7">
-      <segment state="initial">
+      <segment>
         <source>Page views</source>
         <target>Páginas vistas</target>
       </segment>
@@ -3620,7 +3620,7 @@
       </segment>
     </unit>
     <unit id="f3f3c8621ac95833">
-      <segment state="initial">
+      <segment>
         <source>Pages as Markdown</source>
         <target>Páginas en Markdown</target>
       </segment>
@@ -3632,13 +3632,13 @@
       </segment>
     </unit>
     <unit id="f3eefabb7032f4d1">
-      <segment state="initial">
+      <segment>
         <source>Pages for members only are left out of search engines, the sitemap and llms.txt. People who aren’t signed in are asked to sign in.</source>
         <target>Las páginas solo para miembros quedan fuera de los buscadores, del mapa del sitio y de llms.txt. A quien no ha iniciado sesión se le pide que la inicie.</target>
       </segment>
     </unit>
     <unit id="1994967083ce8445">
-      <segment state="initial">
+      <segment>
         <source>Pages not found</source>
         <target>Páginas no encontradas</target>
       </segment>
@@ -3656,7 +3656,7 @@
       </segment>
     </unit>
     <unit id="56e42e3746daaa28">
-      <segment state="initial">
+      <segment>
         <source>Pages read most</source>
         <target>Páginas más leídas</target>
       </segment>
@@ -3686,13 +3686,13 @@
       </segment>
     </unit>
     <unit id="3a5be075367a7400">
-      <segment state="initial">
+      <segment>
         <source>Paste text from the page, or a rich text block’s HTML.</source>
         <target>Pega texto de la página o el HTML de un bloque de texto enriquecido.</target>
       </segment>
     </unit>
     <unit id="2ddf47e0351e918c">
-      <segment state="initial">
+      <segment>
         <source>Paste the text the assistant should rewrite.</source>
         <target>Pega el texto que el asistente debe reescribir.</target>
       </segment>
@@ -3704,7 +3704,7 @@
       </segment>
     </unit>
     <unit id="5339be84531e8ddf">
-      <segment state="initial">
+      <segment>
         <source>People searching this site won’t find it. Search engines still can, unless you also ask them not to list it.</source>
         <target>Quien busque en este sitio no la encontrará. Los buscadores sí podrán, a menos que también les pidas que no la muestren.</target>
       </segment>
@@ -3716,7 +3716,7 @@
       </segment>
     </unit>
     <unit id="63dceb8800b2dd4a">
-      <segment state="initial">
+      <segment>
         <source>Phone</source>
         <target>Móvil</target>
       </segment>
@@ -3800,7 +3800,7 @@
       </segment>
     </unit>
     <unit id="ff65c4c785a8521c">
-      <segment state="initial">
+      <segment>
         <source>Programs that read the site. They are never counted as visitors.</source>
         <target>Programas que leen el sitio. Nunca se cuentan como visitantes.</target>
       </segment>
@@ -3812,7 +3812,7 @@
       </segment>
     </unit>
     <unit id="d565aa2b9736d56f">
-      <segment state="initial">
+      <segment>
         <source>Publish at</source>
         <target>Publicar el</target>
       </segment>
@@ -3890,7 +3890,7 @@
       </segment>
     </unit>
     <unit id="6683c9229ab2464d">
-      <segment state="initial">
+      <segment>
         <source>Read it and change what needs changing. Saving the page, or choosing “I checked this translation”, says a person checked it; until then it can’t be published.</source>
         <target>Léela y cambia lo que haga falta. Guardar la página, o elegir «He revisado esta traducción», indica que una persona la revisó; hasta entonces no se puede publicar.</target>
       </segment>
@@ -3902,7 +3902,7 @@
       </segment>
     </unit>
     <unit id="7f3e8bf052d3900e">
-      <segment state="initial">
+      <segment>
         <source>Reads</source>
         <target>Lecturas</target>
       </segment>
@@ -3920,7 +3920,7 @@
       </segment>
     </unit>
     <unit id="2e4a0471b4a35c58">
-      <segment state="initial">
+      <segment>
         <source>Ready: people can ask {service} ({model}).</source>
         <target>Listo: se puede preguntar a {service} ({model}).</target>
       </segment>
@@ -3950,7 +3950,7 @@
       </segment>
     </unit>
     <unit id="81c45fd9b904308a">
-      <segment state="initial">
+      <segment>
         <source>Remove key</source>
         <target>Quitar la clave</target>
       </segment>
@@ -4016,7 +4016,7 @@
       </segment>
     </unit>
     <unit id="ada27592c9578e90">
-      <segment state="initial">
+      <segment>
         <source>Requests</source>
         <target>Solicitudes</target>
       </segment>
@@ -4082,19 +4082,19 @@
       </segment>
     </unit>
     <unit id="272f25fe45d2cccc">
-      <segment state="initial">
+      <segment>
         <source>Rewrite</source>
         <target>Reescribir</target>
       </segment>
     </unit>
     <unit id="b4a32801a621960a">
-      <segment state="initial">
+      <segment>
         <source>Rewrite text</source>
         <target>Reescribir texto</target>
       </segment>
     </unit>
     <unit id="7d112e05c4d0ebb2">
-      <segment state="initial">
+      <segment>
         <source>Rewritten text</source>
         <target>Texto reescrito</target>
       </segment>
@@ -4106,7 +4106,7 @@
       </segment>
     </unit>
     <unit id="973288385d68374e">
-      <segment state="initial">
+      <segment>
         <source>Role of people who sign up</source>
         <target>Rol de quienes se registran</target>
       </segment>
@@ -4148,19 +4148,19 @@
       </segment>
     </unit>
     <unit id="8d29de0525120893">
-      <segment state="initial">
+      <segment>
         <source>Save sign-up settings</source>
         <target>Guardar la configuración del registro</target>
       </segment>
     </unit>
     <unit id="b77a601ad9a0749d">
-      <segment state="initial">
+      <segment>
         <source>Save the AI service</source>
         <target>Guardar el servicio de IA</target>
       </segment>
     </unit>
     <unit id="abdc1b19de61f956">
-      <segment state="initial">
+      <segment>
         <source>Save the entry</source>
         <target>Guardar la entrada</target>
       </segment>
@@ -4172,13 +4172,13 @@
       </segment>
     </unit>
     <unit id="316976ffad84c912">
-      <segment state="initial">
+      <segment>
         <source>Save the page first: the assistant reads the saved page.</source>
         <target>Guarda primero la página: el asistente lee la página guardada.</target>
       </segment>
     </unit>
     <unit id="0012e3ae2afd4d6b">
-      <segment state="initial">
+      <segment>
         <source>Save the schedule</source>
         <target>Guardar la programación</target>
       </segment>
@@ -4190,7 +4190,7 @@
       </segment>
     </unit>
     <unit id="f9574f5958b6d216">
-      <segment state="initial">
+      <segment>
         <source>Save who may use it</source>
         <target>Guardar quién puede usarlo</target>
       </segment>
@@ -4202,7 +4202,7 @@
       </segment>
     </unit>
     <unit id="b34bd62706256b28">
-      <segment state="initial">
+      <segment>
         <source>Saved API key: {key}</source>
         <target>Clave de API guardada: {key}</target>
       </segment>
@@ -4226,7 +4226,7 @@
       </segment>
     </unit>
     <unit id="26b89304cceed2f5">
-      <segment state="initial">
+      <segment>
         <source>Say what the page should be about.</source>
         <target>Di de qué debe tratar la página.</target>
       </segment>
@@ -4250,31 +4250,31 @@
       </segment>
     </unit>
     <unit id="1dffc51a4f01f54b">
-      <segment state="initial">
+      <segment>
         <source>Say where the link goes, for example “Opening hours”.</source>
         <target>Di adónde lleva el enlace, por ejemplo “Horario”.</target>
       </segment>
     </unit>
     <unit id="f4830a1dae298044">
-      <segment state="initial">
+      <segment>
         <source>Schedule</source>
         <target>Programación</target>
       </segment>
     </unit>
     <unit id="5d94565d1b8626d4">
-      <segment state="initial">
+      <segment>
         <source>Scheduled: the page is published at {publish} ({timezone} time).</source>
         <target>Programado: la página se publica el {publish} (hora de {timezone}).</target>
       </segment>
     </unit>
     <unit id="1d04cb57ca966418">
-      <segment state="initial">
+      <segment>
         <source>Scheduled: the page is published at {publish} and taken off the site at {unpublish} ({timezone} time).</source>
         <target>Programado: la página se publica el {publish} y se retira del sitio el {unpublish} (hora de {timezone}).</target>
       </segment>
     </unit>
     <unit id="ceeaec8e38489030">
-      <segment state="initial">
+      <segment>
         <source>Scheduled: the page is taken off the site at {unpublish} ({timezone} time).</source>
         <target>Programado: la página se retira del sitio el {unpublish} (hora de {timezone}).</target>
       </segment>
@@ -4286,7 +4286,7 @@
       </segment>
     </unit>
     <unit id="49c266baaaa70981">
-      <segment state="initial">
+      <segment>
         <source>Search</source>
         <target>Buscar</target>
       </segment>
@@ -4298,13 +4298,13 @@
       </segment>
     </unit>
     <unit id="39c05e0065bff21a">
-      <segment state="initial">
+      <segment>
         <source>Search engine</source>
         <target>Buscador</target>
       </segment>
     </unit>
     <unit id="d8b9c40eac765144">
-      <segment state="initial">
+      <segment>
         <source>Search engines and AI crawlers</source>
         <target>Buscadores y rastreadores de IA</target>
       </segment>
@@ -4316,43 +4316,43 @@
       </segment>
     </unit>
     <unit id="6ea8f7433c6c0626">
-      <segment state="initial">
+      <segment>
         <source>Search for</source>
         <target>Buscar por</target>
       </segment>
     </unit>
     <unit id="e4c251355f0a809e">
-      <segment state="initial">
+      <segment>
         <source>Search results pages</source>
         <target>Páginas de resultados de la búsqueda</target>
       </segment>
     </unit>
     <unit id="ce970a2013d00e8a">
-      <segment state="initial">
+      <segment>
         <source>Search this site</source>
         <target>Buscar en este sitio</target>
       </segment>
     </unit>
     <unit id="1cb99ce2306617b5">
-      <segment state="initial">
+      <segment>
         <source>Searches</source>
         <target>Búsquedas</target>
       </segment>
     </unit>
     <unit id="09294feda3db1e79">
-      <segment state="initial">
+      <segment>
         <source>Searches that found nothing</source>
         <target>Búsquedas sin resultados</target>
       </segment>
     </unit>
     <unit id="4226ea0aa05b2f65">
-      <segment state="initial">
+      <segment>
         <source>See all analytics</source>
         <target>Ver todas las estadísticas</target>
       </segment>
     </unit>
     <unit id="5df3799a8fde8dc9">
-      <segment state="initial">
+      <segment>
         <source>See how many people visit the site, what they read and where they come from.</source>
         <target>Ver cuántas personas visitan el sitio, qué leen y de dónde vienen.</target>
       </segment>
@@ -4436,7 +4436,7 @@
       </segment>
     </unit>
     <unit id="95299f33ebab0600">
-      <segment state="initial">
+      <segment>
         <source>Sends a tiny request to the service, to check that the key and the model work. It counts towards the budget, like any other use.</source>
         <target>Envía una petición muy pequeña al servicio para comprobar que la clave y el modelo funcionan. Cuenta para el presupuesto, como cualquier otro uso.</target>
       </segment>
@@ -4454,7 +4454,7 @@
       </segment>
     </unit>
     <unit id="6af9519745928e76">
-      <segment state="initial">
+      <segment>
         <source>Sent: the question, and the page the person chooses to share or asks a suggestion for. Never lists of people, email addresses, the audit log or other pages.</source>
         <target>Se envía: la pregunta y la página que la persona decide compartir o para la que pide una sugerencia. Nunca listas de personas, direcciones de correo, el registro de auditoría ni otras páginas.</target>
       </segment>
@@ -4484,13 +4484,13 @@
       </segment>
     </unit>
     <unit id="e38fa3b6888d6cbe">
-      <segment state="initial">
+      <segment>
         <source>Share this page with the assistant</source>
         <target>Compartir esta página con el asistente</target>
       </segment>
     </unit>
     <unit id="3deba4ef191117f5">
-      <segment state="initial">
+      <segment>
         <source>Shorter</source>
         <target>Más corto</target>
       </segment>
@@ -4532,7 +4532,7 @@
       </segment>
     </unit>
     <unit id="a67da1b8c36c97f3">
-      <segment state="initial">
+      <segment>
         <source>Show the data for each day</source>
         <target>Mostrar los datos de cada día</target>
       </segment>
@@ -4544,7 +4544,7 @@
       </segment>
     </unit>
     <unit id="8f85d8a0c4227758">
-      <segment state="initial">
+      <segment>
         <source>Show these days</source>
         <target>Mostrar estos días</target>
       </segment>
@@ -4574,7 +4574,7 @@
       </segment>
     </unit>
     <unit id="b054b0d3f1e537b3">
-      <segment state="initial">
+      <segment>
         <source>Shown next to your name on the site and in emails. Your first name is shown if you leave it empty.</source>
         <target>Se muestra junto a tu nombre en el sitio y en los correos. Si lo dejas vacío, aparece tu nombre.</target>
       </segment>
@@ -4658,7 +4658,7 @@
       </segment>
     </unit>
     <unit id="3cc08ebe9d5f9c11">
-      <segment state="initial">
+      <segment>
         <source>Sign-up</source>
         <target>Registro</target>
       </segment>
@@ -4676,7 +4676,7 @@
       </segment>
     </unit>
     <unit id="6dc9ed5671ad0dad">
-      <segment state="initial">
+      <segment>
         <source>Simpler</source>
         <target>Más sencillo</target>
       </segment>
@@ -4694,7 +4694,7 @@
       </segment>
     </unit>
     <unit id="f38eaae00dc2f5ee">
-      <segment state="initial">
+      <segment>
         <source>Site search</source>
         <target>Búsqueda en el sitio</target>
       </segment>
@@ -4706,13 +4706,13 @@
       </segment>
     </unit>
     <unit id="4db550cd984016b9">
-      <segment state="initial">
+      <segment>
         <source>Sitemap</source>
         <target>Mapa del sitio</target>
       </segment>
     </unit>
     <unit id="c9dd40231ada84fb">
-      <segment state="initial">
+      <segment>
         <source>Sites that use it share your organisation’s key.</source>
         <target>Los sitios que lo usan comparten la clave de tu organización.</target>
       </segment>
@@ -4766,19 +4766,19 @@
       </segment>
     </unit>
     <unit id="9bcf81a23f915e32">
-      <segment state="initial">
+      <segment>
         <source>Someone signed up for {site} with this email address. To confirm it is yours, type this code on the page that asks for it:</source>
         <target>Alguien se ha registrado en {site} con esta dirección de correo. Para confirmar que es tuya, escribe este código en la página que lo pide:</target>
       </segment>
     </unit>
     <unit id="c0bded503c093617">
-      <segment state="initial">
+      <segment>
         <source>Someone tried to sign up for {site} with your email address</source>
         <target>Alguien ha intentado registrarse en {site} con tu dirección de correo</target>
       </segment>
     </unit>
     <unit id="13a56e80ed2cf51d">
-      <segment state="initial">
+      <segment>
         <source>Someone tried to sign up for {site} with your email address. You already have an account there, so nothing was changed and no new account was made.</source>
         <target>Alguien ha intentado registrarse en {site} con tu dirección de correo. Ya tienes una cuenta allí, así que no se ha cambiado nada ni se ha creado ninguna cuenta nueva.</target>
       </segment>
@@ -4808,7 +4808,7 @@
       </segment>
     </unit>
     <unit id="0e570ca6fabe24f9">
-      <segment state="initial">
+      <segment>
         <source>Source</source>
         <target>Origen</target>
       </segment>
@@ -4910,55 +4910,55 @@
       </segment>
     </unit>
     <unit id="ed5d3380fb350219">
-      <segment state="initial">
+      <segment>
         <source>Suggest a description</source>
         <target>Sugerir una descripción</target>
       </segment>
     </unit>
     <unit id="d4e399045d0515de">
-      <segment state="initial">
+      <segment>
         <source>Suggest a summary</source>
         <target>Sugerir un resumen</target>
       </segment>
     </unit>
     <unit id="7835f1a5ea0ba311">
-      <segment state="initial">
+      <segment>
         <source>Suggest a title for search results</source>
         <target>Sugerir un título para los resultados de búsqueda</target>
       </segment>
     </unit>
     <unit id="2494a2ff82b81cb8">
-      <segment state="initial">
+      <segment>
         <source>Suggest alt text</source>
         <target>Sugerir texto alternativo</target>
       </segment>
     </unit>
     <unit id="1f73dd9b3fb7efeb">
-      <segment state="initial">
+      <segment>
         <source>Suggest alt text in {language}</source>
         <target>Sugerir texto alternativo en {language}</target>
       </segment>
     </unit>
     <unit id="0ab295348e4059a0">
-      <segment state="initial">
+      <segment>
         <source>Suggest what search engines show</source>
         <target>Sugerir lo que muestran los buscadores</target>
       </segment>
     </unit>
     <unit id="59c7aa05a8bbf375">
-      <segment state="initial">
+      <segment>
         <source>Suggestion discarded.</source>
         <target>Sugerencia descartada.</target>
       </segment>
     </unit>
     <unit id="74d3c4b8d2a5e5de">
-      <segment state="initial">
+      <segment>
         <source>Suggestion for “{field}”</source>
         <target>Sugerencia para «{field}»</target>
       </segment>
     </unit>
     <unit id="c35b39d3477d7213">
-      <segment state="initial">
+      <segment>
         <source>Suggestion ready</source>
         <target>Sugerencia lista</target>
       </segment>
@@ -4988,13 +4988,13 @@
       </segment>
     </unit>
     <unit id="e34a879c8b8b67ef">
-      <segment state="initial">
+      <segment>
         <source>Tablet</source>
         <target>Tableta</target>
       </segment>
     </unit>
     <unit id="5e9bc768ca88a1de">
-      <segment state="initial">
+      <segment>
         <source>Take off the site at</source>
         <target>Retirar del sitio el</target>
       </segment>
@@ -5036,13 +5036,13 @@
       </segment>
     </unit>
     <unit id="5bcf311b19d80c56">
-      <segment state="initial">
+      <segment>
         <source>Test connection</source>
         <target>Probar la conexión</target>
       </segment>
     </unit>
     <unit id="94c9182777d93dd2">
-      <segment state="initial">
+      <segment>
         <source>Testing the connection…</source>
         <target>Probando la conexión…</target>
       </segment>
@@ -5060,13 +5060,13 @@
       </segment>
     </unit>
     <unit id="ce4191854e091b93">
-      <segment state="initial">
+      <segment>
         <source>Text in {language}</source>
         <target>Texto en {language}</target>
       </segment>
     </unit>
     <unit id="9bfcca9a11fb3800">
-      <segment state="initial">
+      <segment>
         <source>Text to rewrite</source>
         <target>Texto para reescribir</target>
       </segment>
@@ -5096,79 +5096,79 @@
       </segment>
     </unit>
     <unit id="5a2235ded2686a2f">
-      <segment state="initial">
+      <segment>
         <source>The AI assistant drafted the {language} translation. Read it and change what needs changing, then save it or choose “I checked this translation”. It can’t be published before.</source>
         <target>El asistente de IA redactó la traducción al {language}. Léela y cambia lo que haga falta; después guárdala o elige «He revisado esta traducción». Antes no se puede publicar.</target>
       </segment>
     </unit>
     <unit id="09e07ee54fb3c9d8">
-      <segment state="initial">
+      <segment>
         <source>The AI assistant drafted this translation, and nobody has checked it yet.</source>
         <target>El asistente de IA redactó esta traducción y nadie la ha revisado todavía.</target>
       </segment>
     </unit>
     <unit id="1c50c6147e75a1b9">
-      <segment state="initial">
+      <segment>
         <source>The AI assistant suggested this alt text. Pages that show it can’t be published until someone checks it.</source>
         <target>El asistente de IA sugirió este texto alternativo. Las páginas que lo muestran no se pueden publicar hasta que alguien lo revise.</target>
       </segment>
     </unit>
     <unit id="e9a9fd061739fe78">
-      <segment state="initial">
+      <segment>
         <source>The AI service can’t be reached right now. Try again later.</source>
         <target>Ahora mismo no se puede contactar con el servicio de IA. Inténtelo más tarde.</target>
       </segment>
     </unit>
     <unit id="7ca37e9b69d73204">
-      <segment state="initial">
+      <segment>
         <source>The AI service declined to help with this request. Try asking in another way.</source>
         <target>El servicio de IA ha rechazado ayudar con esta petición. Pruebe a pedirlo de otra manera.</target>
       </segment>
     </unit>
     <unit id="de1c898409ab8362">
-      <segment state="initial">
+      <segment>
         <source>The AI service didn’t accept the API key. An admin can replace it on the AI assistant screen.</source>
         <target>El servicio de IA no ha aceptado la clave de API. Un administrador puede sustituirla en la pantalla del asistente de IA.</target>
       </segment>
     </unit>
     <unit id="585eda6b577aedb7">
-      <segment state="initial">
+      <segment>
         <source>The AI service doesn’t offer the chosen model any more. An admin can choose another one on the AI assistant screen.</source>
         <target>El servicio de IA ya no ofrece el modelo elegido. Un administrador puede elegir otro en la pantalla del asistente de IA.</target>
       </segment>
     </unit>
     <unit id="d6600a0e36288a35">
-      <segment state="initial">
+      <segment>
         <source>The AI service handles what it receives under its own terms. Check them, and where it processes data, before you choose it.</source>
         <target>El servicio de IA trata lo que recibe según sus propias condiciones. Revísalas, y dónde trata los datos, antes de elegirlo.</target>
       </segment>
     </unit>
     <unit id="d84d9acb77ffe044">
-      <segment state="initial">
+      <segment>
         <source>The AI service is getting too many requests right now. Try again in a minute.</source>
         <target>El servicio de IA está recibiendo demasiadas peticiones ahora mismo. Inténtelo dentro de un minuto.</target>
       </segment>
     </unit>
     <unit id="cc92bd9a16a06cbf">
-      <segment state="initial">
+      <segment>
         <source>The AI service is saved.</source>
         <target>El servicio de IA está guardado.</target>
       </segment>
     </unit>
     <unit id="989d7f2941abfa80">
-      <segment state="initial">
+      <segment>
         <source>The AI service took too long to answer. Try again, perhaps with less text.</source>
         <target>El servicio de IA ha tardado demasiado en responder. Inténtelo de nuevo, quizá con menos texto.</target>
       </segment>
     </unit>
     <unit id="5451891c775c24ae">
-      <segment state="initial">
+      <segment>
         <source>The API key is removed.</source>
         <target>Se ha quitado la clave de API.</target>
       </segment>
     </unit>
     <unit id="1345dd71533f7ba8">
-      <segment state="initial">
+      <segment>
         <source>The account with the AI service has no credit left, or has reached its spending limit. An admin can check it with the AI service.</source>
         <target>La cuenta del servicio de IA no tiene saldo o ha alcanzado su límite de gasto. Un administrador puede comprobarlo con el servicio de IA.</target>
       </segment>
@@ -5210,7 +5210,7 @@
       </segment>
     </unit>
     <unit id="a6099cfe7c8460f3">
-      <segment state="initial">
+      <segment>
         <source>The address of the AI service isn’t valid. Enter it again.</source>
         <target>La dirección del servicio de IA no es válida. Vuelva a introducirla.</target>
       </segment>
@@ -5252,97 +5252,97 @@
       </segment>
     </unit>
     <unit id="811eadd6678f6913">
-      <segment state="initial">
+      <segment>
         <source>The alt text of {name} was suggested by the AI assistant, and nobody has checked it yet. Check it on the file’s page in the media library, or write the alt text here.</source>
         <target>El texto alternativo de {name} lo sugirió el asistente de IA y nadie lo ha revisado todavía. Revísalo en la página del archivo en la biblioteca de medios o escribe aquí el texto alternativo.</target>
       </segment>
     </unit>
     <unit id="4dd98d157b43be20">
-      <segment state="initial">
+      <segment>
         <source>The answer was cut short because it was too long. Check its end.</source>
         <target>La respuesta se cortó porque era demasiado larga. Revisa el final.</target>
       </segment>
     </unit>
     <unit id="2ecb0f15e8d1f8d8">
-      <segment state="initial">
+      <segment>
         <source>The assistant can’t do that.</source>
         <target>El asistente no puede hacer eso.</target>
       </segment>
     </unit>
     <unit id="eeb3da1bbb820077">
-      <segment state="initial">
+      <segment>
         <source>The assistant couldn’t be reached. Try again.</source>
         <target>No se pudo contactar con el asistente. Inténtalo de nuevo.</target>
       </segment>
     </unit>
     <unit id="449702e997d63fd3">
-      <segment state="initial">
+      <segment>
         <source>The assistant couldn’t draft the translation. {reason}</source>
         <target>El asistente no ha podido redactar la traducción. {reason}</target>
       </segment>
     </unit>
     <unit id="ceb92cf155cf8031">
-      <segment state="initial">
+      <segment>
         <source>The assistant couldn’t help</source>
         <target>El asistente no ha podido ayudar</target>
       </segment>
     </unit>
     <unit id="ba1560054155c30f">
-      <segment state="initial">
+      <segment>
         <source>The assistant couldn’t use what was sent.</source>
         <target>El asistente no ha podido usar lo que se envió.</target>
       </segment>
     </unit>
     <unit id="8334d085f7eb6739">
-      <segment state="initial">
+      <segment>
         <source>The assistant isn’t ready yet, so the test will say what is missing.</source>
         <target>El asistente todavía no está listo, así que la prueba dirá qué falta.</target>
       </segment>
     </unit>
     <unit id="7c79db80e3f0bf10">
-      <segment state="initial">
+      <segment>
         <source>The assistant suggests summaries, descriptions for search engines, alt text and drafts, and answers questions about the site, using an AI service you choose with your own API key. Its suggestions are never used until a person checks them.</source>
         <target>El asistente sugiere resúmenes, descripciones para buscadores, textos alternativos y borradores, y responde preguntas sobre el sitio, con un servicio de IA que eliges con tu propia clave de API. Sus sugerencias nunca se usan hasta que una persona las revisa.</target>
       </segment>
     </unit>
     <unit id="cbcdde3f7c1e4f02">
-      <segment state="initial">
+      <segment>
         <source>The assistant’s address can’t be found: there is no server called {host}.</source>
         <target>No se encuentra la dirección del asistente: no hay ningún servidor llamado {host}.</target>
       </segment>
     </unit>
     <unit id="204783073bab970a">
-      <segment state="initial">
+      <segment>
         <source>The assistant’s address must be a full web address, such as https://ai.example.org/v1.</source>
         <target>La dirección del asistente debe ser una dirección web completa, como https://ai.example.org/v1.</target>
       </segment>
     </unit>
     <unit id="bc3c70266776ddf6">
-      <segment state="initial">
+      <segment>
         <source>The assistant’s address must not contain a user name or password. Put the key in the key field instead.</source>
         <target>La dirección del asistente no debe contener un nombre de usuario ni una contraseña. Pon la clave en el campo de la clave.</target>
       </segment>
     </unit>
     <unit id="00651c12287184d9">
-      <segment state="initial">
+      <segment>
         <source>The assistant’s address must start with https://, so the key and your content are encrypted on the way.</source>
         <target>La dirección del asistente debe empezar por https://, para que la clave y tu contenido viajen cifrados.</target>
       </segment>
     </unit>
     <unit id="9b0ee7c96af36d41">
-      <segment state="initial">
+      <segment>
         <source>The assistant’s address {host} is on a private or local network, which isn’t allowed. Your hosting provider can allow it with the tenant setting assistant.allow_private_hosts.</source>
         <target>La dirección del asistente {host} está en una red privada o local, y eso no está permitido. Tu proveedor de alojamiento puede permitirlo con el ajuste de la organización assistant.allow_private_hosts.</target>
       </segment>
     </unit>
     <unit id="932fa73e870dc008">
-      <segment state="initial">
+      <segment>
         <source>The assistant’s answer</source>
         <target>La respuesta del asistente</target>
       </segment>
     </unit>
     <unit id="77f41740ef3dc355">
-      <segment state="initial">
+      <segment>
         <source>The busiest day was {day}, with {amount}.</source>
         <target>El día con más movimiento fue el {day}, con {amount}.</target>
       </segment>
@@ -5354,19 +5354,19 @@
       </segment>
     </unit>
     <unit id="6b57cd8726fb54ce">
-      <segment state="initial">
+      <segment>
         <source>The chosen AI service ({provider}) isn’t available any more. Choose another one.</source>
         <target>El servicio de IA elegido ({provider}) ya no está disponible. Elija otro.</target>
       </segment>
     </unit>
     <unit id="862ff78129f8c480">
-      <segment state="initial">
+      <segment>
         <source>The chosen days</source>
         <target>Los días elegidos</target>
       </segment>
     </unit>
     <unit id="d92ed9fbba7cd81a">
-      <segment state="initial">
+      <segment>
         <source>The chosen model can’t look at pictures. An admin can choose one that can on the AI assistant screen.</source>
         <target>El modelo elegido no puede ver imágenes. Un administrador puede elegir uno que pueda en la pantalla del asistente de IA.</target>
       </segment>
@@ -5378,13 +5378,13 @@
       </segment>
     </unit>
     <unit id="389c7d9b5c1e6c32">
-      <segment state="initial">
+      <segment>
         <source>The connection didn’t work. {reason}</source>
         <target>La conexión no ha funcionado. {reason}</target>
       </segment>
     </unit>
     <unit id="559a271b696405e9">
-      <segment state="initial">
+      <segment>
         <source>The connection works: {service} answered.</source>
         <target>La conexión funciona: {service} ha respondido.</target>
       </segment>
@@ -5402,13 +5402,13 @@
       </segment>
     </unit>
     <unit id="c19744e4cd7bd55a">
-      <segment state="initial">
+      <segment>
         <source>The draft is added to the end of the page’s blocks, unsaved, for you to check and change.</source>
         <target>El borrador se añade al final de los bloques de la página, sin guardar, para que lo revises y lo cambies.</target>
       </segment>
     </unit>
     <unit id="4ee29b5c1b1eea31">
-      <segment state="initial">
+      <segment>
         <source>The draft is at the end of the page’s blocks. Check it, then save.</source>
         <target>El borrador está al final de los bloques de la página. Revísalo y guarda.</target>
       </segment>
@@ -5558,7 +5558,7 @@
       </segment>
     </unit>
     <unit id="75264d9e69f09115">
-      <segment state="initial">
+      <segment>
         <source>The last day must be the same as the first day or after it</source>
         <target>El último día debe ser igual al primero o posterior</target>
       </segment>
@@ -5594,7 +5594,7 @@
       </segment>
     </unit>
     <unit id="4775d7201fa1face">
-      <segment state="initial">
+      <segment>
         <source>The most: {label}, with {amount} ({share} of all).</source>
         <target>El mayor: {label}, con {amount} ({share} del total).</target>
       </segment>
@@ -5630,7 +5630,7 @@
       </segment>
     </unit>
     <unit id="c313ad012c735b61">
-      <segment state="initial">
+      <segment>
         <source>The page becomes a draft again at this time, if it is published then.</source>
         <target>La página vuelve a ser un borrador a esta hora, si entonces está publicada.</target>
       </segment>
@@ -5654,7 +5654,7 @@
       </segment>
     </unit>
     <unit id="c7838b00264080b3">
-      <segment state="initial">
+      <segment>
         <source>The page has to be approved: it is published at this time, or as soon as it is approved after it. For example 2026-12-01 09:00.</source>
         <target>La página tiene que estar aprobada: se publica a esta hora, o en cuanto se apruebe después de ella. Por ejemplo 2026-12-01 09:00.</target>
       </segment>
@@ -5702,7 +5702,7 @@
       </segment>
     </unit>
     <unit id="c685a19521dcaf8a">
-      <segment state="initial">
+      <segment>
         <source>The page is published already, so it can only get a time to be taken off the site.</source>
         <target>La página ya está publicada, así que solo puede tener una hora para retirarse del sitio.</target>
       </segment>
@@ -5738,7 +5738,7 @@
       </segment>
     </unit>
     <unit id="bdca58a62a129392">
-      <segment state="initial">
+      <segment>
         <source>The page must be taken off the site after it is published.</source>
         <target>La página tiene que retirarse del sitio después de publicarse.</target>
       </segment>
@@ -5810,13 +5810,13 @@
       </segment>
     </unit>
     <unit id="010e1303fb37d148">
-      <segment state="initial">
+      <segment>
         <source>The quietest day was {day}, with {amount}.</source>
         <target>El día con menos movimiento fue el {day}, con {amount}.</target>
       </segment>
     </unit>
     <unit id="c0777e9323b4e004">
-      <segment state="initial">
+      <segment>
         <source>The schedule is cleared: nothing happens to the page on its own.</source>
         <target>Se ha borrado la programación: a la página no le pasa nada por sí sola.</target>
       </segment>
@@ -5888,7 +5888,7 @@
       </segment>
     </unit>
     <unit id="c366139e1ad09357">
-      <segment state="initial">
+      <segment>
         <source>The sign-up settings have been saved.</source>
         <target>Se ha guardado la configuración del registro.</target>
       </segment>
@@ -5960,13 +5960,13 @@
       </segment>
     </unit>
     <unit id="ba2cdb340b604c66">
-      <segment state="initial">
+      <segment>
         <source>The suggestion couldn’t be used: it wasn’t in the expected form, or had something in it that isn’t allowed. Try again.</source>
         <target>No se ha podido usar la sugerencia: no tenía la forma esperada o contenía algo que no está permitido. Inténtelo de nuevo.</target>
       </segment>
     </unit>
     <unit id="f631f232668330d4">
-      <segment state="initial">
+      <segment>
         <source>The suggestion is in “{field}”. Check it, then save.</source>
         <target>La sugerencia está en «{field}». Revísala y guarda.</target>
       </segment>
@@ -6020,7 +6020,7 @@
       </segment>
     </unit>
     <unit id="761476a0ff478a0e">
-      <segment state="initial">
+      <segment>
         <source>The translation can’t be started: the page changed, or you can’t change it now.</source>
         <target>No se puede empezar la traducción: la página ha cambiado o ahora no puedes cambiarla.</target>
       </segment>
@@ -6032,7 +6032,7 @@
       </segment>
     </unit>
     <unit id="faddea156dd2c1a9">
-      <segment state="initial">
+      <segment>
         <source>The translation’s blocks didn’t pass the checks, so it wasn’t saved. Try again.</source>
         <target>Los bloques de la traducción no pasaron las comprobaciones, así que no se guardó. Inténtalo de nuevo.</target>
       </segment>
@@ -6074,7 +6074,7 @@
       </segment>
     </unit>
     <unit id="56f3dd7ee24efb85">
-      <segment state="initial">
+      <segment>
         <source>The whole site is for members only, so only people who are signed in can read it, whatever you choose here.</source>
         <target>Todo el sitio es solo para miembros, así que solo quien ha iniciado sesión puede leerlo, elijas lo que elijas aquí.</target>
       </segment>
@@ -6086,7 +6086,7 @@
       </segment>
     </unit>
     <unit id="35b010c03d1be3b8">
-      <segment state="initial">
+      <segment>
         <source>The {days, plural, one {day before} other {# days before}}</source>
         <target>{days, plural, one {El día anterior} other {Los # días anteriores}}</target>
       </segment>
@@ -6122,7 +6122,7 @@
       </segment>
     </unit>
     <unit id="282f20ea63144cd5">
-      <segment state="initial">
+      <segment>
         <source>The {name} translation is checked. It can be published now.</source>
         <target>La traducción al {name} está revisada. Ya se puede publicar.</target>
       </segment>
@@ -6206,7 +6206,7 @@
       </segment>
     </unit>
     <unit id="db5f3ab31a43e095">
-      <segment state="initial">
+      <segment>
         <source>There is no API key for {provider} yet.</source>
         <target>Aún no hay una clave de API para {provider}.</target>
       </segment>
@@ -6236,25 +6236,25 @@
       </segment>
     </unit>
     <unit id="fe4219b62aff47a2">
-      <segment state="initial">
+      <segment>
         <source>There is nothing to show for these dates.</source>
         <target>No hay nada que mostrar en estas fechas.</target>
       </segment>
     </unit>
     <unit id="6fd84f7e338b9b3b">
-      <segment state="initial">
+      <segment>
         <source>There is nothing to show for {days, plural, one {this day} other {these # days}}.</source>
         <target>No hay nada que mostrar {days, plural, one {en este día} other {en estos # días}}.</target>
       </segment>
     </unit>
     <unit id="be91f875b16f65a5">
-      <segment state="initial">
+      <segment>
         <source>There is nothing to show yet.</source>
         <target>Todavía no hay nada que mostrar.</target>
       </segment>
     </unit>
     <unit id="a61973a4cfa5621b">
-      <segment state="initial">
+      <segment>
         <source>There was no key to remove.</source>
         <target>No había ninguna clave que quitar.</target>
       </segment>
@@ -6290,7 +6290,7 @@
       </segment>
     </unit>
     <unit id="6476216243f5ca4b">
-      <segment state="initial">
+      <segment>
         <source>This account hasn't been confirmed yet, so it can't sign in anyway. It is removed a week after it was made.</source>
         <target>Esta cuenta aún no se ha confirmado, así que de todos modos no puede iniciar sesión. Se borra una semana después de crearse.</target>
       </segment>
@@ -6308,7 +6308,7 @@
       </segment>
     </unit>
     <unit id="72bddb0bcaa9ede4">
-      <segment state="initial">
+      <segment>
         <source>This entry is a link to {address}.</source>
         <target>Esta entrada es un enlace a {address}.</target>
       </segment>
@@ -6332,7 +6332,7 @@
       </segment>
     </unit>
     <unit id="181dc9690cb80bc6">
-      <segment state="initial">
+      <segment>
         <source>This entry leads to a page of the site.</source>
         <target>Esta entrada lleva a una página del sitio.</target>
       </segment>
@@ -6362,7 +6362,7 @@
       </segment>
     </unit>
     <unit id="e84eb1f4667bd986">
-      <segment state="initial">
+      <segment>
         <source>This is a suggestion: check it before you use it.</source>
         <target>Es una sugerencia: revísala antes de usarla.</target>
       </segment>
@@ -6434,7 +6434,7 @@
       </segment>
     </unit>
     <unit id="878b2fc4d54a52c7">
-      <segment state="initial">
+      <segment>
         <source>This page is too long for the assistant to translate in one go. Start the translation with “Translate”, then ask for parts of it with “Rewrite text”.</source>
         <target>Esta página es demasiado larga para que el asistente la traduzca de una vez. Empieza la traducción con «Traducir» y luego pide partes con «Reescribir texto».</target>
       </segment>
@@ -6470,31 +6470,31 @@
       </segment>
     </unit>
     <unit id="c7df7a533bf8915c">
-      <segment state="initial">
+      <segment>
         <source>This searches the pages in {language}. To search in another language, choose it in the list of languages.</source>
         <target>Esta búsqueda busca en las páginas en {language}. Para buscar en otro idioma, elígelo en la lista de idiomas.</target>
       </segment>
     </unit>
     <unit id="414d7df4d6236f85">
-      <segment state="initial">
+      <segment>
         <source>This site has no API key of its own.</source>
         <target>Este sitio no tiene una clave de API propia.</target>
       </segment>
     </unit>
     <unit id="2ee7a41edf141f30">
-      <segment state="initial">
+      <segment>
         <source>This site has used all of its AI assistant budget for this month. It starts again on the 1st, or an admin can raise it on the AI assistant screen.</source>
         <target>Este sitio ha usado todo el presupuesto del asistente de IA de este mes. Vuelve a empezar el día 1, o un administrador puede aumentarlo en la pantalla del asistente de IA.</target>
       </segment>
     </unit>
     <unit id="8cf01f0f05ffd0b4">
-      <segment state="initial">
+      <segment>
         <source>This site has used {percent}% of this month’s AI assistant budget.</source>
         <target>Este sitio ha usado el {percent} % del presupuesto del asistente de IA de este mes.</target>
       </segment>
     </unit>
     <unit id="1aca1ffa176218b1">
-      <segment state="initial">
+      <segment>
         <source>This site is for its members. Sign in to read it.</source>
         <target>Este sitio es para sus miembros. Inicia sesión para leerlo.</target>
       </segment>
@@ -6530,13 +6530,13 @@
       </segment>
     </unit>
     <unit id="0e4d5811f6f7df35">
-      <segment state="initial">
+      <segment>
         <source>Times are in your time zone, {timezone}. Leave a field empty for no time. The page is published and taken off the site within a minute of the time.</source>
         <target>Las horas están en tu zona horaria, {timezone}. Deja un campo vacío para no poner hora. La página se publica y se retira del sitio en el minuto siguiente a la hora.</target>
       </segment>
     </unit>
     <unit id="3838a4d8cb8c5ccc">
-      <segment state="initial">
+      <segment>
         <source>Tips</source>
         <target>Consejos</target>
       </segment>
@@ -6572,19 +6572,19 @@
       </segment>
     </unit>
     <unit id="4c7174118f9c2e57">
-      <segment state="initial">
+      <segment>
         <source>To be published at {time}</source>
         <target>Se publicará el {time}</target>
       </segment>
     </unit>
     <unit id="8ff1d3e1197535a4">
-      <segment state="initial">
+      <segment>
         <source>To be taken off the site at {time}</source>
         <target>Se retirará del sitio el {time}</target>
       </segment>
     </unit>
     <unit id="62bc2af82966b2e9">
-      <segment state="initial">
+      <segment>
         <source>Too many accounts have been made from here. Wait {minutes, plural, one {# minute} other {# minutes}} and try again.</source>
         <target>Se han creado demasiadas cuentas desde aquí. Espera {minutes, plural, one {# minuto} other {# minutos}} y vuelve a intentarlo.</target>
       </segment>
@@ -6596,7 +6596,7 @@
       </segment>
     </unit>
     <unit id="f5006e8afc6dd735">
-      <segment state="initial">
+      <segment>
         <source>Too many searches</source>
         <target>Demasiadas búsquedas</target>
       </segment>
@@ -6626,7 +6626,7 @@
       </segment>
     </unit>
     <unit id="cee482edac4ccd74">
-      <segment state="initial">
+      <segment>
         <source>Translation drafted by the AI assistant, not checked yet:</source>
         <target>Traducción redactada por el asistente de IA, sin revisar todavía:</target>
       </segment>
@@ -6638,7 +6638,7 @@
       </segment>
     </unit>
     <unit id="d8b8392e2c542950">
-      <segment state="initial">
+      <segment>
         <source>Try again</source>
         <target>Intentar de nuevo</target>
       </segment>
@@ -6650,7 +6650,7 @@
       </segment>
     </unit>
     <unit id="dcc253137d58ac22">
-      <segment state="initial">
+      <segment>
         <source>Try fewer words, or other words that mean the same.</source>
         <target>Prueba con menos palabras, o con otras que signifiquen lo mismo.</target>
       </segment>
@@ -6680,7 +6680,7 @@
       </segment>
     </unit>
     <unit id="8d0d125ec978ffe3">
-      <segment state="initial">
+      <segment>
         <source>Turn the AI assistant off on the Features screen</source>
         <target>Desactivar el asistente de IA en la pantalla Funciones</target>
       </segment>
@@ -6722,7 +6722,7 @@
       </segment>
     </unit>
     <unit id="f2c58c086d34f3df">
-      <segment state="initial">
+      <segment>
         <source>Type one or more words, then choose Search.</source>
         <target>Escribe una o más palabras y elige Buscar.</target>
       </segment>
@@ -6746,7 +6746,7 @@
       </segment>
     </unit>
     <unit id="7a44e34c1705259a">
-      <segment state="initial">
+      <segment>
         <source>Type your question for the assistant.</source>
         <target>Escribe tu pregunta para el asistente.</target>
       </segment>
@@ -6764,7 +6764,7 @@
       </segment>
     </unit>
     <unit id="b764cdc0eab71374">
-      <segment state="initial">
+      <segment>
         <source>Unknown</source>
         <target>Desconocido</target>
       </segment>
@@ -6860,7 +6860,7 @@
       </segment>
     </unit>
     <unit id="1e94bc7fc49b37b8">
-      <segment state="initial">
+      <segment>
         <source>Use the AI assistant</source>
         <target>Usar el asistente de IA</target>
       </segment>
@@ -6890,13 +6890,13 @@
       </segment>
     </unit>
     <unit id="11698f07668d5fc7">
-      <segment state="initial">
+      <segment>
         <source>Used this month: {used, number} of {limit, number} tokens ({percent}%).</source>
         <target>Usado este mes: {used, number} de {limit, number} tokens ({percent} %).</target>
       </segment>
     </unit>
     <unit id="4300dc44421da781">
-      <segment state="initial">
+      <segment>
         <source>Used this month: {used, number} tokens. There is no monthly limit.</source>
         <target>Usado este mes: {used, number} tokens. No hay límite mensual.</target>
       </segment>
@@ -6968,7 +6968,7 @@
       </segment>
     </unit>
     <unit id="1acacc4d4ecf164b">
-      <segment state="initial">
+      <segment>
         <source>View analytics</source>
         <target>Ver estadísticas</target>
       </segment>
@@ -6986,7 +6986,7 @@
       </segment>
     </unit>
     <unit id="68f7d7fbb52dd931">
-      <segment state="initial">
+      <segment>
         <source>Visitors</source>
         <target>Visitantes</target>
       </segment>
@@ -7010,7 +7010,7 @@
       </segment>
     </unit>
     <unit id="e44ec007d995305f">
-      <segment state="initial">
+      <segment>
         <source>Visitors over time</source>
         <target>Visitantes a lo largo del tiempo</target>
       </segment>
@@ -7058,7 +7058,7 @@
       </segment>
     </unit>
     <unit id="abc36c9c6eee7a79">
-      <segment state="initial">
+      <segment>
         <source>We email you a code to check it is yours. You sign in with it.</source>
         <target>Te enviamos un código por correo para comprobar que la dirección es tuya. Con ella inicias sesión.</target>
       </segment>
@@ -7082,7 +7082,7 @@
       </segment>
     </unit>
     <unit id="f69eeb77697b4aa4">
-      <segment state="initial">
+      <segment>
         <source>We never send links in our emails.</source>
         <target>Nunca enviamos enlaces en nuestros correos.</target>
       </segment>
@@ -7154,13 +7154,13 @@
       </segment>
     </unit>
     <unit id="babbc0434735cf01">
-      <segment state="initial">
+      <segment>
         <source>What is sent, and what is kept</source>
         <target>Qué se envía y qué se guarda</target>
       </segment>
     </unit>
     <unit id="038026723cc44e89">
-      <segment state="initial">
+      <segment>
         <source>What it read</source>
         <target>Qué leyó</target>
       </segment>
@@ -7178,7 +7178,7 @@
       </segment>
     </unit>
     <unit id="dbd94cf5fc9a1d53">
-      <segment state="initial">
+      <segment>
         <source>What people searched for</source>
         <target>Lo que la gente buscó</target>
       </segment>
@@ -7190,13 +7190,13 @@
       </segment>
     </unit>
     <unit id="b801b48368c62eba">
-      <segment state="initial">
+      <segment>
         <source>What search engines and AI crawlers read</source>
         <target>Lo que leyeron los buscadores y los rastreadores de IA</target>
       </segment>
     </unit>
     <unit id="3889066fd605831e">
-      <segment state="initial">
+      <segment>
         <source>What should the page say?</source>
         <target>¿Qué debe decir la página?</target>
       </segment>
@@ -7232,7 +7232,7 @@
       </segment>
     </unit>
     <unit id="acf02ada6cba251b">
-      <segment state="initial">
+      <segment>
         <source>When this is off, only people you invite can join. When it is on, the sign-in page has a “Create an account” link, and people confirm their email address with a code before they can sign in.</source>
         <target>Si está desactivado, solo pueden unirse las personas que invites. Si está activado, la página de inicio de sesión tiene un enlace “Crear una cuenta”, y las personas confirman su dirección de correo con un código antes de poder iniciar sesión.</target>
       </segment>
@@ -7244,7 +7244,7 @@
       </segment>
     </unit>
     <unit id="4e502e0bdeda5f01">
-      <segment state="initial">
+      <segment>
         <source>Where visitors came from</source>
         <target>De dónde vinieron los visitantes</target>
       </segment>
@@ -7256,13 +7256,13 @@
       </segment>
     </unit>
     <unit id="39299b07d451a8fe">
-      <segment state="initial">
+      <segment>
         <source>Who can read the site</source>
         <target>Quién puede leer el sitio</target>
       </segment>
     </unit>
     <unit id="67e59ac8fe705ebe">
-      <segment state="initial">
+      <segment>
         <source>Who can read this page</source>
         <target>Quién puede leer esta página</target>
       </segment>
@@ -7274,19 +7274,19 @@
       </segment>
     </unit>
     <unit id="0737764e3e43f4f9">
-      <segment state="initial">
+      <segment>
         <source>Who may use it, and how much</source>
         <target>Quién puede usarlo y cuánto</target>
       </segment>
     </unit>
     <unit id="17dace7bec20c706">
-      <segment state="initial">
+      <segment>
         <source>Who may use the assistant</source>
         <target>Quién puede usar el asistente</target>
       </segment>
     </unit>
     <unit id="59f91933bcba1ba2">
-      <segment state="initial">
+      <segment>
         <source>Who may use the assistant and its budget are saved.</source>
         <target>Se han guardado quién puede usar el asistente y su presupuesto.</target>
       </segment>
@@ -7316,7 +7316,7 @@
       </segment>
     </unit>
     <unit id="6a7c277bdc6e499a">
-      <segment state="initial">
+      <segment>
         <source>Working on it…</source>
         <target>Trabajando en ello…</target>
       </segment>
@@ -7376,7 +7376,7 @@
       </segment>
     </unit>
     <unit id="4da00046f3053ff8">
-      <segment state="initial">
+      <segment>
         <source>You can type the start of the last word: “librar” also finds “library”.</source>
         <target>Puedes escribir solo el principio de la última palabra: «bibliot» también encuentra «biblioteca».</target>
       </segment>
@@ -7406,7 +7406,7 @@
       </segment>
     </unit>
     <unit id="94497dfe8d3346d1">
-      <segment state="initial">
+      <segment>
         <source>You can’t use the assistant for this. Ask an admin if you need it.</source>
         <target>No puede usar el asistente para esto. Pídaselo a un administrador si lo necesita.</target>
       </segment>
@@ -7442,7 +7442,7 @@
       </segment>
     </unit>
     <unit id="6b4d6f14d4a87ad7">
-      <segment state="initial">
+      <segment>
         <source>You have searched many times in a short while. Wait {minutes, plural, one {# minute} other {# minutes}}, then search again.</source>
         <target>Has hecho muchas búsquedas en poco tiempo. Espera {minutes, plural, one {# minuto} other {# minutos}} y vuelve a buscar.</target>
       </segment>
@@ -7484,7 +7484,7 @@
       </segment>
     </unit>
     <unit id="c40382596d108085">
-      <segment state="initial">
+      <segment>
         <source>You haven’t confirmed your email address yet. Type the code we emailed you, or send a new one.</source>
         <target>Aún no has confirmado tu dirección de correo. Escribe el código que te enviamos por correo o pide uno nuevo.</target>
       </segment>
@@ -7532,7 +7532,7 @@
       </segment>
     </unit>
     <unit id="a4fd093adf609451">
-      <segment state="initial">
+      <segment>
         <source>Your code to confirm your email address for {site}</source>
         <target>Tu código para confirmar tu dirección de correo en {site}</target>
       </segment>
@@ -7568,7 +7568,7 @@
       </segment>
     </unit>
     <unit id="3c449814eee4b6dd">
-      <segment state="initial">
+      <segment>
         <source>Your email address is confirmed and your account is ready. Sign in with {email} and your password.</source>
         <target>Tu dirección de correo está confirmada y tu cuenta está lista. Inicia sesión con {email} y tu contraseña.</target>
       </segment>
@@ -7592,7 +7592,7 @@
       </segment>
     </unit>
     <unit id="530d6263cb558743">
-      <segment state="initial">
+      <segment>
         <source>Your organisation chooses the AI service for every site, so it can’t be changed here.</source>
         <target>Tu organización elige el servicio de IA para todos los sitios, así que no se puede cambiar aquí.</target>
       </segment>
@@ -7604,13 +7604,13 @@
       </segment>
     </unit>
     <unit id="7ebda9958344d118">
-      <segment state="initial">
+      <segment>
         <source>Your organisation chose this service.</source>
         <target>Tu organización eligió este servicio.</target>
       </segment>
     </unit>
     <unit id="09e6c9ec857cb49e">
-      <segment state="initial">
+      <segment>
         <source>Your organisation’s choice: {service} ({model}).</source>
         <target>La elección de tu organización: {service} ({model}).</target>
       </segment>
@@ -7652,13 +7652,13 @@
       </segment>
     </unit>
     <unit id="22ae3f97a92d0e66">
-      <segment state="initial">
+      <segment>
         <source>Your question</source>
         <target>Tu pregunta</target>
       </segment>
     </unit>
     <unit id="1dc01311d234c46f">
-      <segment state="initial">
+      <segment>
         <source>Your question:</source>
         <target>Tu pregunta:</target>
       </segment>
@@ -7670,7 +7670,7 @@
       </segment>
     </unit>
     <unit id="d24c993b97caf08c">
-      <segment state="initial">
+      <segment>
         <source>You’ve asked the assistant a lot in a short time. Try again in {minutes, plural, one {# minute} other {# minutes}}.</source>
         <target>Ha hecho muchas peticiones al asistente en poco tiempo. Inténtelo dentro de {minutes, plural, one {# minuto} other {# minutos}}.</target>
       </segment>
@@ -7730,7 +7730,7 @@
       </segment>
     </unit>
     <unit id="c38c63d8f14f4353">
-      <segment state="initial">
+      <segment>
         <source>check: {check}</source>
         <target>comprobación: {check}</target>
       </segment>
@@ -7754,13 +7754,13 @@
       </segment>
     </unit>
     <unit id="aab8bbde2a6c2052">
-      <segment state="initial">
+      <segment>
         <source>down {change} on the {days, plural, one {day before} other {# days before}}</source>
         <target>un {change} menos que {days, plural, one {el día anterior} other {en los # días anteriores}}</target>
       </segment>
     </unit>
     <unit id="d51f063419b07bb7">
-      <segment state="initial">
+      <segment>
         <source>for {address}</source>
         <target>para {address}</target>
       </segment>
@@ -7790,13 +7790,13 @@
       </segment>
     </unit>
     <unit id="db21784bc3b6a305">
-      <segment state="initial">
+      <segment>
         <source>llms-full.txt</source>
         <target>llms-full.txt</target>
       </segment>
     </unit>
     <unit id="f43a9e2f7da89777">
-      <segment state="initial">
+      <segment>
         <source>llms.txt</source>
         <target>llms.txt</target>
       </segment>
@@ -7808,19 +7808,19 @@
       </segment>
     </unit>
     <unit id="b4927b2af79d6ca1">
-      <segment state="initial">
+      <segment>
         <source>no model chosen</source>
         <target>ningún modelo elegido</target>
       </segment>
     </unit>
     <unit id="29624390582393d0">
-      <segment state="initial">
+      <segment>
         <source>none in the {days, plural, one {day before} other {# days before}}</source>
         <target>ninguno {days, plural, one {el día anterior} other {en los # días anteriores}}</target>
       </segment>
     </unit>
     <unit id="289d6f22d275a3d9">
-      <segment state="initial">
+      <segment>
         <source>not shown in these languages until the page is published in them: {languages}</source>
         <target>no aparece en estos idiomas hasta que la página se publique en ellos: {languages}</target>
       </segment>
@@ -7832,13 +7832,13 @@
       </segment>
     </unit>
     <unit id="6c73e8d9203a7d29">
-      <segment state="initial">
+      <segment>
         <source>once it is approved: if it is approved later, as soon as it is approved.</source>
         <target>una vez aprobada: si se aprueba más tarde, en cuanto se apruebe.</target>
       </segment>
     </unit>
     <unit id="5fa6c1e8dd75f69d">
-      <segment state="initial">
+      <segment>
         <source>only shown to members who are signed in</source>
         <target>solo aparece a miembros que han iniciado sesión</target>
       </segment>
@@ -7874,7 +7874,7 @@
       </segment>
     </unit>
     <unit id="870b1fc137c2af20">
-      <segment state="initial">
+      <segment>
         <source>robots.txt</source>
         <target>robots.txt</target>
       </segment>
@@ -7892,55 +7892,55 @@
       </segment>
     </unit>
     <unit id="e481c4774c07dda9">
-      <segment state="initial">
+      <segment>
         <source>the devices</source>
         <target>los dispositivos</target>
       </segment>
     </unit>
     <unit id="763512a06d7a6493">
-      <segment state="initial">
+      <segment>
         <source>the languages</source>
         <target>los idiomas</target>
       </segment>
     </unit>
     <unit id="45bd317334c59dcb">
-      <segment state="initial">
+      <segment>
         <source>the pages</source>
         <target>las páginas</target>
       </segment>
     </unit>
     <unit id="49464e1b15ee1e12">
-      <segment state="initial">
+      <segment>
         <source>the pages not found</source>
         <target>las páginas no encontradas</target>
       </segment>
     </unit>
     <unit id="d974699395917aad">
-      <segment state="initial">
+      <segment>
         <source>the same as the {days, plural, one {day before} other {# days before}}</source>
         <target>lo mismo que {days, plural, one {el día anterior} other {en los # días anteriores}}</target>
       </segment>
     </unit>
     <unit id="a5a99bbfeaf0a599">
-      <segment state="initial">
+      <segment>
         <source>the search engines and AI crawlers</source>
         <target>los buscadores y los rastreadores de IA</target>
       </segment>
     </unit>
     <unit id="dcb381c2f95f79ee">
-      <segment state="initial">
+      <segment>
         <source>the searches</source>
         <target>las búsquedas</target>
       </segment>
     </unit>
     <unit id="5ba5fd82c7f37093">
-      <segment state="initial">
+      <segment>
         <source>the searches that found nothing</source>
         <target>las búsquedas sin resultados</target>
       </segment>
     </unit>
     <unit id="0074a5a1087f27cb">
-      <segment state="initial">
+      <segment>
         <source>the sources</source>
         <target>los orígenes</target>
       </segment>
@@ -7952,7 +7952,7 @@
       </segment>
     </unit>
     <unit id="ba194875bc91e911">
-      <segment state="initial">
+      <segment>
         <source>up {change} on the {days, plural, one {day before} other {# days before}}</source>
         <target>un {change} más que {days, plural, one {el día anterior} other {en los # días anteriores}}</target>
       </segment>
@@ -7964,7 +7964,7 @@
       </segment>
     </unit>
     <unit id="82f15a27f06df569">
-      <segment state="initial">
+      <segment>
         <source>visitors and page views per day</source>
         <target>visitantes y páginas vistas por día</target>
       </segment>
@@ -7976,13 +7976,13 @@
       </segment>
     </unit>
     <unit id="78349c94bcd63e2a">
-      <segment state="initial">
+      <segment>
         <source>{amount} on {day}</source>
         <target>{amount} el {day}</target>
       </segment>
     </unit>
     <unit id="c9bcdb628959fea5">
-      <segment state="initial">
+      <segment>
         <source>{amount}, {change}</source>
         <target>{amount}, {change}</target>
       </segment>
@@ -8006,7 +8006,7 @@
       </segment>
     </unit>
     <unit id="e0c54489cfc29ee4">
-      <segment state="initial">
+      <segment>
         <source>{count, number} page views per visitor</source>
         <target>{count, number} páginas vistas por visitante</target>
       </segment>
@@ -8030,13 +8030,13 @@
       </segment>
     </unit>
     <unit id="f8a3349ee9256cea">
-      <segment state="initial">
+      <segment>
         <source>{count, plural, one {# page view} other {# page views}}</source>
         <target>{count, plural, one {# página vista} other {# páginas vistas}}</target>
       </segment>
     </unit>
     <unit id="a929ed33cd715967">
-      <segment state="initial">
+      <segment>
         <source>{count, plural, one {# result} other {# results}} for “{query}”</source>
         <target>{count, plural, one {# resultado} other {# resultados}} para «{query}»</target>
       </segment>
@@ -8048,7 +8048,7 @@
       </segment>
     </unit>
     <unit id="97a243c336302306">
-      <segment state="initial">
+      <segment>
         <source>{count, plural, one {# visitor} other {# visitors}}</source>
         <target>{count, plural, one {# visitante} other {# visitantes}}</target>
       </segment>
@@ -8108,7 +8108,7 @@
       </segment>
     </unit>
     <unit id="f7d63dbf426b241d">
-      <segment state="initial">
+      <segment>
         <source>{effective_name} hasn’t confirmed their email address yet, so they can’t sign in anyway.</source>
         <target>{effective_name} aún no ha confirmado su dirección de correo, así que de todos modos no puede iniciar sesión.</target>
       </segment>
@@ -8126,13 +8126,13 @@
       </segment>
     </unit>
     <unit id="c86d92998be6905d">
-      <segment state="initial">
+      <segment>
         <source>{field}: enter a date and time, for example 2026-12-01 09:00.</source>
         <target>{field}: escribe una fecha y una hora, por ejemplo 2026-12-01 09:00.</target>
       </segment>
     </unit>
     <unit id="2c3910817b0edafb">
-      <segment state="initial">
+      <segment>
         <source>{field}: that time doesn’t exist in your time zone, because the clocks go forward then. Choose another time.</source>
         <target>{field}: esa hora no existe en tu zona horaria, porque los relojes se adelantan entonces. Elige otra hora.</target>
       </segment>
@@ -8150,7 +8150,7 @@
       </segment>
     </unit>
     <unit id="ba318cc195ceff48">
-      <segment state="initial">
+      <segment>
         <source>{from} to {to}</source>
         <target>del {from} al {to}</target>
       </segment>
@@ -8174,7 +8174,7 @@
       </segment>
     </unit>
     <unit id="903480726f3714e9">
-      <segment state="initial">
+      <segment>
         <source>{item} has been changed.</source>
         <target>Se ha cambiado {item}.</target>
       </segment>
@@ -8210,25 +8210,25 @@
       </segment>
     </unit>
     <unit id="5e291d7bcb2dd847">
-      <segment state="initial">
+      <segment>
         <source>{name}</source>
         <target>{name}</target>
       </segment>
     </unit>
     <unit id="70b556718df5421d">
-      <segment state="initial">
+      <segment>
         <source>{name} (AI assistant)</source>
         <target>{name} (asistente de IA)</target>
       </segment>
     </unit>
     <unit id="38b14a590de98b2b">
-      <segment state="initial">
+      <segment>
         <source>{name} (campaign)</source>
         <target>{name} (campaña)</target>
       </segment>
     </unit>
     <unit id="ced4977b8a9f2dde">
-      <segment state="initial">
+      <segment>
         <source>{name} (search engine)</source>
         <target>{name} (buscador)</target>
       </segment>
@@ -8330,7 +8330,7 @@
       </segment>
     </unit>
     <unit id="7afd507c0009cd50">
-      <segment state="initial">
+      <segment>
         <source>{name} signed up but hasn’t typed the code we emailed them yet, so they can’t sign in. If they don’t, the account is removed a week after they signed up.</source>
         <target>{name} se ha registrado pero aún no ha escrito el código que le enviamos por correo, así que no puede iniciar sesión. Si no lo hace, la cuenta se borra una semana después del registro.</target>
       </segment>
@@ -8372,25 +8372,25 @@
       </segment>
     </unit>
     <unit id="b96077b936e2334f">
-      <segment state="initial">
+      <segment>
         <source>{provider} needs the address of the service.</source>
         <target>{provider} necesita la dirección del servicio.</target>
       </segment>
     </unit>
     <unit id="3a4d1da92a65addb">
-      <segment state="initial">
+      <segment>
         <source>{range}: dashed line with square markers</source>
         <target>{range}: línea discontinua con marcas cuadradas</target>
       </segment>
     </unit>
     <unit id="fa2dcefc51b6c8eb">
-      <segment state="initial">
+      <segment>
         <source>{range}: solid line with round markers</source>
         <target>{range}: línea continua con marcas redondas</target>
       </segment>
     </unit>
     <unit id="85ce62b7dd558224">
-      <segment state="initial">
+      <segment>
         <source>{searches, plural, one {# search} other {# searches}}, {empty, plural, =0 {and all of them found something} one {# of which found nothing} other {# of which found nothing}}.</source>
         <target>{searches, plural, one {# búsqueda} other {# búsquedas}}, {empty, plural, =0 {y todas encontraron algo} one {# de ellas sin resultados} other {# de ellas sin resultados}}.</target>
       </segment>
@@ -8402,37 +8402,37 @@
       </segment>
     </unit>
     <unit id="3137b14373d0b5fb">
-      <segment state="initial">
+      <segment>
         <source>{title} for each day</source>
         <target>{title} de cada día</target>
       </segment>
     </unit>
     <unit id="dd2d26492062c9c6">
-      <segment state="initial">
+      <segment>
         <source>{title} stayed the same as {days, plural, one {on the previous day} other {in the previous # days}}: {after}.</source>
         <target>{title}: lo mismo que {days, plural, one {el día anterior} other {en los # días anteriores}}, {after}.</target>
       </segment>
     </unit>
     <unit id="57646906827f5dd6">
-      <segment state="initial">
+      <segment>
         <source>{title} went down {change} compared with {days, plural, one {the previous day} other {the previous # days}}, from {before} to {after}.</source>
         <target>{title}: un {change} menos que {days, plural, one {el día anterior} other {en los # días anteriores}}, de {before} a {after}.</target>
       </segment>
     </unit>
     <unit id="6306254f0ebece99">
-      <segment state="initial">
+      <segment>
         <source>{title} went up {change} compared with {days, plural, one {the previous day} other {the previous # days}}, from {before} to {after}.</source>
         <target>{title}: un {change} más que {days, plural, one {el día anterior} other {en los # días anteriores}}, de {before} a {after}.</target>
       </segment>
     </unit>
     <unit id="fa9c1706ad930d9d">
-      <segment state="initial">
+      <segment>
         <source>{title}: {amount} {days, plural, one {on this day} other {in these # days}}, and none {days, plural, one {on the previous day} other {in the previous # days}}.</source>
         <target>{title}: {amount} {days, plural, one {en este día} other {en estos # días}}, y ninguno {days, plural, one {el día anterior} other {en los # días anteriores}}.</target>
       </segment>
     </unit>
     <unit id="d18c380c4a21eaae">
-      <segment state="initial">
+      <segment>
         <source>{title}: {amount} {days, plural, one {on this day} other {in these # days}}.</source>
         <target>{title}: {amount} {days, plural, one {en este día} other {en estos # días}}.</target>
       </segment>
@@ -8444,7 +8444,7 @@
       </segment>
     </unit>
     <unit id="60a3ff1d92e114dc">
-      <segment state="initial">
+      <segment>
         <source>{visitors} and {views} in the last 7 days; visitors {change}.</source>
         <target>{visitors} y {views} en los últimos 7 días; visitantes: {change}.</target>
       </segment>

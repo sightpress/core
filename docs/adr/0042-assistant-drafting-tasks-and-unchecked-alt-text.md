@@ -1,6 +1,6 @@
 # 0042 — AI assistant: drafting tasks, checked output, and alt text that needs a person
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-20
 
 ## Context

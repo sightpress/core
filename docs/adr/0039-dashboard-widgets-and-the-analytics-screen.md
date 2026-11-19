@@ -1,6 +1,6 @@
 # 0039 — Dashboard widgets drawn by the admin, and the Analytics screen
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-19
 
 ## Context

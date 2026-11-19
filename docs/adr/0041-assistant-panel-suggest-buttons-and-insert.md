@@ -1,6 +1,6 @@
 # 0041 — AI assistant: the settings screen, the panel, Suggest buttons and Insert without JavaScript
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-20
 
 ## Context

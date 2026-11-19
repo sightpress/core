@@ -1,6 +1,6 @@
 # 0032 — Menu entries per language and for members, links that follow moved pages
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context

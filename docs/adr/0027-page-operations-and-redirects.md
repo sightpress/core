@@ -1,6 +1,6 @@
 # 0027 — Page operations: archive and trash steps, a redirects table and "gone" addresses
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context

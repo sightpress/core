@@ -1,6 +1,6 @@
 # 0036 — The search results page: a public screen with the site's menus, routes before the page catch-all
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-19
 
 ## Context

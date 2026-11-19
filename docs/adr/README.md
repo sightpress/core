@@ -40,27 +40,27 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0020](0020-demo-content-in-site-provisioning.md) | Demo content is a flag on site provisioning, and steps can share ids | Accepted |
 | [0021](0021-guided-command-questions.md) | Commands ask guided questions, described by their parameters | Accepted |
 | [0022](0022-site-password-policy.md) | Every site has a password policy, and the Passwords contract describes it | Accepted |
-| [0023](0023-search-dashboard-and-assistant-contracts.md) | Search, dashboard and AI assistant contracts (`module-interface` 0.4) | Proposed |
-| [0024](0024-site-languages-and-translation-drafts.md) | Site languages live in the site, translations can be drafts of their own | Proposed |
-| [0025](0025-locale-fallback-and-sitemaps-per-language.md) | Locale fallback redirects, home page negotiation and a sitemap per language | Proposed |
-| [0026](0026-interface-text-translations.md) | Interface text is translated from XLIFF catalogues, with messages instead of built sentences | Proposed |
-| [0027](0027-page-operations-and-redirects.md) | Page operations: archive and trash steps, a redirects table and "gone" addresses | Proposed |
-| [0028](0028-page-revisions-compared-and-restored.md) | Page revisions: versions per language, a word-by-word comparison and restoring without publishing | Proposed |
-| [0029](0029-scheduled-publishing-and-schedule-run.md) | Scheduled publishing and `schedule:run`, the one command for jobs at a set time | Proposed |
-| [0030](0030-self-registration-with-an-emailed-code.md) | Self-registration with an emailed code, an `unverified` account status and a sign-up role contract | Proposed |
-| [0031](0031-members-only-visibility.md) | Members-only visibility: a site setting, a gate before the routes and "open to everyone" computed once | Proposed |
-| [0032](0032-menu-entries-per-language-and-for-members.md) | Menu entries per language and for members, links that follow moved pages | Proposed |
-| [0033](0033-profile-password-email-and-admin-preferences.md) | Profile: password and email address changed from My account, and admin preferences as classes | Proposed |
-| [0034](0034-per-site-module-switches.md) | Per-site module switches: one registry for the tenant, a filtered view per site | Proposed |
-| [0035](0035-site-search-index-in-the-site-database.md) | Site search: an index in the site database, kept up to date by events | Proposed |
-| [0036](0036-search-results-page-as-a-public-screen.md) | The search results page: a public screen with the site's menus, routes before the page catch-all | Proposed |
-| [0037](0037-analytics-recorded-after-the-response.md) | Analytics: recorded after the response, rolled up daily in the site database | Proposed |
-| [0038](0038-accessible-charts-drawn-on-the-server.md) | Accessible charts drawn on the server as SVG, with summaries and tables | Proposed |
-| [0039](0039-dashboard-widgets-and-the-analytics-screen.md) | Dashboard widgets drawn by the admin, and the Analytics screen | Proposed |
-| [0040](0040-assistant-providers-keys-and-budget.md) | AI assistant: providers over the shared HTTP client, keys, budget and limits | Proposed |
-| [0041](0041-assistant-panel-suggest-buttons-and-insert.md) | AI assistant: the settings screen, the panel, Suggest buttons and Insert without JavaScript | Proposed |
-| [0042](0042-assistant-drafting-tasks-and-unchecked-alt-text.md) | AI assistant: drafting tasks, checked output, and alt text that needs a person | Proposed |
-| [0043](0043-assistant-help-from-the-documentation.md) | AI assistant: help answered from the documentation | Proposed |
-| [0044](0044-assistant-drafted-translations.md) | AI assistant: translations drafted by the assistant, checked by a person | Proposed |
+| [0023](0023-search-dashboard-and-assistant-contracts.md) | Search, dashboard and AI assistant contracts (`module-interface` 0.4) | Accepted |
+| [0024](0024-site-languages-and-translation-drafts.md) | Site languages live in the site, translations can be drafts of their own | Accepted |
+| [0025](0025-locale-fallback-and-sitemaps-per-language.md) | Locale fallback redirects, home page negotiation and a sitemap per language | Accepted |
+| [0026](0026-interface-text-translations.md) | Interface text is translated from XLIFF catalogues, with messages instead of built sentences | Accepted |
+| [0027](0027-page-operations-and-redirects.md) | Page operations: archive and trash steps, a redirects table and "gone" addresses | Accepted |
+| [0028](0028-page-revisions-compared-and-restored.md) | Page revisions: versions per language, a word-by-word comparison and restoring without publishing | Accepted |
+| [0029](0029-scheduled-publishing-and-schedule-run.md) | Scheduled publishing and `schedule:run`, the one command for jobs at a set time | Accepted |
+| [0030](0030-self-registration-with-an-emailed-code.md) | Self-registration with an emailed code, an `unverified` account status and a sign-up role contract | Accepted |
+| [0031](0031-members-only-visibility.md) | Members-only visibility: a site setting, a gate before the routes and "open to everyone" computed once | Accepted |
+| [0032](0032-menu-entries-per-language-and-for-members.md) | Menu entries per language and for members, links that follow moved pages | Accepted |
+| [0033](0033-profile-password-email-and-admin-preferences.md) | Profile: password and email address changed from My account, and admin preferences as classes | Accepted |
+| [0034](0034-per-site-module-switches.md) | Per-site module switches: one registry for the tenant, a filtered view per site | Accepted |
+| [0035](0035-site-search-index-in-the-site-database.md) | Site search: an index in the site database, kept up to date by events | Accepted |
+| [0036](0036-search-results-page-as-a-public-screen.md) | The search results page: a public screen with the site's menus, routes before the page catch-all | Accepted |
+| [0037](0037-analytics-recorded-after-the-response.md) | Analytics: recorded after the response, rolled up daily in the site database | Accepted |
+| [0038](0038-accessible-charts-drawn-on-the-server.md) | Accessible charts drawn on the server as SVG, with summaries and tables | Accepted |
+| [0039](0039-dashboard-widgets-and-the-analytics-screen.md) | Dashboard widgets drawn by the admin, and the Analytics screen | Accepted |
+| [0040](0040-assistant-providers-keys-and-budget.md) | AI assistant: providers over the shared HTTP client, keys, budget and limits | Accepted |
+| [0041](0041-assistant-panel-suggest-buttons-and-insert.md) | AI assistant: the settings screen, the panel, Suggest buttons and Insert without JavaScript | Accepted |
+| [0042](0042-assistant-drafting-tasks-and-unchecked-alt-text.md) | AI assistant: drafting tasks, checked output, and alt text that needs a person | Accepted |
+| [0043](0043-assistant-help-from-the-documentation.md) | AI assistant: help answered from the documentation | Accepted |
+| [0044](0044-assistant-drafted-translations.md) | AI assistant: translations drafted by the assistant, checked by a person | Accepted |
 
 When an ADR's status changes, update it here too.

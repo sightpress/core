@@ -1,6 +1,6 @@
 # 0029 — Scheduled publishing and `schedule:run`, the one command for jobs at a set time
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context

@@ -1,6 +1,6 @@
 # 0031 — Members-only visibility: a site setting, a gate before the routes and "open to everyone" computed once
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context

@@ -1,6 +1,6 @@
 # 0024 — Site languages live in the site, translations can be drafts of their own
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context

@@ -1,6 +1,6 @@
 # 0038 — Accessible charts drawn on the server as SVG
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-19
 
 ## Context

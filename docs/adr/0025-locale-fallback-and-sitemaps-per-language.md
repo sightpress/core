@@ -1,6 +1,6 @@
 # 0025 — Locale fallback redirects, home page negotiation and a sitemap per language
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context

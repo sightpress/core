@@ -27,5 +27,6 @@ ships in British English (the source), European Portuguese and Spanish.
 
 ## Review
 
-A fluent speaker of European Portuguese and of Spanish reviewed the `pt-PT` and `es` catalogues on 2026-11-18
-before the 0.2.0 release. New or changed texts after that need the same review.
+A fluent speaker of European Portuguese and of Spanish reviewed the `pt-PT` and `es` catalogues on 2026-11-18,
+and the texts added after that (sign-up, upload limits, analytics, AI assistant) on 2026-11-19. Reviewed texts carry
+no `state`; a new text keeps `state="initial"` until a fluent speaker has checked it.

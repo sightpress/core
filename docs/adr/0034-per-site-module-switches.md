@@ -1,6 +1,6 @@
 # 0034 — Per-site module switches: one registry for the tenant, a filtered view per site
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context

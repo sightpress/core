@@ -1,6 +1,6 @@
 # 0026 — Interface text is translated from XLIFF catalogues, with messages instead of built sentences
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context

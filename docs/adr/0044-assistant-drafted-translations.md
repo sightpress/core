@@ -1,6 +1,6 @@
 # 0044 — AI assistant: translations drafted by the assistant, checked by a person
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-20
 
 ## Context

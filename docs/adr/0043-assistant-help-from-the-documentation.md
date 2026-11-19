@@ -1,6 +1,6 @@
 # 0043 — AI assistant: help answered from the documentation
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-20
 
 ## Context

@@ -1,6 +1,6 @@
 # 0037 — Analytics: recorded after the response, rolled up daily in the site database
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-19
 
 ## Context

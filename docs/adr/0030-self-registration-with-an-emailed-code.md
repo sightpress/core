@@ -1,6 +1,6 @@
 # 0030 — Self-registration with an emailed code, an `unverified` account status and a sign-up role contract
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-18
 
 ## Context
