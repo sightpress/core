@@ -67,6 +67,10 @@ final class Media implements MediaFile
     #[ORM\Column(type: Types::JSON)]
     private array $caption = [];
 
+    /** @var list<string>|null locales whose alt text the AI assistant suggested and no person has checked yet */
+    #[ORM\Column(name: 'alt_suggested', type: Types::JSON, nullable: true)]
+    private ?array $altSuggested = null;
+
     /** The transcript written before files had one per language: it counts as the main language's. */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $transcript = null;
@@ -207,6 +211,27 @@ final class Media implements MediaFile
     public function altText(string $locale): ?string
     {
         return $this->alt[$locale] ?? null;
+    }
+
+    /**
+     * Whether the alt text in the language was suggested by the AI assistant and no person has checked it yet.
+     */
+    public function isAltSuggested(string $locale): bool
+    {
+        return $this->altText($locale) !== null && in_array($locale, $this->altSuggested ?? [], true);
+    }
+
+    /**
+     * Marks the alt text in a language as the AI assistant's, not checked yet, or as checked by a person.
+     */
+    public function markAltSuggested(string $locale, bool $suggested): void
+    {
+        $locales = array_values(array_diff($this->altSuggested ?? [], [$locale]));
+        if ($suggested && $this->altText($locale) !== null) {
+            $locales[] = $locale;
+            sort($locales);
+        }
+        $this->altSuggested = $locales === [] ? null : $locales;
     }
 
     public function caption(string $locale): ?string

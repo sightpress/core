@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Media\Admin;
 
+use SightPress\Core\Tests\Support\Assistant\NoAssistant;
 use SightPress\Core\Tests\Support\Text;
 use DateTimeImmutable;
 use Nyholm\Psr7\Stream;
@@ -382,6 +383,7 @@ final class MediaAdminHandlersTest extends TestCase
             new MediaTypes(),
             new OriginMediaUrlGenerator(),
             $site ?? $this->admin->auth->site,
+            NoAssistant::access(),
         );
     }
 

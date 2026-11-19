@@ -27,7 +27,11 @@ final readonly class MediaEditor
      * Saves the descriptions. Only what differs from what is stored counts as a change; nothing is saved when
      * nothing changed.
      *
-     * @param array<string, array{alt: ?string, caption: ?string}> $descriptions by locale
+     * @param array<string, array{alt: ?string, caption: ?string, alt_suggested?: ?bool}> $descriptions by locale;
+     *                                                                     `alt_suggested` true when the alt text is the
+     *                                                                     AI assistant's and nobody checked it, false
+     *                                                                     when a person checked it, null (or left out)
+     *                                                                     to keep the mark unless the text changed
      * @param array<string, ?string>|null                          $transcripts  by locale, only for video and audio;
      *                                                                           null leaves them
      * @param ?bool                                                $published    null leaves it
@@ -46,8 +50,10 @@ final readonly class MediaEditor
         foreach ($descriptions as $locale => $texts) {
             $alt = $media->altText($locale);
             $caption = $media->caption($locale);
+            $suggested = $media->isAltSuggested($locale);
             $media->describe($locale, $texts['alt'], $texts['caption'], $now);
-            $changed['alt'] = ($changed['alt'] ?? false) || $alt !== $media->altText($locale);
+            $media->markAltSuggested($locale, $texts['alt_suggested'] ?? ($suggested && $alt === $media->altText($locale)));
+            $changed['alt'] = ($changed['alt'] ?? false) || $alt !== $media->altText($locale) || $suggested !== $media->isAltSuggested($locale);
             $changed['caption'] = ($changed['caption'] ?? false) || $caption !== $media->caption($locale);
         }
         foreach ($transcripts ?? [] as $locale => $transcript) {

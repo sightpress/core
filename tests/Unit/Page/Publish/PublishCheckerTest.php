@@ -53,6 +53,32 @@ final class PublishCheckerTest extends TestCase
         self::assertSame([], Text::of($report->issues));
     }
 
+    public function testAltTextTheAssistantSuggestedStopsPublishingUntilSomeoneChecksIt(): void
+    {
+        $picture = $this->blocks->addMedia();
+        $media = $this->blocks->media()->find($picture) ?? self::fail('No picture.');
+        $media->describe('en-GB', 'A reading room', null, new \DateTimeImmutable());
+        $media->markAltSuggested('en-GB', true);
+        $this->blocks->media()->save($media);
+        $page = $this->pages->editor()->create('en-GB', new PageContent('Our rooms', null, 'The rooms of the library.', 'The rooms of the Riverside Library, with pictures of each one.', [
+            ['type' => 'image', 'version' => 1, 'data' => ['media' => $picture]],
+            ['type' => 'columns', 'version' => 1, 'data' => ['columns' => [['blocks' => [['type' => 'image', 'version' => 1, 'data' => ['media' => $picture]]]], ['blocks' => [['type' => 'image', 'version' => 1, 'data' => ['media' => $picture, 'alt' => 'Written here']]]]]]],
+            ['type' => 'image', 'version' => 1, 'data' => ['media' => $picture, 'decorative' => true]],
+        ]));
+
+        $report = $this->checker()->check($page);
+        self::assertSame(
+            [['media.alt_unchecked', '/blocks/0/data/media'], ['media.alt_unchecked', '/blocks/1/data/columns/0/blocks/0/data/media']],
+            array_values(array_map(static fn (PublishIssue $issue): array => [$issue->rule, $issue->pointer], array_filter($report->errors(), static fn (PublishIssue $issue): bool => $issue->rule === 'media.alt_unchecked'))),
+            'only where the library’s text shows: not with the block’s own alt text, nor when decorative',
+        );
+        self::assertSame(['1.1.1'], array_values(array_filter($report->errors(), static fn (PublishIssue $issue): bool => $issue->rule === 'media.alt_unchecked'))[0]->wcag);
+
+        $media->markAltSuggested('en-GB', false);
+        $this->blocks->media()->save($media);
+        self::assertSame([], array_filter($this->checker()->check($page)->errors(), static fn (PublishIssue $issue): bool => $issue->rule === 'media.alt_unchecked'));
+    }
+
     public function testFindsWhatStopsPublishingAndWhatIsWorthFixing(): void
     {
         $this->pages->editor()->create('en-GB', new PageContent('Visit us'));

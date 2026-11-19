@@ -26,11 +26,16 @@ use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\Site;
 use Symfony\Component\Validator\Constraints\Length;
+use SightPress\Core\Assistant\Contract\AssistantInsert;
+use SightPress\Core\Http\Session\Session;
+use SightPress\Core\Infrastructure\Assistant\AssistantAccess;
 
 /**
  * `/admin/media/{id}`: one file, with a preview, what it is, its address, and a form for its descriptions: alt text
  * (pictures) and caption in each of the site's languages, a transcript (video and audio), and — for people who may
- * publish — whether it is published. Needs `media.upload`.
+ * publish — whether it is published. With the AI assistant on, pictures get "Suggest alt text" per language; alt
+ * text the assistant wrote stays marked, and blocks publishing pages that show it, until a person ticks that they
+ * checked it or changes it. Needs `media.upload`.
  */
 final readonly class MediaItemHandler implements RequestHandlerInterface
 {
@@ -42,6 +47,7 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
         private MediaTypes $types,
         private MediaUrlGenerator $urls,
         private Site $site,
+        private AssistantAccess $assistant,
     ) {
     }
 
@@ -105,20 +111,39 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
         [$actor, $media] = $this->admin->target($request);
         $canPublish = $actor->has(MediaAdmin::PUBLISH);
         if ($request->getMethod() !== 'POST') {
-            return $this->show($request, $actor, $media, $this->form($media, $canPublish));
+            $form = $this->form($media, $canPublish);
+            $suggestions = $this->savedSuggestions($media);
+            $inserted = AssistantInsert::take(Session::fromRequest($request), $request->getUri()->getPath());
+            if ($inserted !== null && $form->has($inserted['field']) && str_starts_with($inserted['field'], 'alt_')) {
+                $form = $form->withValues([$inserted['field'] => $inserted['text']]);
+                $suggestions[(int) substr($inserted['field'], 4)] = $inserted['text'];
+            }
+
+            return $this->show($request, $actor, $media, $form, suggestions: $suggestions);
         }
 
         $body = $request->getParsedBody();
-        $form = $this->validator->submit($this->form($media, $canPublish), is_array($body) ? $body : []);
+        $body = is_array($body) ? $body : [];
+        $form = $this->validator->submit($this->form($media, $canPublish), $body);
+        $suggestions = [];
+        foreach (array_keys(array_values($this->site->locales)) as $index) {
+            $suggestion = is_string($body['alt_suggestion_' . $index] ?? null) ? trim($body['alt_suggestion_' . $index]) : '';
+            if ($suggestion !== '') {
+                $suggestions[$index] = $suggestion;
+            }
+        }
         if (!$form->isValid()) {
-            return $this->show($request, $actor, $media, $form, 422);
+            return $this->show($request, $actor, $media, $form, 422, $suggestions);
         }
         $descriptions = [];
         $transcripts = [];
         foreach (array_values($this->site->locales) as $index => $locale) {
+            $alt = $media->kind() === MediaKind::Image ? $form->text('alt_' . $index) : null;
             $descriptions[$locale] = [
-                'alt' => $media->kind() === MediaKind::Image ? $form->text('alt_' . $index) : null,
+                'alt' => $alt,
                 'caption' => $form->text('caption_' . $index),
+                // The assistant's text stays marked until a person ticks "checked" or changes it (A-4).
+                'alt_suggested' => isset($suggestions[$index]) ? ($alt === $suggestions[$index] && ($body['alt_checked_' . $index] ?? null) !== '1') : null,
             ];
             if ($media->kind()->hasSpeech()) {
                 $transcripts[$locale] = $form->text('transcript_' . $index);
@@ -138,9 +163,35 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
             : new Message('The details of {original_name} have been saved.', ['original_name' => $media->originalName()]));
     }
 
-    private function show(ServerRequestInterface $request, Actor $actor, Media $media, Form $form, int $status = 200): ResponseInterface
+    /**
+     * The alt texts the AI assistant suggested that nobody checked yet, by the language's position.
+     *
+     * @return array<int, string>
+     */
+    private function savedSuggestions(Media $media): array
     {
+        $suggestions = [];
+        foreach (array_values($this->site->locales) as $index => $locale) {
+            if ($media->isAltSuggested($locale)) {
+                $suggestions[$index] = (string) $media->altText($locale);
+            }
+        }
+
+        return $suggestions;
+    }
+
+    /**
+     * @param array<int, string> $suggestions the assistant's alt texts in the form, by the language's position
+     */
+    private function show(ServerRequestInterface $request, Actor $actor, Media $media, Form $form, int $status = 200, array $suggestions = []): ResponseInterface
+    {
+        $image = $media->kind() === MediaKind::Image;
+
         return $this->screens->render($request, '@media_admin/item.html.twig', [
+            'suggestions' => $suggestions,
+            'assistant' => $image ? $this->assistant->panel($actor, MediaAdmin::path($media), fields: ['alt'], mediaId: (int) $media->id()) : null,
+            'assistant_screen' => 'media_item',
+            'languages' => array_map(static fn (string $locale): LanguageName => new LanguageName($locale), array_values($this->site->locales)),
             'media' => $media,
             'form' => $form,
             'url' => $this->urls->url($media),

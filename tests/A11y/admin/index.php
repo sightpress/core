@@ -16,7 +16,8 @@
  * The `features` copy (F-2) also has two optional modules of a test package: "Events" (on, with an event in its table)
  * and "acme.calendar" (off, needs Events).
  * The `assistant` copy (A-3) has the AI assistant on with the pretend "Test AI" service of a test package (nothing
- * leaves the server); `/_test/assistant` chooses it with a key, so the assistant is ready.
+ * leaves the server); `/_test/assistant` chooses it with a key and a model that sees pictures, so the assistant is
+ * ready, and `/_test/picture` adds a picture to the media library and answers with its id.
  *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
@@ -33,6 +34,7 @@ use SightPress\Core\Analytics\AnalyticsRollup;
 use SightPress\Core\Analytics\AnalyticsStore;
 use SightPress\Core\Assistant\AssistantSettings;
 use SightPress\Core\Auth\PasswordHasher;
+use SightPress\Core\Media\MediaUploader;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Mail\MailSender;
@@ -154,8 +156,22 @@ if (!is_file($project . '/config/sites.php')) {
 
 if ($path === '/_test/assistant') {
     $kernel = boot($project, $environment);
-    Services::get(site($kernel), AssistantSettings::class)->connect('test_ai', 'test-small', null, 'sk-test-a11y-5f2b', null);
+    Services::get(site($kernel), AssistantSettings::class)->connect('test_ai', 'test-vision', null, 'sk-test-a11y-5f2b', null);
     http_response_code(204);
+
+    return;
+}
+
+if ($path === '/_test/picture') {
+    // A-4: a picture in the media library, for "Suggest alt text"; answers with its id.
+    $kernel = boot($project, $environment);
+    $image = imagecreatetruecolor(800, 600);
+    imagefill($image, 0, 0, (int) imagecolorallocate($image, 30, 90, 160));
+    $file = $project . '/reading-room.png';
+    imagepng($image, $file);
+    $media = Services::get(site($kernel), MediaUploader::class)->upload($file, 'reading-room.png', null)->media;
+    header('Content-Type: text/plain');
+    echo $media->id();
 
     return;
 }

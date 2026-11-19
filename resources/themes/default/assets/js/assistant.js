@@ -3,8 +3,10 @@
 //   the panel's polite live region (#assistant-status) and errors to its alert region (#assistant-error). The
 //   suggestion goes under its own heading in #assistant-result, never into a live region, and focus moves to that
 //   heading;
-// - "Insert" puts the suggestion in the field the Suggest button named (data-assistant-target) and moves focus back
-//   to it; "Copy" copies it; "Try again" asks again; "Discard" removes it and moves focus back to where the person
+// - "Insert" puts the suggestion in the field the Suggest button named (data-assistant-target), and in the hidden
+//   copy it names (data-assistant-suggestion, for alt text that stays marked as the assistant's), and moves focus
+//   back to it; a draft's "Add to the end of the page" sends it to the server, which adds its blocks;
+// - "Explain this" next to each publish check asks in the same way; "Copy" copies it; "Try again" asks again; "Discard" removes it and moves focus back to where the person
 //   asked;
 // - "Test connection" on the AI assistant screen shows its result in the live region named by data-assistant-test.
 // Texts come from the panel's data attributes, in the person's language.
@@ -47,6 +49,27 @@
     return element;
   };
 
+  // A draft's blocks go into the page through the server, like Insert without JavaScript.
+  const post = (form, insert, answer) => {
+    const sent = document.createElement('form');
+    sent.method = 'post';
+    sent.action = '/admin/assistant/insert';
+    sent.hidden = true;
+    const values = { field: insert.field, text: insert.text, return: answer.return ?? '' };
+    form.querySelectorAll('input[name^="csrf_"], input[name="return"]').forEach((input) => {
+      values[input.name] = input.value;
+    });
+    Object.entries(values).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      sent.append(input);
+    });
+    document.body.append(sent);
+    sent.submit();
+  };
+
   const show = (answer, form, data, origin, target) => {
     result.replaceChildren();
     const section = document.createElement('section');
@@ -77,8 +100,14 @@
     const actions = document.createElement('div');
     actions.className = 'assistant-actions';
     const field = target ? document.getElementById(target) : null;
-    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+    if (answer.insert && answer.insert.field === 'blocks') {
+      actions.append(button(text('addBlocks', 'Add to the end of the page'), '', () => post(form, answer.insert, answer)));
+    } else if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
       actions.append(button(text('insert', 'Insert'), '', () => {
+        const kept = document.getElementById(origin?.dataset.assistantSuggestion ?? '');
+        if (kept instanceof HTMLInputElement) {
+          kept.value = answer.text;
+        }
         field.value = answer.text;
         field.dispatchEvent(new Event('input', { bubbles: true }));
         result.replaceChildren();
@@ -128,7 +157,7 @@
   };
 
   if (panel && status && result && window.fetch && window.FormData) {
-    panel.querySelectorAll('form[data-assistant-ask]').forEach((form) => {
+    document.querySelectorAll('form[data-assistant-ask]').forEach((form) => {
       form.addEventListener('submit', (event) => {
         event.preventDefault();
         const submitter = event.submitter instanceof HTMLButtonElement ? event.submitter : null;

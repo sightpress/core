@@ -313,6 +313,12 @@
         <target>Sobre o site</target>
       </segment>
     </unit>
+    <unit id="9f13a3596bf77089">
+      <segment state="initial">
+        <source>About this check</source>
+        <target>Sobre esta verificação</target>
+      </segment>
+    </unit>
     <unit id="b4b580a9ad8c344f">
       <segment>
         <source>About us</source>
@@ -431,6 +437,12 @@
       <segment>
         <source>Add redirect</source>
         <target>Adicionar redirecionamento</target>
+      </segment>
+    </unit>
+    <unit id="1b588cbf7539b8b0">
+      <segment state="initial">
+        <source>Add to the end of the page</source>
+        <target>Adicionar ao fim da página</target>
       </segment>
     </unit>
     <unit id="6b02e0d363a4af1c">
@@ -1603,6 +1615,18 @@
         <target>Rascunho</target>
       </segment>
     </unit>
+    <unit id="85e5f89b57788752">
+      <segment state="initial">
+        <source>Draft of the page</source>
+        <target>Rascunho da página</target>
+      </segment>
+    </unit>
+    <unit id="c9da8ae30597b162">
+      <segment state="initial">
+        <source>Draft this page</source>
+        <target>Redigir esta página</target>
+      </segment>
+    </unit>
     <unit id="6656d0af00def6fe">
       <segment state="initial">
         <source>Each person may ask 20 times every 10 minutes.</source>
@@ -1885,6 +1909,18 @@
         <target>Tudo o que {name} guardou para este site é eliminado de vez. Não é possível anular.</target>
       </segment>
     </unit>
+    <unit id="7c2b4d48f037a331">
+      <segment state="initial">
+        <source>Explain this</source>
+        <target>Explicar</target>
+      </segment>
+    </unit>
+    <unit id="4fd45b788d809b6f">
+      <segment state="initial">
+        <source>Explain this check</source>
+        <target>Explicar esta verificação</target>
+      </segment>
+    </unit>
     <unit id="5697d03daef4de9c">
       <segment>
         <source>Features</source>
@@ -2027,6 +2063,12 @@
       <segment state="initial">
         <source>Found nothing</source>
         <target>Sem resultados</target>
+      </segment>
+    </unit>
+    <unit id="c041489798782fc9">
+      <segment state="initial">
+        <source>Friendlier</source>
+        <target>Mais próximo</target>
       </segment>
     </unit>
     <unit id="218197693424e015">
@@ -2225,6 +2267,18 @@
       <segment>
         <source>How to fix upload size limits</source>
         <target>Como corrigir os limites de tamanho dos carregamentos</target>
+      </segment>
+    </unit>
+    <unit id="5d8635002ed93771">
+      <segment state="initial">
+        <source>I checked the alt text in {language}: it describes the picture</source>
+        <target>Verifiquei o texto alternativo em {language}: descreve a imagem</target>
+      </segment>
+    </unit>
+    <unit id="a8fb2ab87639daad">
+      <segment state="initial">
+        <source>I checked the alt text: it describes the picture</source>
+        <target>Verifiquei o texto alternativo: descreve a imagem</target>
       </segment>
     </unit>
     <unit id="ed3bcecc81cdaa19">
@@ -2737,6 +2791,12 @@
         <target>Menu principal</target>
       </segment>
     </unit>
+    <unit id="4ce7dbfb92847f55">
+      <segment state="initial">
+        <source>Make it</source>
+        <target>Torná-lo</target>
+      </segment>
+    </unit>
     <unit id="6edb3d350c0026cd">
       <segment>
         <source>Make this translation a draft again</source>
@@ -2897,6 +2957,12 @@
       <segment state="initial">
         <source>Months to keep analytics for</source>
         <target>Meses durante os quais guardar as estatísticas</target>
+      </segment>
+    </unit>
+    <unit id="0d37cbe284f022d3">
+      <segment state="initial">
+        <source>More formal</source>
+        <target>Mais formal</target>
       </segment>
     </unit>
     <unit id="90eae2a9657cd484">
@@ -3589,6 +3655,18 @@
         <target>Cole só o código: as letras e os algarismos entre as aspas depois de content=</target>
       </segment>
     </unit>
+    <unit id="3a5be075367a7400">
+      <segment state="initial">
+        <source>Paste text from the page, or a rich text block’s HTML.</source>
+        <target>Cole texto da página ou o HTML de um bloco de texto formatado.</target>
+      </segment>
+    </unit>
+    <unit id="2ddf47e0351e918c">
+      <segment state="initial">
+        <source>Paste the text the assistant should rewrite.</source>
+        <target>Cole o texto que o assistente deve reescrever.</target>
+      </segment>
+    </unit>
     <unit id="7db20897053bb278">
       <segment>
         <source>People</source>
@@ -3967,6 +4045,24 @@
         <target>As revisões são numeradas a partir de 1.</target>
       </segment>
     </unit>
+    <unit id="272f25fe45d2cccc">
+      <segment state="initial">
+        <source>Rewrite</source>
+        <target>Reescrever</target>
+      </segment>
+    </unit>
+    <unit id="b4a32801a621960a">
+      <segment state="initial">
+        <source>Rewrite text</source>
+        <target>Reescrever texto</target>
+      </segment>
+    </unit>
+    <unit id="7d112e05c4d0ebb2">
+      <segment state="initial">
+        <source>Rewritten text</source>
+        <target>Texto reescrito</target>
+      </segment>
+    </unit>
     <unit id="14736a2eb9f4159f">
       <segment>
         <source>Role</source>
@@ -4091,6 +4187,12 @@
       <segment>
         <source>Say what happens, for example "Book a visit".</source>
         <target>Diga o que acontece, por exemplo "Marcar uma visita".</target>
+      </segment>
+    </unit>
+    <unit id="26b89304cceed2f5">
+      <segment state="initial">
+        <source>Say what the page should be about.</source>
+        <target>Diga sobre o que deve ser a página.</target>
       </segment>
     </unit>
     <unit id="4a45b1cbb51b9eee">
@@ -4351,6 +4453,12 @@
         <target>Partilhar esta página com o assistente</target>
       </segment>
     </unit>
+    <unit id="3deba4ef191117f5">
+      <segment state="initial">
+        <source>Shorter</source>
+        <target>Mais curto</target>
+      </segment>
+    </unit>
     <unit id="39397661fc8e9eeb">
       <segment>
         <source>Shortest password allowed (number of characters)</source>
@@ -4529,6 +4637,12 @@
       <segment>
         <source>Signing in</source>
         <target>Iniciar sessão</target>
+      </segment>
+    </unit>
+    <unit id="6dc9ed5671ad0dad">
+      <segment state="initial">
+        <source>Simpler</source>
+        <target>Mais simples</target>
       </segment>
     </unit>
     <unit id="475f9dc4e4ff83bb">
@@ -4777,6 +4891,24 @@
         <target>Sugerir um título para os resultados de pesquisa</target>
       </segment>
     </unit>
+    <unit id="2494a2ff82b81cb8">
+      <segment state="initial">
+        <source>Suggest alt text</source>
+        <target>Sugerir texto alternativo</target>
+      </segment>
+    </unit>
+    <unit id="1f73dd9b3fb7efeb">
+      <segment state="initial">
+        <source>Suggest alt text in {language}</source>
+        <target>Sugerir texto alternativo em {language}</target>
+      </segment>
+    </unit>
+    <unit id="0ab295348e4059a0">
+      <segment state="initial">
+        <source>Suggest what search engines show</source>
+        <target>Sugerir o que os motores de pesquisa mostram</target>
+      </segment>
+    </unit>
     <unit id="59c7aa05a8bbf375">
       <segment state="initial">
         <source>Suggestion discarded.</source>
@@ -4897,6 +5029,12 @@
         <target>Texto em {language}</target>
       </segment>
     </unit>
+    <unit id="9bfcca9a11fb3800">
+      <segment state="initial">
+        <source>Text to rewrite</source>
+        <target>Texto a reescrever</target>
+      </segment>
+    </unit>
     <unit id="7d411f3bc7c16dc4">
       <segment>
         <source>Thank you. Your message has been sent.</source>
@@ -4919,6 +5057,12 @@
       <segment>
         <source>That redirect would go round in a loop: the new address leads back to the old one.</source>
         <target>Esse redirecionamento ficaria em círculo: o novo endereço leva de volta ao antigo.</target>
+      </segment>
+    </unit>
+    <unit id="1c50c6147e75a1b9">
+      <segment state="initial">
+        <source>The AI assistant suggested this alt text. Pages that show it can’t be published until someone checks it.</source>
+        <target>O assistente de IA sugeriu este texto alternativo. As páginas que o mostram não podem ser publicadas até alguém o verificar.</target>
       </segment>
     </unit>
     <unit id="e9a9fd061739fe78">
@@ -5059,6 +5203,12 @@
         <target>O texto alternativo parece o nome de um ficheiro. Descreva o que a imagem mostra.</target>
       </segment>
     </unit>
+    <unit id="811eadd6678f6913">
+      <segment state="initial">
+        <source>The alt text of {name} was suggested by the AI assistant, and nobody has checked it yet. Check it on the file’s page in the media library, or write the alt text here.</source>
+        <target>O texto alternativo de {name} foi sugerido pelo assistente de IA e ainda ninguém o verificou. Verifique-o na página do ficheiro na biblioteca de multimédia ou escreva aqui o texto alternativo.</target>
+      </segment>
+    </unit>
     <unit id="4dd98d157b43be20">
       <segment state="initial">
         <source>The answer was cut short because it was too long. Check its end.</source>
@@ -5195,6 +5345,18 @@
       <segment>
         <source>The details of {original_name} have been saved.</source>
         <target>Os detalhes de {original_name} foram guardados.</target>
+      </segment>
+    </unit>
+    <unit id="c19744e4cd7bd55a">
+      <segment state="initial">
+        <source>The draft is added to the end of the page’s blocks, unsaved, for you to check and change.</source>
+        <target>O rascunho é adicionado ao fim dos blocos da página, sem guardar, para o verificar e alterar.</target>
+      </segment>
+    </unit>
+    <unit id="4ee29b5c1b1eea31">
+      <segment state="initial">
+        <source>The draft is at the end of the page’s blocks. Check it, then save.</source>
+        <target>O rascunho está no fim dos blocos da página. Verifique-o e depois guarde.</target>
       </segment>
     </unit>
     <unit id="94b96b695999790e">
@@ -6949,6 +7111,12 @@
         <target>O que os motores de pesquisa e os robôs de IA leram</target>
       </segment>
     </unit>
+    <unit id="3889066fd605831e">
+      <segment state="initial">
+        <source>What should the page say?</source>
+        <target>O que deve dizer a página?</target>
+      </segment>
+    </unit>
     <unit id="af38f6a1030c016d">
       <segment>
         <source>What the file is, for example "Annual report 2026". Its type and size are added for you.</source>
@@ -7475,6 +7643,12 @@
       <segment>
         <source>block {index}, {label}</source>
         <target>bloco {index}, {label}</target>
+      </segment>
+    </unit>
+    <unit id="c38c63d8f14f4353">
+      <segment state="initial">
+        <source>check: {check}</source>
+        <target>verificação: {check}</target>
       </segment>
     </unit>
     <unit id="ddf377084a322427">

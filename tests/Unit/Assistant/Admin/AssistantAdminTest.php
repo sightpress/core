@@ -205,7 +205,7 @@ final class AssistantAdminTest extends TestCase
         self::assertStringNotContainsString('>Insert<', $html, 'an answer has no field to go into');
 
         $json = json_decode((string) $bea->submit('/admin', ['question' => 'How do I add a page to the main menu?'], AssistantAskHandler::PATH, headers: self::XHR)->getBody(), true);
-        self::assertSame(['ok' => true, 'heading' => 'The assistant’s answer', 'text' => 'Open Menus in the admin panel, choose the main menu, then add the page to it.', 'lang' => 'en-GB', 'notes' => [], 'status' => 'Suggestion ready'], $json);
+        self::assertSame(['ok' => true, 'heading' => 'The assistant’s answer', 'text' => 'Open Menus in the admin panel, choose the main menu, then add the page to it.', 'lang' => 'en-GB', 'notes' => [], 'status' => 'Suggestion ready', 'insert' => null], $json);
 
         $empty = $bea->submit('/admin', ['question' => '  '], AssistantAskHandler::PATH, headers: self::XHR);
         self::assertSame([422, ['ok' => false, 'error' => 'Type your question for the assistant.']], [$empty->getStatusCode(), json_decode((string) $empty->getBody(), true)]);
@@ -249,7 +249,7 @@ final class AssistantAdminTest extends TestCase
 
         $fields = ['field' => 'summary', 'page' => (string) $own, 'locale' => 'en-GB', 'target_prefix' => 'en-gb', 'screen' => 'page_editor', 'return' => '/admin/pages/' . $own];
         $json = json_decode((string) $cleo->submit('/admin/pages/' . $own, $fields, AssistantAskHandler::PATH, headers: self::XHR)->getBody(), true);
-        self::assertSame(['ok' => true, 'heading' => 'Suggestion for “Summary”', 'text' => 'When the library is open, and the days it is closed.', 'lang' => 'en-GB', 'notes' => [], 'status' => 'Suggestion ready'], $json);
+        self::assertSame(['ok' => true, 'heading' => 'Suggestion for “Summary”', 'text' => 'When the library is open, and the days it is closed.', 'lang' => 'en-GB', 'notes' => [], 'status' => 'Suggestion ready', 'insert' => ['field' => 'summary', 'text' => 'When the library is open, and the days it is closed.']], $json);
 
         $result = (string) $cleo->submit('/admin/pages/' . $own, $fields, AssistantAskHandler::PATH)->getBody();
         self::assertStringContainsString('<h1>Suggestion for “Summary”</h1>', $result);

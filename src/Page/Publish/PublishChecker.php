@@ -10,6 +10,7 @@ use SightPress\Core\Block\Contract\BlockRenderer;
 use SightPress\Core\Block\Contract\BlockValidator;
 use SightPress\Core\Block\Contract\InvalidBlocks;
 use SightPress\Core\Block\Contract\MediaTexts;
+use SightPress\Core\Media\Contract\MediaFile;
 use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Page\Contract\PublishIssue;
 use SightPress\Core\Page\Contract\PublishReport;
@@ -106,8 +107,12 @@ final readonly class PublishChecker
         }
         $files = $this->media->files($validated->mediaIds);
         foreach ($validated->media as $reference) {
-            if (($files[$reference['id']] ?? null)?->isPublished() !== true) {
+            $file = $files[$reference['id']] ?? null;
+            if ($file?->isPublished() !== true) {
                 $issues[] = $this->error($locale, 'media.unpublished', 'This file isn\'t published in the media library, so visitors won\'t see it. Publish it there first.', '/blocks' . $reference['pointer']);
+            }
+            if ($file !== null && self::showsSuggestedAlt($validated->blocks, $reference['pointer'], $file, $locale, $this->site->defaultLocale)) {
+                $issues[] = $this->error($locale, 'media.alt_unchecked', new Message('The alt text of {name} was suggested by the AI assistant, and nobody has checked it yet. Check it on the file’s page in the media library, or write the alt text here.', ['name' => $file->originalName()]), '/blocks' . $reference['pointer'], ['1.1.1']);
             }
         }
 
@@ -121,6 +126,26 @@ final readonly class PublishChecker
         }
 
         return $issues;
+    }
+
+    /**
+     * Whether the block at the file's place shows the library's alt text (in the page's language, or else the main
+     * language's) and that text is the AI assistant's, not checked by a person yet.
+     *
+     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks filled and validated
+     */
+    private static function showsSuggestedAlt(array $blocks, string $pointer, MediaFile $file, string $locale, string $mainLocale): bool
+    {
+        $language = $file->altText($locale) !== null ? $locale : $mainLocale;
+        if (!$file->isAltSuggested($language)) {
+            return false;
+        }
+        $at = $blocks;
+        foreach (explode('/', substr($pointer, 1, (int) strrpos($pointer, '/') - 1)) as $part) {
+            $at = is_array($at) ? ($at[str_replace(['~1', '~0'], ['/', '~'], $part)] ?? null) : null;
+        }
+
+        return is_array($at) && ($at['alt'] ?? null) === $file->altText($language);
     }
 
     /**

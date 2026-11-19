@@ -72,6 +72,26 @@ final class MediaTest extends TestCase
         self::assertSame('Um farol', $media->altText('pt-PT'));
     }
 
+    public function testMarksAltTextTheAssistantSuggestedPerLocale(): void
+    {
+        $media = self::picture();
+        $now = new DateTimeImmutable('2026-11-17 10:00:00 UTC');
+        $media->markAltSuggested('en-GB', true);
+        self::assertFalse($media->isAltSuggested('en-GB'), 'no alt text, nothing to check');
+
+        $media->describe('en-GB', 'A lighthouse', null, $now);
+        $media->describe('pt-PT', 'Um farol', null, $now);
+        $media->markAltSuggested('pt-PT', true);
+        $media->markAltSuggested('en-GB', true);
+        self::assertSame([true, true], [$media->isAltSuggested('en-GB'), $media->isAltSuggested('pt-PT')]);
+        $media->markAltSuggested('en-GB', false);
+        self::assertSame([false, true], [$media->isAltSuggested('en-GB'), $media->isAltSuggested('pt-PT')]);
+        $media->describe('pt-PT', '', null, $now);
+        self::assertFalse($media->isAltSuggested('pt-PT'), 'removed with its text');
+        $media->markAltSuggested('pt-PT', false);
+        self::assertFalse($media->isAltSuggested('pt-PT'));
+    }
+
     public function testRefusesTooLongTextAndUnknownLocales(): void
     {
         $media = self::picture();

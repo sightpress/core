@@ -1,4 +1,4 @@
-# AI assistant (A-2, A-3)
+# AI assistant (A-2, A-3, A-4)
 
 The AI assistant gives suggestions from an AI service the site chooses, with its own API key ("bring your own key"):
 summaries, descriptions for search engines, alt text, drafts and answers to questions. It is an optional feature,
@@ -90,3 +90,24 @@ messages.
   suggestion for that field, from the saved page (save first).
 - The suggestion appears under its own heading. **Insert** puts it in the field (not saved yet), **Copy** copies it,
   **Try again** asks again, **Discard** removes it. Without JavaScript the same buttons are on a page of their own.
+
+## What it can draft (A-4)
+
+| Where | Button | What you get |
+| --- | --- | --- |
+| Page editor, under *Summary* | Suggest a summary | one or two sentences, at most 300 characters |
+| Page editor, under *Title in search results* / *Description for search engines* | Suggest a title… / Suggest a description | a title of about 60 characters, a description of about 160 |
+| Every panel | Rewrite text | the text you paste, simpler, shorter, friendlier or more formal (rich text HTML stays HTML) |
+| Page editor panel | Draft this page | headings and text from what you ask for; **Add to the end of the page** puts them in the editor, unsaved |
+| Page editor, next to each publish check | Explain this | what the check means and how to fix it |
+| A picture in the media library, under each alt text field | Suggest alt text | a description of the picture (only with a model that can see pictures) |
+
+Everything is checked before you see it: too long, the wrong form, unknown blocks or unsafe HTML are refused or
+cleaned, and the page's own text can't give the assistant instructions.
+
+**Alt text from the assistant has to be checked by a person.** After you save it, the picture says "The AI assistant
+suggested this alt text", and pages that show it can't be published until someone ticks **I checked the alt text**
+(or changes the text) and saves.
+
+The instructions the assistant gets are in `resources/assistant/prompts/`. A translation can go in a folder named
+after the language (`pt-PT/summary.md` or `pt/summary.md`).

@@ -70,12 +70,15 @@ final readonly class PageEditorHandler implements RequestHandlerInterface
         }
         if ($request->getMethod() !== 'POST') {
             $form = $this->screen->saved($locale, $page);
+            $blocks = $page->translation($locale)?->blocks() ?? [];
             $inserted = AssistantInsert::take(Session::fromRequest($request), $request->getUri()->getPath());
             if ($inserted !== null && in_array($inserted['field'], PageEditorScreen::SUGGESTED_FIELDS, true)) {
                 $form = $form->withValues([$inserted['field'] => $inserted['text']]);
+            } elseif ($inserted !== null && $inserted['field'] === 'blocks') {
+                $blocks = [...$blocks, ...self::draftedBlocks($inserted['text'])];
             }
 
-            return $this->screen->render($request, $page, $locale, $form, $page->translation($locale)?->blocks() ?? []);
+            return $this->screen->render($request, $page, $locale, $form, $blocks);
         }
         if (!$this->authorizer->can($actor, PageAction::Edit->value, $page)) {
             throw new HttpForbiddenException($request, 'You can’t change this page now.');
@@ -176,5 +179,26 @@ final readonly class PageEditorHandler implements RequestHandlerInterface
         }
 
         return $values;
+    }
+
+    /**
+     * The blocks of an AI assistant draft (already checked by its task): headings and rich text only, the rest left
+     * out; the editor checks them again when the page is saved.
+     *
+     * @return list<array{type: string, version: int, data: array<string, mixed>}>
+     */
+    private static function draftedBlocks(string $json): array
+    {
+        $decoded = json_decode($json, true);
+        $blocks = [];
+        foreach (is_array($decoded) ? $decoded : [] as $block) {
+            if (is_array($block) && in_array($block['type'] ?? null, ['heading', 'rich_text'], true) && is_array($block['data'] ?? null)) {
+                /** @var array<string, mixed> $data */
+                $data = $block['data'];
+                $blocks[] = ['type' => $block['type'], 'version' => 1, 'data' => $data];
+            }
+        }
+
+        return $blocks;
     }
 }

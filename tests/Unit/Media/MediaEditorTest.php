@@ -60,6 +60,22 @@ final class MediaEditorTest extends TestCase
         self::assertFalse($picture->isPublished());
     }
 
+    public function testAltTextFromTheAssistantStaysMarkedUntilAPersonChecksOrChangesIt(): void
+    {
+        $picture = $this->fixture->uploader()->upload($this->fixture->file('a.png', MediaFixture::png()), 'a.png', 1)->media;
+
+        self::assertSame(['alt'], $this->editor->update($picture, ['en-GB' => ['alt' => 'A lighthouse', 'caption' => null, 'alt_suggested' => true]], null, null, 7));
+        self::assertTrue($picture->isAltSuggested('en-GB'));
+        self::assertSame([], $this->editor->update($picture, ['en-GB' => ['alt' => 'A lighthouse', 'caption' => null]], null, null, 7), 'kept while the text is the same');
+        self::assertTrue($picture->isAltSuggested('en-GB'));
+        self::assertSame(['alt'], $this->editor->update($picture, ['en-GB' => ['alt' => 'A lighthouse', 'caption' => null, 'alt_suggested' => false]], null, null, 7), 'checked');
+        self::assertFalse($picture->isAltSuggested('en-GB'));
+
+        $this->editor->update($picture, ['en-GB' => ['alt' => 'A lighthouse', 'caption' => null, 'alt_suggested' => true]], null, null, 7);
+        self::assertSame(['alt'], $this->editor->update($picture, ['en-GB' => ['alt' => 'A white lighthouse', 'caption' => null]], null, null, 7));
+        self::assertFalse($picture->isAltSuggested('en-GB'), 'changed by a person');
+    }
+
     public function testVideoAndAudioHaveATranscript(): void
     {
         $audio = new Media(str_repeat('a', 32), str_repeat('b', 64), new MediaFormat('audio/mpeg', MediaKind::Audio, 'mp3', 'MP3'), 'talk.mp3', 'Talk.mp3', 10, null, null, [], 1, new DateTimeImmutable());

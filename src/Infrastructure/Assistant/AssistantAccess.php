@@ -26,6 +26,12 @@ final readonly class AssistantAccess
         'alt' => 'alt_text',
     ];
 
+    /** The tasks the panel's own forms offer, in their order. */
+    public const array PANEL_TASKS = ['ask', 'rewrite', 'draft_page', 'explain_check'];
+
+    /** Panel tasks only offered on a page's screen. */
+    public const array PAGE_TASKS = ['draft_page', 'explain_check'];
+
     public function __construct(
         private ContainerInterface $container,
         private ModuleRegistry $registry,
@@ -37,10 +43,11 @@ final readonly class AssistantAccess
      *
      * @param string           $return the screen's path, to come back to
      * @param list<string>     $fields the fields of the screen that have a Suggest button when their task is there
+     * @param int|null         $mediaId the file of the media library the screen is about
      *
-     * @return array{ask: bool, suggest: array<string, string>, page: int|null, locale: string|null, return: string}|null
+     * @return array{ask: bool, tasks: list<string>, suggest: array<string, string>, page: int|null, locale: string|null, media: int|null, return: string}|null
      */
-    public function panel(Actor $actor, string $return, ?int $pageId = null, ?string $locale = null, array $fields = []): ?array
+    public function panel(Actor $actor, string $return, ?int $pageId = null, ?string $locale = null, array $fields = [], ?int $mediaId = null): ?array
     {
         if (!$this->registry->has(AssistantModule::ID)) {
             return null;
@@ -53,11 +60,11 @@ final readonly class AssistantAccess
                 $suggest[$field] = $task;
             }
         }
-        $ask = isset($tasks['ask']);
-        if (!$ask && $suggest === []) {
+        $offered = array_values(array_filter(self::PANEL_TASKS, static fn (string $task): bool => isset($tasks[$task]) && ($pageId !== null || !in_array($task, self::PAGE_TASKS, true))));
+        if ($offered === [] && $suggest === []) {
             return null;
         }
 
-        return ['ask' => $ask, 'suggest' => $suggest, 'page' => $pageId, 'locale' => $locale, 'return' => $return];
+        return ['ask' => in_array('ask', $offered, true), 'tasks' => $offered, 'suggest' => $suggest, 'page' => $pageId, 'locale' => $locale, 'media' => $mediaId, 'return' => $return];
     }
 }

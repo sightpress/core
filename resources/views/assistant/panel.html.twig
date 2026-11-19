@@ -1,7 +1,8 @@
 {#
     "Ask the assistant" (A-3), on the dashboard and the page editor, for people who may use the assistant
     (Infrastructure\Assistant\AssistantAccess::panel()). An <aside> named by its heading, with:
-    - the question form (and, on the page editor, "Share this page"), which posts to /admin/assistant/ask;
+    - the question form (and, on the page editor, "Share this page"), "Rewrite text" and, on the page editor, "Draft
+      this page", which post to /admin/assistant/ask;
     - #assistant-suggest, an empty form the Suggest buttons of the page's fields send (their `form` attribute), so
       they work inside the editor's own form;
     - a polite live region (#assistant-status) for "Working on it…" and "Suggestion ready", an alert region for
@@ -12,7 +13,7 @@
 <aside class="admin-panel assistant-panel" aria-labelledby="assistant-panel-title" id="assistant-panel"
     data-working="{{ t('Working on it…') }}" data-failed="{{ t('The assistant couldn’t be reached. Try again.') }}"
     data-insert="{{ t('Insert') }}" data-copy="{{ t('Copy') }}" data-copied="{{ t('Copied.') }}" data-retry="{{ t('Try again') }}" data-discard="{{ t('Discard') }}"
-    data-inserted="{{ t('Inserted. Check it, then save.') }}" data-discarded="{{ t('Suggestion discarded.') }}">
+    data-inserted="{{ t('Inserted. Check it, then save.') }}" data-add-blocks="{{ t('Add to the end of the page') }}" data-discarded="{{ t('Suggestion discarded.') }}">
     <h2 id="assistant-panel-title">{{ t('Ask the assistant') }}</h2>
     <p class="field-hint">{{ t('Its answers are suggestions: check them before you use them.') }}</p>
     {%- if assistant.ask %}
@@ -34,6 +35,41 @@
         <button type="submit">{{ t('Ask') }}</button>
     </form>
     {%- endif %}
+    {%- if 'rewrite' in (assistant.tasks ?? []) %}
+    <form action="/admin/assistant/ask" method="post" class="assistant-ask" data-assistant-ask>
+        {{ csrf_fields() }}
+        {{ _self.hidden(assistant, assistant_screen) }}
+        <input type="hidden" name="task" value="rewrite">
+        <div class="field">
+            <label for="assistant-rewrite-text">{{ t('Text to rewrite') }}</label>
+            <textarea id="assistant-rewrite-text" name="text" rows="4" aria-describedby="assistant-rewrite-hint"></textarea>
+            <p class="field-hint" id="assistant-rewrite-hint">{{ t('Paste text from the page, or a rich text block’s HTML.') }}</p>
+        </div>
+        <div class="field">
+            <label for="assistant-rewrite-style">{{ t('Make it') }}</label>
+            <select id="assistant-rewrite-style" name="style">
+                <option value="simpler">{{ t('Simpler') }}</option>
+                <option value="shorter">{{ t('Shorter') }}</option>
+                <option value="friendlier">{{ t('Friendlier') }}</option>
+                <option value="formal">{{ t('More formal') }}</option>
+            </select>
+        </div>
+        <button type="submit">{{ t('Rewrite') }}</button>
+    </form>
+    {%- endif %}
+    {%- if 'draft_page' in (assistant.tasks ?? []) %}
+    <form action="/admin/assistant/ask" method="post" class="assistant-ask" data-assistant-ask>
+        {{ csrf_fields() }}
+        {{ _self.hidden(assistant, assistant_screen) }}
+        <input type="hidden" name="task" value="draft_page">
+        <div class="field">
+            <label for="assistant-draft-brief">{{ t('What should the page say?') }}</label>
+            <textarea id="assistant-draft-brief" name="question" rows="3" aria-describedby="assistant-draft-hint"></textarea>
+            <p class="field-hint" id="assistant-draft-hint">{{ t('The draft is added to the end of the page’s blocks, unsaved, for you to check and change.') }}</p>
+        </div>
+        <button type="submit">{{ t('Draft this page') }}</button>
+    </form>
+    {%- endif %}
     {%- if assistant.suggest is not empty %}
     <form action="/admin/assistant/ask" method="post" id="assistant-suggest" data-assistant-ask>
         {{ csrf_fields() }}
@@ -51,5 +87,8 @@
         <input type="hidden" name="page" value="{{ assistant.page }}">
         <input type="hidden" name="locale" value="{{ assistant.locale }}">
         <input type="hidden" name="target_prefix" value="{{ assistant.locale|lower }}">
+        {%- endif %}
+        {%- if assistant.media ?? null %}
+        <input type="hidden" name="media" value="{{ assistant.media }}">
         {%- endif %}
 {% endmacro %}

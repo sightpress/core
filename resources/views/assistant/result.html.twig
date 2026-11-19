@@ -1,8 +1,8 @@
 {#
     The assistant's answer without JavaScript (A-3): the suggestion under the screen's <h1>, notes (cut short, budget
-    nearly used up), then "Insert" (when it is for a field), "Try again" (asks again with the same question) and
+    nearly used up), then "Insert" (when it is for a field; a draft's blocks are added to the end of the page), "Try again" (asks again with the same question) and
     "Discard" (goes back). When there is no answer, what went wrong in the error summary style, with "Try again".
-    Context: see AssistantAskHandler (`heading`, `ask`, `text`, `lang`, `notes`, `error`, `action`,
+    Context: see AssistantAskHandler (`heading`, `ask`, `text`, `lang`, `notes`, `insert`, `error`, `action`,
     `insert_action`).
 #}
 {% extends '@admin/layout.html.twig' %}
@@ -15,7 +15,7 @@
     <p>{{ t(error) }}</p>
 </section>
 {%- else %}
-{%- if ask.question and not ask.field %}
+{%- if ask.question and not ask.field and ask.task == 'ask' %}
 <p><strong>{{ t('Your question:') }}</strong> {{ ask.question }}</p>
 {%- endif %}
 <div class="assistant-suggestion"{% if lang %} lang="{{ lang }}"{% endif %}>
@@ -29,18 +29,23 @@
 <p class="field-hint">{{ t('This is a suggestion: check it before you use it.') }}</p>
 {%- endif %}
 <div class="assistant-actions">
-    {%- if not error and ask.field %}
+    {%- if not error and insert %}
     <form action="{{ insert_action }}" method="post">
         {{ csrf_fields() }}
-        {{ _self.ask_fields(ask) }}
-        <input type="hidden" name="text" value="{{ text }}">
-        <button type="submit">{{ t('Insert') }}</button>
+        <input type="hidden" name="field" value="{{ insert.field }}">
+        {%- if ask.target %}<input type="hidden" name="target" value="{{ ask.target }}">{% endif %}
+        <input type="hidden" name="return" value="{{ ask.return }}">
+        <input type="hidden" name="text" value="{{ insert.text }}">
+        <button type="submit">{{ insert.field == 'blocks' ? t('Add to the end of the page') : t('Insert') }}</button>
     </form>
     {%- endif %}
     <form action="{{ action }}" method="post">
         {{ csrf_fields() }}
         {{ _self.ask_fields(ask) }}
         {%- if ask.question %}<input type="hidden" name="question" value="{{ ask.question }}">{% endif %}
+        {%- if ask.text %}<input type="hidden" name="text" value="{{ ask.text }}">{% endif %}
+        {%- if ask.style %}<input type="hidden" name="style" value="{{ ask.style }}">{% endif %}
+        {%- if not ask.field %}<input type="hidden" name="task" value="{{ ask.task }}">{% endif %}
         {%- if ask.share %}<input type="hidden" name="share" value="1">{% endif %}
         <button type="submit" class="button button--secondary">{{ t('Try again') }}</button>
     </form>
@@ -48,7 +53,8 @@
 </div>
 {% endblock %}
 {% macro ask_fields(ask) %}
-        {%- if ask.field %}<input type="hidden" name="field" value="{{ ask.field }}">{% endif %}
+        {%- if ask.field %}<input type="hidden" name="field" value="{{ ask.fieldName }}">{% endif %}
+        {%- if ask.mediaId %}<input type="hidden" name="media" value="{{ ask.mediaId }}">{% endif %}
         {%- if ask.target %}<input type="hidden" name="target" value="{{ ask.target }}">{% endif %}
         {%- if ask.pageId %}<input type="hidden" name="page" value="{{ ask.pageId }}">{% endif %}
         {%- if ask.locale %}<input type="hidden" name="locale" value="{{ ask.locale }}">{% endif %}

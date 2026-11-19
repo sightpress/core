@@ -114,7 +114,12 @@ final readonly class Assistant
             throw new AssistantError(AssistantError::INVALID_INPUT, new Message('The assistant couldn’t use what was sent.'), detail: $problems[0]);
         }
 
-        $response = $this->send($task->id(), $configuration, $task->buildPrompt($input, $context), $actor);
+        try {
+            $prompt = $task->buildPrompt($input, $context);
+        } catch (InvalidValueException $invalid) {
+            throw new AssistantError(AssistantError::INVALID_INPUT, new Message('The assistant couldn’t use what was sent.'), detail: $invalid->getMessage());
+        }
+        $response = $this->send($task->id(), $configuration, $prompt, $actor);
         try {
             $suggestion = $task->validateOutput($response, $input, $context);
         } catch (AssistantException $exception) {

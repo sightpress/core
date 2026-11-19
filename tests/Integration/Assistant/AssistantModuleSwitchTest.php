@@ -48,13 +48,13 @@ final class AssistantModuleSwitchTest extends TestCase
         $site = $this->site->container();
 
         self::assertSame(['anthropic', 'openai', 'mistral', 'openai_compatible'], array_keys(Services::get($site, AssistantExtensions::class)->providers()));
-        self::assertSame(['ask'], array_keys(Services::get($site, AssistantExtensions::class)->tasks()));
+        self::assertSame(['ask', 'summary', 'seo_meta', 'rewrite', 'draft_page', 'explain_check', 'alt_text'], array_keys(Services::get($site, AssistantExtensions::class)->tasks()));
         self::assertTrue(Services::get($site, Connection::class)->createSchemaManager()->tablesExist([AssistantUsageStore::TABLE]));
         self::assertSame(0, Services::get($site, AssistantUsageStore::class)->tokens(gmdate('Y-m')));
         self::assertSame([], Services::get($site, Assistant::class)->tasksFor(null), 'nothing until a service is chosen');
 
         Services::get($site, AssistantSettings::class)->connect('anthropic', 'claude-haiku-5-5', null, 'sk-test-0123456789', 1);
-        self::assertSame(['ask'], array_keys(Services::get($site, Assistant::class)->tasksFor(null)));
+        self::assertSame(['ask', 'summary', 'seo_meta', 'rewrite', 'draft_page', 'explain_check', 'alt_text'], array_keys(Services::get($site, Assistant::class)->tasksFor(null)));
 
         $roles = Services::get($site, RoleRepository::class);
         $holders = [];

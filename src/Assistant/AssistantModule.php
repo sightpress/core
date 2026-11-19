@@ -23,7 +23,15 @@ use SightPress\Core\Assistant\Provider\MistralProvider;
 use SightPress\Core\Assistant\Provider\OpenAiCompatibleProvider;
 use SightPress\Core\Assistant\Provider\OpenAiProvider;
 use SightPress\Core\Assistant\Provider\ProviderModels;
+use SightPress\Core\Assistant\Task\AltTextTask;
 use SightPress\Core\Assistant\Task\AskTask;
+use SightPress\Core\Assistant\Task\DraftPageTask;
+use SightPress\Core\Assistant\Task\ExplainCheckTask;
+use SightPress\Core\Assistant\Task\Prompts;
+use SightPress\Core\Assistant\Task\RewriteTask;
+use SightPress\Core\Assistant\Task\SeoMetaTask;
+use SightPress\Core\Assistant\Task\SummaryTask;
+use SightPress\Core\Block\Contract\RichText;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Access\Permission;
 use SightPress\Module\Admin\AdminMenuItem;
@@ -54,7 +62,7 @@ final class AssistantModule implements ModuleInterface
         return new ModuleManifest(
             self::ID,
             '0.1.0',
-            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('rbac', '^0.1'), new ModuleRequirement('admin', '^0.1'), new ModuleRequirement('page', '^0.1')],
+            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('rbac', '^0.1'), new ModuleRequirement('admin', '^0.1'), new ModuleRequirement('page', '^0.1'), new ModuleRequirement('block', '^0.1'), new ModuleRequirement('media', '^0.1')],
             enabledByDefault: false,
         );
     }
@@ -84,8 +92,12 @@ final class AssistantModule implements ModuleInterface
             $services->autowire($provider);
             $assistant->addProvider($provider);
         }
-        $services->autowire(AskTask::class);
-        $assistant->addTask(AskTask::class);
+        $services->autowire(Prompts::class);
+        $services->autowire(RichText::class);
+        foreach ([AskTask::class, SummaryTask::class, SeoMetaTask::class, RewriteTask::class, DraftPageTask::class, ExplainCheckTask::class, AltTextTask::class] as $task) {
+            $services->autowire($task);
+            $assistant->addTask($task);
+        }
 
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/assistant');
         foreach ([AssistantReplies::class, AssistantSettingsHandler::class, AssistantTestHandler::class, AssistantAskHandler::class, AssistantInsertHandler::class] as $class) {

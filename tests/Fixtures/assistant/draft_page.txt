@@ -1,0 +1,1 @@
+{"blocks": [{"type": "heading", "text": "Join our book club", "level": 2}, {"type": "rich_text", "html": "<p>We meet monthly.</p><script>steal()</script>", "onclick": "x"}]}

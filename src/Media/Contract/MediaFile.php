@@ -74,6 +74,12 @@ interface MediaFile
     public function altText(string $locale): ?string;
 
     /**
+     * Whether the alt text in that language was suggested by the AI assistant and no person has checked it yet:
+     * pages that show it can't be published until someone does.
+     */
+    public function isAltSuggested(string $locale): bool;
+
+    /**
      * The caption written for the file in one language, if any.
      */
     public function caption(string $locale): ?string;

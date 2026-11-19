@@ -59,5 +59,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0039](0039-dashboard-widgets-and-the-analytics-screen.md) | Dashboard widgets drawn by the admin, and the Analytics screen | Proposed |
 | [0040](0040-assistant-providers-keys-and-budget.md) | AI assistant: providers over the shared HTTP client, keys, budget and limits | Proposed |
 | [0041](0041-assistant-panel-suggest-buttons-and-insert.md) | AI assistant: the settings screen, the panel, Suggest buttons and Insert without JavaScript | Proposed |
+| [0042](0042-assistant-drafting-tasks-and-unchecked-alt-text.md) | AI assistant: drafting tasks, checked output, and alt text that needs a person | Proposed |
 
 When an ADR's status changes, update it here too.

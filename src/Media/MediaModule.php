@@ -9,6 +9,7 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageManagerInterface;
 use SightPress\Core\Media\Contract\MediaFormats;
 use SightPress\Core\Media\Contract\MediaLibrary;
+use SightPress\Core\Media\Contract\MediaPictures;
 use SightPress\Core\Media\Contract\MediaUrlGenerator;
 use SightPress\Core\Http\Upload\RequestTooLargeHandler;
 use SightPress\Core\Media\Command\SystemCheckCommand;
@@ -54,6 +55,7 @@ final class MediaModule implements ModuleInterface
         $services->autowire(MediaRepository::class, MediaLibrary::class, public: true);
         $services->autowire(MediaTypes::class, MediaFormats::class, public: true);
         $services->autowire(MediaUploader::class, public: true);
+        $services->autowire(MediaPictureReader::class, MediaPictures::class, public: true);
         $services->autowire(UploadAllowance::class, public: true);
         $services->autowire(RequestTooLargeHandler::class);
         $registrar->commands()->add(SystemCheckCommand::class);

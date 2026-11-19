@@ -1,7 +1,8 @@
 {#
     What the publish checks found, as lists of links to the fields and blocks they are about (ids from
     PublishIssue::anchor()). Errors stop publishing; warnings don't. Context: `report` (PublishReport), optional
-    `focus` (true right after a refused "Publish": the report gets focus, like an error summary).
+    `focus` (true right after a refused "Publish": the report gets focus, like an error summary). With the AI
+    assistant on (`assistant`), each check has "Explain this", which asks the assistant what it means.
 #}
 {%- set errors = report.errors -%}
 {%- set warnings = report.warnings -%}
@@ -21,7 +22,18 @@
     <ul>
         {%- for issue in group.issues %}
         <li><a href="#{{ issue.anchor }}"><span class="visually-hidden">{{ group.label }} </span>{{ t(issue.message) }}</a>
-            <span class="publish-report__where">({{ issue.languageName(current_locale()) }}{% if issue.wcag is not empty %}, WCAG {{ issue.wcag|join(', ') }}{% endif %})</span></li>
+            <span class="publish-report__where">({{ issue.languageName(current_locale()) }}{% if issue.wcag is not empty %}, WCAG {{ issue.wcag|join(', ') }}{% endif %})</span>
+            {%- if (assistant ?? null) and 'explain_check' in assistant.tasks %}
+            <form action="/admin/assistant/ask" method="post" class="assistant-explain" data-assistant-ask>
+                {{ csrf_fields() }}
+                <input type="hidden" name="task" value="explain_check">
+                <input type="hidden" name="text" value="{{ t(issue.message) }}">
+                <input type="hidden" name="screen" value="page_editor">
+                <input type="hidden" name="return" value="{{ assistant.return }}">
+                {%- if assistant.page %}<input type="hidden" name="page" value="{{ assistant.page }}"><input type="hidden" name="locale" value="{{ assistant.locale }}">{% endif %}
+                <button type="submit" class="button button--secondary">{{ t('Explain this') }}<span class="visually-hidden"> {{ t('check: {check}', {check: t(issue.message)}) }}</span></button>
+            </form>
+            {%- endif %}</li>
         {%- endfor %}
     </ul>
     {%- endif %}

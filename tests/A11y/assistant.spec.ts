@@ -121,6 +121,46 @@ test('a question on the dashboard gets an answer, and errors are announced', asy
   await expect(panel.getByRole('heading', { name: 'The assistant’s answer' })).toHaveCount(0);
 });
 
+test('a picture gets alt text from the assistant, which stays marked until someone checks it', async ({ page }) => {
+  await ready(page);
+  const id = await (await page.request.get(`${SITE}/_test/picture`)).text();
+  await signIn(page, SITE, 'bea@example.org', `/admin/media/${id}`);
+  await page.waitForLoadState('load');
+  await page.getByRole('button', { name: 'Suggest alt text' }).press('Enter');
+  const panel = page.getByRole('complementary', { name: 'Ask the assistant' });
+  await expect(panel.getByRole('heading', { name: 'Suggestion for “Alt text”' })).toBeFocused();
+  await panel.getByRole('button', { name: 'Insert' }).press('Enter');
+  const alt = page.getByLabel('Alt text (optional)');
+  await expect(alt).toBeFocused();
+  await expect(alt).toHaveValue('A reading room with tall windows and children reading on cushions.');
+  await page.getByRole('button', { name: 'Save details' }).press('Enter');
+  await expect(page.getByText('The AI assistant suggested this alt text.')).toBeVisible();
+  await expectNoViolations(page);
+
+  await page.getByRole('checkbox', { name: 'I checked the alt text: it describes the picture' }).check();
+  await page.getByRole('button', { name: 'Save details' }).press('Enter');
+  await expect(page.getByText('The AI assistant suggested this alt text.')).toHaveCount(0);
+});
+
+test('an editor drafts a page, adds the draft, and asks about a publish check', async ({ page }) => {
+  await ready(page);
+  await signIn(page, SITE, 'bea@example.org', '/admin');
+  const path = await volunteerPage(page);
+  await page.goto(`${SITE}${path}`);
+  const panel = page.getByRole('complementary', { name: 'Ask the assistant' });
+  await panel.getByLabel('What should the page say?').fill('A page about our book club.');
+  await panel.getByRole('button', { name: 'Draft this page' }).press('Enter');
+  await expect(panel.getByRole('heading', { name: 'Draft of the page' })).toBeFocused();
+  await expectNotLive(page, 'Join our book club');
+  await panel.getByRole('button', { name: 'Add to the end of the page' }).press('Enter');
+  await expect(page.getByRole('status').first()).toHaveText('The draft is at the end of the page’s blocks. Check it, then save.');
+  await expect(page.locator('input[value="Join our book club"]')).toHaveCount(1);
+
+  await page.getByRole('button', { name: /^Explain this check: / }).first().press('Enter');
+  await expect(panel.getByRole('heading', { name: 'About this check' })).toBeFocused();
+  await expectNoViolations(page);
+});
+
 test('the screens pass axe in forced colours and at 320 px', async ({ page }) => {
   await ready(page);
   await signIn(page, SITE, 'ada@example.org', '/admin/assistant');

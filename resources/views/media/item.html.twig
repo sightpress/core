@@ -1,7 +1,9 @@
 {#
     One file of the media library (/admin/media/{id}): a preview (pictures with their alt text, video and audio with
-    native controls), what it is, its address, and the details form. Context: `media`, `form`, `url`, `preview`,
-    `type`, `size`, `alt`, `can_delete`, `can_publish`.
+    native controls), what it is, its address, and the details form. With the AI assistant on, each alt text field
+    has "Suggest alt text"; alt text the assistant suggested carries a hidden copy of the suggestion and an "I checked
+    it" checkbox, and the panel follows the form. Context: `media`, `form`, `url`, `preview`, `type`, `size`, `alt`,
+    `can_delete`, `can_publish`, `suggestions`, `languages`, `assistant`, `assistant_screen`.
 #}
 {% extends '@admin/layout.html.twig' %}
 {% import 'form/macros.html.twig' as f %}
@@ -38,11 +40,32 @@
     {{ f.start(form, '/admin/media/' ~ media.id) }}
         {%- for field in form.fields %}
         {{ f.field(form, field.name) }}
+        {%- if field.name starts with 'alt_' %}
+        {%- set n = field.name|slice(4) %}
+        {%- set many = (languages ?? [])|length > 1 %}
+        <input type="hidden" name="alt_suggestion_{{ n }}" id="alt-suggestion-{{ n }}" value="{{ (suggestions ?? [])[n] ?? '' }}">
+        {%- if (suggestions ?? [])[n] is defined %}
+        <div class="field field--checkbox">
+            <p class="field-hint" id="details-alt-checked-{{ n }}-hint">{{ t('The AI assistant suggested this alt text. Pages that show it can’t be published until someone checks it.') }}</p>
+            <input type="checkbox" id="details-alt-checked-{{ n }}" name="alt_checked_{{ n }}" value="1" aria-describedby="details-alt-checked-{{ n }}-hint">
+            <label for="details-alt-checked-{{ n }}">{{ many ? t('I checked the alt text in {language}: it describes the picture', {language: languages[n]}) : t('I checked the alt text: it describes the picture') }}</label>
+        </div>
+        {%- endif %}
+        {%- if (assistant ?? null) and assistant.suggest.alt is defined %}
+        <p class="assistant-suggest">
+            <button type="submit" form="assistant-suggest" name="field" value="alt_{{ n }}" class="button button--secondary" data-assistant-target="details-alt-{{ n }}" data-assistant-suggestion="alt-suggestion-{{ n }}">{{ many ? t('Suggest alt text in {language}', {language: languages[n]}) : t('Suggest alt text') }}</button>
+        </p>
+        {%- endif %}
+        {%- endif %}
         {%- endfor %}
         {{ f.submit(t('Save details')) }}
     {{ f.end() }}
 </section>
+{%- if assistant ?? null %}
+{% include '@assistant/panel.html.twig' %}
+{%- endif %}
 {%- if can_delete %}
 <p><a href="/admin/media/{{ media.id }}/delete">{{ t('Delete this file') }}</a></p>
 {%- endif %}
 {% endblock %}
+{% block scripts %}{{ parent() }}{% if assistant ?? null %}<script src="{{ asset('js/assistant.js') }}" defer></script>{% endif %}{% endblock %}

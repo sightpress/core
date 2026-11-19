@@ -21,7 +21,13 @@ use SightPress\Core\Assistant\Provider\AnthropicProvider;
 use SightPress\Core\Assistant\Provider\MistralProvider;
 use SightPress\Core\Assistant\Provider\OpenAiCompatibleProvider;
 use SightPress\Core\Assistant\Provider\OpenAiProvider;
+use SightPress\Core\Assistant\Task\AltTextTask;
 use SightPress\Core\Assistant\Task\AskTask;
+use SightPress\Core\Assistant\Task\DraftPageTask;
+use SightPress\Core\Assistant\Task\ExplainCheckTask;
+use SightPress\Core\Assistant\Task\RewriteTask;
+use SightPress\Core\Assistant\Task\SeoMetaTask;
+use SightPress\Core\Assistant\Task\SummaryTask;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleRegistry;
@@ -37,7 +43,7 @@ final class AssistantModuleTest extends TestCase
     {
         $manifest = new AssistantModule()->manifest();
         self::assertSame(['assistant', false, false], [$manifest->id, $manifest->required, $manifest->enabledByDefault]);
-        self::assertSame(['site', 'rbac', 'admin', 'page'], array_map(static fn ($requirement) => $requirement->moduleId, $manifest->requires));
+        self::assertSame(['site', 'rbac', 'admin', 'page', 'block', 'media'], array_map(static fn ($requirement) => $requirement->moduleId, $manifest->requires));
 
         $candidates = array_values(array_filter(CoreModules::candidates(), static fn ($candidate) => $candidate->module instanceof AssistantModule));
         self::assertSame('AI assistant', $candidates[0]->about['assistant']->name);
@@ -53,7 +59,7 @@ final class AssistantModuleTest extends TestCase
             [AnthropicProvider::class, OpenAiProvider::class, MistralProvider::class, OpenAiCompatibleProvider::class],
             array_map(static fn ($p) => $p->item, $registry->assistantProviders()),
         );
-        self::assertSame([AskTask::class], array_map(static fn ($t) => $t->item, $registry->assistantTasks()));
+        self::assertSame([AskTask::class, SummaryTask::class, SeoMetaTask::class, RewriteTask::class, DraftPageTask::class, ExplainCheckTask::class, AltTextTask::class], array_map(static fn ($t) => $t->item, $registry->assistantTasks()));
         $permissions = array_values(array_filter($registry->permissions(), static fn ($p) => $p->module === 'assistant'));
         self::assertSame(
             [['assistant.use', ['admin', 'editor', 'contributor'], true], ['assistant.manage', ['admin'], false]],
