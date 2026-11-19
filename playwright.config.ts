@@ -53,6 +53,14 @@ export default defineConfig({
       stdout: 'ignore',
       stderr: 'ignore',
     },
+    // A members-only copy of the demo site, for the crawl (crawl.spec.ts): nothing is reachable or indexable signed out.
+    {
+      command: 'SIGHTPRESS_A11Y_SITE=members php -S 127.0.0.1:8073 tests/A11y/demo/index.php',
+      url: 'http://127.0.0.1:8073/robots.txt',
+      reuseExistingServer: !process.env.CI,
+      stdout: 'ignore',
+      stderr: 'ignore',
+    },
     // A second copy of the demo site, with its test mailbox, for the journeys from start to finish (journeys.spec.ts).
     {
       command: 'SIGHTPRESS_A11Y_SITE=journeys php -S 127.0.0.1:8086 tests/A11y/demo/index.php',

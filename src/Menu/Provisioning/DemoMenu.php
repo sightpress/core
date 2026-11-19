@@ -10,7 +10,8 @@ use SightPress\Core\Menu\MenuEditor;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 
 /**
- * Demo content, step 4 of 4: the demo page in the main menu, with the page under it one level down.
+ * Demo content, step 4 of 4: the demo page in the main menu, with the page under it one level down, and the page for
+ * members only (shown only to people who are signed in).
  */
 final readonly class DemoMenu
 {
@@ -27,6 +28,10 @@ final readonly class DemoMenu
         $subpage = $event->shared('demo.subpage');
         if ($subpage !== null) {
             $menus->add(MenuName::Main, $subpage, actorId: $event->adminId(), parent: $item);
+        }
+        $members = $event->shared('demo.members');
+        if ($members !== null) {
+            $menus->add(MenuName::Main, $members, actorId: $event->adminId());
         }
     }
 }

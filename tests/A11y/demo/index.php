@@ -12,9 +12,12 @@
  * `/_test/reset` starts again from a fresh site.
  *
  * Copies: the environment variable SIGHTPRESS_A11Y_SITE names a copy with its own folder (default `demo`, the crawl's
- * site on port 8087; `journeys` on port 8086 for tests/A11y/journeys.spec.ts; `search` on port 8074 for
- * tests/A11y/search.spec.ts), so specs never reset each other's site. Its search index is built after site:create.
+ * site on port 8087, written in en-GB, pt-PT and he; `journeys` on port 8086 for tests/A11y/journeys.spec.ts, in en-GB
+ * and pt-PT; `search` on port 8074 for tests/A11y/search.spec.ts; `members` on port 8073, a members-only site for the
+ * crawl), so specs never reset each other's site. Sign-up is open on `demo` and `journeys`. Its search index is built after site:create.
  * The site's address uses the port it is served on.
+ *
+ * `/_test/schedule` runs `schedule:run` once and answers with what it printed.
  *
  * Test mailbox: instead of sending email, the site keeps every message in its folder. `/_test/mail?to=…` answers
  * with the latest message to that address as JSON (subject, text and HTML body), or 404 when there is none.
@@ -25,7 +28,10 @@ declare(strict_types=1);
 use SightPress\Core\Auth\PasswordHasher;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Mail\MailSender;
+use SightPress\Core\Auth\Contract\SignUp;
 use SightPress\Core\Kernel;
+use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\Contract\SiteVisibility;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\User\UserRepository;
@@ -39,7 +45,14 @@ const SECRET = 'a11y-secret-0123456789abcdef0123456789abcdef';
 const PASSWORD = 'Correct horse battery staple 7!';
 
 $copy = getenv('SIGHTPRESS_A11Y_SITE');
-$project = sys_get_temp_dir() . '/sightpress-a11y-' . (is_string($copy) && preg_match('/^[a-z]+$/', $copy) === 1 ? $copy : 'demo');
+$copy = is_string($copy) && preg_match('/^[a-z]+$/', $copy) === 1 ? $copy : 'demo';
+$project = sys_get_temp_dir() . '/sightpress-a11y-' . $copy;
+// The crawl's site is written in three languages, one of them right to left; the journeys' site in two.
+$locales = match ($copy) {
+    'demo' => 'en-GB,pt-PT,he',
+    'journeys' => 'en-GB,pt-PT',
+    default => 'en-GB',
+};
 $port = is_numeric($_SERVER['SERVER_PORT'] ?? null) ? (int) $_SERVER['SERVER_PORT'] : 8087;
 $mailbox = $project . '/mail';
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
@@ -73,7 +86,7 @@ if (!is_file($project . '/config/sites.php')) {
         '--domain' => '127.0.0.1',
         '--db' => 'sqlite:///' . $project . '/demo.sqlite',
         '--owner-type' => 'organization',
-        '--locale' => 'en-GB',
+        '--locale' => $locales,
         '--name' => 'Riverside Library',
         '--url' => 'http://127.0.0.1:' . $port,
         '--admin-email' => 'ada@example.org',
@@ -90,13 +103,34 @@ if (!is_file($project . '/config/sites.php')) {
         throw new RuntimeException('site:search:reindex failed: ' . $output->fetch());
     }
     $site = Services::get($kernel->container(), SiteRepository::class)->find('demo') ?? throw new LogicException('No site.');
-    $users = Services::get(Services::get($kernel->container(), SiteContainerFactory::class)->forSite($site), UserRepository::class);
+    $services = Services::get($kernel->container(), SiteContainerFactory::class)->forSite($site);
+    $settings = Services::get($services, SiteSettings::class);
+    // People may sign up on the crawl's and the journeys' sites; the `members` copy is a members-only site.
+    if (in_array($copy, ['demo', 'journeys'], true)) {
+        $settings->set(SignUp::SETTING, '1');
+    }
+    if ($copy === 'members') {
+        $settings->set(SiteVisibility::SETTING, SiteVisibility::MEMBERS);
+    }
+    $users = Services::get($services, UserRepository::class);
     $hash = new PasswordHasher(['memory_cost' => 8, 'time_cost' => 1, 'threads' => 1])->hash(PASSWORD);
     foreach (['ada', 'bea', 'cleo', 'max'] as $name) {
         $user = $users->findByEmail($name . '@example.org') ?? throw new LogicException($name . ' is missing.');
         $user->setPasswordHash($hash, new DateTimeImmutable());
         $users->save($user);
     }
+}
+
+// Runs `schedule:run` once (P-3), as the scheduler would, and answers with what it printed.
+if ($path === '/_test/schedule') {
+    $console = Kernel::boot($project, $environment)->console();
+    $console->setAutoExit(false);
+    $status = $console->run(new ArrayInput(['command' => 'schedule:run', '--no-interaction' => true]), $output = new BufferedOutput());
+    header('Content-Type: text/plain; charset=utf-8');
+    http_response_code($status === 0 ? 200 : 500);
+    echo $output->fetch();
+
+    return;
 }
 
 if ($path === '/_test/mail') {

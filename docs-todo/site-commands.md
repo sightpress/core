@@ -99,7 +99,12 @@ to check). After the starter pages and menus it adds:
    prints like the first admin's.
 3. A published page "Every kind of block" at `/every-block`, with one block of every kind core has, and a published
    page under it (`/every-block/under`) written by Cleo.
-4. Both pages in the main menu, the second one level down.
+4. A published page "For members" (`/for-members`) that only signed-in people can read, a page "Old news" in the
+   trash (`/old-news` answers "gone") and a redirect from `/visit` to `/every-block`.
+5. On a site in several languages (`--locale=en-GB,pt-PT,he`), these pages copied into every other language and
+   published there, as "Translate from" starts them (the text is still to translate).
+6. The demo pages and "For members" in the main menu (the page under it one level down); "For members" shows only to
+   people who are signed in.
 
 The `example.org` addresses can't receive email; give the printed codes to whoever tries the site out.
 

@@ -25,6 +25,7 @@ use SightPress\Core\Menu\MenuEditor;
 use SightPress\Core\Menu\MenuNode;
 use SightPress\Core\Menu\Provisioning\DemoMenu;
 use SightPress\Core\Page\PageEditor;
+use SightPress\Core\Page\PageRedirects;
 use SightPress\Core\Page\PageRepository;
 use SightPress\Core\Page\Provisioning\DemoPages;
 use SightPress\Core\Rbac\Contract\PageState;
@@ -112,10 +113,24 @@ final class DemoContentTest extends TestCase
         $subpage = $this->pages->repository()->find((int) $event->shared('demo.subpage'));
         self::assertSame(['every-block/under', $event->shared('demo.contributor')], [$subpage?->translation('en-GB')?->path(), $subpage?->authorId()]);
 
+        $members = $this->pages->repository()->find((int) $event->shared('demo.members'));
+        self::assertSame([PageState::Published, false, 'for-members'], [$members?->state(), $members?->isPublic(), $members?->translation('en-GB')?->path()]);
+        $old = $this->pages->repository()->findByPath('en-GB', 'old-news');
+        self::assertSame(PageState::Trash, $old?->page()->state());
+        foreach ([$page, $subpage, $members] as $translated) {
+            self::assertTrue($translated?->translation('pt-PT')?->isPublished(), 'copied into pt-PT and published there');
+        }
+        self::assertSame('every-block/under', $subpage?->translation('pt-PT')?->path());
+        self::assertSame('every-block', $this->pages->redirects()->find('en-GB', 'visit')?->target());
+
         $main = $this->menus->tree(MenuName::Main);
-        self::assertSame([$page->id()], array_map(static fn (MenuNode $node) => $node->item->pageId(), $main));
-        self::assertSame([$subpage?->id()], array_map(static fn (MenuNode $node) => $node->item->pageId(), $main[0]->children));
-        self::assertSame('Added the demo page "Every kind of block" (/every-block) and a page under it.', $event->lines()[4]);
+        self::assertSame([$page->id(), $members?->id()], array_map(static fn (MenuNode $node) => $node->item->pageId(), $main));
+        self::assertSame([$subpage->id()], array_map(static fn (MenuNode $node) => $node->item->pageId(), $main[0]->children));
+        self::assertSame([
+            'Added the demo page "Every kind of block" (/every-block) and a page under it.',
+            'Added a page for members only (/for-members), a page in the trash (/old-news) and a redirect from /visit to /every-block.',
+            'Copied the demo pages into pt-PT and published them there, to translate.',
+        ], array_slice($event->lines(), 4));
     }
 
     public function testPagesNeedTheirMediaAndAMissingFileIsSaid(): void
@@ -147,6 +162,7 @@ final class DemoContentTest extends TestCase
             VerificationCodes::class => $auth->codes(),
             PageEditor::class => $this->pages->editor(),
             PageRepository::class => $this->pages->repository(),
+            PageRedirects::class => $this->pages->redirects(),
             ClockInterface::class => $this->pages->clock,
             MenuEditor::class => $this->menus,
         ]), new FirstAdmin('ada@example.org', 'Ada', 'Lovelace'), 'https://demo.example', $demo);

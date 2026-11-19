@@ -8,13 +8,17 @@ use Psr\Clock\ClockInterface;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
+use SightPress\Core\Page\PageRedirects;
 use SightPress\Core\Page\PageRepository;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 
 /**
  * Demo content, step 3 of 4: a published page with one block of every kind core has, using the demo media files,
- * and a published page under it written by the demo contributor. Shares `demo.page` and `demo.subpage`.
+ * and a published page under it written by the demo contributor; a published page for members only, a page in the
+ * trash and a redirect (`/visit` → `/every-block`). On a site in several languages, these pages are copied into every
+ * other language and published there, so the demo has translations (as "Translate from" starts them: to translate).
+ * Shares `demo.page`, `demo.subpage` and `demo.members`.
  */
 final readonly class DemoPages
 {
@@ -73,9 +77,43 @@ final readonly class DemoPages
             [$text('<p>Pages can sit under other pages; their addresses follow.</p>')],
         ), $page, $event->shared('demo.contributor'));
         $subpage->changeState(PageState::Published, $now);
+        $members = $editor->create($locale, new PageContent(
+            'For members',
+            'for-members',
+            'A demo page that only people with an account can read, once they sign in.',
+            'A demo page for members only.',
+            [$text('<p>Only people with an account on this site can read this page, once they sign in.</p>')],
+        ), null, $event->adminId());
+        $members->setPublic(false, $now);
+        $members->changeState(PageState::Published, $now);
+        $old = $editor->create($locale, new PageContent(
+            'Old news',
+            'old-news',
+            'A demo page in the trash: its address tells visitors it is gone.',
+            'A demo page in the trash.',
+            [$text('<p>This page is in the trash.</p>')],
+        ), null, $event->adminId());
+        $old->changeState(PageState::Trash, $now);
         Services::get($event->services, PageRepository::class)->flush();
+        $translated = [];
+        foreach ($event->site->locales as $other) {
+            if ($other === $locale) {
+                continue;
+            }
+            foreach ([$page, $subpage, $members] as $demo) {
+                $editor->translate($demo, $other, $locale, $event->adminId());
+                $editor->publishTranslation($demo, $other, true, $event->adminId());
+            }
+            $translated[] = $other;
+        }
+        Services::get($event->services, PageRedirects::class)->add($locale, '/visit', '/every-block', $event->adminId());
         $event->share('demo.page', (int) $page->id());
         $event->share('demo.subpage', (int) $subpage->id());
+        $event->share('demo.members', (int) $members->id());
         $event->report('Added the demo page "Every kind of block" (/every-block) and a page under it.');
+        $event->report('Added a page for members only (/for-members), a page in the trash (/old-news) and a redirect from /visit to /every-block.');
+        if ($translated !== []) {
+            $event->report(sprintf('Copied the demo pages into %s and published them there, to translate.', implode(', ', $translated)));
+        }
     }
 }
