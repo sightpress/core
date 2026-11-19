@@ -10,6 +10,8 @@ use Intervention\Image\Interfaces\ImageManagerInterface;
 use SightPress\Core\Media\Contract\MediaFormats;
 use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Contract\MediaUrlGenerator;
+use SightPress\Core\Http\Upload\RequestTooLargeHandler;
+use SightPress\Core\Media\Command\SystemCheckCommand;
 use SightPress\Core\Media\Http\MediaFileHandler;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
@@ -22,6 +24,10 @@ use SightPress\Module\Routing\Route;
  * checks, cleans and stores uploads, and `/media/…`, which serves the files ({@see MediaFileHandler}; addresses come
  * from the public {@see MediaUrlGenerator}). Always on. Its permissions (`media.upload`, `media.publish`) are in core's
  * catalogue.
+ *
+ * Uploads can't be larger than the server lets one request carry: {@see UploadAllowance} gives the largest file of
+ * each kind, {@see \SightPress\Core\Http\Upload\ServerLimitsCheck} the server settings to change (shown to admins and by `system:check`), and
+ * `/_sightpress/request-too-large` is the page the web server shows when it refuses a request for its size.
  */
 final class MediaModule implements ModuleInterface
 {
@@ -48,11 +54,15 @@ final class MediaModule implements ModuleInterface
         $services->autowire(MediaRepository::class, MediaLibrary::class, public: true);
         $services->autowire(MediaTypes::class, MediaFormats::class, public: true);
         $services->autowire(MediaUploader::class, public: true);
+        $services->autowire(UploadAllowance::class, public: true);
+        $services->autowire(RequestTooLargeHandler::class);
+        $registrar->commands()->add(SystemCheckCommand::class);
         $services->autowire(OriginMediaUrlGenerator::class, MediaUrlGenerator::class, public: true);
         $services->autowire(MediaAccess::class);
         $services->autowire(MediaFileHandler::class);
 
         $routes = $registrar->routes();
+        $routes->add(new Route('media.request_too_large', RequestTooLargeHandler::PATH, RequestTooLargeHandler::class, ['GET', 'HEAD']));
         $routes->add(new Route(
             'media.file',
             OriginMediaUrlGenerator::PREFIX . '{' . MediaFileHandler::KEY_ATTRIBUTE . ':[0-9a-f]{32}}/{' . MediaFileHandler::NAME_ATTRIBUTE . '}',

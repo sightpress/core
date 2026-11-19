@@ -7,6 +7,7 @@ namespace SightPress\Core\Tenant;
 use DateTimeZone;
 use Monolog\Level;
 use SensitiveParameter;
+use SightPress\Core\Http\Upload\IniSize;
 
 /**
  * The tenant's settings: one install of SightPress, read once per process from `config/tenant.php` and the
@@ -35,6 +36,9 @@ final readonly class TenantConfig
      *                                            in place of the module's own default
      * @param array<string, bool> $moduleLocks    `modules.locked`: module id => on or off for every site; the sites'
      *                                            admins can't change it ("Set by your organisation")
+     * @param positive-int|null $uploadProxyBodyLimit `uploads.proxy_body_limit`: the web server's request body limit
+     *                                            in bytes (nginx `client_max_body_size` …), which PHP can't read;
+     *                                            null when not stated
      */
     public function __construct(
         public string $projectDir,
@@ -55,6 +59,7 @@ final readonly class TenantConfig
         public string $mailFromName = 'SightPress',
         public array $moduleDefaults = [],
         public array $moduleLocks = [],
+        public ?int $uploadProxyBodyLimit = null,
     ) {
     }
 
@@ -76,6 +81,7 @@ final readonly class TenantConfig
         $session = self::section($config, 'session');
         $mail = self::section($config, 'mail');
         $modules = self::section($config, 'modules');
+        $uploads = self::section($config, 'uploads');
         $dsn = trim($environment['MAILER_DSN'] ?? '');
 
         return new self(
@@ -97,6 +103,7 @@ final readonly class TenantConfig
             mailFromName: self::string($mail, 'from_name', 'mail.from_name', 'SightPress'),
             moduleDefaults: self::switches($modules, 'defaults'),
             moduleLocks: self::switches($modules, 'locked'),
+            uploadProxyBodyLimit: self::bodyLimit($uploads),
         );
     }
 
@@ -153,6 +160,34 @@ final readonly class TenantConfig
 
         /** @var array<string, bool> $switches */
         return $switches;
+    }
+
+    /**
+     * `uploads.proxy_body_limit`: bytes, or a size the way php.ini writes it (`65M`, `1G`); null or `''` when the web
+     * server's limit isn't known.
+     *
+     * @param array<mixed> $uploads
+     *
+     * @return positive-int|null
+     */
+    private static function bodyLimit(array $uploads): ?int
+    {
+        $value = $uploads['proxy_body_limit'] ?? null;
+        if ($value === null || $value === '') {
+            return null;
+        }
+        $bytes = match (true) {
+            is_int($value) => $value,
+            is_string($value) && preg_match('/^\s*\d+\s*[kmg]?\s*$/i', $value) === 1 => IniSize::bytes($value),
+            default => null,
+        };
+        if ($bytes === null || $bytes < 1) {
+            throw new TenantConfigException(
+                'Tenant setting "uploads.proxy_body_limit" must be the web server\'s request body limit, in bytes or as a size such as 65M or 1G.',
+            );
+        }
+
+        return $bytes;
     }
 
     /**

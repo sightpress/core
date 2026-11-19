@@ -20,18 +20,25 @@ use SightPress\Core\Media\Entity\Media;
 use SightPress\Core\Media\MediaLimits;
 use SightPress\Core\Media\MediaRepository;
 use SightPress\Core\Media\MediaTypes;
+use SightPress\Core\Http\Upload\ServerLimitsCheck;
+use SightPress\Core\Media\UploadAllowance;
 use SightPress\Core\Tenant\Site;
 
 /**
  * `/admin/media`: the upload form (progress is announced by `js/media-upload.js`; without JavaScript the form is
  * sent the usual way) and the files, newest first, as a grid of cards or a data table. The chosen view is kept in
  * the session. Needs `media.upload`.
+ *
+ * The field's hint gives the largest file of each kind that can be uploaded ({@see UploadAllowance}), and the
+ * browser refuses a larger one before sending it. People who manage the settings also see the server settings that
+ * stop uploads from working ({@see ServerLimitsCheck}).
  */
 final readonly class MediaLibraryHandler implements RequestHandlerInterface
 {
     public const int PER_PAGE = 48;
     public const string VIEW_KEY = 'media.view';
     public const string ERROR_KEY = 'media.upload_error';
+    public const string SETTINGS = 'settings.manage';
 
     public function __construct(
         private AdminScreens $screens,
@@ -39,6 +46,8 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
         private MediaTypes $types,
         private MediaUrlGenerator $urls,
         private Site $site,
+        private UploadAllowance $allowance,
+        private ServerLimitsCheck $check,
     ) {
     }
 
@@ -48,14 +57,15 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
             'file',
             'File to upload',
             FieldType::File,
-            hint: new Message('{types} New files stay unpublished until an editor publishes them.', ['types' => $this->types->summary()]),
+            hint: new Message('{types} {sizes} New files stay unpublished until an editor publishes them.', ['types' => $this->types->summary(), 'sizes' => $this->allowance->summary()]),
             accept: $this->types->accept(),
+            maxBytes: $this->allowance->forBrowser(),
         ));
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        MediaAdmin::actor($request);
+        $actor = MediaAdmin::actor($request);
         $session = Session::fromRequest($request);
         $query = $request->getQueryParams();
         if (in_array($query['view'] ?? null, ['grid', 'list'], true)) {
@@ -92,6 +102,7 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
             'page' => $page,
             'pages' => $pages,
             'total' => $total,
+            'server_problems' => $actor->has(self::SETTINGS) ? $this->check->problems() : [],
         ], $error === null ? 200 : 422);
     }
 }

@@ -2,6 +2,7 @@
 {% block title %}{{ t('Dashboard') }}{% endblock %}
 {% block content %}
 <h1>{{ t('Dashboard') }}</h1>
+{% include '@admin/server-problems.html.twig' %}
 {%- if drafts is not null %}
 <section class="admin-panel" aria-labelledby="dashboard-drafts">
     <h2 id="dashboard-drafts">{{ t('Your drafts') }}</h2>

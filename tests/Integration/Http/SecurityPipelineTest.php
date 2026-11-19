@@ -67,6 +67,26 @@ final class SecurityPipelineTest extends TestCase
         self::assertSame('saved', (string) $saved->getBody());
     }
 
+    public function testARequestLargerThanPhpReadsGetsTheTooLargePageNotTheExpiredFormPage(): void
+    {
+        $limit = \SightPress\Core\Http\Upload\IniSize::bytes(ini_get('post_max_size'));
+        if ($limit === null) {
+            self::markTestSkipped('post_max_size has no limit here.');
+        }
+        $response = $this->kernel->handle(
+            new ServerRequest('POST', 'https://example.org/form', [
+                'Content-Length' => (string) ($limit + 1),
+                'Referer' => 'https://example.org/form',
+            ]),
+        );
+
+        self::assertSame(413, $response->getStatusCode());
+        $html = (string) $response->getBody();
+        self::assertStringContainsString('<h1>This is too large to send</h1>', $html);
+        self::assertStringContainsString('href="/form"', $html);
+        self::assertStringNotContainsString('This form has expired', $html);
+    }
+
     public function testAFormWithoutATokenGetsTheExpiredFormPage(): void
     {
         $response = $this->kernel->handle(

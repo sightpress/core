@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use SightPress\Core\Http\Upload\IniSize;
 use SightPress\Core\Tenant\Environment;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\TenantConfig;
@@ -17,6 +18,7 @@ use SightPress\Core\Tenant\TenantConfigException;
 #[CoversClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]
 #[UsesClass(LocaleCode::class)]
+#[UsesClass(IniSize::class)]
 final class TenantConfigTest extends TestCase
 {
     public function testEmptyConfigGetsDefaults(): void
@@ -122,6 +124,12 @@ final class TenantConfigTest extends TestCase
      */
     public static function invalidConfigs(): iterable
     {
+        $body = 'Tenant setting "uploads.proxy_body_limit" must be the web server\'s request body limit';
+        yield 'body limit in words' => [['uploads' => ['proxy_body_limit' => 'big']], [], '/srv', $body];
+        yield 'body limit zero' => [['uploads' => ['proxy_body_limit' => 0]], [], '/srv', $body];
+        yield 'body limit 0M' => [['uploads' => ['proxy_body_limit' => '0M']], [], '/srv', $body];
+        yield 'body limit list' => [['uploads' => ['proxy_body_limit' => [1]]], [], '/srv', $body];
+        yield 'uploads not a list' => [['uploads' => 'x'], [], '/srv', 'Tenant setting "uploads" must be an array.'];
         yield 'project dir' => [[], [], '/', 'The project folder must not be empty.'];
         yield 'section' => [['registry' => 'x'], [], '/srv', 'Tenant setting "registry" must be an array.'];
         yield 'string' => [['sites_dir' => ' '], [], '/srv', 'Tenant setting "sites_dir" must be a non-empty string.'];
@@ -176,6 +184,15 @@ final class TenantConfigTest extends TestCase
 
         self::assertSame([['acme.events' => false], ['analytics' => true]], [$config->moduleDefaults, $config->moduleLocks]);
         self::assertSame([[], []], [TenantConfig::fromArray([], '/srv')->moduleDefaults, TenantConfig::fromArray([], '/srv')->moduleLocks]);
+    }
+
+    public function testReadsTheWebServersBodyLimit(): void
+    {
+        self::assertNull(TenantConfig::fromArray([], '/srv')->uploadProxyBodyLimit);
+        self::assertNull(TenantConfig::fromArray(['uploads' => ['proxy_body_limit' => '']], '/srv')->uploadProxyBodyLimit);
+        self::assertSame(65 * 1024 * 1024, TenantConfig::fromArray(['uploads' => ['proxy_body_limit' => '65M']], '/srv')->uploadProxyBodyLimit);
+        self::assertSame(1024 ** 3, TenantConfig::fromArray(['uploads' => ['proxy_body_limit' => ' 1g ']], '/srv')->uploadProxyBodyLimit);
+        self::assertSame(1000, TenantConfig::fromArray(['uploads' => ['proxy_body_limit' => 1000]], '/srv')->uploadProxyBodyLimit);
     }
 
     /**

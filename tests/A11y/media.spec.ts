@@ -112,3 +112,33 @@ test('an editor publishes a file and deletes it after confirming', async ({ page
   await expect(page.getByRole('status')).toHaveText('dusk.png has been deleted.');
   await expect(page.getByText('There are no files yet. Upload one above.')).toBeVisible();
 });
+
+test('a file larger than the server accepts is refused in the browser, with the reason under the field', async ({ page }) => {
+  await signIn(page, ADMIN_SITE, 'cleo@example.org', '/admin/media');
+  const field = page.getByLabel('File to upload');
+  await expect(page.getByText(/Largest file you can upload: pictures \d+(\.\d)? [KMG]B, documents/)).toBeVisible();
+  const limits = JSON.parse((await field.getAttribute('data-max-bytes')) ?? '{}') as Record<string, number>;
+  expect(limits.image).toBeGreaterThan(0);
+
+  let sent = false;
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().endsWith('/admin/media/upload')) {
+      sent = true;
+    }
+  });
+  await field.setInputFiles({ name: 'huge.png', mimeType: 'image/png', buffer: Buffer.alloc(limits.image + 1) });
+  await page.getByRole('button', { name: 'Upload', exact: true }).click();
+
+  const error = page.locator('#upload-file-size-error');
+  await expect(error).toContainText(/^Error: huge\.png is too large \(.+\)\. Files of this type can be at most .+\.$/);
+  await expect(field).toBeFocused();
+  await expect(field).toHaveAttribute('aria-invalid', 'true');
+  await expect(field).toHaveAttribute('aria-describedby', /upload-file-size-error/);
+  expect(sent).toBe(false);
+  await expectNoViolations(page);
+
+  // Choosing another file takes the error away.
+  await field.setInputFiles({ name: 'dusk.png', mimeType: 'image/png', buffer: PNG });
+  await expect(error).toHaveCount(0);
+  await expect(field).not.toHaveAttribute('aria-invalid', 'true');
+});

@@ -6,6 +6,8 @@ namespace SightPress\Core\Http\Error;
 
 use SightPress\Core\Template\Message;
 use SightPress\Core\Http\Csrf\CsrfTokenMismatchException;
+use SightPress\Core\Http\Upload\RequestTooLargeException;
+use SightPress\Core\Media\MediaLimits;
 use Slim\Exception\HttpException;
 use Slim\Exception\HttpMethodNotAllowedException;
 use Throwable;
@@ -39,6 +41,16 @@ final readonly class ErrorCatalogue
                 'For your security, a form only works for a while after you open it, and only on this website.',
                 'Go back, reload the page and send the form again.',
             ]);
+        }
+
+        if ($exception instanceof RequestTooLargeException) {
+            return new ErrorPage(413, 'This is too large to send', [
+                $exception->limit === null
+                    ? 'The server didn’t accept something this large, so nothing was saved.'
+                    : new Message('The server accepts at most {size} at a time, so nothing was saved.', ['size' => MediaLimits::describe($exception->limit)]),
+                'If you were uploading a file, choose a smaller one. If you were saving a long page, go back and split it into shorter pages.',
+                'If you need to send something larger, ask the person who looks after this website.',
+            ], links: $exception->back === null ? [] : [$exception->back => 'Go back to the form']);
         }
 
         $status = $exception instanceof HttpException ? $exception->getCode() : 500;

@@ -114,7 +114,7 @@
                 {%- endfor %}
             </select>
             {%- elseif type == 'file' %}
-            <input type="file" id="{{ id }}"{% if field.accept %} accept="{{ field.accept }}"{% endif %} {{ common }}>
+            <input type="file" id="{{ id }}"{% if field.accept %} accept="{{ field.accept }}"{% endif %}{% if field.maxBytes is not null %} data-max-bytes="{{ field.maxBytes is iterable ? field.maxBytes|json_encode : field.maxBytes }}" data-size-error="{{ t('{name} is too large ({size}). Files of this type can be at most {max}.', {name: '{name}', size: '{size}', max: '{max}'}) }}" data-error-prefix="{{ t('Error:') }}"{% endif %} {{ common }}>
             {%- else %}
             <input type="{{ type }}" id="{{ id }}" value="{{ type == 'password' ? '' : value }}" {{ common }}>
             {%- endif %}

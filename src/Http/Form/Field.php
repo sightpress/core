@@ -31,6 +31,9 @@ final readonly class Field
      * @param string|null           $inputmode       `inputmode` hint for on-screen keyboards, for example `numeric`
      * @param bool                  $localeChoices   whether the choices are languages (values are locale codes, labels
      *                                               in that language): each option gets its `lang`
+     * @param int|array<string, int>|null $maxBytes  for a file field: the largest file, checked in the browser before
+     *                                               the form is sent; or limits by the start of the file's type
+     *                                               (`image`, `video`, `audio`, and `*` for the rest)
      */
     public function __construct(
         public string $name,
@@ -45,6 +48,7 @@ final readonly class Field
         public ?string $accept = null,
         public ?string $inputmode = null,
         public bool $localeChoices = false,
+        public int|array|null $maxBytes = null,
     ) {
         if (preg_match('/^[a-z][a-z0-9_]*$/', $name) !== 1) {
             throw new InvalidArgumentException(sprintf(

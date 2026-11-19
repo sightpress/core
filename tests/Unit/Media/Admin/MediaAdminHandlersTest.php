@@ -15,6 +15,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
+use SightPress\Core\Http\Upload\ServerLimits;
+use SightPress\Core\Http\Upload\ServerLimitsCheck;
 use SightPress\Core\Media\Admin\Http\MediaDeleteHandler;
 use SightPress\Core\Media\Admin\Http\MediaItemHandler;
 use SightPress\Core\Media\Admin\Http\MediaLibraryHandler;
@@ -24,6 +26,8 @@ use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\Entity\Media;
 use SightPress\Core\Media\MediaEditor;
 use SightPress\Core\Media\MediaFormat;
+use SightPress\Core\Media\MediaLimits;
+use SightPress\Core\Media\UploadAllowance;
 use SightPress\Core\Media\MediaTypes;
 use SightPress\Core\Media\OriginMediaUrlGenerator;
 use SightPress\Core\Rbac\Contract\Actor;
@@ -31,6 +35,7 @@ use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tests\Support\AdminFixture;
 use SightPress\Core\Tests\Support\MediaFixture;
 use SightPress\Core\Tests\Support\PageFixture;
+use SightPress\Core\Tests\Support\ServerLimitsFixture;
 use SightPress\Core\User\Entity\User;
 use Slim\Exception\HttpForbiddenException;
 use Slim\Exception\HttpNotFoundException;
@@ -315,9 +320,38 @@ final class MediaAdminHandlersTest extends TestCase
         $this->delete($this->cleo, $own, 'GET');
     }
 
-    private function library(User $actor, string $query = ''): ResponseInterface
+    public function testTheFieldSaysHowLargeAFileCanBeAndTheBrowserChecksIt(): void
     {
-        return new MediaLibraryHandler($this->admin->shell(), $this->media->repository(), new MediaTypes(), new OriginMediaUrlGenerator(), $this->admin->auth->site)
+        $html = (string) $this->library($this->cleo)->getBody();
+
+        self::assertStringContainsString('Largest file you can upload: pictures 20 MB, documents 50 MB, audio files 64 MB and videos 64 MB.', $html);
+        self::assertStringContainsString('data-max-bytes="{&quot;image&quot;:20971520,&quot;video&quot;:67108864,&quot;audio&quot;:67108864,&quot;*&quot;:52428800}"', $html);
+        self::assertStringContainsString('data-size-error="{name} is too large ({size}). Files of this type can be at most {max}." data-error-prefix="Error:"', $html);
+        self::assertStringNotContainsString('server-problems', $html);
+    }
+
+    public function testPeopleWhoManageTheSettingsSeeServerSettingsThatStopUploads(): void
+    {
+        $html = (string) $this->library($this->ada, '', ServerLimitsFixture::phpDefaults())->getBody();
+        self::assertStringContainsString('<h2 id="server-problems-title">Your server’s settings stop some uploads</h2>', $html);
+        self::assertStringContainsString('Largest file you can upload: pictures 2 MB, documents 2 MB, audio files 2 MB and videos 2 MB.', $html);
+
+        self::assertStringNotContainsString('server-problems', (string) $this->library($this->cleo, '', ServerLimitsFixture::phpDefaults())->getBody());
+    }
+
+    private function library(User $actor, string $query = '', ?ServerLimits $server = null): ResponseInterface
+    {
+        $server ??= ServerLimitsFixture::standard();
+
+        return new MediaLibraryHandler(
+            $this->admin->shell(),
+            $this->media->repository(),
+            new MediaTypes(),
+            new OriginMediaUrlGenerator(),
+            $this->admin->auth->site,
+            new UploadAllowance(new MediaLimits(), $server),
+            new ServerLimitsCheck(new MediaLimits(), $server),
+        )
             ->handle($this->request($actor, 'GET', MediaAdmin::PATH . $query));
     }
 

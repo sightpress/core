@@ -48,6 +48,10 @@
   .admin-main { padding-inline: var(--space-5); }
 }
 
+.server-problems { max-width: var(--font-measure); }
+.server-problems h2 { margin: 0 0 var(--space-2); font-size: var(--font-size-h3); color: var(--color-text); }
+.server-problems ul { margin: 0 0 var(--space-2); padding-inline-start: var(--space-4); }
+.server-problems li { margin-bottom: var(--space-1); color: var(--color-text); }
 .admin-panel { margin-bottom: var(--space-5); max-width: var(--font-measure); }
 .admin-list { padding-inline-start: var(--space-4); }
 .admin-list li { margin-bottom: var(--space-2); }

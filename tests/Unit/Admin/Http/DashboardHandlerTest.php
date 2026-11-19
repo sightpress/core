@@ -8,12 +8,16 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Admin\Http\DashboardHandler;
+use SightPress\Core\Http\Upload\ServerLimits;
+use SightPress\Core\Http\Upload\ServerLimitsCheck;
+use SightPress\Core\Media\MediaLimits;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageOverviewQuery;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Tests\Support\AdminFixture;
 use SightPress\Core\Tests\Support\PageFixture;
+use SightPress\Core\Tests\Support\ServerLimitsFixture;
 use SightPress\Core\User\Entity\User;
 
 #[CoversClass(DashboardHandler::class)]
@@ -73,12 +77,28 @@ final class DashboardHandlerTest extends TestCase
         self::assertStringNotContainsString('No pages are waiting for review.', $html);
     }
 
-    private function dashboard(User $user): string
+    public function testAdminsSeeServerSettingsThatStopUploads(): void
+    {
+        $ada = $this->admin->auth->user('ada@example.org', 'admin');
+        $cleo = $this->admin->auth->user('cleo@example.org', 'contributor');
+
+        $html = $this->dashboard($ada, ServerLimitsFixture::phpDefaults());
+        self::assertStringContainsString('<section class="alert alert--warning server-problems" aria-labelledby="server-problems-title">', $html);
+        self::assertStringContainsString('<h2 id="server-problems-title">Your server’s settings stop some uploads</h2>', $html);
+        self::assertStringContainsString('Files larger than 2 MB can’t be uploaded because of your server’s settings', $html);
+        self::assertStringContainsString('href="https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/"', $html);
+
+        self::assertStringNotContainsString('server-problems', $this->dashboard($cleo, ServerLimitsFixture::phpDefaults()), 'only for people who manage the settings');
+        self::assertStringNotContainsString('server-problems', $this->dashboard($ada), 'nothing to fix');
+    }
+
+    private function dashboard(User $user, ?ServerLimits $server = null): string
     {
         $handler = new DashboardHandler(
             $this->admin->shell(),
             new PageOverviewQuery($this->admin->auth->database->entityManager, $this->pages->site),
             $this->admin->auth->users,
+            new ServerLimitsCheck(new MediaLimits(), $server ?? ServerLimitsFixture::standard()),
         );
 
         return (string) $handler->handle($this->admin->request($user))->getBody();

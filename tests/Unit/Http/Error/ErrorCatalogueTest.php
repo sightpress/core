@@ -34,6 +34,8 @@ use Throwable;
 #[CoversClass(\SightPress\Core\Http\Error\NoAdminAccessException::class)]
 #[UsesNamespace('SightPress\Core\Template')]
 #[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesNamespace('SightPress\Core\Http\Upload')]
+#[UsesNamespace('SightPress\Core\Media')]
 final class ErrorCatalogueTest extends TestCase
 {
     public function testThePageForPeopleWithoutAdminAccessLinksToTheirAccount(): void
@@ -42,6 +44,21 @@ final class ErrorCatalogueTest extends TestCase
 
         self::assertTrue($page->homeLink);
         self::assertSame(['/account' => 'Go to My account'], Text::of($page->links));
+    }
+
+    public function testATooLargeRequestSaysHowMuchTheServerAcceptsAndLinksBack(): void
+    {
+        $request = new ServerRequest('POST', '/admin/media/upload');
+
+        $page = new ErrorCatalogue()->pageFor(new \SightPress\Core\Http\Upload\RequestTooLargeException($request, 64 * 1024 * 1024, '/admin/media'));
+        self::assertSame(413, $page->status);
+        self::assertSame('This is too large to send', (string) $page->title);
+        self::assertSame('The server accepts at most 64 MB at a time, so nothing was saved.', (string) $page->paragraphs[0]);
+        self::assertSame(['/admin/media' => 'Go back to the form'], Text::of($page->links));
+
+        $page = new ErrorCatalogue()->pageFor(new \SightPress\Core\Http\Upload\RequestTooLargeException($request));
+        self::assertSame('The server didn’t accept something this large, so nothing was saved.', (string) $page->paragraphs[0]);
+        self::assertSame([], $page->links);
     }
 
     /**

@@ -1639,6 +1639,12 @@
         <target>Ficheiros</target>
       </segment>
     </unit>
+    <unit id="5494cca4538b4b5e">
+      <segment>
+        <source>Files larger than {limit} can’t be uploaded because of your server’s settings, although the site accepts pictures up to {image} and documents up to {document}. Ask your hosting provider to raise {settings}.</source>
+        <target>Os ficheiros com mais de {limit} não podem ser carregados por causa das definições do seu servidor, embora o site aceite imagens até {image} e documentos até {document}. Peça ao seu fornecedor de alojamento que aumente {settings}.</target>
+      </segment>
+    </unit>
     <unit id="3c25aece102727cf">
       <segment>
         <source>Files, newest first ({count} in all)</source>
@@ -1891,6 +1897,12 @@
         <target>Como a administração lhe é mostrada. Não alteram o site que os seus visitantes veem.</target>
       </segment>
     </unit>
+    <unit id="a58ca1f73e05acfb">
+      <segment>
+        <source>How to fix upload size limits</source>
+        <target>Como corrigir os limites de tamanho dos carregamentos</target>
+      </segment>
+    </unit>
     <unit id="ed3bcecc81cdaa19">
       <segment state="initial">
         <source>If it was you, sign in with your email address and password. If you have forgotten your password, choose “Forgot your password?” on the sign-in page.</source>
@@ -1957,6 +1969,12 @@
         <target>Se fez esta alteração, não precisa de fazer nada.</target>
       </segment>
     </unit>
+    <unit id="e11be7652d5e4f28">
+      <segment>
+        <source>If you need to send something larger, ask the person who looks after this website.</source>
+        <target>Se precisar de enviar algo maior, pergunte à pessoa que gere este site.</target>
+      </segment>
+    </unit>
     <unit id="321c2c005347bbd2">
       <segment>
         <source>If you pasted the web address, check you copied the entire address.</source>
@@ -1973,6 +1991,12 @@
       <segment>
         <source>If you typed the web address, check it is correct.</source>
         <target>Se escreveu o endereço web, verifique se está correto.</target>
+      </segment>
+    </unit>
+    <unit id="0450e21082e73c45">
+      <segment>
+        <source>If you were uploading a file, choose a smaller one. If you were saving a long page, go back and split it into shorter pages.</source>
+        <target>Se estava a carregar um ficheiro, escolha um mais pequeno. Se estava a guardar uma página longa, volte atrás e divida-a em páginas mais curtas.</target>
       </segment>
     </unit>
     <unit id="f286776611ef7068">
@@ -2171,6 +2195,12 @@
       <segment>
         <source>Larger text</source>
         <target>Texto maior</target>
+      </segment>
+    </unit>
+    <unit id="599cee907358d69e">
+      <segment>
+        <source>Largest file you can upload: {sizes}.</source>
+        <target>Maior ficheiro que pode carregar: {sizes}.</target>
       </segment>
     </unit>
     <unit id="7b4888049459f04a">
@@ -4285,6 +4315,18 @@
         <target>A primeira versão neste idioma</target>
       </segment>
     </unit>
+    <unit id="baeee79188e5817c">
+      <segment>
+        <source>The folder for files being uploaded ({folder}) has only {free} free, so large files can fail. Free some space, or set upload_tmp_dir to a folder with more room.</source>
+        <target>A pasta dos ficheiros em carregamento ({folder}) só tem {free} livres, por isso os ficheiros grandes podem falhar. Liberte espaço ou defina upload_tmp_dir para uma pasta com mais espaço.</target>
+      </segment>
+    </unit>
+    <unit id="abadec6065ba02ab">
+      <segment>
+        <source>The folder for files being uploaded ({folder}) is missing or PHP can’t write to it, so no file can be uploaded. Set upload_tmp_dir to a folder PHP can write to.</source>
+        <target>A pasta dos ficheiros em carregamento ({folder}) não existe ou o PHP não consegue escrever nela, por isso não é possível carregar ficheiros. Defina upload_tmp_dir para uma pasta onde o PHP possa escrever.</target>
+      </segment>
+    </unit>
     <unit id="a801e94a2170e023">
       <segment>
         <source>The full address must be {max} characters or fewer.</source>
@@ -4585,6 +4627,36 @@
         <target>O esquema do tipo de bloco "{block_type}" usa {what} em "{at}", que o SightPress não suporta.</target>
       </segment>
     </unit>
+    <unit id="480ce1cede3d2027">
+      <segment>
+        <source>The server accepts at most {size} at a time, so nothing was saved.</source>
+        <target>O servidor aceita no máximo {size} de cada vez, por isso nada foi guardado.</target>
+      </segment>
+    </unit>
+    <unit id="09a6ab07ca1d16c1">
+      <segment>
+        <source>The server didn’t accept something this large, so nothing was saved.</source>
+        <target>O servidor não aceita algo tão grande, por isso nada foi guardado.</target>
+      </segment>
+    </unit>
+    <unit id="6f2ca070aa1d5632">
+      <segment>
+        <source>The server setting max_input_vars is {vars}, so saving a long page in the block editor can lose some of its content. Raise it to at least {needed}.</source>
+        <target>A definição do servidor max_input_vars é {vars}, por isso ao guardar uma página longa no editor de blocos pode perder-se parte do conteúdo. Aumente-a para pelo menos {needed}.</target>
+      </segment>
+    </unit>
+    <unit id="4f4caabef67e160b">
+      <segment>
+        <source>The server setting memory_limit ({memory}) is too low to resize pictures of up to {pixels} million pixels. Raise it to at least {needed}.</source>
+        <target>A definição do servidor memory_limit ({memory}) é demasiado baixa para redimensionar imagens até {pixels} milhões de píxeis. Aumente-a para pelo menos {needed}.</target>
+      </segment>
+    </unit>
+    <unit id="ee475d3ad652b523">
+      <segment>
+        <source>The server setting post_max_size ({post}) is smaller than upload_max_filesize ({upload}), so large files fail with a confusing error. Set post_max_size to at least {needed}.</source>
+        <target>A definição do servidor post_max_size ({post}) é menor do que upload_max_filesize ({upload}), por isso os ficheiros grandes falham com um erro confuso. Defina post_max_size para pelo menos {needed}.</target>
+      </segment>
+    </unit>
     <unit id="dc9927bece38cfc4">
       <segment>
         <source>The settings have been saved.</source>
@@ -4625,6 +4697,12 @@
       <segment>
         <source>The site</source>
         <target>O site</target>
+      </segment>
+    </unit>
+    <unit id="9bc6068c8f4511f0">
+      <segment>
+        <source>The site accepts {kind} up to {limit}, but the server’s settings limit them to {max}. Larger ones will be possible once files can be sent in parts.</source>
+        <target>O site aceita {kind} até {limit}, mas as definições do servidor limitam-nos a {max}. Será possível carregar maiores quando os ficheiros puderem ser enviados por partes.</target>
       </segment>
     </unit>
     <unit id="c5e1f6780776d1f5">
@@ -4745,6 +4823,18 @@
       <segment>
         <source>The video has no speech or important sounds, so it needs no captions</source>
         <target>O vídeo não tem fala nem sons importantes, por isso não precisa de legendas</target>
+      </segment>
+    </unit>
+    <unit id="3324277becdc4490">
+      <segment>
+        <source>The web server accepts at most {proxy} per request, less than PHP’s upload_max_filesize ({upload}) allows. Raise the web server’s limit (for nginx, client_max_body_size) to at least {needed}, and set uploads.proxy_body_limit in config/tenant.php to match.</source>
+        <target>O servidor web aceita no máximo {proxy} por pedido, menos do que o upload_max_filesize do PHP ({upload}) permite. Aumente o limite do servidor web (no nginx, client_max_body_size) para pelo menos {needed} e defina o mesmo valor em uploads.proxy_body_limit no config/tenant.php.</target>
+      </segment>
+    </unit>
+    <unit id="e5dca7495b786c4e">
+      <segment>
+        <source>The web server’s request body limit isn’t stated (uploads.proxy_body_limit in config/tenant.php), so it couldn’t be checked.</source>
+        <target>O limite do corpo dos pedidos do servidor web não está indicado (uploads.proxy_body_limit no config/tenant.php), por isso não foi possível verificá-lo.</target>
       </segment>
     </unit>
     <unit id="9dd80ea3cf8063b8">
@@ -5021,6 +5111,12 @@
       <segment>
         <source>This is the picture you uploaded.</source>
         <target>Esta é a imagem que carregou.</target>
+      </segment>
+    </unit>
+    <unit id="ff381797f091ec15">
+      <segment>
+        <source>This is too large to send</source>
+        <target>Isto é demasiado grande para enviar</target>
       </segment>
     </unit>
     <unit id="a5fa1f0ba99b488d">
@@ -6109,6 +6205,12 @@
         <target>A palavra-passe tem de incluir {missing}.</target>
       </segment>
     </unit>
+    <unit id="aedb9d526ca4a40a">
+      <segment>
+        <source>Your server’s settings stop some uploads</source>
+        <target>As definições do seu servidor impedem alguns carregamentos</target>
+      </segment>
+    </unit>
     <unit id="c94b294ced7192b9">
       <segment>
         <source>a capital letter</source>
@@ -6275,6 +6377,12 @@
       <segment>
         <source>text</source>
         <target>texto</target>
+      </segment>
+    </unit>
+    <unit id="c7b576e64e838802">
+      <segment>
+        <source>the web server’s limit (for nginx, client_max_body_size)</source>
+        <target>o limite do servidor web (no nginx, client_max_body_size)</target>
       </segment>
     </unit>
     <unit id="26760e7ce5a56f4b">
@@ -6457,6 +6565,12 @@
         <target>{item} foi alterado.</target>
       </segment>
     </unit>
+    <unit id="7a80a980d4831e06">
+      <segment>
+        <source>{kind} {size}</source>
+        <target>{kind} até {size}</target>
+      </segment>
+    </unit>
     <unit id="2ef556d642f8dbaf">
       <segment>
         <source>{language} (main language)</source>
@@ -6547,6 +6661,12 @@
         <target>{name} é definida pela sua organização, por isso não pode ser alterada para este site.</target>
       </segment>
     </unit>
+    <unit id="5283c10e150f1789">
+      <segment>
+        <source>{name} is too large ({size}). Files of this type can be at most {max}.</source>
+        <target>{name} é demasiado grande ({size}). Os ficheiros deste tipo podem ter no máximo {max}.</target>
+      </segment>
+    </unit>
     <unit id="c90811603d702279">
       <segment>
         <source>{name} needs {required}, which is off. Turn on {required} first.</source>
@@ -6613,10 +6733,16 @@
         <target>{noun} {index} de {value}</target>
       </segment>
     </unit>
-    <unit id="9845ce5c6fc18487">
+    <unit id="e3030205ac1e0386">
       <segment>
-        <source>{types} New files stay unpublished until an editor publishes them.</source>
-        <target>{types} Os ficheiros novos ficam por publicar até um editor os publicar.</target>
+        <source>{setting} to {value}</source>
+        <target>{setting} para {value}</target>
+      </segment>
+    </unit>
+    <unit id="ad22875b7e075a1e">
+      <segment>
+        <source>{types} {sizes} New files stay unpublished until an editor publishes them.</source>
+        <target>{types} {sizes} Os ficheiros novos ficam por publicar até um editor os publicar.</target>
       </segment>
     </unit>
     <unit id="85a85f231e56df24">

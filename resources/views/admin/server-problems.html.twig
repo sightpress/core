@@ -1,0 +1,18 @@
+{#
+    Server settings that stop uploads or saves from working (ServerLimitsCheck), for people who manage the settings,
+    on the dashboard and in the media library. A region named by its heading, so screen reader users
+    find it by landmark or heading; each problem names the setting and the value it needs. Context: `server_problems`.
+#}
+{%- if server_problems|default([]) is not empty %}
+<section class="alert alert--warning server-problems" aria-labelledby="server-problems-title">
+    <div>
+        <h2 id="server-problems-title">{{ t('Your server’s settings stop some uploads') }}</h2>
+        <ul>
+            {%- for problem in server_problems %}
+            <li>{{ t(problem) }}</li>
+            {%- endfor %}
+        </ul>
+        <p><a href="https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/">{{ t('How to fix upload size limits') }}</a></p>
+    </div>
+</section>
+{%- endif %}

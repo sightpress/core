@@ -55,8 +55,12 @@ final class MediaModuleTest extends TestCase
         self::assertSame(OriginMediaUrlGenerator::class, $registry->services()[MediaUrlGenerator::class]->item->class);
         self::assertArrayHasKey(MediaFileHandler::class, $registry->services());
         self::assertArrayHasKey(MediaAccess::class, $registry->services());
+        self::assertTrue($registry->services()[\SightPress\Core\Media\UploadAllowance::class]->item->public);
+        self::assertArrayHasKey(\SightPress\Core\Http\Upload\RequestTooLargeHandler::class, $registry->services());
+        self::assertContains(\SightPress\Core\Media\Command\SystemCheckCommand::class, array_map(static fn ($c) => $c->item, $registry->commands()));
         self::assertSame(
             [
+                ['media.request_too_large', '/_sightpress/request-too-large', ['GET', 'HEAD']],
                 ['media.file', '/media/{key:[0-9a-f]{32}}/{name}', ['GET', 'HEAD']],
                 ['media.variant', '/media/{key:[0-9a-f]{32}}/{width:\\d{1,5}}w/{name}', ['GET', 'HEAD']],
             ],

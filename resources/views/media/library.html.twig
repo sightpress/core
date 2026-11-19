@@ -1,8 +1,9 @@
 {#
     The admin's media library (/admin/media): the upload form, then the files as a grid of cards or a data table.
     Upload progress is shown in a <progress> and announced in a polite live region by js/media-upload.js; without
-    JavaScript the form is sent the usual way. Context: `form`, `items` ({media, path, thumbnail, type, size, alt}),
-    `view` (grid | list), `page`, `pages`, `total`.
+    JavaScript the form is sent the usual way. The field's hint gives the largest file of each kind, which the browser
+    also checks (site.js). Context: `form`, `items` ({media, path, thumbnail, type, size, alt}), `view` (grid | list),
+    `page`, `pages`, `total`, `server_problems` (for people who manage the settings).
 #}
 {% extends '@admin/layout.html.twig' %}
 {% import 'form/macros.html.twig' as f %}
@@ -10,6 +11,7 @@
 {% block title %}{{ t('Media') }}{% endblock %}
 {% block content %}
 <h1>{{ t('Media') }}</h1>
+{% include '@admin/server-problems.html.twig' %}
 <section class="admin-panel" aria-labelledby="media-upload-title">
     <h2 id="media-upload-title">{{ t('Upload a file') }}</h2>
     {{ f.error_summary(form) }}
