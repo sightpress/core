@@ -53,6 +53,13 @@ final class RedirectsHandlerTest extends TestCase
         self::assertStringContainsString('<th scope="col">Language</th>', $html);
     }
 
+    public function testTheOldAddressCanComeAlongFromAnalytics(): void
+    {
+        $request = $this->fixture->admin->request($this->editor, 'GET', RedirectsHandler::PATH)->withQueryParams(['from' => '/old-news']);
+
+        self::assertStringContainsString('value="/old-news"', (string) $this->fixture->redirectsHandler()->handle($request)->getBody());
+    }
+
     public function testExplainsRedirectsThatCantBeAdded(): void
     {
         foreach ([

@@ -70,3 +70,21 @@ analytics`. ADR-0012 (privacy model), ADR-0037 (how it is built).
 Every request to a site is told to the site's listeners of `SightPress\Core\Http\Contract\RequestAnswered` after the
 response has been sent. A handler says what it showed with `AnsweredResource::fromRequest($request)?->page($id,
 $locale)` or `->file('<kind>')`.
+
+# The Analytics screen and the dashboard (AN-3)
+
+- **Analytics** in the admin menu (`/admin/analytics`), for admins and editors (`analytics.view`). Ranges: **Last 7
+  days**, **Last 30 days** (default), **Last 90 days**, **Last 12 months**, or **Other days** (two dates). The days
+  are in the site's time zone, which the screen names.
+- Headline sentences (visitors, page views, page views per visitor, each compared with the days before), then one
+  section per report: visitors over time (chart, summary, "Show the data for each day"), pages read most, where
+  visitors came from, languages (sites in several languages), devices, site search (while it is on), pages not found
+  (with **Add a redirect**, which fills in the Redirects form), search engines and AI crawlers.
+- Every report downloads as a CSV file with every row (`/admin/analytics/download?report=<name>` plus the range);
+  its values are the same as `site:analytics:report --format=json`.
+- Admins (`analytics.manage`): **Months to keep analytics for** (1–25) and **Delete analytics data** (with a
+  confirmation page; audited).
+- The dashboard shows **Last 7 days** to people with `analytics.view`: one sentence and **See all analytics**.
+- Module authors: dashboard widgets registered with `dashboard()->add()` now appear on the dashboard (ADR-0039).
+
+Non-dev how-to: `docs/how-to/see-who-visits-your-website.md` in the docs repo.

@@ -177,3 +177,10 @@ html.admin-reduced-motion *::after {
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
 }
+
+/* Analytics (AN-3) */
+.analytics-headlines { list-style: none; padding: 0; }
+.analytics-headlines li { margin-bottom: var(--space-2); font-size: var(--font-size-h4); }
+.analytics-arrow { display: inline-block; min-width: 1.25em; }
+.analytics-table { margin-bottom: var(--space-2); }
+.analytics-csv { margin-bottom: var(--space-5); }

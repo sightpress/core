@@ -126,7 +126,7 @@ final class AnalyticsReport
     }
 
     /**
-     * Where visitors came from: `type` is `direct`, `search` (a search engine), `ai` (an AI assistant), `site` (a
+     * Where visitors came from, most visitors first: `type` is `direct`, `search` (a search engine), `ai` (an AI assistant), `site` (a
      * link on another site) or `campaign` (`utm_source` / `ref`); `source` its name, host or label.
      *
      * @return list<array{type: string, source: string, visitors: int, views: int}>
@@ -134,7 +134,7 @@ final class AnalyticsReport
     public function sources(DateRange $range, ?int $limit = null): array
     {
         $rows = [];
-        foreach ($this->ranked(Metric::SOURCE, $range, $limit) as $item => $values) {
+        foreach ($this->ranked(Metric::SOURCE, $range, $limit, Metric::VISITORS) as $item => $values) {
             [$type, $source] = array_pad(explode(':', $item, 2), 2, '');
             $rows[] = ['type' => $type, 'source' => $source, 'visitors' => $values[Metric::VISITORS], 'views' => $values[Metric::VIEWS]];
         }
@@ -148,7 +148,7 @@ final class AnalyticsReport
     public function languages(DateRange $range): array
     {
         $rows = [];
-        foreach ($this->ranked(Metric::LOCALE, $range) as $item => $values) {
+        foreach ($this->ranked(Metric::LOCALE, $range, by: Metric::VISITORS) as $item => $values) {
             $rows[] = ['locale' => $item, 'visitors' => $values[Metric::VISITORS], 'views' => $values[Metric::VIEWS]];
         }
 
@@ -161,7 +161,7 @@ final class AnalyticsReport
     public function devices(DateRange $range): array
     {
         $rows = [];
-        foreach ($this->ranked(Metric::DEVICE, $range) as $item => $values) {
+        foreach ($this->ranked(Metric::DEVICE, $range, by: Metric::VISITORS) as $item => $values) {
             $rows[] = ['device' => $item, 'visitors' => $values[Metric::VISITORS], 'views' => $values[Metric::VIEWS]];
         }
 
@@ -328,14 +328,14 @@ final class AnalyticsReport
     }
 
     /**
-     * Views and visitors per item of a dimension, most views first.
+     * Views and visitors per item of a dimension, most views (or visitors) first.
      *
      * @return array<string, array{views: int, visitors: int}>
      */
-    private function ranked(string $dimension, DateRange $range, ?int $limit = null): array
+    private function ranked(string $dimension, DateRange $range, ?int $limit = null, string $by = Metric::VIEWS): array
     {
         $ranked = [];
-        foreach ($this->sum([Metric::VIEWS, Metric::VISITORS], $dimension, $range, Metric::VIEWS, $limit) as $item => $values) {
+        foreach ($this->sum([Metric::VIEWS, Metric::VISITORS], $dimension, $range, $by, $limit) as $item => $values) {
             $ranked[(string) $item] = ['views' => $values[Metric::VIEWS] ?? 0, 'visitors' => $values[Metric::VISITORS] ?? 0];
         }
 

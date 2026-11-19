@@ -139,6 +139,12 @@
         <target>A date was left out because it isn’t a day such as 2026-11-17.</target>
       </segment>
     </unit>
+    <unit id="b4fc1d0646a6062b">
+      <segment>
+        <source>A day in the site’s time zone, for example 2026-11-01.</source>
+        <target>A day in the site’s time zone, for example 2026-11-01.</target>
+      </segment>
+    </unit>
     <unit id="a8bdfe8f1fcd9e59">
       <segment>
         <source>A day, in the site’s time zone ({zone}).</source>
@@ -217,6 +223,12 @@
         <target>A page of this site, such as /contact, or a full address such as https://example.org.</target>
       </segment>
     </unit>
+    <unit id="cb536a66236af162">
+      <segment>
+        <source>A page that was deleted (number {id})</source>
+        <target>A page that was deleted (number {id})</target>
+      </segment>
+    </unit>
     <unit id="5ab49fc083432126">
       <segment>
         <source>A page you can’t open</source>
@@ -259,6 +271,18 @@
         <target>AI crawlers</target>
       </segment>
     </unit>
+    <unit id="73bb930a7cba65c9">
+      <segment>
+        <source>AI search and assistants</source>
+        <target>AI search and assistants</target>
+      </segment>
+    </unit>
+    <unit id="168ba07ea02b143f">
+      <segment>
+        <source>AI training</source>
+        <target>AI training</target>
+      </segment>
+    </unit>
     <unit id="1359ec883b211e72">
       <segment>
         <source>About me</source>
@@ -293,6 +317,12 @@
       <segment>
         <source>Accessibility statement</source>
         <target>Accessibility statement</target>
+      </segment>
+    </unit>
+    <unit id="64cff1319d2fd2cb">
+      <segment>
+        <source>Action</source>
+        <target>Action</target>
       </segment>
     </unit>
     <unit id="ff8059dc6752afdd">
@@ -439,6 +469,12 @@
         <target>Address: {url}</target>
       </segment>
     </unit>
+    <unit id="8c59f43289679098">
+      <segment>
+        <source>Addresses people asked for that don’t exist. A redirect can send them to the right page.</source>
+        <target>Addresses people asked for that don’t exist. A redirect can send them to the right page.</target>
+      </segment>
+    </unit>
     <unit id="42418964a20f472d">
       <segment>
         <source>Addresses start with</source>
@@ -557,6 +593,18 @@
       <segment>
         <source>An avatar needs a file path.</source>
         <target>An avatar needs a file path.</target>
+      </segment>
+    </unit>
+    <unit id="94c116ee118a7299">
+      <segment>
+        <source>Analytics</source>
+        <target>Analytics</target>
+      </segment>
+    </unit>
+    <unit id="847065d2d10dea96">
+      <segment>
+        <source>Analytics are now kept for {count, plural, one {# month} other {# months}}.</source>
+        <target>Analytics are now kept for {count, plural, one {# month} other {# months}}.</target>
       </segment>
     </unit>
     <unit id="43786f7b5c2aada4">
@@ -997,10 +1045,22 @@
         <target>Choose an option</target>
       </segment>
     </unit>
+    <unit id="784eef53e0e9b2b7">
+      <segment>
+        <source>Choose at most {days} days</source>
+        <target>Choose at most {days} days</target>
+      </segment>
+    </unit>
     <unit id="17dc80bfc7f35d00">
       <segment>
         <source>Choose how long analytics are kept, and delete them.</source>
         <target>Choose how long analytics are kept, and delete them.</target>
+      </segment>
+    </unit>
+    <unit id="8b878d589548c118">
+      <segment>
+        <source>Choose how many months to keep analytics for, from 1 to 25.</source>
+        <target>Choose how many months to keep analytics for, from 1 to 25.</target>
       </segment>
     </unit>
     <unit id="f031e7ea7dc59260">
@@ -1073,6 +1133,12 @@
       <segment>
         <source>Columns</source>
         <target>Columns</target>
+      </segment>
+    </unit>
+    <unit id="76ed42d22129dc35">
+      <segment>
+        <source>Computer</source>
+        <target>Computer</target>
       </segment>
     </unit>
     <unit id="2a6df3aac68bec4c">
@@ -1159,6 +1225,18 @@
         <target>Copy this page</target>
       </segment>
     </unit>
+    <unit id="da5e97d033f7b483">
+      <segment>
+        <source>Counted on this site’s own server, without cookies or anything that identifies a visitor. Days run from midnight to midnight in the site’s time zone ({zone}).</source>
+        <target>Counted on this site’s own server, without cookies or anything that identifies a visitor. Days run from midnight to midnight in the site’s time zone ({zone}).</target>
+      </segment>
+    </unit>
+    <unit id="a8697d67ebda3089">
+      <segment>
+        <source>Counting goes on from now; turn analytics off on the Features screen to stop it.</source>
+        <target>Counting goes on from now; turn analytics off on the Features screen to stop it.</target>
+      </segment>
+    </unit>
     <unit id="86033f75a4c0876a">
       <segment>
         <source>Create an account</source>
@@ -1231,6 +1309,12 @@
         <target>Day</target>
       </segment>
     </unit>
+    <unit id="69c0958d3dd51da9">
+      <segment>
+        <source>Days to show</source>
+        <target>Days to show</target>
+      </segment>
+    </unit>
     <unit id="5e31b73d3d36bee7">
       <segment>
         <source>Deactivate account</source>
@@ -1241,6 +1325,18 @@
       <segment>
         <source>Deactivate {name}</source>
         <target>Deactivate {name}</target>
+      </segment>
+    </unit>
+    <unit id="da14333eef1f260d">
+      <segment>
+        <source>Delete all analytics data?</source>
+        <target>Delete all analytics data?</target>
+      </segment>
+    </unit>
+    <unit id="27dbfd8bd8ca11b9">
+      <segment>
+        <source>Delete analytics data</source>
+        <target>Delete analytics data</target>
       </segment>
     </unit>
     <unit id="1c92e637ec2ba65b">
@@ -1309,6 +1405,12 @@
         <target>Delete “{title}” for good?</target>
       </segment>
     </unit>
+    <unit id="7b012ebb327bec4d">
+      <segment>
+        <source>Deleted all of the site’s analytics. Counting goes on from now.</source>
+        <target>Deleted all of the site’s analytics. Counting goes on from now.</target>
+      </segment>
+    </unit>
     <unit id="9138fbe730ee5b23">
       <segment>
         <source>Deleted the data of {name}. Turning it on again starts afresh.</source>
@@ -1345,10 +1447,28 @@
         <target>Details</target>
       </segment>
     </unit>
+    <unit id="6ba0bdeccb426d7b">
+      <segment>
+        <source>Device</source>
+        <target>Device</target>
+      </segment>
+    </unit>
+    <unit id="4ba5121d4d1be174">
+      <segment>
+        <source>Devices</source>
+        <target>Devices</target>
+      </segment>
+    </unit>
     <unit id="914182d5e25f69e1">
       <segment>
         <source>Dimensions</source>
         <target>Dimensions</target>
+      </segment>
+    </unit>
+    <unit id="da5c205078cc8a47">
+      <segment>
+        <source>Direct or unknown</source>
+        <target>Direct or unknown</target>
       </segment>
     </unit>
     <unit id="2b7f6a84de917e38">
@@ -1373,6 +1493,12 @@
       <segment>
         <source>Download these entries as a CSV file</source>
         <target>Download these entries as a CSV file</target>
+      </segment>
+    </unit>
+    <unit id="92a7ac37eba8d3a8">
+      <segment>
+        <source>Download {name} as a CSV file</source>
+        <target>Download {name} as a CSV file</target>
       </segment>
     </unit>
     <unit id="ebf12ef47cf575b3">
@@ -1501,6 +1627,18 @@
         <target>Enter the email address you sign in with. We will email you a 6-digit code to type on the next page.</target>
       </segment>
     </unit>
+    <unit id="c17a9bae1cc6c147">
+      <segment>
+        <source>Enter the first day as a date, for example 2026-11-01</source>
+        <target>Enter the first day as a date, for example 2026-11-01</target>
+      </segment>
+    </unit>
+    <unit id="8e29950b1843810b">
+      <segment>
+        <source>Enter the last day as a date, for example 2026-11-30</source>
+        <target>Enter the last day as a date, for example 2026-11-30</target>
+      </segment>
+    </unit>
     <unit id="650b71e57f1cb2cd">
       <segment>
         <source>Enter the new address</source>
@@ -1541,6 +1679,12 @@
       <segment>
         <source>Error:</source>
         <target>Error:</target>
+      </segment>
+    </unit>
+    <unit id="f4defa4125df0a9e">
+      <segment>
+        <source>Every figure counted since {day} is deleted for good. This can’t be undone.</source>
+        <target>Every figure counted since {day} is deleted for good. This can’t be undone.</target>
       </segment>
     </unit>
     <unit id="70d1b24e9cfb8c2c">
@@ -1693,6 +1837,12 @@
         <target>Find pages</target>
       </segment>
     </unit>
+    <unit id="6c0f6d250287a580">
+      <segment>
+        <source>First day</source>
+        <target>First day</target>
+      </segment>
+    </unit>
     <unit id="702ef921ed1d89bf">
       <segment>
         <source>First name</source>
@@ -1747,10 +1897,22 @@
         <target>Forgot your password?</target>
       </segment>
     </unit>
+    <unit id="95ac01723575479f">
+      <segment>
+        <source>Found nothing</source>
+        <target>Found nothing</target>
+      </segment>
+    </unit>
     <unit id="218197693424e015">
       <segment>
         <source>From</source>
         <target>From</target>
+      </segment>
+    </unit>
+    <unit id="e12e17fc314d11c3">
+      <segment>
+        <source>From 1 to 25. Figures older than this are deleted within the hour. 25 months keeps two full years to compare.</source>
+        <target>From 1 to 25. Figures older than this are deleted within the hour. 25 months keeps two full years to compare.</target>
       </segment>
     </unit>
     <unit id="788bd22024fa60ac">
@@ -2167,6 +2329,12 @@
         <target>Keep {name} on</target>
       </segment>
     </unit>
+    <unit id="999e8b32c3bd26f0">
+      <segment>
+        <source>Keeping analytics</source>
+        <target>Keeping analytics</target>
+      </segment>
+    </unit>
     <unit id="f5387f9bb6ed7031">
       <segment>
         <source>Kind</source>
@@ -2203,6 +2371,12 @@
         <target>Languages</target>
       </segment>
     </unit>
+    <unit id="71e3c208c5992f36">
+      <segment>
+        <source>Languages of the pages read</source>
+        <target>Languages of the pages read</target>
+      </segment>
+    </unit>
     <unit id="661c5b3823baa584">
       <segment>
         <source>Languages of the site, main language first</source>
@@ -2225,6 +2399,36 @@
       <segment>
         <source>Largest file you can upload: {sizes}.</source>
         <target>Largest file you can upload: {sizes}.</target>
+      </segment>
+    </unit>
+    <unit id="b77eef699049a981">
+      <segment>
+        <source>Last 12 months</source>
+        <target>Last 12 months</target>
+      </segment>
+    </unit>
+    <unit id="f8f03fb441b8b4ae">
+      <segment>
+        <source>Last 30 days</source>
+        <target>Last 30 days</target>
+      </segment>
+    </unit>
+    <unit id="0603deca4fcb660f">
+      <segment>
+        <source>Last 7 days</source>
+        <target>Last 7 days</target>
+      </segment>
+    </unit>
+    <unit id="9902d7ae89e288fb">
+      <segment>
+        <source>Last 90 days</source>
+        <target>Last 90 days</target>
+      </segment>
+    </unit>
+    <unit id="a4e24bc476c85773">
+      <segment>
+        <source>Last day</source>
+        <target>Last day</target>
       </segment>
     </unit>
     <unit id="7b4888049459f04a">
@@ -2473,6 +2677,12 @@
         <target>Missing page (#{page_id})</target>
       </segment>
     </unit>
+    <unit id="0dd4488018f09f19">
+      <segment>
+        <source>Months to keep analytics for</source>
+        <target>Months to keep analytics for</target>
+      </segment>
+    </unit>
     <unit id="90eae2a9657cd484">
       <segment>
         <source>More settings: {module}</source>
@@ -2695,6 +2905,12 @@
         <target>No file chosen</target>
       </segment>
     </unit>
+    <unit id="3d032462499467e1">
+      <segment>
+        <source>No one searched the site in these days.</source>
+        <target>No one searched the site in these days.</target>
+      </segment>
+    </unit>
     <unit id="4489a8209ffd75b3">
       <segment>
         <source>No page has every word you searched for, so these pages have some of them.</source>
@@ -2765,6 +2981,24 @@
       <segment>
         <source>Nothing a reader would notice changed in this version.</source>
         <target>Nothing a reader would notice changed in this version.</target>
+      </segment>
+    </unit>
+    <unit id="193f946fab59977b">
+      <segment>
+        <source>Nothing counted in these days.</source>
+        <target>Nothing counted in these days.</target>
+      </segment>
+    </unit>
+    <unit id="15bb4e6ede2c515e">
+      <segment>
+        <source>Nothing has been counted in the last 7 days yet.</source>
+        <target>Nothing has been counted in the last 7 days yet.</target>
+      </segment>
+    </unit>
+    <unit id="9f20df5e74ceecb1">
+      <segment>
+        <source>Nothing has been counted yet, so there is nothing to delete.</source>
+        <target>Nothing has been counted yet, so there is nothing to delete.</target>
       </segment>
     </unit>
     <unit id="b59069c7d78909b6">
@@ -2977,6 +3211,18 @@
         <target>Open the page</target>
       </segment>
     </unit>
+    <unit id="f97e9da0e3b879f0">
+      <segment>
+        <source>Other</source>
+        <target>Other</target>
+      </segment>
+    </unit>
+    <unit id="40ebe450389476a2">
+      <segment>
+        <source>Other days</source>
+        <target>Other days</target>
+      </segment>
+    </unit>
     <unit id="0a30a815d67d7dd2">
       <segment>
         <source>Page</source>
@@ -2995,6 +3241,12 @@
         <target>Page published</target>
       </segment>
     </unit>
+    <unit id="fbd70afd774a1ec7">
+      <segment>
+        <source>Page views</source>
+        <target>Page views</target>
+      </segment>
+    </unit>
     <unit id="dfc63a33a0e1cbc6">
       <segment>
         <source>Page {id}</source>
@@ -3005,6 +3257,12 @@
       <segment>
         <source>Pages</source>
         <target>Pages</target>
+      </segment>
+    </unit>
+    <unit id="f3f3c8621ac95833">
+      <segment>
+        <source>Pages as Markdown</source>
+        <target>Pages as Markdown</target>
       </segment>
     </unit>
     <unit id="eabd6801059da726">
@@ -3019,6 +3277,12 @@
         <target>Pages for members only are left out of search engines, the sitemap and llms.txt. People who aren’t signed in are asked to sign in.</target>
       </segment>
     </unit>
+    <unit id="1994967083ce8445">
+      <segment>
+        <source>Pages not found</source>
+        <target>Pages not found</target>
+      </segment>
+    </unit>
     <unit id="ec116b833afeb7af">
       <segment>
         <source>Pages of files</source>
@@ -3029,6 +3293,12 @@
       <segment>
         <source>Pages of the audit log</source>
         <target>Pages of the audit log</target>
+      </segment>
+    </unit>
+    <unit id="56e42e3746daaa28">
+      <segment>
+        <source>Pages read most</source>
+        <target>Pages read most</target>
       </segment>
     </unit>
     <unit id="d010dbb9e7489dc8">
@@ -3071,6 +3341,12 @@
       <segment>
         <source>People who chose {language} for their emails and the admin panel get {main} instead.</source>
         <target>People who chose {language} for their emails and the admin panel get {main} instead.</target>
+      </segment>
+    </unit>
+    <unit id="63dceb8800b2dd4a">
+      <segment>
+        <source>Phone</source>
+        <target>Phone</target>
       </segment>
     </unit>
     <unit id="9a1c54f55e7cfb1c">
@@ -3149,6 +3425,12 @@
       <segment>
         <source>Profiles on other sites</source>
         <target>Profiles on other sites</target>
+      </segment>
+    </unit>
+    <unit id="ff65c4c785a8521c">
+      <segment>
+        <source>Programs that read the site. They are never counted as visitors.</source>
+        <target>Programs that read the site. They are never counted as visitors.</target>
       </segment>
     </unit>
     <unit id="859390eb495b2ead">
@@ -3239,6 +3521,12 @@
       <segment>
         <source>Read the guide</source>
         <target>Read the guide</target>
+      </segment>
+    </unit>
+    <unit id="7f3e8bf052d3900e">
+      <segment>
+        <source>Reads</source>
+        <target>Reads</target>
       </segment>
     </unit>
     <unit id="c056e02b87d51881">
@@ -3335,6 +3623,12 @@
       <segment>
         <source>Reply to this email to answer them at {email}.</source>
         <target>Reply to this email to answer them at {email}.</target>
+      </segment>
+    </unit>
+    <unit id="ada27592c9578e90">
+      <segment>
+        <source>Requests</source>
+        <target>Requests</target>
       </segment>
     </unit>
     <unit id="67bd10458fe45585">
@@ -3565,6 +3859,18 @@
         <target>Search &amp; AI</target>
       </segment>
     </unit>
+    <unit id="39c05e0065bff21a">
+      <segment>
+        <source>Search engine</source>
+        <target>Search engine</target>
+      </segment>
+    </unit>
+    <unit id="d8b9c40eac765144">
+      <segment>
+        <source>Search engines and AI crawlers</source>
+        <target>Search engines and AI crawlers</target>
+      </segment>
+    </unit>
     <unit id="f8fca50366d93bc8">
       <segment>
         <source>Search engines show about {max} characters of the description; this one has {description}. Shorten it.</source>
@@ -3587,6 +3893,24 @@
       <segment>
         <source>Search this site</source>
         <target>Search this site</target>
+      </segment>
+    </unit>
+    <unit id="1cb99ce2306617b5">
+      <segment>
+        <source>Searches</source>
+        <target>Searches</target>
+      </segment>
+    </unit>
+    <unit id="09294feda3db1e79">
+      <segment>
+        <source>Searches that found nothing</source>
+        <target>Searches that found nothing</target>
+      </segment>
+    </unit>
+    <unit id="4226ea0aa05b2f65">
+      <segment>
+        <source>See all analytics</source>
+        <target>See all analytics</target>
       </segment>
     </unit>
     <unit id="5df3799a8fde8dc9">
@@ -3757,6 +4081,12 @@
         <target>Show the pages under</target>
       </segment>
     </unit>
+    <unit id="8f85d8a0c4227758">
+      <segment>
+        <source>Show these days</source>
+        <target>Show these days</target>
+      </segment>
+    </unit>
     <unit id="75aa09cda18ea905">
       <segment>
         <source>Shown at the top of every page, in the browser tab and in search results.</source>
@@ -3895,10 +4225,22 @@
         <target>Site name</target>
       </segment>
     </unit>
+    <unit id="f38eaae00dc2f5ee">
+      <segment>
+        <source>Site search</source>
+        <target>Site search</target>
+      </segment>
+    </unit>
     <unit id="c9049740523fca2e">
       <segment>
         <source>Site settings</source>
         <target>Site settings</target>
+      </segment>
+    </unit>
+    <unit id="4db550cd984016b9">
+      <segment>
+        <source>Sitemap</source>
+        <target>Sitemap</target>
       </segment>
     </unit>
     <unit id="1af851907331c0ed">
@@ -3989,6 +4331,12 @@
       <segment>
         <source>Sorry, there is a problem with the service</source>
         <target>Sorry, there is a problem with the service</target>
+      </segment>
+    </unit>
+    <unit id="0e570ca6fabe24f9">
+      <segment>
+        <source>Source</source>
+        <target>Source</target>
       </segment>
     </unit>
     <unit id="691e57c6fd8be4fd">
@@ -4109,6 +4457,12 @@
       <segment>
         <source>System</source>
         <target>System</target>
+      </segment>
+    </unit>
+    <unit id="e34a879c8b8b67ef">
+      <segment>
+        <source>Tablet</source>
+        <target>Tablet</target>
       </segment>
     </unit>
     <unit id="5e9bc768ca88a1de">
@@ -4279,6 +4633,12 @@
         <target>The caption must be {{ limit }} characters or fewer</target>
       </segment>
     </unit>
+    <unit id="862ff78129f8c480">
+      <segment>
+        <source>The chosen days</source>
+        <target>The chosen days</target>
+      </segment>
+    </unit>
     <unit id="96adcb148e6a4029">
       <segment>
         <source>The code works for {duration}, and only once.</source>
@@ -4439,6 +4799,12 @@
       <segment>
         <source>The language of your emails and of the admin panel, where it has been translated.</source>
         <target>The language of your emails and of the admin panel, where it has been translated.</target>
+      </segment>
+    </unit>
+    <unit id="75264d9e69f09115">
+      <segment>
+        <source>The last day must be the same as the first day or after it</source>
+        <target>The last day must be the same as the first day or after it</target>
       </segment>
     </unit>
     <unit id="8031a4750fcadeb1">
@@ -4937,6 +5303,12 @@
       <segment>
         <source>The {count} pages under it, which are in the trash too, are deleted with it.</source>
         <target>The {count} pages under it, which are in the trash too, are deleted with it.</target>
+      </segment>
+    </unit>
+    <unit id="35b010c03d1be3b8">
+      <segment>
+        <source>The {days, plural, one {day before} other {# days before}}</source>
+        <target>The {days, plural, one {day before} other {# days before}}</target>
       </segment>
     </unit>
     <unit id="0ed13939e87c6efb">
@@ -5539,6 +5911,12 @@
         <target>Under: {pages}</target>
       </segment>
     </unit>
+    <unit id="b764cdc0eab71374">
+      <segment>
+        <source>Unknown</source>
+        <target>Unknown</target>
+      </segment>
+    </unit>
     <unit id="613c19e780c6293b">
       <segment>
         <source>Unknown block &quot;{name}&quot;</source>
@@ -5737,6 +6115,12 @@
         <target>View the saved page</target>
       </segment>
     </unit>
+    <unit id="68f7d7fbb52dd931">
+      <segment>
+        <source>Visitors</source>
+        <target>Visitors</target>
+      </segment>
+    </unit>
     <unit id="74fb9787fceed2bb">
       <segment>
         <source>Visitors can no longer reach the pages in {language}: addresses starting with {prefix} answer “not found”.</source>
@@ -5753,6 +6137,12 @@
       <segment>
         <source>Visitors can see it now.</source>
         <target>Visitors can see it now.</target>
+      </segment>
+    </unit>
+    <unit id="e44ec007d995305f">
+      <segment>
+        <source>Visitors over time</source>
+        <target>Visitors over time</target>
       </segment>
     </unit>
     <unit id="52b53d31e55600c5">
@@ -5893,6 +6283,12 @@
         <target>What happens to my data?</target>
       </segment>
     </unit>
+    <unit id="038026723cc44e89">
+      <segment>
+        <source>What it read</source>
+        <target>What it read</target>
+      </segment>
+    </unit>
     <unit id="8e7ddf931c59c8c4">
       <segment>
         <source>What it shows</source>
@@ -5905,10 +6301,22 @@
         <target>What it shows, in {language}</target>
       </segment>
     </unit>
+    <unit id="dbd94cf5fc9a1d53">
+      <segment>
+        <source>What people searched for</source>
+        <target>What people searched for</target>
+      </segment>
+    </unit>
     <unit id="a54647e1dea37ae4">
       <segment>
         <source>What personal information this website collects and what is done with it.</source>
         <target>What personal information this website collects and what is done with it.</target>
+      </segment>
+    </unit>
+    <unit id="b801b48368c62eba">
+      <segment>
+        <source>What search engines and AI crawlers read</source>
+        <target>What search engines and AI crawlers read</target>
       </segment>
     </unit>
     <unit id="af38f6a1030c016d">
@@ -5951,6 +6359,12 @@
       <segment>
         <source>Where it should lead, in the same language: for example /news.</source>
         <target>Where it should lead, in the same language: for example /news.</target>
+      </segment>
+    </unit>
+    <unit id="4e502e0bdeda5f01">
+      <segment>
+        <source>Where visitors came from</source>
+        <target>Where visitors came from</target>
       </segment>
     </unit>
     <unit id="c17b94b8c9394d40">
@@ -6385,6 +6799,18 @@
         <target>documents</target>
       </segment>
     </unit>
+    <unit id="aab8bbde2a6c2052">
+      <segment>
+        <source>down {change} on the {days, plural, one {day before} other {# days before}}</source>
+        <target>down {change} on the {days, plural, one {day before} other {# days before}}</target>
+      </segment>
+    </unit>
+    <unit id="d51f063419b07bb7">
+      <segment>
+        <source>for {address}</source>
+        <target>for {address}</target>
+      </segment>
+    </unit>
     <unit id="c2d4b446a44ce54f">
       <segment>
         <source>icon</source>
@@ -6409,10 +6835,28 @@
         <target>light mode with more contrast</target>
       </segment>
     </unit>
+    <unit id="db21784bc3b6a305">
+      <segment>
+        <source>llms-full.txt</source>
+        <target>llms-full.txt</target>
+      </segment>
+    </unit>
+    <unit id="f43a9e2f7da89777">
+      <segment>
+        <source>llms.txt</source>
+        <target>llms.txt</target>
+      </segment>
+    </unit>
     <unit id="3598ce6f965b2481">
       <segment>
         <source>logo</source>
         <target>logo</target>
+      </segment>
+    </unit>
+    <unit id="29624390582393d0">
+      <segment>
+        <source>none in the {days, plural, one {day before} other {# days before}}</source>
+        <target>none in the {days, plural, one {day before} other {# days before}}</target>
       </segment>
     </unit>
     <unit id="289d6f22d275a3d9">
@@ -6469,6 +6913,12 @@
         <target>removed:</target>
       </segment>
     </unit>
+    <unit id="870b1fc137c2af20">
+      <segment>
+        <source>robots.txt</source>
+        <target>robots.txt</target>
+      </segment>
+    </unit>
     <unit id="8be99bac00df84ae">
       <segment>
         <source>share image</source>
@@ -6481,16 +6931,82 @@
         <target>text</target>
       </segment>
     </unit>
+    <unit id="e481c4774c07dda9">
+      <segment>
+        <source>the devices</source>
+        <target>the devices</target>
+      </segment>
+    </unit>
+    <unit id="763512a06d7a6493">
+      <segment>
+        <source>the languages</source>
+        <target>the languages</target>
+      </segment>
+    </unit>
+    <unit id="45bd317334c59dcb">
+      <segment>
+        <source>the pages</source>
+        <target>the pages</target>
+      </segment>
+    </unit>
+    <unit id="49464e1b15ee1e12">
+      <segment>
+        <source>the pages not found</source>
+        <target>the pages not found</target>
+      </segment>
+    </unit>
+    <unit id="d974699395917aad">
+      <segment>
+        <source>the same as the {days, plural, one {day before} other {# days before}}</source>
+        <target>the same as the {days, plural, one {day before} other {# days before}}</target>
+      </segment>
+    </unit>
+    <unit id="a5a99bbfeaf0a599">
+      <segment>
+        <source>the search engines and AI crawlers</source>
+        <target>the search engines and AI crawlers</target>
+      </segment>
+    </unit>
+    <unit id="dcb381c2f95f79ee">
+      <segment>
+        <source>the searches</source>
+        <target>the searches</target>
+      </segment>
+    </unit>
+    <unit id="5ba5fd82c7f37093">
+      <segment>
+        <source>the searches that found nothing</source>
+        <target>the searches that found nothing</target>
+      </segment>
+    </unit>
+    <unit id="0074a5a1087f27cb">
+      <segment>
+        <source>the sources</source>
+        <target>the sources</target>
+      </segment>
+    </unit>
     <unit id="c7b576e64e838802">
       <segment>
         <source>the web server’s limit (for nginx, client_max_body_size)</source>
         <target>the web server’s limit (for nginx, client_max_body_size)</target>
       </segment>
     </unit>
+    <unit id="ba194875bc91e911">
+      <segment>
+        <source>up {change} on the {days, plural, one {day before} other {# days before}}</source>
+        <target>up {change} on the {days, plural, one {day before} other {# days before}}</target>
+      </segment>
+    </unit>
     <unit id="26760e7ce5a56f4b">
       <segment>
         <source>videos</source>
         <target>videos</target>
+      </segment>
+    </unit>
+    <unit id="82f15a27f06df569">
+      <segment>
+        <source>visitors and page views per day</source>
+        <target>visitors and page views per day</target>
       </segment>
     </unit>
     <unit id="937fc0698f0c4764">
@@ -6503,6 +7019,12 @@
       <segment>
         <source>{amount} on {day}</source>
         <target>{amount} on {day}</target>
+      </segment>
+    </unit>
+    <unit id="c9bcdb628959fea5">
+      <segment>
+        <source>{amount}, {change}</source>
+        <target>{amount}, {change}</target>
       </segment>
     </unit>
     <unit id="f2296abaf5cba502">
@@ -6523,6 +7045,12 @@
         <target>{change} Save the page to keep this change.</target>
       </segment>
     </unit>
+    <unit id="e0c54489cfc29ee4">
+      <segment>
+        <source>{count, number} page views per visitor</source>
+        <target>{count, number} page views per visitor</target>
+      </segment>
+    </unit>
     <unit id="52e7b5cd5c20db88">
       <segment>
         <source>{count, plural, one {# day} other {# days}}</source>
@@ -6541,6 +7069,12 @@
         <target>{count, plural, one {# minute} other {# minutes}}</target>
       </segment>
     </unit>
+    <unit id="f8a3349ee9256cea">
+      <segment>
+        <source>{count, plural, one {# page view} other {# page views}}</source>
+        <target>{count, plural, one {# page view} other {# page views}}</target>
+      </segment>
+    </unit>
     <unit id="a929ed33cd715967">
       <segment>
         <source>{count, plural, one {# result} other {# results}} for “{query}”</source>
@@ -6551,6 +7085,12 @@
       <segment>
         <source>{count, plural, one {# second} other {# seconds}}</source>
         <target>{count, plural, one {# second} other {# seconds}}</target>
+      </segment>
+    </unit>
+    <unit id="97a243c336302306">
+      <segment>
+        <source>{count, plural, one {# visitor} other {# visitors}}</source>
+        <target>{count, plural, one {# visitor} other {# visitors}}</target>
       </segment>
     </unit>
     <unit id="cedb35ac8ccc4874">
@@ -6649,6 +7189,12 @@
         <target>{first}, {rest}</target>
       </segment>
     </unit>
+    <unit id="ba318cc195ceff48">
+      <segment>
+        <source>{from} to {to}</source>
+        <target>{from} to {to}</target>
+      </segment>
+    </unit>
     <unit id="04465f1428e7b500">
       <segment>
         <source>{inviter} has invited you to join {site} as {role}.</source>
@@ -6701,6 +7247,30 @@
       <segment>
         <source>{modules} needs it: turn that off first to turn this off.</source>
         <target>{modules} needs it: turn that off first to turn this off.</target>
+      </segment>
+    </unit>
+    <unit id="5e291d7bcb2dd847">
+      <segment>
+        <source>{name}</source>
+        <target>{name}</target>
+      </segment>
+    </unit>
+    <unit id="70b556718df5421d">
+      <segment>
+        <source>{name} (AI assistant)</source>
+        <target>{name} (AI assistant)</target>
+      </segment>
+    </unit>
+    <unit id="38b14a590de98b2b">
+      <segment>
+        <source>{name} (campaign)</source>
+        <target>{name} (campaign)</target>
+      </segment>
+    </unit>
+    <unit id="ced4977b8a9f2dde">
+      <segment>
+        <source>{name} (search engine)</source>
+        <target>{name} (search engine)</target>
       </segment>
     </unit>
     <unit id="4e77984ccffff99d">
@@ -6853,6 +7423,12 @@
         <target>{range}: solid line with round markers</target>
       </segment>
     </unit>
+    <unit id="85ce62b7dd558224">
+      <segment>
+        <source>{searches, plural, one {# search} other {# searches}}, {empty, plural, =0 {and all of them found something} one {# of which found nothing} other {# of which found nothing}}.</source>
+        <target>{searches, plural, one {# search} other {# searches}}, {empty, plural, =0 {and all of them found something} one {# of which found nothing} other {# of which found nothing}}.</target>
+      </segment>
+    </unit>
     <unit id="e3030205ac1e0386">
       <segment>
         <source>{setting} to {value}</source>
@@ -6899,6 +7475,12 @@
       <segment>
         <source>{types} {sizes} New files stay unpublished until an editor publishes them.</source>
         <target>{types} {sizes} New files stay unpublished until an editor publishes them.</target>
+      </segment>
+    </unit>
+    <unit id="60a3ff1d92e114dc">
+      <segment>
+        <source>{visitors} and {views} in the last 7 days; visitors {change}.</source>
+        <target>{visitors} and {views} in the last 7 days; visitors {change}.</target>
       </segment>
     </unit>
     <unit id="85a85f231e56df24">

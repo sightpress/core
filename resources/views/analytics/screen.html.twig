@@ -1,0 +1,148 @@
+{#
+    The Analytics screen (/admin/analytics): the range (preset links with aria-current, or a custom range form with
+    its error summary), headline figures as text, then one <section> with an <h2> per report, each with its CSV.
+    Context: see AnalyticsHandler.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% import '@analytics/charts.html.twig' as charts %}
+{% block title %}{{ t('Analytics') }}: {{ t(range_name) }}{% endblock %}
+{% macro csv(report, query, name) %}
+<p class="analytics-csv"><a href="/admin/analytics/download?report={{ report }}&amp;{{ query }}" download>{{ t('Download {name} as a CSV file', {name: name}) }}</a></p>
+{% endmacro %}
+{% macro top(id, caption, columns, rows, can_redirect = false) %}
+{%- if rows is empty %}
+<p>{{ t('Nothing counted in these days.') }}</p>
+{%- else %}
+<div class="table-wrapper" role="region" aria-labelledby="{{ id }}-caption" tabindex="0">
+<table class="chart-data__table analytics-table">
+    <caption id="{{ id }}-caption">{{ caption }}</caption>
+    <thead><tr>{% for column in columns %}<th scope="col">{{ column }}</th>{% endfor %}{% if can_redirect %}<th scope="col">{{ t('Action') }}</th>{% endif %}</tr></thead>
+    <tbody>
+        {%- for row in rows %}
+        <tr>
+            <th scope="row">{% if row.url %}<a href="{{ row.url }}"{% if row.lang %} lang="{{ row.lang }}"{% endif %}>{{ t(row.label) }}</a>{% else %}<span{% if row.lang %} lang="{{ row.lang }}"{% endif %}>{{ t(row.label) }}</span>{% endif %}</th>
+            {%- for value in row.values %}
+            <td class="chart-data__number">{% if loop.first %}<span>{{ value }}</span>{{ row.bar|raw }}{% else %}{{ value }}{% endif %}</td>
+            {%- endfor %}
+            {%- if can_redirect %}<td><a href="{{ row.redirect }}">{{ t('Add a redirect') }}<span class="visually-hidden"> {{ t('for {address}', {address: row.label}) }}</span></a></td>{% endif %}
+        </tr>
+        {%- endfor %}
+    </tbody>
+</table>
+</div>
+{%- endif %}
+{% endmacro %}
+{% block content %}
+<h1>{{ t('Analytics') }}</h1>
+{{ f.error_summary(form) }}
+<p>{{ t('Counted on this site’s own server, without cookies or anything that identifies a visitor. Days run from midnight to midnight in the site’s time zone ({zone}).', {zone: zone}) }}</p>
+<nav aria-labelledby="analytics-range-title">
+    <h2 id="analytics-range-title" class="visually-hidden">{{ t('Days to show') }}</h2>
+    <ul class="media-views analytics-ranges">
+        {%- for preset in presets %}
+        <li><a href="{{ preset.url }}"{% if preset.current %} aria-current="page"{% endif %}>{{ t(preset.name) }}</a></li>
+        {%- endfor %}
+    </ul>
+</nav>
+{{ f.start(form, '/admin/analytics', 'get') }}
+    <fieldset class="admin-filters">
+        <legend>{{ t('Other days') }}</legend>
+        {{ f.field(form, 'from') }}
+        {{ f.field(form, 'to') }}
+        {{ f.submit(t('Show these days')) }}
+    </fieldset>
+{{ f.end() }}
+
+<section class="admin-panel" aria-labelledby="analytics-summary">
+    <h2 id="analytics-summary">{{ t(range_name) }}: {{ t(range_text) }}</h2>
+    <ul class="analytics-headlines">
+        {%- for headline in headlines %}
+        <li><span class="analytics-arrow" aria-hidden="true">{{ headline.direction == 'up' ? '▲' : (headline.direction == 'down' ? '▼' : '=') }}</span> {{ t(headline.text) }}</li>
+        {%- endfor %}
+    </ul>
+</section>
+
+<section aria-labelledby="analytics-visits">
+    <h2 id="analytics-visits">{{ t('Visitors over time') }}</h2>
+    {{ charts.line(chart) }}
+    {{ _self.csv('daily', query, t('visitors and page views per day')) }}
+</section>
+
+<section aria-labelledby="analytics-pages">
+    <h2 id="analytics-pages">{{ t('Pages read most') }}</h2>
+    {{ _self.top('analytics-pages-table', t('Pages read most'), [t('Page'), t('Page views'), t('Visitors')], pages) }}
+    {{ _self.csv('pages', query, t('the pages')) }}
+</section>
+
+<section aria-labelledby="analytics-sources">
+    <h2 id="analytics-sources">{{ t('Where visitors came from') }}</h2>
+    {{ _self.top('analytics-sources-table', t('Where visitors came from'), [t('Source'), t('Visitors')], sources) }}
+    {{ _self.csv('sources', query, t('the sources')) }}
+</section>
+
+{%- if languages is not null %}
+<section aria-labelledby="analytics-languages">
+    <h2 id="analytics-languages">{{ t('Languages') }}</h2>
+    {{ _self.top('analytics-languages-table', t('Languages of the pages read'), [t('Language'), t('Visitors'), t('Page views')], languages) }}
+    {{ _self.csv('languages', query, t('the languages')) }}
+</section>
+{%- endif %}
+
+<section aria-labelledby="analytics-devices">
+    <h2 id="analytics-devices">{{ t('Devices') }}</h2>
+    {{ charts.bar(devices) }}
+    {{ _self.csv('devices', query, t('the devices')) }}
+</section>
+
+{%- if search is not null %}
+<section aria-labelledby="analytics-search">
+    <h2 id="analytics-search">{{ t('Site search') }}</h2>
+    <p>{% if search.totals.searches == 0 %}{{ t('No one searched the site in these days.') }}{% else %}{{ t('{searches, plural, one {# search} other {# searches}}, {empty, plural, =0 {and all of them found something} one {# of which found nothing} other {# of which found nothing}}.', {searches: search.totals.searches, empty: search.totals.without_results}) }}{% endif %}</p>
+    {{ _self.top('analytics-queries-table', t('What people searched for'), [t('Search'), t('Searches'), t('Found nothing')], search.queries) }}
+    {{ _self.csv('searches', query, t('the searches')) }}
+    <h3>{{ t('Searches that found nothing') }}</h3>
+    {{ _self.top('analytics-empty-table', t('Searches that found nothing'), [t('Search'), t('Searches')], search.empty) }}
+    {{ _self.csv('searches-without-results', query, t('the searches that found nothing')) }}
+</section>
+{%- endif %}
+
+<section aria-labelledby="analytics-not-found">
+    <h2 id="analytics-not-found">{{ t('Pages not found') }}</h2>
+    <p>{{ t('Addresses people asked for that don’t exist. A redirect can send them to the right page.') }}</p>
+    {{ _self.top('analytics-not-found-table', t('Pages not found'), [t('Address'), t('Requests')], not_found, can_redirect) }}
+    {{ _self.csv('not-found', query, t('the pages not found')) }}
+</section>
+
+<section aria-labelledby="analytics-bots">
+    <h2 id="analytics-bots">{{ t('Search engines and AI crawlers') }}</h2>
+    <p>{{ t('Programs that read the site. They are never counted as visitors.') }}</p>
+    {%- if bots is empty %}
+    <p>{{ t('Nothing counted in these days.') }}</p>
+    {%- else %}
+    <div class="table-wrapper" role="region" aria-labelledby="analytics-bots-caption" tabindex="0">
+    <table class="chart-data__table analytics-table">
+        <caption id="analytics-bots-caption">{{ t('What search engines and AI crawlers read') }}</caption>
+        <thead><tr><th scope="col">{{ t('Name') }}</th><th scope="col">{{ t('Kind') }}</th><th scope="col">{{ t('What it read') }}</th><th scope="col">{{ t('Reads') }}</th></tr></thead>
+        <tbody>
+            {%- for bot in bots %}
+            <tr><th scope="row">{{ bot.bot }}</th><td>{{ t(bot.kind) }}</td><td>{{ t(bot.resource) }}</td><td>{{ bot.reads }}</td></tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+    </div>
+    {%- endif %}
+    {{ _self.csv('bots', query, t('the search engines and AI crawlers')) }}
+</section>
+
+{%- if manage is not null %}
+<section class="admin-panel" id="analytics-manage" aria-labelledby="analytics-manage-title" tabindex="-1">
+    <h2 id="analytics-manage-title">{{ t('Keeping analytics') }}</h2>
+    {{ f.start(manage.form, '/admin/analytics/retention') }}
+        {{ f.field(manage.form, 'months') }}
+        {{ f.submit(t('Save')) }}
+    {{ f.end() }}
+    <p><a href="/admin/analytics/delete">{{ t('Delete analytics data') }}</a></p>
+</section>
+{%- endif %}
+{% endblock %}

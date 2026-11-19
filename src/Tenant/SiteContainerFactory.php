@@ -26,6 +26,7 @@ use SightPress\Core\Infrastructure\Event\EventDispatcher;
 use SightPress\Core\Infrastructure\Event\ListenerProvider;
 use SightPress\Core\Module\ModulePolicy;
 use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Core\Infrastructure\Dashboard\DashboardWidgets;
 use SightPress\Core\Infrastructure\Search\SearchExtensions;
 use SightPress\Core\Module\SiteModuleStore;
 use SightPress\Core\Navigation\AdminNavigation;
@@ -165,6 +166,10 @@ final class SiteContainerFactory
                 Services::get($container, ListenerProviderInterface::class),
             )),
             SearchExtensions::class => factory(static fn (ContainerInterface $container): SearchExtensions => new SearchExtensions(
+                $container,
+                Services::get($container, ModuleRegistry::class),
+            )),
+            DashboardWidgets::class => factory(static fn (ContainerInterface $container): DashboardWidgets => new DashboardWidgets(
                 $container,
                 Services::get($container, ModuleRegistry::class),
             )),

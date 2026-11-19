@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Analytics;
 
+use SightPress\Core\Analytics\Admin\AnalyticsCsvHandler;
+use SightPress\Core\Analytics\Admin\AnalyticsHandler;
+use SightPress\Core\Analytics\Admin\AnalyticsWidget;
+use SightPress\Core\Analytics\Admin\DeleteAnalyticsHandler;
+use SightPress\Core\Analytics\Admin\RetentionHandler;
 use SightPress\Core\Analytics\Chart\ChartRenderer;
 use SightPress\Core\Analytics\Chart\ChartSummary;
 use SightPress\Core\Analytics\Chart\ChartView;
@@ -15,11 +20,14 @@ use SightPress\Core\Analytics\Command\AnalyticsReportCommand;
 use SightPress\Core\Analytics\Report\AnalyticsReports;
 use SightPress\Core\Http\Contract\RequestAnswered;
 use SightPress\Core\Site\Contract\ScheduleDue;
+use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Access\Permission;
+use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\ModuleRequirement;
+use SightPress\Module\Routing\Route;
 use SightPress\Module\Search\SearchPerformed;
 
 /**
@@ -27,7 +35,8 @@ use SightPress\Module\Search\SearchPerformed;
  * pages not found and bots, on the server, after the response ({@see AnalyticsRecorder}) — no cookies, no
  * JavaScript, no third parties, and no IP address, user agent or query string kept. `schedule:run` rolls finished
  * days up every hour ({@see AnalyticsRollup}); {@see Report\AnalyticsReport} reads them for the admin and
- * `site:analytics:report`, and {@see ChartView} draws them as accessible SVG charts with summaries and tables.
+ * `site:analytics:report`, and {@see ChartView} draws them as accessible SVG charts with summaries and tables, on
+ * the admin's Analytics screen ({@see AnalyticsHandler}) and the dashboard's "Last 7 days" ({@see AnalyticsWidget}).
  * Optional, on by default.
  */
 final class AnalyticsModule implements ModuleInterface
@@ -43,7 +52,7 @@ final class AnalyticsModule implements ModuleInterface
         return new ModuleManifest(
             self::ID,
             '0.1.0',
-            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('page', '^0.1'), new ModuleRequirement('rbac', '^0.1')],
+            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('page', '^0.1'), new ModuleRequirement('rbac', '^0.1'), new ModuleRequirement('admin', '^0.1')],
             enabledByDefault: true,
         );
     }
@@ -75,6 +84,17 @@ final class AnalyticsModule implements ModuleInterface
         $subscribers->listen(RequestAnswered::class, AnalyticsRecorder::class);
         $subscribers->listen(SearchPerformed::class, SearchListener::class);
         $subscribers->listen(ScheduleDue::class, AnalyticsRollupJob::class);
+
+        foreach ([AnalyticsHandler::class, AnalyticsCsvHandler::class, RetentionHandler::class, DeleteAnalyticsHandler::class, AnalyticsWidget::class] as $class) {
+            $services->autowire($class);
+        }
+        $routes = $registrar->routes();
+        $routes->add(new Route('analytics.overview', AnalyticsHandler::PATH, AnalyticsHandler::class, middleware: [AdminAccessMiddleware::class]));
+        $routes->add(new Route('analytics.download', AnalyticsCsvHandler::PATH, AnalyticsCsvHandler::class, middleware: [AdminAccessMiddleware::class]));
+        $routes->add(new Route('analytics.retention', RetentionHandler::PATH, RetentionHandler::class, ['POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('analytics.delete', DeleteAnalyticsHandler::PATH, DeleteAnalyticsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $registrar->adminMenu()->add(new AdminMenuItem('analytics.overview', 'Analytics', 'analytics.overview', self::VIEW, position: 15));
+        $registrar->dashboard()->add(AnalyticsWidget::class);
 
         foreach ([AnalyticsReportCommand::class, AnalyticsPurgeCommand::class] as $command) {
             $registrar->commands()->add($command);

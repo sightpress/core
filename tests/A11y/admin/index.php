@@ -8,7 +8,8 @@
  * People: Ada (admin), Bea (editor), Cleo (contributor) and Max (member).
  * Test-only addresses: `/_test/reset` starts again from a fresh site (forgets sessions and rate limits);
  * `/_test/invitation?email=…&role=…&first_name=…` invites someone from Ada and answers with the invitation code (the
- * test site sends no email); `/_test/starter` writes the starter pages of a new site (I-4) in its languages.
+ * test site sends no email); `/_test/starter` writes the starter pages of a new site (I-4) in its languages;
+ * `/_test/analytics` stores 60 days of analytics figures ending yesterday (AN-3).
  * Test mailbox: the site keeps every email it would send in its folder, and `/_test/mail?to=…` answers with the
  * latest one to that address as JSON (to, subject, text, html), or 404.
  *
@@ -26,6 +27,8 @@ use Doctrine\Migrations\Configuration\Connection\ExistingConnection;
 use Doctrine\Migrations\Configuration\Migration\ExistingConfiguration;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\MigratorConfiguration;
+use SightPress\Core\Analytics\AnalyticsRollup;
+use SightPress\Core\Analytics\AnalyticsStore;
 use SightPress\Core\Auth\PasswordHasher;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
@@ -160,6 +163,45 @@ if ($path === '/_test/invitation') {
 if ($path === '/_test/starter') {
     $kernel = boot($project, $environment);
     Services::get(site($kernel), StarterContent::class)->create('Ada Lovelace', 'http://127.0.0.1', 'ada@example.org', null);
+    http_response_code(204);
+
+    return;
+}
+
+if ($path === '/_test/analytics') {
+    // Analytics (AN-3): 60 finished days of figures, ending yesterday, so every report has something to show.
+    $kernel = boot($project, $environment);
+    $services = site($kernel);
+    $store = Services::get($services, AnalyticsStore::class);
+    $today = Services::get($services, AnalyticsRollup::class)->today(new DateTimeImmutable());
+    for ($back = 60; $back >= 1; $back--) {
+        $day = new DateTimeImmutable($today)->modify("-{$back} days")->format('Y-m-d');
+        $visitors = 20 + (($back * 37) % 41);
+        $figure = static fn (string $metric, string $dimension, string $item, int $value): array => ['metric' => $metric, 'dimension' => $dimension, 'item' => $item, 'value' => $value];
+        $store->finishDay($day, [
+            $figure('visitors', '', '', $visitors),
+            $figure('views', '', '', $visitors * 2),
+            $figure('views', 'page', '1:en-GB', $visitors),
+            $figure('visitors', 'page', '1:en-GB', $visitors),
+            $figure('views', 'page', '2:en-GB', $visitors),
+            $figure('visitors', 'page', '2:en-GB', (int) ($visitors / 2)),
+            $figure('visitors', 'source', 'direct', $visitors - 5),
+            $figure('visitors', 'source', 'search:Google', 4),
+            $figure('visitors', 'source', 'ai:ChatGPT', 1),
+            $figure('views', 'source', 'direct', $visitors),
+            $figure('visitors', 'device', 'computer', $visitors - 8),
+            $figure('visitors', 'device', 'phone', 8),
+            $figure('views', 'device', 'computer', $visitors),
+            $figure('not_found', 'path', '/old-news', 2),
+            $figure('bot_reads', 'bot', 'Googlebot|search|page', 12),
+            $figure('bot_reads', 'bot', 'GPTBot|ai_training|llms', 1),
+            $figure('searches', '', '', 3),
+            $figure('searches', 'query', 'opening hours', 2),
+            $figure('searches', 'query', 'parking', 1),
+            $figure('empty_searches', '', '', 1),
+            $figure('empty_searches', 'query', 'parking', 1),
+        ]);
+    }
     http_response_code(204);
 
     return;

@@ -56,5 +56,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0036](0036-search-results-page-as-a-public-screen.md) | The search results page: a public screen with the site's menus, routes before the page catch-all | Proposed |
 | [0037](0037-analytics-recorded-after-the-response.md) | Analytics: recorded after the response, rolled up daily in the site database | Proposed |
 | [0038](0038-accessible-charts-drawn-on-the-server.md) | Accessible charts drawn on the server as SVG, with summaries and tables | Proposed |
+| [0039](0039-dashboard-widgets-and-the-analytics-screen.md) | Dashboard widgets drawn by the admin, and the Analytics screen | Proposed |
 
 When an ADR's status changes, update it here too.

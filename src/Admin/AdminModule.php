@@ -45,6 +45,7 @@ final class AdminModule implements ModuleInterface
     {
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/admin');
         $registrar->services()->autowire(AdminShell::class, AdminScreens::class, public: true);
+        $registrar->services()->autowire(AdminShell::class);
         $registrar->services()->autowire(DashboardHandler::class);
         $registrar->services()->autowire(SettingsHandler::class);
         $registrar->services()->autowire(LanguagesHandler::class);

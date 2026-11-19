@@ -58,6 +58,11 @@ final readonly class RedirectsHandler implements RequestHandlerInterface
             throw new HttpForbiddenException($request);
         }
         $form = self::form();
+        $from = $request->getQueryParams()['from'] ?? null;
+        if (is_string($from) && $from !== '') {
+            // From "Add a redirect" on the Analytics screen's pages not found.
+            $form = $form->withValues(['from' => mb_substr($from, 0, 300)]);
+        }
         if ($request->getMethod() === 'POST') {
             $body = $request->getParsedBody();
             $body = is_array($body) ? $body : [];

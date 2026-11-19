@@ -6,6 +6,7 @@ namespace SightPress\Core\Audit;
 
 use Psr\Clock\ClockInterface;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
+use SightPress\Core\Analytics\Contract\AnalyticsDataDeleted;
 use SightPress\Core\Media\Contract\MediaChanged;
 use SightPress\Core\Media\Contract\MediaDeleted;
 use SightPress\Core\Media\Contract\MediaLibrary;
@@ -48,7 +49,7 @@ final readonly class AuditRecorder
         PageScheduled::class, ScheduledStepFailed::class,
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
         MenuChanged::class, RoleChanged::class, AccountChanged::class, AccountRegistered::class, SettingsChanged::class,
-        SiteModuleChanged::class,
+        SiteModuleChanged::class, AnalyticsDataDeleted::class,
     ];
 
     public function __construct(
@@ -117,6 +118,7 @@ final readonly class AuditRecorder
                 SiteModuleChanged::DISABLED => 'Turned off %s.',
                 SiteModuleChanged::DATA_DELETED => 'Deleted the data of %s.',
             }, $event->name), ['module' => $event->moduleId]),
+            $event instanceof AnalyticsDataDeleted => $this->entry($event->actorId, 'analytics.deleted', 'settings', null, 'Deleted all analytics data.', []),
             $event instanceof SettingsChanged => $this->entry($event->actorId, 'settings.changed', 'settings', null, sprintf('Changed the site settings: %s.', implode(', ', array_map($this->setting(...), $event->keys))), ['keys' => $event->keys]),
             default => null,
         };

@@ -32,7 +32,7 @@ final class AnalyticsModuleTest extends TestCase
     {
         $manifest = new AnalyticsModule()->manifest();
         self::assertSame(['analytics', false, true], [$manifest->id, $manifest->required, $manifest->enabledByDefault]);
-        self::assertSame(['site', 'page', 'rbac'], array_map(static fn ($requirement) => $requirement->moduleId, $manifest->requires));
+        self::assertSame(['site', 'page', 'rbac', 'admin'], array_map(static fn ($requirement) => $requirement->moduleId, $manifest->requires));
 
         $candidates = array_values(array_filter(CoreModules::candidates(), static fn ($candidate) => $candidate->module instanceof AnalyticsModule));
         self::assertSame('Analytics', $candidates[0]->about['analytics']->name);
@@ -51,6 +51,12 @@ final class AnalyticsModuleTest extends TestCase
             [AnalyticsReportCommand::class, AnalyticsPurgeCommand::class],
             array_values(array_map(static fn ($c) => $c->item, array_filter($registry->commands(), static fn ($c) => $c->module === 'analytics'))),
         );
+
+        $routes = array_values(array_filter($registry->routes(), static fn ($r) => $r->module === 'analytics'));
+        self::assertSame(['/admin/analytics', '/admin/analytics/download', '/admin/analytics/retention', '/admin/analytics/delete'], array_map(static fn ($r) => $r->item->path, $routes));
+        self::assertSame([\SightPress\Core\Analytics\Admin\AnalyticsWidget::class], array_values(array_map(static fn ($w) => $w->item, array_filter($registry->dashboardWidgets(), static fn ($w) => $w->module === 'analytics'))));
+        $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'analytics'));
+        self::assertFileExists($views[0]->item->directory . '/charts.html.twig');
 
         $migrations = new AnalyticsMigrations();
         self::assertSame('SightPress\Core\Analytics\Migrations', $migrations->namespace());

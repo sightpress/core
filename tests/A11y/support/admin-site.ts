@@ -24,6 +24,7 @@ export const ADMIN_SITES = {
   menuentries: 'http://127.0.0.1:8077',
   profile: 'http://127.0.0.1:8076',
   features: 'http://127.0.0.1:8075',
+  analytics: 'http://127.0.0.1:8072',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

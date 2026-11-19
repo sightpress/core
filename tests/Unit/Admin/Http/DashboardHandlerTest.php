@@ -16,11 +16,14 @@ use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageOverviewQuery;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Tests\Support\AdminFixture;
+use SightPress\Core\Tests\Support\Dashboard\FakeWidgets;
 use SightPress\Core\Tests\Support\PageFixture;
 use SightPress\Core\Tests\Support\ServerLimitsFixture;
 use SightPress\Core\User\Entity\User;
 
 #[CoversClass(DashboardHandler::class)]
+#[CoversClass(\SightPress\Core\Admin\Http\AdminDashboardContext::class)]
+#[CoversClass(\SightPress\Core\Infrastructure\Dashboard\DashboardWidgets::class)]
 #[UsesNamespace('SightPress\Core')]
 final class DashboardHandlerTest extends TestCase
 {
@@ -92,13 +95,33 @@ final class DashboardHandlerTest extends TestCase
         self::assertStringNotContainsString('server-problems', $this->dashboard($ada), 'nothing to fix');
     }
 
-    private function dashboard(User $user, ?ServerLimits $server = null): string
+    public function testShowsTheWidgetsOfModulesThePersonMaySeeFirst(): void
     {
+        $widgets = new FakeWidgets();
+        $max = $this->admin->auth->user('max@example.org', null);
+
+        $html = $this->dashboard($max, widgets: $widgets);
+
+        self::assertStringContainsString('<h2 id="dashboard-widget-acme-news">Latest news</h2>', $html);
+        self::assertStringContainsString('<p>News for en-GB in Europe/London, <a href="/admin/news/7">read</a>.</p>', $html);
+        self::assertStringNotContainsString('Money', $html, 'needs acme.money');
+        self::assertStringNotContainsString('Broken', $html, 'a widget that fails is left out');
+        self::assertLessThan(strpos($html, 'Recent activity'), strpos($html, 'Latest news'));
+        self::assertTrue($widgets->log->hasErrorThatContains('Dashboard widget {widget} failed'));
+        self::assertSame(['widget' => 'acme.broken', 'class' => \RuntimeException::class, 'message' => 'No news today.'], $widgets->log->getRecords()[0]->context);
+    }
+
+    private function dashboard(User $user, ?ServerLimits $server = null, ?FakeWidgets $widgets = null): string
+    {
+        $widgets ??= new FakeWidgets();
         $handler = new DashboardHandler(
             $this->admin->shell(),
             new PageOverviewQuery($this->admin->auth->database->entityManager, $this->pages->site),
             $this->admin->auth->users,
             new ServerLimitsCheck(new MediaLimits(), $server ?? ServerLimitsFixture::standard()),
+            $this->admin->shell(),
+            FakeWidgets::widgets(),
+            $widgets->logger(),
         );
 
         return (string) $handler->handle($this->admin->request($user))->getBody();

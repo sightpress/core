@@ -1,0 +1,20 @@
+{#
+    Confirms deleting all of the site's analytics (/admin/analytics/delete), then "Delete analytics data" and "Keep
+    them". Context: `action`, `cancel`, `first_day` (YYYY-MM-DD or null).
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Delete all analytics data?') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Delete all analytics data?') }}</h1>
+<ul>
+    <li>{%- if first_day %}{{ t('Every figure counted since {day} is deleted for good. This can’t be undone.', {day: first_day}) }}{% else %}{{ t('Nothing has been counted yet, so there is nothing to delete.') }}{% endif %}</li>
+    <li>{{ t('Counting goes on from now; turn analytics off on the Features screen to stop it.') }}</li>
+</ul>
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <div class="page-editor__workflow">
+        <button type="submit" class="button button--danger">{{ t('Delete analytics data') }}</button>
+        <a href="{{ cancel }}">{{ t('Keep the data') }}</a>
+    </div>
+</form>
+{% endblock %}
