@@ -11,7 +11,8 @@ use Symfony\Component\RateLimiter\Storage\StorageInterface;
 
 /**
  * Named rate limits. `write` caps state-changing requests per client; `sign_in` caps sign-in attempts;
- * `contact_form` caps contact form messages per client; `registration` caps sign-up forms per client. The
+ * `contact_form` caps contact form messages per client; `registration` caps sign-up forms per client; `search`
+ * caps site searches per client; `assistant` caps AI assistant requests per person. The
  * verification limits cap six-digit codes: `verification_target` how many codes one address gets,
  * `verification_client` how many codes one client asks for, and `verification_check` how many codes one client
  * tries. Modules ask for a limiter by policy and key, for example
@@ -29,6 +30,7 @@ final class RateLimiters
         'contact_form' => ['policy' => 'sliding_window', 'limit' => 5, 'interval' => '10 minutes'],
         'registration' => ['policy' => 'sliding_window', 'limit' => 10, 'interval' => '1 hour'],
         'search' => ['policy' => 'sliding_window', 'limit' => 30, 'interval' => '1 minute'],
+        'assistant' => ['policy' => 'sliding_window', 'limit' => 20, 'interval' => '10 minutes'],
     ];
 
     /** @var array<string, RateLimiterFactory> */

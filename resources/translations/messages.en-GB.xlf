@@ -607,6 +607,12 @@
         <target>Analytics are now kept for {count, plural, one {# month} other {# months}}.</target>
       </segment>
     </unit>
+    <unit id="e49a9cb18844c7d0">
+      <segment>
+        <source>Another OpenAI-compatible service</source>
+        <target>Another OpenAI-compatible service</target>
+      </segment>
+    </unit>
     <unit id="43786f7b5c2aada4">
       <segment>
         <source>Another account already uses {email}.</source>
@@ -617,6 +623,12 @@
       <segment>
         <source>Another page is also called &quot;{title}&quot;. Give this page a title of its own, so people can tell them apart in search results.</source>
         <target>Another page is also called &quot;{title}&quot;. Give this page a title of its own, so people can tell them apart in search results.</target>
+      </segment>
+    </unit>
+    <unit id="118c19cacd3f8327">
+      <segment>
+        <source>Anthropic (Claude)</source>
+        <target>Anthropic (Claude)</target>
       </segment>
     </unit>
     <unit id="224776b25589e5cd">
@@ -713,6 +725,18 @@
       <segment>
         <source>Ask search engines and AI search engines not to list this page</source>
         <target>Ask search engines and AI search engines not to list this page</target>
+      </segment>
+    </unit>
+    <unit id="e4bfd92189feaa52">
+      <segment>
+        <source>Ask the AI assistant for suggestions, which they check before using.</source>
+        <target>Ask the AI assistant for suggestions, which they check before using.</target>
+      </segment>
+    </unit>
+    <unit id="ae207dbb7b681953">
+      <segment>
+        <source>Ask the assistant</source>
+        <target>Ask the assistant</target>
       </segment>
     </unit>
     <unit id="91f9d3ce4e6d173f">
@@ -1067,6 +1091,12 @@
       <segment>
         <source>Choose one of the options.</source>
         <target>Choose one of the options.</target>
+      </segment>
+    </unit>
+    <unit id="47ce55e426f2e51d">
+      <segment>
+        <source>Choose the AI service, its key, the monthly budget and who may use the assistant.</source>
+        <target>Choose the AI service, its key, the monthly budget and who may use the assistant.</target>
       </segment>
     </unit>
     <unit id="c8a50c818e2a05bd">
@@ -2611,6 +2641,12 @@
         <target>Manage site settings</target>
       </segment>
     </unit>
+    <unit id="532d662ad96d7ce2">
+      <segment>
+        <source>Manage the AI assistant</source>
+        <target>Manage the AI assistant</target>
+      </segment>
+    </unit>
     <unit id="58606e582452ca98">
       <segment>
         <source>Manage users</source>
@@ -2675,6 +2711,12 @@
       <segment>
         <source>Missing page (#{page_id})</source>
         <target>Missing page (#{page_id})</target>
+      </segment>
+    </unit>
+    <unit id="f1fff94a8e8008bf">
+      <segment>
+        <source>Mistral AI</source>
+        <target>Mistral AI</target>
       </segment>
     </unit>
     <unit id="0dd4488018f09f19">
@@ -2863,6 +2905,12 @@
         <target>No</target>
       </segment>
     </unit>
+    <unit id="e877797d8fee2371">
+      <segment>
+        <source>No AI service is chosen yet.</source>
+        <target>No AI service is chosen yet.</target>
+      </segment>
+    </unit>
     <unit id="1ed60049108c1eca">
       <segment>
         <source>No animations, sliding or smooth scrolling in the admin panel, even if your device doesn’t ask for less motion.</source>
@@ -2903,6 +2951,12 @@
       <segment>
         <source>No file chosen</source>
         <target>No file chosen</target>
+      </segment>
+    </unit>
+    <unit id="13372952d2764b91">
+      <segment>
+        <source>No model is chosen yet.</source>
+        <target>No model is chosen yet.</target>
       </segment>
     </unit>
     <unit id="3d032462499467e1">
@@ -3209,6 +3263,12 @@
       <segment>
         <source>Open the page</source>
         <target>Open the page</target>
+      </segment>
+    </unit>
+    <unit id="9e75c58da7eb3ede">
+      <segment>
+        <source>OpenAI (GPT)</source>
+        <target>OpenAI (GPT)</target>
       </segment>
     </unit>
     <unit id="f97e9da0e3b879f0">
@@ -4549,6 +4609,48 @@
         <target>That redirect would go round in a loop: the new address leads back to the old one.</target>
       </segment>
     </unit>
+    <unit id="e9a9fd061739fe78">
+      <segment>
+        <source>The AI service can’t be reached right now. Try again later.</source>
+        <target>The AI service can’t be reached right now. Try again later.</target>
+      </segment>
+    </unit>
+    <unit id="7ca37e9b69d73204">
+      <segment>
+        <source>The AI service declined to help with this request. Try asking in another way.</source>
+        <target>The AI service declined to help with this request. Try asking in another way.</target>
+      </segment>
+    </unit>
+    <unit id="de1c898409ab8362">
+      <segment>
+        <source>The AI service didn’t accept the API key. An admin can replace it on the AI assistant screen.</source>
+        <target>The AI service didn’t accept the API key. An admin can replace it on the AI assistant screen.</target>
+      </segment>
+    </unit>
+    <unit id="585eda6b577aedb7">
+      <segment>
+        <source>The AI service doesn’t offer the chosen model any more. An admin can choose another one on the AI assistant screen.</source>
+        <target>The AI service doesn’t offer the chosen model any more. An admin can choose another one on the AI assistant screen.</target>
+      </segment>
+    </unit>
+    <unit id="d84d9acb77ffe044">
+      <segment>
+        <source>The AI service is getting too many requests right now. Try again in a minute.</source>
+        <target>The AI service is getting too many requests right now. Try again in a minute.</target>
+      </segment>
+    </unit>
+    <unit id="989d7f2941abfa80">
+      <segment>
+        <source>The AI service took too long to answer. Try again, perhaps with less text.</source>
+        <target>The AI service took too long to answer. Try again, perhaps with less text.</target>
+      </segment>
+    </unit>
+    <unit id="1345dd71533f7ba8">
+      <segment>
+        <source>The account with the AI service has no credit left, or has reached its spending limit. An admin can check it with the AI service.</source>
+        <target>The account with the AI service has no credit left, or has reached its spending limit. An admin can check it with the AI service.</target>
+      </segment>
+    </unit>
     <unit id="ce58ee2f8cb35bdd">
       <segment>
         <source>The address &quot;/{path}&quot; is already used by the page &quot;{title}&quot;. Choose another one.</source>
@@ -4583,6 +4685,12 @@
       <segment>
         <source>The address must start with https://, http://, mailto:, tel: or / (an address on this site).</source>
         <target>The address must start with https://, http://, mailto:, tel: or / (an address on this site).</target>
+      </segment>
+    </unit>
+    <unit id="a6099cfe7c8460f3">
+      <segment>
+        <source>The address of the AI service isn’t valid. Enter it again.</source>
+        <target>The address of the AI service isn’t valid. Enter it again.</target>
       </segment>
     </unit>
     <unit id="fa4dce8a937a7920">
@@ -4621,6 +4729,18 @@
         <target>The alt text looks like a file name. Describe what the image shows.</target>
       </segment>
     </unit>
+    <unit id="2ecb0f15e8d1f8d8">
+      <segment>
+        <source>The assistant can’t do that.</source>
+        <target>The assistant can’t do that.</target>
+      </segment>
+    </unit>
+    <unit id="ba1560054155c30f">
+      <segment>
+        <source>The assistant couldn’t use what was sent.</source>
+        <target>The assistant couldn’t use what was sent.</target>
+      </segment>
+    </unit>
     <unit id="77f41740ef3dc355">
       <segment>
         <source>The busiest day was {day}, with {amount}.</source>
@@ -4633,10 +4753,22 @@
         <target>The caption must be {{ limit }} characters or fewer</target>
       </segment>
     </unit>
+    <unit id="6b57cd8726fb54ce">
+      <segment>
+        <source>The chosen AI service ({provider}) isn’t available any more. Choose another one.</source>
+        <target>The chosen AI service ({provider}) isn’t available any more. Choose another one.</target>
+      </segment>
+    </unit>
     <unit id="862ff78129f8c480">
       <segment>
         <source>The chosen days</source>
         <target>The chosen days</target>
+      </segment>
+    </unit>
+    <unit id="d92ed9fbba7cd81a">
+      <segment>
+        <source>The chosen model can’t look at pictures. An admin can choose one that can on the AI assistant screen.</source>
+        <target>The chosen model can’t look at pictures. An admin can choose one that can on the AI assistant screen.</target>
       </segment>
     </unit>
     <unit id="96adcb148e6a4029">
@@ -5203,6 +5335,12 @@
         <target>The subject of the emails you get.</target>
       </segment>
     </unit>
+    <unit id="ba2cdb340b604c66">
+      <segment>
+        <source>The suggestion couldn’t be used: it wasn’t in the expected form, or had something in it that isn’t allowed. Try again.</source>
+        <target>The suggestion couldn’t be used: it wasn’t in the expected form, or had something in it that isn’t allowed. Try again.</target>
+      </segment>
+    </unit>
     <unit id="6af642e51eefed35">
       <segment>
         <source>The system</source>
@@ -5417,6 +5555,12 @@
       <segment>
         <source>There is already an account for {email}.</source>
         <target>There is already an account for {email}.</target>
+      </segment>
+    </unit>
+    <unit id="db5f3ab31a43e095">
+      <segment>
+        <source>There is no API key for {provider} yet.</source>
+        <target>There is no API key for {provider} yet.</target>
       </segment>
     </unit>
     <unit id="f3e8759b55887d39">
@@ -5663,6 +5807,12 @@
       <segment>
         <source>This searches the pages in {language}. To search in another language, choose it in the list of languages.</source>
         <target>This searches the pages in {language}. To search in another language, choose it in the list of languages.</target>
+      </segment>
+    </unit>
+    <unit id="2ee7a41edf141f30">
+      <segment>
+        <source>This site has used all of its AI assistant budget for this month. It starts again on the 1st, or an admin can raise it on the AI assistant screen.</source>
+        <target>This site has used all of its AI assistant budget for this month. It starts again on the 1st, or an admin can raise it on the AI assistant screen.</target>
       </segment>
     </unit>
     <unit id="1aca1ffa176218b1">
@@ -6005,6 +6155,12 @@
       <segment>
         <source>Use at most {{ limit }}.</source>
         <target>Use at most {{ limit }}.</target>
+      </segment>
+    </unit>
+    <unit id="1e94bc7fc49b37b8">
+      <segment>
+        <source>Use the AI assistant</source>
+        <target>Use the AI assistant</target>
       </segment>
     </unit>
     <unit id="fafb6498f927d53c">
@@ -6499,6 +6655,12 @@
         <target>You can’t deactivate your own account.</target>
       </segment>
     </unit>
+    <unit id="94497dfe8d3346d1">
+      <segment>
+        <source>You can’t use the assistant for this. Ask an admin if you need it.</source>
+        <target>You can’t use the assistant for this. Ask an admin if you need it.</target>
+      </segment>
+    </unit>
     <unit id="6be54543aa7b7a95">
       <segment>
         <source>You do not have permission to see this page</source>
@@ -6725,6 +6887,12 @@
       <segment>
         <source>Your server’s settings stop some uploads</source>
         <target>Your server’s settings stop some uploads</target>
+      </segment>
+    </unit>
+    <unit id="d24c993b97caf08c">
+      <segment>
+        <source>You’ve asked the assistant a lot in a short time. Try again in {minutes, plural, one {# minute} other {# minutes}}.</source>
+        <target>You’ve asked the assistant a lot in a short time. Try again in {minutes, plural, one {# minute} other {# minutes}}.</target>
       </segment>
     </unit>
     <unit id="c94b294ced7192b9">
@@ -7409,6 +7577,12 @@
       <segment>
         <source>{noun} {index} of {value}</source>
         <target>{noun} {index} of {value}</target>
+      </segment>
+    </unit>
+    <unit id="b96077b936e2334f">
+      <segment>
+        <source>{provider} needs the address of the service.</source>
+        <target>{provider} needs the address of the service.</target>
       </segment>
     </unit>
     <unit id="3a4d1da92a65addb">

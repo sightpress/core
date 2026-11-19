@@ -15,6 +15,7 @@ use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tenant\TenantConfigException;
 
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantAssistant::class)]
 #[CoversClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]
 #[UsesClass(LocaleCode::class)]

@@ -109,6 +109,9 @@ final class AuditRecorderTest extends TestCase
             new \SightPress\Core\Tenant\SiteModuleChanged('acme.events', 'Events', \SightPress\Core\Tenant\SiteModuleChanged::DISABLED, 1),
             new \SightPress\Core\Tenant\SiteModuleChanged('acme.events', 'Events', \SightPress\Core\Tenant\SiteModuleChanged::DATA_DELETED, null),
             new \SightPress\Core\Analytics\Contract\AnalyticsDataDeleted(1),
+            new \SightPress\Core\Assistant\Contract\AssistantUsed(4, 'seo_meta', 'anthropic', 'claude-haiku-5-5', 300, 40, 'ok'),
+            new \SightPress\Core\Assistant\Contract\AssistantUsed(null, 'connection_test', 'openai', 'gpt-5', 0, 0, 'invalid_key'),
+            new SettingsChanged(['assistant.provider', 'assistant.model', 'assistant.base_url', 'assistant.key', 'assistant.monthly_budget', 'assistant.roles'], 1),
             new \stdClass(),
         ] as $event) {
             $recorder($event);
@@ -160,6 +163,9 @@ final class AuditRecorderTest extends TestCase
             'Turned off Events.',
             'Deleted the data of Events.',
             'Deleted all analytics data.',
+            'Used the AI assistant (seo meta) with anthropic, claude-haiku-5-5: 340 tokens.',
+            'Asked the AI assistant (connection test) with openai, gpt-5, without a suggestion: invalid key.',
+            'Changed the site settings: AI service, AI model, AI service address, AI service key, AI assistant budget, Who may use the AI assistant.',
         ], array_map(static fn (AuditEntry $e): string => $e->summary, $entries));
         self::assertSame(['page.submit', 'page', (string) $page, 3, ['from' => 'draft', 'to' => 'in_review', 'comment' => 'Ready']], [$entries[3]->action, $entries[3]->entityType, $entries[3]->entityId, $entries[3]->actorId, $entries[3]->details]);
         self::assertSame(['settings', null], [$entries[20]->entityType, $entries[20]->entityId]);
@@ -174,6 +180,7 @@ final class AuditRecorderTest extends TestCase
         self::assertSame(['role' => 'member', 'refused_role' => 'editor'], $entries[38]->details);
         self::assertSame(['feature.data_deleted', 'feature', 'acme.events', null, ['module' => 'acme.events']], [$entries[42]->action, $entries[42]->entityType, $entries[42]->entityId, $entries[42]->actorId, $entries[42]->details]);
         self::assertSame(['analytics.deleted', 'settings', null, 1, 'Deleted all analytics data.'], [$entries[43]->action, $entries[43]->entityType, $entries[43]->entityId, $entries[43]->actorId, $entries[43]->summary]);
-        self::assertCount(21, AuditRecorder::EVENTS);
+        self::assertSame(['assistant.used', 'assistant', 'seo_meta', 4, ['task' => 'seo_meta', 'provider' => 'anthropic', 'model' => 'claude-haiku-5-5', 'input_tokens' => 300, 'output_tokens' => 40, 'outcome' => 'ok']], [$entries[44]->action, $entries[44]->entityType, $entries[44]->entityId, $entries[44]->actorId, $entries[44]->details]);
+        self::assertCount(22, AuditRecorder::EVENTS);
     }
 }

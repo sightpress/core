@@ -39,6 +39,7 @@ final readonly class TenantConfig
      * @param positive-int|null $uploadProxyBodyLimit `uploads.proxy_body_limit`: the web server's request body limit
      *                                            in bytes (nginx `client_max_body_size` …), which PHP can't read;
      *                                            null when not stated
+     * @param TenantAssistant $assistant          `assistant`: the AI assistant's tenant default and limits
      */
     public function __construct(
         public string $projectDir,
@@ -60,6 +61,7 @@ final readonly class TenantConfig
         public array $moduleDefaults = [],
         public array $moduleLocks = [],
         public ?int $uploadProxyBodyLimit = null,
+        public TenantAssistant $assistant = new TenantAssistant(),
     ) {
     }
 
@@ -104,6 +106,7 @@ final readonly class TenantConfig
             moduleDefaults: self::switches($modules, 'defaults'),
             moduleLocks: self::switches($modules, 'locked'),
             uploadProxyBodyLimit: self::bodyLimit($uploads),
+            assistant: TenantAssistant::fromArray(self::section($config, 'assistant'), $environment),
         );
     }
 

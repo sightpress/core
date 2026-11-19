@@ -6,6 +6,7 @@ namespace SightPress\Core\Module;
 
 use SightPress\Core\Admin\AdminModule;
 use SightPress\Core\Analytics\AnalyticsModule;
+use SightPress\Core\Assistant\AssistantModule;
 use SightPress\Core\Audit\AuditModule;
 use SightPress\Core\Auth\AuthModule;
 use SightPress\Core\Block\BlockModule;
@@ -63,6 +64,11 @@ final class CoreModules
                 'Analytics',
                 'Counts how many people visit the site, what they read, where they come from, what they search for and which addresses are not found, and which search engines and AI crawlers read it. No cookies, no tracking scripts and nothing that identifies a visitor is kept.',
                 'Visits are no longer counted and the Analytics screen is removed. The figures already counted are kept, until they are deleted or are older than the site keeps them.',
+            )]),
+            new ModuleCandidate(new AssistantModule(), 'sightpress/core', about: [AssistantModule::ID => new ModuleAbout(
+                'AI assistant',
+                'Suggestions from an AI service you choose, with your own key: summaries, descriptions for search engines, alt text, drafts and answers to questions. Off until an admin chooses the service and enters its key. Nothing is sent to the service until someone asks for a suggestion, and every suggestion is checked by a person before it is used.',
+                'The assistant panel, the Suggest buttons and the AI assistant screen are removed. The settings, the key and the record of what was used are kept.',
             )]),
             new ModuleCandidate(new AuditModule(), 'sightpress/core'),
         ];

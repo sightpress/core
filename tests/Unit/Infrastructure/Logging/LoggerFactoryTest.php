@@ -13,6 +13,7 @@ use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
 
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantAssistant::class)]
 #[CoversClass(LoggerFactory::class)]
 #[UsesClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]

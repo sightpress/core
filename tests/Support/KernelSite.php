@@ -35,10 +35,12 @@ final class KernelSite
      * @param list<string> $domains
      * @param list<string>          $locales      the first one is the default
      * @param list<ModuleCandidate> $extraModules modules installed next to core's
+     * @param array<string, mixed>  $tenant       extra tenant settings
+     * @param array<string, string> $variables    extra environment variables
      */
-    public function __construct(string $name, array $domains = ['example.org'], string $environment = 'test', array $locales = ['en-GB'], array $extraModules = [])
+    public function __construct(string $name, array $domains = ['example.org'], string $environment = 'test', array $locales = ['en-GB'], array $extraModules = [], array $tenant = [], array $variables = [])
     {
-        $this->project = new TestProject();
+        $this->project = new TestProject($tenant);
         $dsn = TestDatabases::dsn($name, $this->project->path());
         $this->project->directory->write('config/sites.php', '<?php return ' . var_export([
             'version' => 1,
@@ -50,7 +52,7 @@ final class KernelSite
             ])],
         ], true) . ';');
         $this->kernel = Kernel::fromConfig(
-            new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment, 'APP_SECRET' => SiteFixture::SECRET]),
+            new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment, 'APP_SECRET' => SiteFixture::SECRET] + $variables),
             [...CoreModules::candidates(), ...$extraModules],
         );
 

@@ -607,6 +607,12 @@
         <target>As estatísticas passam a ser guardadas durante {count, plural, one {# mês} other {# meses}}.</target>
       </segment>
     </unit>
+    <unit id="e49a9cb18844c7d0">
+      <segment state="initial">
+        <source>Another OpenAI-compatible service</source>
+        <target>Outro serviço compatível com a OpenAI</target>
+      </segment>
+    </unit>
     <unit id="43786f7b5c2aada4">
       <segment>
         <source>Another account already uses {email}.</source>
@@ -617,6 +623,12 @@
       <segment>
         <source>Another page is also called "{title}". Give this page a title of its own, so people can tell them apart in search results.</source>
         <target>Outra página também se chama "{title}". Dê a esta página um título próprio, para que as pessoas as distingam nos resultados de pesquisa.</target>
+      </segment>
+    </unit>
+    <unit id="118c19cacd3f8327">
+      <segment state="initial">
+        <source>Anthropic (Claude)</source>
+        <target>Anthropic (Claude)</target>
       </segment>
     </unit>
     <unit id="224776b25589e5cd">
@@ -713,6 +725,18 @@
       <segment>
         <source>Ask search engines and AI search engines not to list this page</source>
         <target>Pedir aos motores de pesquisa e aos motores de pesquisa de IA que não listem esta página</target>
+      </segment>
+    </unit>
+    <unit id="e4bfd92189feaa52">
+      <segment state="initial">
+        <source>Ask the AI assistant for suggestions, which they check before using.</source>
+        <target>Pedir sugestões ao assistente de IA, que verificam antes de usar.</target>
+      </segment>
+    </unit>
+    <unit id="ae207dbb7b681953">
+      <segment state="initial">
+        <source>Ask the assistant</source>
+        <target>Perguntar ao assistente</target>
       </segment>
     </unit>
     <unit id="91f9d3ce4e6d173f">
@@ -1067,6 +1091,12 @@
       <segment>
         <source>Choose one of the options.</source>
         <target>Escolha uma das opções.</target>
+      </segment>
+    </unit>
+    <unit id="47ce55e426f2e51d">
+      <segment state="initial">
+        <source>Choose the AI service, its key, the monthly budget and who may use the assistant.</source>
+        <target>Escolher o serviço de IA, a sua chave, o orçamento mensal e quem pode usar o assistente.</target>
       </segment>
     </unit>
     <unit id="c8a50c818e2a05bd">
@@ -2611,6 +2641,12 @@
         <target>Gerir as definições do site</target>
       </segment>
     </unit>
+    <unit id="532d662ad96d7ce2">
+      <segment state="initial">
+        <source>Manage the AI assistant</source>
+        <target>Gerir o assistente de IA</target>
+      </segment>
+    </unit>
     <unit id="58606e582452ca98">
       <segment>
         <source>Manage users</source>
@@ -2675,6 +2711,12 @@
       <segment>
         <source>Missing page (#{page_id})</source>
         <target>Página em falta (#{page_id})</target>
+      </segment>
+    </unit>
+    <unit id="f1fff94a8e8008bf">
+      <segment state="initial">
+        <source>Mistral AI</source>
+        <target>Mistral AI</target>
       </segment>
     </unit>
     <unit id="0dd4488018f09f19">
@@ -2863,6 +2905,12 @@
         <target>Não</target>
       </segment>
     </unit>
+    <unit id="e877797d8fee2371">
+      <segment state="initial">
+        <source>No AI service is chosen yet.</source>
+        <target>Ainda não foi escolhido nenhum serviço de IA.</target>
+      </segment>
+    </unit>
     <unit id="1ed60049108c1eca">
       <segment>
         <source>No animations, sliding or smooth scrolling in the admin panel, even if your device doesn’t ask for less motion.</source>
@@ -2903,6 +2951,12 @@
       <segment>
         <source>No file chosen</source>
         <target>Nenhum ficheiro escolhido</target>
+      </segment>
+    </unit>
+    <unit id="13372952d2764b91">
+      <segment state="initial">
+        <source>No model is chosen yet.</source>
+        <target>Ainda não foi escolhido nenhum modelo.</target>
       </segment>
     </unit>
     <unit id="3d032462499467e1">
@@ -3209,6 +3263,12 @@
       <segment>
         <source>Open the page</source>
         <target>Abrir a página</target>
+      </segment>
+    </unit>
+    <unit id="9e75c58da7eb3ede">
+      <segment state="initial">
+        <source>OpenAI (GPT)</source>
+        <target>OpenAI (GPT)</target>
       </segment>
     </unit>
     <unit id="f97e9da0e3b879f0">
@@ -4549,6 +4609,48 @@
         <target>Esse redirecionamento ficaria em círculo: o novo endereço leva de volta ao antigo.</target>
       </segment>
     </unit>
+    <unit id="e9a9fd061739fe78">
+      <segment state="initial">
+        <source>The AI service can’t be reached right now. Try again later.</source>
+        <target>Neste momento não é possível contactar o serviço de IA. Tente mais tarde.</target>
+      </segment>
+    </unit>
+    <unit id="7ca37e9b69d73204">
+      <segment state="initial">
+        <source>The AI service declined to help with this request. Try asking in another way.</source>
+        <target>O serviço de IA recusou ajudar com este pedido. Tente pedir de outra forma.</target>
+      </segment>
+    </unit>
+    <unit id="de1c898409ab8362">
+      <segment state="initial">
+        <source>The AI service didn’t accept the API key. An admin can replace it on the AI assistant screen.</source>
+        <target>O serviço de IA não aceitou a chave da API. Um administrador pode substituí-la no ecrã do assistente de IA.</target>
+      </segment>
+    </unit>
+    <unit id="585eda6b577aedb7">
+      <segment state="initial">
+        <source>The AI service doesn’t offer the chosen model any more. An admin can choose another one on the AI assistant screen.</source>
+        <target>O serviço de IA já não oferece o modelo escolhido. Um administrador pode escolher outro no ecrã do assistente de IA.</target>
+      </segment>
+    </unit>
+    <unit id="d84d9acb77ffe044">
+      <segment state="initial">
+        <source>The AI service is getting too many requests right now. Try again in a minute.</source>
+        <target>O serviço de IA está a receber demasiados pedidos neste momento. Tente daqui a um minuto.</target>
+      </segment>
+    </unit>
+    <unit id="989d7f2941abfa80">
+      <segment state="initial">
+        <source>The AI service took too long to answer. Try again, perhaps with less text.</source>
+        <target>O serviço de IA demorou demasiado a responder. Tente outra vez, talvez com menos texto.</target>
+      </segment>
+    </unit>
+    <unit id="1345dd71533f7ba8">
+      <segment state="initial">
+        <source>The account with the AI service has no credit left, or has reached its spending limit. An admin can check it with the AI service.</source>
+        <target>A conta no serviço de IA já não tem crédito ou atingiu o limite de gastos. Um administrador pode verificá-lo junto do serviço de IA.</target>
+      </segment>
+    </unit>
     <unit id="ce58ee2f8cb35bdd">
       <segment>
         <source>The address "/{path}" is already used by the page "{title}". Choose another one.</source>
@@ -4583,6 +4685,12 @@
       <segment>
         <source>The address must start with https://, http://, mailto:, tel: or / (an address on this site).</source>
         <target>O endereço tem de começar por https://, http://, mailto:, tel: ou / (um endereço deste site).</target>
+      </segment>
+    </unit>
+    <unit id="a6099cfe7c8460f3">
+      <segment state="initial">
+        <source>The address of the AI service isn’t valid. Enter it again.</source>
+        <target>O endereço do serviço de IA não é válido. Introduza-o de novo.</target>
       </segment>
     </unit>
     <unit id="fa4dce8a937a7920">
@@ -4621,6 +4729,18 @@
         <target>O texto alternativo parece o nome de um ficheiro. Descreva o que a imagem mostra.</target>
       </segment>
     </unit>
+    <unit id="2ecb0f15e8d1f8d8">
+      <segment state="initial">
+        <source>The assistant can’t do that.</source>
+        <target>O assistente não consegue fazer isso.</target>
+      </segment>
+    </unit>
+    <unit id="ba1560054155c30f">
+      <segment state="initial">
+        <source>The assistant couldn’t use what was sent.</source>
+        <target>O assistente não conseguiu usar o que foi enviado.</target>
+      </segment>
+    </unit>
     <unit id="77f41740ef3dc355">
       <segment state="initial">
         <source>The busiest day was {day}, with {amount}.</source>
@@ -4633,10 +4753,22 @@
         <target>A legenda pode ter no máximo {{ limit }} caracteres</target>
       </segment>
     </unit>
+    <unit id="6b57cd8726fb54ce">
+      <segment state="initial">
+        <source>The chosen AI service ({provider}) isn’t available any more. Choose another one.</source>
+        <target>O serviço de IA escolhido ({provider}) já não está disponível. Escolha outro.</target>
+      </segment>
+    </unit>
     <unit id="862ff78129f8c480">
       <segment state="initial">
         <source>The chosen days</source>
         <target>Os dias escolhidos</target>
+      </segment>
+    </unit>
+    <unit id="d92ed9fbba7cd81a">
+      <segment state="initial">
+        <source>The chosen model can’t look at pictures. An admin can choose one that can on the AI assistant screen.</source>
+        <target>O modelo escolhido não consegue ver imagens. Um administrador pode escolher um que consiga no ecrã do assistente de IA.</target>
       </segment>
     </unit>
     <unit id="96adcb148e6a4029">
@@ -5203,6 +5335,12 @@
         <target>O assunto dos emails que recebe.</target>
       </segment>
     </unit>
+    <unit id="ba2cdb340b604c66">
+      <segment state="initial">
+        <source>The suggestion couldn’t be used: it wasn’t in the expected form, or had something in it that isn’t allowed. Try again.</source>
+        <target>Não foi possível usar a sugestão: não vinha na forma esperada ou tinha algo que não é permitido. Tente outra vez.</target>
+      </segment>
+    </unit>
     <unit id="6af642e51eefed35">
       <segment>
         <source>The system</source>
@@ -5417,6 +5555,12 @@
       <segment>
         <source>There is already an account for {email}.</source>
         <target>Já existe uma conta para {email}.</target>
+      </segment>
+    </unit>
+    <unit id="db5f3ab31a43e095">
+      <segment state="initial">
+        <source>There is no API key for {provider} yet.</source>
+        <target>Ainda não há uma chave da API para {provider}.</target>
       </segment>
     </unit>
     <unit id="f3e8759b55887d39">
@@ -5663,6 +5807,12 @@
       <segment state="initial">
         <source>This searches the pages in {language}. To search in another language, choose it in the list of languages.</source>
         <target>Esta pesquisa procura nas páginas em {language}. Para pesquisar noutra língua, escolha-a na lista de línguas.</target>
+      </segment>
+    </unit>
+    <unit id="2ee7a41edf141f30">
+      <segment state="initial">
+        <source>This site has used all of its AI assistant budget for this month. It starts again on the 1st, or an admin can raise it on the AI assistant screen.</source>
+        <target>Este site já usou todo o orçamento do assistente de IA deste mês. Recomeça no dia 1, ou um administrador pode aumentá-lo no ecrã do assistente de IA.</target>
       </segment>
     </unit>
     <unit id="1aca1ffa176218b1">
@@ -6005,6 +6155,12 @@
       <segment>
         <source>Use at most {{ limit }}.</source>
         <target>Use no máximo {{ limit }}.</target>
+      </segment>
+    </unit>
+    <unit id="1e94bc7fc49b37b8">
+      <segment state="initial">
+        <source>Use the AI assistant</source>
+        <target>Usar o assistente de IA</target>
       </segment>
     </unit>
     <unit id="fafb6498f927d53c">
@@ -6499,6 +6655,12 @@
         <target>Não pode desativar a sua própria conta.</target>
       </segment>
     </unit>
+    <unit id="94497dfe8d3346d1">
+      <segment state="initial">
+        <source>You can’t use the assistant for this. Ask an admin if you need it.</source>
+        <target>Não pode usar o assistente para isto. Peça a um administrador se precisar.</target>
+      </segment>
+    </unit>
     <unit id="6be54543aa7b7a95">
       <segment>
         <source>You do not have permission to see this page</source>
@@ -6725,6 +6887,12 @@
       <segment>
         <source>Your server’s settings stop some uploads</source>
         <target>As definições do seu servidor impedem alguns carregamentos</target>
+      </segment>
+    </unit>
+    <unit id="d24c993b97caf08c">
+      <segment state="initial">
+        <source>You’ve asked the assistant a lot in a short time. Try again in {minutes, plural, one {# minute} other {# minutes}}.</source>
+        <target>Fez muitos pedidos ao assistente em pouco tempo. Tente daqui a {minutes, plural, one {# minuto} other {# minutos}}.</target>
       </segment>
     </unit>
     <unit id="c94b294ced7192b9">
@@ -7409,6 +7577,12 @@
       <segment>
         <source>{noun} {index} of {value}</source>
         <target>{noun} {index} de {value}</target>
+      </segment>
+    </unit>
+    <unit id="b96077b936e2334f">
+      <segment state="initial">
+        <source>{provider} needs the address of the service.</source>
+        <target>{provider} precisa do endereço do serviço.</target>
       </segment>
     </unit>
     <unit id="3a4d1da92a65addb">

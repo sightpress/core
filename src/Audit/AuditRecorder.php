@@ -7,6 +7,7 @@ namespace SightPress\Core\Audit;
 use Psr\Clock\ClockInterface;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
 use SightPress\Core\Analytics\Contract\AnalyticsDataDeleted;
+use SightPress\Core\Assistant\Contract\AssistantUsed;
 use SightPress\Core\Media\Contract\MediaChanged;
 use SightPress\Core\Media\Contract\MediaDeleted;
 use SightPress\Core\Media\Contract\MediaLibrary;
@@ -49,7 +50,7 @@ final readonly class AuditRecorder
         PageScheduled::class, ScheduledStepFailed::class,
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
         MenuChanged::class, RoleChanged::class, AccountChanged::class, AccountRegistered::class, SettingsChanged::class,
-        SiteModuleChanged::class, AnalyticsDataDeleted::class,
+        SiteModuleChanged::class, AnalyticsDataDeleted::class, AssistantUsed::class,
     ];
 
     public function __construct(
@@ -119,6 +120,13 @@ final readonly class AuditRecorder
                 SiteModuleChanged::DATA_DELETED => 'Deleted the data of %s.',
             }, $event->name), ['module' => $event->moduleId]),
             $event instanceof AnalyticsDataDeleted => $this->entry($event->actorId, 'analytics.deleted', 'settings', null, 'Deleted all analytics data.', []),
+            $event instanceof AssistantUsed => $this->entry($event->actorId, 'assistant.used', 'assistant', $event->task, sprintf(
+                $event->outcome === 'ok' ? 'Used the AI assistant (%s) with %s, %s: %d tokens.' : 'Asked the AI assistant (%s) with %s, %s, without a suggestion: %s.',
+                str_replace('_', ' ', $event->task),
+                $event->provider,
+                $event->model,
+                ...($event->outcome === 'ok' ? [$event->inputTokens + $event->outputTokens] : [str_replace('_', ' ', $event->outcome)]),
+            ), ['task' => $event->task, 'provider' => $event->provider, 'model' => $event->model, 'input_tokens' => $event->inputTokens, 'output_tokens' => $event->outputTokens, 'outcome' => $event->outcome]),
             $event instanceof SettingsChanged => $this->entry($event->actorId, 'settings.changed', 'settings', null, sprintf('Changed the site settings: %s.', implode(', ', array_map($this->setting(...), $event->keys))), ['keys' => $event->keys]),
             default => null,
         };
@@ -154,6 +162,12 @@ final readonly class AuditRecorder
             'branding.icon' => 'Icon',
             'branding.share_image' => 'Share picture',
             'analytics.retention_months' => 'How long analytics are kept',
+            'assistant.provider' => 'AI service',
+            'assistant.model' => 'AI model',
+            'assistant.base_url' => 'AI service address',
+            'assistant.key' => 'AI service key',
+            'assistant.monthly_budget' => 'AI assistant budget',
+            'assistant.roles' => 'Who may use the AI assistant',
             default => $key,
         };
     }

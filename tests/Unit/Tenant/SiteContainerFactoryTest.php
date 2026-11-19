@@ -28,6 +28,8 @@ use SightPress\Core\Tests\Support\TemporaryDirectory;
 use PDO;
 use stdClass;
 
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantAssistant::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Infrastructure\Assistant\AssistantExtensions::class)]
 #[CoversClass(SiteContainerFactory::class)]
 #[CoversClass(SiteContext::class)]
 #[CoversClass(SiteContainer::class)]
@@ -221,6 +223,7 @@ final class SiteContainerFactoryTest extends TestCase
         $site = $factory->forSite(SiteFixture::site('demo'));
 
         self::assertSame(['acme.events'], array_keys(Services::get($site, \SightPress\Core\Infrastructure\Search\SearchExtensions::class)->providers()));
+        self::assertSame([], Services::get($site, \SightPress\Core\Infrastructure\Assistant\AssistantExtensions::class)->providers());
         self::assertTrue(Services::get($site, \SightPress\Core\Tenant\EnabledModules::class)->has('acme.events'));
         self::assertFalse(Services::get($site, \SightPress\Core\Tenant\EnabledModules::class)->has('search'));
     }

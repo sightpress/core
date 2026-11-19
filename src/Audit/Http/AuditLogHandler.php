@@ -44,6 +44,7 @@ final readonly class AuditLogHandler implements RequestHandlerInterface
         'user' => 'People',
         'settings' => 'Site settings',
         'feature' => 'Features',
+        'assistant' => 'AI assistant',
     ];
 
     public function __construct(
