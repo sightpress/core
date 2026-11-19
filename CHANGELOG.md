@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.3.0](https://github.com/sightpress/core/compare/0.2.0...0.3.0) (2026-11-19)
+
+
+### Features
+
+* add an Analytics screen with accessible charts, tables and CSV downloads, and a Last 7 days dashboard box (AN-3) ([#79](https://github.com/sightpress/core/issues/79)) ([3873a95](https://github.com/sightpress/core/commit/3873a9526afc938110f4b3e418b5d5145dd7598a))
+* add the AI assistant screen, an Ask the assistant panel on the dashboard and page editor, and Suggest buttons for the summary and search fields (A-3) ([#81](https://github.com/sightpress/core/issues/81)) ([e841c9d](https://github.com/sightpress/core/commit/e841c9db52c61424c26a73a5c5a63d424d28a539))
+* add the assistant's drafting tasks (summary, search title and description, rewrite, draft a page, explain a check, alt text) with checked answers, and alt text that needs a person to check it (A-4) ([#82](https://github.com/sightpress/core/issues/82)) ([7e90f0f](https://github.com/sightpress/core/commit/7e90f0f6616dde984caa5528f5898287d393d101))
+* add the optional AI assistant module with Anthropic, OpenAI, Mistral and OpenAI-compatible services, encrypted keys, a monthly budget and site:assistant commands (A-2) ([#80](https://github.com/sightpress/core/issues/80)) ([5f3af42](https://github.com/sightpress/core/commit/5f3af42b165df4e443e8988a4b77c6ea46e9c540))
+* answer questions about SightPress from a help index of the documentation, pointing only to screens the person can use (A-5) ([#83](https://github.com/sightpress/core/issues/83)) ([e6c554e](https://github.com/sightpress/core/commit/e6c554e02ea1cba6549c79b62c06179e72f7227c))
+* count visits, pages, sources, searches and bots on the server without cookies or personal data, with site:analytics commands (AN-1) ([#77](https://github.com/sightpress/core/issues/77)) ([aba2814](https://github.com/sightpress/core/commit/aba28140ec66a5f7047f2585df498b92b6958c77))
+* draw accessible charts on the server as SVG, with a summary in words, a key and the data as a table (AN-2) ([#78](https://github.com/sightpress/core/issues/78)) ([7eb9240](https://github.com/sightpress/core/commit/7eb9240b7b050ac72290701a47ae58019cb98a1e))
+* give the demo content translations, a members-only page, a page in the trash and a redirect, and crawl and walk through every M2 feature (Q-1, Q-2) ([#86](https://github.com/sightpress/core/issues/86)) ([18e1590](https://github.com/sightpress/core/commit/18e1590e7d732dc56c1514619ee5b75373179a9a))
+* let the assistant draft a translation that keeps the page's blocks and links, marked until a person checks it (A-6) ([#84](https://github.com/sightpress/core/issues/84)) ([7daaefd](https://github.com/sightpress/core/commit/7daaefd9e41c022f0febf1a98427c2f8910e73e5))
+* show the largest file that can be uploaded, warn admins about server settings that stop uploads, and explain a request that is too large (M-5) ([#75](https://github.com/sightpress/core/issues/75)) ([932a059](https://github.com/sightpress/core/commit/932a0595bc2fcf16d343ae9622ff5d99d639e3be))
+
+
+### Documentation
+
+* accept the M2 decision records and mark the reviewed pt-PT and es texts (Q-5) ([#85](https://github.com/sightpress/core/issues/85)) ([9b7260e](https://github.com/sightpress/core/commit/9b7260e336f0bce363bdc7f99bb72a0991dd9cf0))
+
 ## [0.2.0](https://github.com/sightpress/core/compare/0.1.0...0.2.0) (2026-11-19)
 
 
