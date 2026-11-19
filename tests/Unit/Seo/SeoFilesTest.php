@@ -222,6 +222,14 @@ final class SeoFilesTest extends TestCase
         $full = $handler->handle(new ServerRequest('GET', 'https://demo.example/llms-full.txt'));
         self::assertSame('text/plain; charset=utf-8', $full->getHeaderLine('Content-Type'));
         self::assertStringContainsString('Source: <https://demo.example/>', (string) $full->getBody());
+
+        $kinds = [];
+        foreach (['/sitemap.xml', '/sitemap-en-gb.xml', '/robots.txt', '/llms.txt', '/llms-full.txt'] as $path) {
+            $resource = new \SightPress\Core\Http\Contract\AnsweredResource();
+            $handler->handle(new ServerRequest('GET', 'https://demo.example' . $path)->withAttribute(\SightPress\Core\Http\Contract\AnsweredResource::class, $resource));
+            $kinds[] = $resource->kind();
+        }
+        self::assertSame(['sitemap', 'sitemap', 'robots', 'llms', 'llms_full'], $kinds, 'what it showed, for analytics');
     }
 
     public function testKeepsItsCacheInTheTenantsCacheFolderByDefault(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core;
 
+use Closure;
 use Composer\InstalledVersions;
 use DI\ContainerBuilder;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -13,6 +14,7 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Cli\ConsoleApplicationFactory;
+use SightPress\Core\Http\AfterResponse;
 use SightPress\Core\Http\Csrf\CsrfMiddleware;
 use SightPress\Core\Http\Error\ErrorCatalogue;
 use SightPress\Core\Http\Error\ErrorHandlingMiddleware;
@@ -20,6 +22,7 @@ use SightPress\Core\Http\Error\HtmlErrorRenderer;
 use SightPress\Core\Http\Error\NoSiteConfiguredMiddleware;
 use SightPress\Core\Infrastructure\Container\CoreServices;
 use SightPress\Core\Http\RateLimit\RateLimitMiddleware;
+use SightPress\Core\Http\RequestAnsweredMiddleware;
 use SightPress\Core\Http\RouteInstaller;
 use SightPress\Core\Http\SiteResolverMiddleware;
 use SightPress\Core\Http\Security\AuthenticationMiddleware;
@@ -108,10 +111,12 @@ final readonly class Kernel
         // Middleware added last runs first. The site is resolved from the host before anything else touches the
         // request. Routing comes before the CSRF check, so an unknown address or method answers 404 or 405 rather
         // than 403. Members-only sites send anonymous visitors to sign in once the visitor is known. A request larger
-        // than PHP reads has lost its CSRF token, so it is answered "too large" before the CSRF check.
+        // than PHP reads has lost its CSRF token, so it is answered "too large" before the CSRF check. Modules hear
+        // about each answered request after the response is sent, once the visitor is known (ADR-0037).
         $app->add(CsrfMiddleware::class);
         $app->add(RequestOverflowMiddleware::class);
         $app->add(MembersOnlyMiddleware::class);
+        $app->add(RequestAnsweredMiddleware::class);
         $app->add(AuthenticationMiddleware::class);
         $app->addRoutingMiddleware();
         $app->add(SessionMiddleware::class);
@@ -159,6 +164,19 @@ final readonly class Kernel
         }
 
         new ResponseEmitter()->emit($this->handle($request));
+        // Let the visitor go before the work that waits for the response, where the server can (PHP-FPM).
+        $this->terminate(function_exists('fastcgi_finish_request') ? fastcgi_finish_request(...) : null);
+    }
+
+    /**
+     * Does the work that waits until the response has been sent ({@see AfterResponse}), such as telling modules
+     * about the request. {@see run()} calls it; whoever calls {@see handle()} directly calls it after sending.
+     *
+     * @param Closure(): mixed|null $release ends the response for the client first
+     */
+    public function terminate(?Closure $release = null): void
+    {
+        Services::get($this->container, AfterResponse::class)->run($release);
     }
 
     public function config(): TenantConfig

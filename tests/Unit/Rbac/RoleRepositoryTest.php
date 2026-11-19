@@ -24,7 +24,7 @@ final class RoleRepositoryTest extends TestCase
             ['admin', 'contributor', 'editor', 'member'],
             array_map(static fn ($role) => $role->name(), $roles->roles()),
         );
-        self::assertCount(18, $roles->permissions());
+        self::assertCount(20, $roles->permissions());
         self::assertSame('admin.access', $roles->permissions()[0]->name());
         self::assertNull($roles->findRole('ghost'));
         self::assertNull($roles->findPermission('acme.missing'));
@@ -96,6 +96,6 @@ final class RoleRepositoryTest extends TestCase
         $names = $roles->permissionNamesOf(9);
 
         self::assertSame($names, array_values(array_unique($names)));
-        self::assertCount(12, $names);
+        self::assertCount(13, $names);
     }
 }

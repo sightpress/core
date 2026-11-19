@@ -18,6 +18,7 @@ use SightPress\Core\Tenant\OwnerType;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tests\Support\ArrayContainer;
 use SightPress\Core\Tests\Support\ContactFixture;
+use SightPress\Core\Tests\Support\PageAdminFixture;
 
 #[CoversClass(StarterPages::class)]
 #[CoversClass(StarterContent::class)]
@@ -50,6 +51,21 @@ final class StarterPagesTest extends TestCase
         self::assertSame(['type' => 'contact_form', 'version' => 1, 'data' => ['recipient' => 'grace@example.org', 'subject' => 'Message from the website of Demo']], $contact[1]);
         self::assertStringContainsString('This statement applies to https://demo.example. It was prepared on 14 November 2026.', self::html($pages[5], 'en-GB'));
         self::assertStringContainsString('<a href="/contact">Contact us</a>: send us a message.', self::html($pages[0], 'en-GB'));
+        self::assertStringNotContainsString('Visitor statistics', self::html($pages[3], 'en-GB'), 'analytics is off');
+    }
+
+    public function testThePrivacyNoticeExplainsTheVisitorStatisticsWhileAnalyticsIsOn(): void
+    {
+        foreach (['en-GB' => 'Visitor statistics', 'pt-PT' => 'Estatísticas de visitas', 'es' => 'Estadísticas de visitas'] as $locale => $heading) {
+            foreach ([OwnerType::Organization, OwnerType::Person] as $owner) {
+                $fixture = new ContactFixture([$locale]);
+                new StarterPages()($this->event($fixture, $owner, analytics: true));
+
+                $privacy = self::html($fixture->pages->repository()->children(null)[3], $locale);
+                self::assertStringContainsString('<h2>' . $heading . '</h2>', $privacy, $locale);
+                self::assertStringContainsString('Global Privacy Control', $privacy);
+            }
+        }
     }
 
     public function testAPersonGetsPagesInTheFirstPersonThatAreWrittenForThem(): void
@@ -136,7 +152,7 @@ final class StarterPagesTest extends TestCase
         return is_string($data['html'] ?? null) ? $data['html'] : '';
     }
 
-    private function starter(ContactFixture $fixture, Site $site): StarterContent
+    private function starter(ContactFixture $fixture, Site $site, bool $analytics = false): StarterContent
     {
         return new StarterContent(
             $fixture->pages->editor(),
@@ -147,18 +163,19 @@ final class StarterPagesTest extends TestCase
             $fixture->auth->twig,
             $fixture->pages->clock,
             $site,
+            $analytics ? PageAdminFixture::modules('analytics') : PageAdminFixture::modules(),
         );
     }
 
     /**
      * @param list<string>|null $locales the languages the site is made with (default: the fixture's)
      */
-    private function event(ContactFixture $fixture, OwnerType $owner, ?array $locales = null): SiteProvisioning
+    private function event(ContactFixture $fixture, OwnerType $owner, ?array $locales = null, bool $analytics = false): SiteProvisioning
     {
         $site = $fixture->pages->site;
         $locales ??= $site->locales;
         $site = new Site($site->id, $site->slug, $site->name, $site->status, $owner, $site->domains, $site->databaseDsn, $site->storage, $locales[0], $locales, $site->defaultTimezone, $site->createdAt);
 
-        return new SiteProvisioning($site, new ArrayContainer([StarterContent::class => $this->starter($fixture, $site)]), new FirstAdmin('grace@example.org', 'Grace', 'Hopper'), 'https://demo.example/');
+        return new SiteProvisioning($site, new ArrayContainer([StarterContent::class => $this->starter($fixture, $site, $analytics)]), new FirstAdmin('grace@example.org', 'Grace', 'Hopper'), 'https://demo.example/');
     }
 }

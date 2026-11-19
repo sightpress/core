@@ -13,6 +13,7 @@ use SightPress\Core\Block\Contract\BlockContexts;
 use SightPress\Core\Block\Contract\BlockRenderer;
 use SightPress\Core\Block\Contract\MediaTexts;
 use SightPress\Core\Http\AcceptNegotiator;
+use SightPress\Core\Http\Contract\AnsweredResource;
 use SightPress\Core\Http\Security\MembersOnlyMiddleware;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Page\Contract\MarkdownAddress;
@@ -132,7 +133,9 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         $page = $translation->page();
         $baseUrl = $uri->getScheme() . '://' . $uri->getAuthority();
         $blocks = $this->texts->fill($translation->blocks(), $translation->locale());
-        if ($markdownPath || $this->negotiator->prefersMarkdown($request)) {
+        $markdown = $markdownPath || $this->negotiator->prefersMarkdown($request);
+        AnsweredResource::fromRequest($request)?->page((int) $page->id(), $translation->locale(), $markdown);
+        if ($markdown) {
             return $this->markdown($request, $translation, $blocks, $baseUrl . $url, $baseUrl, $actor);
         }
         $context = $this->contexts->create($translation->locale(), $baseUrl, $request);

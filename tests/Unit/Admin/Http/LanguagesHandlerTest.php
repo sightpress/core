@@ -166,7 +166,7 @@ final class LanguagesHandlerTest extends TestCase
     {
         $pages = new \SightPress\Core\Tests\Support\PageFixture($this->fixture->auth->database, [new \SightPress\Core\Contact\ContactFormBlock($this->fixture->auth->templates)], ['en-GB', 'pt-PT', 'cy']);
 
-        return new \SightPress\Core\Page\Contract\StarterContent($pages->editor(), $pages->repository(), $pages->addresses(), $this->fixture->auth->database->settings(), $this->fixture->auth->translations, $this->fixture->auth->twig, $pages->clock, PageFixture::site($locales));
+        return new \SightPress\Core\Page\Contract\StarterContent($pages->editor(), $pages->repository(), $pages->addresses(), $this->fixture->auth->database->settings(), $this->fixture->auth->translations, $this->fixture->auth->twig, $pages->clock, PageFixture::site($locales), \SightPress\Core\Tests\Support\PageAdminFixture::modules());
     }
 
     /**

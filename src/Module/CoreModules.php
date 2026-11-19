@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Module;
 
 use SightPress\Core\Admin\AdminModule;
+use SightPress\Core\Analytics\AnalyticsModule;
 use SightPress\Core\Audit\AuditModule;
 use SightPress\Core\Auth\AuthModule;
 use SightPress\Core\Block\BlockModule;
@@ -57,6 +58,11 @@ final class CoreModules
                 'Site search',
                 'A search box on every page of the site, which finds its published pages in the language being read. Members-only pages are only found by people who are signed in.',
                 'The search box and the search page are removed. The search index is kept, and is brought up to date when search is turned on again.',
+            )]),
+            new ModuleCandidate(new AnalyticsModule(), 'sightpress/core', about: [AnalyticsModule::ID => new ModuleAbout(
+                'Analytics',
+                'Counts how many people visit the site, what they read, where they come from, what they search for and which addresses are not found, and which search engines and AI crawlers read it. No cookies, no tracking scripts and nothing that identifies a visitor is kept.',
+                'Visits are no longer counted and the Analytics screen is removed. The figures already counted are kept, until they are deleted or are older than the site keeps them.',
             )]),
             new ModuleCandidate(new AuditModule(), 'sightpress/core'),
         ];

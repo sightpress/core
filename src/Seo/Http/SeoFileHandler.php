@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Seo\Http;
 
+use SightPress\Core\Http\Contract\AnsweredResource;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -49,6 +50,12 @@ final readonly class SeoFileHandler implements RequestHandlerInterface
         $response = $this->responses->createResponse()
             ->withHeader('Content-Type', $path === self::SITEMAP || $locale !== null ? 'application/xml; charset=utf-8' : 'text/plain; charset=utf-8')
             ->withHeader('Cache-Control', 'public, max-age=3600');
+        AnsweredResource::fromRequest($request)?->file(match (true) {
+            $localeSitemap !== null, $path === self::SITEMAP => 'sitemap',
+            $path === self::LLMS => 'llms',
+            $path === self::LLMS_FULL => 'llms_full',
+            default => 'robots',
+        });
         $response->getBody()->write(match (true) {
             $localeSitemap !== null => $localeSitemap,
             $path === self::SITEMAP => $this->files->sitemap($base),

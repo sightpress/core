@@ -151,6 +151,7 @@ final readonly class AuditRecorder
             'branding.logo' => 'Logo',
             'branding.icon' => 'Icon',
             'branding.share_image' => 'Share picture',
+            'analytics.retention_months' => 'How long analytics are kept',
             default => $key,
         };
     }

@@ -45,6 +45,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(\SightPress\Core\Feature\Migrations\Version20261118600000::class)]
 #[CoversClass(\SightPress\Core\Page\Migrations\Version20261119100000::class)]
 #[CoversClass(\SightPress\Core\Search\Migrations\Version20261119110000::class)]
+#[CoversClass(\SightPress\Core\Analytics\Migrations\Version20261119200000::class)]
 #[UsesNamespace('SightPress\Core')]
 final class MigrationsTest extends TestCase
 {
@@ -53,7 +54,7 @@ final class MigrationsTest extends TestCase
         $database = new CoreSiteDatabase();
 
         self::assertSame(
-            ['audit_log', 'auth_remember_tokens', 'invitations', 'media', 'menu_items', 'migration_versions', 'page_redirects', 'page_revisions', 'page_translations', 'pages', 'permissions', 'role_permission', 'roles', 'search_document', 'search_posting', 'search_word', 'site_module', 'site_settings', 'user_role', 'users', 'verification_code'],
+            ['analytics_daily', 'analytics_hit', 'analytics_salt', 'audit_log', 'auth_remember_tokens', 'invitations', 'media', 'menu_items', 'migration_versions', 'page_redirects', 'page_revisions', 'page_translations', 'pages', 'permissions', 'role_permission', 'roles', 'search_document', 'search_posting', 'search_word', 'site_module', 'site_settings', 'user_role', 'users', 'verification_code'],
             $database->tables(),
         );
         $descriptions = array_map(

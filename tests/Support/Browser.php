@@ -43,6 +43,7 @@ final class Browser
         }
 
         $response = $this->kernel->handle($request);
+        $this->kernel->terminate();
         foreach ($response->getHeader('Set-Cookie') as $cookie) {
             [$pair] = explode(';', $cookie, 2);
             [$name, $value] = explode('=', $pair, 2);

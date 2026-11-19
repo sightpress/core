@@ -54,5 +54,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0034](0034-per-site-module-switches.md) | Per-site module switches: one registry for the tenant, a filtered view per site | Proposed |
 | [0035](0035-site-search-index-in-the-site-database.md) | Site search: an index in the site database, kept up to date by events | Proposed |
 | [0036](0036-search-results-page-as-a-public-screen.md) | The search results page: a public screen with the site's menus, routes before the page catch-all | Proposed |
+| [0037](0037-analytics-recorded-after-the-response.md) | Analytics: recorded after the response, rolled up daily in the site database | Proposed |
 
 When an ADR's status changes, update it here too.

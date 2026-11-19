@@ -17,6 +17,7 @@ use SightPress\Core\Template\Message;
 use SightPress\Core\Template\Translations;
 use SightPress\Core\Tenant\LocaleFallback;
 use SightPress\Core\Tenant\OwnerType;
+use SightPress\Core\Tenant\EnabledModules;
 use SightPress\Core\Tenant\Site;
 use Twig\Environment;
 
@@ -58,6 +59,7 @@ final readonly class StarterContent
         private Environment $twig,
         private ClockInterface $clock,
         private Site $site,
+        private EnabledModules $modules,
     ) {
     }
 
@@ -165,6 +167,7 @@ final readonly class StarterContent
             'site_url' => is_string($stored['url'] ?? null) ? $stored['url'] : '',
             'date' => (string) new IntlDateFormatter(str_replace('-', '_', $locale), IntlDateFormatter::LONG, IntlDateFormatter::NONE, $this->site->defaultTimezone)->format($this->clock->now()),
             'links' => $this->links($locale),
+            'analytics' => $this->modules->has('analytics'),
         ]);
         $blocks = [['type' => 'rich_text', 'version' => 1, 'data' => ['html' => $html]]];
         if ($slug === 'contact') {

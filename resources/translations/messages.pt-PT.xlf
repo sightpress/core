@@ -985,6 +985,12 @@
         <target>Escolha uma opção</target>
       </segment>
     </unit>
+    <unit id="17dc80bfc7f35d00">
+      <segment state="initial">
+        <source>Choose how long analytics are kept, and delete them.</source>
+        <target>Escolher durante quanto tempo as estatísticas são guardadas, e apagá-las.</target>
+      </segment>
+    </unit>
     <unit id="f031e7ea7dc59260">
       <segment>
         <source>Choose one of the options.</source>
@@ -2341,6 +2347,12 @@
         <target>Tornar {language} o idioma principal</target>
       </segment>
     </unit>
+    <unit id="ef9d2e359eb78112">
+      <segment state="initial">
+        <source>Manage analytics</source>
+        <target>Gerir estatísticas</target>
+      </segment>
+    </unit>
     <unit id="030856514c451a9a">
       <segment>
         <source>Manage features</source>
@@ -3539,6 +3551,12 @@
       <segment state="initial">
         <source>Search this site</source>
         <target>Pesquisar neste site</target>
+      </segment>
+    </unit>
+    <unit id="5df3799a8fde8dc9">
+      <segment state="initial">
+        <source>See how many people visit the site, what they read and where they come from.</source>
+        <target>Ver quantas pessoas visitam o site, o que leem e de onde vêm.</target>
       </segment>
     </unit>
     <unit id="3048b5ea49603392">
@@ -5621,6 +5639,12 @@
       <segment>
         <source>Video</source>
         <target>Vídeo</target>
+      </segment>
+    </unit>
+    <unit id="1acacc4d4ecf164b">
+      <segment state="initial">
+        <source>View analytics</source>
+        <target>Ver estatísticas</target>
       </segment>
     </unit>
     <unit id="bc3f7d4e85a6566f">
