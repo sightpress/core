@@ -1,0 +1,61 @@
+{#
+    Accessible charts (AN-2): every chart is a <figure> whose <figcaption> holds a plain-language summary, the SVG is
+    role="img" with a name and that summary as its description, and the data is always in a table too. Pass the
+    arrays ChartView builds; the caller gives the heading of the section the chart is in.
+#}
+{% macro line(chart) %}
+<figure class="chart">
+    <figcaption id="{{ chart.id }}-summary" class="chart__summary">{{ chart.summary }}</figcaption>
+    {%- if not chart.empty %}
+    {{ chart.svg|raw }}
+    <ul class="chart__key">
+        {%- for item in chart.key %}
+        <li><svg class="chart__sample chart__series--{{ item.series }}" aria-hidden="true" focusable="false" width="2.5em" height="1em"><line x1="0" y1="50%" x2="100%" y2="50%"/>{% if item.series == 'current' %}<circle cx="50%" cy="50%" r="5"/>{% else %}<svg x="50%" y="50%" overflow="visible"><rect x="-4.5" y="-4.5" width="9" height="9"/></svg>{% endif %}</svg> {{ item.label }}</li>
+        {%- endfor %}
+    </ul>
+    {%- endif %}
+</figure>
+{%- if not chart.empty %}
+<details class="chart-data">
+    <summary>{{ chart.disclosure }}</summary>
+    <div class="chart-data__scroll">
+    <table class="chart-data__table">
+        <caption>{{ chart.caption }}</caption>
+        <thead><tr>{% for column in chart.columns %}<th scope="col">{{ column }}</th>{% endfor %}</tr></thead>
+        <tbody>
+            {%- for row in chart.rows %}
+            <tr><th scope="row">{{ row[0] }}</th>{% for cell in row[1:] %}<td>{{ cell }}</td>{% endfor %}</tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+    </div>
+</details>
+{%- endif %}
+{% endmacro %}
+
+{% macro bar(chart) %}
+<figure class="chart">
+    <figcaption id="{{ chart.id }}-summary" class="chart__summary">{{ chart.summary }}</figcaption>
+    {%- if not chart.empty %}
+    {{ chart.svg|raw }}
+    {%- endif %}
+</figure>
+{%- if not chart.empty %}
+{{ _self.table(chart) }}
+{%- endif %}
+{% endmacro %}
+
+{# A top list as a table first, with a decorative bar in each row next to its number. #}
+{% macro table(chart) %}
+<div class="chart-data__scroll">
+<table class="chart-data__table">
+    <caption>{{ chart.caption }}</caption>
+    <thead><tr><th scope="col">{{ chart.columns[0] }}</th><th scope="col">{{ chart.columns[1] }}</th></tr></thead>
+    <tbody>
+        {%- for row in chart.rows %}
+        <tr><th scope="row">{{ row.label }}</th><td class="chart-data__number"><span>{{ row.value }}</span>{{ row.bar|raw }}</td></tr>
+        {%- endfor %}
+    </tbody>
+</table>
+</div>
+{% endmacro %}

@@ -463,6 +463,12 @@
         <target>Todos os campos são necessários, exceto os que dizem “opcional”. A seguir, enviamos-lhe por email um código de 6 dígitos para escrever na página seguinte.</target>
       </segment>
     </unit>
+    <unit id="a224df49a9b43f14">
+      <segment state="initial">
+        <source>All of them: {label}, with {amount}.</source>
+        <target>Todos: {label}, com {amount}.</target>
+      </segment>
+    </unit>
     <unit id="903542125c003f8f">
       <segment>
         <source>All pages</source>
@@ -743,6 +749,12 @@
       <segment>
         <source>Back to the site settings</source>
         <target>Voltar às definições do site</target>
+      </segment>
+    </unit>
+    <unit id="34030c9d46e7cc79">
+      <segment state="initial">
+        <source>Bar chart: {title}</source>
+        <target>Gráfico de barras: {title}</target>
       </segment>
     </unit>
     <unit id="5d4b008ca70e5029">
@@ -1211,6 +1223,12 @@
       <segment>
         <source>Dates and times are shown in this time zone.</source>
         <target>As datas e horas são mostradas neste fuso horário.</target>
+      </segment>
+    </unit>
+    <unit id="8f2364e11b8be3ff">
+      <segment state="initial">
+        <source>Day</source>
+        <target>Dia</target>
       </segment>
     </unit>
     <unit id="5e31b73d3d36bee7">
@@ -2281,6 +2299,18 @@
         <target>Nível</target>
       </segment>
     </unit>
+    <unit id="2b4003d1fed60aec">
+      <segment state="initial">
+        <source>Line chart of {what} on {day}</source>
+        <target>Gráfico de linhas de {what} em {day}</target>
+      </segment>
+    </unit>
+    <unit id="84eae198d2d2f3b0">
+      <segment state="initial">
+        <source>Line chart of {what} per day, {from} to {to}</source>
+        <target>Gráfico de linhas de {what} por dia, de {from} a {to}</target>
+      </segment>
+    </unit>
     <unit id="a6a32dbc5618ea39">
       <segment>
         <source>Link</source>
@@ -2765,6 +2795,12 @@
       <segment>
         <source>Nothing was changed.</source>
         <target>Não foi alterado nada.</target>
+      </segment>
+    </unit>
+    <unit id="bd82cf16699be29e">
+      <segment state="initial">
+        <source>Number</source>
+        <target>Número</target>
       </segment>
     </unit>
     <unit id="ca7981b46ecf2c17">
@@ -3709,6 +3745,12 @@
         <target>Mostrar páginas</target>
       </segment>
     </unit>
+    <unit id="a67da1b8c36c97f3">
+      <segment state="initial">
+        <source>Show the data for each day</source>
+        <target>Mostrar os dados de cada dia</target>
+      </segment>
+    </unit>
     <unit id="636107c588e6cd51">
       <segment>
         <source>Show the pages under</source>
@@ -4225,6 +4267,12 @@
         <target>O texto alternativo parece o nome de um ficheiro. Descreva o que a imagem mostra.</target>
       </segment>
     </unit>
+    <unit id="77f41740ef3dc355">
+      <segment state="initial">
+        <source>The busiest day was {day}, with {amount}.</source>
+        <target>O dia com mais movimento foi {day}, com {amount}.</target>
+      </segment>
+    </unit>
     <unit id="b79c13010f306db8">
       <segment>
         <source>The caption must be {{ limit }} characters or fewer</source>
@@ -4421,6 +4469,12 @@
       <segment>
         <source>The main menu is at the top of every page of the site, the footer menu at the bottom. Menus can be three levels deep; visitors open the levels below with a button.</source>
         <target>O menu principal está no topo de todas as páginas do site, o menu do rodapé no fundo. Os menus podem ter três níveis; os visitantes abrem os níveis de baixo com um botão.</target>
+      </segment>
+    </unit>
+    <unit id="4775d7201fa1face">
+      <segment state="initial">
+        <source>The most: {label}, with {amount} ({share} of all).</source>
+        <target>O maior: {label}, com {amount} ({share} do total).</target>
       </segment>
     </unit>
     <unit id="3b8e58b445ac7407">
@@ -4631,6 +4685,12 @@
       <segment>
         <source>The previews show your changes. Save the page to keep them.</source>
         <target>As pré-visualizações mostram as suas alterações. Guarde a página para as manter.</target>
+      </segment>
+    </unit>
+    <unit id="010e1303fb37d148">
+      <segment state="initial">
+        <source>The quietest day was {day}, with {amount}.</source>
+        <target>O dia com menos movimento foi {day}, com {amount}.</target>
       </segment>
     </unit>
     <unit id="c0777e9323b4e004">
@@ -5009,6 +5069,24 @@
       <segment>
         <source>There is no page before this one to move it under.</source>
         <target>Não há nenhuma página antes desta para a pôr por baixo.</target>
+      </segment>
+    </unit>
+    <unit id="fe4219b62aff47a2">
+      <segment state="initial">
+        <source>There is nothing to show for these dates.</source>
+        <target>Não há nada para mostrar nestas datas.</target>
+      </segment>
+    </unit>
+    <unit id="6fd84f7e338b9b3b">
+      <segment state="initial">
+        <source>There is nothing to show for {days, plural, one {this day} other {these # days}}.</source>
+        <target>Não há nada para mostrar {days, plural, one {neste dia} other {nestes # dias}}.</target>
+      </segment>
+    </unit>
+    <unit id="be91f875b16f65a5">
+      <segment state="initial">
+        <source>There is nothing to show yet.</source>
+        <target>Ainda não há nada para mostrar.</target>
       </segment>
     </unit>
     <unit id="de410bbe2db097fe">
@@ -6421,6 +6499,12 @@
         <target>{about}: {problem}</target>
       </segment>
     </unit>
+    <unit id="78349c94bcd63e2a">
+      <segment state="initial">
+        <source>{amount} on {day}</source>
+        <target>{amount} em {day}</target>
+      </segment>
+    </unit>
     <unit id="f2296abaf5cba502">
       <segment>
         <source>{author} submitted the page "{title}" on {site} for review.</source>
@@ -6757,10 +6841,58 @@
         <target>{noun} {index} de {value}</target>
       </segment>
     </unit>
+    <unit id="3a4d1da92a65addb">
+      <segment state="initial">
+        <source>{range}: dashed line with square markers</source>
+        <target>{range}: linha tracejada com marcas quadradas</target>
+      </segment>
+    </unit>
+    <unit id="fa2dcefc51b6c8eb">
+      <segment state="initial">
+        <source>{range}: solid line with round markers</source>
+        <target>{range}: linha contínua com marcas redondas</target>
+      </segment>
+    </unit>
     <unit id="e3030205ac1e0386">
       <segment>
         <source>{setting} to {value}</source>
         <target>{setting} para {value}</target>
+      </segment>
+    </unit>
+    <unit id="3137b14373d0b5fb">
+      <segment state="initial">
+        <source>{title} for each day</source>
+        <target>{title} em cada dia</target>
+      </segment>
+    </unit>
+    <unit id="dd2d26492062c9c6">
+      <segment state="initial">
+        <source>{title} stayed the same as {days, plural, one {on the previous day} other {in the previous # days}}: {after}.</source>
+        <target>{title}: o mesmo que {days, plural, one {no dia anterior} other {nos # dias anteriores}}, {after}.</target>
+      </segment>
+    </unit>
+    <unit id="57646906827f5dd6">
+      <segment state="initial">
+        <source>{title} went down {change} compared with {days, plural, one {the previous day} other {the previous # days}}, from {before} to {after}.</source>
+        <target>{title}: menos {change} do que {days, plural, one {no dia anterior} other {nos # dias anteriores}}, de {before} para {after}.</target>
+      </segment>
+    </unit>
+    <unit id="6306254f0ebece99">
+      <segment state="initial">
+        <source>{title} went up {change} compared with {days, plural, one {the previous day} other {the previous # days}}, from {before} to {after}.</source>
+        <target>{title}: mais {change} do que {days, plural, one {no dia anterior} other {nos # dias anteriores}}, de {before} para {after}.</target>
+      </segment>
+    </unit>
+    <unit id="fa9c1706ad930d9d">
+      <segment state="initial">
+        <source>{title}: {amount} {days, plural, one {on this day} other {in these # days}}, and none {days, plural, one {on the previous day} other {in the previous # days}}.</source>
+        <target>{title}: {amount} {days, plural, one {neste dia} other {nestes # dias}}, e nenhum {days, plural, one {no dia anterior} other {nos # dias anteriores}}.</target>
+      </segment>
+    </unit>
+    <unit id="d18c380c4a21eaae">
+      <segment state="initial">
+        <source>{title}: {amount} {days, plural, one {on this day} other {in these # days}}.</source>
+        <target>{title}: {amount} {days, plural, one {neste dia} other {nestes # dias}}.</target>
       </segment>
     </unit>
     <unit id="ad22875b7e075a1e">

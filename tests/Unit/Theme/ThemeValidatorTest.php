@@ -40,7 +40,7 @@ final class ThemeValidatorTest extends TestCase
 
         self::assertSame([], array_map(static fn (ThemeIssue $i): string => $i->message, $result->issues));
         self::assertTrue($result->passes());
-        self::assertSame(count($theme->contrast) * 4, $result->checks);
+        self::assertSame((count($theme->contrast) + 10) * 4, $result->checks, 'the declared pairs and the chart colours, in every mode');
         self::assertSame($theme, $result->theme);
     }
 
@@ -53,7 +53,7 @@ final class ThemeValidatorTest extends TestCase
         ));
 
         self::assertFalse($result->passes());
-        self::assertSame(8, $result->checks);
+        self::assertSame(8 + 20, $result->checks, 'chart colours on the background (the theme has no surface)');
         self::assertSame([
             'In light mode, interface colour "border" (#959595) on "background" (#ffffff) has a contrast of 2.99:1; it needs at least 3.00:1.',
             'In light mode with more contrast, interface colour "border" (#959595) on "background" (#ffffff) has a contrast of 2.99:1; it needs at least 3.00:1.',
@@ -73,11 +73,28 @@ final class ThemeValidatorTest extends TestCase
         self::assertStringContainsString('has a contrast of 4.47:1; it needs at least 4.50:1.', $result->issues[0]->message);
     }
 
+    public function testChartColoursAreRequiredAndChecked(): void
+    {
+        $missing = new ThemeValidator()->validate(self::theme(light: ['text' => '#000000', 'background' => '#ffffff', 'border' => '#000000', 'chart-text' => '#000000'], charts: false));
+        self::assertSame(
+            'The theme has no chart colours "chart-1", "chart-2", "chart-3", "chart-4", "chart-grid". Add them to "colors.light" and "colors.dark" in theme.json: chart-1 to chart-4 for the lines and bars, chart-grid and chart-text.',
+            $missing->issues[0]->message,
+        );
+        $one = new ThemeValidator()->validate(self::theme(light: ['text' => '#000000', 'background' => '#ffffff', 'border' => '#000000', 'chart-1' => '#000000', 'chart-2' => '#000000', 'chart-3' => '#000000', 'chart-4' => '#000000', 'chart-text' => '#000000'], charts: false));
+        self::assertStringStartsWith('The theme has no chart colour "chart-grid". Add it to', $one->issues[0]->message);
+
+        $faint = new ThemeValidator()->validate(self::theme(light: ['text' => '#000000', 'background' => '#ffffff', 'border' => '#000000', 'chart-2' => '#aaaaaa', 'chart-text' => '#888888']));
+        self::assertSame([
+            'In light mode, interface colour "chart-2" (#aaaaaa) on "background" (#ffffff) has a contrast of 2.32:1; it needs at least 3.00:1.',
+            'In light mode, text "chart-text" (#888888) on "background" (#ffffff) has a contrast of 3.54:1; it needs at least 4.50:1.',
+        ], array_slice(array_map(static fn (ThemeIssue $i): string => $i->message, $faint->issues), 0, 2));
+    }
+
     public function testAThemeWithoutPairsFails(): void
     {
         $result = new ThemeValidator()->validate(self::theme(pairs: []));
 
-        self::assertSame(0, $result->checks);
+        self::assertSame(20, $result->checks, 'only the chart colours');
         self::assertStringStartsWith('The theme declares no colour pairs under "contrast" in theme.json', $result->issues[0]->message);
         self::assertNull($result->issues[0]->pair);
         self::assertNull($result->issues[0]->mode);
@@ -118,10 +135,15 @@ final class ThemeValidatorTest extends TestCase
         array $darkMore = [],
         ?array $pairs = null,
         string $size = '1rem',
+        bool $charts = true,
     ): Theme {
+        $chart = static fn (string $hex): array => $charts ? array_fill_keys([...ThemeValidator::CHART_MARKS, ThemeValidator::CHART_GRID, ThemeValidator::CHART_TEXT], $hex) : [];
+        $light += $chart('#000000');
+        $dark = $dark === [] ? $light : $dark + $chart('#ffffff');
+
         return new Theme('t', 'T', '1', '/themes/t', new ThemeTokens(
             self::colors($light),
-            self::colors($dark === [] ? $light : $dark),
+            self::colors($dark),
             [],
             self::colors($darkMore),
             ['typography' => ['size-base' => $size]],

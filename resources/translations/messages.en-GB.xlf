@@ -463,6 +463,12 @@
         <target>All fields are needed unless they say “optional”. After this, we email you a 6-digit code to type on the next page.</target>
       </segment>
     </unit>
+    <unit id="a224df49a9b43f14">
+      <segment>
+        <source>All of them: {label}, with {amount}.</source>
+        <target>All of them: {label}, with {amount}.</target>
+      </segment>
+    </unit>
     <unit id="903542125c003f8f">
       <segment>
         <source>All pages</source>
@@ -743,6 +749,12 @@
       <segment>
         <source>Back to the site settings</source>
         <target>Back to the site settings</target>
+      </segment>
+    </unit>
+    <unit id="34030c9d46e7cc79">
+      <segment>
+        <source>Bar chart: {title}</source>
+        <target>Bar chart: {title}</target>
       </segment>
     </unit>
     <unit id="5d4b008ca70e5029">
@@ -1211,6 +1223,12 @@
       <segment>
         <source>Dates and times are shown in this time zone.</source>
         <target>Dates and times are shown in this time zone.</target>
+      </segment>
+    </unit>
+    <unit id="8f2364e11b8be3ff">
+      <segment>
+        <source>Day</source>
+        <target>Day</target>
       </segment>
     </unit>
     <unit id="5e31b73d3d36bee7">
@@ -2281,6 +2299,18 @@
         <target>Level</target>
       </segment>
     </unit>
+    <unit id="2b4003d1fed60aec">
+      <segment>
+        <source>Line chart of {what} on {day}</source>
+        <target>Line chart of {what} on {day}</target>
+      </segment>
+    </unit>
+    <unit id="84eae198d2d2f3b0">
+      <segment>
+        <source>Line chart of {what} per day, {from} to {to}</source>
+        <target>Line chart of {what} per day, {from} to {to}</target>
+      </segment>
+    </unit>
     <unit id="a6a32dbc5618ea39">
       <segment>
         <source>Link</source>
@@ -2765,6 +2795,12 @@
       <segment>
         <source>Nothing was changed.</source>
         <target>Nothing was changed.</target>
+      </segment>
+    </unit>
+    <unit id="bd82cf16699be29e">
+      <segment>
+        <source>Number</source>
+        <target>Number</target>
       </segment>
     </unit>
     <unit id="ca7981b46ecf2c17">
@@ -3709,6 +3745,12 @@
         <target>Show pages</target>
       </segment>
     </unit>
+    <unit id="a67da1b8c36c97f3">
+      <segment>
+        <source>Show the data for each day</source>
+        <target>Show the data for each day</target>
+      </segment>
+    </unit>
     <unit id="636107c588e6cd51">
       <segment>
         <source>Show the pages under</source>
@@ -4225,6 +4267,12 @@
         <target>The alt text looks like a file name. Describe what the image shows.</target>
       </segment>
     </unit>
+    <unit id="77f41740ef3dc355">
+      <segment>
+        <source>The busiest day was {day}, with {amount}.</source>
+        <target>The busiest day was {day}, with {amount}.</target>
+      </segment>
+    </unit>
     <unit id="b79c13010f306db8">
       <segment>
         <source>The caption must be {{ limit }} characters or fewer</source>
@@ -4421,6 +4469,12 @@
       <segment>
         <source>The main menu is at the top of every page of the site, the footer menu at the bottom. Menus can be three levels deep; visitors open the levels below with a button.</source>
         <target>The main menu is at the top of every page of the site, the footer menu at the bottom. Menus can be three levels deep; visitors open the levels below with a button.</target>
+      </segment>
+    </unit>
+    <unit id="4775d7201fa1face">
+      <segment>
+        <source>The most: {label}, with {amount} ({share} of all).</source>
+        <target>The most: {label}, with {amount} ({share} of all).</target>
       </segment>
     </unit>
     <unit id="3b8e58b445ac7407">
@@ -4631,6 +4685,12 @@
       <segment>
         <source>The previews show your changes. Save the page to keep them.</source>
         <target>The previews show your changes. Save the page to keep them.</target>
+      </segment>
+    </unit>
+    <unit id="010e1303fb37d148">
+      <segment>
+        <source>The quietest day was {day}, with {amount}.</source>
+        <target>The quietest day was {day}, with {amount}.</target>
       </segment>
     </unit>
     <unit id="c0777e9323b4e004">
@@ -5009,6 +5069,24 @@
       <segment>
         <source>There is no page before this one to move it under.</source>
         <target>There is no page before this one to move it under.</target>
+      </segment>
+    </unit>
+    <unit id="fe4219b62aff47a2">
+      <segment>
+        <source>There is nothing to show for these dates.</source>
+        <target>There is nothing to show for these dates.</target>
+      </segment>
+    </unit>
+    <unit id="6fd84f7e338b9b3b">
+      <segment>
+        <source>There is nothing to show for {days, plural, one {this day} other {these # days}}.</source>
+        <target>There is nothing to show for {days, plural, one {this day} other {these # days}}.</target>
+      </segment>
+    </unit>
+    <unit id="be91f875b16f65a5">
+      <segment>
+        <source>There is nothing to show yet.</source>
+        <target>There is nothing to show yet.</target>
       </segment>
     </unit>
     <unit id="de410bbe2db097fe">
@@ -6421,6 +6499,12 @@
         <target>{about}: {problem}</target>
       </segment>
     </unit>
+    <unit id="78349c94bcd63e2a">
+      <segment>
+        <source>{amount} on {day}</source>
+        <target>{amount} on {day}</target>
+      </segment>
+    </unit>
     <unit id="f2296abaf5cba502">
       <segment>
         <source>{author} submitted the page &quot;{title}&quot; on {site} for review.</source>
@@ -6757,10 +6841,58 @@
         <target>{noun} {index} of {value}</target>
       </segment>
     </unit>
+    <unit id="3a4d1da92a65addb">
+      <segment>
+        <source>{range}: dashed line with square markers</source>
+        <target>{range}: dashed line with square markers</target>
+      </segment>
+    </unit>
+    <unit id="fa2dcefc51b6c8eb">
+      <segment>
+        <source>{range}: solid line with round markers</source>
+        <target>{range}: solid line with round markers</target>
+      </segment>
+    </unit>
     <unit id="e3030205ac1e0386">
       <segment>
         <source>{setting} to {value}</source>
         <target>{setting} to {value}</target>
+      </segment>
+    </unit>
+    <unit id="3137b14373d0b5fb">
+      <segment>
+        <source>{title} for each day</source>
+        <target>{title} for each day</target>
+      </segment>
+    </unit>
+    <unit id="dd2d26492062c9c6">
+      <segment>
+        <source>{title} stayed the same as {days, plural, one {on the previous day} other {in the previous # days}}: {after}.</source>
+        <target>{title} stayed the same as {days, plural, one {on the previous day} other {in the previous # days}}: {after}.</target>
+      </segment>
+    </unit>
+    <unit id="57646906827f5dd6">
+      <segment>
+        <source>{title} went down {change} compared with {days, plural, one {the previous day} other {the previous # days}}, from {before} to {after}.</source>
+        <target>{title} went down {change} compared with {days, plural, one {the previous day} other {the previous # days}}, from {before} to {after}.</target>
+      </segment>
+    </unit>
+    <unit id="6306254f0ebece99">
+      <segment>
+        <source>{title} went up {change} compared with {days, plural, one {the previous day} other {the previous # days}}, from {before} to {after}.</source>
+        <target>{title} went up {change} compared with {days, plural, one {the previous day} other {the previous # days}}, from {before} to {after}.</target>
+      </segment>
+    </unit>
+    <unit id="fa9c1706ad930d9d">
+      <segment>
+        <source>{title}: {amount} {days, plural, one {on this day} other {in these # days}}, and none {days, plural, one {on the previous day} other {in the previous # days}}.</source>
+        <target>{title}: {amount} {days, plural, one {on this day} other {in these # days}}, and none {days, plural, one {on the previous day} other {in the previous # days}}.</target>
+      </segment>
+    </unit>
+    <unit id="d18c380c4a21eaae">
+      <segment>
+        <source>{title}: {amount} {days, plural, one {on this day} other {in these # days}}.</source>
+        <target>{title}: {amount} {days, plural, one {on this day} other {in these # days}}.</target>
       </segment>
     </unit>
     <unit id="ad22875b7e075a1e">

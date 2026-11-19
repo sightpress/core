@@ -22,7 +22,13 @@
       "warning-surface": "#fff3df",
       "info": "#0a57c2",
       "info-surface": "#e8f0fd",
-      "mark": "#fff2a8"
+      "mark": "#fff2a8",
+      "chart-1": "#0a57c2",
+      "chart-2": "#a14800",
+      "chart-3": "#1d6b33",
+      "chart-4": "#7b2c94",
+      "chart-grid": "#d4d4dc",
+      "chart-text": "#1a1a1f"
     },
     "dark": {
       "background": "#121216",
@@ -43,7 +49,13 @@
       "warning-surface": "#3a2a06",
       "info": "#8ab4f8",
       "info-surface": "#152742",
-      "mark": "#5c4a00"
+      "mark": "#5c4a00",
+      "chart-1": "#8ab4f8",
+      "chart-2": "#ffb870",
+      "chart-3": "#80d59a",
+      "chart-4": "#d7a8f5",
+      "chart-grid": "#3c3c47",
+      "chart-text": "#ececf1"
     },
     "more": {
       "light": {
@@ -58,7 +70,13 @@
         "error": "#8c1d18",
         "success": "#0f4d22",
         "warning": "#5a3600",
-        "info": "#003a8c"
+        "info": "#003a8c",
+        "chart-1": "#003a8c",
+        "chart-2": "#7a3400",
+        "chart-3": "#0f4d22",
+        "chart-4": "#5a1a70",
+        "chart-grid": "#6b6b78",
+        "chart-text": "#000000"
       },
       "dark": {
         "background": "#000000",
@@ -74,7 +92,13 @@
         "error": "#ffcdc6",
         "success": "#a8e8bb",
         "warning": "#ffe0a3",
-        "info": "#b8d3ff"
+        "info": "#b8d3ff",
+        "chart-1": "#b8d3ff",
+        "chart-2": "#ffd0a0",
+        "chart-3": "#a8e8bb",
+        "chart-4": "#e8ccff",
+        "chart-grid": "#8e8e9c",
+        "chart-text": "#ffffff"
       }
     }
   },

@@ -1,0 +1,32 @@
+{#
+    Chart style guide (AN-2): a line chart with the previous period, a single day, a range of zeros, an empty range,
+    a bar chart and an empty bar chart, each with its summary and its data as a table.
+#}
+{% extends 'layouts/default.html.twig' %}
+{% import '@analytics/charts.html.twig' as charts %}
+{% block content %}
+<section aria-labelledby="chart-month">
+    <h2 id="chart-month">Visitors over 30 days</h2>
+    {{ charts.line(month) }}
+</section>
+<section aria-labelledby="chart-single">
+    <h2 id="chart-single">One day</h2>
+    {{ charts.line(single) }}
+</section>
+<section aria-labelledby="chart-zero">
+    <h2 id="chart-zero">A week with no visitors</h2>
+    {{ charts.line(zero) }}
+</section>
+<section aria-labelledby="chart-empty">
+    <h2 id="chart-empty">No days</h2>
+    {{ charts.line(empty) }}
+</section>
+<section aria-labelledby="chart-devices">
+    <h2 id="chart-devices">Devices</h2>
+    {{ charts.bar(devices) }}
+</section>
+<section aria-labelledby="chart-nothing">
+    <h2 id="chart-nothing">Languages, nothing yet</h2>
+    {{ charts.bar(nothing) }}
+</section>
+{% endblock %}

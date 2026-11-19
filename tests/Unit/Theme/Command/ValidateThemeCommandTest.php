@@ -52,7 +52,7 @@ final class ValidateThemeCommandTest extends TestCase
 
         self::assertSame(Command::SUCCESS, self::command([$theme])->run(self::input(null), $this->output));
         self::assertSame([
-            'The theme "Plain" passes: 4 colour pairs checked in light and dark mode, with and without more contrast, '
+            'The theme "Plain" passes: 24 colour pairs checked in light and dark mode, with and without more contrast, '
             . 'and the base font size is at least 16 px.',
         ], $this->output->lines);
         self::assertSame([], $this->output->errors);
@@ -101,6 +101,7 @@ final class ValidateThemeCommandTest extends TestCase
         $light = array_fill_keys(ThemeLoader::REQUIRED_COLORS, '#000000');
         $light['background'] = '#ffffff';
         $light['text'] = $text;
+        $light += array_fill_keys([...ThemeValidator::CHART_MARKS, ThemeValidator::CHART_GRID, ThemeValidator::CHART_TEXT], '#000000');
         $folder = 'theme-' . bin2hex(random_bytes(4));
         $this->directory->write($folder . '/theme.json', json_encode([
             'name' => 'plain',

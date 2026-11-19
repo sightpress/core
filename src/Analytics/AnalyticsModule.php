@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Analytics;
 
+use SightPress\Core\Analytics\Chart\ChartRenderer;
+use SightPress\Core\Analytics\Chart\ChartSummary;
+use SightPress\Core\Analytics\Chart\ChartView;
 use SightPress\Core\Analytics\Classification\BotClassifier;
 use SightPress\Core\Analytics\Classification\DeviceClassifier;
 use SightPress\Core\Analytics\Classification\SourceClassifier;
@@ -24,7 +27,8 @@ use SightPress\Module\Search\SearchPerformed;
  * pages not found and bots, on the server, after the response ({@see AnalyticsRecorder}) — no cookies, no
  * JavaScript, no third parties, and no IP address, user agent or query string kept. `schedule:run` rolls finished
  * days up every hour ({@see AnalyticsRollup}); {@see Report\AnalyticsReport} reads them for the admin and
- * `site:analytics:report`. Optional, on by default.
+ * `site:analytics:report`, and {@see ChartView} draws them as accessible SVG charts with summaries and tables.
+ * Optional, on by default.
  */
 final class AnalyticsModule implements ModuleInterface
 {
@@ -55,7 +59,11 @@ final class AnalyticsModule implements ModuleInterface
         ] as $class) {
             $services->autowire($class);
         }
-        foreach ([AnalyticsRollup::class, AnalyticsRetention::class, AnalyticsReports::class] as $class) {
+        foreach ([ChartRenderer::class, ChartSummary::class] as $class) {
+            $services->autowire($class);
+        }
+        $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/analytics');
+        foreach ([AnalyticsRollup::class, AnalyticsRetention::class, AnalyticsReports::class, ChartView::class] as $class) {
             $services->autowire($class, public: true);
         }
 

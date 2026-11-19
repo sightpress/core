@@ -414,3 +414,36 @@ input[type=file] { max-width: 100%; }
   .search-note { border-color: CanvasText; }
   mark { forced-color-adjust: none; background: Mark; color: MarkText; }
 }
+
+/* Charts (AN-2): server-drawn SVG, coloured by the chart tokens; the two series of a line chart also differ by line
+   and marker, and every chart has its summary and its data as text. No animation. */
+.chart { margin: 0 0 var(--space-3); }
+.chart__summary { margin-bottom: var(--space-2); max-width: var(--font-measure); }
+.chart__svg { display: block; width: 100%; overflow: visible; color: var(--color-chart-text); }
+.chart__svg--line { height: 16rem; }
+.chart__svg text, .chart__text { fill: var(--color-chart-text); font-size: var(--font-size-small); }
+.chart__grid line { stroke: var(--color-chart-grid); stroke-width: 1; }
+.chart__series line { stroke-width: 3; stroke-linecap: round; fill: none; }
+.chart__series--current line { stroke: var(--color-chart-1); }
+.chart__series--current circle { fill: var(--color-chart-1); }
+.chart__series--previous line { stroke: var(--color-chart-2); stroke-dasharray: 8 6; }
+.chart__series--previous rect { fill: var(--color-chart-2); }
+.chart__bar { fill: var(--color-chart-1); }
+.chart__key { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); list-style: none; margin: var(--space-2) 0 0; padding: 0; }
+.chart__sample { vertical-align: middle; overflow: visible; }
+.chart-data { margin-bottom: var(--space-4); }
+.chart-data__scroll { overflow-x: auto; }
+.chart-data__table { border-collapse: collapse; }
+.chart-data__table caption { text-align: start; font-weight: 600; padding-bottom: var(--space-1); }
+.chart-data__table th, .chart-data__table td { padding: var(--space-1) var(--space-2); border-bottom: 1px solid var(--color-border); text-align: start; }
+.chart-data__number { min-width: 10rem; }
+.chart-data__number span { display: inline-block; min-width: 4ch; }
+.chart-inline-bar { display: block; max-width: 12rem; }
+
+@media (forced-colors: active) {
+  .chart__svg, .chart__sample, .chart-inline-bar { forced-color-adjust: none; }
+  .chart__svg text, .chart__text { fill: CanvasText; }
+  .chart__grid line { stroke: GrayText; }
+  .chart__series--current line, .chart__series--previous line { stroke: CanvasText; }
+  .chart__series--current circle, .chart__series--previous rect, .chart__bar { fill: CanvasText; }
+}
