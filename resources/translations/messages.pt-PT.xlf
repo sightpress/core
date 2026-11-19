@@ -2215,6 +2215,12 @@
         <target>Olá,</target>
       </segment>
     </unit>
+    <unit id="d8f4834f78e25343">
+      <segment state="initial">
+        <source>Help with SightPress</source>
+        <target>Ajuda com o SightPress</target>
+      </segment>
+    </unit>
     <unit id="b8b1a80738820c43">
       <segment>
         <source>Hide the pages under</source>

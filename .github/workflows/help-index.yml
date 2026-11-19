@@ -1,0 +1,45 @@
+# Keeps the AI assistant's help index (resources/assistant/help-index.json, A-5) in step with the documentation.
+# Whenever the release pull request changes (and on demand), it rebuilds the index from the `docs` repository's main
+# branch, which is released together with core, and opens or updates a pull request when the index changed. The
+# index is deterministic, so an unchanged documentation never opens one.
+name: Help index
+
+on:
+  push:
+    branches: [release-please--branches--main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  help-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          path: core
+      - uses: actions/checkout@v5
+        with:
+          repository: sightpress/docs
+          ref: main
+          path: docs
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+      - name: Build the help index
+        run: php core/tools/assistant-help-index.php docs/docs
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          path: core
+          branch: chore/help-index
+          commit-message: 'fix: update the assistant''s help index from the documentation'
+          title: 'fix: update the assistant''s help index from the documentation'
+          body: |
+            Rebuilt `resources/assistant/help-index.json` from the `docs` repository's main branch (A-5), so the AI
+            assistant's answers point to the documentation of this release. Merge it before the release pull request.
+          add-paths: resources/assistant/help-index.json
+          delete-branch: true

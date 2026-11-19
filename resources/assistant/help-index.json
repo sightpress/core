@@ -1,0 +1,1362 @@
+{
+    "version": 1,
+    "chunks": [
+        {
+            "id": "940caad09ba1",
+            "page": "Getting started",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/getting-started/",
+            "text": "This guide shows you how to run SightPress on your own computer, create your first website and sign in to its admin\npanel, so that you can try it out. You don't need to know how to program. It takes about 30 minutes, most of which is\nwaiting for downloads.\n\n!!! note \"What you can try today\"\n\n    This is the first version of SightPress. You can create a website with ready-made pages, write and publish pages,\n    upload pictures and other files, invite people and change the site's settings. Running SightPress on a public\n    server is not covered yet.",
+            "needs": []
+        },
+        {
+            "id": "19a80e3c25ec",
+            "page": "Getting started",
+            "heading": "What you need",
+            "url": "https://docs.sightpress.org/latest/getting-started/#what-you-need",
+            "text": "- A computer running Windows 10 or 11, macOS, or Linux.\n- About 5 GB of free disk space.\n- An internet connection.\n- Permission to install programs on the computer.\n\nYou type some commands in a terminal. A terminal is a window where you type instructions instead of clicking:\n\n- On Windows, open **Windows Terminal** or **PowerShell** from the Start menu.\n- On macOS, open **Terminal** from Applications, then Utilities.\n- On Linux, open your terminal app.\n\nType or paste each command, then press <kbd>Enter</kbd>.",
+            "needs": []
+        },
+        {
+            "id": "43179188a8b3",
+            "page": "Getting started",
+            "heading": "Step 1: install Docker",
+            "url": "https://docs.sightpress.org/latest/getting-started/#step-1-install-docker",
+            "text": "Docker runs SightPress and everything it needs inside separate, self-contained boxes called containers. You don't\nhave to install PHP, a web server or a database yourself.\n\n1. Install Docker:\n    - On Windows or macOS, install [Docker Desktop](https://docs.docker.com/desktop/). On Windows, accept the\n      option to use WSL 2 if the installer asks.\n    - On Linux, install [Docker Engine and the Docker Compose plugin](https://docs.docker.com/engine/install/).\n2. On Windows or macOS, open Docker Desktop and wait until it says that Docker is running.\n3. In the terminal, type:\n\n    ```sh\n    docker compose version\n    ```\n\n    You should see a line such as `Docker Compose version v5.3.0`. The number may be different. If you see\n    \"command not found\" or a similar message, Docker is not installed correctly, or Docker Desktop is not running.",
+            "needs": []
+        },
+        {
+            "id": "f84f626509e3",
+            "page": "Getting started",
+            "heading": "Step 2: install Git",
+            "url": "https://docs.sightpress.org/latest/getting-started/#step-2-install-git",
+            "text": "Git downloads the SightPress files from GitHub, where they are published.\n\n1. Install Git from the [Git downloads page](https://git-scm.com/downloads). On macOS, you can instead type\n   `git --version` in the terminal and accept the offer to install the developer tools.\n2. In the terminal, type:\n\n    ```sh\n    git --version\n    ```\n\n    You should see a line such as `git version 2.51.0`.",
+            "needs": []
+        },
+        {
+            "id": "ee0efb2d11b6",
+            "page": "Getting started",
+            "heading": "Step 3: download SightPress",
+            "url": "https://docs.sightpress.org/latest/getting-started/#step-3-download-sightpress",
+            "text": "You only download the `skeleton`, the project you start. The other parts of SightPress are fetched for you\nautomatically the first time you start it, in step 4.\n\n1. Make a folder for SightPress and go into it:\n\n    ```sh\n    mkdir sightpress\n    cd sightpress\n    ```\n\n2. Download the skeleton:\n\n    ```sh\n    git clone https://github.com/sightpress/skeleton.git\n    ```\n\n    You should see a few lines that end with `done.`\n\n3. Go into the `skeleton` folder:\n\n    ```sh\n    cd skeleton\n    ```\n\n!!! tip \"Only on Linux\"\n\n    The SightPress container writes files as user number 1000. If your Linux user has a different number, files\n    can end up owned by the wrong user. Type `id -u`. If it shows anything other than `1000`, copy the settings\n    file with `cp .env.example .env`, open `.env` in a text editor, and set `UID` and `GID` to the numbers that\n    `id -u` and `id -g` show. Windows and macOS users can skip this.",
+            "needs": []
+        },
+        {
+            "id": "d807521edabf",
+            "page": "Getting started",
+            "heading": "Step 4: start SightPress",
+            "url": "https://docs.sightpress.org/latest/getting-started/#step-4-start-sightpress",
+            "text": "1. In the `skeleton` folder, type:\n\n    ```sh\n    docker compose up\n    ```\n\n2. Wait. The first time, Docker downloads and builds everything it needs. This can take 5 to 15 minutes. You see\n   many lines of text scroll past. Later starts take a few seconds.\n3. SightPress is ready when the text stops scrolling and you see lines starting with `php-1` that end with\n   `ready to handle connections`.\n\nLeave this terminal window open. SightPress stops when you close it.",
+            "needs": []
+        },
+        {
+            "id": "fede745110ba",
+            "page": "Getting started",
+            "heading": "Step 5: open SightPress in your browser",
+            "url": "https://docs.sightpress.org/latest/getting-started/#step-5-open-sightpress-in-your-browser",
+            "text": "1. Open your web browser and go to <http://localhost:8080>.\n2. You should see a plain page with the heading **No site configured** and this text: \"SightPress is running, but\n   no site is set up for this address yet. If you look after this server, create a site and link this address to\n   it.\" The browser tab is called \"No site configured - SightPress\".\n\nThis is the right result. It means SightPress is running, but has no website yet. You create one in the next steps.\n\nIf the browser shows **502 Bad Gateway**, SightPress is still finishing its first start. Wait a minute, then\nreload the page.",
+            "needs": []
+        },
+        {
+            "id": "9c2e8473c436",
+            "page": "Getting started",
+            "heading": "Step 6: make a settings file with a secret key",
+            "url": "https://docs.sightpress.org/latest/getting-started/#step-6-make-a-settings-file-with-a-secret-key",
+            "text": "SightPress keeps its settings in a file called `.env` in the `skeleton` folder. One setting, the secret key, protects\nthe address of each website's database. You make it once.\n\n1. Open a second terminal window and go to the `skeleton` folder, as in step 3. Leave the first window running.\n2. Copy the example settings file:\n\n    ```sh\n    cp .env.example .env\n    ```\n\n3. Make a secret key:\n\n    ```sh\n    docker compose run --rm --no-deps php php -r 'echo bin2hex(random_bytes(32)), PHP_EOL;'\n    ```\n\n    You should see one line of 64 letters and digits, such as `3f9a…`. Yours will be different.\n\n4. Open the `.env` file in a text editor, such as Notepad on Windows or TextEdit on macOS. Find the line\n   `APP_SECRET=` and paste your key straight after the `=` sign, with no spaces. Save the file.\n5. Keep a copy of the key somewhere safe, such as a password manager. Without it, SightPress can't open your\n   websites' databases.\n6. Go back to the first terminal window and press <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop SightPress. Then start it\n   again with `docker compose up`, so that it reads the new settings.\n\nThe copied file also turns on the test e-mail inbox, which catches every e-mail SightPress sends. See\n[Open the test e-mail inbox](how-to/open-the-test-email-inbox.md).",
+            "needs": []
+        },
+        {
+            "id": "47541cf2c1a6",
+            "page": "Getting started",
+            "heading": "Step 7: create your first website",
+            "url": "https://docs.sightpress.org/latest/getting-started/#step-7-create-your-first-website",
+            "text": "1. In the second terminal window, type this command on one line. Change the e-mail address and the names to your\n   own if you like. (You can also type just `docker compose run --rm --no-deps php bin/sightpress site:create` and\n   answer one question at a time: see [Create a website](how-to/create-a-site.md).)\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:create demo --domain=localhost --db=sqlite:////app/sites/demo.sqlite --url=http://localhost:8080 --owner-type=organization --locale=en-GB --name=\"Riverside Library\" --admin-email=ada@example.org --admin-first-name=Ada --admin-last-name=Lovelace\n    ```\n\n2. After a few seconds, you should see lines like these:\n\n    ```text\n    Getting the SQLite file /app/sites/demo.sqlite ready…\n    Ran 13 database migrations.\n    Created the account of the first admin, Ada Lovelace (ada@example.org).\n    Set up the roles admin, editor, contributor and member.\n    Gave the first admin the admin role.\n    Give the setup code 388 641 to ada@example.org. They go to http://localhost:8080/login/setup, type their email address and the code, and choose their password. The code works once, for 7 days.\n    Made the site's icons, wordmark and share image from its name; replace them with site:branding:set.\n    Published the starter pages: Welcome to Riverside Library, About us, Contact us, Privacy notice, Terms of use, Accessibility statement.\n    Added 5 starter pages to the main and footer menus.\n    The site \"demo\" is read",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "412b92bce38b",
+            "page": "Getting started",
+            "heading": "Step 8: choose your password and sign in",
+            "url": "https://docs.sightpress.org/latest/getting-started/#step-8-choose-your-password-and-sign-in",
+            "text": "1. In your browser, go to <http://localhost:8080/login/setup>. You should see the heading **Set up your account**.\n2. In **Email address**, type the address you used, for example `ada@example.org`.\n3. In **6-digit code**, type the setup code. You can type it with or without the space.\n4. Choose **Continue**. You should see the heading **Choose your password**.\n5. In **New password**, type a password of at least 12 characters. A few unrelated words make a strong password\n   that is easy to remember.\n6. Choose **Set password**. You should see the sign-in page with the message \"Your password has been set. Sign in\n   with it now.\"\n7. Type your e-mail address and your new password, then choose **Sign in**.\n8. You should see the admin panel's **Dashboard**. The browser tab says \"Dashboard - Admin - Riverside Library\".\n   The admin menu has the links Dashboard, Pages, Media, Menus, People, Invite someone, Site settings, Branding and\n   Audit log.\n\nSightPress never sends links to sign in or to set a password. It always gives you a code to type on the website\ninstead. See [Codes we send you](how-to/codes-we-send-you.md).",
+            "needs": [
+                "audit.view",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "5cb02f18e311",
+            "page": "Getting started",
+            "heading": "Step 9: look at your website",
+            "url": "https://docs.sightpress.org/latest/getting-started/#step-9-look-at-your-website",
+            "text": "1. Go to <http://localhost:8080>.\n2. You should see the home page, with the heading **Welcome to Riverside Library**, a main menu with About us and\n   Contact us, and a footer menu with the privacy notice, the terms of use and the accessibility statement.\n\nEvery new website starts with these six pages, already published. Change them in the admin panel under **Pages**.\nSee [Write and publish a page](how-to/write-and-publish-a-page.md).\n\nThe pages follow your computer's light or dark setting, and every page works with a keyboard alone and with a\nscreen reader. While SightPress runs on your computer, every page asks search engines not to list it.",
+            "needs": []
+        },
+        {
+            "id": "1de761286252",
+            "page": "Getting started",
+            "heading": "Step 10: stop SightPress",
+            "url": "https://docs.sightpress.org/latest/getting-started/#step-10-stop-sightpress",
+            "text": "1. Go back to the terminal window where SightPress is running.\n2. Press <kbd>Ctrl</kbd>+<kbd>C</kbd>. You should see lines that end with `Stopped`.\n\nTo start SightPress again later, go to the `skeleton` folder and type `docker compose up` again. Your website and\nyour account are kept.",
+            "needs": []
+        },
+        {
+            "id": "f91759e004f5",
+            "page": "Getting started",
+            "heading": "If something goes wrong",
+            "url": "https://docs.sightpress.org/latest/getting-started/#if-something-goes-wrong",
+            "text": "**\"port is already allocated\" or \"address already in use\"**\n:   Another program on your computer is using one of the ports SightPress needs. See\n    [Change the ports SightPress uses](how-to/change-the-ports.md).\n\n**\"Cannot connect to the Docker daemon\"**\n:   Docker is not running. On Windows or macOS, open Docker Desktop and wait until it says that Docker is running.\n    On Linux, type `sudo systemctl start docker`.\n\n**The page doesn't load at all**\n:   Check that the terminal still shows SightPress running, and that the address is exactly\n    `http://localhost:8080`, with `http`, not `https`.\n\n**\"APP_SECRET is not set\" when you create the site**\n:   The secret key is missing from `.env`. Go back to [step 6](#step-6-make-a-settings-file-with-a-secret-key).\n\n**The website shows an error page after you created it**\n:   SightPress was not restarted after you added the secret key. Stop it with <kbd>Ctrl</kbd>+<kbd>C</kbd> and\n    start it again with `docker compose up`.\n\n**\"This code doesn't work\" on the setup page**\n:   Check the e-mail address and the six digits. A setup code works once, for 7 days. To get a new one, see\n    [Create a website](how-to/create-a-site.md#give-someone-a-new-setup-code).",
+            "needs": []
+        },
+        {
+            "id": "268eaa0af921",
+            "page": "Getting started",
+            "heading": "What to do next",
+            "url": "https://docs.sightpress.org/latest/getting-started/#what-to-do-next",
+            "text": "The [how-to guides](how-to/index.md) show you how to write and publish pages, invite people and run SightPress in the\nbackground. The reference pages explain [roles](reference/roles-and-permissions.md), [blocks](reference/blocks.md),\n[search and AI visibility](reference/search-and-ai.md) and the [command line tool](reference/command-line.md).",
+            "needs": []
+        },
+        {
+            "id": "7c4c69cfd709",
+            "page": "Change the ports SightPress uses",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/change-the-ports/",
+            "text": "A port is a numbered door on your computer that a program listens on. Each address SightPress uses ends in a port\nnumber, such as the `8080` in `http://localhost:8080`. If another program already uses one of these ports,\nSightPress can't start and you see an error such as \"port is already allocated\". This guide shows you how to\nchoose different ports.",
+            "needs": []
+        },
+        {
+            "id": "a3b14ac17899",
+            "page": "Change the ports SightPress uses",
+            "heading": "The ports SightPress uses",
+            "url": "https://docs.sightpress.org/latest/how-to/change-the-ports/#the-ports-sightpress-uses",
+            "text": "| Setting              | Default | What it is for                              |\n|----------------------|---------|---------------------------------------------|\n| `HTTP_PORT`          | 8080    | SightPress itself                           |\n| `MAILPIT_UI_PORT`    | 8025    | The test e-mail inbox                       |\n| `MAILPIT_SMTP_PORT`  | 1025    | Where the test e-mail inbox receives e-mail |\n| `MINIO_API_PORT`     | 9000    | File storage                                |\n| `MINIO_CONSOLE_PORT` | 9001    | The file storage console                    |\n\nThe error message names the port that is taken, for example `127.0.0.1:8080`.",
+            "needs": []
+        },
+        {
+            "id": "e5cd59d18753",
+            "page": "Change the ports SightPress uses",
+            "heading": "Change a port",
+            "url": "https://docs.sightpress.org/latest/how-to/change-the-ports/#change-a-port",
+            "text": "1. If SightPress is running, stop it. See [Run SightPress in the background](run-in-the-background.md#stop-sightpress),\n   or press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the terminal where it runs.\n2. In the `skeleton` folder, check whether a file called `.env` exists. If it doesn't, create it by copying the\n   example file:\n\n    ```sh\n    cp .env.example .env\n    ```\n\n    On Windows in PowerShell, `cp` works too.\n\n3. Open `.env` in a text editor, such as Notepad on Windows or TextEdit on macOS. The name starts with a dot, so\n   some file browsers hide it; you can open it from the editor's **Open** menu instead.\n4. Find the line for the port you want to change, for example `HTTP_PORT=8080`, and change the number, for\n   example to `HTTP_PORT=8081`. Pick a number between 1024 and 65535 that no other program uses.\n5. Save the file.\n6. Start SightPress again with `docker compose up`.\n7. Use the new number in the address. With `HTTP_PORT=8081`, go to <http://localhost:8081>. You should see the\n   **No site configured** page.",
+            "needs": []
+        },
+        {
+            "id": "3aa510335139",
+            "page": "Change the ports SightPress uses",
+            "heading": "Who can reach these ports",
+            "url": "https://docs.sightpress.org/latest/how-to/change-the-ports/#who-can-reach-these-ports",
+            "text": "Every port listens only on your own computer (the address `127.0.0.1`, also called `localhost`). Other computers on\nyour network can't reach SightPress.",
+            "needs": []
+        },
+        {
+            "id": "18a0bdf1ec6b",
+            "page": "Codes we send you",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/codes-we-send-you/",
+            "text": "A SightPress website **never sends you a link** to click. When it needs to check that an e-mail address is yours,\nit sends a **6-digit code** instead, and you type that code on the website yourself.\n\nThis keeps you safe from fake messages. If you ever get a message that claims to come from a SightPress website and\nasks you to click a link, it is not from us. Don't click it.",
+            "needs": []
+        },
+        {
+            "id": "4ba9fa7166cc",
+            "page": "Codes we send you",
+            "heading": "When you get a code",
+            "url": "https://docs.sightpress.org/latest/how-to/codes-we-send-you/#when-you-get-a-code",
+            "text": "You get a code by e-mail when:\n\n- you **forgot your password** and asked for a new one: the code works for 15 minutes;\n- someone **invited you** to help with a website: the invitation code works for 7 days.\n\nThe person who sets up a new website gets a **setup code** from the command line tool, not by e-mail. They pass it\non to the website's first admin, who uses it to choose a password. A setup code works for 7 days.\n\nEach code works only once.",
+            "needs": []
+        },
+        {
+            "id": "8a98b8aa9aa6",
+            "page": "Codes we send you",
+            "heading": "What a code message looks like",
+            "url": "https://docs.sightpress.org/latest/how-to/codes-we-send-you/#what-a-code-message-looks-like",
+            "text": "- The subject names the website, for example \"Your code to reset your password for Riverside Library\" or \"Ada\n  invited you to Riverside Library\". The code itself is never in the subject.\n- The message has the code on its own line, for example `123 456`.\n- The message has no links, no web addresses and no pictures.\n- It ends with: \"We will never send you a link. Type this code on the page where you asked for it. Never share it\n  with anyone.\"",
+            "needs": []
+        },
+        {
+            "id": "b923be731b04",
+            "page": "Codes we send you",
+            "heading": "Type a code",
+            "url": "https://docs.sightpress.org/latest/how-to/codes-we-send-you/#type-a-code",
+            "text": "1. Go to the page that asked for the code. For a password, that is the page you are already on. For an invitation,\n   go to the website's sign-in page and choose **Accept an invitation**.\n2. Find the field called **6-digit code**.\n3. Type the 6 digits. You can type them with or without the space in the middle.\n4. Choose **Continue**. The page never sends the code by itself, so take your time.\n5. You should see the next step, for example a page where you choose your password.",
+            "needs": []
+        },
+        {
+            "id": "f9cc1d80c7b9",
+            "page": "Codes we send you",
+            "heading": "If the code doesn't work",
+            "url": "https://docs.sightpress.org/latest/how-to/codes-we-send-you/#if-the-code-doesnt-work",
+            "text": "- Check the digits and try again. After 5 wrong tries the code stops working.\n- A code also stops working when it is too old, when it has been used, or when you asked for a newer one.\n- On the password page, choose **Send a new code**. You can ask for a new code once a minute; if it is too soon,\n  the page tells you how many seconds to wait.\n- For an invitation, ask the person who invited you to invite you again.\n- For a setup code, ask the person who set up the website for a new one.",
+            "needs": []
+        },
+        {
+            "id": "b389725c6b44",
+            "page": "Codes we send you",
+            "heading": "Try it on your computer",
+            "url": "https://docs.sightpress.org/latest/how-to/codes-we-send-you/#try-it-on-your-computer",
+            "text": "When SightPress runs on your computer, the e-mails with codes go to the test inbox. See\n[Open the test e-mail inbox](open-the-test-email-inbox.md).",
+            "needs": []
+        },
+        {
+            "id": "8f42b0ae191b",
+            "page": "Create a website",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-site/",
+            "text": "One SightPress installation can run many websites. Each website has its own pages, people, files and settings,\nkept in its own database. This guide shows you how to create a website with the command line tool, and what each\npart of the command means.\n\nBefore you start, follow [Getting started](../getting-started.md) up to step 6, so that SightPress runs and has a\nsecret key.",
+            "needs": []
+        },
+        {
+            "id": "74f651126042",
+            "page": "Create a website",
+            "heading": "Create the website, answering questions",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-site/#create-the-website-answering-questions",
+            "text": "The easiest way is to let the command ask you everything, one question at a time.\n\n1. Open a terminal and go to the `skeleton` folder.\n2. Type:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:create\n    ```\n\n3. Answer each question and press Enter. Each question says what to type. When it ends with \"Press Enter for\"\n   and a value, pressing Enter without typing takes that value. When it lists choices, such as \"Type person or\n   organization\", type one of them; capital letters don't matter.\n4. For the database, the command first asks which engine to use. Press Enter for **SQLite**: it keeps the\n   website in one file and needs nothing else. Press Enter again to keep the file in the `sites` folder. If you\n   choose MySQL, MariaDB or PostgreSQL instead, the command asks for the server, port, database name, user name and\n   password one by one, each with a usual value you can keep with Enter. The password isn't shown as you type it,\n   and you type it twice so a typing mistake is caught.\n5. For the main language, type a code such as `en-GB` or `pt-BR`. Capital letters don't matter and you can use\n   `_` instead of `-`. The command says the language in words, for example \"That is Brazilian Portuguese (pt-BR).\n   Is that right?\". Type `yes` or press Enter if it is, or `no` to type it again.\n6. If an answer isn't right, for example an e-mail address without the part after `@`, the command says what is\n   wrong and asks again. After 3 wrong answers in a row i",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "3af9f3653cbd",
+            "page": "Create a website",
+            "heading": "Create the website with one command",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-site/#create-the-website-with-one-command",
+            "text": "If you already know every answer, for example in a script, give them all on one line. The command then asks\nnothing. This example creates a website called \"Riverside Library\" for an organisation:\n\n```sh\ndocker compose run --rm --no-deps php bin/sightpress site:create demo --domain=localhost --db-engine=sqlite --url=http://localhost:8080 --owner-type=organization --locale=en-GB --name=\"Riverside Library\" --admin-email=ada@example.org --admin-first-name=Ada --admin-last-name=Lovelace\n```\n\nIf something is wrong, the command says what, and creates nothing.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "a2b147f373d3",
+            "page": "Create a website",
+            "heading": "What each part means",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-site/#what-each-part-means",
+            "text": "| Part | What to give | Example |\n| --- | --- | --- |\n| `demo` | A short name for the website: lower-case letters, digits and hyphens. You use it in other commands. | `library` |\n| `--domain` | The web addresses of the website, without `https://`, separated by commas. Each address belongs to one website only. On your own computer, use `localhost`. | `library.example.org,www.library.example.org` |\n| `--db-engine` | The database engine: `sqlite`, `mysql`, `mariadb` or `postgresql`. On your own computer, SQLite is simplest. See [Start a database server](start-a-database.md) for the others. | `sqlite` |\n| `--db-path` | For SQLite: the file. Optional: without it, a file named after the short name in the `sites` folder. | `library.sqlite` |\n| `--db-host`, `--db-port`, `--db-name`, `--db-user`, `--db-password` | For the other engines: the server, its port, the database, and the user name and password. Without them, `localhost`, the engine's usual port, `sightpress_` and the short name, `sightpress` and no password. | `--db-host=db --db-user=library` |\n| `--db` | Instead of the parts above: the whole database address in one go. | `sqlite:////app/sites/library.sqlite` |\n| `--owner-type` | Who runs the website: `organization` or `person`, in capitals or not. The ready-made pages say \"we\" for an organisation and \"I\" for a person. | `person` |\n| `--locale` | The website's main language. Capital letters don't matter, and `_` works as well as `-`. | `en-GB`, `pt_br`, `fr-FR` |\n| `--name` |",
+            "needs": []
+        },
+        {
+            "id": "dc2c72e6cec9",
+            "page": "Create a website",
+            "heading": "What a new website has",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-site/#what-a-new-website-has",
+            "text": "Every new website starts ready to use:\n\n- six published pages: a home page called \"Welcome to\" and the website's name, About, Contact (with a contact form\n  whose messages go to the first admin), a privacy notice, terms of use and an accessibility statement;\n- a main menu with About and Contact, and a footer menu with the other three pages;\n- a logo, an icon and a picture for sharing on social media, made from the website's name;\n- the roles admin, editor, contributor and member (see [Roles and permissions](../reference/roles-and-permissions.md)).\n\nThe ready-made pages are in English, whatever the website's language. Change or translate them in the admin panel.",
+            "needs": []
+        },
+        {
+            "id": "871db94c1faa",
+            "page": "Create a website",
+            "heading": "Try SightPress with demo content",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-site/#try-sightpress-with-demo-content",
+            "text": "Add `--with-demo-content` to the command to fill the new website with examples:\n\n- five files in the media library: a picture, a short video with captions, a sound recording and a PDF;\n- a page called \"Every kind of block\" at `/every-block`, with one block of every kind, and a page under it;\n- three more people, each waiting for their setup code: Bea Okafor (editor), Cleo Martins (contributor) and Max\n  Müller (member).\n\nThe command prints a setup code for each person. The `example.org` addresses can't receive e-mail, so give the codes\nto whoever tries the website out.",
+            "needs": []
+        },
+        {
+            "id": "78e2453821ac",
+            "page": "Create a website",
+            "heading": "Give someone a new setup code",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-site/#give-someone-a-new-setup-code",
+            "text": "A setup code works once, for 7 days. To make a new one for an admin who hasn't chosen a password yet, type:\n\n```sh\ndocker compose run --rm --no-deps php bin/sightpress site:user:create-admin demo --email=ada@example.org --first-name=Ada --last-name=Lovelace --url=http://localhost:8080\n```\n\nYou should see a new setup code. The old one stops working. The same command adds another admin when you give a new\ne-mail address. Someone who already has a password uses **Forgot your password?** on the sign-in page instead.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "c08b2ae5d155",
+            "page": "Create a website",
+            "heading": "Turn a website off, or remove it",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-site/#turn-a-website-off-or-remove-it",
+            "text": "| To | Type | Visitors see |\n| --- | --- | --- |\n| turn it off for a while | `bin/sightpress site:disable demo` | \"temporarily unavailable\" |\n| turn it on again | `bin/sightpress site:enable demo` | the website |\n| close it and keep its data | `bin/sightpress site:archive demo` | \"gone\" |\n| delete it, softly | `bin/sightpress site:delete demo` | \"not found\"; the data is kept |\n| remove a deleted website for good | `bin/sightpress site:purge demo` | — |\n\nStart each command with `docker compose run --rm --no-deps php`, as above. `site:purge` keeps the database unless\nyou add `--drop-database`, which can't be undone. The [command line reference](../reference/command-line.md) lists\nevery command.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "4d5525337bf6",
+            "page": "Fix upload size limits",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/",
+            "text": "How large a file you can upload depends on two things: what the website accepts for each kind of file, and what the\nserver accepts in one go. This guide explains the warning admins see when the server's settings are too low, and\nhow to change them.",
+            "needs": []
+        },
+        {
+            "id": "0bad66b5f02d",
+            "page": "Fix upload size limits",
+            "heading": "What you see",
+            "url": "https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/#what-you-see",
+            "text": "- Next to the upload field in **Media**, everyone sees the largest file they can upload, for example \"Largest file\n  you can upload: pictures 20 MB, documents 50 MB, audio files 64 MB and videos 64 MB.\"\n- If you choose a file that is too large, the browser refuses it before sending it. The reason appears under the\n  field, which gets focus, so screen readers read it out.\n- If something too large is sent anyway, you see a page called **This is too large to send**. It says how much the\n  server accepts and has a **Go back to the form** link.\n- Admins see a warning called **Your server’s settings stop some uploads** on the dashboard and in **Media**. Each\n  point names a server setting and the value it needs. Editors and contributors don't see it.",
+            "needs": [
+                "media.upload"
+            ]
+        },
+        {
+            "id": "b7cf90a25722",
+            "page": "Fix upload size limits",
+            "heading": "Change the limits on your own computer",
+            "url": "https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/#change-the-limits-on-your-own-computer",
+            "text": "With SightPress running in Docker, the limits are one group of lines in the `.env` file of the `skeleton` folder.\nPHP and the web server both read them, so they always match.\n\n1. If there is no `.env` file in the `skeleton` folder yet, create it by copying the example:\n\n    ```sh\n    cp .env.example .env\n    ```\n\n2. Open `.env` in a text editor and find the lines that start with `UPLOAD_MAX_SIZE`.\n3. Change the values you need:\n\n    | Setting            | Recommended | What it is                                                      |\n    |--------------------|-------------|-----------------------------------------------------------------|\n    | `UPLOAD_MAX_SIZE`  | `64M`       | The largest file in one upload                                  |\n    | `INPUT_MAX_SIZE`   | `8M`        | The largest form without files, such as a long page             |\n    | `INPUT_MAX_VARS`   | `5000`      | How many fields one form can have; lower values can lose content |\n    | `MAX_FILE_UPLOADS` | `20`        | How many files one upload can hold                               |\n    | `PHP_MEMORY_LIMIT` | `256M`      | Memory for one request; `512M` for pictures over 25 million pixels |\n    | `UPLOAD_TIMEOUT`   | `300`       | Seconds a slow upload may take                                   |\n\n    Sizes are whole megabytes or gigabytes, such as `64M` or `1G`. On a small site or shared hosting, `32M` is\n    enough for `UPLOAD_MAX_SIZE`.\n\n4. Save the file and restart SightPress:\n\n    ```sh\n    do",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "739aea6a1f00",
+            "page": "Fix upload size limits",
+            "heading": "On a hosting provider's server",
+            "url": "https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/#on-a-hosting-providers-server",
+            "text": "If someone else runs your server, send them the warning's text. It names the settings, for example\n`upload_max_filesize`, `post_max_size` or the web server's limit (`client_max_body_size` for nginx), and the value\neach needs. Ask them to tell you when it is done, then open the dashboard again: the warning is gone once the\nsettings are right.",
+            "needs": []
+        },
+        {
+            "id": "83a03dcede58",
+            "page": "Fix upload size limits",
+            "heading": "Large audio files and videos",
+            "url": "https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/#large-audio-files-and-videos",
+            "text": "The website accepts audio files up to 200 MB and videos up to 1 GB, but for now one upload can't be larger than\n`UPLOAD_MAX_SIZE`. A later version will send large files in parts, so they can be larger than the server's limit.\n`system:check` mentions this as a note, not a problem.",
+            "needs": []
+        },
+        {
+            "id": "b6ea26678059",
+            "page": "How-to guides",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/",
+            "text": "Each guide shows you how to do one thing with SightPress, in short, numbered steps. They assume you have already\nfollowed [Getting started](../getting-started.md), so SightPress is downloaded and runs on your computer.",
+            "needs": []
+        },
+        {
+            "id": "b193fb82a026",
+            "page": "How-to guides",
+            "heading": "Your website",
+            "url": "https://docs.sightpress.org/latest/how-to/#your-website",
+            "text": "- [Create a website](create-a-site.md) with the command line tool, and give its first admin a setup code.\n- [Write and publish a page](write-and-publish-a-page.md), from a draft through review to the public website.\n- [Turn features on or off](turn-features-on-or-off.md) for one website, and delete a feature's data.\n- [Search your website](search-your-website.md) from any page, and leave a page out of the search.\n- [See who visits your website](see-who-visits-your-website.md): the Analytics screen, its charts and tables, and\n  what is and isn't counted.",
+            "needs": [
+                "analytics.view"
+            ]
+        },
+        {
+            "id": "89904c223c4f",
+            "page": "How-to guides",
+            "heading": "Running SightPress",
+            "url": "https://docs.sightpress.org/latest/how-to/#running-sightpress",
+            "text": "- [Fix upload size limits](fix-upload-size-limits.md): what the admin warning means, and how to let larger files in.\n- [Run SightPress in the background](run-in-the-background.md), so that you can close the terminal.\n- [Change the ports SightPress uses](change-the-ports.md), if another program already uses them.\n- [Start a database server](start-a-database.md): MySQL, MariaDB or PostgreSQL.",
+            "needs": []
+        },
+        {
+            "id": "e3f287f52e2b",
+            "page": "How-to guides",
+            "heading": "Checking the built-in tools",
+            "url": "https://docs.sightpress.org/latest/how-to/#checking-the-built-in-tools",
+            "text": "- [Open the test e-mail inbox](open-the-test-email-inbox.md), which catches every e-mail SightPress sends.\n- [Open the file storage console](open-the-file-storage-console.md), which later versions will use for uploaded files.\n- [Try the command line tool](try-the-command-line-tool.md).",
+            "needs": []
+        },
+        {
+            "id": "92b78d648880",
+            "page": "How-to guides",
+            "heading": "Signing in",
+            "url": "https://docs.sightpress.org/latest/how-to/#signing-in",
+            "text": "- [Codes we send you](codes-we-send-you.md): why SightPress never sends links, and how to type a 6-digit code.",
+            "needs": []
+        },
+        {
+            "id": "cda0e301e255",
+            "page": "How-to guides",
+            "heading": "Reference",
+            "url": "https://docs.sightpress.org/latest/how-to/#reference",
+            "text": "- [Roles and permissions](../reference/roles-and-permissions.md): what admins, editors, contributors and members can do.\n- [Blocks](../reference/blocks.md): every kind of content block and its fields.\n- [Search and AI visibility](../reference/search-and-ai.md): how pages appear in search engines and AI search.\n- [Command line reference](../reference/command-line.md): every command of `bin/sightpress`.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "e11d505d677d",
+            "page": "How-to guides",
+            "heading": "Coming later",
+            "url": "https://docs.sightpress.org/latest/how-to/#coming-later",
+            "text": "Putting SightPress on a public server is not covered yet. A guide will appear here when it is ready.",
+            "needs": []
+        },
+        {
+            "id": "f1f0510e4ef7",
+            "page": "Open the file storage console",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/open-the-file-storage-console/",
+            "text": "SightPress comes with a file storage program called MinIO, which has its own web console. This guide shows you how\nto sign in to it.\n\n1. Start SightPress (see [Getting started](../getting-started.md)).\n2. In your web browser, go to <http://localhost:9001>.\n3. You should see the MinIO sign-in page.\n4. Sign in with the user name `sightpress` and the password `sightpress-secret`.\n5. You should see the MinIO console. There are no files yet.\n\nIn this version, websites don't use MinIO yet. Each website keeps its uploaded files, such as pictures and documents,\nin its own folder inside the `sites` folder of the `skeleton`. A later version will let websites store their files in\nMinIO or another storage service.\n\nIf you changed `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` or `MINIO_CONSOLE_PORT` in your `.env` file, use your\nvalues instead. These settings only take effect the first time the storage starts.",
+            "needs": []
+        },
+        {
+            "id": "84824c116dea",
+            "page": "Open the test e-mail inbox",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/open-the-test-email-inbox/",
+            "text": "When SightPress runs on your computer, it never sends real e-mail. Every message goes to a test inbox called\nMailpit instead, so you can read it without anything leaving your computer. This guide shows you how to open it.\n\n1. Start SightPress (see [Getting started](../getting-started.md)).\n2. In your web browser, go to <http://localhost:8025>.\n3. You should see the Mailpit inbox. It is empty for now, with a message saying there are no messages.\n\nSightPress sends e-mail when:\n\n- someone forgets their password and asks for a code;\n- someone is invited to help with a website;\n- a page is sent for review: every editor and admin is told;\n- a visitor sends a message with a contact form.\n\nEach of these messages appears here a moment later. Choose a message to read it.\n\nThe inbox only gets messages when your `.env` file has the line `MAILER_DSN=smtp://mailpit:1025`. The file you copied\nfrom `.env.example` in [Getting started](../getting-started.md) already has it. Without it, SightPress sends nothing.\n\nIf you changed `MAILPIT_UI_PORT` in your `.env` file, use that number instead of `8025`.",
+            "needs": []
+        },
+        {
+            "id": "ccd65502dbc6",
+            "page": "Run SightPress in the background",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/run-in-the-background/",
+            "text": "In [Getting started](../getting-started.md), SightPress runs in a terminal window and stops when you close it.\nThis guide shows you how to run it in the background instead.",
+            "needs": []
+        },
+        {
+            "id": "2659dd743201",
+            "page": "Run SightPress in the background",
+            "heading": "Start SightPress",
+            "url": "https://docs.sightpress.org/latest/how-to/run-in-the-background/#start-sightpress",
+            "text": "1. Open a terminal and go to the `skeleton` folder, for example:\n\n    ```sh\n    cd sightpress/skeleton\n    ```\n\n2. Type:\n\n    ```sh\n    docker compose up --detach --wait\n    ```\n\n3. Wait until the command finishes. You should see one line per container (`php`, `nginx`, `mailpit` and\n   `minio`), each ending with `Healthy`. You get your terminal back.\n4. Go to <http://localhost:8080>. You should see the **No site configured** page.\n\n    The very first time, SightPress keeps installing for a minute or two after the command finishes, and the\n    browser shows **502 Bad Gateway**. Wait a minute, then reload the page.\n\nYou can now close the terminal. SightPress keeps running until you stop it or restart your computer.",
+            "needs": []
+        },
+        {
+            "id": "a3abd8b81e03",
+            "page": "Run SightPress in the background",
+            "heading": "See what is running",
+            "url": "https://docs.sightpress.org/latest/how-to/run-in-the-background/#see-what-is-running",
+            "text": "Type:\n\n```sh\ndocker compose ps\n```\n\nYou should see a table with one row for each container. The **STATUS** column says `Up` and how long the\ncontainer has been running.",
+            "needs": []
+        },
+        {
+            "id": "81921b413441",
+            "page": "Run SightPress in the background",
+            "heading": "Read the messages SightPress writes",
+            "url": "https://docs.sightpress.org/latest/how-to/run-in-the-background/#read-the-messages-sightpress-writes",
+            "text": "Type:\n\n```sh\ndocker compose logs --follow\n```\n\nYou see the messages from every container, and new ones as they arrive. Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to\nstop reading. SightPress keeps running.",
+            "needs": []
+        },
+        {
+            "id": "3615f8246ebe",
+            "page": "Run SightPress in the background",
+            "heading": "Stop SightPress",
+            "url": "https://docs.sightpress.org/latest/how-to/run-in-the-background/#stop-sightpress",
+            "text": "Type:\n\n```sh\ndocker compose --profile \"*\" down\n```\n\nYou should see lines ending with `Removed`. The `--profile \"*\"` part also stops a database server if you started\none. Your settings and stored files are kept for next time.\n\n!!! tip \"Shortcuts for macOS and Linux\"\n\n    If the `make` program is installed, you can type `make up` to start SightPress in the background and\n    `make down` to stop it. Type `make` on its own to list every shortcut.",
+            "needs": []
+        },
+        {
+            "id": "12f284c7fd5b",
+            "page": "Search your website",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/search-your-website/",
+            "text": "Every page of a website has a search box in its header. It finds the website's published pages in the language you\nare reading, by their title, their summary and their text, including the descriptions of pictures, the transcripts\nof recordings and the names of downloads. Site search is an optional feature, on by default.",
+            "needs": []
+        },
+        {
+            "id": "742ab9aa4553",
+            "page": "Search your website",
+            "heading": "Search from any page",
+            "url": "https://docs.sightpress.org/latest/how-to/search-your-website/#search-from-any-page",
+            "text": "1. Open any page of your website, for example `http://localhost:8080/`.\n2. In the header, find **Search this site**. With a keyboard, press Tab until you reach the search box.\n3. Type one or more words, for example `opening hours`, and press Enter (or choose **Search**).\n4. You should see the results page. Its title and heading say what you searched for and how many results there are,\n   for example \"2 results for “opening hours”\". Screen readers read this out when the page opens.\n5. Each result has its title as a link, where it is on the website (\"In: About us › Team\") and a few lines of its\n   text with the words you searched for in bold and underlined. Choose a title to open the page.\n\nGood to know:\n\n- Capitals and accents don't matter: `cafe` finds \"Café\".\n- Words are matched by their stem: `libraries` finds \"library\".\n- The last word can be the start of a word: `accessib` finds \"accessibility\".\n- Pages with every word come first. When no page has every word, the results page says so and shows pages with some\n  of them.\n- With ten results or more, links at the bottom (\"Search results pages\") lead to the next pages.",
+            "needs": []
+        },
+        {
+            "id": "eca02086d1fb",
+            "page": "Search your website",
+            "heading": "When nothing is found",
+            "url": "https://docs.sightpress.org/latest/how-to/search-your-website/#when-nothing-is-found",
+            "text": "The page says \"No results for …\" and gives tips: check the spelling, try fewer or other words. On a website in\nseveral languages, the language list at the top leads to the same search in the other languages.",
+            "needs": []
+        },
+        {
+            "id": "64cafab08c85",
+            "page": "Search your website",
+            "heading": "Pages for members only",
+            "url": "https://docs.sightpress.org/latest/how-to/search-your-website/#pages-for-members-only",
+            "text": "Pages for members only are found only by people who are signed in. Sign in, search again, and they appear in the\nresults.",
+            "needs": []
+        },
+        {
+            "id": "96fc40f83112",
+            "page": "Search your website",
+            "heading": "Leave a page out of the search",
+            "url": "https://docs.sightpress.org/latest/how-to/search-your-website/#leave-a-page-out-of-the-search",
+            "text": "1. Open the page in the admin panel's page editor.\n2. In the **Search & AI** section, tick **Leave this page out of the site’s own search**.\n3. Choose **Save**.\n4. Check: searching for the page's title no longer finds it. Search engines can still list the page, unless you also\n   tick **Ask search engines and AI search engines not to list this page**.\n\nThe choice is made for each language of the page.",
+            "needs": []
+        },
+        {
+            "id": "7de6a333d243",
+            "page": "Search your website",
+            "heading": "If new pages don't show up",
+            "url": "https://docs.sightpress.org/latest/how-to/search-your-website/#if-new-pages-dont-show-up",
+            "text": "The search follows every change as it is saved. After a bigger change (adding a language, changing the website's\nmain language, making the whole website members-only, or turning search back on), SightPress rebuilds the search\nwithin a minute, as long as it runs in the background (see\n[Run SightPress in the background](run-in-the-background.md)). To rebuild it straight away, in the `skeleton` folder\ntype (replace `demo` with your website's short name):\n\n```sh\ndocker compose run --rm --no-deps php bin/sightpress site:search:reindex demo\n```\n\nYou should see one line per language, such as `en-GB: 12 documents indexed.`",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "ec83d1fb4ee2",
+            "page": "Search your website",
+            "heading": "Turn search off",
+            "url": "https://docs.sightpress.org/latest/how-to/search-your-website/#turn-search-off",
+            "text": "Search is a feature: an admin can turn it off on the **Features** screen (see\n[Turn features on or off](turn-features-on-or-off.md)). The search box and the results page are then gone.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "39d453e7e180",
+            "page": "See who visits your website",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/see-who-visits-your-website/",
+            "text": "SightPress counts how many people visit your website, which pages they read, where they come from, what they search\nfor and which addresses are not found. It also shows which search engines and AI crawlers read the website.\nAnalytics is an optional feature, on by default.\n\nIt is private by design: visits are counted on your own server, with no cookies, no tracking scripts and nothing\nsent to other companies. SightPress never stores visitors' IP addresses or details of their browser. This is not\nlegal advice, but it means most websites don't need a cookie banner for it.",
+            "needs": []
+        },
+        {
+            "id": "0117140013b8",
+            "page": "See who visits your website",
+            "heading": "Open the Analytics screen",
+            "url": "https://docs.sightpress.org/latest/how-to/see-who-visits-your-website/#open-the-analytics-screen",
+            "text": "1. Sign in to the admin panel as an admin or an editor, for example at `http://localhost:8080/admin`.\n2. In the admin menu, choose **Analytics**. (Contributors don't have it.)\n3. You should see the last 30 days. Under **Days to show**, the link for the range you are looking at is marked as\n   the current one; choose **Last 7 days**, **Last 90 days** or **Last 12 months** to change it.\n4. For other dates, fill in **First day** and **Last day** under **Other days** and choose **Show these days**. If a\n   date is missing or the last day comes before the first, a box at the top says \"There is a problem\" and links to\n   the field to fix.\n\nDays run from midnight to midnight in your website's time zone, which the screen names, so everyone sees the same\nnumbers. Today's numbers are counted live.",
+            "needs": [
+                "analytics.view"
+            ]
+        },
+        {
+            "id": "24fc3d551aec",
+            "page": "See who visits your website",
+            "heading": "Read the numbers",
+            "url": "https://docs.sightpress.org/latest/how-to/see-who-visits-your-website/#read-the-numbers",
+            "text": "At the top, three sentences sum up the range, for example \"1,349 visitors, up 12% on the 30 days before\". The arrows\nnext to them are only decoration: the words say the same.\n\nEach part of the screen has its own heading, so a screen reader can move between them:\n\n- **Visitors over time**: a chart, with a sentence above it that says what it shows, for example \"Visitors went up\n  12% compared with the previous 30 days, from 1,204 to 1,349. The busiest day was Tuesday 4 November, with 98\n  visitors.\" This period is a solid line with round markers, the period before a dashed line with square markers.\n  Choose **Show the data for each day** to see every day in a table.\n- **Pages read most**, **Where visitors came from** and **Devices** (phone, tablet or computer): tables, with a\n  small bar next to each number.\n- **Languages**: only on websites in more than one language.\n- **Site search**: what people searched for, and the searches that found nothing. Only while site search is on.\n  Searches that look like an email address or a phone number are counted but never shown.\n- **Pages not found**: addresses people asked for that don't exist. People who can edit any page see **Add a\n  redirect** next to each one: it opens the Redirects screen with the address filled in.\n- **Search engines and AI crawlers**: which programs read the website and what they read. They are never counted\n  as visitors.\n\nEach part has a **Download … as a CSV file** link, for a spreadsheet. The file has every row",
+            "needs": []
+        },
+        {
+            "id": "55804a29457f",
+            "page": "See who visits your website",
+            "heading": "What is counted and what isn't",
+            "url": "https://docs.sightpress.org/latest/how-to/see-who-visits-your-website/#what-is-counted-and-what-isnt",
+            "text": "- A visitor is counted once per day. The same person on two days counts twice; there is no \"returning visitors\"\n  number, on purpose.\n- Not counted: people signed in to the website, visitors whose browser asks websites not to track them (Global\n  Privacy Control or Do Not Track), the admin panel, pictures and other files, and pages a browser only loads in\n  advance.\n- Figures are kept for 25 months, so you can compare two full years.",
+            "needs": []
+        },
+        {
+            "id": "cc14b90472ea",
+            "page": "See who visits your website",
+            "heading": "The dashboard",
+            "url": "https://docs.sightpress.org/latest/how-to/see-who-visits-your-website/#the-dashboard",
+            "text": "The dashboard (`/admin`) shows **Last 7 days**: one sentence with the visitors and page views of the last week, and\na link to the Analytics screen.",
+            "needs": [
+                "analytics.view"
+            ]
+        },
+        {
+            "id": "2dc7a8a28175",
+            "page": "See who visits your website",
+            "heading": "Keep analytics for less time, or delete them (admins)",
+            "url": "https://docs.sightpress.org/latest/how-to/see-who-visits-your-website/#keep-analytics-for-less-time-or-delete-them-admins",
+            "text": "1. On the Analytics screen, go to **Keeping analytics** at the bottom.\n2. In **Months to keep analytics for**, type a number from 1 to 25 and choose **Save**. Older figures are deleted\n   within the hour. The change is in the audit log.\n3. To delete everything, choose **Delete analytics data**. A page asks you to confirm; choose **Delete analytics\n   data** again, or **Keep the data** to go back. Counting goes on from then.",
+            "needs": [
+                "analytics.view"
+            ]
+        },
+        {
+            "id": "162e817ef350",
+            "page": "See who visits your website",
+            "heading": "From the command line",
+            "url": "https://docs.sightpress.org/latest/how-to/see-who-visits-your-website/#from-the-command-line",
+            "text": "In the `skeleton` folder (replace `demo` with your website's short name):\n\n```sh\ndocker compose run --rm --no-deps php bin/sightpress site:analytics:report demo\n```\n\nYou should see the visitors, page views and views per visitor of the last 30 days, each with the 30 days before.\nAdd `--report=pages` (or `sources`, `devices`, `not-found` …) for another report, and `--format=csv` or\n`--format=json` for a file. If it warns that analytics were \"last rolled up\" long ago, SightPress isn't running in\nthe background (see [Run SightPress in the background](run-in-the-background.md)).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "55c61707b379",
+            "page": "See who visits your website",
+            "heading": "Turn analytics off",
+            "url": "https://docs.sightpress.org/latest/how-to/see-who-visits-your-website/#turn-analytics-off",
+            "text": "Analytics is a feature: an admin can turn it off on the **Features** screen (see\n[Turn features on or off](turn-features-on-or-off.md)). Nothing is counted any more, and the figures already\ncounted are kept until they are deleted. If your website's **Privacy notice** page was written by SightPress, remove\nits \"Visitor statistics\" section.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "deada3c54285",
+            "page": "Start a database server",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/start-a-database/",
+            "text": "SightPress keeps its data in a single file on disk (an SQLite database), so it doesn't need a separate database\nserver. If you want to try one, SightPress can start MySQL, MariaDB or PostgreSQL for you. This guide shows you how.\n\n!!! note \"Not used yet\"\n\n    At this stage SightPress starts the database server but doesn't store anything in it. You can check that it\n    runs. Later versions will let you use it for your sites.",
+            "needs": []
+        },
+        {
+            "id": "9c2a5ac525c4",
+            "page": "Start a database server",
+            "heading": "Start SightPress with a database",
+            "url": "https://docs.sightpress.org/latest/how-to/start-a-database/#start-sightpress-with-a-database",
+            "text": "1. If SightPress is running, stop it with `docker compose --profile \"*\" down`.\n2. In the `skeleton` folder, type one of these commands:\n\n    ```sh\n    docker compose --profile mysql up\n    ```\n\n    For MariaDB, use `--profile mariadb`. For PostgreSQL, use `--profile postgres`.\n\n3. Wait until the text stops scrolling. The first time, Docker downloads the database, which can take a few minutes.\n   You should see lines starting with `mysql-1` (or `mariadb-1`, or `postgres-1`) among the others.\n\nTo start it in the background instead, add `--detach --wait` to the end of the command.",
+            "needs": []
+        },
+        {
+            "id": "9e203f030d93",
+            "page": "Start a database server",
+            "heading": "Check that the database runs",
+            "url": "https://docs.sightpress.org/latest/how-to/start-a-database/#check-that-the-database-runs",
+            "text": "1. Open a second terminal and go to the `skeleton` folder.\n2. Type:\n\n    ```sh\n    docker compose --profile \"*\" ps\n    ```\n\n3. You should see a row for the database, such as `mysql`, with `(healthy)` in the **STATUS** column. If it says\n   `(health: starting)`, wait a few seconds and type the command again.\n\nWhen you start SightPress without `--profile`, no database server runs, and this table has no database row.",
+            "needs": []
+        },
+        {
+            "id": "1e22f0a1ba2e",
+            "page": "Start a database server",
+            "heading": "The database settings",
+            "url": "https://docs.sightpress.org/latest/how-to/start-a-database/#the-database-settings",
+            "text": "The database is created with these values. You can change them in the `.env` file before the first start (see\n[Change the ports SightPress uses](change-the-ports.md#change-a-port) for how to create and edit `.env`).\n\n| Setting            | Default           | What it is                                  |\n|--------------------|-------------------|---------------------------------------------|\n| `DB_NAME`          | `sightpress`      | The name of the database                    |\n| `DB_USER`          | `sightpress`      | The user name                               |\n| `DB_PASSWORD`      | `sightpress`      | The user's password                         |\n| `DB_ROOT_PASSWORD` | `sightpress-root` | The administrator password (MySQL, MariaDB) |\n\nThe database server can only be reached by the other SightPress containers, not from your computer or your network.",
+            "needs": []
+        },
+        {
+            "id": "91f1fcbf1810",
+            "page": "Start a database server",
+            "heading": "Stop the database",
+            "url": "https://docs.sightpress.org/latest/how-to/start-a-database/#stop-the-database",
+            "text": "Type `docker compose --profile \"*\" down`. This stops SightPress and the database. The data in the database is kept\nfor next time.",
+            "needs": []
+        },
+        {
+            "id": "c87b2af8bda0",
+            "page": "Try the command line tool",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/try-the-command-line-tool/",
+            "text": "SightPress has a command line tool for tasks such as creating a website. This guide shows you how to run it.",
+            "needs": []
+        },
+        {
+            "id": "3f71971d03ea",
+            "page": "Try the command line tool",
+            "heading": "List the commands",
+            "url": "https://docs.sightpress.org/latest/how-to/try-the-command-line-tool/#list-the-commands",
+            "text": "1. Open a terminal and go to the `skeleton` folder.\n2. Type:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress list\n    ```\n\n3. You should see a list of commands, each with one line about what it does, such as\n   `site:create   Creates a site: its database, its first admin and its roles.`",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "b0d0cd12ac4c",
+            "page": "Try the command line tool",
+            "heading": "List your websites",
+            "url": "https://docs.sightpress.org/latest/how-to/try-the-command-line-tool/#list-your-websites",
+            "text": "1. Type:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:list\n    ```\n\n2. You should see one sentence for each website, with its status, its addresses, its language and its database. If\n   you haven't created a website yet, it says \"There are no sites yet. Create one with site:create.\"",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "ad1f0f608091",
+            "page": "Try the command line tool",
+            "heading": "Get help with one command",
+            "url": "https://docs.sightpress.org/latest/how-to/try-the-command-line-tool/#get-help-with-one-command",
+            "text": "1. Type `help` and the name of the command, for example:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress help site:create\n    ```\n\n2. You should see what the command needs and what each option means.\n\nTo create a website, see [Create a website](create-a-site.md). The [command line reference](../reference/command-line.md)\nlists every command.\n\n!!! tip \"Shortcut for macOS and Linux\"\n\n    If the `make` program is installed, `make site-create NAME=demo` runs `site:create demo` and asks for the rest.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "31102b14330b",
+            "page": "Turn features on or off",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/",
+            "text": "Some parts of SightPress are optional **features**, for example site search or visitor statistics. Each website has\nits own: an admin can turn a feature off for one website and keep it on for the others. Turning a feature off hides\neverything it adds, on the website and in the admin panel, and **keeps its data**, so turning it on again brings it\nback as it was.\n\nYou need to be an **admin** of the website. Editors, contributors and members don't see the *Features* screen.\n\n!!! note \"Optional features in this version\"\n\n    This version of SightPress has one optional feature of its own: **Site search** (see\n    [Search your website](search-your-website.md)). Statistics and the AI assistant arrive in later versions.\n    Features installed as extra packages show up on the screen too.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "0d13a7e9b1d1",
+            "page": "Turn features on or off",
+            "heading": "See the features of a website",
+            "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#see-the-features-of-a-website",
+            "text": "1. Sign in to the admin panel of the website, for example `http://localhost:8080/admin`.\n2. In the admin menu, choose **Features**.\n3. You should see one section for each optional feature, with its name as a heading, what it does, its **Status**\n   (\"On\" or \"Off\") and what happens when it is off.\n\nA feature that says **\"set by your organisation\"** was chosen for every website by whoever runs your SightPress\ninstallation. It has no button, and it can't be changed from the website.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "6667a6a8ed5c",
+            "page": "Turn features on or off",
+            "heading": "Turn a feature off",
+            "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#turn-a-feature-off",
+            "text": "1. On the *Features* screen, find the feature and choose **Turn off** followed by its name, for example\n   **Turn off Events**.\n2. A page asks you to confirm and says what will happen. Choose **Turn off …** again to go ahead, or\n   **Keep … on** to go back without changing anything.\n3. You are back on the *Features* screen, at the feature's heading. A message at the top says that it is off and that\n   its data is kept. Screen readers read the message out.\n4. Check: the pages the feature added now answer \"not found\", and its screens have left the admin menu.\n\nIf another feature needs this one, SightPress refuses and names that feature: turn that one off first.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "35981cb9f786",
+            "page": "Turn features on or off",
+            "heading": "Turn a feature on",
+            "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#turn-a-feature-on",
+            "text": "1. On the *Features* screen, choose **Turn on** followed by the feature's name.\n2. You are back at the feature's heading, with the message \"… is on.\"\n3. Check: its pages and screens are back, with the data they had before.\n\nIf the feature needs another feature that is off, SightPress refuses and names the feature to turn on first.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "70bebae74bc3",
+            "page": "Turn features on or off",
+            "heading": "Delete a feature's data",
+            "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#delete-a-features-data",
+            "text": "This removes everything the feature stored for the website, **for good**. You can only do it while the feature is off.\n\n1. Turn the feature off (see above).\n2. Under the feature, choose **Delete the data of …**. The link only appears when there is data to delete.\n3. A page asks you to confirm. Choose **Delete the data of …** to go ahead, or **Keep the data** to go back.\n4. The message says the data was deleted. Turning the feature on again later starts afresh, with no data.\n\nEvery change on this screen is written to the website's **Audit log**, with who made it and when.",
+            "needs": [
+                "audit.view",
+                "module.manage"
+            ]
+        },
+        {
+            "id": "9ee30fdd717d",
+            "page": "Turn features on or off",
+            "heading": "With the command line tool",
+            "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#with-the-command-line-tool",
+            "text": "The same can be done in a terminal, in the `skeleton` folder. Replace `demo` with the short name of your website and\n`acme.events` with the feature's id, which the first command shows.\n\n1. List the features of a website and whether each one is on:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:module:list demo\n    ```\n\n2. Turn one on, or off:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:module:enable demo acme.events\n    docker compose run --rm --no-deps php bin/sightpress site:module:disable demo acme.events\n    ```\n\n3. Turn one off and delete its data for good:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:module:disable demo acme.events --purge-data\n    ```\n\nWhen you create a website, `site:create demo --without=acme.events` starts it with that feature off.",
+            "needs": [
+                "module.manage",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "f6290d15bf04",
+            "page": "Turn features on or off",
+            "heading": "For whoever runs the installation",
+            "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/#for-whoever-runs-the-installation",
+            "text": "In `config/tenant.php`, the `modules` section changes the features of **every** website:\n\n- `defaults` says which features new websites start with, for example `'defaults' => ['analytics' => false]`.\n  Websites that already exist keep what they have.\n- `locked` turns a feature on or off for every website, for example `'locked' => ['analytics' => false]`. Admins then\n  see \"set by your organisation\" and can't change it, and neither can the command line tool.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "09d5ac487b95",
+            "page": "Write and publish a page",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/write-and-publish-a-page/",
+            "text": "This guide shows you how to start a page, add its content, and take it through review until visitors can read it.\nEvery step works with a keyboard alone and with a screen reader.\n\nYou need an account on the website with the role contributor, editor or admin. See\n[Roles and permissions](../reference/roles-and-permissions.md).",
+            "needs": []
+        },
+        {
+            "id": "9215e5267190",
+            "page": "Write and publish a page",
+            "heading": "Start a page",
+            "url": "https://docs.sightpress.org/latest/how-to/write-and-publish-a-page/#start-a-page",
+            "text": "1. Sign in to the website, for example at <http://localhost:8080/login>. You should see the **Dashboard**.\n2. Choose **Pages** in the admin menu, then **Start a new page**. You should see the heading **Start a new page**.\n3. In **Title**, type the page's title, for example `Book club`. You can change it later.\n4. In **Put it under**, choose where the page belongs. Choose **None: a top-level page** for a page of its own, or\n   another page to put it under that one. A page under \"About us\" gets an address such as `/about/book-club`.\n5. Leave **Layout** on **Standard page**. **Home page** shows the title and summary as a large introduction.\n6. Choose **Start the page**. You should see the message \"“Book club” has been started as a draft. Add its content,\n   then save it.\" and the heading **Edit “Book club”**.\n\nA new page is a **draft**: nobody else sees it until it is published.",
+            "needs": []
+        },
+        {
+            "id": "96d49a128109",
+            "page": "Write and publish a page",
+            "heading": "Add the content",
+            "url": "https://docs.sightpress.org/latest/how-to/write-and-publish-a-page/#add-the-content",
+            "text": "A page is made of **blocks**, shown one after another: a heading, some text, a picture and so on. The\n[blocks reference](../reference/blocks.md) describes every kind.\n\n1. Go to the **Content** section. On a new page it says \"There are no blocks yet. Add the first one below.\"\n2. In **Type of block to add**, choose a kind of block, for example **Text**.\n3. Choose **Add block**. You should hear or see \"Added a Text block. It is block 1 of 1. Save the page to keep this\n   change.\" Focus moves to the new block, a group called \"Block 1 of 1: Text\".\n4. Fill in the block's fields. For a Text block, type your text in **Text**. You can use simple HTML, such as\n   `<p>We meet every first <strong>Tuesday</strong> of the month.</p>`. **Update the previews** shows how it will\n   look.\n5. Add more blocks the same way. Each block has the buttons **Move up**, **Move down** and **Remove**. After each\n   one, you hear or see what changed, for example \"Moved block 2 (Text) up. It is now block 1 of 2.\" Focus stays on\n   the block or on the button.\n6. Choose **Save page**. It is at the top and at the bottom of the form; pressing <kbd>Enter</kbd> in a field saves\n   too. You should see \"Saved “Book club”.\"\n\n!!! warning \"The block buttons don't save\"\n\n    Adding, moving and removing blocks changes the form only. Nothing is kept until you choose **Save page**.\n\nIf the page can't be saved, a list of problems appears at the top of the page and gets focus. Each problem is a link\nto the field it is about",
+            "needs": []
+        },
+        {
+            "id": "96a0512d8b7c",
+            "page": "Write and publish a page",
+            "heading": "Help people find the page",
+            "url": "https://docs.sightpress.org/latest/how-to/write-and-publish-a-page/#help-people-find-the-page",
+            "text": "The **Search & AI** section decides how the page looks in search engines, in AI search and when it is shared. All\nits fields are optional, but a description and a summary help people find the page.\n\n- **Summary**: one or two sentences about the page. Shown in lists of pages and read by AI search engines.\n- **Title in search results**: only when it should differ from the page title.\n- **Description for search engines**: one or two sentences. Search engines show about 160 characters. A count of\n  the characters is read out after a short pause.\n- **Ask search engines and AI search engines not to list this page**: tick it to keep the page out of search\n  results. It is then also left out of the sitemap and `llms.txt`.\n\n**How a search result could look** shows the title, the address and the description as text. Choose **Update the\npreviews** after a change. [Search and AI visibility](../reference/search-and-ai.md) explains the rest.",
+            "needs": []
+        },
+        {
+            "id": "116e75ffe81c",
+            "page": "Write and publish a page",
+            "heading": "Check the page before you send it",
+            "url": "https://docs.sightpress.org/latest/how-to/write-and-publish-a-page/#check-the-page-before-you-send-it",
+            "text": "Under the form, SightPress checks the saved page:\n\n- **Problems that stop publishing**, for example a picture without alt text, a video without captions or a heading\n  that skips a level. A page with these can't be published until they are fixed.\n- **Suggestions**, for example \"Add a description for search engines\". The page can be published with these.\n\nEach item links to the field or block it is about. When there are only suggestions, the check says \"Ready to\npublish, with suggestions\".",
+            "needs": []
+        },
+        {
+            "id": "d78a28b0befc",
+            "page": "Write and publish a page",
+            "heading": "Send the page for review",
+            "url": "https://docs.sightpress.org/latest/how-to/write-and-publish-a-page/#send-the-page-for-review",
+            "text": "Contributors, editors and admins all send their pages for review.\n\n1. Save the page first. The review buttons use the saved page.\n2. Under **Review and publishing**, you can write a **Note for the next person**, for example what you changed.\n3. Choose **Submit for review**. You should see \"Sent for review. The editors have been told by email.\"\n\nThe page now waits for review. Every editor and admin gets an e-mail with the page's name and a link to it in the\nadmin panel. A contributor can't change the page while it waits.",
+            "needs": []
+        },
+        {
+            "id": "b809b5313448",
+            "page": "Write and publish a page",
+            "heading": "Review, approve and publish a page",
+            "url": "https://docs.sightpress.org/latest/how-to/write-and-publish-a-page/#review-approve-and-publish-a-page",
+            "text": "You need the role editor or admin.\n\n1. Open the page: choose the link in the e-mail, or find the page under **Waiting for review** on the **Dashboard**.\n2. Read the page. **View the saved page**, at the top, shows it as visitors will see it.\n3. If it needs changes, choose **Send back to draft**, with a note that says what to change. You should see \"Sent\n   back to draft. The writer can change it and send it again.\"\n4. If it is ready, choose **Approve**. You should see \"Approved. It can be published now.\"\n5. Choose **Publish**. You should see \"Published. Visitors can see the page now.\"\n\nIf the page still has a problem that stops publishing, **Publish** is refused, and the list of problems appears at\nthe top with focus on it.",
+            "needs": []
+        },
+        {
+            "id": "89d3f5e58adf",
+            "page": "Write and publish a page",
+            "heading": "Look at the published page",
+            "url": "https://docs.sightpress.org/latest/how-to/write-and-publish-a-page/#look-at-the-published-page",
+            "text": "1. Go to the page's address on the website, for example <http://localhost:8080/book-club>. The address is shown\n   next to **State** at the top of the page editor.\n2. You should see the page with its content. It is now also in the website's sitemap and its `llms.txt` file.",
+            "needs": []
+        },
+        {
+            "id": "7d062560ddf0",
+            "page": "Write and publish a page",
+            "heading": "Take a page off the website",
+            "url": "https://docs.sightpress.org/latest/how-to/write-and-publish-a-page/#take-a-page-off-the-website",
+            "text": "1. Open the page in the admin panel.\n2. Choose **Unpublish**. You should see \"Unpublished. Visitors can’t see the page any more; it is a draft again.\"\n\nThe page becomes a draft and goes through review again before it is back on the website.",
+            "needs": []
+        },
+        {
+            "id": "d497ccdeb35c",
+            "page": "SightPress documentation",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/",
+            "text": "SightPress is a powerful content management system (CMS) for everyone, designed with blind and low-vision\ncreators and audiences in mind. It is built on modern, object-oriented PHP and is free software, licensed\nunder the GNU General Public License v3.0 or later.\n\nWith SightPress you can run many websites from one installation, each in as many languages as you need.\nThe admin area, the default theme and every built-in feature aim to meet the Web Content Accessibility\nGuidelines (WCAG) 2.2 at level AA. Every task works with a keyboard alone and with a screen reader.",
+            "needs": []
+        },
+        {
+            "id": "cad8f4dcbb94",
+            "page": "SightPress documentation",
+            "heading": "Status",
+            "url": "https://docs.sightpress.org/latest/#status",
+            "text": "This is the first version of SightPress (0.1). You can create websites from the command line, and each website has\nready-made pages, an admin panel to write and publish pages through review, a media library, menus, invitations,\nsite settings and an audit log. Every page is ready for search engines and AI readers.",
+            "needs": []
+        },
+        {
+            "id": "3840968f021a",
+            "page": "SightPress documentation",
+            "heading": "Where to go next",
+            "url": "https://docs.sightpress.org/latest/#where-to-go-next",
+            "text": "- To see what SightPress can do, with ideas for websites, read [What you can build](what-you-can-build.md).\n- The source code lives on GitHub in the [SightPress organisation](https://github.com/sightpress).\n- To run SightPress on your own computer, follow [Getting started](getting-started.md).\n- The [how-to guides](how-to/index.md) show you how to do one task at a time, such as\n  [creating a website](how-to/create-a-site.md) or [writing and publishing a page](how-to/write-and-publish-a-page.md).\n- The reference pages explain [roles and permissions](reference/roles-and-permissions.md), [blocks](reference/blocks.md),\n  [search and AI visibility](reference/search-and-ai.md) and the [command line tool](reference/command-line.md).",
+            "needs": []
+        },
+        {
+            "id": "c00376569a46",
+            "page": "Blocks",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/",
+            "text": "A page's content is a list of **blocks**, shown one after another. Each kind of block holds one kind of content, such\nas a heading, some text or a picture. SightPress comes with ten kinds. Add-on modules can add more.\n\nThis page lists every kind, its fields and their limits, and what SightPress checks for accessibility. To add, move\nand remove blocks, see [Write and publish a page](../how-to/write-and-publish-a-page.md).",
+            "needs": []
+        },
+        {
+            "id": "24158ebca47b",
+            "page": "Blocks",
+            "heading": "How blocks are checked",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#how-blocks-are-checked",
+            "text": "- **When you save**, every block is checked. Every problem is listed at once, at the top of the page, with a link to\n  the field, for example \"Heading text: Fill in this field.\" Nothing is saved until every block is fine.\n- **When you publish**, SightPress checks the page for accessibility. Problems marked \"stops publishing\" below must be\n  fixed first. Problems marked \"suggestion\" don't stop publishing.\n- **Files** come from the website's media library and must be the right kind, for example a picture for an Image\n  block. Visitors only see files that are published in the media library; a page that uses an unpublished file\n  can't be published.\n- **Every block also has a text version**, which AI search engines and other readers get as Markdown. See\n  [Search and AI visibility](search-and-ai.md).\n\nFields marked *required* must be filled in. All the others are optional.",
+            "needs": []
+        },
+        {
+            "id": "b76688b02a36",
+            "page": "Blocks",
+            "heading": "Heading",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#heading",
+            "text": "A heading that starts a part of the page.\n\n| Field | Limits |\n| --- | --- |\n| **Heading text** (required) | Up to 200 characters. |\n| **Level** (required) | 2 to 6. Level 2 starts a main part of the page, 3 a part of that, and so on. The page title is the only level 1. |\n\n- Stops publishing: a heading that skips a level, such as a level 4 straight after a level 2.",
+            "needs": []
+        },
+        {
+            "id": "be5505dad782",
+            "page": "Blocks",
+            "heading": "Text",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#text",
+            "text": "Formatted text: paragraphs, lists, links and more.\n\n| Field | Limits |\n| --- | --- |\n| **Text** (required) | Up to 100,000 characters, written as HTML. |\n\nYou can use paragraphs `<p>`, headings `<h2>` to `<h6>`, lists `<ul>`, `<ol>` and `<li>`, links `<a href=\"…\">`,\n`<strong>` and `<em>`. Quotes, code, abbreviations and description lists work too, and a text or background colour\nwritten as `style=\"color: #1a1a1a\"` or `style=\"background-color: #ffeb3b\"`. Anything else is removed when you save.\nScripts, embedded frames and pictures are always removed; use an Image block for pictures. Text pasted from other\neditors keeps its words.\n\n- Stops publishing: a link with no text; a level 1 heading or a heading that skips a level; a colour that is too\n  faint to read (a contrast below 4.5 to 1, in light or dark mode); a language code that isn't real.\n- Suggestion: link text that doesn't say where it goes, such as \"click here\", \"read more\" or a bare web address.",
+            "needs": []
+        },
+        {
+            "id": "9176925ddb6b",
+            "page": "Blocks",
+            "heading": "Image",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#image",
+            "text": "One picture from the media library.\n\n| Field | Limits |\n| --- | --- |\n| **Image** (required) | A picture from the media library. |\n| **Alternative text** | Up to 1,000 characters. What the picture shows, for people who can't see it. |\n| **The picture is only decoration: screen readers skip it** | Tick it only for a picture that adds nothing to the page. |\n| **Caption** | Up to 2,000 characters. Shown under the picture, for everyone. |\n\n- Stops publishing: no alternative text, when the picture isn't marked as decoration.\n- Suggestion: alternative text that looks like a file name, starts with \"image of\", or is longer than 250 characters.",
+            "needs": []
+        },
+        {
+            "id": "ecad8e279c55",
+            "page": "Blocks",
+            "heading": "Gallery",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#gallery",
+            "text": "A set of pictures, shown as a list so that screen readers say how many there are.\n\n| Field | Limits |\n| --- | --- |\n| **Pictures** (required) | 1 to 50 pictures. Each has **Picture**, **Alternative text**, the decoration tick box and **Caption**, as in an Image block. |\n| **Caption of the gallery** | Up to 2,000 characters. Shown under all the pictures. |\n\nEvery picture is checked like an Image block.",
+            "needs": []
+        },
+        {
+            "id": "c26a74ec7fed",
+            "page": "Blocks",
+            "heading": "Video",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#video",
+            "text": "A video from the media library, with captions and a transcript. It never starts by itself.\n\n| Field | Limits |\n| --- | --- |\n| **Video** (required) | A video from the media library. |\n| **Title** (required) | Up to 200 characters. Names the video for screen readers and search engines. |\n| **Captions** | A WebVTT captions file (`.vtt`) from the media library. |\n| **Language of the captions** | A language tag such as `en-GB`. Leave it empty for the page's language. |\n| **The video has no speech or important sounds, so it needs no captions** | A tick box. |\n| **Poster picture** | A picture shown before the video plays. |\n| **Transcript** | Up to 100,000 characters. Everything said and shown, as text. Shown under the video behind a **Transcript** button. |\n\n- Stops publishing: a video with speech but no captions; a video marked as having no speech, but with no transcript\n  that describes what it shows.\n- Suggestion: a video without a transcript.\n\nA captions file is a plain text file whose first line is `WEBVTT`. Upload it to the media library like any other\nfile.",
+            "needs": []
+        },
+        {
+            "id": "bd264a7bc8f7",
+            "page": "Blocks",
+            "heading": "Audio",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#audio",
+            "text": "A sound recording from the media library, with a transcript. It never starts by itself.\n\n| Field | Limits |\n| --- | --- |\n| **Audio** (required) | A sound file from the media library. |\n| **Title** (required) | Up to 200 characters. Names the recording for screen readers and search engines. |\n| **Transcript** | Up to 100,000 characters. Everything said, as text. Shown under the player behind a **Transcript** button. |\n\n- Stops publishing: no transcript.",
+            "needs": []
+        },
+        {
+            "id": "c5a62e276358",
+            "page": "Blocks",
+            "heading": "File download",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#file-download",
+            "text": "A link to a file from the media library, such as a PDF.\n\n| Field | Limits |\n| --- | --- |\n| **File** (required) | A file from the media library. |\n| **Link text** (required) | Up to 200 characters. What the file is, for example \"Annual report 2026\". |\n\nSightPress adds the file's type and size to the link, written for the page's language: \"Annual report 2026 (PDF,\n2.3 MB)\".\n\n- Suggestion: link text that says nothing on its own, such as \"here\" or \"details\".",
+            "needs": []
+        },
+        {
+            "id": "08edcb1ae88f",
+            "page": "Blocks",
+            "heading": "Call to action",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#call-to-action",
+            "text": "A button that leads somewhere.\n\n| Field | Limits |\n| --- | --- |\n| **Button text** (required) | Up to 80 characters. Say what happens, for example \"Book a visit\". |\n| **Link address** (required) | Up to 2,000 characters. A page of this website, such as `/contact`, a full address such as `https://example.org`, or a `mailto:` or `tel:` address. |\n| **Style** | Primary for the main action of the page, secondary for others. |\n\n- Suggestion: button text that doesn't say what happens, such as \"click here\".",
+            "needs": []
+        },
+        {
+            "id": "8c9e254f5f4b",
+            "page": "Blocks",
+            "heading": "Columns",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#columns",
+            "text": "Two to four columns side by side on wide screens, one after another on narrow screens and when zoomed in. The\ncolumns are read in order: the first column, then the second.\n\n| Field | Limits |\n| --- | --- |\n| **Columns** (required) | 2 to 4 columns. |\n| **Blocks** in each column | Up to 50 blocks of any kind except Columns. |\n\nEvery block in a column is checked as if it were on the page.",
+            "needs": []
+        },
+        {
+            "id": "c5cd7f71a718",
+            "page": "Blocks",
+            "heading": "Contact form",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#contact-form",
+            "text": "A form visitors use to send you a message. It has fields for their name, e-mail address and message.\n\n| Field | Limits |\n| --- | --- |\n| **Send messages to** (required) | The e-mail address that gets the messages. It is never shown on the page. |\n| **Email subject** | Up to 100 characters. The subject of the e-mails you get. |\n| **Button text** | Up to 40 characters. |\n| **Message after sending** | Up to 300 characters. The thank-you message visitors see. |\n\n- Messages arrive from the website's own address. Reply to them as usual: the reply goes to the visitor.\n- Spam is kept out without a puzzle: a hidden field that people never see, and at most 5 messages per visitor every\n  10 minutes.\n- When something is missing, the visitor comes back to the same page with a list of what to fix, which gets focus,\n  and what they typed is kept. After sending, the thank-you message gets focus.\n- The form only works on a published, public page.",
+            "needs": []
+        },
+        {
+            "id": "8bb510545863",
+            "page": "Blocks",
+            "heading": "For developers",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#for-developers",
+            "text": "A module adds a kind of block with `$registrar->blockTypes()->add(MyBlock::class)`, a class that implements\n`SightPress\\Module\\Block\\BlockType`. Names of other modules' kinds need a vendor prefix, such as `acme.event_card`.\n\nThe fields come from the block's JSON Schema (draft 2020-12). Give every field a `title` (its label) and a\n`description` (its hint). Core enforces only these keywords, and refuses a schema with any other, so no rule is ever\nskipped without notice: `type`, `properties`, `required`, `additionalProperties`, `enum`, `minLength`, `maxLength`,\n`pattern`, `minimum`, `maximum`, `items`, `minItems`, `maxItems`, `format` and `contentMediaType: text/html` (rich\ntext, cleaned on save). The formats are `link`, `email`, `media`, `media-image`, `media-video`, `media-audio`,\n`media-document` and `media-captions`.\n\nCore's own kinds are named `heading`, `rich_text`, `image`, `gallery`, `video`, `audio`, `file_download`,\n`call_to_action`, `columns` and `contact_form`.",
+            "needs": []
+        },
+        {
+            "id": "f748acd70c70",
+            "page": "Command line reference",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/",
+            "text": "SightPress has a command line tool, `bin/sightpress`, for the tasks that are done once per website or by whoever runs\nthe installation: creating websites, turning them on and off, and moving them. Everyday work, such as writing pages\nand inviting people, happens in each website's admin panel.\n\nThe tool writes plain sentences, without tables or colours, so that its answers read well with a screen reader. It\nnever shows a database password.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "feb726462249",
+            "page": "Command line reference",
+            "heading": "How to run it",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#how-to-run-it",
+            "text": "With the `skeleton` running in Docker, start every command from the `skeleton` folder with\n`docker compose run --rm --no-deps php`, for example:\n\n```sh\ndocker compose run --rm --no-deps php bin/sightpress list\n```\n\nYou should see every command with one line about what it does. For the details of one command, type\n`bin/sightpress help` and its name, for example `bin/sightpress help site:create`.\n\nMost commands need `APP_SECRET` to be set (see step 6 of [Getting started](../getting-started.md)).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "35ee53ce8136",
+            "page": "Command line reference",
+            "heading": "How commands ask questions",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#how-commands-ask-questions",
+            "text": "If you leave out something a command needs, it asks for it, one question at a time, and also asks the optional\nquestions that have a usual answer. Every command asks the same way:\n\n- a question that ends with \"Press Enter for\" and a value takes that value when you just press Enter;\n- a question that lists choices accepts one of them, in capitals or not;\n- a password is not shown as you type it, and is never printed; you type it twice, and if the two are not the same\n  you are asked for it again;\n- some answers are read back in words for you to confirm, for example a language code;\n- a wrong answer is explained and asked again; after 3 wrong answers in a row the command stops and changes\n  nothing;\n- at the end, the command lists your answers and asks \"Is all of this right?\". Answer `no` to go through the\n  questions again, with your answers kept: press Enter for each one that was right.\n\nIf you give everything on the command line, nothing is asked. Add `--no-interaction` (or `-n`) to never be asked:\nthen a missing or wrong value stops the command with a sentence that says what is wrong.\n\n`<slug>` below is the short name of a website, the one you gave `site:create`, such as `demo`.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "f2a796002d48",
+            "page": "Command line reference",
+            "heading": "site:create",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#sitecreate",
+            "text": "```text\nsite:create [<slug>] [--domain=] [--db= | --db-engine= --db-path= | --db-host= --db-port= --db-name= --db-user= --db-password=]\n            [--owner-type=] [--locale=] [--admin-email=] [--admin-first-name=] [--admin-last-name=]\n            [--name=] [--timezone=] [--url=] [--create-db] [--with-demo-content] [--without=]\n```\n\nCreates a website: its database tables, its roles, its first admin, six starter pages, its menus and its logo, icon\nand share image. It prints the first admin's setup code. Nothing is created if something is wrong.\n[Create a website](../how-to/create-a-site.md) explains every option. `--without=` names optional features (module\nids, separated by commas) the website starts with off.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "48037910dc9b",
+            "page": "Command line reference",
+            "heading": "site:user:create-admin",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#siteusercreate-admin",
+            "text": "```text\nsite:user:create-admin <slug> --email= --first-name= --last-name= [--url=]\n```\n\nCreates an admin on a website and prints the setup code they choose their password with. For an admin who hasn't\nchosen a password yet, it prints a new code, and the old one stops working. Someone who can already sign in is\nrefused: they use \"Forgot your password?\" instead.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "d29cf14344cc",
+            "page": "Command line reference",
+            "heading": "Turn websites on and off",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#turn-websites-on-and-off",
+            "text": "| Command | What it does | Visitors see |\n| --- | --- | --- |\n| `site:enable <slug>` | Turns a website on, so it answers again. Also brings back a deleted website. | the website |\n| `site:disable <slug>` | Turns a website off for a while. | \"temporarily unavailable\" (503) |\n| `site:archive <slug>` | Archives a website. Its data is kept. | \"gone\" (410) |\n| `site:delete <slug>` | Deletes a website, softly: it stops answering and its data is kept until `site:purge`. | \"not found\" (404) |\n| `site:purge <slug> [--drop-database]` | Removes a deleted website for good. Its database is kept unless you add `--drop-database`, which can't be undone. | — |\n\nEvery change is written to the installation's log.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "c8e9e516ebf2",
+            "page": "Command line reference",
+            "heading": "Look after websites",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#look-after-websites",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:list` | Lists the websites: status, domains, language, time zone and database (engine, host and name only). |\n| `site:migrate <slug>` or `site:migrate --all` | Updates a website's database tables after an update of SightPress. `--all` updates every website that isn't deleted; one failure doesn't stop the others. |\n| `site:db:change <slug> [--db= or the --db-… parts] [--migrate]` | Points a **disabled** website at another database, asked for in parts like in `site:create`. **Nothing is copied**: move the data first. The new database must be up to date, or add `--migrate`. If anything fails, the website keeps its old database. |\n| `site:seo:check <slug>` | Checks what search engines will find: titles longer than 60 characters, missing or too long descriptions, pages left out of search and why. Ends with an error when two pages have the same title. See [Search and AI visibility](search-and-ai.md). |\n\n| `system:check` | Lists the server's upload and input limits, the largest file of each kind that can be uploaded, and the settings to change. Ends with an error when something must be fixed. Run it with `docker compose exec php` so it reads the same settings as the website. See [Fix upload size limits](../how-to/fix-upload-size-limits.md). |\n\nTo move a website to another database:\n\n```sh\nbin/sightpress site:disable demo\n# copy the data to the new database with your database's own tools\nbin/sightpress site:db:change demo --db=postgres",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "1f51a745a1b3",
+            "page": "Command line reference",
+            "heading": "Features",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#features",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:module:list <slug>` | Lists the website's optional features (modules): id, name and whether each one is on. |\n| `site:module:enable <slug> <module>` | Turns a feature on, after updating the website's database for it. Refused while a feature it needs is off. |\n| `site:module:disable <slug> <module> [--purge-data]` | Turns a feature off; its data is kept. Refused while a feature that is on needs it. `--purge-data` also deletes its data, for good. |\n\nFeatures the installation set in `config/tenant.php` (`modules.locked`) can't be changed. See\n[Turn features on or off](../how-to/turn-features-on-or-off.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "599849c8e07e",
+            "page": "Command line reference",
+            "heading": "Site search",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#site-search",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:search:reindex <slug> [--locale=<locale>]` | Builds the website's search index again from its published pages, in every language or one. |\n| `site:search:status <slug>` | How many pages the search index holds in each language, when it last changed, and whether it is waiting to be rebuilt. |\n| `site:search <slug> <words> [--locale=<locale>] [--members]` | Searches the website the way a visitor would (`--members`: as someone signed in) and lists the first results. |\n\nThey refuse a website with search turned off. See [Search your website](../how-to/search-your-website.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "5559c6a17fe7",
+            "page": "Command line reference",
+            "heading": "Analytics",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#analytics",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:analytics:report <slug> [--from=YYYY-MM-DD] [--to=YYYY-MM-DD] [--report=<name>\\|all] [--format=table\\|csv\\|json]` | Shows the website's analytics, the last 30 days by default. Reports: `summary`, `daily`, `pages`, `sources`, `languages`, `devices`, `searches`, `searches-without-results`, `not-found`, `bots`. Warns when the hourly roll-up hasn't run for two hours. |\n| `site:analytics:purge <slug> [--before=YYYY-MM-DD]` | Deletes the figures from before a day; without `--before`, those older than the website keeps them. |\n\nThey refuse a website with analytics turned off. See [See who visits your website](../how-to/see-who-visits-your-website.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "566582011da0",
+            "page": "Command line reference",
+            "heading": "Branding",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#branding",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:branding:set <slug> [--logo=] [--logo-alt=] [--icon=] [--share-image=] [--share-image-alt=]` | Uses picture files for the logo (SVG, PNG, JPEG or WebP, from 1:1 to 8:1 wide), the icon (a square PNG, JPEG or WebP of at least 512 × 512 pixels) or the share image (PNG, JPEG or WebP of 1200 × 630 pixels, or larger with the same proportions). The `-alt` options say what the picture shows, for screen readers; the default is the website's name. |\n| `site:branding:reset <slug> [--logo] [--icon] [--share-image]` | Goes back to the generated logo, icon or share image; all three unless you name some. |\n| `site:branding:regenerate <slug>` | Makes the generated pictures again from the website's name, for example after renaming it. Uploaded pictures stay. |\n\nAdmins can do the same in the admin panel, under **Branding**.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "b871576016ee",
+            "page": "Command line reference",
+            "heading": "The site registry",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#the-site-registry",
+            "text": "The installation keeps its list of websites in `config/sites.php`, with each database address encrypted with\n`APP_SECRET`.\n\n| Command | What it does |\n| --- | --- |\n| `site:registry:check` | Checks the file, and that every database address can be read with this `APP_SECRET`, and says what to fix. |\n| `site:registry:upgrade` | Upgrades the file to the format this version of SightPress reads. |\n\nEach change to the file keeps the previous version as `config/sites.php.bak`.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "7885af705e36",
+            "page": "Command line reference",
+            "heading": "theme:validate",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#themevalidate",
+            "text": "```text\ntheme:validate [<path>]\n```\n\nChecks a theme's colour contrast, in light and dark mode and with and without more contrast, and its base font size,\nagainst WCAG 2.2 AA, and says what to fix. Without a path, it checks the active theme. It ends with an error when a\ncheck fails.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "bd48f588b3e6",
+            "page": "Command line reference",
+            "heading": "Database addresses",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#database-addresses",
+            "text": "`--db` takes the address (DSN) of a database:\n\n| Engine | Example |\n| --- | --- |\n| SQLite (a file) | `sqlite:////app/sites/demo.sqlite` |\n| MySQL | `mysql://user:password@mysql:3306/demo` |\n| MariaDB | `mariadb://user:password@mariadb:3306/demo` |\n| PostgreSQL | `postgresql://user:password@postgres:5432/demo` |\n\nA SQLite file and its folder are created when missing. On the other engines the database must exist, unless you add\n`--create-db` to `site:create` and the database user is allowed to create databases. To start a database server on\nyour computer, see [Start a database server](../how-to/start-a-database.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "37c6ada88ae3",
+            "page": "Roles and permissions",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/reference/roles-and-permissions/",
+            "text": "Everyone who signs in to a SightPress website has one **role**. A role is a set of **permissions**: each permission\nlets a person do one thing, such as publish pages. Each website keeps its own people and roles, so someone can be an\neditor on one website and a contributor on another.",
+            "needs": []
+        },
+        {
+            "id": "9853fe5445c5",
+            "page": "Roles and permissions",
+            "heading": "The four roles",
+            "url": "https://docs.sightpress.org/latest/reference/roles-and-permissions/#the-four-roles",
+            "text": "Every new website has these roles. The admin panel describes each one in the same words when you invite someone or\nchange their role.\n\n| Role | What the admin panel says | In short |\n| --- | --- | --- |\n| **Admin** | Can do everything, including inviting people, changing roles and site settings. | Runs the website. |\n| **Editor** | Can write, review and publish any page, and invite contributors. | Looks after the content. |\n| **Contributor** | Can write pages and send them for review, but not publish them. | Writes. |\n| **Member** | Can sign in and read the site, but not use the admin panel. | Reads. |\n\nThe admin and member roles can't be renamed or deleted. The member role never has any permission. Every new website\nhas one admin: the person named when it was created (see [Create a website](../how-to/create-a-site.md)).",
+            "needs": []
+        },
+        {
+            "id": "96ef897456e5",
+            "page": "Roles and permissions",
+            "heading": "What each role can do",
+            "url": "https://docs.sightpress.org/latest/reference/roles-and-permissions/#what-each-role-can-do",
+            "text": "| Permission | What it lets you do | Admin | Editor | Contributor | Member |\n| --- | --- | --- | --- | --- | --- |\n| Use the admin panel | Sign in to the admin panel. | yes | yes | yes | no |\n| Create pages | Start new pages. | yes | yes | yes | no |\n| Edit own pages | Change pages they wrote. | yes | yes | yes | no |\n| Edit any page | Change pages anyone wrote. | yes | yes | no | no |\n| Submit pages for review | Send a page to the editors. | yes | yes | yes | no |\n| Publish pages | Approve, publish and unpublish pages. | yes | yes | no | no |\n| Archive pages | Take pages off the site and keep them. | yes | yes | no | no |\n| Delete pages | Delete pages for good. | yes | yes | no | no |\n| Upload media | Add pictures, video, audio and files. | yes | yes | yes | no |\n| Publish media | Make uploaded files public. | yes | yes | no | no |\n| Manage menus | Change the main and footer menus. | yes | yes | no | no |\n| Invite people | Invite people to the site with a role they are allowed to give. | yes | yes | no | no |\n| Manage users | Change the role of any user, and deactivate accounts. | yes | no | no | no |\n| Manage roles | Create roles and change what they allow. | yes | no | no | no |\n| Manage site settings | Change the site's name, profile, branding and other settings. | yes | no | no | no |\n| Manage features | Turn the site's optional features on and off, and delete their data ([how](../how-to/turn-features-on-or-off.md)). | yes | no | no | no |\n| Apply themes | Choose the sit",
+            "needs": []
+        },
+        {
+            "id": "d6ed8d724649",
+            "page": "Roles and permissions",
+            "heading": "Pages and roles",
+            "url": "https://docs.sightpress.org/latest/reference/roles-and-permissions/#pages-and-roles",
+            "text": "Every page goes through the same steps before visitors can see it. Editors' own pages go through review too.\n\n| Step | From | To | Who can take it |\n| --- | --- | --- | --- |\n| **Submit for review** | Draft | Waiting for review | The person who wrote the page, or anyone who can edit any page |\n| **Send back to draft** | Waiting for review | Draft | Editors and admins |\n| **Approve** | Waiting for review | Approved | Editors and admins |\n| **Publish** | Approved | Published | Editors and admins |\n| **Unpublish** | Published | Draft | Editors and admins |\n\nOnly published pages are on the public website. When a page is submitted, every editor and admin (except the person\nwho submitted it) gets an e-mail about it. Contributors see their own pages and published pages in the admin panel,\nand can't change a page while it waits for review.",
+            "needs": []
+        },
+        {
+            "id": "2c55d50c1a76",
+            "page": "Roles and permissions",
+            "heading": "Who can invite whom",
+            "url": "https://docs.sightpress.org/latest/reference/roles-and-permissions/#who-can-invite-whom",
+            "text": "- **Admins** can invite someone with any role.\n- **Editors** can invite **contributors** only. Their form shows just that role.\n- Contributors and members can't invite anyone.\n\nThe invited person gets an e-mail with a 6-digit code, never a link. See [Codes we send you](../how-to/codes-we-send-you.md).",
+            "needs": []
+        },
+        {
+            "id": "80129e6945dd",
+            "page": "Roles and permissions",
+            "heading": "Change someone's role",
+            "url": "https://docs.sightpress.org/latest/reference/roles-and-permissions/#change-someones-role",
+            "text": "Admins do this in the admin panel:\n\n1. Choose **People** in the admin menu. You should see a table of everyone with an account.\n2. Choose the person's name.\n3. Under **Change role**, choose the new role, then choose **Change role**. You should hear or see, for example,\n   \"Cleo’s role is now Editor.\" The new role applies from the person's next page.\n\nOn the same page, **Deactivate account** stops someone signing in straight away; their pages stay. **Reactivate**\nlets them sign in again with their old password. Nobody can change their own role or deactivate themselves, so a\nwebsite always keeps someone who can manage people.",
+            "needs": [
+                "user.manage"
+            ]
+        },
+        {
+            "id": "5c4fa00c2570",
+            "page": "Roles and permissions",
+            "heading": "For developers",
+            "url": "https://docs.sightpress.org/latest/reference/roles-and-permissions/#for-developers",
+            "text": "Permission names, for modules and the command line: `admin.access`, `page.create`, `page.edit.own`, `page.edit.any`,\n`page.submit`, `page.publish`, `page.archive`, `page.delete`, `media.upload`, `media.publish`, `menu.manage`,\n`user.invite`, `user.manage`, `role.manage`, `settings.manage`, `module.manage`, `theme.apply` and `audit.view`.\n\n- A role that has any permission also has `admin.access`.\n- A module adds permissions with `$registrar->permissions()->add(...)`. They are copied into every website and given\n  to their default roles, and always to the admin role.\n- The role people get when they register themselves (site setting `registration_role`, default `member`) may only\n  hold permissions that are safe for strangers: `admin.access`, `page.create`, `page.edit.own`, `page.submit` and\n  `media.upload`. Self-registration arrives in a later version.",
+            "needs": []
+        },
+        {
+            "id": "8c42deaa122c",
+            "page": "Search and AI visibility",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/",
+            "text": "Every public page of a SightPress website is ready for search engines and for AI search engines and assistants, with\nnothing to set up. This page explains what SightPress does for each page, and the settings that change it.",
+            "needs": []
+        },
+        {
+            "id": "38d4df7f4388",
+            "page": "Search and AI visibility",
+            "heading": "Which pages are shown",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/#which-pages-are-shown",
+            "text": "Search engines and AI readers are only ever offered pages that are:\n\n- **published** (drafts and pages waiting for review never are);\n- **public**;\n- **not marked** \"Ask search engines and AI search engines not to list this page\";\n- **not a copy** of a page on another website (a page with an \"Address of the original\").\n\nWhile SightPress runs anywhere other than production (the `APP_ENV` setting, for example on your own computer), every\npage asks search engines not to list it, and `robots.txt` keeps crawlers out of the whole website.",
+            "needs": []
+        },
+        {
+            "id": "be7393e2dcc6",
+            "page": "Search and AI visibility",
+            "heading": "What every page has",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/#what-every-page-has",
+            "text": "- **A title**: the page's \"Title in search results\" if it has one, otherwise its title followed by the website's\n  name, such as \"About us - Riverside Library\".\n- **A description**: the page's \"Description for search engines\", otherwise its summary, otherwise its first words.\n  Longer text is cut at a whole word, at 160 characters. Social networks get the same description.\n- **One address** (the canonical address). An address ending in `/` moves permanently to the one without it, and the\n  website's other domains move permanently to its first domain.\n- **Structured data** that search engines read: the page, where it sits in the website, who runs the website (from\n  the site settings) and the pictures, videos and recordings on it.\n- **\"Last updated\"** under the content, in the reader's time zone.\n- **A Markdown version** for AI readers: add `.md` to the page's address, such as `/about.md`, or `/index.md` for the\n  home page. It has the title, the summary, every block as plain text (pictures with their alternative text, videos\n  and recordings with their transcripts, files with their type and size) and the page's address and date. Contact\n  forms are left out.",
+            "needs": []
+        },
+        {
+            "id": "088ec26d605d",
+            "page": "Search and AI visibility",
+            "heading": "Files for search engines and AI readers",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/#files-for-search-engines-and-ai-readers",
+            "text": "| Address | What it is |\n| --- | --- |\n| `/sitemap.xml` | Every page search engines may list, in every language, with the date it last changed. |\n| `/robots.txt` | Keeps crawlers out of the admin panel, accounts and sign-in pages, points them to the sitemap, and names the AI crawlers the website keeps out. |\n| `/llms.txt` | The website's name and summary, then a link to the Markdown version of every page that may be listed, with its description. |\n| `/llms-full.txt` | The same pages in full, as Markdown, up to 500 KB. If it stops early, it says how many pages were left out. |\n\nThe files are made again each time a page is created, saved, moved, published or unpublished.",
+            "needs": []
+        },
+        {
+            "id": "0e29d178a3ac",
+            "page": "Search and AI visibility",
+            "heading": "Settings",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/#settings",
+            "text": "Admins change these under **Site settings**, in the **Search & AI** section.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "b650d533f40c",
+            "page": "Search and AI visibility",
+            "heading": "AI crawlers",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/#ai-crawlers",
+            "text": "Whether AI services may read the public pages, to answer people's questions with a link back (AI search and\nassistants) and to train their models.\n\n| Choice | What `robots.txt` asks |\n| --- | --- |\n| **Allow all** (the default) | Nothing extra: every crawler may read the public pages. |\n| **AI search only** | Crawlers that train AI models, such as GPTBot, ClaudeBot, Google-Extended and CCBot, stay out. AI search and assistants may read the pages and link to them. |\n| **Block all** | Every AI crawler stays out: those that train models, and AI search and assistant crawlers such as OAI-SearchBot, ChatGPT-User, Claude-SearchBot and PerplexityBot. |\n\nSearch engines are never affected. `robots.txt` is a request that well-behaved crawlers follow, not a lock.",
+            "needs": []
+        },
+        {
+            "id": "d297e729b298",
+            "page": "Search and AI visibility",
+            "heading": "Search console codes",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/#search-console-codes",
+            "text": "To prove to a search engine that the website is yours, it gives you a code. Paste only the code (the part in\n`content=\"…\"`) into **Google Search Console verification code**, **Bing Webmaster Tools verification code** or\n**Yandex Webmaster verification code**. SightPress adds it to the home page.",
+            "needs": []
+        },
+        {
+            "id": "d31c67fe78c9",
+            "page": "Search and AI visibility",
+            "heading": "IndexNow",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/#indexnow",
+            "text": "**Tell search engines at once when a page is published or unpublished (IndexNow)** is off by default. When it is on,\nthe website tells the search engines that use IndexNow, such as Bing and Yandex, each time a page is published or\nunpublished.",
+            "needs": []
+        },
+        {
+            "id": "363743ba7e1b",
+            "page": "Search and AI visibility",
+            "heading": "Who runs the site",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/#who-runs-the-site",
+            "text": "The **Who runs the site** section (a description, full name, contact details and profiles on other websites) goes\ninto the structured data, and the description also goes at the top of `llms.txt`. Leave a field empty to keep it\nprivate.",
+            "needs": []
+        },
+        {
+            "id": "b5f35fea0624",
+            "page": "Search and AI visibility",
+            "heading": "Settings on each page",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/#settings-on-each-page",
+            "text": "In the page editor's **Search & AI** section:\n\n| Field | What it does |\n| --- | --- |\n| **Summary** | One or two sentences, shown in lists of pages, used as the description when there is none, and read by AI search engines. |\n| **Title in search results** | Replaces the title in search results only. |\n| **Description for search engines** | Shown under the title in search results. About 160 characters are shown. |\n| **Picture shown when the page is shared** | A picture from the media library. Leave it empty to use the website's share image. Shown only when the media library has pictures. |\n| **Ask search engines and AI search engines not to list this page** | Keeps the page out of search results, the sitemap, `llms.txt` and `llms-full.txt`. |\n| **Address of the original** | Only for a copy of a page on another website: its full address. The copy then points search engines to the original, and is left out of the sitemap. |\n\nBefore publishing, the page's checks suggest a description and a summary when they are missing, and warn about a\ndescription longer than 160 characters or a title another page already has.",
+            "needs": []
+        },
+        {
+            "id": "5b53d636070f",
+            "page": "Search and AI visibility",
+            "heading": "Check a website from the command line",
+            "url": "https://docs.sightpress.org/latest/reference/search-and-ai/#check-a-website-from-the-command-line",
+            "text": "```sh\ndocker compose run --rm --no-deps php bin/sightpress site:seo:check demo\n```\n\nIt lists titles longer than 60 characters, missing or too long descriptions, pages left out of search and why, and\nwhether SightPress runs in production. Two pages with the same title count as a problem, and the command ends with an\nerror.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "e6d6a6bb1366",
+            "page": "What you can build with SightPress",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/",
+            "text": "SightPress is a content management system (CMS): a program that lets you build and run websites without writing code.\nYou write pages in an admin panel, and SightPress turns them into a website that everyone can use, including people\nwho use a screen reader, a keyboard alone or screen magnification.\n\nThis page explains what SightPress can do today, then gives you ideas for websites you could build with it.",
+            "needs": []
+        },
+        {
+            "id": "c2dee9557656",
+            "page": "What you can build with SightPress",
+            "heading": "What you can do today",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#what-you-can-do-today",
+            "text": "This is the first version of SightPress (0.1). It already gives you the following.",
+            "needs": []
+        },
+        {
+            "id": "6a70d1d7433b",
+            "page": "What you can build with SightPress",
+            "heading": "Run many websites from one installation",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#run-many-websites-from-one-installation",
+            "text": "One installation of SightPress can run as many websites as you need. Each website has its own pages, people, files,\nmenus and settings, and its own main language. A person can be an editor on one website and a contributor on another.\nSee [Create a website](how-to/create-a-site.md).",
+            "needs": []
+        },
+        {
+            "id": "8a1d765bf07a",
+            "page": "What you can build with SightPress",
+            "heading": "Write pages with blocks",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#write-pages-with-blocks",
+            "text": "A page is a list of **blocks**, such as a heading, some text or a picture. There are ten kinds:\n\n| Block | What it is for |\n| --- | --- |\n| Heading | Starting a part of the page. |\n| Text | Paragraphs, lists, links, quotes and more. |\n| Image | One picture, with its alternative text and a caption. |\n| Gallery | A set of up to 50 pictures. |\n| Video | A video with captions and a transcript. It never starts by itself. |\n| Audio | A sound recording, such as a podcast episode, with a transcript. |\n| File download | A file such as a PDF, with its type and size shown in the link. |\n| Call to action | A button that leads somewhere, such as \"Book a visit\". |\n| Columns | Two to four columns side by side on wide screens. |\n| Contact form | A form visitors use to send you a message, without a puzzle to solve. |\n\nEvery block is described in [Blocks](reference/blocks.md).",
+            "needs": []
+        },
+        {
+            "id": "ffb882850b3f",
+            "page": "What you can build with SightPress",
+            "heading": "Publish with confidence",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#publish-with-confidence",
+            "text": "- **Accessibility checks.** Before a page is published, SightPress checks it. A picture with no alternative text, a\n  video with speech but no captions or text that is too faint to read stops the page from being published until it\n  is fixed. Smaller problems, such as a link that says \"click here\", come up as suggestions.\n- **Review before publishing.** Contributors write pages and send them for review. Editors and admins approve and\n  publish them. See [Write and publish a page](how-to/write-and-publish-a-page.md).\n- **Roles for your team.** Admins, editors, contributors and members each see and do only what they need. See\n  [Roles and permissions](reference/roles-and-permissions.md).\n- **An audit log.** Admins can see who changed what, and when.",
+            "needs": []
+        },
+        {
+            "id": "f1639c90c5b6",
+            "page": "What you can build with SightPress",
+            "heading": "Look after your files and people",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#look-after-your-files-and-people",
+            "text": "- **A media library** for pictures, videos, sound recordings, captions files and documents. Visitors only see the\n  files you publish.\n- **Invitations.** Invite people by e-mail. They get a 6-digit code, never a link. See\n  [Codes we send you](how-to/codes-we-send-you.md).\n- **Menus.** A main menu and a footer menu, which you change in the admin panel.\n- **Site settings.** The website's name, profile, logo and other details.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "df0e424ebedb",
+            "page": "What you can build with SightPress",
+            "heading": "Be found in search engines and AI search",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#be-found-in-search-engines-and-ai-search",
+            "text": "Every public page is ready for search engines and for AI search engines and assistants, with nothing to set up: a\ntitle and description, a sitemap, structured data and a plain-text version of each page. You choose whether AI\nservices may read your pages. See [Search and AI visibility](reference/search-and-ai.md).",
+            "needs": []
+        },
+        {
+            "id": "8c80573eb442",
+            "page": "What you can build with SightPress",
+            "heading": "Do every task with a keyboard and a screen reader",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#do-every-task-with-a-keyboard-and-a-screen-reader",
+            "text": "The admin panel, the default theme and every built-in feature aim to meet the Web Content Accessibility Guidelines\n(WCAG) 2.2 at level AA. Nothing depends on dragging, on colour alone or on a puzzle to prove you are human. Admins can\nalso do many tasks with the [command line tool](reference/command-line.md).",
+            "needs": []
+        },
+        {
+            "id": "a18966f717b1",
+            "page": "What you can build with SightPress",
+            "heading": "Ideas for websites",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#ideas-for-websites",
+            "text": "These ideas use only what SightPress can do today. Each one lists the blocks and features that help most.",
+            "needs": []
+        },
+        {
+            "id": "762f968198fa",
+            "page": "What you can build with SightPress",
+            "heading": "A website for a small business",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-website-for-a-small-business",
+            "text": "A café, a hairdresser, a plumber or a shop that wants people to find it and get in touch.\n\n- Pages: Home, What we offer, Prices, About us, Contact.\n- A **Gallery** of your work or your premises, and a **Call to action** such as \"Book an appointment\" that opens a\n  phone number or an e-mail address.\n- A **Contact form**, so that customers can write to you without seeing your e-mail address.\n- **Search and AI visibility**, so that people asking a search engine or an AI assistant can find you.",
+            "needs": []
+        },
+        {
+            "id": "1cf7d36c43fa",
+            "page": "What you can build with SightPress",
+            "heading": "A charity or community group",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-charity-or-community-group",
+            "text": "A charity, a residents' association, a sports club or a support group.\n\n- Pages: Who we are, What we do, Get involved, Annual reports, Contact.\n- **File download** blocks for annual reports, minutes and leaflets, with their type and size shown.\n- A **Video** about your work, with captions and a transcript, so that everyone can follow it.\n- **Roles**, so that volunteers write pages as contributors and a trustee publishes them as an editor.",
+            "needs": []
+        },
+        {
+            "id": "e44b8a2399d9",
+            "page": "What you can build with SightPress",
+            "heading": "A podcast or audio project",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-podcast-or-audio-project",
+            "text": "A podcast, an audio drama, a radio show or a collection of oral history recordings.\n\n- One page per episode, with an **Audio** block and its transcript. The transcript makes every episode readable and\n  searchable.\n- A **File download** for show notes or extra material.\n- A page for each guest or contributor, with an **Image** and a short biography.",
+            "needs": []
+        },
+        {
+            "id": "7ecbaab49bf0",
+            "page": "What you can build with SightPress",
+            "heading": "A portfolio",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-portfolio",
+            "text": "An artist, photographer, writer, musician or designer who wants to show their work.\n\n- A **Gallery** for each project, with alternative text that describes every picture. Writing good alternative text\n  helps blind and low-vision visitors enjoy your work, and helps search engines understand it.\n- **Columns** to put a picture next to its description on wide screens.\n- **Audio** or **Video** blocks for performances and recordings.\n- A **Contact form** for commissions and bookings.",
+            "needs": []
+        },
+        {
+            "id": "28646942c704",
+            "page": "What you can build with SightPress",
+            "heading": "A school, library or museum",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-school-library-or-museum",
+            "text": "A school, a public library, a museum or a gallery that must be accessible to everyone.\n\n- Pages: Visit us, Opening hours, What's on, Accessibility, Contact.\n- **Video** tours with captions, and **Audio** guides with transcripts.\n- **File download** blocks for policies, timetables and forms.\n- **Roles**, so that staff in different departments write their own pages, and a web editor approves them.\n- One installation with a separate **website** for each school, branch or venue.",
+            "needs": []
+        },
+        {
+            "id": "06884d1aa47f",
+            "page": "What you can build with SightPress",
+            "heading": "An accessibility-first information website",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#an-accessibility-first-information-website",
+            "text": "A council service, a health clinic, a disability organisation or a guide to a local service, where clear,\naccessible information matters most.\n\n- Short pages with clear **Headings**, so that screen reader users can jump from part to part.\n- **File download** blocks for forms and leaflets, plus the same information as a page, so that nobody has to open a\n  PDF.\n- The **accessibility checks** stop common mistakes, such as a missing caption, before they reach the public.",
+            "needs": []
+        },
+        {
+            "id": "4a53271a82d8",
+            "page": "What you can build with SightPress",
+            "heading": "A personal website or blog-style journal",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-personal-website-or-blog-style-journal",
+            "text": "A personal homepage, a CV or a journal of your projects, travels or hobbies.\n\n- Pages: About me, Projects, CV, Contact.\n- A **File download** for your CV as a PDF.\n- One page per project or trip, with **Images**, a **Gallery** and **Text**.",
+            "needs": []
+        },
+        {
+            "id": "dd00911cafaa",
+            "page": "What you can build with SightPress",
+            "heading": "Several websites for an agency or organisation",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#several-websites-for-an-agency-or-organisation",
+            "text": "A web agency, a federation of clubs or an organisation with several brands.\n\n- One installation of SightPress with a **website** for each client, club or brand, each with its own domain,\n  language, people and settings.\n- Each website keeps its own **roles**, so that each client or club looks after its own content.\n- The **command line tool** to create and list websites quickly.",
+            "needs": []
+        },
+        {
+            "id": "976e75e82130",
+            "page": "What you can build with SightPress",
+            "heading": "Coming later",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#coming-later",
+            "text": "Later versions of SightPress add more, such as more themes, add-on modules and putting SightPress on a public server.\nThe [Getting started](getting-started.md) guide and the [how-to guides](how-to/index.md) are updated as each feature\narrives.",
+            "needs": []
+        },
+        {
+            "id": "c3bc7dae4342",
+            "page": "What you can build with SightPress",
+            "heading": "Where to go next",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#where-to-go-next",
+            "text": "- To try SightPress on your own computer, follow [Getting started](getting-started.md).\n- To build your first website, follow [Create a website](how-to/create-a-site.md), then\n  [Write and publish a page](how-to/write-and-publish-a-page.md).",
+            "needs": []
+        }
+    ]
+}

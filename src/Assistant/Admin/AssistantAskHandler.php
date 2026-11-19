@@ -16,6 +16,7 @@ use SightPress\Core\Assistant\Task\AltTextTask;
 use SightPress\Core\Assistant\Task\AskTask;
 use SightPress\Core\Assistant\Task\DraftPageTask;
 use SightPress\Core\Assistant\Task\ExplainCheckTask;
+use SightPress\Core\Assistant\Task\HelpTask;
 use SightPress\Core\Assistant\Task\PageInput;
 use SightPress\Core\Assistant\Task\RewriteTask;
 use SightPress\Core\Infrastructure\Assistant\AssistantAccess;
@@ -116,7 +117,7 @@ final readonly class AssistantAskHandler implements RequestHandlerInterface
             ExplainCheckTask::ID => $ask->text === ''
                 ? throw new AssistantError(AssistantError::INVALID_INPUT, new Message('The assistant couldn’t use what was sent.'))
                 : [ExplainCheckTask::ID, ['check' => mb_substr($ask->text, 0, ExplainCheckTask::MAX_CHECK)] + ($page === null ? [] : ['title' => $page->title]), $admin],
-            default => $this->question($ask, $page, $admin),
+            default => $this->question($ask, $page, $actor, $admin),
         };
     }
 
@@ -125,17 +126,18 @@ final readonly class AssistantAskHandler implements RequestHandlerInterface
      *
      * @throws AssistantError
      */
-    private function question(AssistantAsk $ask, ?PageText $page, string $locale): array
+    private function question(AssistantAsk $ask, ?PageText $page, Actor $actor, string $locale): array
     {
         if ($ask->question === '') {
             throw new AssistantError(AssistantError::INVALID_INPUT, new Message('Type your question for the assistant.'));
         }
-        $input = ['question' => $ask->question];
-        if ($ask->share && $page !== null) {
-            $input['context'] = mb_substr("# {$page->title}\n\n" . ($page->summary === '' ? '' : "> {$page->summary}\n\n") . $page->text, 0, AskTask::MAX_CONTEXT);
+        if (!$ask->share || $page === null) {
+            // A question about using SightPress: answered from the documentation (A-5).
+            return [HelpTask::ID, ['question' => mb_substr($ask->question, 0, HelpTask::MAX_QUESTION), 'permissions' => $actor->permissions()], self::locale($locale)];
         }
+        $context = mb_substr("# {$page->title}\n\n" . ($page->summary === '' ? '' : "> {$page->summary}\n\n") . $page->text, 0, AskTask::MAX_CONTEXT);
 
-        return [AskTask::ID, $input, self::locale($locale)];
+        return [AskTask::ID, ['question' => $ask->question, 'context' => $context], self::locale($locale)];
     }
 
     private function answered(ServerRequestInterface $request, AssistantAsk $ask, Message $heading, AssistantResult $result, string $locale): ResponseInterface

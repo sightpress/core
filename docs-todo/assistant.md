@@ -1,4 +1,4 @@
-# AI assistant (A-2, A-3, A-4)
+# AI assistant (A-2 … A-5)
 
 The AI assistant gives suggestions from an AI service the site chooses, with its own API key ("bring your own key"):
 summaries, descriptions for search engines, alt text, drafts and answers to questions. It is an optional feature,
@@ -111,3 +111,14 @@ suggested this alt text", and pages that show it can't be published until someon
 
 The instructions the assistant gets are in `resources/assistant/prompts/`. A translation can go in a folder named
 after the language (`pt-PT/summary.md` or `pt/summary.md`).
+
+## Help with SightPress (A-5)
+
+A question in **Ask the assistant** (without *Share this page*) is answered from the SightPress documentation: the
+assistant gets the parts of the documentation that match the question and that you can use, and its answer ends
+with a link to read more. It never points you to screens your role can't open (a contributor isn't sent to
+*Features*); it says an admin can do it instead.
+
+For maintainers: the documentation is copied into `resources/assistant/help-index.json` by
+`php tools/assistant-help-index.php <docs>/docs` (add `--check` to see whether it is up to date). The *Help index*
+workflow does it whenever the release pull request changes and opens a pull request with the new file.

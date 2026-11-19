@@ -205,7 +205,11 @@ final class AssistantAdminTest extends TestCase
         self::assertStringNotContainsString('>Insert<', $html, 'an answer has no field to go into');
 
         $json = json_decode((string) $bea->submit('/admin', ['question' => 'How do I add a page to the main menu?'], AssistantAskHandler::PATH, headers: self::XHR)->getBody(), true);
-        self::assertSame(['ok' => true, 'heading' => 'The assistant’s answer', 'text' => 'Open Menus in the admin panel, choose the main menu, then add the page to it.', 'lang' => 'en-GB', 'notes' => [], 'status' => 'Suggestion ready', 'insert' => null], $json);
+        self::assertIsArray($json);
+        $text = is_string($json['text'] ?? null) ? $json['text'] : '';
+        unset($json['text']);
+        self::assertSame(['ok' => true, 'heading' => 'The assistant’s answer', 'lang' => 'en-GB', 'notes' => [], 'status' => 'Suggestion ready', 'insert' => null], $json);
+        self::assertMatchesRegularExpression('~^Open Menus in the admin panel, choose the main menu, then add the page to it\.\n\nhttps://docs\.sightpress\.org/latest/\S*$~', $text, 'a question about SightPress is answered from the documentation, with a link (A-5)');
 
         $empty = $bea->submit('/admin', ['question' => '  '], AssistantAskHandler::PATH, headers: self::XHR);
         self::assertSame([422, ['ok' => false, 'error' => 'Type your question for the assistant.']], [$empty->getStatusCode(), json_decode((string) $empty->getBody(), true)]);
@@ -216,7 +220,7 @@ final class AssistantAdminTest extends TestCase
         self::assertStringContainsString('The AI service is getting too many requests right now.', $busyHtml);
         self::assertStringContainsString('<a href="/admin">Go back</a>', $busyHtml, 'never another site');
         $uses = array_column(Services::get($this->site->container(), AssistantUsageStore::class)->byTask(gmdate('Y-m')), null, 'task');
-        self::assertSame([3, 1], [$uses['ask']['uses'] ?? null, $uses['ask']['failed'] ?? null], 'two answers and the busy service; the empty question never reached it');
+        self::assertSame([3, 1], [$uses['help']['uses'] ?? null, $uses['help']['failed'] ?? null], 'two answers and the busy service; the empty question never reached it');
 
         $this->settings()->limit(500, ['admin', 'editor'], null);
         $long = json_decode((string) $bea->submit('/admin', ['question' => 'Tell me everything [[long]]'], AssistantAskHandler::PATH, headers: self::XHR)->getBody(), true);

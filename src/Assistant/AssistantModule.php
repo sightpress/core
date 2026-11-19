@@ -27,6 +27,8 @@ use SightPress\Core\Assistant\Task\AltTextTask;
 use SightPress\Core\Assistant\Task\AskTask;
 use SightPress\Core\Assistant\Task\DraftPageTask;
 use SightPress\Core\Assistant\Task\ExplainCheckTask;
+use SightPress\Core\Assistant\Task\HelpTask;
+use SightPress\Core\Assistant\Help\HelpIndex;
 use SightPress\Core\Assistant\Task\Prompts;
 use SightPress\Core\Assistant\Task\RewriteTask;
 use SightPress\Core\Assistant\Task\SeoMetaTask;
@@ -93,8 +95,9 @@ final class AssistantModule implements ModuleInterface
             $assistant->addProvider($provider);
         }
         $services->autowire(Prompts::class);
+        $services->autowire(HelpIndex::class);
         $services->autowire(RichText::class);
-        foreach ([AskTask::class, SummaryTask::class, SeoMetaTask::class, RewriteTask::class, DraftPageTask::class, ExplainCheckTask::class, AltTextTask::class] as $task) {
+        foreach ([AskTask::class, SummaryTask::class, SeoMetaTask::class, RewriteTask::class, DraftPageTask::class, ExplainCheckTask::class, AltTextTask::class, HelpTask::class] as $task) {
             $services->autowire($task);
             $assistant->addTask($task);
         }
