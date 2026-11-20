@@ -14,6 +14,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Admin\Contract\AdminScreens;
 use SightPress\Core\Http\Upload\ServerLimitsCheck;
+use SightPress\Core\Theme\Contract\ThemeStatus;
 use SightPress\Core\Page\Contract\PageChange;
 use SightPress\Core\Page\Contract\PageOverview;
 use SightPress\Core\Rbac\Contract\Actor;
@@ -40,6 +41,7 @@ final readonly class DashboardHandler implements RequestHandlerInterface
         private DashboardWidgets $widgets,
         private LoggerInterface $logger,
         private AssistantAccess $assistant,
+        private ThemeStatus $theme,
     ) {
     }
 
@@ -58,6 +60,7 @@ final readonly class DashboardHandler implements RequestHandlerInterface
 
         return $this->screens->render($request, '@admin/dashboard.html.twig', [
             'server_problems' => $actor->has('settings.manage') ? $this->check->problems() : [],
+            'theme_problem' => $actor->has('theme.apply') ? $this->theme->problem() : null,
             'widgets' => $this->widgets($request, $actor),
             'assistant' => $this->assistant->panel($actor, '/admin'),
             'assistant_screen' => 'dashboard',

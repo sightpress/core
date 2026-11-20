@@ -20,9 +20,9 @@
 <meta name="color-scheme" content="light dark">
 <meta name="robots" content="noindex, nofollow">
 <title>{% if error_count > 0 %}{{ error_count == 1 ? t('1 error:') : t('{count} errors:', {count: error_count}) }} {% endif %}{% block title %}{% endblock %} - {{ t('Admin') }} - {{ site_name }}</title>
-<link rel="stylesheet" href="{{ asset('tokens.css') }}">
-<link rel="stylesheet" href="{{ asset('css/site.css') }}">
-<link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+<link rel="stylesheet" href="{{ asset('admin/tokens.css') }}">
+<link rel="stylesheet" href="{{ asset('admin/css/site.css') }}">
+<link rel="stylesheet" href="{{ asset('admin/css/admin.css') }}">
 {% block head %}{% endblock %}
 </head>
 <body class="admin">
@@ -64,7 +64,7 @@
         {% block content %}{% endblock %}
     </main>
 </div>
-{% block scripts %}<script src="{{ asset('js/site.js') }}" defer></script>{% endblock %}
+{% block scripts %}<script src="{{ asset('admin/js/site.js') }}" defer></script>{% endblock %}
 </body>
 </html>
 {% macro menu(entries) %}

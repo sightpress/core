@@ -80,7 +80,7 @@ final class CoreServices
             SessionStore::class => autowire(FileSessionStore::class)
                 ->constructorParameter('directory', $config->sessionPath)
                 ->constructorParameter('idleTimeout', $config->sessionIdleTimeout),
-            ThemeRegistry::class => factory(static fn (): ThemeRegistry => ThemeRegistry::forProject($config->projectDir)),
+            ThemeRegistry::class => factory(static fn (): ThemeRegistry => ThemeRegistry::forProject($config->projectDir, $config->debug ? null : $config->cacheDir)),
             TemplatePaths::class => factory(static fn (ContainerInterface $container): TemplatePaths => new TemplatePaths(
                 [Services::get($container, ThemeRegistry::class)->default()->paths()->root],
                 TemplatePaths::core(),

@@ -10,6 +10,7 @@ use SightPress\Core\Site\Command\DefaultSiteLocaleCommand;
 use SightPress\Core\Site\Command\RemoveSiteLocaleCommand;
 use SightPress\Core\Site\Command\ChangeSiteDatabaseCommand;
 use SightPress\Core\Site\Command\CheckRegistryCommand;
+use SightPress\Core\Site\Command\ClearCacheCommand;
 use SightPress\Core\Site\Command\CreateSiteCommand;
 use SightPress\Core\Site\Command\DeleteSiteCommand;
 use SightPress\Core\Site\Command\DisableSiteCommand;
@@ -61,6 +62,7 @@ final class SiteModule implements ModuleInterface
             RemoveSiteLocaleCommand::class,
             DefaultSiteLocaleCommand::class,
             RunScheduleCommand::class,
+            ClearCacheCommand::class,
         ] as $command) {
             $registrar->commands()->add($command);
         }

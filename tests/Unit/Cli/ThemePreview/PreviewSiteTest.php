@@ -17,6 +17,7 @@ use SightPress\Core\Theme\ThemeException;
  * Renders the preview of the default theme through the whole kernel, twice.
  */
 #[CoversClass(PreviewSite::class)]
+#[CoversClass(\SightPress\Core\Cli\ThemePreview\FolderTheme::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PreviewSiteTest extends TestCase
 {

@@ -18,6 +18,16 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use ReflectionClass;
 use SightPress\Core\Infrastructure\Container\Services;
+use Composer\InstalledVersions;
+use SightPress\Core\Template\AssetUrls;
+use SightPress\Core\Template\TemplateExtension;
+use SightPress\Core\Template\Viewer;
+use SightPress\Core\Template\TemplatePaths;
+use SightPress\Core\Template\TemplateRenderer;
+use SightPress\Core\Template\TwigFactory;
+use SightPress\Core\Theme\Contract\ThemeStatus;
+use SightPress\Core\Theme\SiteTheme;
+use Twig\Environment;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
@@ -36,6 +46,7 @@ use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
+use function DI\autowire;
 use function DI\factory;
 use function DI\get;
 
@@ -186,6 +197,27 @@ final class SiteContainerFactory
             EnabledModules::class => factory(static fn (ContainerInterface $container): EnabledModules => new EnabledModules(
                 Services::get($container, ModuleRegistry::class),
             )),
+            // The site's own theme (T-1): its templates come first, so the site's Twig environment and renderer are
+            // the site's too.
+            SiteTheme::class => autowire(),
+            ThemeStatus::class => get(SiteTheme::class),
+            TemplatePaths::class => factory(static fn (ContainerInterface $container): TemplatePaths => Services::get($container, SiteTheme::class)->templatePaths()),
+            Environment::class => factory(static fn (ContainerInterface $container): Environment => new TwigFactory()->create(
+                Services::get($container, TemplatePaths::class),
+                Services::get($container, ModuleRegistry::class),
+                Services::get($container, TemplateExtension::class),
+                $config->cacheDir,
+                $config->debug,
+            )),
+            TemplateRenderer::class => autowire(),
+            // asset() addresses carry the site theme's version, so a theme change reaches browsers at once.
+            AssetUrls::class => factory(static fn (ContainerInterface $container): AssetUrls => new AssetUrls(
+                '/assets/',
+                Services::get($container, SiteTheme::class)->assetVersion(InstalledVersions::getReference('sightpress/core')),
+            )),
+            TemplateExtension::class => autowire()
+                ->constructorParameter('defaultViewer', new Viewer($config->adminLocale, $config->defaultTimezone))
+                ->constructorParameter('modules', $this->modules),
         ];
     }
 

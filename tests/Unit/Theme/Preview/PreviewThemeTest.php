@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Template\TemplatePaths;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
-use SightPress\Core\Tests\Support\Theme\PreviewFakeTheme;
+use SightPress\Core\Tests\Support\Theme\HarbourTheme;
 use SightPress\Core\Theme\Preview\PreviewTheme;
 use SightPress\Core\Theme\ThemeException;
 
@@ -81,7 +81,7 @@ final class PreviewThemeTest extends TestCase
 
     public function testTheThemeClassHasTheLastWord(): void
     {
-        $this->directory->write('composer.json', (string) json_encode(['extra' => ['sightpress' => ['theme' => PreviewFakeTheme::class]]]));
+        $this->directory->write('composer.json', (string) json_encode(['extra' => ['sightpress' => ['theme' => HarbourTheme::class]]]));
         $theme = PreviewTheme::fromDirectory($this->directory->path);
 
         self::assertSame('Harbour', $theme->name);

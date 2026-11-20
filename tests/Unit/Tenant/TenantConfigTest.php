@@ -16,6 +16,7 @@ use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tenant\TenantConfigException;
 
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantAssistant::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
 #[CoversClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]
 #[UsesClass(LocaleCode::class)]
@@ -83,6 +84,7 @@ final class TenantConfigTest extends TestCase
             'admin' => ['default_locale' => 'pt-BR'],
             'timezone' => 'Europe/London',
             'session' => ['path' => '/var/lib/sessions', 'idle_timeout' => 900],
+            'themes' => ['allowed' => ['default', 'acme-harbour'], 'default' => 'acme-harbour'],
         ], '/srv/app', ['APP_ENV' => 'staging', 'APP_DEBUG' => '1']);
 
         self::assertSame(Environment::Staging, $config->environment);
@@ -96,6 +98,8 @@ final class TenantConfigTest extends TestCase
         self::assertSame('Europe/London', $config->defaultTimezone);
         self::assertSame('/var/lib/sessions', $config->sessionPath);
         self::assertSame(900, $config->sessionIdleTimeout);
+        self::assertSame(['default', 'acme-harbour'], $config->themes->allowed);
+        self::assertSame('acme-harbour', $config->themes->default);
     }
 
     /**

@@ -18,6 +18,8 @@ use SightPress\Core\Theme\ThemeTokens;
 use SightPress\Core\Theme\TokenStylesheet;
 
 #[CoversClass(ThemeAssets::class)]
+#[UsesClass(\SightPress\Core\Theme\ThemeLoader::class)]
+#[UsesClass(\SightPress\Core\Theme\ContrastPair::class)]
 #[UsesClass(Color::class)]
 #[UsesClass(Theme::class)]
 #[UsesClass(ThemeAsset::class)]
@@ -69,6 +71,21 @@ final class ThemeAssetsTest extends TestCase
         self::assertSame('default js', $js->contents);
         self::assertSame('text/javascript; charset=utf-8', $js->contentType);
         self::assertSame('image/svg+xml', $svg->contentType);
+    }
+
+    public function testTheAdminPanelAlwaysGetsTheDefaultThemesFilesAndTokens(): void
+    {
+        $css = $this->assets->find('admin/css/site.css');
+        $tokens = $this->assets->find('admin/tokens.css');
+        $admin = $this->assets->find('admin/css/admin.css');
+        self::assertNotNull($css);
+        self::assertNotNull($tokens);
+        self::assertNotNull($admin);
+
+        self::assertSame((string) file_get_contents(TemplatePaths::defaultTheme() . '/assets/css/site.css'), $css->contents);
+        self::assertStringNotContainsString('#222', $tokens->contents);
+        self::assertStringContainsString('--color-', $tokens->contents);
+        self::assertSame((string) file_get_contents(TemplatePaths::coreAssets() . '/css/admin.css'), $admin->contents);
     }
 
     public function testCoresOwnFilesComeLast(): void

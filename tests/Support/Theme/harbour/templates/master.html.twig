@@ -1,0 +1,22 @@
+{%- set lang = locale|default(current_locale()) -%}
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ text_direction(lang) }}">
+<head>
+<meta charset="utf-8">
+<title>{% block title %}{% endblock %} - {{ site_name|default('Harbour') }}</title>
+{% include '@seo/head.html.twig' %}
+<link rel="stylesheet" href="{{ asset('tokens.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<a href="#content">{{ t('Skip to main content') }}</a>
+<header>{% block brand %}{% endblock %}</header>
+{% block breadcrumbs %}{% endblock %}
+<main id="content" tabindex="-1">
+{% include 'partials/messages.html.twig' with {messages: messages|default([])} only %}
+{% block main %}{% endblock %}
+</main>
+<footer>{% block footer %}{% endblock %}</footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>

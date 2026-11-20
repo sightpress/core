@@ -29,6 +29,7 @@ use PDO;
 use stdClass;
 
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantAssistant::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Infrastructure\Assistant\AssistantExtensions::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Infrastructure\Assistant\AssistantAccess::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Rbac\Contract\Actor::class)]
@@ -38,6 +39,7 @@ use stdClass;
 #[UsesClass(Services::class)]
 #[UsesClass(DatabaseDsn::class)]
 #[UsesClass(SecretBox::class)]
+#[UsesClass(\SightPress\Core\Template\Viewer::class)]
 #[UsesClass(\SightPress\Core\Site\Contract\SiteProfile::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
 #[UsesNamespace('SightPress\Core\Module')]

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Admin\Http;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use SightPress\Core\Template\Message;
+use SightPress\Core\Theme\Contract\ThemeStatus;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Admin\Http\DashboardHandler;
@@ -96,6 +98,19 @@ final class DashboardHandlerTest extends TestCase
         self::assertStringNotContainsString('server-problems', $this->dashboard($ada), 'nothing to fix');
     }
 
+    public function testAdminsSeeWhenTheSiteFallsBackToTheDefaultTheme(): void
+    {
+        $ada = $this->admin->auth->user('ada@example.org', 'admin');
+        $cleo = $this->admin->auth->user('cleo@example.org', 'contributor');
+        $problem = new Message('The theme {theme} is not installed on the server any more.', ['theme' => 'acme-gone']);
+
+        $html = $this->dashboard($ada, theme: $problem);
+        self::assertStringContainsString('<h2 id="theme-problem-title">Your site is shown in the default theme</h2>', $html);
+        self::assertStringContainsString('<p>The theme acme-gone is not installed on the server any more. Visitors see the default theme until an admin chooses another one.</p>', $html);
+        self::assertStringNotContainsString('theme-problem', $this->dashboard($cleo, theme: $problem), 'only for people who apply themes');
+        self::assertStringNotContainsString('theme-problem', $this->dashboard($ada), 'nothing to fix');
+    }
+
     public function testShowsTheWidgetsOfModulesThePersonMaySeeFirst(): void
     {
         $widgets = new FakeWidgets();
@@ -112,7 +127,7 @@ final class DashboardHandlerTest extends TestCase
         self::assertSame(['widget' => 'acme.broken', 'class' => \RuntimeException::class, 'message' => 'No news today.'], $widgets->log->getRecords()[0]->context);
     }
 
-    private function dashboard(User $user, ?ServerLimits $server = null, ?FakeWidgets $widgets = null): string
+    private function dashboard(User $user, ?ServerLimits $server = null, ?FakeWidgets $widgets = null, ?Message $theme = null): string
     {
         $widgets ??= new FakeWidgets();
         $handler = new DashboardHandler(
@@ -124,6 +139,16 @@ final class DashboardHandlerTest extends TestCase
             FakeWidgets::widgets(),
             $widgets->logger(),
             NoAssistant::access(),
+            new readonly class ($theme) implements ThemeStatus {
+                public function __construct(private ?Message $problem)
+                {
+                }
+
+                public function problem(): ?Message
+                {
+                    return $this->problem;
+                }
+            },
         );
 
         return (string) $handler->handle($this->admin->request($user))->getBody();

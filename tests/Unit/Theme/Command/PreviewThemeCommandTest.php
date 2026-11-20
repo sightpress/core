@@ -12,7 +12,7 @@ use SightPress\Core\Tests\Support\ArrayCommandInput;
 use SightPress\Core\Tests\Support\RecordingOutput;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
 use SightPress\Core\Theme\Command\PreviewThemeCommand;
-use SightPress\Core\Theme\Preview\PreviewScreenshots;
+use SightPress\Core\Theme\Preview\PreviewTools;
 use SightPress\Module\Console\Command;
 
 #[CoversClass(PreviewThemeCommand::class)]
@@ -48,7 +48,7 @@ final class PreviewThemeCommandTest extends TestCase
     {
         $out = $this->directory->path . '/out';
         $workspace = $this->directory->path . '/workspace';
-        $command = new PreviewThemeCommand(new PreviewScreenshots($this->node('touch "$2/screenshot.png"')), $workspace);
+        $command = new PreviewThemeCommand(new PreviewTools($this->node('touch "$2/screenshot.png"')), $workspace);
 
         $status = $command->run(new ArrayCommandInput(['theme' => 'default'], ['out' => $out, 'locale' => ' '], ['screenshot']), $this->output);
 
@@ -57,7 +57,7 @@ final class PreviewThemeCommandTest extends TestCase
         self::assertFileExists($out . '/screenshot.png');
         self::assertDirectoryDoesNotExist($workspace);
         self::assertSame([
-            'The preview of "SightPress Default" 0.1.0 is in ' . $out . ': open index.html in any browser; it works offline.',
+            'The preview of "SightPress Default" ' . \SightPress\ThemeDefault\DefaultTheme::VERSION . ' is in ' . $out . ': open index.html in any browser; it works offline.',
             'Screenshots: screenshot.png, screenshot-dark.png, page.png.',
         ], $this->output->lines);
     }
@@ -66,7 +66,7 @@ final class PreviewThemeCommandTest extends TestCase
     {
         $out = $this->directory->path . '/out';
         $theme = $this->directory->write('plain/theme.json', (string) file_get_contents(TemplatePaths::defaultTheme() . '/theme.json'));
-        $command = new PreviewThemeCommand(new PreviewScreenshots($this->node('exit 9')));
+        $command = new PreviewThemeCommand(new PreviewTools($this->node('exit 9')));
 
         self::assertSame(Command::SUCCESS, $command->run(new ArrayCommandInput(['theme' => dirname($theme)], ['out' => $out, 'locale' => 'en-GB']), $this->output));
         self::assertFileExists($out . '/index.html');
@@ -77,7 +77,7 @@ final class PreviewThemeCommandTest extends TestCase
 
     public function testFailsWhenTheScreenshotsFail(): void
     {
-        $command = new PreviewThemeCommand(new PreviewScreenshots($this->node('exit 5')));
+        $command = new PreviewThemeCommand(new PreviewTools($this->node('exit 5')));
         $cwd = (string) getcwd();
         chdir($this->directory->path);
         try {

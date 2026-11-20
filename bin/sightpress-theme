@@ -9,11 +9,9 @@
 declare(strict_types=1);
 
 use SightPress\Core\Cli\ModuleCommand;
-use SightPress\Core\Template\TemplatePaths;
 use SightPress\Core\Theme\Command\PreviewThemeCommand;
 use SightPress\Core\Theme\Command\ValidateThemeCommand;
-use SightPress\Core\Theme\ThemeLoader;
-use SightPress\Core\Theme\ThemeValidator;
+use SightPress\Core\Theme\ThemeRegistry;
 use Symfony\Component\Console\Application;
 
 require $GLOBALS['_composer_autoload_path'] ?? dirname(__DIR__) . '/vendor/autoload.php';
@@ -21,9 +19,5 @@ require $GLOBALS['_composer_autoload_path'] ?? dirname(__DIR__) . '/vendor/autol
 date_default_timezone_set('UTC');
 $application = new Application('SightPress theme tools');
 $application->addCommand(new ModuleCommand(new PreviewThemeCommand()));
-$application->addCommand(new ModuleCommand(new ValidateThemeCommand(
-    new ThemeLoader(),
-    new ThemeValidator(),
-    new TemplatePaths([TemplatePaths::defaultTheme()], TemplatePaths::core()),
-)));
+$application->addCommand(new ModuleCommand(new ValidateThemeCommand(ThemeRegistry::forProject((string) getcwd()))));
 $application->run();

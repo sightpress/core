@@ -7,6 +7,8 @@ namespace SightPress\Core\Theme;
 use Psr\Container\ContainerInterface;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Template\TemplatePaths;
+use SightPress\Core\Theme\Command\ApplyThemeCommand;
+use SightPress\Core\Theme\Command\ListThemesCommand;
 use SightPress\Core\Theme\Command\PreviewThemeCommand;
 use SightPress\Core\Theme\Command\ValidateThemeCommand;
 use SightPress\Core\Theme\Http\ThemeAssetHandler;
@@ -42,10 +44,14 @@ final class ThemeModule implements ModuleInterface
         $services->autowire(ThemeAssets::class);
         $services->autowire(ThemeAssetHandler::class);
         $services->autowire(ThemeValidator::class, public: true);
+        $services->autowire(ThemeChecker::class, public: true);
+        $services->autowire(ThemeApplier::class, public: true);
         $services->autowire(ThemePageColours::class, PageColours::class, public: true);
 
         $registrar->commands()->add(ValidateThemeCommand::class);
         $registrar->commands()->add(PreviewThemeCommand::class);
+        $registrar->commands()->add(ListThemesCommand::class);
+        $registrar->commands()->add(ApplyThemeCommand::class);
 
         $registrar->routes()->add(new Route(
             'theme.asset',

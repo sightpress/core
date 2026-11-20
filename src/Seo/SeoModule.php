@@ -59,6 +59,8 @@ final class SeoModule implements ModuleInterface
         }
         $subscribers->listen(PageTransitioned::class, IndexNow::class);
         $registrar->commands()->add(CheckSeoCommand::class);
+        // Core's <head> partial every theme's shell includes (theme-interface CorePartial::Head).
+        $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/seo');
         $registrar->routes()->add(new Route('seo.sitemap', SeoFileHandler::SITEMAP, SeoFileHandler::class, ['GET', 'HEAD']));
         $registrar->routes()->add(new Route('seo.sitemap_locale', SeoFileHandler::LOCALE_SITEMAP, SeoFileHandler::class, ['GET', 'HEAD']));
         $registrar->routes()->add(new Route('seo.robots', SeoFileHandler::ROBOTS, SeoFileHandler::class, ['GET', 'HEAD']));

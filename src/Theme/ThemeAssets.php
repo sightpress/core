@@ -8,12 +8,16 @@ use SightPress\Core\Template\TemplatePaths;
 
 /**
  * Finds a theme's static files (`assets/` of the site theme, then of the default theme, then core's own files for the
- * admin panel) and builds `tokens.css` from the active theme. Only known file types inside an `assets/` folder are
- * served; anything else is not found.
+ * admin panel) and builds `tokens.css` from the active theme. Under `admin/` it serves the default theme's files and
+ * tokens instead, whatever the site's theme: the admin panel always looks the same and keeps its contrast. Only known
+ * file types inside an `assets/` folder are served; anything else is not found.
  */
 final readonly class ThemeAssets
 {
     public const string TOKENS = 'tokens.css';
+
+    /** Prefix of the admin panel's files: the default theme's, never the site theme's. */
+    public const string ADMIN = 'admin/';
 
     private const array TYPES = [
         'css' => 'text/css; charset=utf-8',
@@ -30,6 +34,7 @@ final readonly class ThemeAssets
         private Theme $theme,
         private TemplatePaths $paths,
         private TokenStylesheet $stylesheet,
+        private ThemeLoader $loader = new ThemeLoader(),
     ) {
     }
 
@@ -38,8 +43,12 @@ final readonly class ThemeAssets
      */
     public function find(string $path): ?ThemeAsset
     {
+        $admin = str_starts_with($path, self::ADMIN);
+        $path = $admin ? substr($path, strlen(self::ADMIN)) : $path;
         if ($path === self::TOKENS) {
-            return new ThemeAsset($this->stylesheet->compile($this->theme->tokens), self::TYPES['css']);
+            $tokens = $admin ? $this->loader->load(TemplatePaths::defaultTheme())->tokens : $this->theme->tokens;
+
+            return new ThemeAsset($this->stylesheet->compile($tokens), self::TYPES['css']);
         }
 
         $type = self::TYPES[strtolower(pathinfo($path, PATHINFO_EXTENSION))] ?? null;
@@ -47,7 +56,8 @@ final readonly class ThemeAssets
             return null;
         }
 
-        foreach ([...array_map(static fn (string $theme): string => $theme . '/assets', $this->paths->themes), TemplatePaths::coreAssets()] as $folder) {
+        $themes = $admin ? [TemplatePaths::defaultTheme()] : $this->paths->themes;
+        foreach ([...array_map(static fn (string $theme): string => $theme . '/assets', $themes), TemplatePaths::coreAssets()] as $folder) {
             $root = realpath($folder);
             $file = realpath($folder . '/' . $path);
             if ($root === false || $file === false || !str_starts_with($file, $root . DIRECTORY_SEPARATOR) || !is_file($file)) {

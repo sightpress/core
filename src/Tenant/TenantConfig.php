@@ -40,6 +40,7 @@ final readonly class TenantConfig
      *                                            in bytes (nginx `client_max_body_size` …), which PHP can't read;
      *                                            null when not stated
      * @param TenantAssistant $assistant          `assistant`: the AI assistant's tenant default and limits
+     * @param TenantThemes    $themes             `themes`: which installed themes sites may use, and new sites' theme
      */
     public function __construct(
         public string $projectDir,
@@ -62,6 +63,7 @@ final readonly class TenantConfig
         public array $moduleLocks = [],
         public ?int $uploadProxyBodyLimit = null,
         public TenantAssistant $assistant = new TenantAssistant(),
+        public TenantThemes $themes = new TenantThemes(),
     ) {
     }
 
@@ -107,6 +109,7 @@ final readonly class TenantConfig
             moduleLocks: self::switches($modules, 'locked'),
             uploadProxyBodyLimit: self::bodyLimit($uploads),
             assistant: TenantAssistant::fromArray(self::section($config, 'assistant'), $environment),
+            themes: TenantThemes::fromArray(self::section($config, 'themes')),
         );
     }
 

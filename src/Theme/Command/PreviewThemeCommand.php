@@ -7,7 +7,7 @@ namespace SightPress\Core\Theme\Command;
 use SightPress\Core\Cli\ThemePreview\PreviewSite;
 use SightPress\Core\Template\TemplatePaths;
 use SightPress\Core\Theme\Preview\PreviewFolder;
-use SightPress\Core\Theme\Preview\PreviewScreenshots;
+use SightPress\Core\Theme\Preview\PreviewTools;
 use SightPress\Core\Theme\Preview\PreviewTheme;
 use SightPress\Core\Theme\ThemeException;
 use SightPress\Module\Console\Command;
@@ -29,7 +29,7 @@ final readonly class PreviewThemeCommand implements Command
      * @param non-empty-string|null $workspace the throwaway tenant's folder (default: a new one in the temporary folder)
      */
     public function __construct(
-        private PreviewScreenshots $screenshots = new PreviewScreenshots(),
+        private PreviewTools $tools = new PreviewTools(),
         private ?string $workspace = null,
     ) {
     }
@@ -84,13 +84,13 @@ final readonly class PreviewThemeCommand implements Command
         if (!$input->flag('screenshot')) {
             return self::SUCCESS;
         }
-        $problem = $this->screenshots->take($out);
+        $problem = $this->tools->screenshots($out);
         if ($problem !== null) {
             $output->error($problem);
 
             return self::FAILURE;
         }
-        $output->line(sprintf('Screenshots: %s.', implode(', ', PreviewScreenshots::FILES)));
+        $output->line(sprintf('Screenshots: %s.', implode(', ', PreviewTools::SCREENSHOTS)));
 
         return self::SUCCESS;
     }

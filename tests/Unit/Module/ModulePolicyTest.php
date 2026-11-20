@@ -20,6 +20,7 @@ use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tests\Support\FakeModule;
 
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantAssistant::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
 #[CoversClass(ModulePolicy::class)]
 #[CoversClass(ModuleAbout::class)]
 #[CoversClass(LoadedModule::class)]

@@ -1,0 +1,7 @@
+{% extends 'master.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block main %}
+<h1>{{ title }}</h1>{% if lead is defined %}<p>{{ lead }}</p>{% endif %}
+<div>{% block content %}{% endblock %}</div>
+<aside aria-labelledby="related">{% block aside %}<h2 id="related">{{ t('Related') }}</h2>{% endblock %}</aside>
+{% endblock %}

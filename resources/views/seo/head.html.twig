@@ -1,0 +1,7 @@
+{#
+    Core's <head> partial (theme-interface CorePartial::Head): every theme's shell includes it inside <head>, so no
+    theme can drop what every page needs. It prints `head`, the HTML the modules listening to PublicPageRendering or
+    PublicScreenRendering escaped: the description, canonical and alternate-language links, Open Graph and Twitter
+    card meta, JSON-LD, icons, the web manifest and theme-color. Pages without it (sign-in, admin) print nothing.
+#}
+{{- head|default('')|raw -}}

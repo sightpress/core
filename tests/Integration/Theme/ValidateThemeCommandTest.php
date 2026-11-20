@@ -38,7 +38,7 @@ final class ValidateThemeCommandTest extends TestCase
 
         self::assertSame(0, $tester->getStatusCode());
         self::assertMatchesRegularExpression(
-            '/^The theme "SightPress Default" passes: \d+ colour pairs checked in light and dark mode, with and without more contrast, and the base font size is at least 16 px\.$/',
+            '/^The theme "SightPress Default" passes: \d+ colour pairs checked in light and dark mode, with and without more contrast; the base font size is at least 16 px; the required templates are there; it ships no screenshot\.$/',
             trim($tester->getDisplay()),
         );
     }
@@ -48,11 +48,11 @@ final class ValidateThemeCommandTest extends TestCase
         $json = (string) file_get_contents(\SightPress\Core\Template\TemplatePaths::defaultTheme() . '/theme.json');
         $this->project->directory->write('themes/pale/theme.json', str_replace('"text-muted": "#4b4b57"', '"text-muted": "#9a9aa5"', $json));
 
-        $tester = $this->console(['command' => 'theme:validate', 'path' => $this->project->path() . '/themes/pale'], ['capture_stderr_separately' => true]);
+        $tester = $this->console(['command' => 'theme:validate', 'theme' => $this->project->path() . '/themes/pale'], ['capture_stderr_separately' => true]);
 
         self::assertSame(1, $tester->getStatusCode());
         $errors = $tester->getErrorOutput();
-        self::assertStringContainsString('The theme "SightPress Default" fails with 2 problems:', $errors);
+        self::assertMatchesRegularExpression('/The theme "SightPress Default" fails with \d+ problems:/', $errors);
         self::assertStringContainsString('1. In light mode, text "text-muted" (#9a9aa5) on "background" (#ffffff) has a contrast of 2.', $errors);
         self::assertStringContainsString('it needs at least 4.50:1.', $errors);
     }

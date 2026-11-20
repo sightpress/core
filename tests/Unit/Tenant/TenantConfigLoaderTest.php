@@ -15,6 +15,7 @@ use SightPress\Core\Tenant\TenantConfigLoader;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
 
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantAssistant::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
 #[CoversClass(TenantConfigLoader::class)]
 #[UsesClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]

@@ -31,6 +31,7 @@ use Throwable;
 #[CoversClass(SiteResolverMiddleware::class)]
 #[UsesClass(HttpServiceUnavailableException::class)]
 #[UsesClass(SecretBox::class)]
+#[UsesClass(\SightPress\Core\Template\Viewer::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
 final class SiteResolverMiddlewareTest extends TestCase
 {

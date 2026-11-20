@@ -3,6 +3,14 @@
 {% block content %}
 <h1>{{ t('Dashboard') }}</h1>
 {% include '@admin/server-problems.html.twig' %}
+{%- if theme_problem ?? null %}
+<section class="alert alert--warning" aria-labelledby="theme-problem-title">
+    <div>
+        <h2 id="theme-problem-title">{{ t('Your site is shown in the default theme') }}</h2>
+        <p>{{ t(theme_problem) }} {{ t('Visitors see the default theme until an admin chooses another one.') }}</p>
+    </div>
+</section>
+{%- endif %}
 {%- if assistant ?? null %}
 {% include '@assistant/panel.html.twig' %}
 {%- endif %}

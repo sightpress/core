@@ -1,0 +1,8 @@
+{%- set id = id|default('search') -%}
+<search aria-labelledby="{{ id }}-label">
+<form method="get" action="{{ action }}">
+<label id="{{ id }}-label" for="{{ id }}-q">{{ label|default(t('Search this site')) }}</label>
+<input id="{{ id }}-q" type="search" name="q" value="{{ query|default('') }}">
+<button type="submit">{{ t('Search') }}</button>
+</form>
+</search>

@@ -5989,6 +5989,24 @@
         <target>A cor do texto {foreground} sobre {behind} tem um contraste de {ratio}:1{mode}; precisa de pelo menos 4,5:1. Escolha outra cor, adicione uma cor de fundo que combine com ela ou remova-a.</target>
       </segment>
     </unit>
+    <unit id="bd0c02d99cccfe87">
+      <segment>
+        <source>The theme {theme} doesn’t work with this version of SightPress.</source>
+        <target>O tema {theme} não funciona com esta versão do SightPress.</target>
+      </segment>
+    </unit>
+    <unit id="f680d9987ccc4858">
+      <segment>
+        <source>The theme {theme} is not allowed on this server any more.</source>
+        <target>O tema {theme} já não é permitido neste servidor.</target>
+      </segment>
+    </unit>
+    <unit id="656936be935e9a97">
+      <segment>
+        <source>The theme {theme} is not installed on the server any more.</source>
+        <target>O tema {theme} já não está instalado no servidor.</target>
+      </segment>
+    </unit>
     <unit id="85a6ea9f1fa6f22b">
       <segment>
         <source>The title must be {max} characters or fewer.</source>
@@ -7015,6 +7033,12 @@
         <target>Visitantes ao longo do tempo</target>
       </segment>
     </unit>
+    <unit id="1e7c4c87b1d0515e">
+      <segment>
+        <source>Visitors see the default theme until an admin chooses another one.</source>
+        <target>Os visitantes veem o tema predefinido até um administrador escolher outro.</target>
+      </segment>
+    </unit>
     <unit id="52b53d31e55600c5">
       <segment>
         <source>Wait {retry_after}, then ask again. The code we sent before still works.</source>
@@ -7667,6 +7691,12 @@
       <segment>
         <source>Your server’s settings stop some uploads</source>
         <target>As definições do seu servidor impedem alguns carregamentos</target>
+      </segment>
+    </unit>
+    <unit id="77e334c38581423e">
+      <segment>
+        <source>Your site is shown in the default theme</source>
+        <target>O seu site é apresentado com o tema predefinido</target>
       </segment>
     </unit>
     <unit id="d24c993b97caf08c">
