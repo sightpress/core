@@ -179,7 +179,8 @@ final class TemplatingTest extends TestCase
 
         self::assertDirectoryExists($this->directory->path . '/cache/twig');
         self::assertSame(dirname(__DIR__, 3) . '/resources/views', TemplatePaths::core());
-        self::assertSame(dirname(__DIR__, 3) . '/resources/themes/default', TemplatePaths::defaultTheme());
+        self::assertSame(new \SightPress\ThemeDefault\DefaultTheme()->paths()->root, TemplatePaths::defaultTheme());
+        self::assertSame(dirname(__DIR__, 3) . '/resources/assets', TemplatePaths::coreAssets());
     }
 
     private function renderer(bool $debug = false, bool $withFunctions = false): TemplateRenderer

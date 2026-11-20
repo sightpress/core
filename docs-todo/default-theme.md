@@ -82,6 +82,7 @@ a comment showing how to use it. Rules they keep:
 ## Code and tests
 
 - `src/Theme/` (`ThemeModule`, `ThemeLoader`, `ThemeTokens`, `TokenStylesheet`, `ThemeAssets`,
-  `Http/ThemeAssetHandler`), `resources/themes/default/`
+  `Http/ThemeAssetHandler`, `ThemeRegistry`); the theme itself is the `sightpress/theme-default` package (its own
+  repo since T-0, found through `ThemeRegistry`); the admin panel's own CSS and scripts are in `resources/assets/`
 - `tests/Unit/Theme/`, `tests/Integration/Theme/`, `tests/A11y/theme.spec.ts` (style guide at `/theme/home` and
   `/theme/default` in `tests/A11y/gallery`)

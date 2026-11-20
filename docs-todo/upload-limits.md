@@ -52,6 +52,6 @@ branding forms, hiding the admin notice until the result changes, counting reque
 - `src/Http/Upload/` (`IniSize`, `ServerLimits`, `ServerLimitsCheck`, `RequestOverflowMiddleware`,
   `RequestTooLargeException`, `RequestTooLargeHandler`), `src/Media/UploadAllowance.php`,
   `src/Media/Command/SystemCheckCommand.php`, `resources/views/admin/server-problems.html.twig`, the size check in
-  `resources/themes/default/assets/js/site.js`.
+  `assets/js/site.js` of the default theme (`sightpress/theme-default`).
 - Unit tests in `tests/Unit/Http/Upload/` and `tests/Unit/Media/Command/`; the kernel test in
   `tests/Integration/Http/SecurityPipelineTest.php`; the browser check in `tests/A11y/media.spec.ts`.

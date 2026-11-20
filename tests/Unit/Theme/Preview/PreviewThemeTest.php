@@ -31,20 +31,29 @@ final class PreviewThemeTest extends TestCase
         $this->directory->remove();
     }
 
-    public function testATheFolderWithoutComposerJsonIsTheDefaultTheme(): void
+    public function testTheDefaultThemeIsReadFromItsPackage(): void
     {
         $theme = PreviewTheme::fromDirectory(TemplatePaths::defaultTheme());
 
         self::assertSame('default', $theme->id);
         self::assertSame('SightPress Default', $theme->name);
-        self::assertSame('The SightPress Default theme for SightPress.', $theme->description);
-        self::assertSame('https://packagist.org/packages/sightpress/theme-default', $theme->downloadUrl);
+        self::assertStringStartsWith('Calm greys', $theme->description);
+        self::assertSame('https://github.com/sightpress/theme-default', $theme->downloadUrl);
         self::assertSame(TemplatePaths::defaultTheme(), $theme->directory);
-        self::assertNull($theme->previewDescription);
+        self::assertNotNull($theme->previewDescription);
         self::assertSame('SightPress Default', $theme->variable('name'));
         self::assertSame($theme->description, $theme->variable('description'));
         self::assertSame($theme->version, $theme->variable('version'));
         self::assertSame($theme->downloadUrl, $theme->variable('download_url'));
+    }
+
+    public function testAFolderWithoutComposerJsonIsDescribedFromThemeJson(): void
+    {
+        $theme = PreviewTheme::fromDirectory($this->directory->path);
+
+        self::assertSame('The SightPress Default theme for SightPress.', $theme->description);
+        self::assertSame('https://packagist.org/packages/sightpress/theme-default', $theme->downloadUrl);
+        self::assertNull($theme->previewDescription);
     }
 
     public function testReadsComposerJson(): void

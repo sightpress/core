@@ -71,6 +71,14 @@ final class ThemeAssetsTest extends TestCase
         self::assertSame('image/svg+xml', $svg->contentType);
     }
 
+    public function testCoresOwnFilesComeLast(): void
+    {
+        $css = $this->assets->find('css/admin.css');
+        self::assertNotNull($css);
+
+        self::assertSame((string) file_get_contents(TemplatePaths::coreAssets() . '/css/admin.css'), $css->contents);
+    }
+
     public function testTokensCssIsBuiltFromTheActiveTheme(): void
     {
         $asset = $this->assets->find(ThemeAssets::TOKENS);

@@ -7,8 +7,9 @@ namespace SightPress\Core\Theme;
 use SightPress\Core\Template\TemplatePaths;
 
 /**
- * Finds a theme's static files (`assets/` of the site theme, then of the default theme) and builds `tokens.css`
- * from the active theme. Only known file types inside an `assets/` folder are served; anything else is not found.
+ * Finds a theme's static files (`assets/` of the site theme, then of the default theme, then core's own files for the
+ * admin panel) and builds `tokens.css` from the active theme. Only known file types inside an `assets/` folder are
+ * served; anything else is not found.
  */
 final readonly class ThemeAssets
 {
@@ -46,9 +47,9 @@ final readonly class ThemeAssets
             return null;
         }
 
-        foreach ($this->paths->themes as $theme) {
-            $root = realpath($theme . '/assets');
-            $file = realpath($theme . '/assets/' . $path);
+        foreach ([...array_map(static fn (string $theme): string => $theme . '/assets', $this->paths->themes), TemplatePaths::coreAssets()] as $folder) {
+            $root = realpath($folder);
+            $file = realpath($folder . '/' . $path);
             if ($root === false || $file === false || !str_starts_with($file, $root . DIRECTORY_SEPARATOR) || !is_file($file)) {
                 continue;
             }

@@ -45,6 +45,7 @@ use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Template\AssetUrls;
 use SightPress\Core\Template\TemplateExtension;
 use SightPress\Core\Template\TemplatePaths;
+use SightPress\Core\Theme\ThemeRegistry;
 use SightPress\Core\Template\Translations;
 use SightPress\Core\Template\TwigFactory;
 use SightPress\Core\Template\Viewer;
@@ -79,7 +80,11 @@ final class CoreServices
             SessionStore::class => autowire(FileSessionStore::class)
                 ->constructorParameter('directory', $config->sessionPath)
                 ->constructorParameter('idleTimeout', $config->sessionIdleTimeout),
-            TemplatePaths::class => new TemplatePaths([TemplatePaths::defaultTheme()], TemplatePaths::core()),
+            ThemeRegistry::class => factory(static fn (): ThemeRegistry => ThemeRegistry::forProject($config->projectDir)),
+            TemplatePaths::class => factory(static fn (ContainerInterface $container): TemplatePaths => new TemplatePaths(
+                [Services::get($container, ThemeRegistry::class)->default()->paths()->root],
+                TemplatePaths::core(),
+            )),
             AssetUrls::class => autowire()->constructorParameter('version', \Composer\InstalledVersions::getReference('sightpress/core')),
             Translations::class => factory(static fn (): Translations => Translations::fromDirectories(
                 [dirname(TemplatePaths::core()) . '/translations'],

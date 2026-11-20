@@ -45,7 +45,7 @@ final class ValidateThemeCommandTest extends TestCase
 
     public function testACopyWithAPaleTextColourFails(): void
     {
-        $json = (string) file_get_contents(dirname(__DIR__, 3) . '/resources/themes/default/theme.json');
+        $json = (string) file_get_contents(\SightPress\Core\Template\TemplatePaths::defaultTheme() . '/theme.json');
         $this->project->directory->write('themes/pale/theme.json', str_replace('"text-muted": "#4b4b57"', '"text-muted": "#9a9aa5"', $json));
 
         $tester = $this->console(['command' => 'theme:validate', 'path' => $this->project->path() . '/themes/pale'], ['capture_stderr_separately' => true]);

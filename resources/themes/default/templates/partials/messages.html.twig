@@ -1,6 +1,0 @@
-{# Flash messages in a polite live region; the region is always there so screen readers know it. #}
-<div class="messages" role="status">
-{%- for message in messages %}
-    <p>{{ t(message) }}</p>
-{%- endfor %}
-</div>

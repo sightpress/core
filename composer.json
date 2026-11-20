@@ -30,6 +30,13 @@
       "options": {
         "symlink": true
       }
+    },
+    {
+      "type": "path",
+      "url": "../theme-default",
+      "options": {
+        "symlink": true
+      }
     }
   ],
   "require": {
@@ -54,6 +61,7 @@
     "psr/clock": "^1",
     "psr/event-dispatcher": "^1",
     "sightpress/module-interface": "^0.4",
+    "sightpress/theme-default": "^0.1",
     "sightpress/theme-interface": "^0.2",
     "slim/csrf": "^1",
     "slim/slim": "^4",

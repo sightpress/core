@@ -35,7 +35,7 @@ final class PreviewSiteTest extends TestCase
         self::assertStringContainsString('<html lang="en-GB" dir="ltr">', $html);
         self::assertStringContainsString('<title>SightPress Default - Riverside Reading Room</title>', $html);
         self::assertStringContainsString('<h1>SightPress Default</h1>', $html);
-        self::assertStringContainsString('<a class="button" href="https://packagist.org/packages/sightpress/theme-default" aria-label="Download SightPress Default">Download</a>', $html);
+        self::assertStringContainsString('<a class="button" href="https://github.com/sightpress/theme-default" aria-label="Download SightPress Default">Download</a>', $html);
         foreach (['text' => 'Text and buttons', 'media' => 'Pictures and files', 'layout' => 'Side by side', 'sound' => 'Sound and video', 'contact' => 'Contact'] as $id => $heading) {
             self::assertStringContainsString(sprintf('<a href="#%s">%s</a>', $id, $heading), $html);
             self::assertStringContainsString(sprintf('<h2 class="block-heading" id="%s">%s</h2>', $id, $heading), $html);

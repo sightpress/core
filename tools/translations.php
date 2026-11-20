@@ -328,7 +328,7 @@ function placeholders(string $text): array
 $options = getopt('', ['src::', 'views::', 'catalogues::']);
 $root = dirname(__DIR__);
 $src = is_string($options['src'] ?? null) ? $options['src'] : $root . '/src';
-$views = is_string($options['views'] ?? null) ? explode(',', $options['views']) : [$root . '/resources/views', $root . '/resources/themes'];
+$views = is_string($options['views'] ?? null) ? explode(',', $options['views']) : [$root . '/resources/views', $root . '/vendor/sightpress/theme-default/templates'];
 $catalogues = is_string($options['catalogues'] ?? null) ? $options['catalogues'] : $root . '/resources/translations';
 $command = $argv[count($argv) - 1] ?? 'check';
 

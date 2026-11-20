@@ -7,6 +7,7 @@ namespace SightPress\Core\Tests\Unit\Theme\Command;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
+use SightPress\Core\Template\TemplatePaths;
 use SightPress\Core\Tests\Support\ArrayCommandInput;
 use SightPress\Core\Tests\Support\RecordingOutput;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
@@ -57,18 +58,19 @@ final class PreviewThemeCommandTest extends TestCase
         self::assertDirectoryDoesNotExist($workspace);
         self::assertSame([
             'The preview of "SightPress Default" 0.1.0 is in ' . $out . ': open index.html in any browser; it works offline.',
-            'The theme has no preview description: add previewDescription to its manifest, the text people get instead of the screenshot.',
             'Screenshots: screenshot.png, screenshot-dark.png, page.png.',
         ], $this->output->lines);
     }
 
-    public function testWithoutScreenshotsOnlyWritesTheFolder(): void
+    public function testWithoutScreenshotsOnlyWritesTheFolderAndAsksForAPreviewDescription(): void
     {
         $out = $this->directory->path . '/out';
+        $theme = $this->directory->write('plain/theme.json', (string) file_get_contents(TemplatePaths::defaultTheme() . '/theme.json'));
         $command = new PreviewThemeCommand(new PreviewScreenshots($this->node('exit 9')));
 
-        self::assertSame(Command::SUCCESS, $command->run(new ArrayCommandInput(['theme' => 'default'], ['out' => $out, 'locale' => 'en-GB']), $this->output));
+        self::assertSame(Command::SUCCESS, $command->run(new ArrayCommandInput(['theme' => dirname($theme)], ['out' => $out, 'locale' => 'en-GB']), $this->output));
         self::assertFileExists($out . '/index.html');
+        self::assertSame('The theme has no preview description: add previewDescription to its manifest, the text people get instead of the screenshot.', $this->output->lines[1]);
         self::assertCount(2, $this->output->lines);
         self::assertSame([], $this->output->errors);
     }
