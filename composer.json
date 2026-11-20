@@ -23,15 +23,23 @@
       "options": {
         "symlink": true
       }
+    },
+    {
+      "type": "path",
+      "url": "../theme-interface",
+      "options": {
+        "symlink": true
+      }
     }
   ],
   "require": {
-    "php": ">=8.5",
     "ext-exif": "*",
     "ext-fileinfo": "*",
     "ext-gd": "*",
     "ext-intl": "*",
     "ext-sodium": "*",
+    "php": ">=8.5",
+    "php-di/php-di": "^7",
     "composer/semver": "^3",
     "doctrine/dbal": "^4",
     "doctrine/migrations": "^3",
@@ -43,10 +51,10 @@
     "monolog/monolog": "^3",
     "nyholm/psr7": "^1",
     "nyholm/psr7-server": "^1",
-    "php-di/php-di": "^7",
     "psr/clock": "^1",
     "psr/event-dispatcher": "^1",
     "sightpress/module-interface": "^0.4",
+    "sightpress/theme-interface": "^0.2",
     "slim/csrf": "^1",
     "slim/slim": "^4",
     "symfony/cache": "^8",
@@ -72,6 +80,9 @@
     "phpunit/phpunit": "^13",
     "rector/rector": "^2"
   },
+  "bin": [
+    "bin/sightpress-theme"
+  ],
   "autoload": {
     "psr-4": {
       "SightPress\\Core\\": "src/"

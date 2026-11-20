@@ -22,8 +22,8 @@ jobs:
       run:
         working-directory: core
     steps:
-      # Composer finds module-interface through the path repository ../module-interface, so both repos are
-      # checked out side by side.
+      # Composer finds module-interface and theme-interface through the path repositories ../module-interface and
+      # ../theme-interface, so the repos are checked out side by side.
       - uses: actions/checkout@v7
         with:
           path: core
@@ -32,6 +32,10 @@ jobs:
         with:
           repository: sightpress/module-interface
           path: module-interface
+      - uses: actions/checkout@v7
+        with:
+          repository: sightpress/theme-interface
+          path: theme-interface
 
       - uses: shivammathur/setup-php@v2
         with:

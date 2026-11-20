@@ -46,6 +46,10 @@ jobs:
         with:
           repository: sightpress/module-interface
           path: module-interface
+      - uses: actions/checkout@v7
+        with:
+          repository: sightpress/theme-interface
+          path: theme-interface
 
       - uses: actions/checkout@v7
         with:

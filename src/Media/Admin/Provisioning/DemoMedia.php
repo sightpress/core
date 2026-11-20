@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media\Admin\Provisioning;
 
+use Psr\Container\ContainerInterface;
 use SightPress\Core\Template\Message;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Media\MediaEditor;
@@ -41,9 +42,22 @@ final readonly class DemoMedia
         if (!$event->demo) {
             return;
         }
-        $uploader = Services::get($event->services, MediaUploader::class);
-        $editor = Services::get($event->services, MediaEditor::class);
-        $by = $event->adminId();
+        foreach ($this->add($event->services, $event->site->defaultLocale, $event->adminId()) as $name => $id) {
+            $event->share('demo.' . $name, $id);
+        }
+        $event->report(sprintf('Added %d demo files to the media library, described and published.', count(self::FILES)));
+    }
+
+    /**
+     * Puts the demo files in a site's media library, described in the locale and published.
+     *
+     * @return array<string, int> media id by share name ({@see FILES})
+     */
+    public function add(ContainerInterface $services, string $locale, ?int $by): array
+    {
+        $uploader = Services::get($services, MediaUploader::class);
+        $editor = Services::get($services, MediaEditor::class);
+        $ids = [];
         foreach (self::FILES as $name => [$file, $alt, $transcript]) {
             $copy = tempnam(sys_get_temp_dir(), 'sp-demo-');
             if ($copy === false || !@copy(($this->directory ?? self::directory()) . '/' . $file, $copy)) {
@@ -56,15 +70,16 @@ final readonly class DemoMedia
             }
             $editor->update(
                 $media,
-                $alt === null ? [] : [$event->site->defaultLocale => ['alt' => $alt, 'caption' => null]],
-                $transcript === null ? null : [$event->site->defaultLocale => $transcript],
+                $alt === null ? [] : [$locale => ['alt' => $alt, 'caption' => null]],
+                $transcript === null ? null : [$locale => $transcript],
                 true,
                 $by,
-                $event->site->defaultLocale,
+                $locale,
             );
-            $event->share('demo.' . $name, (int) $media->id());
+            $ids[$name] = (int) $media->id();
         }
-        $event->report(sprintf('Added %d demo files to the media library, described and published.', count(self::FILES)));
+
+        return $ids;
     }
 
     public static function directory(): string

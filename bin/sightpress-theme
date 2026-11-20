@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Theme tools for theme authors and CI, without a tenant project: `theme:preview` (the static preview page and its
+ * screenshots) and `theme:validate`. Installed as vendor/bin/sightpress-theme with core as a dev dependency.
+ */
+
+declare(strict_types=1);
+
+use SightPress\Core\Cli\ModuleCommand;
+use SightPress\Core\Template\TemplatePaths;
+use SightPress\Core\Theme\Command\PreviewThemeCommand;
+use SightPress\Core\Theme\Command\ValidateThemeCommand;
+use SightPress\Core\Theme\ThemeLoader;
+use SightPress\Core\Theme\ThemeValidator;
+use Symfony\Component\Console\Application;
+
+require $GLOBALS['_composer_autoload_path'] ?? dirname(__DIR__) . '/vendor/autoload.php';
+
+date_default_timezone_set('UTC');
+$application = new Application('SightPress theme tools');
+$application->addCommand(new ModuleCommand(new PreviewThemeCommand()));
+$application->addCommand(new ModuleCommand(new ValidateThemeCommand(
+    new ThemeLoader(),
+    new ThemeValidator(),
+    new TemplatePaths([TemplatePaths::defaultTheme()], TemplatePaths::core()),
+)));
+$application->run();

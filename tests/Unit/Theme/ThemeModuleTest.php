@@ -49,7 +49,7 @@ final class ThemeModuleTest extends TestCase
         self::assertTrue($registry->services()[ThemeValidator::class]->item->public);
         self::assertSame(\SightPress\Core\Theme\ThemePageColours::class, $registry->services()[\SightPress\Core\Theme\Contract\PageColours::class]->item->class);
         $commands = array_values(array_filter($registry->commands(), static fn ($c) => $c->module === 'theme'));
-        self::assertSame([ValidateThemeCommand::class], array_map(static fn ($c) => $c->item, $commands));
+        self::assertSame([ValidateThemeCommand::class, \SightPress\Core\Theme\Command\PreviewThemeCommand::class], array_map(static fn ($c) => $c->item, $commands));
     }
 
     public function testTheActiveThemeIsTheFirstThemeFolderOrTheDefaultTheme(): void
