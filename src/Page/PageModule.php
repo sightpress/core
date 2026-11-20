@@ -15,7 +15,10 @@ use SightPress\Core\Page\Contract\StarterContent;
 use SightPress\Core\Page\Contract\MovedAddresses;
 use SightPress\Core\Page\Contract\PageLinks;
 use SightPress\Core\Page\Contract\PageOverview;
+use SightPress\Core\Page\Contract\PageLayouts;
+use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Page\Http\PublicPageHandler;
+use SightPress\Core\Page\Http\SectionAside;
 use SightPress\Core\Page\Provisioning\DemoPages;
 use SightPress\Core\Page\Provisioning\StarterPages;
 use SightPress\Core\Page\Schedule\PageSchedule;
@@ -75,6 +78,8 @@ final class PageModule implements ModuleInterface
         $services->autowire(PageTextQuery::class, PageTexts::class, public: true);
         $services->autowire(TranslationDraftService::class, TranslationDrafts::class, public: true);
         $services->autowire(PublicPageHandler::class);
+        $services->autowire(SectionAside::class);
+        $services->autowire(PageLayoutQuery::class, PageLayouts::class, public: true);
         $services->autowire(PageRedirects::class, public: true);
         $services->autowire(RedirectedAddresses::class, MovedAddresses::class, public: true);
         $services->autowire(PageEditor::class, public: true);
@@ -94,6 +99,7 @@ final class PageModule implements ModuleInterface
 
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/page');
         $registrar->subscribers()->listen(PageTransitioned::class, ReviewRequestMailer::class);
+        $registrar->subscribers()->listen(PublicPageRendering::class, SectionAside::class);
         $registrar->subscribers()->listen(SiteProvisioning::class, StarterPages::class, SiteProvisioning::CONTENT);
         $registrar->subscribers()->listen(SiteProvisioning::class, DemoPages::class, DemoPages::PRIORITY);
         $registrar->subscribers()->listen(ScheduleDue::class, ScheduledPages::class);

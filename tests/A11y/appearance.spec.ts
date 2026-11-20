@@ -96,3 +96,52 @@ test('only people who apply themes see the screens', async ({ page }) => {
   await expect(page.getByRole('navigation', { name: 'Admin' }).getByRole('link', { name: 'Appearance' })).toHaveCount(0);
   expect((await page.goto(`${SITE}/admin/appearance`))?.status()).toBe(403);
 });
+
+for (const [path, name] of [['/services', 'sidebar'], ['/summer', 'landing'], ['/hours', 'full width']] as const) {
+  test(`the ${name} layout has no violations and works by keyboard`, async ({ page, request }) => {
+    expect((await request.get(`${SITE}/_test/layouts`)).status()).toBe(204);
+    await page.goto(`${SITE}${path}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+    await expectNoViolationsAnywhere(page);
+
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('link', { name: 'Skip to main content' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('main')).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('main').getByRole('link', { name: 'a link home' })).toBeFocused();
+    if (name === 'sidebar') {
+      const aside = page.getByRole('complementary', { name: 'In this section' });
+      await expect(aside).toBeVisible();
+      await page.keyboard.press('Tab');
+      await expect(aside.getByRole('link', { name: 'Lending' })).toBeFocused();
+    }
+  });
+}
+
+test('switching to a theme without some layouts lists their pages first, and switching back restores them', async ({ page, request }) => {
+  expect((await request.get(`${SITE}/_test/layouts`)).status()).toBe(204);
+  await signIn(page, SITE, 'ada@example.org', '/admin/appearance');
+  await page.getByRole('button', { name: 'Use Harbour' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Use Harbour?');
+  const table = page.getByRole('table', { name: 'Pages shown in the standard layout with Harbour' });
+  await expect(table.getByRole('row')).toHaveCount(3);
+  await expect(table.getByRole('row', { name: 'Summer reading landing' })).toBeVisible();
+  await expect(table.getByRole('row', { name: 'Opening hours full-width' })).toBeVisible();
+  await expectNoViolations(page);
+
+  await page.getByRole('button', { name: 'Use Harbour' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('status')).toHaveText('Harbour is now the site’s theme.');
+  await page.goto(`${SITE}/summer`);
+  await expect(page.locator('.hero--landing')).toHaveCount(0);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Summer reading');
+
+  await page.goto(`${SITE}/admin/appearance`);
+  await page.getByRole('button', { name: 'Use SightPress Default' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('status')).toHaveText('SightPress Default is now the site’s theme.');
+  await page.goto(`${SITE}/summer`);
+  await expect(page.locator('.hero--landing')).toHaveCount(1);
+});

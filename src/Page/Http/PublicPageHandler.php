@@ -38,7 +38,7 @@ use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\TenantConfig;
 use Slim\Exception\HttpGoneException;
 use Slim\Exception\HttpNotFoundException;
-use Twig\Environment;
+use SightPress\Core\Theme\Contract\ThemeLayouts;
 
 /**
  * The public site: `/` is the home page, `/{path}` the page at that address (`/pt-pt/…` for other locales), in the
@@ -68,7 +68,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         private BlockContexts $contexts,
         private BlockRenderer $renderer,
         private TemplateRenderer $templates,
-        private Environment $twig,
+        private ThemeLayouts $layouts,
         private Site $site,
         private ResponseFactoryInterface $responses,
         private EventDispatcherInterface $events,
@@ -161,7 +161,6 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
             $content,
         );
         $this->events->dispatch($rendering);
-        $layout = 'layouts/' . $page->layout() . '.html.twig';
         // The site's own words (menus, buttons, the language switcher) are in the page's language.
         $own = $request->getAttribute(ViewerPreferences::class);
         $timezone = $own instanceof ViewerPreferences && $own->timezone !== null && $own->timezone !== '' ? $own->timezone : $this->site->defaultTimezone;
@@ -169,7 +168,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
         $body = $this->templates->render($request, '@page/public.html.twig', [
             ...$rendering->variables(),
             'head' => $rendering->head(),
-            'layout_template' => $this->twig->getLoader()->exists($layout) ? $layout : 'layouts/default.html.twig',
+            'layout_template' => $this->layouts->template($page->layout()),
             'title' => $translation->title(),
             'lead' => $translation->summary(),
             'locale' => $translation->locale(),

@@ -82,7 +82,7 @@ final class PageAdminFixture
 
     public function pageAdmin(): PageAdmin
     {
-        return new PageAdmin($this->pages->repository(), $this->admin->auth->twig);
+        return new PageAdmin($this->pages->repository(), new \SightPress\Core\Tests\Support\Theme\TwigLayouts($this->admin->auth->twig));
     }
 
     public function workflow(): PageWorkflow

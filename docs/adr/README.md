@@ -65,5 +65,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0045](0045-theme-architecture-and-preview.md) | Themes: the architecture in theme-interface, and the static preview page | Proposed |
 | [0047](0047-theme-discovery-and-per-site-themes.md) | Themes: discovery, a theme per site, and an admin that keeps the default theme | Proposed |
 | [0048](0048-theme-picker-and-site-colours.md) | Themes: the admin theme picker, published previews and a site's own colours | Proposed |
+| [0049](0049-standard-layouts.md) | Themes: the standard layouts, the side column, and switching to a theme without a layout | Proposed |
 
 When an ADR's status changes, update it here too.

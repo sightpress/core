@@ -22,7 +22,7 @@
  *
  * The `appearance` copy (T-2) also has a second theme installed, "Harbour" (the contract's fake theme, through
  * vendor/composer/installed.json), and serves the previews `/_test/publish` (theme:publish-assets) writes to its public
- * folder (`/themes/…`), as a web server would.
+ * folder (`/themes/…`), as a web server would; `/_test/layouts` adds published pages in the standard layouts (T-3).
  *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
@@ -221,6 +221,32 @@ if ($path === '/_test/publish') {
     http_response_code($status === 0 ? 200 : 500);
     header('Content-Type: text/plain');
     echo $output->fetch();
+
+    return;
+}
+
+// Pages in the standard layouts (T-3): "Our services" (sidebar) with "Lending" under it, "Summer reading" (landing)
+// and "Opening hours" (full width), all published.
+if ($path === '/_test/layouts') {
+    $kernel = boot($project, $environment);
+    $services = site($kernel);
+    $editor = Services::get($services, SightPress\Core\Page\PageEditor::class);
+    $now = new DateTimeImmutable();
+    /** @var array<string, SightPress\Core\Page\Entity\Page> $made */
+    $made = [];
+    /** @var list<array{string, string, string, string|null}> $layouts */
+    $layouts = [['Our services', 'services', 'sidebar', null], ['Lending', 'lending', 'default', 'services'], ['Summer reading', 'summer', 'landing', null], ['Opening hours', 'hours', 'full-width', null]];
+    foreach ($layouts as [$title, $slug, $layout, $parent]) {
+        $page = $editor->create('en-GB', new SightPress\Core\Page\PageContent($title, $slug, 'About ' . strtolower($title) . '.', 'About ' . strtolower($title) . '.', [
+            ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'What we offer', 'level' => 2]],
+            ['type' => 'rich_text', 'version' => 1, 'data' => ['html' => '<p>' . $title . ' at the Riverside Library, with <a href="/">a link home</a>.</p>']],
+        ]), $parent === null ? null : ($made[$parent] ?? null));
+        $page->setLayout($layout, $now);
+        $page->changeState(SightPress\Core\Rbac\Contract\PageState::Published, $now);
+        $made[$slug] = $page;
+    }
+    Services::get($services, SightPress\Core\Page\PageRepository::class)->flush();
+    http_response_code(204);
 
     return;
 }

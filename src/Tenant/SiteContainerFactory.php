@@ -25,6 +25,7 @@ use SightPress\Core\Template\Viewer;
 use SightPress\Core\Template\TemplatePaths;
 use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Core\Template\TwigFactory;
+use SightPress\Core\Theme\Contract\ThemeLayouts;
 use SightPress\Core\Theme\Contract\ThemeStatus;
 use SightPress\Core\Theme\SiteTheme;
 use Twig\Environment;
@@ -201,6 +202,7 @@ final class SiteContainerFactory
             // the site's too.
             SiteTheme::class => autowire(),
             ThemeStatus::class => get(SiteTheme::class),
+            ThemeLayouts::class => get(SiteTheme::class),
             TemplatePaths::class => factory(static fn (ContainerInterface $container): TemplatePaths => Services::get($container, SiteTheme::class)->templatePaths()),
             Environment::class => factory(static fn (ContainerInterface $container): Environment => new TwigFactory()->create(
                 Services::get($container, TemplatePaths::class),

@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Admin\Contract\AdminScreens;
+use SightPress\Core\Page\Contract\PageLayouts;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Template\Message;
 use SightPress\Core\Tenant\TenantConfig;
@@ -23,7 +24,9 @@ use Slim\Exception\HttpForbiddenException;
  * `/admin/appearance`: the themes installed on the server, each under its own heading with its description, version,
  * whether it is the site's theme or why it can't be used (in words), the screenshot of its preview page with the
  * theme's own description as alt text (or the description as text when no screenshot was made), a link to the preview
- * (a new tab) and a "Use …" button. Applying re-checks the theme ({@see ThemeApplier}). Needs `theme.apply`.
+ * (a new tab) and a "Use …" button. Applying re-checks the theme ({@see ThemeApplier}). When pages use a layout the
+ * theme doesn't have, a page lists them first and asks to confirm: they are shown in the standard layout until the
+ * site switches back (T-3). Needs `theme.apply`.
  */
 final readonly class AppearanceHandler implements RequestHandlerInterface
 {
@@ -38,6 +41,7 @@ final readonly class AppearanceHandler implements RequestHandlerInterface
         private ThemeApplier $applier,
         private TenantConfig $config,
         private PublishedPreviews $previews,
+        private PageLayouts $layouts,
     ) {
     }
 
@@ -55,7 +59,18 @@ final readonly class AppearanceHandler implements RequestHandlerInterface
 
         if ($request->getMethod() === 'POST') {
             $body = $request->getParsedBody();
-            $id = is_array($body) && is_string($body['theme'] ?? null) ? $body['theme'] : '';
+            $body = is_array($body) ? $body : [];
+            $id = is_string($body['theme'] ?? null) ? $body['theme'] : '';
+            $theme = $this->registry->find($id);
+            $affected = $theme === null ? [] : $this->layouts->pagesNotIn(array_map(static fn ($layout): string => $layout->id, $theme->manifest()->layouts));
+            if ($affected !== [] && !is_string($body['confirm'] ?? null) && $theme !== null) {
+                return $this->screens->render($request, '@theme/switch.html.twig', [
+                    'theme' => $theme->manifest(),
+                    'pages' => $affected,
+                    'action' => self::PATH,
+                    'back' => self::PATH . '#' . self::anchor($id),
+                ]);
+            }
             try {
                 $check = $this->applier->apply($id, $actor->userId);
             } catch (ThemeException $exception) {

@@ -5,9 +5,10 @@
     shell includes.
     Context: `layout_template`, `title`, `lead` (the summary, optional), `locale`, `site_name`, `content`, `head`,
     `updated_at` (UTC), and whatever the modules added (`main_menu`, `footer_menu`, `breadcrumbs` …). `hero` is HTML a
-    module escaped for the `hero` block of layouts that have one (`home`), such as the Download button on a theme's
-    preview page.
+    module escaped for the `hero` block of layouts that have one (`home`, `landing`), such as the Download button on a
+    theme's preview page; `aside` is the side column of the `sidebar` layout ("In this section", SectionAside).
 #}
 {% extends layout_template %}
 {% block hero %}{{ hero|default('')|raw }}{% endblock %}
 {% block content %}{{ content|raw }}{% endblock %}
+{% block aside %}{{ aside|default('')|raw }}{% endblock %}

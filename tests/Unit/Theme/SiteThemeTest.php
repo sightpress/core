@@ -53,6 +53,16 @@ final class SiteThemeTest extends TestCase
         self::assertMatchesRegularExpression('/^[0-9a-f]{12}$/', $this->theme([])->assetVersion(null));
     }
 
+    public function testTheThemesManifestDecidesTheLayouts(): void
+    {
+        $theme = $this->theme([SiteTheme::SETTING => 'acme-harbour']);
+
+        self::assertTrue($theme->provides('sidebar'));
+        self::assertFalse($theme->provides('landing'));
+        self::assertSame('layouts/sidebar.html.twig', $theme->template('sidebar'));
+        self::assertSame('layouts/default.html.twig', $theme->template('landing'));
+    }
+
     public function testTheSitesOwnChoiceWins(): void
     {
         $theme = $this->theme([SiteTheme::SETTING => 'default'], ['themes' => ['default' => 'acme-harbour']]);

@@ -883,6 +883,12 @@
         <target>Volver a la configuración del sitio</target>
       </segment>
     </unit>
+    <unit id="5f86ed23b6ce7541">
+      <segment>
+        <source>Back to {page}</source>
+        <target>Volver a {page}</target>
+      </segment>
+    </unit>
     <unit id="ea2b8a878841df59">
       <segment>
         <source>Background</source>
@@ -2497,6 +2503,12 @@
         <target>En la papelera</target>
       </segment>
     </unit>
+    <unit id="a4b1dbff1e62245f">
+      <segment>
+        <source>In this section</source>
+        <target>En esta sección</target>
+      </segment>
+    </unit>
     <unit id="76d6aad1a2a03c8f">
       <segment>
         <source>In:</source>
@@ -2621,6 +2633,12 @@
       <segment>
         <source>Keep the comment to {max} characters or fewer.</source>
         <target>El comentario puede tener como máximo {max} caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="5bd9d3ca4d5897e7">
+      <segment>
+        <source>Keep the current theme</source>
+        <target>Mantener el tema actual</target>
       </segment>
     </unit>
     <unit id="d8f07ee9ed837434">
@@ -3743,6 +3761,12 @@
       <segment>
         <source>Pages read most</source>
         <target>Páginas más leídas</target>
+      </segment>
+    </unit>
+    <unit id="db5936e3322ca0ae">
+      <segment>
+        <source>Pages shown in the standard layout with {name}</source>
+        <target>Páginas que se muestran con el diseño estándar con {name}</target>
       </segment>
     </unit>
     <unit id="d010dbb9e7489dc8">
@@ -7057,6 +7081,12 @@
         <target>Usar {name}</target>
       </segment>
     </unit>
+    <unit id="145a6079b81b592f">
+      <segment>
+        <source>Use {name}?</source>
+        <target>¿Usar {name}?</target>
+      </segment>
+    </unit>
     <unit id="96cb79324a257f15">
       <segment>
         <source>Use {{ compared_value }} or less.</source>
@@ -8483,6 +8513,12 @@
       <segment>
         <source>{name} can’t sign in. Reactivating lets them sign in again with their old password.</source>
         <target>{name} no puede iniciar sesión. Al reactivarla, podrá volver a iniciar sesión con su contraseña antigua.</target>
+      </segment>
+    </unit>
+    <unit id="ca1865581f6f6966">
+      <segment>
+        <source>{name} doesn’t have the layouts of these pages. They will be shown in the standard layout. Their own layout is kept, and comes back if the site uses a theme that has it.</source>
+        <target>{name} no tiene los diseños de estas páginas. Se mostrarán con el diseño estándar. Cada una conserva su propio diseño, que vuelve si el sitio usa un tema que lo tenga.</target>
       </segment>
     </unit>
     <unit id="6a5ee76e749e4d1c">

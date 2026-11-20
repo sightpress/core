@@ -61,7 +61,7 @@
     "psr/clock": "^1",
     "psr/event-dispatcher": "^1",
     "sightpress/module-interface": "^0.4",
-    "sightpress/theme-default": "^0.2",
+    "sightpress/theme-default": "^0.3",
     "sightpress/theme-interface": "^0.2",
     "slim/csrf": "^1",
     "slim/slim": "^4",

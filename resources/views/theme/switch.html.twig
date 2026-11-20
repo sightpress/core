@@ -1,0 +1,29 @@
+{#
+    Before a theme is applied (T-3): the pages that use a layout the theme doesn't have, in a table with their layout,
+    and what happens to them (they are shown in the standard layout; switching back brings their layout back). "Use …"
+    applies the theme, "Keep the current theme" goes back.
+    Context: `theme` (manifest), `pages` [{id, title, layout}], `action`, `back`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Use {name}?', {name: theme.name}) }}{% endblock %}
+{% block content %}
+<h1>{{ t('Use {name}?', {name: theme.name}) }}</h1>
+<p>{{ t('{name} doesn’t have the layouts of these pages. They will be shown in the standard layout. Their own layout is kept, and comes back if the site uses a theme that has it.', {name: theme.name}) }}</p>
+<table class="table">
+    <caption>{{ t('Pages shown in the standard layout with {name}', {name: theme.name}) }}</caption>
+    <thead>
+        <tr><th scope="col">{{ t('Page') }}</th><th scope="col">{{ t('Layout') }}</th></tr>
+    </thead>
+    <tbody>
+        {%- for page in pages %}
+        <tr><td><a href="/admin/pages/{{ page.id }}">{{ page.title }}</a></td><td>{{ page.layout }}</td></tr>
+        {%- endfor %}
+    </tbody>
+</table>
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <input type="hidden" name="confirm" value="1">
+    <button type="submit" name="theme" value="{{ theme.id }}" class="button">{{ t('Use {name}', {name: theme.name}) }}</button>
+    <a href="{{ back }}" class="button button--secondary">{{ t('Keep the current theme') }}</a>
+</form>
+{% endblock %}

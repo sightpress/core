@@ -380,7 +380,7 @@ final class PublicPageHandlerTest extends TestCase
             $this->fixture->blocks->contexts($pages->site),
             $this->fixture->blocks->renderer(),
             $this->fixture->auth->templates,
-            $this->fixture->auth->twig,
+            new \SightPress\Core\Tests\Support\Theme\TwigLayouts($this->fixture->auth->twig),
             $pages->site,
             $this->fixture->auth->http,
             $events ?? $pages,

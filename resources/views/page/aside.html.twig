@@ -1,0 +1,14 @@
+{#
+    "In this section" (T-3), the side column of a page in the `sidebar` layout: a heading the layout's <aside> is
+    named by (`page-aside-title`), the page above this one and the pages under it, as a list of links.
+    Context: `parent` ({title, url} or null), `children` (list of {title, url}), `title` (this page's title).
+#}
+<h2 id="page-aside-title">{{ t('In this section') }}</h2>
+<ul class="section-links">
+    {%- if parent %}
+    <li><a href="{{ parent.url }}">{{ t('Back to {page}', {page: parent.title}) }}</a></li>
+    {%- endif %}
+    {%- for child in children %}
+    <li><a href="{{ child.url }}">{{ child.title }}</a></li>
+    {%- endfor %}
+</ul>

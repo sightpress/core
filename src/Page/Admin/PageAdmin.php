@@ -9,7 +9,7 @@ use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\PageRepository;
 use SightPress\Core\Rbac\Contract\PageState;
 use Slim\Exception\HttpNotFoundException;
-use Twig\Environment;
+use SightPress\Core\Theme\Contract\ThemeLayouts;
 
 /**
  * What the page screens share: their addresses, the words for a page's state, the layouts a page can use and
@@ -25,11 +25,14 @@ final readonly class PageAdmin
     public const array LAYOUTS = [
         'default' => 'Standard page',
         'home' => 'Home page: the title and summary as a large introduction',
+        'landing' => 'Landing page: a wide introduction band, then content across the page, for a campaign or an event',
+        'sidebar' => 'Page with a side column that lists the pages in its section',
+        'full-width' => 'Wide page: content across the whole width, for wide tables and galleries',
     ];
 
     public function __construct(
         private PageRepository $pages,
-        private Environment $twig,
+        private ThemeLayouts $themeLayouts,
     ) {
     }
 
@@ -77,7 +80,7 @@ final readonly class PageAdmin
     {
         $layouts = array_filter(
             self::LAYOUTS,
-            fn (string $name): bool => $this->twig->getLoader()->exists('layouts/' . $name . '.html.twig'),
+            fn (string $name): bool => $this->themeLayouts->provides($name),
             ARRAY_FILTER_USE_KEY,
         );
         if ($current !== null && !isset($layouts[$current])) {

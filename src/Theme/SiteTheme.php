@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Template\Message;
 use SightPress\Core\Template\TemplatePaths;
+use SightPress\Core\Theme\Contract\ThemeLayouts;
 use SightPress\Core\Theme\Contract\ThemeStatus;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Theme\ThemeInterface;
@@ -18,7 +19,7 @@ use Throwable;
  * sites. When that theme isn't installed, can't be used with this SightPress, or the tenant no longer allows it, the
  * site falls back to the default theme, the reason is logged as a warning, and admins see it ({@see problem()}).
  */
-final class SiteTheme implements ThemeStatus
+final class SiteTheme implements ThemeStatus, ThemeLayouts
 {
     /** The site setting that holds the chosen theme's id. */
     public const string SETTING = 'theme';
@@ -103,6 +104,16 @@ final class SiteTheme implements ThemeStatus
         }
 
         return substr(hash('sha256', ($core ?? '') . '|' . $manifest->id . '|' . $manifest->version . '|' . $colours), 0, 12);
+    }
+
+    public function provides(string $layout): bool
+    {
+        return $this->theme()->manifest()->provides($layout);
+    }
+
+    public function template(string $layout): string
+    {
+        return $this->theme()->manifest()->resolveLayout($layout)->template();
     }
 
     /**
