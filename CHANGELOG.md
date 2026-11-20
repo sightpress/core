@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.0](https://github.com/sightpress/core/compare/0.3.0...0.4.0) (2026-11-20)
+
+
+### Features
+
+* add the Appearance screen to choose the site's theme and change its colours, and theme:publish-assets for its previews (T-2) ([#95](https://github.com/sightpress/core/issues/95)) ([e2dc9b2](https://github.com/sightpress/core/commit/e2dc9b258da4909de5c0eaca363a76fb459a995e))
+* add theme:preview, a static, offline preview page of a theme made from theme-interface's sample page (T-5) ([#89](https://github.com/sightpress/core/issues/89)) ([88a678c](https://github.com/sightpress/core/commit/88a678c380ad17ad583603e6aeda38fa88183055))
+* find the themes installed with Composer, check them, and let each site use its own, with theme:list, theme:validate, site:theme:apply and cache:clear (T-1) ([#94](https://github.com/sightpress/core/issues/94)) ([94da8ad](https://github.com/sightpress/core/commit/94da8ad87356a56c2f10255613ea2f933f70eaeb))
+* let editors use the landing, sidebar and full-width layouts, list a section's pages beside a sidebar page, and say which pages lose their layout before a theme change (T-3) ([#96](https://github.com/sightpress/core/issues/96)) ([4172ba9](https://github.com/sightpress/core/commit/4172ba917aef16ab8e74784981c6d30ec5f21535))
+* take the default theme from the sightpress/theme-default package and keep no theme files in core (T-0) ([#93](https://github.com/sightpress/core/issues/93)) ([a7aa7ce](https://github.com/sightpress/core/commit/a7aa7ce2a5c29212a19f9d4fd80412423d188369))
+
 ## [0.3.0](https://github.com/sightpress/core/compare/0.2.0...0.3.0) (2026-11-19)
 
 
