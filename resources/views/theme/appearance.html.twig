@@ -1,0 +1,52 @@
+{#
+    The site's theme (/admin/appearance, T-2): every installed theme in its own section under an <h2> (the id
+    `anchor`, where the screen comes back after a change), with its description, version and status in words ("The
+    site's theme", "Can't be used: …", "Not allowed on this server"); the screenshot of its preview page, whose alt text
+    is the theme's own description of its look (without a screenshot, that description is shown as text); a link to
+    the preview page in a new tab, said in the link text; and a "Use …" button in its own form. The site's own colours
+    are on their own screen.
+    Context: `themes` [{manifest, anchor, current, unavailable, allowed, screenshot, preview}], `problem`, `action`,
+    `colours`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Appearance') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Appearance') }}</h1>
+<p>{{ t('The theme decides how the site looks: colours, fonts and the layout of its pages. Your pages stay the same when you change it.') }}</p>
+{%- if problem %}
+<section class="alert alert--warning" aria-labelledby="theme-problem-title">
+    <div>
+        <h2 id="theme-problem-title">{{ t('Your site is shown in the default theme') }}</h2>
+        <p>{{ t(problem) }} {{ t('Visitors see the default theme until an admin chooses another one.') }}</p>
+    </div>
+</section>
+{%- endif %}
+<p><a href="{{ colours }}">{{ t('Change the colours of the site’s theme') }}</a></p>
+{%- for item in themes %}
+{%- set theme = item.manifest %}
+<section class="admin-panel theme-choice" aria-labelledby="{{ item.anchor }}">
+    <h2 id="{{ item.anchor }}" tabindex="-1">{{ theme.name }}</h2>
+    <p>{{ theme.description }}</p>
+    <p class="theme-choice__status"><strong>{{ t('Status:') }}</strong>
+        {% if item.current %}{{ t('The site’s theme') }}{% elseif item.unavailable %}{{ t('Can’t be used with this version of SightPress') }}{% elseif not item.allowed %}{{ t('Not allowed on this server') }}{% else %}{{ t('Available') }}{% endif %}</p>
+    <p>{{ t('Version {version}', {version: theme.version}) }}{% if theme.author %}, {{ t('by {author}', {author: theme.author}) }}{% endif %}</p>
+    {%- if item.unavailable %}
+    <p>{{ item.unavailable }}</p>
+    {%- endif %}
+    {%- if item.screenshot %}
+    <img class="theme-choice__screenshot" src="{{ item.screenshot }}" alt="{{ theme.previewDescription ?? t('The top of the preview page of {name}.', {name: theme.name}) }}" width="640" height="400" loading="lazy">
+    {%- elseif theme.previewDescription %}
+    <p><strong>{{ t('What it looks like:') }}</strong> {{ theme.previewDescription }}</p>
+    {%- endif %}
+    {%- if item.preview %}
+    <p><a href="{{ item.preview }}" target="_blank" rel="noopener">{{ t('Preview {name} (opens in a new tab)', {name: theme.name}) }}</a></p>
+    {%- endif %}
+    {%- if not item.current and not item.unavailable and item.allowed %}
+    <form action="{{ action }}" method="post" class="theme-choice__action">
+        {{ csrf_fields() }}
+        <button type="submit" name="theme" value="{{ theme.id }}" class="button">{{ t('Use {name}', {name: theme.name}) }}</button>
+    </form>
+    {%- endif %}
+</section>
+{%- endfor %}
+{% endblock %}

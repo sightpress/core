@@ -9,6 +9,7 @@ use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
 use SightPress\Core\Analytics\Contract\AnalyticsDataDeleted;
 use SightPress\Core\Assistant\Contract\AssistantUsed;
 use SightPress\Core\Theme\Contract\ThemeApplied;
+use SightPress\Core\Theme\Contract\ThemeColoursChanged;
 use SightPress\Core\Media\Contract\MediaChanged;
 use SightPress\Core\Media\Contract\MediaDeleted;
 use SightPress\Core\Media\Contract\MediaLibrary;
@@ -51,7 +52,7 @@ final readonly class AuditRecorder
         PageScheduled::class, ScheduledStepFailed::class,
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
         MenuChanged::class, RoleChanged::class, AccountChanged::class, AccountRegistered::class, SettingsChanged::class,
-        SiteModuleChanged::class, AnalyticsDataDeleted::class, AssistantUsed::class, ThemeApplied::class,
+        SiteModuleChanged::class, AnalyticsDataDeleted::class, AssistantUsed::class, ThemeApplied::class, ThemeColoursChanged::class,
     ];
 
     public function __construct(
@@ -121,6 +122,9 @@ final readonly class AuditRecorder
                 SiteModuleChanged::DATA_DELETED => 'Deleted the data of %s.',
             }, $event->name), ['module' => $event->moduleId]),
             $event instanceof ThemeApplied => $this->entry($event->actorId, 'theme.applied', 'theme', $event->themeId, sprintf('Applied the theme %s.', $event->name), ['previous' => $event->previous]),
+            $event instanceof ThemeColoursChanged => $this->entry($event->actorId, $event->colours === [] ? 'theme.colours_reset' : 'theme.colours_changed', 'theme', $event->themeId, $event->colours === []
+                ? sprintf('Went back to the colours of the theme %s.', $event->name)
+                : sprintf('Changed the colours of the theme %s.', $event->name), ['colours' => $event->colours]),
             $event instanceof AnalyticsDataDeleted => $this->entry($event->actorId, 'analytics.deleted', 'settings', null, 'Deleted all analytics data.', []),
             $event instanceof AssistantUsed => $this->entry($event->actorId, 'assistant.used', 'assistant', $event->task, sprintf(
                 $event->outcome === 'ok' ? 'Used the AI assistant (%s) with %s, %s: %d tokens.' : 'Asked the AI assistant (%s) with %s, %s, without a suggestion: %s.',

@@ -113,6 +113,8 @@ final class AuditRecorderTest extends TestCase
             new \SightPress\Core\Assistant\Contract\AssistantUsed(null, 'connection_test', 'openai', 'gpt-5', 0, 0, 'invalid_key'),
             new SettingsChanged(['assistant.provider', 'assistant.model', 'assistant.base_url', 'assistant.key', 'assistant.monthly_budget', 'assistant.roles'], 1),
             new \SightPress\Core\Theme\Contract\ThemeApplied('acme-harbour', 'Harbour', null, null),
+            new \SightPress\Core\Theme\Contract\ThemeColoursChanged('acme-harbour', 'Harbour', ['dark.link'], 1),
+            new \SightPress\Core\Theme\Contract\ThemeColoursChanged('acme-harbour', 'Harbour', [], 1),
             new \stdClass(),
         ] as $event) {
             $recorder($event);
@@ -168,6 +170,8 @@ final class AuditRecorderTest extends TestCase
             'Asked the AI assistant (connection test) with openai, gpt-5, without a suggestion: invalid key.',
             'Changed the site settings: AI service, AI model, AI service address, AI service key, AI assistant budget, Who may use the AI assistant.',
             'Applied the theme Harbour.',
+            'Changed the colours of the theme Harbour.',
+            'Went back to the colours of the theme Harbour.',
         ], array_map(static fn (AuditEntry $e): string => $e->summary, $entries));
         self::assertSame(['page.submit', 'page', (string) $page, 3, ['from' => 'draft', 'to' => 'in_review', 'comment' => 'Ready']], [$entries[3]->action, $entries[3]->entityType, $entries[3]->entityId, $entries[3]->actorId, $entries[3]->details]);
         self::assertSame(['settings', null], [$entries[20]->entityType, $entries[20]->entityId]);
@@ -184,6 +188,7 @@ final class AuditRecorderTest extends TestCase
         self::assertSame(['analytics.deleted', 'settings', null, 1, 'Deleted all analytics data.'], [$entries[43]->action, $entries[43]->entityType, $entries[43]->entityId, $entries[43]->actorId, $entries[43]->summary]);
         self::assertSame(['assistant.used', 'assistant', 'seo_meta', 4, ['task' => 'seo_meta', 'provider' => 'anthropic', 'model' => 'claude-haiku-5-5', 'input_tokens' => 300, 'output_tokens' => 40, 'outcome' => 'ok']], [$entries[44]->action, $entries[44]->entityType, $entries[44]->entityId, $entries[44]->actorId, $entries[44]->details]);
         self::assertSame(['theme.applied', 'theme', 'acme-harbour', null, ['previous' => null]], [$entries[47]->action, $entries[47]->entityType, $entries[47]->entityId, $entries[47]->actorId, $entries[47]->details]);
-        self::assertCount(23, AuditRecorder::EVENTS);
+        self::assertSame(['theme.colours_changed', ['colours' => ['dark.link']]], [$entries[48]->action, $entries[48]->details]);
+        self::assertCount(24, AuditRecorder::EVENTS);
     }
 }

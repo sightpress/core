@@ -691,6 +691,12 @@
         <target>Cualquiera puede crear una cuenta. Las cuentas nuevas reciben el rol “{role}” cuando confirman su dirección de correo.</target>
       </segment>
     </unit>
+    <unit id="3907fa7f80722a6f">
+      <segment>
+        <source>Appearance</source>
+        <target>Apariencia</target>
+      </segment>
+    </unit>
     <unit id="b963d27ae3bc880a">
       <segment>
         <source>Apply themes</source>
@@ -805,10 +811,22 @@
         <target>Registro de auditoría</target>
       </segment>
     </unit>
+    <unit id="e674447337e83c13">
+      <segment>
+        <source>Available</source>
+        <target>Disponible</target>
+      </segment>
+    </unit>
     <unit id="1f0cc35745fb7f9f">
       <segment>
         <source>Avatar colour "{color}" must be written as #rrggbb in lower case.</source>
         <target>El color del avatar "{color}" debe escribirse como #rrggbb en minúsculas.</target>
+      </segment>
+    </unit>
+    <unit id="c20512d33bf974a1">
+      <segment>
+        <source>Back to Appearance</source>
+        <target>Volver a Apariencia</target>
       </segment>
     </unit>
     <unit id="6740b83446d19bbe">
@@ -865,10 +883,22 @@
         <target>Volver a la configuración del sitio</target>
       </segment>
     </unit>
+    <unit id="ea2b8a878841df59">
+      <segment>
+        <source>Background</source>
+        <target>Fondo</target>
+      </segment>
+    </unit>
     <unit id="34030c9d46e7cc79">
       <segment>
         <source>Bar chart: {title}</source>
         <target>Gráfico de barras: {title}</target>
+      </segment>
+    </unit>
+    <unit id="1372f2fa77231c36">
+      <segment>
+        <source>Behind the text of every page.</source>
+        <target>Detrás del texto de todas las páginas.</target>
       </segment>
     </unit>
     <unit id="5d4b008ca70e5029">
@@ -907,6 +937,12 @@
         <target>Bloques</target>
       </segment>
     </unit>
+    <unit id="09d52690354c13c1">
+      <segment>
+        <source>Borders of fields and boxes</source>
+        <target>Bordes de campos y cuadros</target>
+      </segment>
+    </unit>
     <unit id="d417aa16da364524">
       <segment>
         <source>Branding</source>
@@ -925,6 +961,12 @@
         <target>Texto del botón</target>
       </segment>
     </unit>
+    <unit id="136a744be6321d9f">
+      <segment>
+        <source>Buttons and highlights</source>
+        <target>Botones y elementos destacados</target>
+      </segment>
+    </unit>
     <unit id="125466b821c6448a">
       <segment>
         <source>By</source>
@@ -935,6 +977,12 @@
       <segment>
         <source>Call to action</source>
         <target>Llamada a la acción</target>
+      </segment>
+    </unit>
+    <unit id="911cc322aab5de80">
+      <segment>
+        <source>Can’t be used with this version of SightPress</source>
+        <target>No se puede usar con esta versión de SightPress</target>
       </segment>
     </unit>
     <unit id="87d296ec94898c86">
@@ -995,6 +1043,12 @@
       <segment>
         <source>Change role</source>
         <target>Cambiar el rol</target>
+      </segment>
+    </unit>
+    <unit id="2028d82a974aca3c">
+      <segment>
+        <source>Change the colours of the site’s theme</source>
+        <target>Cambiar los colores del tema del sitio</target>
       </segment>
     </unit>
     <unit id="af4192f42f3f9209">
@@ -1207,6 +1261,12 @@
         <target>El código funciona hasta</target>
       </segment>
     </unit>
+    <unit id="88f20221cac178c4">
+      <segment>
+        <source>Colours</source>
+        <target>Colores</target>
+      </segment>
+    </unit>
     <unit id="3fdc9a587693f9e6">
       <segment>
         <source>Column</source>
@@ -1379,6 +1439,12 @@
       <segment>
         <source>Current password</source>
         <target>Contraseña actual</target>
+      </segment>
+    </unit>
+    <unit id="9b7878aef90b527c">
+      <segment>
+        <source>Dark mode</source>
+        <target>Modo oscuro</target>
       </segment>
     </unit>
     <unit id="67b696468610b879">
@@ -2027,6 +2093,12 @@
       <segment>
         <source>Fix before publishing</source>
         <target>Corregir antes de publicar</target>
+      </segment>
+    </unit>
+    <unit id="e337287401e76987">
+      <segment>
+        <source>Focus outline</source>
+        <target>Contorno de foco</target>
       </segment>
     </unit>
     <unit id="26c87bb51e6978fe">
@@ -2761,6 +2833,12 @@
         <target>Nivel</target>
       </segment>
     </unit>
+    <unit id="b4fcfbee4fb937d7">
+      <segment>
+        <source>Light mode</source>
+        <target>Modo claro</target>
+      </segment>
+    </unit>
     <unit id="2b4003d1fed60aec">
       <segment>
         <source>Line chart of {what} on {day}</source>
@@ -2789,6 +2867,12 @@
       <segment>
         <source>Link text</source>
         <target>Texto del enlace</target>
+      </segment>
+    </unit>
+    <unit id="9024c197d84940e4">
+      <segment>
+        <source>Links</source>
+        <target>Enlaces</target>
       </segment>
     </unit>
     <unit id="6f202f54a7b2d8fe">
@@ -3277,6 +3361,12 @@
         <target>Ninguno</target>
       </segment>
     </unit>
+    <unit id="ce1a721d92b246df">
+      <segment>
+        <source>Not allowed on this server</source>
+        <target>No permitido en este servidor</target>
+      </segment>
+    </unit>
     <unit id="117adf013b8521b5">
       <segment>
         <source>Not known</source>
@@ -3299,12 +3389,6 @@
       <segment>
         <source>Not ready yet.</source>
         <target>Todavía no está listo.</target>
-      </segment>
-    </unit>
-    <unit id="3bbe7ecfd73d004a">
-      <segment>
-        <source>Not yet changeable</source>
-        <target>Aún no se puede cambiar</target>
       </segment>
     </unit>
     <unit id="0bc54243c4fa448f">
@@ -3769,6 +3853,12 @@
         <target>Vista previa de {block}</target>
       </segment>
     </unit>
+    <unit id="accd7a7b3031e946">
+      <segment>
+        <source>Preview {name} (opens in a new tab)</source>
+        <target>Vista previa de {name} (se abre en una pestaña nueva)</target>
+      </segment>
+    </unit>
     <unit id="a57b08a480b822a0">
       <segment>
         <source>Previous</source>
@@ -4157,6 +4247,12 @@
       <segment>
         <source>Save the AI service</source>
         <target>Guardar el servicio de IA</target>
+      </segment>
+    </unit>
+    <unit id="67f2484154d126a8">
+      <segment>
+        <source>Save the colours</source>
+        <target>Guardar los colores</target>
       </segment>
     </unit>
     <unit id="abdc1b19de61f956">
@@ -4621,10 +4717,10 @@
         <target>Se muestra cuando alguien comparte una página del sitio. Al menos {share_width} × {share_height} píxeles: JPEG, PNG o WebP. Una imagen más grande se recorta desde el centro.</target>
       </segment>
     </unit>
-    <unit id="af5508afae44ccd3">
+    <unit id="a2464934adfe1ef7">
       <segment>
-        <source>SightPress Default. More themes come in a later version.</source>
-        <target>SightPress Default. Llegarán más temas en una versión posterior.</target>
+        <source>Shows where the keyboard is.</source>
+        <target>Muestra dónde está el teclado.</target>
       </segment>
     </unit>
     <unit id="618ab7d74d2fc262">
@@ -5065,6 +5161,12 @@
         <target>Texto en {language}</target>
       </segment>
     </unit>
+    <unit id="6caf2c853d39e5c2">
+      <segment>
+        <source>Text on buttons</source>
+        <target>Texto de los botones</target>
+      </segment>
+    </unit>
     <unit id="9bfcca9a11fb3800">
       <segment>
         <source>Text to rewrite</source>
@@ -5375,6 +5477,12 @@
       <segment>
         <source>The code works for {duration}, and only once.</source>
         <target>El código funciona durante {duration} y solo una vez.</target>
+      </segment>
+    </unit>
+    <unit id="45a219ace49e290f">
+      <segment>
+        <source>The colours are saved.</source>
+        <target>Los colores se han guardado.</target>
       </segment>
     </unit>
     <unit id="389c7d9b5c1e6c32">
@@ -5947,6 +6055,36 @@
         <target>El nombre del sitio puede tener como máximo 120 caracteres</target>
       </segment>
     </unit>
+    <unit id="25e47d8969c50657">
+      <segment>
+        <source>The site uses some colours of its own.</source>
+        <target>El sitio usa algunos colores propios.</target>
+      </segment>
+    </unit>
+    <unit id="79f31e2e66c7685f">
+      <segment>
+        <source>The site uses the colours of {name} again.</source>
+        <target>El sitio vuelve a usar los colores de {name}.</target>
+      </segment>
+    </unit>
+    <unit id="52a62a525c4f5b42">
+      <segment>
+        <source>The site uses the theme’s own colours.</source>
+        <target>El sitio usa los colores propios del tema.</target>
+      </segment>
+    </unit>
+    <unit id="fa773a56d6fe5010">
+      <segment>
+        <source>The site’s theme</source>
+        <target>El tema del sitio</target>
+      </segment>
+    </unit>
+    <unit id="63abe0a5317f4901">
+      <segment>
+        <source>The site’s theme and colours are on their own page:</source>
+        <target>El tema y los colores del sitio están en su propia página:</target>
+      </segment>
+    </unit>
     <unit id="58eb5392b1a835a5">
       <segment>
         <source>The starter pages are already written in {language}.</source>
@@ -5989,6 +6127,18 @@
         <target>El color del texto {foreground} sobre {behind} tiene un contraste de {ratio}:1{mode}; necesita al menos 4,5:1. Elige otro color, añade un color de fondo que vaya con él o quítalo.</target>
       </segment>
     </unit>
+    <unit id="0e36e80f40d72c36">
+      <segment>
+        <source>The theme can’t be used: {reason}</source>
+        <target>No se puede usar el tema: {reason}</target>
+      </segment>
+    </unit>
+    <unit id="6709bb7f5e27646c">
+      <segment>
+        <source>The theme decides how the site looks: colours, fonts and the layout of its pages. Your pages stay the same when you change it.</source>
+        <target>El tema decide el aspecto del sitio: colores, tipos de letra y la disposición de las páginas. Sus páginas no cambian cuando lo cambia.</target>
+      </segment>
+    </unit>
     <unit id="bd0c02d99cccfe87">
       <segment>
         <source>The theme {theme} doesn’t work with this version of SightPress.</source>
@@ -6029,6 +6179,12 @@
       <segment>
         <source>The top level of the site</source>
         <target>El nivel superior del sitio</target>
+      </segment>
+    </unit>
+    <unit id="2f74db975601df48">
+      <segment>
+        <source>The top of the preview page of {name}.</source>
+        <target>La parte superior de la página de vista previa de {name}.</target>
       </segment>
     </unit>
     <unit id="dcfc4c4510532334">
@@ -6157,12 +6313,6 @@
         <target>El {what} puede tener como máximo {max} caracteres.</target>
       </segment>
     </unit>
-    <unit id="efb52e7172b77731">
-      <segment>
-        <source>Theme</source>
-        <target>Tema</target>
-      </segment>
-    </unit>
     <unit id="346d867592183370">
       <segment>
         <source>There are no blocks yet. Add the first one below.</source>
@@ -6281,6 +6431,12 @@
       <segment>
         <source>These buttons use the saved page. Save your changes first.</source>
         <target>Estos botones usan la página guardada. Guarda primero tus cambios.</target>
+      </segment>
+    </unit>
+    <unit id="f27f74ba5ce7a460">
+      <segment>
+        <source>These colours replace the ones of {name}, the site’s theme, on every page of the site. They must keep enough contrast: text 4.5 to 1, borders and buttons 3 to 1. The admin panel keeps its own colours.</source>
+        <target>Estos colores sustituyen a los de {name}, el tema del sitio, en todas las páginas del sitio. Deben mantener suficiente contraste: texto 4,5 a 1, bordes y botones 3 a 1. El panel de administración conserva sus propios colores.</target>
       </segment>
     </unit>
     <unit id="dfe48d3160fdfea5">
@@ -6889,6 +7045,18 @@
         <target>Usar la administración</target>
       </segment>
     </unit>
+    <unit id="27198bab5a5c2091">
+      <segment>
+        <source>Use the theme’s own colours</source>
+        <target>Usar los colores propios del tema</target>
+      </segment>
+    </unit>
+    <unit id="a622e464b0866447">
+      <segment>
+        <source>Use {name}</source>
+        <target>Usar {name}</target>
+      </segment>
+    </unit>
     <unit id="96cb79324a257f15">
       <segment>
         <source>Use {{ compared_value }} or less.</source>
@@ -6953,6 +7121,12 @@
       <segment>
         <source>Version {number} of “{title}”</source>
         <target>Versión {number} de «{title}»</target>
+      </segment>
+    </unit>
+    <unit id="a18745121bb8af6d">
+      <segment>
+        <source>Version {version}</source>
+        <target>Versión {version}</target>
       </segment>
     </unit>
     <unit id="07ae1fa82853674c">
@@ -7181,6 +7355,12 @@
       <segment>
         <source>What is sent, and what is kept</source>
         <target>Qué se envía y qué se guarda</target>
+      </segment>
+    </unit>
+    <unit id="277803fef8046832">
+      <segment>
+        <source>What it looks like:</source>
+        <target>Aspecto:</target>
       </segment>
     </unit>
     <unit id="038026723cc44e89">
@@ -7759,6 +7939,12 @@
         <target>bloque {index}, {label}</target>
       </segment>
     </unit>
+    <unit id="5be0b65ad624c00c">
+      <segment>
+        <source>by {author}</source>
+        <target>de {author}</target>
+      </segment>
+    </unit>
     <unit id="c38c63d8f14f4353">
       <segment>
         <source>check: {check}</source>
@@ -8179,6 +8365,18 @@
         <target>{first}, {rest}</target>
       </segment>
     </unit>
+    <unit id="886ed3a3b425ee14">
+      <segment>
+        <source>{foreground} on {background} has a contrast of {ratio}:1 in dark mode; it needs at least {minimum}:1. Choose a darker or lighter colour.</source>
+        <target>{foreground} sobre {background} tiene un contraste de {ratio}:1 en el modo oscuro; necesita al menos {minimum}:1. Elija un color más oscuro o más claro.</target>
+      </segment>
+    </unit>
+    <unit id="837e9d05cd0ef061">
+      <segment>
+        <source>{foreground} on {background} has a contrast of {ratio}:1 in light mode; it needs at least {minimum}:1. Choose a darker or lighter colour.</source>
+        <target>{foreground} sobre {background} tiene un contraste de {ratio}:1 en el modo claro; necesita al menos {minimum}:1. Elija un color más oscuro o más claro.</target>
+      </segment>
+    </unit>
     <unit id="ba318cc195ceff48">
       <segment>
         <source>{from} to {to}</source>
@@ -8309,6 +8507,12 @@
       <segment>
         <source>{name} is already in the library, so it wasn’t added again. Here it is.</source>
         <target>{name} ya está en la biblioteca, así que no se ha vuelto a añadir. Aquí está.</target>
+      </segment>
+    </unit>
+    <unit id="da5f64f58f3b48f1">
+      <segment>
+        <source>{name} is now the site’s theme.</source>
+        <target>{name} es ahora el tema del sitio.</target>
       </segment>
     </unit>
     <unit id="56c04276fde4878e">

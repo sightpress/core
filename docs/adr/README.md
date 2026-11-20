@@ -64,5 +64,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0044](0044-assistant-drafted-translations.md) | AI assistant: translations drafted by the assistant, checked by a person | Accepted |
 | [0045](0045-theme-architecture-and-preview.md) | Themes: the architecture in theme-interface, and the static preview page | Proposed |
 | [0047](0047-theme-discovery-and-per-site-themes.md) | Themes: discovery, a theme per site, and an admin that keeps the default theme | Proposed |
+| [0048](0048-theme-picker-and-site-colours.md) | Themes: the admin theme picker, published previews and a site's own colours | Proposed |
 
 When an ADR's status changes, update it here too.

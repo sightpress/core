@@ -1,0 +1,37 @@
+{#
+    The site's own colours (/admin/appearance/colours, T-2): the main colours of the site's theme in light and dark
+    mode, each a text field with its value as # and six hex digits, in one fieldset per mode. Saving checks contrast
+    first; a failing pair is named with both colours and the ratio, in words, on the field that changed, and the form
+    keeps what was typed. Nothing is shown by colour alone. "Use the theme's own colours" posts `reset`.
+    Context: `form`, `theme` (manifest), `action`, `appearance`, `customised`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Colours') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Colours') }}</h1>
+<p>{{ t('These colours replace the ones of {name}, the site’s theme, on every page of the site. They must keep enough contrast: text 4.5 to 1, borders and buttons 3 to 1. The admin panel keeps its own colours.', {name: theme.name}) }}</p>
+<p>{{ customised ? t('The site uses some colours of its own.') : t('The site uses the theme’s own colours.') }} <a href="{{ appearance }}">{{ t('Back to Appearance') }}</a></p>
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    <fieldset class="admin-panel">
+        <legend>{{ t('Light mode') }}</legend>
+        {%- for name in ['light__background', 'light__text', 'light__link', 'light__primary', 'light__on_primary', 'light__border', 'light__focus'] %}
+        {{ f.field(form, name) }}
+        {%- endfor %}
+    </fieldset>
+    <fieldset class="admin-panel">
+        <legend>{{ t('Dark mode') }}</legend>
+        {%- for name in ['dark__background', 'dark__text', 'dark__link', 'dark__primary', 'dark__on_primary', 'dark__border', 'dark__focus'] %}
+        {{ f.field(form, name) }}
+        {%- endfor %}
+    </fieldset>
+    {{ f.submit(t('Save the colours')) }}
+{{ f.end() }}
+{%- if customised %}
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <button type="submit" name="reset" value="1" class="button button--secondary">{{ t('Use the theme’s own colours') }}</button>
+</form>
+{%- endif %}
+{% endblock %}

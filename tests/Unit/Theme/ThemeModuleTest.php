@@ -38,10 +38,10 @@ final class ThemeModuleTest extends TestCase
         self::assertSame([], $module->manifest()->requires);
 
         $routes = array_values(array_filter($registry->routes(), static fn ($r) => $r->module === 'theme'));
-        self::assertSame('theme.asset', $routes[0]->item->name);
-        self::assertSame('/assets/{path:.+}', $routes[0]->item->path);
-        self::assertSame(['GET', 'HEAD'], $routes[0]->item->methods);
-        self::assertSame(ThemeAssetHandler::class, $routes[0]->item->handler);
+        self::assertSame(['theme.appearance', 'theme.colours', 'theme.asset'], array_map(static fn ($r) => $r->item->name, $routes));
+        self::assertSame('/assets/{path:.+}', $routes[2]->item->path);
+        self::assertSame(['GET', 'HEAD'], $routes[2]->item->methods);
+        self::assertSame(ThemeAssetHandler::class, $routes[2]->item->handler);
 
         foreach ([ThemeLoader::class, TokenStylesheet::class, ThemeAssets::class, ThemeAssetHandler::class, ThemeValidator::class] as $id) {
             self::assertSame($id, $registry->services()[$id]->item->class);
@@ -49,7 +49,7 @@ final class ThemeModuleTest extends TestCase
         self::assertTrue($registry->services()[ThemeValidator::class]->item->public);
         self::assertSame(\SightPress\Core\Theme\ThemePageColours::class, $registry->services()[\SightPress\Core\Theme\Contract\PageColours::class]->item->class);
         $commands = array_values(array_filter($registry->commands(), static fn ($c) => $c->module === 'theme'));
-        self::assertSame([ValidateThemeCommand::class, \SightPress\Core\Theme\Command\PreviewThemeCommand::class, \SightPress\Core\Theme\Command\ListThemesCommand::class, \SightPress\Core\Theme\Command\ApplyThemeCommand::class], array_map(static fn ($c) => $c->item, $commands));
+        self::assertSame([ValidateThemeCommand::class, \SightPress\Core\Theme\Command\PublishThemeAssetsCommand::class, \SightPress\Core\Theme\Command\PreviewThemeCommand::class, \SightPress\Core\Theme\Command\ListThemesCommand::class, \SightPress\Core\Theme\Command\ApplyThemeCommand::class], array_map(static fn ($c) => $c->item, $commands));
     }
 
     public function testTheActiveThemeIsTheFirstThemeFolderOrTheDefaultTheme(): void

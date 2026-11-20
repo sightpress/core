@@ -11,6 +11,7 @@
 {% block content %}
 <h1>{{ t('Site settings') }}</h1>
 <p>{{ t('The logo, icon and share picture are on their own page:') }} <a href="/admin/settings/branding">{{ t('Branding') }}</a>.</p>
+<p>{{ t('The site’s theme and colours are on their own page:') }} <a href="/admin/appearance">{{ t('Appearance') }}</a>.</p>
 <p>{{ sign_up_open ? t('Anyone can create an account.') : t('Only people you invite can join.') }} <a href="/admin/settings/sign-up">{{ t('Change who can sign up') }}</a></p>
 {{ f.error_summary(form) }}
 {{ f.start(form, action) }}
@@ -33,13 +34,6 @@
         {%- endfor %}
     </fieldset>
     {%- endfor %}
-    <section class="admin-panel" aria-labelledby="settings-later">
-        <h2 id="settings-later">{{ t('Not yet changeable') }}</h2>
-        <dl class="people-details">
-            <dt>{{ t('Theme') }}</dt>
-            <dd>{{ t('SightPress Default. More themes come in a later version.') }}</dd>
-        </dl>
-    </section>
     {{ f.submit(t('Save settings')) }}
 {{ f.end() }}
 {% endblock %}

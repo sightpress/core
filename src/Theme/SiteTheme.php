@@ -87,16 +87,22 @@ final class SiteTheme implements ThemeStatus
     }
 
     /**
-     * The version in the addresses of the site's static files (`asset()`): core's version and the theme's id and
-     * version, so browsers fetch the files again after an update or when the site changes theme.
+     * The version in the addresses of the site's static files (`asset()`): core's version, the theme's id and
+     * version and the site's own colours, so browsers fetch the files again after an update, a change of theme or of
+     * colours.
      *
      * @param string|null $core core's version (Composer's reference of `sightpress/core`)
      */
     public function assetVersion(?string $core): string
     {
         $manifest = $this->theme()->manifest();
+        try {
+            $colours = (string) $this->settings->get(ThemeColours::SETTING . $manifest->id);
+        } catch (Throwable) {
+            $colours = '';
+        }
 
-        return substr(hash('sha256', ($core ?? '') . '|' . $manifest->id . '|' . $manifest->version), 0, 12);
+        return substr(hash('sha256', ($core ?? '') . '|' . $manifest->id . '|' . $manifest->version . '|' . $colours), 0, 12);
     }
 
     /**

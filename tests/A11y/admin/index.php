@@ -20,6 +20,10 @@
  * ready, and `/_test/picture` adds a picture to the media library and answers with its id. The `translate` copy
  * (A-6) is the same, written in British English and European Portuguese.
  *
+ * The `appearance` copy (T-2) also has a second theme installed, "Harbour" (the contract's fake theme, through
+ * vendor/composer/installed.json), and serves the previews `/_test/publish` (theme:publish-assets) writes to its public
+ * folder (`/themes/…`), as a web server would.
+ *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
  */
@@ -80,6 +84,21 @@ $mailbox = $project . '/mail';
 if ($path === '/_test/reset') {
     exec('rm -rf ' . escapeshellarg($project));
     http_response_code(204);
+
+    return;
+}
+
+if (basename($project) === 'sightpress-a11y-appearance' && !is_file($project . '/vendor/composer/installed.json')) {
+    @mkdir($project . '/vendor/composer', 0o777, true);
+    file_put_contents($project . '/vendor/composer/installed.json', (string) json_encode(['packages' => [
+        ['name' => 'acme/theme-harbour', 'type' => 'sightpress-theme', 'extra' => ['sightpress' => ['theme' => SightPress\Core\Tests\Support\Theme\HarbourTheme::class]]],
+    ]]));
+}
+// The published theme previews (`theme:publish-assets`) are static files the web server sends.
+if (str_starts_with($path, '/themes/') && !str_contains($path, '..') && is_file($project . '/public' . $path)) {
+    $types = ['html' => 'text/html; charset=utf-8', 'css' => 'text/css', 'js' => 'text/javascript', 'png' => 'image/png', 'jpg' => 'image/jpeg', 'svg' => 'image/svg+xml', 'ico' => 'image/vnd.microsoft.icon'];
+    header('Content-Type: ' . ($types[pathinfo($path, PATHINFO_EXTENSION)] ?? 'application/octet-stream'));
+    readfile($project . '/public' . $path);
 
     return;
 }
@@ -190,6 +209,18 @@ if ($path === '/_test/invitation') {
     );
     header('Content-Type: text/plain');
     echo $code->code;
+
+    return;
+}
+
+// Publishes the installed themes' previews (theme:publish-assets, without screenshots) to the public folder.
+if ($path === '/_test/publish') {
+    $console = boot($project, $environment)->console();
+    $console->setAutoExit(false);
+    $status = $console->run(new Symfony\Component\Console\Input\ArrayInput(['command' => 'theme:publish-assets', '--no-screenshot' => true]), $output = new Symfony\Component\Console\Output\BufferedOutput());
+    http_response_code($status === 0 ? 200 : 500);
+    header('Content-Type: text/plain');
+    echo $output->fetch();
 
     return;
 }

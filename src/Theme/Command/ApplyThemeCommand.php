@@ -63,7 +63,6 @@ final readonly class ApplyThemeCommand implements Command
 
             return self::FAILURE;
         }
-        $this->containers->evict($slug);
         $output->line(sprintf('Applied the theme "%s" to %s.', $check->name, $slug));
 
         return self::SUCCESS;

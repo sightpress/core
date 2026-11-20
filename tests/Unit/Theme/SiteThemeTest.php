@@ -99,7 +99,9 @@ final class SiteThemeTest extends TestCase
             }
         };
 
-        self::assertSame('default', new SiteTheme(new ThemeRegistry([new HarbourTheme()]), self::config([]), $settings, $this->logger())->chosen());
+        $theme = new SiteTheme(new ThemeRegistry([new HarbourTheme()]), self::config([]), $settings, $this->logger());
+        self::assertSame('default', $theme->chosen());
+        self::assertMatchesRegularExpression('/^[0-9a-f]{12}$/', $theme->assetVersion('abc'));
     }
 
     /**
