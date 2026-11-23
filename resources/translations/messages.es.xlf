@@ -235,6 +235,12 @@
         <target>Una página que no puedes abrir</target>
       </segment>
     </unit>
+    <unit id="3fda6451422417f9">
+      <segment>
+        <source>A part of the file was damaged on the way. It will be sent again.</source>
+        <target>Una parte del archivo se dañó por el camino. Se enviará de nuevo.</target>
+      </segment>
+    </unit>
     <unit id="de200aa07dedd766">
       <segment>
         <source>A password hash can't be empty.</source>
@@ -661,6 +667,12 @@
         <target>Otra página también se llama "{title}". Dale a esta página un título propio, para que se distingan en los resultados de búsqueda.</target>
       </segment>
     </unit>
+    <unit id="a9faf3850a46e84c">
+      <segment>
+        <source>Another part of this file is still being received.</source>
+        <target>Todavía se está recibiendo otra parte de este archivo.</target>
+      </segment>
+    </unit>
     <unit id="118c19cacd3f8327">
       <segment>
         <source>Anthropic (Claude)</source>
@@ -983,6 +995,12 @@
       <segment>
         <source>Call to action</source>
         <target>Llamada a la acción</target>
+      </segment>
+    </unit>
+    <unit id="326d9c957d5a6cd9">
+      <segment>
+        <source>Cancel upload</source>
+        <target>Cancelar la subida</target>
       </segment>
     </unit>
     <unit id="911cc322aab5de80">
@@ -3817,6 +3835,12 @@
         <target>Pega el texto que el asistente debe reescribir.</target>
       </segment>
     </unit>
+    <unit id="858e4ba7a29fd38b">
+      <segment>
+        <source>Pause</source>
+        <target>Pausar</target>
+      </segment>
+    </unit>
     <unit id="7db20897053bb278">
       <segment>
         <source>People</source>
@@ -4187,6 +4211,18 @@
       <segment>
         <source>Restored version {number} as version {new}. Nothing was published: the page is still {state}.</source>
         <target>Se ha restaurado la versión {number} como versión {new}. No se ha publicado nada: la página sigue {state}.</target>
+      </segment>
+    </unit>
+    <unit id="d640c7421da06661">
+      <segment>
+        <source>Resume</source>
+        <target>Reanudar</target>
+      </segment>
+    </unit>
+    <unit id="ff224105bb385ab9">
+      <segment>
+        <source>Resuming {name} from {percent}%.</source>
+        <target>Reanudando {name} desde el {percent} %.</target>
       </segment>
     </unit>
     <unit id="cb39572f09f71897">
@@ -5527,6 +5563,12 @@
         <target>La conexión no ha funcionado. {reason}</target>
       </segment>
     </unit>
+    <unit id="cc71e7b768ce53e3">
+      <segment>
+        <source>The connection dropped. Trying again…</source>
+        <target>Se ha perdido la conexión. Intentándolo de nuevo…</target>
+      </segment>
+    </unit>
     <unit id="559a271b696405e9">
       <segment>
         <source>The connection works: {service} answered.</source>
@@ -5615,6 +5657,18 @@
       <segment>
         <source>The file is larger than {max}. Make it smaller and try again.</source>
         <target>El archivo ocupa más de {max}. Redúcelo e inténtalo de nuevo.</target>
+      </segment>
+    </unit>
+    <unit id="4db21f29735d71d5">
+      <segment>
+        <source>The file is {size}; files of this type can be at most {max}.</source>
+        <target>El archivo ocupa {size}; los archivos de este tipo pueden ocupar como máximo {max}.</target>
+      </segment>
+    </unit>
+    <unit id="367a935d13f4e06c">
+      <segment>
+        <source>The file is {size}; the largest file this server accepts is {max}.</source>
+        <target>El archivo ocupa {size}; el archivo más grande que acepta este servidor es de {max}.</target>
       </segment>
     </unit>
     <unit id="0cd06ab592105d45">
@@ -5989,10 +6043,22 @@
         <target>El servidor acepta como máximo {size} cada vez, así que no se ha guardado nada.</target>
       </segment>
     </unit>
+    <unit id="d88e2db22f8a5f65">
+      <segment>
+        <source>The server can't store uploads right now. Ask the person who runs it to check the upload folder.</source>
+        <target>El servidor no puede guardar subidas ahora mismo. Pide a la persona que lo gestiona que revise la carpeta de subidas.</target>
+      </segment>
+    </unit>
     <unit id="09a6ab07ca1d16c1">
       <segment>
         <source>The server didn’t accept something this large, so nothing was saved.</source>
         <target>El servidor no acepta algo tan grande, así que no se ha guardado nada.</target>
+      </segment>
+    </unit>
+    <unit id="60e35a52d5d41e41">
+      <segment>
+        <source>The server doesn't have enough free space for this file. Ask the person who runs it to free some space.</source>
+        <target>El servidor no tiene espacio libre suficiente para este archivo. Pide a la persona que lo gestiona que libere espacio.</target>
       </segment>
     </unit>
     <unit id="6f2ca070aa1d5632">
@@ -6257,6 +6323,12 @@
       <segment>
         <source>The translation’s blocks didn’t pass the checks, so it wasn’t saved. Try again.</source>
         <target>Los bloques de la traducción no pasaron las comprobaciones, así que no se guardó. Inténtalo de nuevo.</target>
+      </segment>
+    </unit>
+    <unit id="f7fc50d1d0318e0d">
+      <segment>
+        <source>The upload stopped because the connection was lost. Choose Resume to go on.</source>
+        <target>La subida se detuvo porque se perdió la conexión. Elige Reanudar para continuar.</target>
       </segment>
     </unit>
     <unit id="84e91fdf4a44672e">
@@ -6661,6 +6733,18 @@
         <target>Esta página es demasiado larga para que el asistente la traduzca de una vez. Empieza la traducción con «Traducir» y luego pide partes con «Reescribir texto».</target>
       </segment>
     </unit>
+    <unit id="39ffecd19914c80e">
+      <segment>
+        <source>This part doesn't follow the last one received.</source>
+        <target>Esta parte no sigue a la última recibida.</target>
+      </segment>
+    </unit>
+    <unit id="ab36abdaa1c7409c">
+      <segment>
+        <source>This part is larger than the server expected.</source>
+        <target>Esta parte es mayor de lo que esperaba el servidor.</target>
+      </segment>
+    </unit>
     <unit id="1e636a03b968c9da">
       <segment>
         <source>This picture can't be read. It may be damaged; save it again and try the new file.</source>
@@ -6695,6 +6779,12 @@
       <segment>
         <source>This searches the pages in {language}. To search in another language, choose it in the list of languages.</source>
         <target>Esta búsqueda busca en las páginas en {language}. Para buscar en otro idioma, elígelo en la lista de idiomas.</target>
+      </segment>
+    </unit>
+    <unit id="caea5f92bda1d0f2">
+      <segment>
+        <source>This server doesn't have the file's earlier parts. If the site runs on several servers, their upload folder isn't shared. Start the upload again, and tell the person who runs the server if it keeps happening.</source>
+        <target>Este servidor no tiene las partes anteriores del archivo. Si el sitio funciona en varios servidores, su carpeta de subidas no está compartida. Vuelve a iniciar la subida y avisa a la persona que gestiona el servidor si sigue ocurriendo.</target>
       </segment>
     </unit>
     <unit id="414d7df4d6236f85">
@@ -6737,6 +6827,12 @@
       <segment>
         <source>This type of file can't be uploaded. {types}</source>
         <target>Este tipo de archivo no se puede subir. {types}</target>
+      </segment>
+    </unit>
+    <unit id="319bcebc6189e79f">
+      <segment>
+        <source>This upload has already ended.</source>
+        <target>Esta subida ya ha terminado.</target>
       </segment>
     </unit>
     <unit id="86c063da1f13fb61">
@@ -7039,6 +7135,18 @@
         <target>Subir multimedia</target>
       </segment>
     </unit>
+    <unit id="c321d9d2e31c3bac">
+      <segment>
+        <source>Upload of {name} cancelled.</source>
+        <target>Subida de {name} cancelada.</target>
+      </segment>
+    </unit>
+    <unit id="b9a5f040c07250a3">
+      <segment>
+        <source>Upload of {name} paused at {percent}%.</source>
+        <target>Subida de {name} en pausa al {percent} %.</target>
+      </segment>
+    </unit>
     <unit id="0aa62f7898f3c61b">
       <segment>
         <source>Upload picture</source>
@@ -7061,6 +7169,12 @@
       <segment>
         <source>Uploaded.</source>
         <target>Subido.</target>
+      </segment>
+    </unit>
+    <unit id="45daf7eb1570f5d4">
+      <segment>
+        <source>Uploading {name}: {percent}%</source>
+        <target>Subiendo {name}: {percent} %</target>
       </segment>
     </unit>
     <unit id="3b768aa3ef4800ff">
@@ -7615,6 +7729,12 @@
         <target>Sí</target>
       </segment>
     </unit>
+    <unit id="5710417f4dafd80a">
+      <segment>
+        <source>You already have {count} uploads in progress. Finish or cancel one first.</source>
+        <target>Ya tienes {count} subidas en curso. Termina o cancela una primero.</target>
+      </segment>
+    </unit>
     <unit id="e7edf683f4040dc0">
       <segment>
         <source>You are editing it now.</source>
@@ -7931,6 +8051,12 @@
       <segment>
         <source>Your site is shown in the default theme</source>
         <target>Su sitio se muestra con el tema predeterminado</target>
+      </segment>
+    </unit>
+    <unit id="01e3016818f3072d">
+      <segment>
+        <source>Your uploads in progress are too large together. Finish or cancel one first.</source>
+        <target>Tus subidas en curso son demasiado grandes en conjunto. Termina o cancela una primero.</target>
       </segment>
     </unit>
     <unit id="d24c993b97caf08c">
@@ -8551,6 +8677,12 @@
         <target>{name} no tiene los diseños de estas páginas. Se mostrarán con el diseño estándar. Cada una conserva su propio diseño, que vuelve si el sitio usa un tema que lo tenga.</target>
       </segment>
     </unit>
+    <unit id="f1caeb7ff5e2c2be">
+      <segment>
+        <source>{name} has arrived. Checking the file…</source>
+        <target>{name} ha llegado. Comprobando el archivo…</target>
+      </segment>
+    </unit>
     <unit id="6a5ee76e749e4d1c">
       <segment>
         <source>{name} has been deleted.</source>
@@ -8741,6 +8873,12 @@
       <segment>
         <source>{types} {sizes} New files stay unpublished until an editor publishes them.</source>
         <target>{types} {sizes} Los archivos nuevos quedan sin publicar hasta que los publique un editor.</target>
+      </segment>
+    </unit>
+    <unit id="653016caf4cd6369">
+      <segment>
+        <source>{types} {sizes} Without JavaScript, the limit is lower: {basic} New files stay unpublished until an editor publishes them.</source>
+        <target>{types} {sizes} Sin JavaScript, el límite es menor: {basic} Los archivos nuevos quedan sin publicar hasta que los publique un editor.</target>
       </segment>
     </unit>
     <unit id="60a3ff1d92e114dc">

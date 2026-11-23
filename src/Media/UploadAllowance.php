@@ -75,6 +75,36 @@ final readonly class UploadAllowance implements UploadLimits
         ];
     }
 
+    /**
+     * The limits with JavaScript, which sends large files in parts: one request no longer decides the size.
+     *
+     * @return array{image: int, video: int, audio: int, '*': int}
+     */
+    public function forChunkedBrowser(int $maxChunkedBytes): array
+    {
+        return [
+            'image' => min($this->limits->maxBytes(MediaKind::Image), $maxChunkedBytes),
+            'video' => min($this->limits->maxBytes(MediaKind::Video), $maxChunkedBytes),
+            'audio' => min($this->limits->maxBytes(MediaKind::Audio), $maxChunkedBytes),
+            '*' => min($this->limits->maxBytes(MediaKind::Document), $maxChunkedBytes),
+        ];
+    }
+
+    /**
+     * "Largest file you can upload: …", for the form that sends large files in parts.
+     */
+    public function chunkedSummary(int $maxChunkedBytes): Message
+    {
+        $sizes = $this->forChunkedBrowser($maxChunkedBytes);
+
+        return new Message('Largest file you can upload: {sizes}.', ['sizes' => Message::list([
+            new Message('{kind} {size}', ['kind' => self::plural(MediaKind::Image), 'size' => MediaLimits::describe($sizes['image'])]),
+            new Message('{kind} {size}', ['kind' => self::plural(MediaKind::Document), 'size' => MediaLimits::describe($sizes['*'])]),
+            new Message('{kind} {size}', ['kind' => self::plural(MediaKind::Audio), 'size' => MediaLimits::describe($sizes['audio'])]),
+            new Message('{kind} {size}', ['kind' => self::plural(MediaKind::Video), 'size' => MediaLimits::describe($sizes['video'])]),
+        ])]);
+    }
+
     public static function plural(MediaKind $kind): Message
     {
         return match ($kind) {

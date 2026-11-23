@@ -66,6 +66,8 @@
 
 .media-upload__progress progress { width: 100%; max-width: 30rem; height: 1.25rem; }
 .media-upload__status:empty { display: none; }
+.media-upload__controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block: 0.5rem; }
+.media-upload__controls[hidden] { display: none; }
 .media-views { display: flex; gap: var(--space-3); padding: 0; list-style: none; }
 .media-views a[aria-current="true"] { font-weight: 700; text-decoration-thickness: 0.2em; }
 .media-grid {

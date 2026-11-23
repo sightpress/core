@@ -14,9 +14,16 @@ use SightPress\Core\Http\Session\Session;
 /**
  * Checks the CSRF token of every state-changing request (`POST`, `PUT`, `PATCH`, `DELETE`); a missing or wrong token
  * answers 403 with a page that explains the form expired. Every request gets {@see CsrfTokens} for its forms.
+ *
+ * A request whose body isn't a form (a part of a large file) sends the token in `X-CSRF-Name` and `X-CSRF-Value`. The
+ * guard's own header names contain underscores, which nginx drops by default.
  */
 final readonly class CsrfMiddleware implements MiddlewareInterface
 {
+    public const string NAME_HEADER = 'X-CSRF-Name';
+
+    public const string VALUE_HEADER = 'X-CSRF-Value';
+
     private const array STATE_CHANGING = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
     public function __construct(private ResponseFactoryInterface $responses)
@@ -29,7 +36,14 @@ final readonly class CsrfMiddleware implements MiddlewareInterface
         $request = $request->withAttribute(CsrfTokens::class, $tokens);
 
         if (in_array(strtoupper($request->getMethod()), self::STATE_CHANGING, true)) {
-            return $tokens->guard()->process($request, $handler);
+            $guard = $tokens->guard();
+            if ($request->hasHeader(self::NAME_HEADER) && $request->hasHeader(self::VALUE_HEADER)) {
+                $request = $request
+                    ->withHeader($guard->getTokenNameKey(), $request->getHeaderLine(self::NAME_HEADER))
+                    ->withHeader($guard->getTokenValueKey(), $request->getHeaderLine(self::VALUE_HEADER));
+            }
+
+            return $guard->process($request, $handler);
         }
 
         return $handler->handle($request);

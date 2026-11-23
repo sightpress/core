@@ -60,6 +60,33 @@ final class FileSessionStoreTest extends TestCase
         self::assertFileDoesNotExist($this->directory->path . '/sessions/' . hash('sha256', 'abc'));
     }
 
+    public function testWritingLeavesOnlyTheFinishedFile(): void
+    {
+        $store = $this->store();
+        $store->write('abc', ['user' => 1]);
+        $store->write('abc', ['user' => 2]);
+
+        self::assertSame(['user' => 2], $store->read('abc'));
+        $files = glob($this->directory->path . '/sessions/*');
+        self::assertIsArray($files);
+        self::assertCount(1, $files);
+        self::assertSame('0600', substr(sprintf('%o', fileperms($files[0])), -4));
+    }
+
+    public function testTouchingRestartsTheIdleTimeAndNeverBringsASessionBack(): void
+    {
+        $store = $this->store();
+        $store->write('abc', ['user' => 1]);
+        $this->clock->advance(100);
+        $store->touch('abc');
+        $this->clock->advance(100);
+        self::assertSame(['user' => 1], $store->read('abc'));
+
+        $store->delete('abc');
+        $store->touch('abc');
+        self::assertNull($store->read('abc'));
+    }
+
     public function testWritingCleansUpExpiredSessions(): void
     {
         $this->store()->write('old', ['a' => 1]);

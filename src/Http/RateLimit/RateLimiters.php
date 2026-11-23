@@ -23,6 +23,7 @@ final class RateLimiters
     /** @var array<string, array{policy: string, limit: positive-int, interval: string}> */
     public const array POLICIES = [
         'write' => ['policy' => 'sliding_window', 'limit' => 60, 'interval' => '1 minute'],
+        'upload_part' => ['policy' => 'sliding_window', 'limit' => 600, 'interval' => '1 minute'],
         'sign_in' => ['policy' => 'sliding_window', 'limit' => 5, 'interval' => '15 minutes'],
         'verification_target' => ['policy' => 'sliding_window', 'limit' => 5, 'interval' => '1 hour'],
         'verification_client' => ['policy' => 'sliding_window', 'limit' => 20, 'interval' => '1 hour'],

@@ -100,6 +100,8 @@ final class ServerLimitsCheckTest extends TestCase
 
         self::assertSame(['image' => 20 * self::MB, 'video' => 64 * self::MB, 'audio' => 64 * self::MB, '*' => 50 * self::MB], $allowance->forBrowser());
         self::assertSame('Largest file you can upload: pictures 20 MB, documents 50 MB, audio files 64 MB and videos 64 MB.', (string) $allowance->summary());
+        self::assertSame(['image' => 20 * self::MB, 'video' => 100 * self::MB, 'audio' => 100 * self::MB, '*' => 50 * self::MB], $allowance->forChunkedBrowser(100 * self::MB));
+        self::assertSame('Largest file you can upload: pictures 20 MB, documents 50 MB, audio files 100 MB and videos 100 MB.', (string) $allowance->chunkedSummary(100 * self::MB));
     }
 
     private function check(ServerLimits $server): ServerLimitsCheck

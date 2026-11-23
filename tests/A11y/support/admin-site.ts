@@ -30,6 +30,7 @@ export const ADMIN_SITES = {
   appearance: 'http://127.0.0.1:8069',
   limits: 'http://127.0.0.1:8068',
   provisioning: 'http://127.0.0.1:8067',
+  chunked: 'http://127.0.0.1:8066',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

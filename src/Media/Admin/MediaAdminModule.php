@@ -8,6 +8,7 @@ use SightPress\Core\Media\Admin\Http\MediaDeleteHandler;
 use SightPress\Core\Media\Admin\Http\MediaItemHandler;
 use SightPress\Core\Media\Admin\Http\MediaLibraryHandler;
 use SightPress\Core\Media\Admin\Http\MediaUploadHandler;
+use SightPress\Core\Media\Admin\Http\TusUploadHandler;
 use SightPress\Core\Media\MediaEditor;
 use SightPress\Core\Media\Admin\Provisioning\DemoMedia;
 use SightPress\Core\Site\Contract\SiteProvisioning;
@@ -48,7 +49,7 @@ final class MediaAdminModule implements ModuleInterface
         $registrar->views()->add(self::ID, dirname(__DIR__, 3) . '/resources/views/media');
 
         $services = $registrar->services();
-        foreach ([MediaAdmin::class, MediaEditor::class, MediaLibraryHandler::class, MediaUploadHandler::class, MediaItemHandler::class, MediaDeleteHandler::class, DemoMedia::class] as $class) {
+        foreach ([MediaAdmin::class, MediaEditor::class, MediaLibraryHandler::class, MediaUploadHandler::class, TusUploadHandler::class, MediaItemHandler::class, MediaDeleteHandler::class, DemoMedia::class] as $class) {
             $services->autowire($class);
         }
 
@@ -57,6 +58,8 @@ final class MediaAdminModule implements ModuleInterface
         $routes = $registrar->routes();
         $routes->add(new Route('media_admin.library', MediaAdmin::PATH, MediaLibraryHandler::class, middleware: [AdminAccessMiddleware::class]));
         $routes->add(new Route('media_admin.upload', MediaUploadHandler::PATH, MediaUploadHandler::class, ['POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('media_admin.uploads', TusUploadHandler::PATH, TusUploadHandler::class, ['POST', 'OPTIONS'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('media_admin.uploads.session', TusUploadHandler::PATH . '/{' . TusUploadHandler::ID_ATTRIBUTE . ':[0-9a-f]{32}}', TusUploadHandler::class, ['HEAD', 'PATCH', 'DELETE'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('media_admin.item', $item, MediaItemHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('media_admin.delete', $item . '/delete', MediaDeleteHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('media_admin.library', 'Media', 'media_admin.library', MediaAdmin::UPLOAD, position: 30));

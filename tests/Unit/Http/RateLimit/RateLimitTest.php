@@ -64,12 +64,39 @@ final class RateLimitTest extends TestCase
         }
     }
 
+    public function testThePartsOfALargeFileHaveTheirOwnLimit(): void
+    {
+        $middleware = new RateLimitMiddleware(
+            new RateLimiters(new InMemoryStorage(), [
+                'write' => ['policy' => 'fixed_window', 'limit' => 1, 'interval' => '1 minute'],
+                'upload_part' => ['policy' => 'fixed_window', 'limit' => 2, 'interval' => '1 minute'],
+            ]),
+            new FixedClock(new \DateTimeImmutable()),
+        );
+        $handler = new CallbackHandler(static fn () => new Response());
+        $part = new ServerRequest('PATCH', '/admin/media/uploads/' . str_repeat('a', 32), [], null, '1.1', ['REMOTE_ADDR' => '192.0.2.1']);
+
+        $middleware->process($part, $handler);
+        $middleware->process($part, $handler);
+        self::assertSame(200, $middleware->process($part->withMethod('POST'), $handler)->getStatusCode(), 'parts leave the write limit alone');
+
+        foreach ([$part, $part->withMethod('DELETE'), $part->withUri($part->getUri()->withPath('/admin/pages/1'))] as $refused) {
+            try {
+                $middleware->process($refused, $handler);
+                self::fail('The request was accepted.');
+            } catch (HttpTooManyRequestsException $exception) {
+                self::assertGreaterThanOrEqual(1, $exception->retryAfter());
+            }
+        }
+    }
+
     public function testTheBuiltInPolicies(): void
     {
         $limiters = new RateLimiters(new InMemoryStorage());
 
         self::assertSame(5, $limiters->limiter('sign_in', 'ada@example.org')->consume(0)->getLimit());
         self::assertSame(60, $limiters->limiter('write', '192.0.2.1')->consume(0)->getLimit());
+        self::assertSame(600, $limiters->limiter('upload_part', '192.0.2.1')->consume(0)->getLimit());
         self::assertSame(5, $limiters->limiter('verification_target', 'ada@example.org')->consume(0)->getLimit());
         self::assertSame(20, $limiters->limiter('verification_client', '192.0.2.1')->consume(0)->getLimit());
         self::assertSame(10, $limiters->limiter('verification_check', '192.0.2.1')->consume(0)->getLimit());

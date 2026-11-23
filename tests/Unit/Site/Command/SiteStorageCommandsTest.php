@@ -350,6 +350,16 @@ final class SiteStorageCommandsTest extends TestCase
         self::assertNull($this->sites()->find('one'));
     }
 
+    public function testPurgeRemovesPartsOfUnfinishedUploads(): void
+    {
+        $folder = $this->kernel->config()->uploadTempPath . '/' . $this->site()->id;
+        $this->project->directory->write(substr($folder, strlen($this->project->path()) + 1) . '/' . str_repeat('a', 32) . '.part', 'part of a file');
+        $this->sites()->save($this->site()->withStatus(SiteStatus::Deleted));
+
+        self::assertSame(0, $this->run_($this->purge(), 'one'), implode("\n", $this->err));
+        self::assertDirectoryDoesNotExist($folder);
+    }
+
     public function testPurgeKeepsAFolderThatHoldsTheDatabase(): void
     {
         $this->addLocalFile('media/a.bin', 'x');

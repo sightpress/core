@@ -141,6 +141,21 @@ final readonly class PurgeSiteCommand implements Command
         if (!$keepFolder) {
             $this->filesystems->local($site)->deleteDirectory('');
         }
+        $this->removeUnfinishedUploads($site);
+    }
+
+    /**
+     * Parts of large files still waiting in the temporary folder. They hold the site's content, so they go with it.
+     */
+    private function removeUnfinishedUploads(Site $site): void
+    {
+        $parts = glob($this->config->uploadTempPath . '/' . $site->id . '/*.part');
+        foreach ($parts === false ? [] : $parts as $part) {
+            unlink($part);
+        }
+        if (is_dir($this->config->uploadTempPath . '/' . $site->id)) {
+            rmdir($this->config->uploadTempPath . '/' . $site->id);
+        }
     }
 
     /**

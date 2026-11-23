@@ -82,6 +82,25 @@ final class CsrfTest extends TestCase
         }
     }
 
+    public function testARequestWithoutAFormSendsTheTokenInHeaders(): void
+    {
+        $session = new Session();
+        $token = $this->tokenFor($session);
+        $handled = 0;
+
+        $this->send(
+            new ServerRequest('PATCH', '/uploads/1', [CsrfMiddleware::NAME_HEADER => $token->name, CsrfMiddleware::VALUE_HEADER => $token->value]),
+            $session,
+            static function () use (&$handled): void {
+                ++$handled;
+            },
+        );
+        self::assertSame(1, $handled);
+
+        $this->expectException(CsrfTokenMismatchException::class);
+        $this->send(new ServerRequest('PATCH', '/uploads/1', [CsrfMiddleware::NAME_HEADER => $token->name, CsrfMiddleware::VALUE_HEADER => 'forged']), $session);
+    }
+
     public function testTokensComeFromTheRequest(): void
     {
         $this->expectException(LogicException::class);

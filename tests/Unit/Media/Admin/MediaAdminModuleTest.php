@@ -11,6 +11,7 @@ use SightPress\Core\Media\Admin\Http\MediaDeleteHandler;
 use SightPress\Core\Media\Admin\Http\MediaItemHandler;
 use SightPress\Core\Media\Admin\Http\MediaLibraryHandler;
 use SightPress\Core\Media\Admin\Http\MediaUploadHandler;
+use SightPress\Core\Media\Admin\Http\TusUploadHandler;
 use SightPress\Core\Media\Admin\MediaAdmin;
 use SightPress\Core\Media\Admin\MediaAdminModule;
 use SightPress\Core\Media\MediaEditor;
@@ -34,7 +35,7 @@ final class MediaAdminModuleTest extends TestCase
         self::assertSame('media_admin', $module->manifest()->id);
         self::assertTrue($module->manifest()->required);
         self::assertSame(['site', 'rbac', 'media', 'admin'], array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires));
-        foreach ([MediaAdmin::class, MediaEditor::class, MediaLibraryHandler::class, MediaUploadHandler::class, MediaItemHandler::class, MediaDeleteHandler::class] as $class) {
+        foreach ([MediaAdmin::class, MediaEditor::class, MediaLibraryHandler::class, MediaUploadHandler::class, TusUploadHandler::class, MediaItemHandler::class, MediaDeleteHandler::class] as $class) {
             self::assertArrayHasKey($class, $registry->services());
         }
         $routes = [];
@@ -45,6 +46,8 @@ final class MediaAdminModuleTest extends TestCase
         self::assertSame([
             'media_admin.library' => ['/admin/media', MediaLibraryHandler::class, ['GET'], $admin],
             'media_admin.upload' => ['/admin/media/upload', MediaUploadHandler::class, ['POST'], $admin],
+            'media_admin.uploads' => ['/admin/media/uploads', TusUploadHandler::class, ['POST', 'OPTIONS'], $admin],
+            'media_admin.uploads.session' => ['/admin/media/uploads/{upload:[0-9a-f]{32}}', TusUploadHandler::class, ['HEAD', 'PATCH', 'DELETE'], $admin],
             'media_admin.item' => ['/admin/media/{id:[0-9]+}', MediaItemHandler::class, ['GET', 'POST'], $admin],
             'media_admin.delete' => ['/admin/media/{id:[0-9]+}/delete', MediaDeleteHandler::class, ['GET', 'POST'], $admin],
         ], $routes);

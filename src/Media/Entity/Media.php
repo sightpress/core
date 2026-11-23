@@ -101,7 +101,7 @@ final class Media implements MediaFile
         private string $fileName,
         #[ORM\Column(name: 'original_name', type: Types::STRING, length: 255)]
         private string $originalName,
-        #[ORM\Column(type: Types::INTEGER)]
+        #[ORM\Column(type: Types::BIGINT)]
         private int $size,
         ?int $width,
         ?int $height,

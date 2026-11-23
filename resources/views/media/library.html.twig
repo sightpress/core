@@ -21,6 +21,11 @@
             <progress id="media-upload-bar" max="100" value="0" aria-labelledby="media-upload-status"></progress>
         </div>
         <p id="media-upload-status" class="media-upload__status" aria-live="polite"></p>
+        <div id="media-upload-controls" class="media-upload__controls" hidden>
+            <button type="button" id="media-upload-pause">{{ t('Pause') }}</button>
+            <button type="button" id="media-upload-resume" hidden>{{ t('Resume') }}</button>
+            <button type="button" id="media-upload-cancel">{{ t('Cancel upload') }}</button>
+        </div>
         {{ f.submit(t('Upload')) }}
     {{ f.end() }}
 </section>
@@ -81,5 +86,12 @@
 {% endblock %}
 {% block scripts %}
 {{ parent() }}
-<script src="{{ asset('js/media-upload.js') }}" data-form="{{ form.id }}" defer></script>
+<script src="{{ asset('js/media-upload.js') }}" data-form="{{ form.id }}" data-chunk-bytes="{{ chunk_bytes }}" data-uploads="/admin/media/uploads"
+    data-text-progress="{{ t('Uploading {name}: {percent}%', {name: '{name}', percent: '{percent}'}) }}"
+    data-text-paused="{{ t('Upload of {name} paused at {percent}%.', {name: '{name}', percent: '{percent}'}) }}"
+    data-text-resumed="{{ t('Resuming {name} from {percent}%.', {name: '{name}', percent: '{percent}'}) }}"
+    data-text-retrying="{{ t('The connection dropped. Trying again…') }}"
+    data-text-offline="{{ t('The upload stopped because the connection was lost. Choose Resume to go on.') }}"
+    data-text-cancelled="{{ t('Upload of {name} cancelled.', {name: '{name}'}) }}"
+    data-text-checking="{{ t('{name} has arrived. Checking the file…', {name: '{name}'}) }}" defer></script>
 {% endblock %}

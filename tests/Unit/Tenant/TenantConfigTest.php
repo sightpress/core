@@ -137,6 +137,13 @@ final class TenantConfigTest extends TestCase
         yield 'body limit zero' => [['uploads' => ['proxy_body_limit' => 0]], [], '/srv', $body];
         yield 'body limit 0M' => [['uploads' => ['proxy_body_limit' => '0M']], [], '/srv', $body];
         yield 'body limit list' => [['uploads' => ['proxy_body_limit' => [1]]], [], '/srv', $body];
+        $public = 'Tenant setting "uploads.temp_path" must not be inside the public folder.';
+        yield 'temp path is public' => [['uploads' => ['temp_path' => 'public']], [], '/srv', $public];
+        yield 'temp path under public' => [['uploads' => ['temp_path' => '/srv/public/parts']], [], '/srv', $public];
+        yield 'temp path climbs into public' => [['uploads' => ['temp_path' => 'var/../public/x']], [], '/srv', $public];
+        $chunked = 'Tenant setting "uploads.max_chunked_bytes" must be a size';
+        yield 'chunked limit in words' => [['uploads' => ['max_chunked_bytes' => 'big']], [], '/srv', $chunked];
+        yield 'chunked limit zero' => [['uploads' => ['max_chunked_bytes' => 0]], [], '/srv', $chunked];
         yield 'uploads not a list' => [['uploads' => 'x'], [], '/srv', 'Tenant setting "uploads" must be an array.'];
         yield 'project dir' => [[], [], '/', 'The project folder must not be empty.'];
         yield 'section' => [['registry' => 'x'], [], '/srv', 'Tenant setting "registry" must be an array.'];
@@ -201,6 +208,16 @@ final class TenantConfigTest extends TestCase
         self::assertSame(65 * 1024 * 1024, TenantConfig::fromArray(['uploads' => ['proxy_body_limit' => '65M']], '/srv')->uploadProxyBodyLimit);
         self::assertSame(1024 ** 3, TenantConfig::fromArray(['uploads' => ['proxy_body_limit' => ' 1g ']], '/srv')->uploadProxyBodyLimit);
         self::assertSame(1000, TenantConfig::fromArray(['uploads' => ['proxy_body_limit' => 1000]], '/srv')->uploadProxyBodyLimit);
+    }
+
+    public function testReadsWhereLargeUploadsWaitAndHowLargeTheyCanBe(): void
+    {
+        self::assertSame('/srv/var/uploads', TenantConfig::fromArray([], '/srv')->uploadTempPath);
+        self::assertSame('/data/parts', TenantConfig::fromArray(['uploads' => ['temp_path' => '/data/./parts/']], '/srv')->uploadTempPath);
+        self::assertSame('/srv/tmp', TenantConfig::fromArray(['uploads' => ['temp_path' => 'var/../tmp']], '/srv')->uploadTempPath);
+        self::assertSame(5 * 1024 ** 3, TenantConfig::fromArray([], '/srv')->maxChunkedBytes);
+        self::assertSame(1024 ** 3, TenantConfig::fromArray(['uploads' => ['max_chunked_bytes' => '1G']], '/srv')->maxChunkedBytes);
+        self::assertSame(1000, TenantConfig::fromArray(['uploads' => ['max_chunked_bytes' => 1000]], '/srv')->maxChunkedBytes);
     }
 
     /**

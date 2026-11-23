@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Media\Command;
 
+use DateTimeImmutable;
+use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -14,8 +16,12 @@ use SightPress\Core\Audit\AuditRecorder;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Kernel;
 use SightPress\Core\Media\Command\SiteMediaLimitsCommand;
+use SightPress\Core\Media\Command\SiteMediaUploadsCommand;
 use SightPress\Core\Media\Command\SystemCheckCommand;
 use SightPress\Core\Media\MediaLimits;
+use SightPress\Core\Media\Upload\ChunkedUploads;
+use SightPress\Core\Media\Upload\UploadSession;
+use SightPress\Core\Media\Upload\UploadSessions;
 use SightPress\Core\Media\UploadRefusals;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
@@ -29,6 +35,7 @@ use Symfony\Component\Console\Tester\ApplicationTester;
  * Two sites on one tenant with a ceiling: each keeps its own limits in the registry, within the ceiling.
  */
 #[CoversClass(SiteMediaLimitsCommand::class)]
+#[CoversClass(SiteMediaUploadsCommand::class)]
 #[CoversClass(SystemCheckCommand::class)]
 #[CoversClass(SiteRegistryFormat::class)]
 #[CoversClass(SiteContainerFactory::class)]
@@ -73,6 +80,30 @@ final class SiteUploadLimitsTest extends TestCase
     protected function tearDown(): void
     {
         $this->project->remove();
+    }
+
+    public function testListsAndPurgesLargeUploadsInProgress(): void
+    {
+        self::assertSame(1, $this->console(['command' => 'site:media:uploads', 'slug' => 'ghost']));
+        self::assertStringContainsString('There is no site "ghost".', $this->stderr);
+        self::assertSame(0, $this->console(['command' => 'site:media:uploads', 'slug' => 'podcast']), $this->stderr);
+        self::assertStringContainsString('No uploads in progress.', $this->stdout);
+
+        $session = Services::get($this->site('podcast'), ChunkedUploads::class)->create(1, 'Private name.csv', 'text/csv', 2048);
+        self::assertSame(0, $this->console(['command' => 'site:media:uploads', 'slug' => 'podcast']), $this->stderr);
+        self::assertStringContainsString($session->id . ': 0 bytes of 2 KB, in progress, last active', $this->stdout);
+        self::assertStringNotContainsString('Private name', $this->stdout);
+
+        self::assertSame(0, $this->console(['command' => 'site:media:uploads', 'slug' => 'podcast', '--purge-expired' => true]), $this->stderr);
+        self::assertStringContainsString('Removed 0 expired uploads.', $this->stdout);
+        Services::get($this->site('podcast'), Connection::class)->update('media_upload', ['updated_at' => '2020-01-01 00:00:00'], ['id' => $session->id]);
+        self::assertSame(0, $this->console(['command' => 'site:media:uploads', 'slug' => 'podcast', '--purge-expired' => true]), $this->stderr);
+        self::assertStringContainsString('Removed 1 expired upload.', $this->stdout);
+
+        $finished = Services::get($this->site('podcast'), UploadSessions::class);
+        $finished->add(new UploadSession(str_repeat('b', 32), 1, 'x.csv', 10, 10, new DateTimeImmutable(), new DateTimeImmutable(), new DateTimeImmutable(), 1));
+        self::assertSame(0, $this->console(['command' => 'site:media:uploads', 'slug' => 'podcast']), $this->stderr);
+        self::assertStringContainsString('10 bytes of 10 bytes, finished', $this->stdout);
     }
 
     public function testASiteGetsItsOwnLimitsAndTheOtherKeepsTheDefaults(): void

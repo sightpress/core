@@ -16,6 +16,10 @@ use Psr\Http\Server\RequestHandlerInterface;
  * this host and path). It lasts until the browser closes; the store ends idle sessions. A session is only saved
  * — and a cookie only sent — once it holds data. Responses for a visitor with a session are `private, no-store`,
  * except those marked `public` that set no cookie.
+ *
+ * A request that didn't change the session only restarts its idle time. Requests of one visitor can overlap (a part of
+ * a large file still arriving while the page reloads), and saving the copy it read would undo what the other stored,
+ * such as a new form's CSRF token, or bring back a session that was signed out meanwhile.
  */
 final readonly class SessionMiddleware implements MiddlewareInterface
 {
@@ -36,9 +40,10 @@ final readonly class SessionMiddleware implements MiddlewareInterface
         $cookie = $request->getCookieParams()[$name] ?? null;
 
         $session = new Session();
+        $loaded = null;
         if (is_string($cookie) && preg_match(self::ID_PATTERN, $cookie) === 1) {
-            $data = $this->store->read($cookie);
-            $session = $data === null ? new Session() : new Session($cookie, $data);
+            $loaded = $this->store->read($cookie);
+            $session = $loaded === null ? new Session() : new Session($cookie, $loaded);
         }
 
         $response = $handler->handle($request->withAttribute(Session::class, $session));
@@ -57,7 +62,11 @@ final readonly class SessionMiddleware implements MiddlewareInterface
         }
 
         $id = $session->idOrNew();
-        $this->store->write($id, $session->all());
+        if ($id === $cookie && $session->all() === $loaded) {
+            $this->store->touch($id);
+        } else {
+            $this->store->write($id, $session->all());
+        }
         // A response that holds no personal data says so with `Cache-Control: public` (theme files, for example);
         // it keeps that header unless a new cookie is being set with it.
         if ($id !== $cookie || !str_contains($response->getHeaderLine('Cache-Control'), 'public')) {

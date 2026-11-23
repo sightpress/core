@@ -59,13 +59,25 @@ final readonly class FileSessionStore implements SessionStore
             throw new RuntimeException(sprintf('Could not create the session folder %s.', $this->directory));
         }
 
+        // Written beside it and moved into place: a request reading at this moment gets the old session or the new
+        // one, never a half-written file, which would look like no session and sign the person out.
         $file = $this->file($id);
-        file_put_contents($file, json_encode($data, JSON_THROW_ON_ERROR), LOCK_EX);
-        chmod($file, 0o600);
-        touch($file, $this->clock->now()->getTimestamp());
+        $temporary = $file . '.' . bin2hex(random_bytes(8));
+        file_put_contents($temporary, json_encode($data, JSON_THROW_ON_ERROR));
+        chmod($temporary, 0o600);
+        touch($temporary, $this->clock->now()->getTimestamp());
+        rename($temporary, $file);
 
         if (random_int(1, $this->gcProbability) === 1) {
             $this->collectGarbage();
+        }
+    }
+
+    public function touch(string $id): void
+    {
+        $file = $this->file($id);
+        if (is_file($file)) {
+            touch($file, $this->clock->now()->getTimestamp());
         }
     }
 

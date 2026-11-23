@@ -21,5 +21,10 @@ interface SessionStore
      */
     public function write(string $id, array $data): void;
 
+    /**
+     * Restarts a session's idle time without changing its data. A session that no longer exists stays gone.
+     */
+    public function touch(string $id): void;
+
     public function delete(string $id): void;
 }

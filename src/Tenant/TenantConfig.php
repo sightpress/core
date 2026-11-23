@@ -18,6 +18,8 @@ use SightPress\Core\Http\Upload\IniSize;
  */
 final readonly class TenantConfig
 {
+    public const int DEFAULT_MAX_CHUNKED_BYTES = 5 * 1024 * 1024 * 1024;
+
     /**
      * @param non-empty-string $projectDir
      * @param non-empty-string $registryPath
@@ -42,6 +44,8 @@ final readonly class TenantConfig
      * @param TenantAssistant $assistant          `assistant`: the AI assistant's tenant default and limits
      * @param TenantThemes    $themes             `themes`: which installed themes sites may use, and new sites' theme
      * @param TenantMediaLimits $mediaLimits      `media.limits`: every site's upload limits, and the ceiling of a site's own
+     * @param non-empty-string $uploadTempPath    `uploads.temp_path`: where files sent in parts wait, never under `public/`
+     * @param positive-int     $maxChunkedBytes   `uploads.max_chunked_bytes`: the largest file that can be sent in parts
      */
     public function __construct(
         public string $projectDir,
@@ -66,6 +70,8 @@ final readonly class TenantConfig
         public TenantAssistant $assistant = new TenantAssistant(),
         public TenantThemes $themes = new TenantThemes(),
         public TenantMediaLimits $mediaLimits = new TenantMediaLimits(),
+        public string $uploadTempPath = '/tmp/sightpress-uploads',
+        public int $maxChunkedBytes = self::DEFAULT_MAX_CHUNKED_BYTES,
     ) {
     }
 
@@ -113,6 +119,8 @@ final readonly class TenantConfig
             assistant: TenantAssistant::fromArray(self::section($config, 'assistant'), $environment),
             themes: TenantThemes::fromArray(self::section($config, 'themes')),
             mediaLimits: TenantMediaLimits::fromArray(self::section($config, 'media')),
+            uploadTempPath: self::uploadTempPath($uploads, $projectDir),
+            maxChunkedBytes: self::maxChunkedBytes($uploads),
         );
     }
 
@@ -194,6 +202,57 @@ final readonly class TenantConfig
             throw new TenantConfigException(
                 'Tenant setting "uploads.proxy_body_limit" must be the web server\'s request body limit, in bytes or as a size such as 65M or 1G.',
             );
+        }
+
+        return $bytes;
+    }
+
+    /**
+     * `uploads.temp_path`: an absolute path, or one relative to the project. Files wait there before they are checked,
+     * so it can never be inside the folder the web server serves.
+     *
+     * @param array<mixed> $uploads
+     *
+     * @return non-empty-string
+     */
+    private static function uploadTempPath(array $uploads, string $projectDir): string
+    {
+        $path = rtrim(self::string($uploads, 'temp_path', 'uploads.temp_path', 'var/uploads'), '/');
+        $path = str_starts_with($path, '/') ? $path : $projectDir . '/' . $path;
+        $segments = [];
+        foreach (explode('/', $path) as $segment) {
+            if ($segment === '..') {
+                array_pop($segments);
+            } elseif ($segment !== '' && $segment !== '.') {
+                $segments[] = $segment;
+            }
+        }
+        $path = '/' . implode('/', $segments);
+        $public = $projectDir . '/public';
+        if ($path === $public || str_starts_with($path, $public . '/')) {
+            throw new TenantConfigException('Tenant setting "uploads.temp_path" must not be inside the public folder.');
+        }
+
+        return $path;
+    }
+
+    /**
+     * `uploads.max_chunked_bytes`: bytes, or a size such as `5G`.
+     *
+     * @param array<mixed> $uploads
+     *
+     * @return positive-int
+     */
+    private static function maxChunkedBytes(array $uploads): int
+    {
+        $value = $uploads['max_chunked_bytes'] ?? self::DEFAULT_MAX_CHUNKED_BYTES;
+        $bytes = match (true) {
+            is_int($value) => $value,
+            is_string($value) && preg_match('/^\s*\d+\s*[kmg]?\s*$/i', $value) === 1 => IniSize::bytes($value),
+            default => null,
+        };
+        if ($bytes === null || $bytes < 1) {
+            throw new TenantConfigException('Tenant setting "uploads.max_chunked_bytes" must be a size in bytes or such as 5G.');
         }
 
         return $bytes;

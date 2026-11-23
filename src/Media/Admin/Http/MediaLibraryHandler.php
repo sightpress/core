@@ -21,6 +21,7 @@ use SightPress\Core\Media\MediaLimits;
 use SightPress\Core\Media\MediaRepository;
 use SightPress\Core\Media\MediaTypes;
 use SightPress\Core\Http\Upload\ServerNotice;
+use SightPress\Core\Media\Upload\ChunkedUploads;
 use SightPress\Core\Media\UploadAllowance;
 use SightPress\Core\Tenant\Site;
 
@@ -48,18 +49,25 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
         private Site $site,
         private UploadAllowance $allowance,
         private ServerNotice $notice,
+        private ChunkedUploads $chunked,
     ) {
     }
 
     public function form(): Form
     {
+        $types = $this->types->summary();
+        $sizes = $this->allowance->chunkedSummary($this->chunked->maxBytes());
+        $limits = $this->allowance->forChunkedBrowser($this->chunked->maxBytes());
+
         return Form::create('upload', new Field(
             'file',
             'File to upload',
             FieldType::File,
-            hint: new Message('{types} {sizes} New files stay unpublished until an editor publishes them.', ['types' => $this->types->summary(), 'sizes' => $this->allowance->summary()]),
+            hint: $limits === $this->allowance->forBrowser()
+                ? new Message('{types} {sizes} New files stay unpublished until an editor publishes them.', ['types' => $types, 'sizes' => $sizes])
+                : new Message('{types} {sizes} Without JavaScript, the limit is lower: {basic} New files stay unpublished until an editor publishes them.', ['types' => $types, 'sizes' => $sizes, 'basic' => $this->allowance->summary()]),
             accept: $this->types->accept(),
-            maxBytes: $this->allowance->forBrowser(),
+            maxBytes: $limits,
         ));
     }
 
@@ -102,6 +110,7 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
             'page' => $page,
             'pages' => $pages,
             'total' => $total,
+            'chunk_bytes' => $this->chunked->chunkBytes(),
             'server_problems' => $actor->has(self::SETTINGS) ? $this->notice->visible() : [],
         ], $error === null ? 200 : 422);
     }

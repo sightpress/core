@@ -23,6 +23,9 @@ final class SessionMiddlewareTest extends TestCase
     /** @var array<string, array<string, mixed>> */
     private array $stored = [];
 
+    /** @var list<string> */
+    private array $touched = [];
+
     public function testAVisitorWithoutDataGetsNoCookie(): void
     {
         $response = $this->send(new ServerRequest('GET', 'http://example.org/'), static fn (Session $s) => null);
@@ -69,6 +72,23 @@ final class SessionMiddlewareTest extends TestCase
         self::assertSame(7, $seen);
         self::assertSame(['user' => 7, 'visits' => 2], $this->stored[$id]);
         self::assertFalse($response->hasHeader('Set-Cookie'));
+    }
+
+    public function testARequestThatChangesNothingCantUndoAnOverlappingOne(): void
+    {
+        $id = str_repeat('a', 43);
+        $this->stored[$id] = ['_csrf' => ['old' => 'token']];
+
+        $this->send(
+            $this->withCookie(new ServerRequest('PATCH', 'http://example.org/admin/media/uploads/1'), $id),
+            function (Session $s) use ($id): void {
+                // The page reloads while this request runs, and stores a new form's token.
+                $this->stored[$id] = ['_csrf' => ['old' => 'token', 'new' => 'token']];
+            },
+        );
+
+        self::assertSame(['_csrf' => ['old' => 'token', 'new' => 'token']], $this->stored[$id]);
+        self::assertSame([$id], $this->touched, 'its idle time still restarts');
     }
 
     public function testAPublicResponseKeepsItsCachingWhenNoCookieIsSet(): void
@@ -169,11 +189,13 @@ final class SessionMiddlewareTest extends TestCase
     private function send(ServerRequestInterface $request, \Closure $use, ?string $cacheControl = null): ResponseInterface
     {
         $stored = &$this->stored;
-        $store = new class ($stored) implements SessionStore {
+        $touched = &$this->touched;
+        $store = new class ($stored, $touched) implements SessionStore {
             /**
              * @param array<string, array<string, mixed>> $stored
+             * @param list<string>                        $touched
              */
-            public function __construct(private array &$stored)
+            public function __construct(private array &$stored, private array &$touched)
             {
             }
 
@@ -185,6 +207,11 @@ final class SessionMiddlewareTest extends TestCase
             public function write(string $id, array $data): void
             {
                 $this->stored[$id] = $data;
+            }
+
+            public function touch(string $id): void
+            {
+                $this->touched = [...$this->touched, $id];
             }
 
             public function delete(string $id): void

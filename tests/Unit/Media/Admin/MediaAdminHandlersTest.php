@@ -7,6 +7,7 @@ namespace SightPress\Core\Tests\Unit\Media\Admin;
 use SightPress\Core\Tests\Support\Assistant\NoAssistant;
 use SightPress\Core\Tests\Support\Text;
 use DateTimeImmutable;
+use Monolog\Level;
 use Nyholm\Psr7\Stream;
 use Nyholm\Psr7\UploadedFile;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -28,11 +29,16 @@ use SightPress\Core\Media\Entity\Media;
 use SightPress\Core\Media\MediaEditor;
 use SightPress\Core\Media\MediaFormat;
 use SightPress\Core\Media\MediaLimits;
+use SightPress\Core\Media\Upload\ChunkedUploads;
+use SightPress\Core\Media\Upload\UploadFolder;
+use SightPress\Core\Media\Upload\UploadSessions;
 use SightPress\Core\Media\UploadAllowance;
 use SightPress\Core\Media\MediaTypes;
 use SightPress\Core\Media\OriginMediaUrlGenerator;
 use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Core\Tenant\Environment;
 use SightPress\Core\Tenant\Site;
+use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tests\Support\AdminFixture;
 use SightPress\Core\Tests\Support\MediaFixture;
 use SightPress\Core\Tests\Support\PageFixture;
@@ -93,7 +99,7 @@ final class MediaAdminHandlersTest extends TestCase
         self::assertMatchesRegularExpression('#<input type="file"[^>]+accept="\.jpg,\.png,#', $html);
         self::assertStringContainsString('<p id="media-upload-status" class="media-upload__status" aria-live="polite"></p>', $html);
         self::assertStringContainsString('There are no files yet. Upload one above.', $html);
-        self::assertMatchesRegularExpression('#<script src="/assets/[^"]*js/media-upload\.js[^"]*" data-form="upload" defer></script>#', $html);
+        self::assertMatchesRegularExpression('#<script src="/assets/[^"]*js/media-upload\.js[^"]*" data-form="upload" data-chunk-bytes="\d+"#', $html);
     }
 
     public function testFilesAreAGridOfCardsOrADataTableAndTheChoiceIsKept(): void
@@ -325,10 +331,19 @@ final class MediaAdminHandlersTest extends TestCase
     {
         $html = (string) $this->library($this->cleo)->getBody();
 
-        self::assertStringContainsString('Largest file you can upload: pictures 20 MB, documents 50 MB, audio files 64 MB and videos 64 MB.', $html);
-        self::assertStringContainsString('data-max-bytes="{&quot;image&quot;:20971520,&quot;video&quot;:67108864,&quot;audio&quot;:67108864,&quot;*&quot;:52428800}"', $html);
+        self::assertStringContainsString('Largest file you can upload: pictures 20 MB, documents 50 MB, audio files 200 MB and videos 1 GB. Without JavaScript, the limit is lower: Largest file you can upload: pictures 20 MB, documents 50 MB, audio files 64 MB and videos 64 MB.', $html);
+        self::assertStringContainsString('data-max-bytes="{&quot;image&quot;:20971520,&quot;video&quot;:1073741824,&quot;audio&quot;:209715200,&quot;*&quot;:52428800}"', $html);
+        self::assertStringContainsString('data-chunk-bytes="8388608"', $html);
         self::assertStringContainsString('data-size-error="{name} is too large ({size}). Files of this type can be at most {max}." data-error-prefix="Error:"', $html);
         self::assertStringNotContainsString('server-problems', $html);
+    }
+
+    public function testTheFieldNamesNoLowerLimitWhenThereIsNone(): void
+    {
+        $html = (string) $this->library($this->cleo, '', ServerLimitsFixture::standard(upload: null, post: null, proxy: null))->getBody();
+
+        self::assertStringContainsString('audio files 200 MB and videos 1 GB. New files stay unpublished', $html);
+        self::assertStringNotContainsString('Without JavaScript', $html);
     }
 
     public function testPeopleWhoManageTheSettingsSeeServerSettingsThatStopUploads(): void
@@ -352,6 +367,16 @@ final class MediaAdminHandlersTest extends TestCase
             $this->admin->auth->site,
             new UploadAllowance(new MediaLimits(), $server),
             ServerLimitsFixture::notice($server, $this->admin->auth->database->connection, $this->admin->auth->database->settings(), $this->admin->auth->clock),
+            new ChunkedUploads(
+                new UploadSessions($this->media->database->connection),
+                new UploadFolder(new TenantConfig('/srv', Environment::Test, false, '/srv/r', '/srv/s', '/srv/c', '/srv/l', Level::Error, uploadTempPath: $this->media->directory->path . '/parts'), $this->admin->auth->site),
+                new MediaTypes(),
+                new MediaLimits(),
+                $this->media->uploader(),
+                $server,
+                new TenantConfig('/srv', Environment::Test, false, '/srv/r', '/srv/s', '/srv/c', '/srv/l', Level::Error),
+                $this->media->clock,
+            ),
         )
             ->handle($this->request($actor, 'GET', MediaAdmin::PATH . $query));
     }
