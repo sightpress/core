@@ -116,6 +116,9 @@ final readonly class PublishChecker
             if ($file?->isPublished() !== true) {
                 $issues[] = $this->error($locale, 'media.unpublished', 'This file isn\'t published in the media library, so visitors won\'t see it. Publish it there first.', '/blocks' . $reference['pointer']);
             }
+            if ($file !== null && self::showsSuggestedTranscript($validated->blocks, $reference['pointer'], $file, $locale, $this->site->defaultLocale)) {
+                $issues[] = $this->error($locale, 'media.transcript_unchecked', new Message('The AI assistant tidied the transcript of {name}, and nobody has checked it yet. Check it on the file’s page in the media library, or write the transcript here.', ['name' => $file->originalName()]), '/blocks' . $reference['pointer'], ['1.2.1']);
+            }
             if ($file !== null && self::showsSuggestedAlt($validated->blocks, $reference['pointer'], $file, $locale, $this->site->defaultLocale)) {
                 $issues[] = $this->error($locale, 'media.alt_unchecked', new Message('The alt text of {name} was suggested by the AI assistant, and nobody has checked it yet. Check it on the file’s page in the media library, or write the alt text here.', ['name' => $file->originalName()]), '/blocks' . $reference['pointer'], ['1.1.1']);
             }
@@ -145,12 +148,40 @@ final readonly class PublishChecker
         if (!$file->isAltSuggested($language)) {
             return false;
         }
+        $at = self::dataAt($blocks, $pointer);
+
+        return is_array($at) && ($at['alt'] ?? null) === $file->altText($language);
+    }
+
+    /**
+     * Whether the block at the file's place shows the library's transcript and the AI assistant tidied it.
+     *
+     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks filled and validated
+     */
+    private static function showsSuggestedTranscript(array $blocks, string $pointer, MediaFile $file, string $locale, string $mainLocale): bool
+    {
+        $language = $file->transcript($locale) !== null ? $locale : $mainLocale;
+        if (!$file->isTranscriptSuggested($language)) {
+            return false;
+        }
+        $at = self::dataAt($blocks, $pointer);
+
+        return is_array($at) && ($at['transcript'] ?? null) === $file->transcript($language);
+    }
+
+    /**
+     * What holds the field a JSON pointer ends in.
+     *
+     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     */
+    private static function dataAt(array $blocks, string $pointer): mixed
+    {
         $at = $blocks;
         foreach (explode('/', substr($pointer, 1, (int) strrpos($pointer, '/') - 1)) as $part) {
             $at = is_array($at) ? ($at[str_replace(['~1', '~0'], ['/', '~'], $part)] ?? null) : null;
         }
 
-        return is_array($at) && ($at['alt'] ?? null) === $file->altText($language);
+        return $at;
     }
 
     /**

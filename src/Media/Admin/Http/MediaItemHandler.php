@@ -21,6 +21,7 @@ use SightPress\Core\Media\Contract\MediaUrlGenerator;
 use SightPress\Core\Media\Entity\Media;
 use SightPress\Core\Media\MediaEditor;
 use SightPress\Core\Media\MediaLimits;
+use SightPress\Core\Media\MediaRepository;
 use SightPress\Core\Media\MediaTypes;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Tenant\LocaleCode;
@@ -48,6 +49,7 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
         private MediaUrlGenerator $urls,
         private Site $site,
         private AssistantAccess $assistant,
+        private MediaRepository $library,
     ) {
     }
 
@@ -113,13 +115,19 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
         if ($request->getMethod() !== 'POST') {
             $form = $this->form($media, $canPublish);
             $suggestions = $this->savedSuggestions($media);
+            $tidied = $this->savedTranscripts($media);
             $inserted = AssistantInsert::take(Session::fromRequest($request), $request->getUri()->getPath());
-            if ($inserted !== null && $form->has($inserted['field']) && str_starts_with($inserted['field'], 'alt_')) {
-                $form = $form->withValues([$inserted['field'] => $inserted['text']]);
-                $suggestions[(int) substr($inserted['field'], 4)] = $inserted['text'];
+            if ($inserted !== null && $form->has($inserted['field'])) {
+                if (str_starts_with($inserted['field'], 'alt_')) {
+                    $form = $form->withValues([$inserted['field'] => $inserted['text']]);
+                    $suggestions[(int) substr($inserted['field'], 4)] = $inserted['text'];
+                } elseif (str_starts_with($inserted['field'], 'transcript_')) {
+                    $form = $form->withValues([$inserted['field'] => $inserted['text']]);
+                    $tidied[(int) substr($inserted['field'], 11)] = $inserted['text'];
+                }
             }
 
-            return $this->show($request, $actor, $media, $form, suggestions: $suggestions);
+            return $this->show($request, $actor, $media, $form, suggestions: $suggestions, tidied: $tidied);
         }
 
         $body = $request->getParsedBody();
@@ -132,9 +140,17 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
                 $suggestions[$index] = $suggestion;
             }
         }
-        if (!$form->isValid()) {
-            return $this->show($request, $actor, $media, $form, 422, $suggestions);
+        $tidied = [];
+        foreach (array_keys(array_values($this->site->locales)) as $index) {
+            $suggestion = is_string($body['transcript_suggestion_' . $index] ?? null) ? trim($body['transcript_suggestion_' . $index]) : '';
+            if ($suggestion !== '') {
+                $tidied[$index] = $suggestion;
+            }
         }
+        if (!$form->isValid()) {
+            return $this->show($request, $actor, $media, $form, 422, $suggestions, $tidied);
+        }
+        $transcriptMarks = [];
         $descriptions = [];
         $transcripts = [];
         foreach (array_values($this->site->locales) as $index => $locale) {
@@ -147,6 +163,8 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
             ];
             if ($media->kind()->hasSpeech()) {
                 $transcripts[$locale] = $form->text('transcript_' . $index);
+                // Like alt text: the assistant's transcript stays marked until a person ticks "checked" or changes it.
+                $transcriptMarks[$locale] = isset($tidied[$index]) ? (self::sameText($transcripts[$locale], $tidied[$index]) && ($body['transcript_checked_' . $index] ?? null) !== '1') : null;
             }
         }
         $changed = $this->editor->update(
@@ -156,6 +174,7 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
             $canPublish ? $form->text('published') === '1' : null,
             $actor->userId,
             $this->site->defaultLocale,
+            $transcriptMarks,
         );
 
         return $this->screens->redirect($request, MediaAdmin::path($media), $changed === []
@@ -181,15 +200,77 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
     }
 
     /**
-     * @param array<int, string> $suggestions the assistant's alt texts in the form, by the language's position
+     * The transcripts the AI assistant tidied that nobody checked yet, by the language's position.
+     *
+     * @return array<int, string>
      */
-    private function show(ServerRequestInterface $request, Actor $actor, Media $media, Form $form, int $status = 200, array $suggestions = []): ResponseInterface
+    private function savedTranscripts(Media $media): array
+    {
+        $tidied = [];
+        foreach (array_values($this->site->locales) as $index => $locale) {
+            if ($media->isTranscriptSuggested($locale)) {
+                $tidied[$index] = (string) $media->ownTranscript($locale);
+            }
+        }
+
+        return $tidied;
+    }
+
+    /**
+     * A browser sends a textarea's line endings as CRLF.
+     */
+    private static function sameText(?string $text, string $other): bool
+    {
+        return str_replace("\r\n", "\n", (string) $text) === str_replace("\r\n", "\n", $other);
+    }
+
+    /**
+     * The video's captions per language, for its Captions section.
+     *
+     * @return list<array{index: int, language: LanguageName, name: ?string, url: ?string, unpublished: bool}>
+     */
+    private function captionRows(Media $media): array
+    {
+        $tracks = $media->captionFiles();
+        $files = $this->library->files(array_values($tracks));
+        $rows = [];
+        foreach (array_values($this->site->locales) as $index => $locale) {
+            $file = $files[$tracks[$locale] ?? 0] ?? null;
+            $rows[] = [
+                'index' => $index,
+                'language' => new LanguageName($locale),
+                'name' => $file?->originalName(),
+                'url' => $file === null ? null : MediaAdmin::path($file),
+                'unpublished' => $file !== null && !$file->isPublished(),
+            ];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @param array<int, string> $suggestions the assistant's alt texts in the form, by the language's position
+     * @param array<int, string> $tidied      the assistant's transcripts in the form, by the language's position
+     */
+    private function show(ServerRequestInterface $request, Actor $actor, Media $media, Form $form, int $status = 200, array $suggestions = [], array $tidied = []): ResponseInterface
     {
         $image = $media->kind() === MediaKind::Image;
+        $session = Session::fromRequest($request);
+        $captionsError = $session->get(MediaCaptionsHandler::ERROR_KEY);
+        $session->remove(MediaCaptionsHandler::ERROR_KEY);
+        $canTidy = [];
+        foreach (array_values($this->site->locales) as $index => $locale) {
+            $saved = trim((string) $media->transcript($locale));
+            $canTidy[$index] = $media->kind()->hasSpeech() && $saved !== '' && mb_strlen($saved) <= AssistantAccess::TRANSCRIPT_CLEANUP_MAX;
+        }
 
         return $this->screens->render($request, '@media_admin/item.html.twig', [
             'suggestions' => $suggestions,
-            'assistant' => $image ? $this->assistant->panel($actor, MediaAdmin::path($media), fields: ['alt'], mediaId: (int) $media->id()) : null,
+            'tidied' => $tidied,
+            'can_tidy' => $canTidy,
+            'caption_rows' => $media->kind() === MediaKind::Video ? $this->captionRows($media) : [],
+            'captions_error' => is_array($captionsError) ? Message::import($captionsError) : null,
+            'assistant' => $image || $media->kind()->hasSpeech() ? $this->assistant->panel($actor, MediaAdmin::path($media), fields: [$image ? 'alt' : 'transcript'], mediaId: (int) $media->id()) : null,
             'assistant_screen' => 'media_item',
             'languages' => array_map(static fn (string $locale): LanguageName => new LanguageName($locale), array_values($this->site->locales)),
             'media' => $media,

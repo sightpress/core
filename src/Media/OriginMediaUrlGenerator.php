@@ -22,6 +22,11 @@ final readonly class OriginMediaUrlGenerator implements MediaUrlGenerator
         return self::PREFIX . $file->key() . '/' . $size . rawurlencode($file->fileName());
     }
 
+    public function siteUrl(MediaFile $file): string
+    {
+        return $this->url($file);
+    }
+
     public function temporaryUrl(MediaFile $file, ?int $width = null): string
     {
         return $this->url($file, $width);

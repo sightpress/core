@@ -15,10 +15,12 @@ use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SightPress\Core\Assistant\Contract\AssistantInsert;
 use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Http\Upload\ServerLimits;
 use SightPress\Core\Http\Upload\ServerLimitsCheck;
+use SightPress\Core\Media\Admin\Http\MediaCaptionsHandler;
 use SightPress\Core\Media\Admin\Http\MediaDeleteHandler;
 use SightPress\Core\Media\Admin\Http\MediaItemHandler;
 use SightPress\Core\Media\Admin\Http\MediaLibraryHandler;
@@ -52,6 +54,7 @@ use Slim\Exception\HttpNotFoundException;
 #[CoversClass(MediaUploadHandler::class)]
 #[CoversClass(MediaItemHandler::class)]
 #[CoversClass(MediaDeleteHandler::class)]
+#[CoversClass(MediaCaptionsHandler::class)]
 #[UsesNamespace('SightPress\Core')]
 final class MediaAdminHandlersTest extends TestCase
 {
@@ -389,6 +392,98 @@ final class MediaAdminHandlersTest extends TestCase
             ->handle($xhr ? $request->withHeader('X-Requested-With', 'XMLHttpRequest') : $request);
     }
 
+    public function testAVideoGetsCaptionsPerLanguageAndABadFileIsExplained(): void
+    {
+        $video = $this->stored(new MediaFormat('video/mp4', MediaKind::Video, 'mp4', 'MP4'), 'tour.mp4');
+        $screen = (string) $this->item($this->ada, $video)->getBody();
+        self::assertStringContainsString('<h2 id="media-captions-title" tabindex="-1">Captions</h2>', $screen);
+        self::assertStringContainsString('No captions in this language yet.', $screen);
+
+        $refused = $this->captions($this->ada, $video, ['language' => '0'], "WEBVTT\n\n00:05.000 --> 00:01.000\nHello\n");
+        self::assertSame(MediaAdmin::path($video), $refused->getHeaderLine('Location'), 'no fragment: it would take focus from the error summary');
+        self::assertSame([], $video->captionFiles());
+        $explained = (string) $this->item($this->ada, $video)->getBody();
+        self::assertStringContainsString('mistake on line 3', $explained);
+        self::assertStringNotContainsString('mistake on line 3', (string) $this->item($this->ada, $video)->getBody(), 'said once');
+
+        self::assertSame(303, $this->captions($this->ada, $video, ['language' => '0'], "WEBVTT\n\n00:01.000 --> 00:02.000\nHello\n", 'tour.en.vtt')->getStatusCode());
+        /** @var array<string, int> $tracks */
+        $tracks = $video->captionFiles();
+        $id = $tracks['en-GB'] ?? self::fail('No captions.');
+        self::assertStringContainsString('tour.en.vtt</a> (Not published)', (string) $this->item($this->ada, $video)->getBody());
+
+        $this->captions($this->ada, $video, ['language' => '0', 'remove' => '1']);
+        self::assertSame([], $video->captionFiles());
+        self::assertNotNull($this->media->repository()->find($id), 'the file stays in the library');
+    }
+
+    public function testCaptionsMustBeWebVttAndForAVideoInALanguageOfTheSite(): void
+    {
+        $video = $this->stored(new MediaFormat('video/mp4', MediaKind::Video, 'mp4', 'MP4'), 'tour.mp4');
+        $count = $this->media->repository()->count();
+
+        $this->captions($this->ada, $video, ['language' => '0']);
+        self::assertStringContainsString('Choose a file to upload.', (string) $this->item($this->ada, $video)->getBody());
+
+        $this->captions($this->ada, $video, ['language' => '0'], MediaFixture::png(), 'picture.png');
+        self::assertStringContainsString('Choose a captions file in WebVTT format', (string) $this->item($this->ada, $video)->getBody());
+        self::assertSame($count, $this->media->repository()->count(), 'the wrong file isn\'t kept');
+
+        $existing = $this->upload('kept.png', MediaFixture::png(20, 20));
+        $this->captions($this->ada, $video, ['language' => '0'], MediaFixture::png(20, 20), 'again.png');
+        self::assertNotNull($this->media->repository()->find((int) $existing->id()), 'a file already in the library stays');
+
+        foreach ([['language' => '9'], ['language' => 'x'], []] as $body) {
+            try {
+                $this->captions($this->ada, $video, $body);
+                self::fail('Accepted.');
+            } catch (HttpNotFoundException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+        $this->expectException(HttpNotFoundException::class);
+        $this->captions($this->ada, $existing, ['language' => '0']);
+    }
+
+    public function testATranscriptFromTheAssistantStaysMarkedUntilAPersonChecksIt(): void
+    {
+        $audio = $this->stored(new MediaFormat('audio/mpeg', MediaKind::Audio, 'mp3', 'MP3'), 'talk.mp3');
+        AssistantInsert::keep($this->session, MediaAdmin::path($audio), 'transcript_0', 'Tidied, by the assistant.');
+        $filled = (string) $this->item($this->ada, $audio)->getBody();
+        self::assertStringContainsString('name="transcript_suggestion_0" id="transcript-suggestion-0" value="Tidied, by the assistant."', $filled);
+        self::assertStringContainsString('I checked the transcript against the recording', $filled);
+
+        $fields = ['caption_0' => '', 'transcript_0' => "Tidied,\r\nby hand.", 'transcript_suggestion_0' => "Tidied,\nby hand.", 'published' => ''];
+        $this->item($this->ada, $audio, $fields);
+        self::assertTrue($audio->isTranscriptSuggested('en-GB'), 'line endings from the browser don\'t count as a change');
+        self::assertStringContainsString('id="details-transcript-checked-0"', (string) $this->item($this->ada, $audio)->getBody(), 'still asks after a reload');
+
+        self::assertSame(422, $this->item($this->ada, $audio, ['transcript_0' => str_repeat('x', Media::TRANSCRIPT_MAX_LENGTH + 1), 'transcript_suggestion_0' => 'Kept.'])->getStatusCode());
+
+        $this->item($this->ada, $audio, ['transcript_checked_0' => '1'] + $fields);
+        self::assertFalse($audio->isTranscriptSuggested('en-GB'));
+    }
+
+    public function testAnInsertedAltTextOrUnknownFieldIsHandledOnTheFilesPage(): void
+    {
+        $picture = $this->upload('room.png', MediaFixture::png(30, 30));
+        AssistantInsert::keep($this->session, MediaAdmin::path($picture), 'caption_0', 'Not for this field.');
+        self::assertStringNotContainsString('Not for this field.', (string) $this->item($this->ada, $picture)->getBody());
+    }
+
+    /**
+     * @param array<string, string> $body
+     */
+    private function captions(User $actor, Media $media, array $body, ?string $contents = null, string $name = 'captions.vtt'): ResponseInterface
+    {
+        $request = $this->request($actor, 'POST', MediaAdmin::path($media, '/captions'), $body, (string) $media->id());
+        if ($contents !== null) {
+            $request = $request->withUploadedFiles(['captions' => new UploadedFile(Stream::create($contents), strlen($contents), UPLOAD_ERR_OK, $name, 'text/vtt')]);
+        }
+
+        return new MediaCaptionsHandler($this->admin->shell(), new MediaAdmin($this->media->repository()), $this->editor(), $this->media->uploader(), $this->admin->auth->site)->handle($request);
+    }
+
     /**
      * @param array<string, string> $body
      */
@@ -409,6 +504,7 @@ final class MediaAdminHandlersTest extends TestCase
             new OriginMediaUrlGenerator(),
             $site ?? $this->admin->auth->site,
             NoAssistant::access(),
+            $this->media->repository(),
         );
     }
 

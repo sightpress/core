@@ -30,6 +30,7 @@ final class TestAssistantProvider implements AssistantProvider
         'You write the summary of a web page' => 'When the library is open, and the days it is closed.',
         'You write what search engines show' => '{"title": "Opening hours of Riverside Library", "description": "When Riverside Library is open each day, and the bank holidays it is closed."}',
         'You write the alt text of a picture' => 'A reading room with tall windows and children reading on cushions.',
+        'You tidy the transcript' => "Speaker 1: Hello, and welcome to the library.\n\nSpeaker 2: Thank you.",
         'You rewrite a piece of text' => 'We are open every day from 9 to 5.',
         'You draft the text of a web page' => '{"blocks": [{"type": "heading", "text": "Join our book club", "level": 2}, {"type": "rich_text", "html": "<p>We meet on the first Tuesday of each month. [Add the time.]</p>"}]}',
         'You explain one check' => 'Pictures need alt text so that people who can’t see them know what they show. Open the picture’s block and describe it.',

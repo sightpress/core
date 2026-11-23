@@ -84,6 +84,15 @@ final class SiteBlockContext implements HttpBlockContext
     }
 
     /**
+     * The address of a captions file on the page's own origin, which is the only place a `<track>` loads from without
+     * CORS, also when the site's other files are on a CDN or the page is on another of the site's domains.
+     */
+    public function captionsUrl(MediaFile $file): string
+    {
+        return $this->urls->siteUrl($file);
+    }
+
+    /**
      * A published picture, with what an `<img>` needs.
      *
      * @return array{src: string, srcset: string, width: ?int, height: ?int}|null

@@ -54,6 +54,7 @@ final class MediaAdminModuleTest extends TestCase
             'media_admin.direct.urls' => ['/admin/media/direct/{upload:[0-9a-f]{32}}/urls', DirectUploadHandler::class, ['POST'], $admin],
             'media_admin.direct.complete' => ['/admin/media/direct/{upload:[0-9a-f]{32}}/complete', DirectUploadHandler::class, ['POST'], $admin],
             'media_admin.item' => ['/admin/media/{id:[0-9]+}', MediaItemHandler::class, ['GET', 'POST'], $admin],
+            'media_admin.captions' => ['/admin/media/{id:[0-9]+}/captions', \SightPress\Core\Media\Admin\Http\MediaCaptionsHandler::class, ['POST'], $admin],
             'media_admin.delete' => ['/admin/media/{id:[0-9]+}/delete', MediaDeleteHandler::class, ['GET', 'POST'], $admin],
         ], $routes);
         $menu = array_values(array_filter($registry->adminMenu(), static fn ($m) => $m->module === 'media_admin'));

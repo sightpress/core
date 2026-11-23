@@ -157,6 +157,55 @@ final class MediaTest extends TestCase
         self::assertSame(['New words.', 'Palavras.', null], [$audio->transcript('en-GB'), $audio->transcript('pt-PT'), $audio->transcript('es')]);
     }
 
+    public function testAVideoKeepsACaptionsFilePerLanguage(): void
+    {
+        $now = new DateTimeImmutable('2026-11-23 10:00:00 UTC');
+        $later = new DateTimeImmutable('2026-11-23 11:00:00 UTC');
+        $video = new Media(self::KEY, str_repeat('b', 64), new MediaFormat('video/mp4', MediaKind::Video, 'mp4', 'MP4'), 'a.mp4', 'a.mp4', 10, null, null, [], null, $now);
+        self::assertSame([], $video->captionFiles());
+
+        $video->setCaptionFile('pt-PT', 5, $now);
+        $video->setCaptionFile('en-GB', 4, $later);
+        self::assertSame(['en-GB' => 4, 'pt-PT' => 5], $video->captionFiles());
+        self::assertSame($later, $video->updatedAt());
+
+        $video->setCaptionFile('en-GB', null, $now);
+        $video->setCaptionFile('pt-PT', null, $now);
+        self::assertSame([], $video->captionFiles());
+
+        $this->expectException(MediaException::class);
+        $video->setCaptionFile('not a locale', 4, $now);
+    }
+
+    public function testOnlyVideosHaveCaptionsFiles(): void
+    {
+        $this->expectException(MediaException::class);
+        $this->expectExceptionMessage('Only videos have captions files.');
+        self::picture()->setCaptionFile('en-GB', 4, new DateTimeImmutable());
+    }
+
+    public function testATranscriptCanBeMarkedAsTheAssistantsPerLanguage(): void
+    {
+        $now = new DateTimeImmutable();
+        $audio = new Media(self::KEY, str_repeat('b', 64), new MediaFormat('audio/mpeg', MediaKind::Audio, 'mp3', 'MP3'), 'a.mp3', 'a.mp3', 10, null, null, [], null, $now);
+
+        $audio->markTranscriptSuggested('en-GB', true);
+        self::assertFalse($audio->isTranscriptSuggested('en-GB'), 'there is no transcript to mark');
+
+        $audio->setTranscript('en-GB', 'Words.', $now);
+        $audio->setTranscript('pt-PT', 'Palavras.', $now);
+        $audio->markTranscriptSuggested('pt-PT', true);
+        $audio->markTranscriptSuggested('en-GB', true);
+        self::assertTrue($audio->isTranscriptSuggested('en-GB'));
+        self::assertTrue($audio->isTranscriptSuggested('pt-PT'));
+
+        $audio->markTranscriptSuggested('en-GB', false);
+        self::assertFalse($audio->isTranscriptSuggested('en-GB'));
+        self::assertTrue($audio->isTranscriptSuggested('pt-PT'));
+        $audio->setTranscript('pt-PT', null, $now);
+        self::assertFalse($audio->isTranscriptSuggested('pt-PT'), 'a removed transcript is no longer marked');
+    }
+
     public function testPublishesAndUnpublishes(): void
     {
         $media = self::picture();

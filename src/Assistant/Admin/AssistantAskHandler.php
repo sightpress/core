@@ -19,6 +19,7 @@ use SightPress\Core\Assistant\Task\ExplainCheckTask;
 use SightPress\Core\Assistant\Task\HelpTask;
 use SightPress\Core\Assistant\Task\PageInput;
 use SightPress\Core\Assistant\Task\RewriteTask;
+use SightPress\Core\Assistant\Task\TranscriptCleanupTask;
 use SightPress\Core\Infrastructure\Assistant\AssistantAccess;
 use SightPress\Core\Page\Contract\PageText;
 use SightPress\Core\Page\Contract\PageTexts;
@@ -45,6 +46,7 @@ final readonly class AssistantAskHandler implements RequestHandlerInterface
         'seo_title' => 'Title in search results',
         'description' => 'Description for search engines',
         'alt' => 'Alt text',
+        'transcript' => 'Transcript',
     ];
 
     public function __construct(
@@ -90,13 +92,13 @@ final readonly class AssistantAskHandler implements RequestHandlerInterface
     private function request(AssistantAsk $ask, ?PageText $page, Actor $actor, ServerRequestInterface $request): array
     {
         $admin = self::locale($this->replies->locale($request));
-        if ($ask->field === 'alt') {
+        if ($ask->field === 'alt' || $ask->field === 'transcript') {
             $locale = $this->site->locales[$ask->altIndex ?? -1] ?? null;
             if ($ask->mediaId === null || $locale === null) {
                 throw new AssistantError(AssistantError::INVALID_INPUT, new Message('The assistant couldn’t use what was sent.'));
             }
 
-            return [AltTextTask::ID, ['field' => 'alt', 'media' => $ask->mediaId], self::locale($locale)];
+            return [$ask->field === 'alt' ? AltTextTask::ID : TranscriptCleanupTask::ID, ['field' => $ask->field, 'media' => $ask->mediaId], self::locale($locale)];
         }
         if ($ask->field !== null) {
             if ($page === null) {

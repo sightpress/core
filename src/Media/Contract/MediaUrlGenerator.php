@@ -25,6 +25,12 @@ interface MediaUrlGenerator
     public function srcset(MediaFile $file): string;
 
     /**
+     * The file's root-relative address on the site itself, never on a CDN. Browsers only load a captions `<track>`
+     * from the page's own origin unless the other host allows it with CORS.
+     */
+    public function siteUrl(MediaFile $file): string;
+
+    /**
      * A short-lived address for someone already allowed to see this file, even if it isn't published. Never put it in
      * a page other people can read.
      */

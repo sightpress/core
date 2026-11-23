@@ -43,6 +43,27 @@ final class MediaRepositoryTest extends TestCase
         self::assertNull($repository->find($id));
     }
 
+    public function testFindsTheVideosThatUseACaptionsFile(): void
+    {
+        $database = new CoreSiteDatabase();
+        $repository = new MediaRepository($database->entityManager);
+        $format = new MediaFormat('video/mp4', MediaKind::Video, 'mp4', 'MP4');
+        $now = new DateTimeImmutable('2026-11-23 10:00:00 UTC');
+        $videos = [];
+        foreach ([1, 2, 3] as $number) {
+            $videos[$number] = new Media(str_repeat((string) $number, 32), str_repeat((string) $number, 64), $format, 'v.mp4', 'V.mp4', 1, null, null, [], null, $now);
+        }
+        $videos[1]->setCaptionFile('en-GB', 40, $now);
+        $videos[2]->setCaptionFile('pt-PT', 41, $now);
+        foreach ($videos as $video) {
+            $repository->save($video);
+        }
+        $database->entityManager->clear();
+
+        self::assertSame([(int) $videos[1]->id()], array_map(static fn (Media $video): int => (int) $video->id(), $repository->videosCaptionedBy(40)));
+        self::assertSame([], $repository->videosCaptionedBy(99));
+    }
+
     public function testListsTheNewestFilesAPageAtATime(): void
     {
         $database = new CoreSiteDatabase();

@@ -95,6 +95,19 @@ interface MediaFile
     public function transcript(string $locale): ?string;
 
     /**
+     * Whether the transcript in that language was tidied by the AI assistant and no person has checked it yet: pages
+     * that show it can't be published until someone does.
+     */
+    public function isTranscriptSuggested(string $locale): bool;
+
+    /**
+     * The WebVTT files with a video's captions: language => id of the file in the media library.
+     *
+     * @return array<string, int>
+     */
+    public function captionFiles(): array;
+
+    /**
      * When the file was uploaded (UTC). Its content never changes after that.
      */
     public function createdAt(): DateTimeImmutable;

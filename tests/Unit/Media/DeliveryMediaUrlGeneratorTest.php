@@ -66,6 +66,11 @@ final class DeliveryMediaUrlGeneratorTest extends TestCase
         self::assertSame('/media/' . self::KEY . '/photo.jpg', $this->urls(null)->url($this->media()));
     }
 
+    public function testTheSiteAddressIsNeverOnTheCdn(): void
+    {
+        self::assertSame('/media/' . self::KEY . '/photo.jpg', $this->urls()->siteUrl($this->media()));
+    }
+
     public function testPublicFilesUseTheCdnWithTheirChecksum(): void
     {
         self::assertSame(self::CDN . '/media/' . self::KEY . '/640w/photo.jpg?v=' . str_repeat('a', 16), $this->urls()->url($this->media(), 640));

@@ -79,6 +79,30 @@ final class PublishCheckerTest extends TestCase
         self::assertSame([], array_filter($this->checker()->check($page)->errors(), static fn (PublishIssue $issue): bool => $issue->rule === 'media.alt_unchecked'));
     }
 
+    public function testATranscriptTheAssistantTidiedStopsPublishingUntilSomeoneChecksIt(): void
+    {
+        $this->pages = new PageFixture(null, [new \SightPress\Core\Block\Type\AudioBlock()]);
+        $this->blocks = new BlockFixture([new \SightPress\Core\Block\Type\AudioBlock()], $this->pages->database);
+        $id = $this->blocks->addMedia(kind: \SightPress\Core\Media\Contract\MediaKind::Audio, fileName: 'talk.mp3');
+        $audio = $this->blocks->media()->find($id) ?? self::fail('No audio.');
+        $audio->setTranscript('en-GB', 'Hello, everyone.', new \DateTimeImmutable());
+        $audio->markTranscriptSuggested('en-GB', true);
+        $this->blocks->media()->save($audio);
+        $page = $this->pages->editor()->create('en-GB', new PageContent('Our talk', null, 'A talk at the library.', 'A recording of the talk at the Riverside Library, with its transcript.', [
+            ['type' => 'audio', 'version' => 1, 'data' => ['media' => $id, 'title' => 'Library talk']],
+            ['type' => 'audio', 'version' => 1, 'data' => ['media' => $id, 'title' => 'Own text', 'transcript' => 'Written here.']],
+        ]));
+        $unchecked = static fn (PublishIssue $issue): bool => $issue->rule === 'media.transcript_unchecked';
+
+        $found = array_values(array_filter($this->checker()->check($page)->errors(), $unchecked));
+        self::assertSame(['/blocks/0/data/media'], array_map(static fn (PublishIssue $issue): string => $issue->pointer, $found));
+        self::assertSame(['1.2.1'], $found[0]->wcag);
+
+        $audio->markTranscriptSuggested('en-GB', false);
+        $this->blocks->media()->save($audio);
+        self::assertSame([], array_filter($this->checker()->check($page)->errors(), $unchecked));
+    }
+
     public function testFindsWhatStopsPublishingAndWhatIsWorthFixing(): void
     {
         $this->pages->editor()->create('en-GB', new PageContent('Visit us'));

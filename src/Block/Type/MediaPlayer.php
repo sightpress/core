@@ -42,6 +42,22 @@ final class MediaPlayer
     }
 
     /**
+     * The address of a published WebVTT file for a `<track>`.
+     */
+    public static function captionsUrl(mixed $id, BlockContext $context): ?string
+    {
+        if (!is_int($id)) {
+            return null;
+        }
+        if (!$context instanceof SiteBlockContext) {
+            return $context->mediaUrl((string) $id);
+        }
+        $file = $context->file($id);
+
+        return $file !== null && $file->mimeType() === 'text/vtt' ? $context->captionsUrl($file) : null;
+    }
+
+    /**
      * The transcript as a closed disclosure, named after the title so several on a page can be told apart.
      */
     public static function transcript(string $transcript, string $title): string

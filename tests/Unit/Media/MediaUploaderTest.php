@@ -251,4 +251,25 @@ final class MediaUploaderTest extends TestCase
 
         return 'RIFF' . pack('V', 36 + strlen($data)) . 'WAVEfmt ' . pack('VvvVVvv', 16, 1, 1, 8000, 8000, 1, 8) . 'data' . pack('V', strlen($data)) . $data;
     }
+
+    public function testRefusesACaptionsFileWithAMistakeAndSaysOnWhichLine(): void
+    {
+        try {
+            $this->fixture->uploader()->upload($this->fixture->file('bad.vtt', "WEBVTT\n\n00:05.000 --> 00:01.000\nHello\n"), 'bad.vtt', 1);
+            self::fail('The file was accepted.');
+        } catch (MediaException $refused) {
+            self::assertSame('This captions file has a mistake on line 3: the cue must end after it starts.', $refused->getMessage());
+        }
+        self::assertSame([], $this->fixture->stored());
+    }
+
+    public function testChecksACaptionsFileSentStraightToTheBucket(): void
+    {
+        $good = new FakeIncomingFile("WEBVTT\n\n00:01.000 --> 00:02.000\nHello\n");
+        self::assertSame('text/vtt', $this->fixture->uploader()->adopt($good, 'good.vtt', 7)->media->mimeType());
+
+        $this->expectException(MediaException::class);
+        $this->expectExceptionMessage('mistake on line 3');
+        $this->fixture->uploader()->adopt(new FakeIncomingFile("WEBVTT\n\nnot a time --> at all\nHello\n"), 'bad.vtt', 7);
+    }
 }

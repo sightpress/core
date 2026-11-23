@@ -98,4 +98,35 @@ final class MediaTextsTest extends TestCase
     {
         return ['type' => $type, 'version' => 1, 'data' => $data];
     }
+
+    public function testAVideoTakesTheLibrarysCaptionsInThePagesLanguageOrElseTheMainOne(): void
+    {
+        $id = $this->blocks->addMedia(kind: MediaKind::Video, fileName: 'tour.mp4');
+        $english = $this->blocks->addCaptions();
+        $video = $this->blocks->media()->find($id) ?? throw new \LogicException();
+        $video->setCaptionFile('en-GB', $english, new DateTimeImmutable());
+        $this->blocks->media()->save($video);
+
+        self::assertSame(['captions' => $english, 'captions_language' => 'en-GB'], array_intersect_key($this->texts->fill(self::video($id, []), 'pt-BR')[0]['data'], ['captions' => 1, 'captions_language' => 1]), 'falls back to the main language');
+        self::assertSame(99, $this->texts->fill(self::video($id, ['captions' => 99]), 'en-GB')[0]['data']['captions'], 'the block\'s own file wins');
+        self::assertArrayNotHasKey('captions', $this->texts->fill(self::video($id, ['no_speech' => true]), 'en-GB')[0]['data']);
+
+        $portuguese = $this->blocks->addCaptions();
+        $video->setCaptionFile('pt-BR', $portuguese, new DateTimeImmutable());
+        $video->setCaptionFile('en-GB', null, new DateTimeImmutable());
+        $this->blocks->media()->save($video);
+        self::assertSame($portuguese, $this->texts->fill(self::video($id, []), 'pt-BR')[0]['data']['captions']);
+        self::assertArrayNotHasKey('captions', $this->texts->fill(self::video($id, []), 'en-GB')[0]['data'], 'no main-language track to fall back to');
+        self::assertSame([['type' => 'video', 'version' => 1, 'data' => ['media' => 12345]]], $this->texts->fill([['type' => 'video', 'version' => 1, 'data' => ['media' => 12345]]], 'en-GB'));
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return list<array{type: string, version: int, data: array<string, mixed>}>
+     */
+    private static function video(int $id, array $data): array
+    {
+        return [['type' => 'video', 'version' => 1, 'data' => array_merge(['media' => $id, 'title' => 'T'], $data)]];
+    }
 }

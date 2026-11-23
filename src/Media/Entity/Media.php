@@ -79,6 +79,14 @@ final class Media implements MediaFile
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $transcripts = null;
 
+    /** @var array<string, int>|null locale => id of the WebVTT file with the video's captions in that language */
+    #[ORM\Column(name: 'caption_tracks', type: Types::JSON, nullable: true)]
+    private ?array $captionTracks = null;
+
+    /** @var list<string>|null locales whose transcript the AI assistant tidied and no person has checked yet */
+    #[ORM\Column(name: 'transcript_suggested', type: Types::JSON, nullable: true)]
+    private ?array $transcriptSuggested = null;
+
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $published = false;
 
@@ -301,6 +309,51 @@ final class Media implements MediaFile
         if ($main) {
             $this->transcript = null;
         }
+        $this->updatedAt = $now;
+    }
+
+    public function isTranscriptSuggested(string $locale): bool
+    {
+        return $this->ownTranscript($locale) !== null && in_array($locale, $this->transcriptSuggested ?? [], true);
+    }
+
+    /**
+     * Marks the transcript in a language as tidied by the AI assistant and not checked yet, or as checked by a person.
+     */
+    public function markTranscriptSuggested(string $locale, bool $suggested): void
+    {
+        $locales = array_values(array_diff($this->transcriptSuggested ?? [], [$locale]));
+        if ($suggested && $this->ownTranscript($locale) !== null) {
+            $locales[] = $locale;
+            sort($locales);
+        }
+        $this->transcriptSuggested = $locales === [] ? null : $locales;
+    }
+
+    public function captionFiles(): array
+    {
+        return $this->captionTracks ?? [];
+    }
+
+    /**
+     * Sets the WebVTT file with the video's captions in one language; null removes it.
+     */
+    public function setCaptionFile(string $locale, ?int $file, DateTimeImmutable $now): void
+    {
+        if ($this->kind !== MediaKind::Video) {
+            throw new MediaException('Only videos have captions files.');
+        }
+        if (!LocaleCode::isValid($locale)) {
+            throw new MediaException(new Message('"{locale}" is not a locale code such as "en-GB".', ['locale' => $locale]));
+        }
+        $tracks = $this->captionTracks ?? [];
+        if ($file === null) {
+            unset($tracks[$locale]);
+        } else {
+            $tracks[$locale] = $file;
+            ksort($tracks);
+        }
+        $this->captionTracks = $tracks === [] ? null : $tracks;
         $this->updatedAt = $now;
     }
 

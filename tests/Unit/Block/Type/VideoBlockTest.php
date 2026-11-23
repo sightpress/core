@@ -46,7 +46,7 @@ final class VideoBlockTest extends TestCase
         self::assertSame(
             '<figure class="block-video"><video controls preload="metadata" poster="' . $base . $fixture->key($poster) . '/lighthouse.jpg">'
             . '<source src="' . $base . $fixture->key($video) . '/tour.mp4" type="video/mp4">'
-            . '<track kind="captions" src="' . $base . $fixture->key($captions) . '/captions.vtt" srclang="en-GB" label="English (United Kingdom)" default>'
+            . '<track kind="captions" src="/media/' . $fixture->key($captions) . '/captions.vtt" srclang="en-GB" label="English (United Kingdom)" default>'
             . '<p>Your browser can\'t play this video. <a href="' . $base . $fixture->key($video) . '/tour.mp4">Download the video: A tour of the harbour</a>.</p></video>'
             . '<figcaption>A tour of the harbour</figcaption>'
             . '<details class="disclosure block-transcript"><summary>Transcript<span class="visually-hidden">: A tour of the harbour</span></summary><div class="disclosure__content"><p>Welcome.<br>Line two.</p><p>Second &lt;part&gt;.</p></div></details></figure>',
@@ -119,5 +119,28 @@ final class VideoBlockTest extends TestCase
     public function testNeedsCaptionsOrADescription(array $data, array $expected): void
     {
         self::assertSame($expected, array_map(static fn ($issue): array => [$issue->rule, $issue->severity], new VideoRule()->check($data)));
+    }
+
+    public function testRendersATrackPerLanguageFromTheSitesOwnAddress(): void
+    {
+        $fixture = new BlockFixture();
+        $id = $fixture->addMedia(kind: MediaKind::Video, fileName: 'tour.mp4');
+        $english = $fixture->addCaptions();
+        $portuguese = $fixture->addCaptions();
+        $hidden = $fixture->addMedia(published: false, kind: MediaKind::Document, fileName: 'hidden.vtt', format: new \SightPress\Core\Media\MediaFormat('text/vtt', MediaKind::Document, 'vtt', 'WebVTT captions'));
+        $video = $fixture->media()->find($id) ?? self::fail('No video.');
+        $now = new \DateTimeImmutable();
+        $video->setCaptionFile('en-GB', $english, $now);
+        $video->setCaptionFile('pt-PT', $portuguese, $now);
+        $video->setCaptionFile('es', $hidden, $now);
+        $fixture->media()->save($video);
+
+        $html = new VideoBlock()->render(['media' => $id, 'title' => 'T', 'captions' => $english, 'captions_language' => 'en-gb'], $fixture->context());
+
+        self::assertSame(2, substr_count($html, '<track'), 'one per language; the unpublished one is left out');
+        self::assertStringContainsString('src="/media/' . $fixture->key($english) . '/captions.vtt" srclang="en-gb"', $html);
+        self::assertStringContainsString('<track kind="captions" src="/media/' . $fixture->key($portuguese) . '/captions.vtt" srclang="pt-PT" label="português (Portugal)">', $html);
+        self::assertSame(1, substr_count($html, ' default>'));
+        self::assertStringNotContainsString('<track', new VideoBlock()->render(['media' => $id, 'title' => 'T', 'no_speech' => true], $fixture->context()));
     }
 }

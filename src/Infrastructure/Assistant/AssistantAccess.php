@@ -24,6 +24,7 @@ final readonly class AssistantAccess
         'seo_title' => 'seo_meta',
         'description' => 'seo_meta',
         'alt' => 'alt_text',
+        'transcript' => 'transcript_cleanup',
     ];
 
     /** The tasks the panel's own forms offer, in their order. */
@@ -31,6 +32,12 @@ final readonly class AssistantAccess
 
     /** Panel tasks only offered on a page's screen. */
     public const array PAGE_TASKS = ['draft_page', 'explain_check', 'translate'];
+
+    /**
+     * Longest transcript the assistant tidies in one go: its answer is as long as the transcript and has to arrive
+     * within the time an AI service is given to answer.
+     */
+    public const int TRANSCRIPT_CLEANUP_MAX = 6000;
 
     public function __construct(
         private ContainerInterface $container,

@@ -8,7 +8,7 @@ use SightPress\Core\Infrastructure\Assistant\AssistantAccess;
 
 /**
  * What the assistant panel or a Suggest button sent, checked: the field to suggest (`summary`, `seo_title`,
- * `description`, or `alt_<n>` for the alt text in the site's n-th language), or else the panel's task (`ask`,
+ * `description`, or `alt_<n>` / `transcript_<n>` for the alt text or transcript in the site's n-th language), or else the panel's task (`ask`,
  * `rewrite`, `draft_page`, `explain_check`) with its question, text and style, brief or check; whether to share the
  * saved page; the page and its language, or the media file; the screen; the admin path to go back to and the id of
  * the field to fill there (`target`, or `target_prefix` and the field: `en-gb` + `summary`). Anything else is
@@ -55,17 +55,17 @@ final readonly class AssistantAsk
         $id = static fn (string $name): ?int => preg_match('/^[1-9]\d{0,9}$/', $text($name)) === 1 ? (int) $text($name) : null;
         $field = $text('field');
         $altIndex = null;
-        if (preg_match('/^alt_(\d{1,2})$/', $field, $alt) === 1) {
-            $field = 'alt';
-            $altIndex = (int) $alt[1];
+        if (preg_match('/^(alt|transcript)_(\d{1,2})$/', $field, $perLanguage) === 1) {
+            $field = $perLanguage[1];
+            $altIndex = (int) $perLanguage[2];
         }
-        $field = isset(AssistantAccess::FIELD_TASKS[$field]) && ($field !== 'alt' || $altIndex !== null) ? $field : null;
+        $field = isset(AssistantAccess::FIELD_TASKS[$field]) && (!in_array($field, ['alt', 'transcript'], true) || $altIndex !== null) ? $field : null;
         $locale = $text('locale');
         $screen = $text('screen');
         $target = $text('target');
         $prefix = $text('target_prefix');
-        if ($target === '' && $field === 'alt') {
-            $target = 'details-alt-' . $altIndex;
+        if ($target === '' && ($field === 'alt' || $field === 'transcript')) {
+            $target = 'details-' . $field . '-' . $altIndex;
         } elseif ($target === '' && $prefix !== '' && $field !== null) {
             $target = $prefix . '-' . str_replace('_', '-', $field);
         }
@@ -93,7 +93,7 @@ final readonly class AssistantAsk
      */
     public function fieldName(): ?string
     {
-        return $this->field === 'alt' ? 'alt_' . $this->altIndex : $this->field;
+        return $this->field === 'alt' || $this->field === 'transcript' ? $this->field . '_' . $this->altIndex : $this->field;
     }
 
     /**

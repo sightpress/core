@@ -126,7 +126,7 @@ if (!is_file($project . '/config/sites.php')) {
         'db_dsn' => new SecretBox(SECRET)->encrypt('sqlite:///' . $project . '/demo.sqlite'),
         'storage' => ['adapter' => 'local'],
         'default_locale' => 'en-GB',
-        'locales' => basename($project) === 'sightpress-a11y-translate' ? ['en-GB', 'pt-PT'] : ['en-GB'],
+        'locales' => in_array(basename($project), ['sightpress-a11y-translate', 'sightpress-a11y-captions'], true) ? ['en-GB', 'pt-PT'] : ['en-GB'],
         'default_timezone' => 'Europe/London',
         'created_at' => '2026-11-16T09:00:00Z',
     ]]], true) . ';');
@@ -200,6 +200,37 @@ if ($path === '/_test/picture') {
     $media = Services::get(site($kernel), MediaUploader::class)->upload($file, 'reading-room.png', null)->media;
     header('Content-Type: text/plain');
     echo $media->id();
+
+    return;
+}
+
+if ($path === '/_test/captioned') {
+    // M-4: a published page with a video (captions in two languages) and a recording with a transcript.
+    $kernel = boot($project, $environment);
+    $services = site($kernel);
+    $uploader = Services::get($services, MediaUploader::class);
+    $library = Services::get($services, SightPress\Core\Media\MediaRepository::class);
+    $editor = Services::get($services, SightPress\Core\Media\MediaEditor::class);
+    $demo = dirname(__DIR__, 3) . '/resources/demo/';
+    $video = $uploader->upload($demo . 'tour.mp4', 'tour.mp4', null)->media;
+    $audio = $uploader->upload($demo . 'talk.mp3', 'talk.mp3', null)->media;
+    $english = $uploader->upload($demo . 'tour.vtt', 'tour.en.vtt', null)->media;
+    $file = $project . '/tour.pt.vtt';
+    file_put_contents($file, "WEBVTT\n\n00:00.000 --> 00:02.000\n[Um som suave.]\n");
+    $portuguese = $uploader->upload($file, 'tour.pt.vtt', null)->media;
+    $editor->setCaptions($video, 'en-GB', $english, null, true);
+    $editor->setCaptions($video, 'pt-PT', $portuguese, null, true);
+    $editor->update($video, [], ['en-GB' => 'A gentle tone plays over coloured test patterns.'], true, null, 'en-GB');
+    $editor->update($audio, [], ['en-GB' => 'hello and welcome to the library thank you'], true, null, 'en-GB');
+    $now = new DateTimeImmutable();
+    $page = Services::get($services, PageEditor::class)->create('en-GB', new PageContent('Harbour tour', 'harbour-tour', 'A short tour.', 'A short tour of the harbour, with captions and a transcript.', [
+        ['type' => 'video', 'version' => 1, 'data' => ['media' => (int) $video->id(), 'title' => 'Harbour tour']],
+        ['type' => 'audio', 'version' => 1, 'data' => ['media' => (int) $audio->id(), 'title' => 'Welcome talk']],
+    ]));
+    $page->changeState(SightPress\Core\Rbac\Contract\PageState::Published, $now);
+    Services::get($services, SightPress\Core\Page\PageRepository::class)->flush();
+    header('Content-Type: application/json');
+    echo json_encode(['video' => $video->id(), 'audio' => $audio->id()], JSON_THROW_ON_ERROR);
 
     return;
 }
@@ -361,7 +392,7 @@ $kernel->run();
  */
 function boot(string $project, array $environment): Kernel
 {
-    if (in_array(basename($project), ['sightpress-a11y-assistant', 'sightpress-a11y-translate'], true)) {
+    if (in_array(basename($project), ['sightpress-a11y-assistant', 'sightpress-a11y-translate', 'sightpress-a11y-captions'], true)) {
         return Kernel::fromConfig(new TenantConfigLoader()->load($project, $environment), [
             ...CoreModules::candidates(),
             new ModuleCandidate(new TestAssistantModule(), 'acme/test-ai'),

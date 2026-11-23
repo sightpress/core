@@ -25,6 +25,7 @@ use SightPress\Core\Assistant\Provider\OpenAiCompatibleProvider;
 use SightPress\Core\Assistant\Provider\OpenAiProvider;
 use SightPress\Core\Assistant\Provider\ProviderModels;
 use SightPress\Core\Assistant\Task\AltTextTask;
+use SightPress\Core\Assistant\Task\TranscriptCleanupTask;
 use SightPress\Core\Assistant\Task\AskTask;
 use SightPress\Core\Assistant\Task\DraftPageTask;
 use SightPress\Core\Assistant\Task\ExplainCheckTask;
@@ -99,7 +100,7 @@ final class AssistantModule implements ModuleInterface
         $services->autowire(Prompts::class);
         $services->autowire(HelpIndex::class);
         $services->autowire(RichText::class);
-        foreach ([AskTask::class, SummaryTask::class, SeoMetaTask::class, RewriteTask::class, DraftPageTask::class, ExplainCheckTask::class, AltTextTask::class, HelpTask::class, TranslateTask::class] as $task) {
+        foreach ([AskTask::class, SummaryTask::class, SeoMetaTask::class, RewriteTask::class, DraftPageTask::class, ExplainCheckTask::class, AltTextTask::class, TranscriptCleanupTask::class, HelpTask::class, TranslateTask::class] as $task) {
             $services->autowire($task);
             $assistant->addTask($task);
         }

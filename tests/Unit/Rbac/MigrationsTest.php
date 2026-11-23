@@ -23,6 +23,7 @@ use SightPress\Core\Media\Migrations\Version20261123100000 as MediaUploadRefusal
 use SightPress\Core\Media\Migrations\Version20261123120000 as MediaChunkedUploads;
 use SightPress\Core\Media\Migrations\Version20261123130000 as MediaLargeFileSizes;
 use SightPress\Core\Media\Migrations\Version20261123140000 as MediaDirectUploads;
+use SightPress\Core\Media\Migrations\Version20261123150000 as MediaCaptionTracks;
 use SightPress\Core\People\Migrations\Version20261116180000 as InvitationsTable;
 use SightPress\Core\Rbac\Migrations\Version20261114120000 as RbacTables;
 use SightPress\Core\Site\Migrations\Version20261114120000 as SiteSettingsTable;
@@ -33,6 +34,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
  * The core modules' migrations create their tables and drop them again.
  */
 #[CoversClass(RbacTables::class)]
+#[CoversClass(MediaCaptionTracks::class)]
 #[CoversClass(SiteSettingsTable::class)]
 #[CoversClass(UsersTable::class)]
 #[CoversClass(MediaTable::class)]

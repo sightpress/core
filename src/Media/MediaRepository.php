@@ -84,6 +84,21 @@ final readonly class MediaRepository implements MediaLibrary
         return $this->entityManager->getRepository(Media::class)->findBy($criteria, ['createdAt' => 'DESC', 'id' => 'DESC'], $limit);
     }
 
+    /**
+     * The videos that use this file as their captions in some language.
+     *
+     * @return list<Media>
+     */
+    public function videosCaptionedBy(int $file): array
+    {
+        /** @var list<Media> $videos */
+        $videos = $this->entityManager->createQuery('SELECT m FROM ' . Media::class . ' m WHERE m.kind = :video AND m.captionTracks IS NOT NULL')
+            ->setParameter('video', MediaKind::Video)
+            ->getResult();
+
+        return array_values(array_filter($videos, static fn (Media $video): bool => in_array($file, $video->captionFiles(), true)));
+    }
+
     public function count(): int
     {
         return $this->entityManager->getRepository(Media::class)->count();

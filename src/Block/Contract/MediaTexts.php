@@ -12,7 +12,7 @@ use SightPress\Core\Tenant\Site;
 /**
  * Fills in the texts a block left empty from the media library, in the page's language, or else the main language's
  * (never an empty text when the library has one): the alt text and caption of a picture (image blocks, gallery
- * pictures; not for decorative pictures) and the transcript of a video or audio file. Text written in the block
+ * pictures; not for decorative pictures) the transcript of a video or audio file, and a video's captions file. Text written in the block
  * always wins. Blocks inside other blocks (columns) are filled too. The library is asked once for all the files.
  */
 final class MediaTexts
@@ -109,7 +109,8 @@ final class MediaTexts
         $value['data'] = match ($value['type']) {
             'image' => $this->picture($data, $files, $locale),
             'gallery' => $this->gallery($data, $files, $locale),
-            'video', 'audio' => $this->recording($data, $files, $locale),
+            'video' => $this->captions($this->recording($data, $files, $locale), $files, $locale),
+            'audio' => $this->recording($data, $files, $locale),
             default => $data,
         };
 
@@ -167,6 +168,31 @@ final class MediaTexts
         }
 
         return self::withText($data, 'transcript', $this->text(static fn (string $in): ?string => $file->transcript($in), $locale), VideoBlock::TRANSCRIPT_MAX_LENGTH);
+    }
+
+    /**
+     * A video block without a captions file of its own gets the library's, in the page's language or else the main
+     * language's, unless it has no speech.
+     *
+     * @param array<array-key, mixed> $data
+     * @param array<int, MediaFile>   $files
+     *
+     * @return array<array-key, mixed>
+     */
+    private function captions(array $data, array $files, string $locale): array
+    {
+        $file = is_int($data['media'] ?? null) ? ($files[$data['media']] ?? null) : null;
+        if ($file === null || is_int($data['captions'] ?? null) || ($data['no_speech'] ?? false) === true) {
+            return $data;
+        }
+        $tracks = $file->captionFiles();
+        $language = isset($tracks[$locale]) ? $locale : $this->site->defaultLocale;
+        if (isset($tracks[$language])) {
+            $data['captions'] = $tracks[$language];
+            $data['captions_language'] = $language;
+        }
+
+        return $data;
     }
 
     /**

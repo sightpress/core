@@ -73,16 +73,7 @@ final class VideoBlock implements BlockType
             $attributes .= ' poster="' . Html::e($poster) . '"';
         }
         $inner = '<source src="' . Html::e($video['url']) . '"' . ($video['type'] === null ? '' : ' type="' . Html::e($video['type']) . '"') . '>';
-        $captions = ($data['no_speech'] ?? false) === true ? null : MediaPlayer::source($data, 'captions', $context, 'text/vtt');
-        if ($captions !== null) {
-            $language = self::captionsLanguage($data, $context);
-            $inner .= sprintf(
-                '<track kind="captions" src="%s" srclang="%s" label="%s" default>',
-                Html::e($captions['url']),
-                Html::e($language),
-                Html::e(self::languageName($language)),
-            );
-        }
+        $inner .= self::tracks($data, $context);
         $inner .= '<p>Your browser can\'t play this video. <a href="' . Html::e($video['url']) . '">Download the video: ' . Html::e($title) . '</a>.</p>';
 
         return '<figure class="block-video"><video' . $attributes . '>' . $inner . '</video>'
@@ -124,6 +115,44 @@ final class VideoBlock implements BlockType
     public function a11yRules(): array
     {
         return [new VideoRule()];
+    }
+
+    /**
+     * One `<track>` per language: the block's own captions (or those the library gave it for this page's language,
+     * {@see \SightPress\Core\Block\Contract\MediaTexts}) are on by default, then the file's other languages.
+     *
+     * @param array<string, mixed> $data
+     */
+    private static function tracks(array $data, BlockContext $context): string
+    {
+        if (($data['no_speech'] ?? false) === true) {
+            return '';
+        }
+        $tracks = [];
+        $url = MediaPlayer::captionsUrl($data['captions'] ?? null, $context);
+        if ($url !== null) {
+            $language = self::captionsLanguage($data, $context);
+            $tracks[strtolower($language)] = [$language, $url, true];
+        }
+        $video = $context instanceof SiteBlockContext && is_int($data['media'] ?? null) ? $context->file($data['media']) : null;
+        foreach ($video?->captionFiles() ?? [] as $language => $id) {
+            $url = isset($tracks[strtolower($language)]) ? null : MediaPlayer::captionsUrl($id, $context);
+            if ($url !== null) {
+                $tracks[strtolower($language)] = [$language, $url, false];
+            }
+        }
+        $html = '';
+        foreach ($tracks as [$language, $url, $default]) {
+            $html .= sprintf(
+                '<track kind="captions" src="%s" srclang="%s" label="%s"%s>',
+                Html::e($url),
+                Html::e($language),
+                Html::e(self::languageName($language)),
+                $default ? ' default' : '',
+            );
+        }
+
+        return $html;
     }
 
     private static function languageName(string $language): string

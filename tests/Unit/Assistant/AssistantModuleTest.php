@@ -22,6 +22,7 @@ use SightPress\Core\Assistant\Provider\MistralProvider;
 use SightPress\Core\Assistant\Provider\OpenAiCompatibleProvider;
 use SightPress\Core\Assistant\Provider\OpenAiProvider;
 use SightPress\Core\Assistant\Task\AltTextTask;
+use SightPress\Core\Assistant\Task\TranscriptCleanupTask;
 use SightPress\Core\Assistant\Task\AskTask;
 use SightPress\Core\Assistant\Task\DraftPageTask;
 use SightPress\Core\Assistant\Task\ExplainCheckTask;
@@ -61,7 +62,7 @@ final class AssistantModuleTest extends TestCase
             [AnthropicProvider::class, OpenAiProvider::class, MistralProvider::class, OpenAiCompatibleProvider::class],
             array_map(static fn ($p) => $p->item, $registry->assistantProviders()),
         );
-        self::assertSame([AskTask::class, SummaryTask::class, SeoMetaTask::class, RewriteTask::class, DraftPageTask::class, ExplainCheckTask::class, AltTextTask::class, HelpTask::class, TranslateTask::class], array_map(static fn ($t) => $t->item, $registry->assistantTasks()));
+        self::assertSame([AskTask::class, SummaryTask::class, SeoMetaTask::class, RewriteTask::class, DraftPageTask::class, ExplainCheckTask::class, AltTextTask::class, TranscriptCleanupTask::class, HelpTask::class, TranslateTask::class], array_map(static fn ($t) => $t->item, $registry->assistantTasks()));
         $permissions = array_values(array_filter($registry->permissions(), static fn ($p) => $p->module === 'assistant'));
         self::assertSame(
             [['assistant.use', ['admin', 'editor', 'contributor'], true], ['assistant.manage', ['admin'], false]],

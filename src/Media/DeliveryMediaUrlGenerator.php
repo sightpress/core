@@ -48,6 +48,11 @@ final readonly class DeliveryMediaUrlGenerator implements MediaUrlGenerator
         return $this->onCdn($path, $file);
     }
 
+    public function siteUrl(MediaFile $file): string
+    {
+        return $this->origin->url($file);
+    }
+
     public function temporaryUrl(MediaFile $file, ?int $width = null): string
     {
         $path = $this->origin->url($file, $width);

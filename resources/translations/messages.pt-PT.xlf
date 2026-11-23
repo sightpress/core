@@ -9181,5 +9181,149 @@
         <target>O que vai ser configurado</target>
       </segment>
     </unit>
+    <unit id="3184bd92a02c1fbc">
+      <segment>
+        <source>A WebVTT file (.vtt) for each language. Pages show the captions in their own language, or else in the main language.</source>
+        <target>Um ficheiro WebVTT (.vtt) para cada idioma. As páginas mostram as legendas no seu próprio idioma ou, se não existirem, no idioma principal.</target>
+      </segment>
+    </unit>
+    <unit id="da167726c6356e9a">
+      <segment>
+        <source>Captions file in {language}</source>
+        <target>Ficheiro de legendas em {language}</target>
+      </segment>
+    </unit>
+    <unit id="a50146acc13a2c42">
+      <segment>
+        <source>Choose a captions file in WebVTT format (.vtt).</source>
+        <target>Escolha um ficheiro de legendas no formato WebVTT (.vtt).</target>
+      </segment>
+    </unit>
+    <unit id="fe8a8dfdc48cf4f6">
+      <segment>
+        <source>I checked the transcript against the recording</source>
+        <target>Verifiquei a transcrição com a gravação</target>
+      </segment>
+    </unit>
+    <unit id="3b0158b9d0dd9bc8">
+      <segment>
+        <source>I checked the transcript in {language} against the recording</source>
+        <target>Verifiquei a transcrição em {language} com a gravação</target>
+      </segment>
+    </unit>
+    <unit id="ce3e17a2362b85b7">
+      <segment>
+        <source>No captions in this language yet.</source>
+        <target>Ainda não há legendas neste idioma.</target>
+      </segment>
+    </unit>
+    <unit id="a6983ccd3fc185af">
+      <segment>
+        <source>Now using:</source>
+        <target>Em utilização:</target>
+      </segment>
+    </unit>
+    <unit id="ce176563e0cac53e">
+      <segment>
+        <source>Only videos have captions files.</source>
+        <target>Só os vídeos têm ficheiros de legendas.</target>
+      </segment>
+    </unit>
+    <unit id="766cdb5b1ca58d88">
+      <segment>
+        <source>Remove captions in {language}</source>
+        <target>Remover as legendas em {language}</target>
+      </segment>
+    </unit>
+    <unit id="bc157e4b6235d938">
+      <segment>
+        <source>The AI assistant tidied the transcript of {name}, and nobody has checked it yet. Check it on the file’s page in the media library, or write the transcript here.</source>
+        <target>O assistente de IA arrumou a transcrição de {name} e ainda ninguém a verificou. Verifique-a na página do ficheiro na biblioteca de multimédia ou escreva aqui a transcrição.</target>
+      </segment>
+    </unit>
+    <unit id="e284fbd7196e8ca3">
+      <segment>
+        <source>The AI assistant tidied this transcript. Pages that show it can’t be published until someone checks it against the recording.</source>
+        <target>O assistente de IA arrumou esta transcrição. As páginas que a mostram não podem ser publicadas até alguém a verificar com a gravação.</target>
+      </segment>
+    </unit>
+    <unit id="d8c1eb0c68c66f46">
+      <segment>
+        <source>The captions file has been removed.</source>
+        <target>O ficheiro de legendas foi removido.</target>
+      </segment>
+    </unit>
+    <unit id="a27686c9f62b45ae">
+      <segment>
+        <source>The captions have been saved.</source>
+        <target>As legendas foram guardadas.</target>
+      </segment>
+    </unit>
+    <unit id="6ce7d617fee38eed">
+      <segment>
+        <source>This captions file has a mistake on line {line}: {reason}.</source>
+        <target>Este ficheiro de legendas tem um erro na linha {line}: {reason}.</target>
+      </segment>
+    </unit>
+    <unit id="0a3e4a6b2cc08157">
+      <segment>
+        <source>Tidy up the transcript</source>
+        <target>Arrumar a transcrição</target>
+      </segment>
+    </unit>
+    <unit id="75d6362a3dae4dd6">
+      <segment>
+        <source>Tidy up the transcript in {language}</source>
+        <target>Arrumar a transcrição em {language}</target>
+      </segment>
+    </unit>
+    <unit id="3638ad9db582fed6">
+      <segment>
+        <source>Upload captions in {language}</source>
+        <target>Carregar legendas em {language}</target>
+      </segment>
+    </unit>
+    <unit id="5d31b376def6f550">
+      <segment>
+        <source>a timing line such as &quot;00:01.000 --&gt; 00:04.000&quot; is missing</source>
+        <target>falta uma linha de tempos como "00:01.000 --&gt; 00:04.000"</target>
+      </segment>
+    </unit>
+    <unit id="51171bffd94ebb73">
+      <segment>
+        <source>it isn't UTF-8 text</source>
+        <target>não é texto UTF-8</target>
+      </segment>
+    </unit>
+    <unit id="fbc30334b529fbc1">
+      <segment>
+        <source>the cue must end after it starts</source>
+        <target>a legenda tem de terminar depois de começar</target>
+      </segment>
+    </unit>
+    <unit id="39d3449ce108457e">
+      <segment>
+        <source>the cue starts before the one above it</source>
+        <target>a legenda começa antes da anterior</target>
+      </segment>
+    </unit>
+    <unit id="6d1dd3d1b18b6496">
+      <segment>
+        <source>the first line must be &quot;WEBVTT&quot;</source>
+        <target>a primeira linha tem de ser "WEBVTT"</target>
+      </segment>
+    </unit>
+    <unit id="d65856842d528ca6">
+      <segment>
+        <source>the line is too long</source>
+        <target>a linha é demasiado longa</target>
+      </segment>
+    </unit>
+    <unit id="e3b7587eccebc505">
+      <segment>
+        <source>the timing must look like &quot;00:01.000 --&gt; 00:04.000&quot;</source>
+        <target>os tempos têm de ter a forma "00:01.000 --&gt; 00:04.000"</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

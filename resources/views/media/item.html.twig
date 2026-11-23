@@ -57,10 +57,56 @@
         </p>
         {%- endif %}
         {%- endif %}
+        {%- if field.name starts with 'transcript_' %}
+        {%- set n = field.name|slice(11) %}
+        {%- set many = (languages ?? [])|length > 1 %}
+        <input type="hidden" name="transcript_suggestion_{{ n }}" id="transcript-suggestion-{{ n }}" value="{{ (tidied ?? [])[n] ?? '' }}">
+        {%- if (tidied ?? [])[n] is defined %}
+        <div class="field field--checkbox">
+            <p class="field-hint" id="details-transcript-checked-{{ n }}-hint">{{ t('The AI assistant tidied this transcript. Pages that show it can’t be published until someone checks it against the recording.') }}</p>
+            <input type="checkbox" id="details-transcript-checked-{{ n }}" name="transcript_checked_{{ n }}" value="1" aria-describedby="details-transcript-checked-{{ n }}-hint">
+            <label for="details-transcript-checked-{{ n }}">{{ many ? t('I checked the transcript in {language} against the recording', {language: languages[n]}) : t('I checked the transcript against the recording') }}</label>
+        </div>
+        {%- endif %}
+        {%- if (assistant ?? null) and assistant.suggest.transcript is defined and (can_tidy ?? [])[n]|default(false) %}
+        <p class="assistant-suggest">
+            <button type="submit" form="assistant-suggest" name="field" value="transcript_{{ n }}" class="button button--secondary" data-assistant-target="details-transcript-{{ n }}" data-assistant-suggestion="transcript-suggestion-{{ n }}">{{ many ? t('Tidy up the transcript in {language}', {language: languages[n]}) : t('Tidy up the transcript') }}</button>
+        </p>
+        {%- endif %}
+        {%- endif %}
         {%- endfor %}
         {{ f.submit(t('Save details')) }}
     {{ f.end() }}
 </section>
+{%- if caption_rows ?? [] %}
+<section class="admin-panel" aria-labelledby="media-captions-title">
+    <h2 id="media-captions-title" tabindex="-1">{{ t('Captions') }}</h2>
+    <p class="field-hint">{{ t('A WebVTT file (.vtt) for each language. Pages show the captions in their own language, or else in the main language.') }}</p>
+    {%- if captions_error %}
+    <section class="error-summary" aria-labelledby="media-captions-error-title" tabindex="-1" autofocus>
+        <h3 id="media-captions-error-title">{{ t('There is a problem') }}</h3>
+        <p>{{ t(captions_error) }}</p>
+    </section>
+    {%- endif %}
+    {%- for row in caption_rows %}
+    <form action="/admin/media/{{ media.id }}/captions" method="post" enctype="multipart/form-data" class="media-captions">
+        {{ csrf_fields() }}
+        <input type="hidden" name="language" value="{{ row.index }}">
+        <div class="field">
+            <label for="captions-file-{{ row.index }}">{{ t('Captions file in {language}', {language: row.language}) }}</label>
+            <p class="field-hint" id="captions-file-{{ row.index }}-hint">
+                {%- if row.name %}{{ t('Now using:') }} <a href="{{ row.url }}">{{ row.name }}</a>{% if row.unpublished %} ({{ t('Not published') }}){% endif %}{% else %}{{ t('No captions in this language yet.') }}{% endif -%}
+            </p>
+            <input type="file" id="captions-file-{{ row.index }}" name="captions" accept=".vtt,text/vtt" aria-describedby="captions-file-{{ row.index }}-hint">
+        </div>
+        <button type="submit">{{ t('Upload captions in {language}', {language: row.language}) }}</button>
+        {%- if row.name %}
+        <button type="submit" name="remove" value="1" class="button button--secondary">{{ t('Remove captions in {language}', {language: row.language}) }}</button>
+        {%- endif %}
+    </form>
+    {%- endfor %}
+</section>
+{%- endif %}
 {%- if assistant ?? null %}
 {% include '@assistant/panel.html.twig' %}
 {%- endif %}

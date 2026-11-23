@@ -123,6 +123,17 @@ final readonly class MediaUploader
             return $result;
         }
 
+        if ($format->mimeType === 'text/vtt') {
+            $local = tempnam(sys_get_temp_dir(), 'sp-upload-');
+            $local = is_string($local) ? $local : throw new MediaException(self::STORE_FAILED);
+            try {
+                $file->saveTo($local);
+                WebVtt::check($local);
+            } finally {
+                unlink($local);
+            }
+        }
+
         $checksum = $file->sha256();
         $existing = $this->media->findByChecksum($checksum);
         if ($existing !== null) {
@@ -161,6 +172,10 @@ final readonly class MediaUploader
 
         $detected = new finfo(FILEINFO_MIME_TYPE)->file($localFile);
         $format = $this->allowed(is_string($detected) ? $detected : '', $clientName, $size, (string) file_get_contents($localFile, length: 16), $importPixels === null);
+
+        if ($format->mimeType === 'text/vtt') {
+            WebVtt::check($localFile);
+        }
 
         $checksum = (string) hash_file('sha256', $localFile);
         $existing = $this->media->findByChecksum($checksum);

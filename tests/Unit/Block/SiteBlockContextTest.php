@@ -43,6 +43,15 @@ final class SiteBlockContextTest extends TestCase
         self::assertSame('#top', $other->linkUrl('#top'));
     }
 
+    public function testACaptionsFileIsAddressedOnThePagesOwnOrigin(): void
+    {
+        $fixture = new BlockFixture();
+        $id = $fixture->addCaptions();
+        $file = $fixture->media()->find($id) ?? self::fail('No file.');
+
+        self::assertSame('/media/' . $file->key() . '/captions.vtt', $fixture->context()->captionsUrl($file));
+    }
+
     public function testRefusesLocalesTheSiteIsNotWrittenIn(): void
     {
         $this->expectException(BlockException::class);
