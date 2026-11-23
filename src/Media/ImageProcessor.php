@@ -22,6 +22,9 @@ final readonly class ImageProcessor
     /** Widths of the smaller copies, in pixels. */
     public const array WIDTHS = [320, 640, 960, 1280, 1920];
 
+    /** Memory one pixel takes while a picture is decoded and its copies are made: 25 million pixels fit in 256 MB. */
+    public const int BYTES_PER_PIXEL = 11;
+
     private const int QUALITY = 85;
 
     public function __construct(
@@ -30,13 +33,21 @@ final readonly class ImageProcessor
     ) {
     }
 
-    public function process(string $localFile, MediaFormat $format): ProcessedImage
+    /**
+     * @param ?int $importPixels the command line's own pixel limit (it can raise it for one run); null for uploads
+     */
+    public function process(string $localFile, MediaFormat $format, ?int $importPixels = null): ProcessedImage
     {
         $size = @getimagesize($localFile);
         if ($size === false) {
             throw new MediaException('This picture can\'t be read. It may be damaged; try saving it again and uploading the new file.');
         }
-        if ($size[0] * $size[1] > $this->limits->imagePixels) {
+        if ($importPixels !== null && $size[0] * $size[1] > $importPixels) {
+            $memory = (int) ceil($size[0] * $size[1] * self::BYTES_PER_PIXEL / 1_048_576);
+
+            throw new MediaException(new Message('This picture is {width} × {height} pixels and needs about {memory} MB of memory. Run the import again with --memory-limit={memory}M.', ['width' => (string) $size[0], 'height' => (string) $size[1], 'memory' => (string) $memory]));
+        }
+        if ($importPixels === null && $size[0] * $size[1] > $this->limits->imagePixels) {
             throw new MediaException(new Message('This picture is {size} × {size2} pixels, which is more than {_000_000} million pixels. Make it smaller and upload it again.', ['size' => (string) $size[0], 'size2' => (string) $size[1], '_000_000' => number_format($this->limits->imagePixels / 1_000_000, 0, '.', ',')]));
         }
 

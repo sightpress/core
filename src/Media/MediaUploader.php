@@ -76,6 +76,20 @@ final readonly class MediaUploader
      */
     public function upload(string $localFile, string $clientName, ?int $uploadedBy): UploadResult
     {
+        return $this->add($localFile, $clientName, $uploadedBy, null);
+    }
+
+    /**
+     * Adds a file from the command line: no limit on its size (D40), with every other check. The file is hashed and
+     * stored as a stream, so its size doesn't matter; only pictures are decoded in memory, up to `$maxPixels`.
+     */
+    public function import(string $localFile, string $clientName, int $maxPixels): UploadResult
+    {
+        return $this->add($localFile, $clientName, null, $maxPixels);
+    }
+
+    private function add(string $localFile, string $clientName, ?int $uploadedBy, ?int $importPixels): UploadResult
+    {
         $size = is_file($localFile) && is_readable($localFile) ? filesize($localFile) : false;
         if ($size === false) {
             throw new MediaException('The uploaded file can\'t be read. Try uploading it again.');
@@ -93,7 +107,7 @@ final readonly class MediaUploader
             throw new MediaException('This captions file isn\'t in WebVTT format: its first line must be "WEBVTT".');
         }
         $max = $this->limits->maxBytes($format->kind);
-        if ($size > $max) {
+        if ($importPixels === null && $size > $max) {
             throw new MediaException(new Message('The file is {size}; {kind} can be at most {max}.', ['size' => MediaLimits::describe($size), 'kind' => self::plural($format->kind), 'max' => MediaLimits::describe($max)]));
         }
 
@@ -108,7 +122,7 @@ final readonly class MediaUploader
         $written = [];
         try {
             if ($format->kind === MediaKind::Image) {
-                $image = $this->images->process($localFile, $format);
+                $image = $this->images->process($localFile, $format, $importPixels);
                 $this->files->write($written[] = MediaFiles::path($key, $format->extension), $image->contents);
                 foreach ($image->variants as $width => $contents) {
                     $this->files->write($written[] = MediaFiles::path($key, $format->extension, $width), $contents);

@@ -12,6 +12,7 @@ use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Contract\MediaPictures;
 use SightPress\Core\Media\Contract\MediaUrlGenerator;
 use SightPress\Core\Http\Upload\RequestTooLargeHandler;
+use SightPress\Core\Media\Command\SiteMediaImportCommand;
 use SightPress\Core\Media\Command\SiteMediaLimitsCommand;
 use SightPress\Core\Media\Command\SiteStorageCdnCommand;
 use SightPress\Core\Media\Command\SystemCheckCommand;
@@ -63,6 +64,7 @@ final class MediaModule implements ModuleInterface
         $registrar->commands()->add(SystemCheckCommand::class);
         $registrar->commands()->add(SiteMediaLimitsCommand::class);
         $registrar->commands()->add(SiteStorageCdnCommand::class);
+        $registrar->commands()->add(SiteMediaImportCommand::class);
         $services->autowire(DeliveryMediaUrlGenerator::class, MediaUrlGenerator::class, public: true);
         $services->autowire(MediaAccess::class);
         $services->autowire(MediaFileHandler::class);

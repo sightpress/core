@@ -8893,5 +8893,11 @@
         <target>Visitors get the site’s public files through a content delivery network: {address}</target>
       </segment>
     </unit>
+    <unit id="fe4c58bb32727e3c">
+      <segment>
+        <source>This picture is {width} × {height} pixels and needs about {memory} MB of memory. Run the import again with --memory-limit={memory}M.</source>
+        <target>This picture is {width} × {height} pixels and needs about {memory} MB of memory. Run the import again with --memory-limit={memory}M.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

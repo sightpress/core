@@ -69,5 +69,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0049](0049-standard-layouts.md) | Themes: the standard layouts, the side column, and switching to a theme without a layout | Proposed |
 | [0050](0050-per-site-upload-limits.md) | Per-site upload limits, the upload probe and refused-upload counts | Proposed |
 | [0051](0051-cdn-delivery-and-signed-media-urls.md) | CDN delivery and signed media addresses | Proposed |
+| [0052](0052-command-line-media-import.md) | Command-line media import | Proposed |
 
 When an ADR's status changes, update it here too.

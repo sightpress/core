@@ -54,6 +54,9 @@ final class ModuleCommand extends ConsoleCommand
                 ),
             };
         }
+        if ($command instanceof TakesPaths) {
+            $this->addArgument(TakesPaths::ARGUMENT, InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files or folders.');
+        }
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void

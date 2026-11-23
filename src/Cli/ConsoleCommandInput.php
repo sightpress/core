@@ -31,6 +31,18 @@ final readonly class ConsoleCommandInput implements CommandInput
         return $this->input->hasOption($name) && $this->input->getOption($name) === true;
     }
 
+    /**
+     * The paths given to a {@see TakesPaths} command.
+     *
+     * @return list<string>
+     */
+    public function paths(): array
+    {
+        $paths = $this->input->hasArgument(TakesPaths::ARGUMENT) ? $this->input->getArgument(TakesPaths::ARGUMENT) : [];
+
+        return is_array($paths) ? array_values(array_filter($paths, is_string(...))) : [];
+    }
+
     private function text(mixed $value): ?string
     {
         return is_string($value) ? $value : null;
