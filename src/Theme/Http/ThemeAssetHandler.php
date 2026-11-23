@@ -45,6 +45,11 @@ final readonly class ThemeAssetHandler implements RequestHandlerInterface
             $response = $response->withHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'");
         }
 
+        if ($asset->contentType === 'font/woff2') {
+            // Browsers fetch fonts from another host (a CDN) only with this header.
+            $response = $response->withHeader('Access-Control-Allow-Origin', '*');
+        }
+
         if (in_array($etag, array_map(trim(...), explode(',', $request->getHeaderLine('If-None-Match'))), true)) {
             return $response->withStatus(304);
         }

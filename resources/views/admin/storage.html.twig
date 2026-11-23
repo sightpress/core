@@ -1,6 +1,6 @@
 {#
     Storage (/admin/settings/storage): read-only status of where the site's files are kept. Never shows a key.
-    Context: `cloud`, `bucket`, `region`, `provider`, `settings_path`.
+    Context: `cloud`, `bucket`, `region`, `provider`, `cdn`, `settings_path`.
 #}
 {% extends '@admin/layout.html.twig' %}
 {% block title %}{{ t('File storage') }}{% endblock %}
@@ -19,6 +19,9 @@
     <dt>{{ t('Bucket') }}</dt><dd>{{ bucket }}</dd>
     <dt>{{ t('Region') }}</dt><dd>{{ region }}</dd>
 </dl>
+{% endif %}
+{% if cdn %}
+<p>{{ t('Visitors get the site’s public files through a content delivery network: {address}', {address: cdn}) }}</p>
 {% endif %}
 <p>{{ t('The person who runs the server changes where files are kept.') }}</p>
 <p><a href="{{ settings_path }}">{{ t('Back to site settings') }}</a></p>

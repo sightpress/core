@@ -23,8 +23,12 @@ final readonly class SiteStorage
     /**
      * @param string|null $path absolute folder for the site's files; null for the default
      */
-    public function __construct(string $adapter = 'local', ?string $path = null, public ?SiteS3Storage $s3 = null)
-    {
+    public function __construct(
+        string $adapter = 'local',
+        ?string $path = null,
+        public ?SiteS3Storage $s3 = null,
+        public ?string $cdnUrl = null,
+    ) {
         if ($adapter === '' || !in_array($adapter, self::ADAPTERS, true)) {
             throw new SiteRegistryException('"storage.adapter" is not valid: use local or s3.');
         }
@@ -33,6 +37,9 @@ final readonly class SiteStorage
         }
         if ($path !== null && ($path === '' || !str_starts_with($path, '/'))) {
             throw new SiteRegistryException('"storage.path" must be an absolute path.');
+        }
+        if ($cdnUrl !== null && !self::isCdnUrl($cdnUrl)) {
+            throw new SiteRegistryException('"storage.cdn_url" must be an https address with no path, such as https://cdn.example.org.');
         }
         $this->adapter = $adapter;
         $this->path = $path;
@@ -45,7 +52,7 @@ final readonly class SiteStorage
 
     public function withS3(SiteS3Storage $s3): self
     {
-        return new self($this->adapter, $this->path, $s3);
+        return new self($this->adapter, $this->path, $s3, $this->cdnUrl);
     }
 
     /**
@@ -53,7 +60,36 @@ final readonly class SiteStorage
      */
     public function switchedToS3(): self
     {
-        return new self('s3', $this->path, $this->s3);
+        return new self('s3', $this->path, $this->s3, $this->cdnUrl);
+    }
+
+    /**
+     * The same settings with files delivered through this CDN address (null: by the site itself).
+     */
+    public function withCdn(?string $cdnUrl): self
+    {
+        return new self($this->adapter, $this->path, $this->s3, $cdnUrl);
+    }
+
+    /**
+     * Whether file addresses leave the site's own host or come from a bucket, so private ones must be signed.
+     */
+    public function signsPrivateUrls(): bool
+    {
+        return $this->isCloud() || $this->cdnUrl !== null;
+    }
+
+    private static function isCdnUrl(string $url): bool
+    {
+        $parts = parse_url($url);
+
+        return is_array($parts)
+            && ($parts['scheme'] ?? '') === 'https'
+            && ($parts['host'] ?? '') !== ''
+            && !isset($parts['user'])
+            && !isset($parts['query'])
+            && !isset($parts['fragment'])
+            && !isset($parts['path']);
     }
 
     /**

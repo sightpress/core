@@ -30,6 +30,13 @@ final class OriginMediaUrlGeneratorTest extends TestCase
         self::assertSame('/media/' . self::KEY . '/harbour-at-dawn.jpg', $urls->url($photo, 500), 'no copy that wide: the original');
     }
 
+    public function testATemporaryAddressIsTheSameOnTheSiteItself(): void
+    {
+        $urls = new OriginMediaUrlGenerator();
+
+        self::assertSame($urls->url(self::picture(), 640), $urls->temporaryUrl(self::picture(), 640));
+    }
+
     public function testListsEveryWidthOfAPictureForSrcset(): void
     {
         self::assertSame(

@@ -194,9 +194,9 @@ final readonly class MediaItemHandler implements RequestHandlerInterface
             'languages' => array_map(static fn (string $locale): LanguageName => new LanguageName($locale), array_values($this->site->locales)),
             'media' => $media,
             'form' => $form,
-            'url' => $this->urls->url($media),
+            'url' => $this->urls->temporaryUrl($media),
             'preview' => $media->kind() === MediaKind::Image
-                ? $this->urls->url($media, in_array(640, $media->variantWidths(), true) ? 640 : null)
+                ? $this->urls->temporaryUrl($media, in_array(640, $media->variantWidths(), true) ? 640 : null)
                 : null,
             'type' => $this->types->label($media->mimeType()) ?? $media->mimeType(),
             'size' => MediaLimits::describe($media->size()),

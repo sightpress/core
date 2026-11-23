@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace SightPress\Core\Media\Contract;
 
 /**
- * Builds the addresses of media files. In origin mode (this version) they are root-relative paths served by the
- * site itself, for example `/media/<key>/photo.jpg`; a CDN mode (later) returns absolute URLs. Callers that need
- * an absolute URL (Open Graph) prefix root-relative ones with the site's base URL.
- *
- * Addresses contain the file's key, which names one content for good, so they can be cached for good too.
+ * Builds the addresses of media files: root-relative paths served by the site itself, for example
+ * `/media/<key>/photo.jpg`, or absolute URLs on the site's CDN. Callers that need an absolute URL (Open Graph) prefix
+ * root-relative ones with the site's base URL. On a members-only site with cloud delivery they are signed and expire,
+ * so don't store them.
  */
 interface MediaUrlGenerator
 {
@@ -24,4 +23,10 @@ interface MediaUrlGenerator
      * for other files.
      */
     public function srcset(MediaFile $file): string;
+
+    /**
+     * A short-lived address for someone already allowed to see this file, even if it isn't published. Never put it in
+     * a page other people can read.
+     */
+    public function temporaryUrl(MediaFile $file, ?int $width = null): string;
 }

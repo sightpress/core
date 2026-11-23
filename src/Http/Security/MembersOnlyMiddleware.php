@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Http\Security;
 
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Media\MediaUrlSigner;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Site\Contract\SiteVisibility;
@@ -40,6 +42,7 @@ final readonly class MembersOnlyMiddleware implements MiddlewareInterface
             $container === null
             || Actor::fromRequest($request)->isSignedIn()
             || self::isOpen($request->getUri()->getPath())
+            || self::isSignedMedia($request, $container)
             || !$container->has(SiteSettings::class)
             || !SiteVisibility::isMembersOnly(Services::get($container, SiteSettings::class))
         ) {
@@ -50,6 +53,24 @@ final readonly class MembersOnlyMiddleware implements MiddlewareInterface
             ->withHeader('Location', self::signIn($request))
             ->withHeader('Cache-Control', 'no-store')
             ->withHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+
+    /**
+     * A signed file address is its own proof, and a CDN fetching it has no session. The file handler checks the
+     * signature against the exact file and width; this only lets a request that carries a valid one get there.
+     */
+    private static function isSignedMedia(ServerRequestInterface $request, ContainerInterface $container): bool
+    {
+        if (preg_match('#^/media/([0-9a-f]{32})/(?:(\d{1,5})w/)?[^/]+$#', $request->getUri()->getPath(), $match) !== 1
+            || !$container->has(MediaUrlSigner::class)) {
+            return false;
+        }
+
+        return Services::get($container, MediaUrlSigner::class)->verifies(
+            $match[1],
+            ($match[2] ?? '') === '' ? null : (int) $match[2],
+            $request->getQueryParams(),
+        );
     }
 
     public static function isOpen(string $path): bool

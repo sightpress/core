@@ -39,6 +39,7 @@ final class ThemeAssetHandlerTest extends TestCase
         $d = $this->directory = new TemporaryDirectory();
         $d->write('theme/assets/css/site.css', 'body {}');
         $d->write('theme/assets/icons/logo.svg', '<svg/>');
+        $d->write('theme/assets/fonts/body.woff2', 'font');
         $factory = new Psr17Factory();
         $tokens = new ThemeTokens(['text' => Color::fromHex('#222')], ['text' => Color::fromHex('#eee')]);
         $this->handler = new ThemeAssetHandler(
@@ -69,6 +70,12 @@ final class ThemeAssetHandlerTest extends TestCase
         self::assertSame('nosniff', $response->getHeaderLine('X-Content-Type-Options'));
         self::assertSame(new ThemeAsset('body {}', '')->etag(), $response->getHeaderLine('ETag'));
         self::assertFalse($response->hasHeader('Content-Security-Policy'));
+    }
+
+    public function testFontsMayBeFetchedFromACdnButOtherFilesGetNoCorsHeader(): void
+    {
+        self::assertSame('*', $this->handler->handle(self::request('fonts/body.woff2', '?v=abc'))->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertFalse($this->handler->handle(self::request('css/site.css', '?v=abc'))->hasHeader('Access-Control-Allow-Origin'));
     }
 
     public function testAnUnversionedFileIsCachedBriefly(): void

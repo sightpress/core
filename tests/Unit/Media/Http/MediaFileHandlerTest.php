@@ -19,9 +19,14 @@ use SightPress\Core\Media\Http\MediaFileHandler;
 use SightPress\Core\Media\MediaAccess;
 use SightPress\Core\Media\MediaFiles;
 use SightPress\Core\Media\MediaFormat;
-use SightPress\Core\Media\OriginMediaUrlGenerator;
+use SightPress\Core\Media\MediaUrlSigner;
+use SightPress\Core\Infrastructure\Clock\FrozenClock;
 use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Core\Site\Contract\SiteVisibility;
+use SightPress\Core\Tenant\Site;
+use SightPress\Core\Tests\Support\ArraySiteSettings;
 use SightPress\Core\Tests\Support\MediaFixture;
+use SightPress\Core\Tests\Support\SiteFixture;
 use Slim\Exception\HttpNotFoundException;
 
 #[CoversClass(MediaFileHandler::class)]
@@ -40,23 +45,92 @@ final class MediaFileHandlerTest extends TestCase
 
     private Media $notes;
 
+    private ArraySiteSettings $settings;
+
+    private MediaUrlSigner $signer;
+
     protected function setUp(): void
     {
         $this->fixture = new MediaFixture();
         $uploader = $this->fixture->uploader();
         $this->photo = $uploader->upload($this->fixture->file('photo.jpg', MediaFixture::jpeg(700, 400)), 'Harbour at dawn.jpg', 1)->media;
         $this->notes = $uploader->upload($this->fixture->file('notes.txt', 'Opening times: 9 to 5.'), 'Notas de reunião.txt', 1)->media;
-        $http = new Psr17Factory();
         $this->log = new TestHandler();
-        $this->handler = new MediaFileHandler(
+        $this->settings = new ArraySiteSettings();
+        $this->signer = new MediaUrlSigner(SiteFixture::SECRET, SiteFixture::site()->id, new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')));
+        $this->handler = $this->handlerFor(SiteFixture::site());
+    }
+
+    private function handlerFor(Site $site): MediaFileHandler
+    {
+        $http = new Psr17Factory();
+
+        return new MediaFileHandler(
             $this->fixture->repository(),
             $this->fixture->files(),
             new MediaAccess(),
-            new OriginMediaUrlGenerator(),
             $http,
             $http,
             new Logger('test', [$this->log]),
+            $this->signer,
+            $this->settings,
+            $site,
         );
+    }
+
+    /**
+     * @param array<string, string> $attributes
+     */
+    private function signedGet(Media $media, string $query, array $attributes = []): ResponseInterface
+    {
+        parse_str($query, $params);
+        $request = new ServerRequest('GET', 'https://demo.example/media/' . $media->key() . '/' . $media->fileName() . '?' . $query)
+            ->withQueryParams($params)
+            ->withAttribute(MediaFileHandler::KEY_ATTRIBUTE, $media->key())
+            ->withAttribute(MediaFileHandler::NAME_ATTRIBUTE, $attributes['name'] ?? $media->fileName());
+
+        return $this->handler->handle($request);
+    }
+
+    public function testAValidSignatureOpensAPrivateFileAndIsNeverCached(): void
+    {
+        $response = $this->signedGet($this->photo, $this->signer->query($this->photo->key(), null, MediaUrlSigner::PREVIEW_TTL));
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('private, no-store', $response->getHeaderLine('Cache-Control'));
+    }
+
+    public function testASignatureForAnotherFileOpensNothing(): void
+    {
+        $this->expectException(HttpNotFoundException::class);
+        $this->signedGet($this->photo, $this->signer->query($this->notes->key(), null, MediaUrlSigner::PREVIEW_TTL));
+    }
+
+    public function testARedirectToTheRightNameKeepsTheSignature(): void
+    {
+        $query = $this->signer->query($this->photo->key(), null, MediaUrlSigner::PREVIEW_TTL);
+        $response = $this->signedGet($this->photo, $query, ['name' => 'old-name.jpg']);
+
+        self::assertSame(301, $response->getStatusCode());
+        self::assertSame('/media/' . $this->photo->key() . '/' . $this->photo->fileName() . '?' . $query, $response->getHeaderLine('Location'));
+        self::assertSame('private, no-store', $response->getHeaderLine('Cache-Control'));
+    }
+
+    public function testAMembersOnlySitesFilesAreNeverPubliclyCached(): void
+    {
+        $this->publish($this->photo);
+        $this->settings->set(SiteVisibility::SETTING, SiteVisibility::MEMBERS);
+
+        self::assertSame('private, no-store', $this->get($this->photo)->getHeaderLine('Cache-Control'));
+    }
+
+    public function testBehindACdnPublishedFilesAreCachedBriefly(): void
+    {
+        $this->publish($this->photo);
+        $site = SiteFixture::site();
+        $this->handler = $this->handlerFor($site->withStorage($site->storage->withCdn('https://cdn.example')));
+
+        self::assertSame('public, max-age=300, s-maxage=300', $this->get($this->photo)->getHeaderLine('Cache-Control'));
     }
 
     protected function tearDown(): void

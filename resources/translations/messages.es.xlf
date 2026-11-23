@@ -8887,5 +8887,11 @@
         <target>Dónde se guardan los archivos del sitio:</target>
       </segment>
     </unit>
+    <unit id="b3570085dfb3fa11">
+      <segment>
+        <source>Visitors get the site’s public files through a content delivery network: {address}</source>
+        <target>Los visitantes reciben los archivos públicos del sitio a través de una red de distribución de contenidos: {address}</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

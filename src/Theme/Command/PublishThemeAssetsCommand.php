@@ -8,6 +8,7 @@ use SightPress\Core\Cli\ThemePreview\PreviewSite;
 use SightPress\Core\Theme\Preview\PreviewFolder;
 use SightPress\Core\Theme\Preview\PreviewTheme;
 use SightPress\Core\Theme\Preview\PreviewTools;
+use SightPress\Core\Theme\PublishedAssets;
 use SightPress\Core\Theme\PublishedPreviews;
 use SightPress\Core\Theme\ThemeException;
 use SightPress\Core\Theme\ThemeRegistry;
@@ -18,7 +19,8 @@ use SightPress\Module\Console\CommandParameter;
 use SightPress\Module\Console\CommandParameterType;
 
 /**
- * `theme:publish-assets [--no-screenshot]`: writes the preview page of every installed theme to the public folder
+ * `theme:publish-assets [--no-screenshot]`: writes every installed theme's static files under a checksum folder
+ * ({@see PublishedAssets}, used with a CDN) and its preview page to the public folder
  * (`public/themes/<id>/<version>/preview/`, gap 8), for the theme picker: the static page and, where Node.js and
  * Playwright's Chromium are installed, its screenshots. Without them the picker shows each theme's description in
  * words instead of a picture. Run after installing or updating themes (the skeleton runs it after `composer install`
@@ -63,6 +65,7 @@ final readonly class PublishThemeAssetsCommand implements Command
             $workspace = $this->workspace ?? sys_get_temp_dir() . '/sightpress-publish-' . bin2hex(random_bytes(6));
             try {
                 @mkdir($workspace, 0o777, true);
+                new PublishedAssets($this->previews->config())->publish($manifest, $theme->paths()->root . '/assets');
                 new PreviewFolder($folder)->write(new PreviewSite($workspace)->render(PreviewTheme::fromDirectory($theme->paths()->root), 'en-GB'));
             } catch (ThemeException $exception) {
                 $output->error(sprintf('The preview of "%s" could not be published. %s', $manifest->name, $exception->getMessage()));

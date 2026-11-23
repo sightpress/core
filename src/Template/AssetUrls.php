@@ -12,9 +12,16 @@ use InvalidArgumentException;
  */
 final readonly class AssetUrls
 {
+    /**
+     * @param array<string, string> $published files with a published address that names their checksum, by asset path
+     * @param string                $cdn       CDN address for styles, fonts and pictures. Scripts and the admin panel's
+     *                                         files always come from the site, so a CDN can never run code on it.
+     */
     public function __construct(
         private string $basePath = '/assets/',
         private ?string $version = null,
+        private array $published = [],
+        private string $cdn = '',
     ) {
     }
 
@@ -28,7 +35,12 @@ final readonly class AssetUrls
             throw new InvalidArgumentException(sprintf('Asset path "%s" is not valid: use a relative path inside the assets folder.', $path));
         }
 
-        $url = rtrim($this->basePath, '/') . '/' . implode('/', array_map(rawurlencode(...), explode('/', $path)));
+        $onSite = str_starts_with($path, 'admin/') || strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'js';
+        if (!$onSite && isset($this->published[$path])) {
+            return $this->published[$path];
+        }
+
+        $url = ($onSite ? '' : $this->cdn) . rtrim($this->basePath, '/') . '/' . implode('/', array_map(rawurlencode(...), explode('/', $path)));
 
         return $this->version === null || $this->version === '' ? $url : $url . '?v=' . rawurlencode($this->version);
     }

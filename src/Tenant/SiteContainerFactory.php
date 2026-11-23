@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMSetup;
 use League\Flysystem\FilesystemOperator;
+use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -31,6 +32,8 @@ use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Storage\SiteFilesystems;
+use SightPress\Core\Media\MediaUrlSigner;
+use SightPress\Core\Theme\PublishedAssets;
 use SightPress\Core\Infrastructure\Database\DatabaseDsn;
 use SightPress\Core\Infrastructure\Event\EventDispatcher;
 use SightPress\Core\Infrastructure\Event\ListenerProvider;
@@ -161,6 +164,7 @@ final class SiteContainerFactory
                 Services::get($container, MediaLimits::class),
                 Services::get($container, ServerLimits::class),
             )),
+            MediaUrlSigner::class => factory(static fn (ContainerInterface $container): MediaUrlSigner => new MediaUrlSigner($config->secret, $site->id, Services::get($container, ClockInterface::class))),
             UploadRefusals::class => autowire(),
             ServerNotice::class => autowire(),
             Connection::class => factory(static fn (): Connection => new ReflectionClass(Connection::class)->newLazyProxy(
@@ -227,6 +231,8 @@ final class SiteContainerFactory
             AssetUrls::class => factory(static fn (ContainerInterface $container): AssetUrls => new AssetUrls(
                 '/assets/',
                 Services::get($container, SiteTheme::class)->assetVersion(InstalledVersions::getReference('sightpress/core')),
+                $site->storage->cdnUrl === null ? [] : new PublishedAssets($config)->urls(Services::get($container, SiteTheme::class)->theme()->manifest(), $site->storage->cdnUrl),
+                $site->storage->cdnUrl ?? '',
             )),
             TemplateExtension::class => autowire()
                 ->constructorParameter('defaultViewer', new Viewer($config->adminLocale, $config->defaultTimezone))

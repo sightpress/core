@@ -88,7 +88,7 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
             'media' => $media,
             'path' => MediaAdmin::path($media),
             'thumbnail' => $media->kind() === MediaKind::Image
-                ? $this->urls->url($media, $media->variantWidths() === [] ? null : min($media->variantWidths()))
+                ? $this->urls->temporaryUrl($media, $media->variantWidths() === [] ? null : min($media->variantWidths()))
                 : null,
             'type' => $this->types->label($media->mimeType()) ?? $media->mimeType(),
             'size' => MediaLimits::describe($media->size()),

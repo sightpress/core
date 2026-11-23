@@ -22,6 +22,7 @@ use SightPress\Theme\ThemePaths;
 use SightPress\Theme\ThemeRequirement;
 
 #[CoversClass(PublishThemeAssetsCommand::class)]
+#[CoversClass(\SightPress\Core\Theme\PublishedPreviews::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PublishThemeAssetsCommandTest extends TestCase
 {

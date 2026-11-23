@@ -40,4 +40,14 @@ final class AssetUrlsTest extends TestCase
 
         new AssetUrls()->url($path);
     }
+
+    public function testACdnServesStylesButNeverScriptsOrTheAdminPanel(): void
+    {
+        $urls = new AssetUrls('/assets/', 'v1', ['css/site.css' => 'https://cdn.example/themes/t/1/assets-abc/css/site.css', 'js/site.js' => 'https://cdn.example/themes/t/1/assets-abc/js/site.js'], 'https://cdn.example');
+
+        self::assertSame('https://cdn.example/themes/t/1/assets-abc/css/site.css', $urls->url('css/site.css'));
+        self::assertSame('https://cdn.example/assets/tokens.css?v=v1', $urls->url('tokens.css'));
+        self::assertSame('/assets/js/site.js?v=v1', $urls->url('js/site.js'));
+        self::assertSame('/assets/admin/tokens.css?v=v1', $urls->url('admin/tokens.css'));
+    }
 }

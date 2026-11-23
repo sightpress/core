@@ -12,21 +12,28 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
-use SightPress\Core\Media\Contract\MediaUrlGenerator;
 use SightPress\Core\Media\Entity\Media;
 use SightPress\Core\Media\MediaAccess;
 use SightPress\Core\Media\MediaFiles;
 use SightPress\Core\Media\MediaRepository;
+use SightPress\Core\Media\MediaUrlSigner;
+use SightPress\Core\Media\OriginMediaUrlGenerator;
 use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\Contract\SiteVisibility;
+use SightPress\Core\Tenant\Site;
 use Slim\Exception\HttpNotFoundException;
 
 /**
  * `/media/{key}/{name}` and `/media/{key}/{width}w/{name}`: streams a file of the media library from the site's
  * storage (origin mode).
  *
- * - Unpublished files are only sent to people who can manage media ({@see MediaAccess}); everyone else gets "not
- *   found", so nobody learns that the file exists. They are never cached (`private, no-store`).
- * - Published files are cached for a year (`immutable`): a key names one content for good.
+ * - Unpublished files are only sent to people who can manage media ({@see MediaAccess}) or with a valid signature
+ *   ({@see MediaUrlSigner}); everyone else gets "not found", so nobody learns that the file exists.
+ * - Anything private (unpublished, on a members-only site, or opened by signature) is never cached
+ *   (`private, no-store`), so a CDN can't serve it to someone else.
+ * - Published files of a public site are cached for a year (`immutable`). With a CDN, for five minutes, so that
+ *   unpublishing a file or making the site members-only reaches the CDN within that time.
  * - `ETag` and `Last-Modified` answer revalidations with 304; a single `Range` is answered with 206 (video and audio
  *   players seek this way), a range past the end with 416, `If-Range` is honoured.
  * - Pictures, video and audio are shown in the browser (`inline`); documents are downloaded (`attachment`), with
@@ -42,6 +49,7 @@ final readonly class MediaFileHandler implements RequestHandlerInterface
 
     private const string PUBLIC_CACHE = 'public, max-age=31536000, immutable';
     private const string PRIVATE_CACHE = 'private, no-store';
+    private const string CDN_CACHE = 'public, max-age=300, s-maxage=300';
 
     /** RFC 9110 §5.6.7, always in GMT (`DATE_RFC7231` is deprecated since PHP 8.5). */
     private const string HTTP_DATE = 'D, d M Y H:i:s \G\M\T';
@@ -53,10 +61,12 @@ final readonly class MediaFileHandler implements RequestHandlerInterface
         private MediaRepository $media,
         private MediaFiles $files,
         private MediaAccess $access,
-        private MediaUrlGenerator $urls,
         private ResponseFactoryInterface $responses,
         private StreamFactoryInterface $streams,
         private LoggerInterface $logger,
+        private MediaUrlSigner $signer,
+        private SiteSettings $settings,
+        private Site $site,
     ) {
     }
 
@@ -69,15 +79,21 @@ final readonly class MediaFileHandler implements RequestHandlerInterface
         if (
             $media === null
             || ($width !== null && !$media->hasVariant($width))
-            || !$this->access->canView(Actor::fromRequest($request), $media)
         ) {
             throw new HttpNotFoundException($request);
         }
+        $signed = $this->signer->verifies($media->key(), $width, $request->getQueryParams());
+        if (!$signed && !$this->access->canView(Actor::fromRequest($request), $media)) {
+            throw new HttpNotFoundException($request);
+        }
 
-        $cache = $media->isPublished() ? self::PUBLIC_CACHE : self::PRIVATE_CACHE;
+        $cache = $this->cache($media, $signed);
         if ($request->getAttribute(self::NAME_ATTRIBUTE) !== $media->fileName() || ($width !== null && $rawWidth !== (string) $width)) {
+            // Stays on this host and keeps the query, so a signature still applies after the redirect.
+            $query = $request->getUri()->getQuery();
+
             return $this->responses->createResponse(301)
-                ->withHeader('Location', $this->urls->url($media, $width))
+                ->withHeader('Location', new OriginMediaUrlGenerator()->url($media, $width) . ($query === '' ? '' : '?' . $query))
                 ->withHeader('Cache-Control', $cache);
         }
 
@@ -141,6 +157,15 @@ final readonly class MediaFileHandler implements RequestHandlerInterface
         }
 
         return $response->withBody($body);
+    }
+
+    private function cache(Media $media, bool $signed): string
+    {
+        if ($signed || !$media->isPublished() || SiteVisibility::isMembersOnly($this->settings)) {
+            return self::PRIVATE_CACHE;
+        }
+
+        return $this->site->storage->cdnUrl === null ? self::PUBLIC_CACHE : self::CDN_CACHE;
     }
 
     /**

@@ -68,6 +68,12 @@ final class StorageHandlerTest extends TestCase
         }
     }
 
+    public function testNamesTheCdn(): void
+    {
+        $site = SiteFixture::site();
+        self::assertStringContainsString('https://cdn.example', $this->page($site->withStorage($site->storage->withCdn('https://cdn.example'))));
+    }
+
     public function testNeedsThePermission(): void
     {
         $request = $this->admin->request($this->admin->auth->user('cleo@example.org', 'contributor'), 'GET', StorageHandler::PATH);

@@ -24,6 +24,11 @@ interface MediaFile
      */
     public function key(): string;
 
+    /**
+     * SHA-256 of the uploaded file, in lower-case hex.
+     */
+    public function checksum(): string;
+
     public function kind(): MediaKind;
 
     /**

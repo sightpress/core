@@ -36,6 +36,7 @@ final readonly class StorageHandler implements RequestHandlerInterface
             'bucket' => $s3?->bucket,
             'region' => $s3?->region,
             'provider' => $s3 === null ? null : ($s3->endpoint === null ? 'Amazon S3' : (string) parse_url($s3->endpoint, PHP_URL_HOST)),
+            'cdn' => $this->site->storage->cdnUrl,
             'settings_path' => SettingsHandler::PATH,
         ]);
     }

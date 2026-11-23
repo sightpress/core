@@ -19,7 +19,7 @@ use SightPress\Core\Media\MediaMigrations;
 use SightPress\Core\Media\MediaModule;
 use SightPress\Core\Media\MediaRepository;
 use SightPress\Core\Media\MediaUploader;
-use SightPress\Core\Media\OriginMediaUrlGenerator;
+use SightPress\Core\Media\DeliveryMediaUrlGenerator;
 use SightPress\Core\Module\ModuleCandidate;
 use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleRegistry;
@@ -52,7 +52,7 @@ final class MediaModuleTest extends TestCase
         self::assertTrue($registry->services()[MediaUrlGenerator::class]->item->public);
         self::assertSame(MediaTypes::class, $registry->services()[MediaFormats::class]->item->class);
         self::assertSame(MediaRepository::class, $registry->services()[MediaLibrary::class]->item->class);
-        self::assertSame(OriginMediaUrlGenerator::class, $registry->services()[MediaUrlGenerator::class]->item->class);
+        self::assertSame(DeliveryMediaUrlGenerator::class, $registry->services()[MediaUrlGenerator::class]->item->class);
         self::assertArrayHasKey(MediaFileHandler::class, $registry->services());
         self::assertArrayHasKey(MediaAccess::class, $registry->services());
         self::assertTrue($registry->services()[\SightPress\Core\Media\UploadAllowance::class]->item->public);

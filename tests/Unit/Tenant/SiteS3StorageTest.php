@@ -109,4 +109,23 @@ final class SiteS3StorageTest extends TestCase
         $this->expectException(SiteRegistryException::class);
         new SiteStorage('s3');
     }
+
+    public function testCdnAddressIsCheckedAndKeptThroughChanges(): void
+    {
+        $s3 = SiteS3Storage::fromArray(self::data());
+        $storage = new SiteStorage()->withCdn('https://cdn.example');
+        self::assertTrue($storage->signsPrivateUrls());
+        self::assertSame('https://cdn.example', $storage->withS3($s3)->switchedToS3()->cdnUrl);
+        self::assertNull($storage->withCdn(null)->cdnUrl);
+        self::assertFalse(new SiteStorage()->signsPrivateUrls());
+        self::assertTrue(new SiteStorage()->withS3($s3)->switchedToS3()->signsPrivateUrls());
+        foreach (['http://cdn.example', 'https://cdn.example/path', 'https://u@cdn.example', 'https://cdn.example?a=1', 'https://cdn.example#a', 'cdn.example'] as $bad) {
+            try {
+                new SiteStorage()->withCdn($bad);
+                self::fail('Expected a refusal of ' . $bad);
+            } catch (SiteRegistryException $exception) {
+                self::assertStringContainsString('storage.cdn_url', $exception->getMessage());
+            }
+        }
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Http\Security;
 
+use DateTimeImmutable;
 use DI\Container;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
@@ -15,6 +16,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Http\Security\MembersOnlyMiddleware;
+use SightPress\Core\Infrastructure\Clock\FrozenClock;
+use SightPress\Core\Media\MediaUrlSigner;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Site\Contract\SiteVisibility;
@@ -98,10 +101,32 @@ final class MembersOnlyMiddlewareTest extends TestCase
         self::assertFalse(SiteVisibility::isMembersOnly($public));
     }
 
+    public function testAValidSignatureOpensOnlyItsOwnFile(): void
+    {
+        $key = str_repeat('a', 32);
+        $signer = new MediaUrlSigner(SiteFixture::SECRET, SiteFixture::site()->id, new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')));
+        $container = new Container([SiteSettings::class => new ArraySiteSettings([SiteVisibility::SETTING => SiteVisibility::MEMBERS]), MediaUrlSigner::class => $signer]);
+        $status = function (string $path, string $query) use ($container): int {
+            parse_str($query, $params);
+            $request = new ServerRequest('GET', 'https://demo.example' . $path . '?' . $query)
+                ->withQueryParams($params)
+                ->withAttribute(SiteContext::class, new SiteContext(SiteFixture::site(), $container));
+
+            return $this->middleware()->process($request, $this->handler())->getStatusCode();
+        };
+
+        self::assertSame(204, $status('/media/' . $key . '/a.jpg', $signer->query($key, null, MediaUrlSigner::MEMBER_TTL)));
+        self::assertSame(204, $status('/media/' . $key . '/640w/a.jpg', $signer->query($key, 640, MediaUrlSigner::MEMBER_TTL)));
+        self::assertSame(302, $status('/media/' . $key . '/320w/a.jpg', $signer->query($key, 640, MediaUrlSigner::MEMBER_TTL)));
+        self::assertSame(302, $status('/media/' . str_repeat('b', 32) . '/a.jpg', $signer->query($key, null, MediaUrlSigner::MEMBER_TTL)));
+        self::assertSame(302, $status('/about', $signer->query($key, null, MediaUrlSigner::MEMBER_TTL)));
+        self::assertSame(302, $status('/media/' . $key . '/a.jpg', 'expires=1&signature=forged'));
+    }
+
     private function process(ServerRequestInterface $request, ?string $visibility): ResponseInterface
     {
         $settings = new ArraySiteSettings($visibility === null ? [] : [SiteVisibility::SETTING => $visibility]);
-        $request = $request->withAttribute(SiteContext::class, new SiteContext(SiteFixture::site(), new Container([SiteSettings::class => $settings])));
+        $request = $request->withAttribute(SiteContext::class, new SiteContext(SiteFixture::site(), new Container([SiteSettings::class => $settings, MediaUrlSigner::class => new MediaUrlSigner(SiteFixture::SECRET, SiteFixture::site()->id, new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')))])));
 
         return $this->middleware()->process($request, $this->handler());
     }

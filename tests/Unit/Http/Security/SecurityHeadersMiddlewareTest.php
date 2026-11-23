@@ -8,13 +8,21 @@ use LogicException;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Http\Security\CspNonce;
 use SightPress\Core\Http\Security\SecurityHeadersMiddleware;
+use SightPress\Core\Tenant\SiteRegistryException;
+use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Tests\Support\CallbackHandler;
+use SightPress\Core\Tests\Support\SiteFixture;
 
 #[CoversClass(SecurityHeadersMiddleware::class)]
+#[UsesClass(\SightPress\Core\Infrastructure\Crypto\SecretBox::class)]
+#[UsesClass(\SightPress\Core\Tenant\Site::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteMediaLimits::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteStorage::class)]
 #[CoversClass(CspNonce::class)]
 final class SecurityHeadersMiddlewareTest extends TestCase
 {
@@ -92,5 +100,34 @@ final class SecurityHeadersMiddlewareTest extends TestCase
         $this->expectException(LogicException::class);
 
         CspNonce::fromRequest(new ServerRequest('GET', '/'));
+    }
+
+    public function testASitesCdnMayServeStylesFontsAndMediaButNeverScripts(): void
+    {
+        $site = SiteFixture::site();
+        $sites = self::createStub(SiteRepository::class);
+        $sites->method('findByDomain')->willReturn($site->withStorage($site->storage->withCdn('https://cdn.example')));
+        $response = new SecurityHeadersMiddleware($sites)->process(
+            new ServerRequest('GET', 'https://demo.example/'),
+            new CallbackHandler(static fn (): Response => new Response()),
+        );
+        $policy = $response->getHeaderLine('Content-Security-Policy');
+
+        foreach (['style-src', 'img-src', 'font-src', 'media-src'] as $directive) {
+            self::assertMatchesRegularExpression('/' . $directive . " 'self' https:\/\/cdn\.example/", $policy);
+        }
+        self::assertDoesNotMatchRegularExpression('/script-src[^;]*cdn\.example/', $policy);
+    }
+
+    public function testABrokenRegistryStillGetsTheHeaders(): void
+    {
+        $sites = self::createStub(SiteRepository::class);
+        $sites->method('findByDomain')->willThrowException(new SiteRegistryException('broken'));
+        $response = new SecurityHeadersMiddleware($sites)->process(
+            new ServerRequest('GET', 'https://demo.example/'),
+            new CallbackHandler(static fn (): Response => new Response()),
+        );
+
+        self::assertStringContainsString("img-src 'self' data:", $response->getHeaderLine('Content-Security-Policy'));
     }
 }

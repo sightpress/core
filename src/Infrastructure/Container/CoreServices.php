@@ -37,6 +37,7 @@ use SightPress\Core\Module\ModulePolicy;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleServices;
 use SightPress\Core\Navigation\AdminNavigation;
+use SightPress\Core\Http\Security\SecurityHeadersMiddleware;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Storage\SiteFilesystems;
 use SightPress\Core\Tenant\FileSiteRepository;
@@ -126,6 +127,7 @@ final class CoreServices
                     => Services::get($container, LoggerFactory::class)->create(),
             ),
             SecretBox::class => autowire()->constructor($config->secret),
+            SecurityHeadersMiddleware::class => autowire()->constructorParameter('sites', get(SiteRepository::class)),
             SiteFilesystems::class => autowire()->constructorParameter('sitesDir', $config->sitesDir),
             SiteRegistryFile::class => autowire()->constructor($config->registryPath),
             SiteRepository::class => autowire(FileSiteRepository::class),

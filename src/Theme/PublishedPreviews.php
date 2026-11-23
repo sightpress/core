@@ -20,6 +20,11 @@ final readonly class PublishedPreviews
     {
     }
 
+    public function config(): TenantConfig
+    {
+        return $this->config;
+    }
+
     /**
      * Folder of a theme version's preview on disk.
      *
