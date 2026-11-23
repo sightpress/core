@@ -38,6 +38,7 @@ use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleServices;
 use SightPress\Core\Navigation\AdminNavigation;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
+use SightPress\Core\Infrastructure\Storage\SiteFilesystems;
 use SightPress\Core\Tenant\FileSiteRepository;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRegistryFile;
@@ -125,6 +126,7 @@ final class CoreServices
                     => Services::get($container, LoggerFactory::class)->create(),
             ),
             SecretBox::class => autowire()->constructor($config->secret),
+            SiteFilesystems::class => autowire()->constructorParameter('sitesDir', $config->sitesDir),
             SiteRegistryFile::class => autowire()->constructor($config->registryPath),
             SiteRepository::class => autowire(FileSiteRepository::class),
             // Built by hand: PHP-DI would resolve the module service definitions if they were passed as a parameter.

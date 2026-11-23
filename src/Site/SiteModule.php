@@ -19,6 +19,8 @@ use SightPress\Core\Site\Command\ListSitesCommand;
 use SightPress\Core\Site\Command\MigrateSitesCommand;
 use SightPress\Core\Site\Command\PurgeSiteCommand;
 use SightPress\Core\Site\Command\RunScheduleCommand;
+use SightPress\Core\Site\Command\SiteStorageMigrateCommand;
+use SightPress\Core\Site\Command\SiteStorageS3Command;
 use SightPress\Core\Site\Command\UpgradeRegistryCommand;
 use SightPress\Core\Site\Contract\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteLanguages;
@@ -58,6 +60,8 @@ final class SiteModule implements ModuleInterface
             PurgeSiteCommand::class,
             MigrateSitesCommand::class,
             ChangeSiteDatabaseCommand::class,
+            SiteStorageS3Command::class,
+            SiteStorageMigrateCommand::class,
             AddSiteLocaleCommand::class,
             RemoveSiteLocaleCommand::class,
             DefaultSiteLocaleCommand::class,

@@ -316,7 +316,7 @@ final class SiteCommandsTest extends TestCase
         self::assertStringStartsWith('Turns a site off for a while', $application->find('site:disable')->getDescription());
         self::assertStringStartsWith('Archives a site', $application->find('site:archive')->getDescription());
         self::assertStringStartsWith('Deletes a site, softly', $application->find('site:delete')->getDescription());
-        self::assertStringStartsWith('Removes a deleted site for good', $application->find('site:purge')->getDescription());
+        self::assertStringStartsWith('Removes a deleted site and its files for good', $application->find('site:purge')->getDescription());
         self::assertStringStartsWith('Lists the sites', $application->find('site:list')->getDescription());
         self::assertStringStartsWith('Runs the database migrations', $application->find('site:migrate')->getDescription());
         self::assertStringStartsWith('Creates a site', $application->find('site:create')->getDescription());
@@ -335,7 +335,7 @@ final class SiteCommandsTest extends TestCase
         $this->console(['command' => 'site:delete', 'slug' => 'demo']);
         self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:purge', 'slug' => 'demo']));
         self::assertSame(
-            "The site \"demo\" was removed from the registry.\nIts SQLite file " . $this->database('demo') . " was kept: delete it yourself when you no longer need it.\n",
+            "The site \"demo\" and its files were removed.\nIts SQLite file " . $this->database('demo') . " was kept: delete it yourself when you no longer need it.\n",
             $this->stdout,
         );
         self::assertNull($this->sites()->find('demo'));
@@ -343,7 +343,7 @@ final class SiteCommandsTest extends TestCase
 
         $this->console(['command' => 'site:delete', 'slug' => 'other']);
         self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:purge', 'slug' => 'other', '--drop-database' => true]));
-        self::assertSame("The site \"other\" was removed from the registry.\nDeleted its SQLite file " . $this->database('other') . ".\n", $this->stdout);
+        self::assertSame("The site \"other\" and its files were removed.\nDeleted its SQLite file " . $this->database('other') . ".\n", $this->stdout);
         self::assertFileDoesNotExist($this->database('other'));
         self::assertStringContainsString('sites.NOTICE: Site "other" purged.', $this->project->log());
     }

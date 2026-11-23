@@ -9,7 +9,8 @@ use RuntimeException;
 
 /**
  * A read-only stream over part of a file: `$length` bytes from `$start`, read in chunks so a large video is never
- * loaded into memory. The stream must be seekable (local files are); it is closed if it can't be positioned.
+ * loaded into memory. A stream that can't seek (a file coming from a bucket) is read forward to `$start`, in chunks
+ * that are thrown away. It is closed if it can't be positioned.
  */
 final class RangeStream implements StreamInterface
 {
@@ -23,12 +24,29 @@ final class RangeStream implements StreamInterface
      */
     public function __construct($resource, int $start, private readonly int $length)
     {
-        if (@fseek($resource, $start) !== 0) {
+        $seekable = stream_get_meta_data($resource)['seekable'];
+        if (!($seekable ? @fseek($resource, $start) === 0 : self::skip($resource, $start))) {
             fclose($resource);
 
             throw new RuntimeException('The file can\'t be read from the requested position.');
         }
         $this->resource = $resource;
+    }
+
+    /**
+     * @param resource $resource
+     */
+    private static function skip($resource, int $bytes): bool
+    {
+        while ($bytes > 0) {
+            $chunk = @fread($resource, min(65536, $bytes));
+            if ($chunk === false || $chunk === '') {
+                return false;
+            }
+            $bytes -= strlen($chunk);
+        }
+
+        return true;
     }
 
     public function __toString(): string

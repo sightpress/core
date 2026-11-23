@@ -78,7 +78,9 @@
     "wamania/php-stemmer": "^4"
   },
   "require-dev": {
+    "aws/aws-sdk-php": "^3",
     "friendsofphp/php-cs-fixer": "^3",
+    "league/flysystem-aws-s3-v3": "^3",
     "nikic/php-parser": "^5",
     "phpstan/extension-installer": "^1",
     "phpstan/phpstan": "^2",
@@ -87,6 +89,10 @@
     "phpstan/phpstan-strict-rules": "^2",
     "phpunit/phpunit": "^13",
     "rector/rector": "^2"
+  },
+  "suggest": {
+    "aws/aws-sdk-php": "Needed with league/flysystem-aws-s3-v3 to keep a site's files in S3-compatible storage.",
+    "league/flysystem-aws-s3-v3": "Install it to keep a site's files in S3-compatible storage (AWS S3, R2, Spaces, MinIO)."
   },
   "bin": [
     "bin/sightpress-theme"

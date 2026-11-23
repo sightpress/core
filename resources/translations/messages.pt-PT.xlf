@@ -8833,5 +8833,59 @@
         <target>“{{ line }}” não é um endereço web completo a começar por https://. Coloque um endereço por linha.</target>
       </segment>
     </unit>
+    <unit id="c83b65791b5b42ce">
+      <segment>
+        <source>Bucket</source>
+        <target>Bucket</target>
+      </segment>
+    </unit>
+    <unit id="879ebfba113e907f">
+      <segment>
+        <source>File storage</source>
+        <target>Armazenamento de ficheiros</target>
+      </segment>
+    </unit>
+    <unit id="472590ae974d4c1f">
+      <segment>
+        <source>Provider</source>
+        <target>Fornecedor</target>
+      </segment>
+    </unit>
+    <unit id="d3a008ef1335692d">
+      <segment>
+        <source>Region</source>
+        <target>Região</target>
+      </segment>
+    </unit>
+    <unit id="085f5f022b9f1183">
+      <segment>
+        <source>The person who runs the server changes where files are kept.</source>
+        <target>Quem gere o servidor decide onde os ficheiros são guardados.</target>
+      </segment>
+    </unit>
+    <unit id="3a2ea6b234b30b25">
+      <segment>
+        <source>This site keeps its files in a cloud storage bucket.</source>
+        <target>Este site guarda os ficheiros num bucket de armazenamento na nuvem.</target>
+      </segment>
+    </unit>
+    <unit id="d3e3d1fe8594fb75">
+      <segment>
+        <source>This site keeps its files on this server.</source>
+        <target>Este site guarda os ficheiros neste servidor.</target>
+      </segment>
+    </unit>
+    <unit id="1016524593ae1277">
+      <segment>
+        <source>This site keeps its files on this server. A cloud storage bucket is connected, but the files haven’t been moved to it yet.</source>
+        <target>Este site guarda os ficheiros neste servidor. Está ligado um bucket de armazenamento na nuvem, mas os ficheiros ainda não foram movidos para lá.</target>
+      </segment>
+    </unit>
+    <unit id="a6ceee3bffdf5343">
+      <segment>
+        <source>Where the site’s files are kept:</source>
+        <target>Onde são guardados os ficheiros do site:</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

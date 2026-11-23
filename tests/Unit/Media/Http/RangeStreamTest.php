@@ -84,6 +84,27 @@ final class RangeStreamTest extends TestCase
         }
     }
 
+    public function testReadsForwardOnAStreamThatCannotSeek(): void
+    {
+        $server = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+        self::assertIsArray($server);
+        fwrite($server[0], str_repeat('a', 70000) . 'wanted');
+        fclose($server[0]);
+
+        self::assertSame('wanted', (string) new RangeStream($server[1], 70000, 6));
+    }
+
+    public function testAStreamThatEndsBeforeTheStartIsClosed(): void
+    {
+        $server = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+        self::assertIsArray($server);
+        fwrite($server[0], 'short');
+        fclose($server[0]);
+
+        $this->expectException(RuntimeException::class);
+        new RangeStream($server[1], 100, 1);
+    }
+
     public function testAFileThatCannotBePositionedIsClosed(): void
     {
         $resource = fopen('php://output', 'w');

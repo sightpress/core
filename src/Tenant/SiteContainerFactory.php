@@ -10,9 +10,7 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMSetup;
-use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -32,6 +30,7 @@ use Twig\Environment;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
+use SightPress\Core\Infrastructure\Storage\SiteFilesystems;
 use SightPress\Core\Infrastructure\Database\DatabaseDsn;
 use SightPress\Core\Infrastructure\Event\EventDispatcher;
 use SightPress\Core\Infrastructure\Event\ListenerProvider;
@@ -183,9 +182,7 @@ final class SiteContainerFactory
                 ),
             ),
             EntityManager::class => get(EntityManagerInterface::class),
-            FilesystemOperator::class => factory(static fn (): FilesystemOperator => new Filesystem(
-                new LocalFilesystemAdapter($site->storage->root($config->sitesDir, $site->id), lazyRootCreation: true),
-            )),
+            FilesystemOperator::class => factory(static fn (): FilesystemOperator => new SiteFilesystems($secretBox, $config->sitesDir)->forSite($site)),
             ListenerProviderInterface::class => factory(static fn (ContainerInterface $container): ListenerProviderInterface => new ListenerProvider(
                 $container,
                 Services::get($container, ModuleRegistry::class),

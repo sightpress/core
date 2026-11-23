@@ -165,9 +165,9 @@ final class SiteTest extends TestCase
     public function testRejectsUnknownStorage(): void
     {
         $this->expectException(SiteRegistryException::class);
-        $this->expectExceptionMessage('"storage.adapter" is not valid: use local.');
+        $this->expectExceptionMessage('"storage.adapter" is not valid: use local or s3.');
 
-        new SiteStorage('s3');
+        new SiteStorage('ftp');
     }
 
     public function testRejectsARelativeStoragePath(): void

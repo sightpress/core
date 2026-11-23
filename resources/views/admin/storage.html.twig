@@ -1,0 +1,25 @@
+{#
+    Storage (/admin/settings/storage): read-only status of where the site's files are kept. Never shows a key.
+    Context: `cloud`, `bucket`, `region`, `provider`, `settings_path`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('File storage') }}{% endblock %}
+{% block content %}
+<h1>{{ t('File storage') }}</h1>
+{% if cloud %}
+<p>{{ t('This site keeps its files in a cloud storage bucket.') }}</p>
+{% elseif bucket %}
+<p>{{ t('This site keeps its files on this server. A cloud storage bucket is connected, but the files haven’t been moved to it yet.') }}</p>
+{% else %}
+<p>{{ t('This site keeps its files on this server.') }}</p>
+{% endif %}
+{% if bucket %}
+<dl>
+    <dt>{{ t('Provider') }}</dt><dd>{{ provider }}</dd>
+    <dt>{{ t('Bucket') }}</dt><dd>{{ bucket }}</dd>
+    <dt>{{ t('Region') }}</dt><dd>{{ region }}</dd>
+</dl>
+{% endif %}
+<p>{{ t('The person who runs the server changes where files are kept.') }}</p>
+<p><a href="{{ settings_path }}">{{ t('Back to site settings') }}</a></p>
+{% endblock %}

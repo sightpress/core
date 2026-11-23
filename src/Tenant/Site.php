@@ -100,6 +100,28 @@ final readonly class Site
     }
 
     /**
+     * The same site with other file storage settings.
+     */
+    public function withStorage(SiteStorage $storage): self
+    {
+        return new self(
+            $this->id,
+            $this->slug,
+            $this->name,
+            $this->status,
+            $this->ownerType,
+            $this->domains,
+            $this->databaseDsn,
+            $storage,
+            $this->defaultLocale,
+            $this->locales,
+            $this->defaultTimezone,
+            $this->createdAt,
+            $this->mediaLimits,
+        );
+    }
+
+    /**
      * The same site with another status.
      */
     public function withStatus(SiteStatus $status): self

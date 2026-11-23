@@ -96,3 +96,18 @@ test('the audit log lists the change in a captioned table and filters it', async
   await expect(page.getByRole('link', { name: 'Download these entries as a CSV file' })).toHaveAttribute('href', '/admin/audit.csv?type=settings');
   await expectNoViolations(page);
 });
+
+test('the file storage screen opens from the settings by keyboard and goes back', async ({ page }) => {
+  await signIn(page, SITE, 'ada@example.org', '/admin/settings');
+  const link = page.getByRole('link', { name: 'File storage' });
+  await link.focus();
+  await expect(link).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(`${SITE}/admin/settings/storage`);
+  await expect(page.getByRole('heading', { level: 1, name: 'File storage' })).toBeVisible();
+  await expect(page.getByText('This site keeps its files on this server.')).toBeVisible();
+  const back = page.getByRole('link', { name: 'Back to site settings' });
+  await back.focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(`${SITE}/admin/settings`);
+});

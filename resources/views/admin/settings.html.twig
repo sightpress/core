@@ -12,6 +12,7 @@
 <h1>{{ t('Site settings') }}</h1>
 <p>{{ t('The logo, icon and share picture are on their own page:') }} <a href="/admin/settings/branding">{{ t('Branding') }}</a>.</p>
 <p>{{ t('The site’s theme and colours are on their own page:') }} <a href="/admin/appearance">{{ t('Appearance') }}</a>.</p>
+<p>{{ t('Where the site’s files are kept:') }} <a href="/admin/settings/storage">{{ t('File storage') }}</a>.</p>
 <p>{{ sign_up_open ? t('Anyone can create an account.') : t('Only people you invite can join.') }} <a href="/admin/settings/sign-up">{{ t('Change who can sign up') }}</a></p>
 {{ f.error_summary(form) }}
 {{ f.start(form, action) }}

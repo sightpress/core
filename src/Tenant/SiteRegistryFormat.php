@@ -134,7 +134,7 @@ final class SiteRegistryFormat
     public static function upgradeSteps(): array
     {
         return [
-            // Version 2 adds the optional `media_limits` of a site; what version 1 stored stays as it is.
+            // Version 2 adds a site's optional `media_limits` and `storage.s3`; what version 1 stored stays as it is.
             1 => static fn (array $registry): array => $registry,
         ];
     }
@@ -153,6 +153,9 @@ final class SiteRegistryFormat
             $storage = ['adapter' => $site->storage->adapter];
             if ($site->storage->path !== null) {
                 $storage['path'] = $site->storage->path;
+            }
+            if ($site->storage->s3 !== null) {
+                $storage['s3'] = $site->storage->s3->toArray();
             }
 
             $exported[$site->slug] = [
@@ -210,8 +213,12 @@ final class SiteRegistryFormat
         }
 
         $storage = $data['storage'] ?? [];
-        if (!is_array($storage) || array_diff(array_keys($storage), ['adapter', 'path']) !== []) {
-            throw new SiteRegistryException('"storage" must be an array with "adapter" and an optional "path".');
+        if (!is_array($storage) || array_diff(array_keys($storage), ['adapter', 'path', 's3']) !== []) {
+            throw new SiteRegistryException('"storage" must be an array with "adapter" and an optional "path" and "s3".');
+        }
+        $s3 = $storage['s3'] ?? null;
+        if ($s3 !== null && !is_array($s3)) {
+            throw new SiteRegistryException('"storage.s3" must be an array.');
         }
 
         return new Site(
@@ -229,6 +236,7 @@ final class SiteRegistryFormat
             storage: new SiteStorage(
                 self::string($storage + ['adapter' => 'local'], 'adapter', 'storage.adapter'),
                 isset($storage['path']) ? self::string($storage, 'path', 'storage.path') : null,
+                $s3 === null ? null : SiteS3Storage::fromArray($s3),
             ),
             defaultLocale: self::string($data, 'default_locale'),
             locales: self::strings($data, 'locales'),
