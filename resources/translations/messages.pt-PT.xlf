@@ -2755,6 +2755,30 @@
         <target>Idiomas:</target>
       </segment>
     </unit>
+    <unit id="5432a31676f46b9e">
+      <segment>
+        <source>Large files go straight from the browser to the bucket.</source>
+        <target>Os ficheiros grandes vão diretamente do navegador para o bucket.</target>
+      </segment>
+    </unit>
+    <unit id="b6e1a4cce648c1df">
+      <segment>
+        <source>Large files go through this server, because the bucket can’t be reached to check its upload rules.</source>
+        <target>Os ficheiros grandes passam por este servidor, porque não é possível contactar o bucket para verificar as regras de carregamento.</target>
+      </segment>
+    </unit>
+    <unit id="af344a468f59ee3e">
+      <segment>
+        <source>Large files go through this server, because the bucket doesn’t allow uploads from this site’s address (its CORS rules).</source>
+        <target>Os ficheiros grandes passam por este servidor, porque o bucket não permite carregamentos a partir do endereço deste site (as regras CORS).</target>
+      </segment>
+    </unit>
+    <unit id="00e85dfb8c3a8f10">
+      <segment>
+        <source>Large files go through this server, because the site doesn’t keep its files in a bucket.</source>
+        <target>Os ficheiros grandes passam por este servidor, porque o site não guarda os ficheiros num bucket.</target>
+      </segment>
+    </unit>
     <unit id="13b3946395824ca9">
       <segment>
         <source>Larger text</source>
@@ -6827,6 +6851,12 @@
       <segment>
         <source>This type of file can't be uploaded. {types}</source>
         <target>Este tipo de ficheiro não pode ser carregado. {types}</target>
+      </segment>
+    </unit>
+    <unit id="b1380a0310abc29a">
+      <segment>
+        <source>This upload goes through the server, because the storage bucket doesn’t accept uploads from the browser.</source>
+        <target>Este carregamento passa pelo servidor, porque o bucket de armazenamento não aceita carregamentos a partir do navegador.</target>
       </segment>
     </unit>
     <unit id="319bcebc6189e79f">

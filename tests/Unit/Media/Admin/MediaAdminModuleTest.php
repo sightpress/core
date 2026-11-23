@@ -7,6 +7,7 @@ namespace SightPress\Core\Tests\Unit\Media\Admin;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
+use SightPress\Core\Media\Admin\Http\DirectUploadHandler;
 use SightPress\Core\Media\Admin\Http\MediaDeleteHandler;
 use SightPress\Core\Media\Admin\Http\MediaItemHandler;
 use SightPress\Core\Media\Admin\Http\MediaLibraryHandler;
@@ -48,6 +49,10 @@ final class MediaAdminModuleTest extends TestCase
             'media_admin.upload' => ['/admin/media/upload', MediaUploadHandler::class, ['POST'], $admin],
             'media_admin.uploads' => ['/admin/media/uploads', TusUploadHandler::class, ['POST', 'OPTIONS'], $admin],
             'media_admin.uploads.session' => ['/admin/media/uploads/{upload:[0-9a-f]{32}}', TusUploadHandler::class, ['HEAD', 'PATCH', 'DELETE'], $admin],
+            'media_admin.direct' => ['/admin/media/direct', DirectUploadHandler::class, ['POST'], $admin],
+            'media_admin.direct.session' => ['/admin/media/direct/{upload:[0-9a-f]{32}}', DirectUploadHandler::class, ['GET', 'DELETE'], $admin],
+            'media_admin.direct.urls' => ['/admin/media/direct/{upload:[0-9a-f]{32}}/urls', DirectUploadHandler::class, ['POST'], $admin],
+            'media_admin.direct.complete' => ['/admin/media/direct/{upload:[0-9a-f]{32}}/complete', DirectUploadHandler::class, ['POST'], $admin],
             'media_admin.item' => ['/admin/media/{id:[0-9]+}', MediaItemHandler::class, ['GET', 'POST'], $admin],
             'media_admin.delete' => ['/admin/media/{id:[0-9]+}/delete', MediaDeleteHandler::class, ['GET', 'POST'], $admin],
         ], $routes);

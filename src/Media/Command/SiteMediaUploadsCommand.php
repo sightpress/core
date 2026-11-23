@@ -8,6 +8,7 @@ use DateTimeZone;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Media\MediaLimits;
 use SightPress\Core\Media\Upload\ChunkedUploads;
+use SightPress\Core\Media\Upload\DirectUploads;
 use SightPress\Core\Media\Upload\UploadSessions;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
@@ -58,7 +59,7 @@ final readonly class SiteMediaUploadsCommand implements Command
         }
         $services = $this->containers->forSite($site);
         if ($input->flag('purge-expired')) {
-            $purged = Services::get($services, ChunkedUploads::class)->purgeExpired();
+            $purged = Services::get($services, ChunkedUploads::class)->purgeExpired() + Services::get($services, DirectUploads::class)->purgeExpired();
             $output->line(sprintf('Removed %d expired %s.', $purged, $purged === 1 ? 'upload' : 'uploads'));
 
             return self::SUCCESS;

@@ -137,6 +137,7 @@ final readonly class PurgeSiteCommand implements Command
                 }
             }
             $this->filesystems->bucket($s3)->deleteDirectory('');
+            $this->filesystems->abortUnfinishedUploads($s3);
         }
         if (!$keepFolder) {
             $this->filesystems->local($site)->deleteDirectory('');

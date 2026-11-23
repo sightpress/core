@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\NullLogger;
 use SightPress\Core\Admin\Http\StorageHandler;
+use SightPress\Core\Http\Upload\DirectUploadCheck;
 use SightPress\Core\Infrastructure\Storage\Provisioning\StorageProvisioning;
 use SightPress\Core\Site\Contract\SettingsChanged;
 use SightPress\Core\Tenant\Site;
@@ -21,7 +22,10 @@ use SightPress\Core\Tests\Support\FakeAws;
 use SightPress\Core\Tests\Support\RecordingEvents;
 use SightPress\Core\Tests\Support\SiteFixture;
 use Slim\Exception\HttpForbiddenException;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 
 #[CoversClass(StorageHandler::class)]
 #[UsesNamespace('SightPress\Core')]
@@ -38,6 +42,11 @@ final class StorageHandlerTest extends TestCase
     private FakeAws $aws;
 
     private RecordingEvents $events;
+
+    /** @var array<string, string> */
+    private array $corsHeaders = [];
+
+    private bool $unreachable = false;
 
     protected function setUp(): void
     {
@@ -58,7 +67,9 @@ final class StorageHandlerTest extends TestCase
             ['handler' => $this->aws],
         );
 
-        return new StorageHandler($this->admin->shell(), $site, $provisioning, $this->events, new NullLogger());
+        $preflight = new MockResponse('', ['http_code' => 204, 'response_headers' => $this->corsHeaders]);
+
+        return new StorageHandler($this->admin->shell(), $site, $provisioning, $this->events, new NullLogger(), new DirectUploadCheck($site, new MockHttpClient($this->unreachable ? static fn () => throw new TransportException('down') : $preflight), new ArrayAdapter()));
     }
 
     /**
@@ -74,7 +85,7 @@ final class StorageHandlerTest extends TestCase
 
     private function page(Site $site): string
     {
-        $request = $this->admin->request($this->admin->auth->user('ada@example.org', 'admin'), 'GET', StorageHandler::PATH);
+        $request = $this->admin->request($this->admin->auth->user('page-' . bin2hex(random_bytes(4)) . '@example.org', 'admin'), 'GET', StorageHandler::PATH);
 
         return (string) $this->handler($site)->handle($request)->getBody();
     }
@@ -84,6 +95,20 @@ final class StorageHandlerTest extends TestCase
         $box = SiteFixture::secretBox();
 
         return new SiteS3Storage('media-bucket', 'eu-west-2', $endpoint, 'sites/one', false, $box->encrypt('AKIAVISIBLE'), $box->encrypt('secret-visible'));
+    }
+
+    public function testSaysHowLargeFilesTravelAndWhy(): void
+    {
+        $site = SiteFixture::site();
+        $cloud = $site->withStorage(new SiteStorage()->withS3(self::bucket('https://files.example'))->switchedToS3());
+        self::assertStringContainsString('because the site doesn’t keep its files in a bucket', $this->page($site));
+        self::assertStringContainsString('(its CORS rules)', $this->page($cloud));
+
+        $this->corsHeaders = ['Access-Control-Allow-Origin' => 'https://demo.example', 'Access-Control-Allow-Methods' => 'PUT'];
+        self::assertStringContainsString('Large files go straight from the browser to the bucket.', $this->page($cloud));
+
+        $this->unreachable = true;
+        self::assertStringContainsString('the bucket can’t be reached', $this->page($cloud));
     }
 
     public function testLocalSite(): void
@@ -129,7 +154,7 @@ final class StorageHandlerTest extends TestCase
 
     public function testNoSetUpFormUnlessTheServerAllowsIt(): void
     {
-        $request = $this->admin->request($this->admin->auth->user('ada@example.org', 'admin'), 'GET', StorageHandler::PATH);
+        $request = $this->admin->request($this->admin->auth->user('page-' . bin2hex(random_bytes(4)) . '@example.org', 'admin'), 'GET', StorageHandler::PATH);
         self::assertStringNotContainsString('name="provider"', (string) $this->handler(SiteFixture::site(), [StorageProvisioning::ADMIN_SWITCH => '0'] + self::ALLOWED)->handle($request)->getBody());
         self::assertStringNotContainsString('name="provider"', (string) $this->handler(SiteFixture::site(), [StorageProvisioning::ADMIN_SWITCH => '1'])->handle($request)->getBody());
         $form = (string) $this->handler(SiteFixture::site(), self::ALLOWED)->handle($request)->getBody();

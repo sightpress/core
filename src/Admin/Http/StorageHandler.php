@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use SightPress\Core\Admin\Contract\AdminScreens;
+use SightPress\Core\Http\Upload\DirectUploadCheck;
 use SightPress\Core\Infrastructure\Storage\Provisioning\ProvisioningException;
 use SightPress\Core\Infrastructure\Storage\Provisioning\StorageProvisioning;
 use SightPress\Core\Rbac\Contract\Actor;
@@ -33,6 +34,7 @@ final readonly class StorageHandler implements RequestHandlerInterface
         private StorageProvisioning $provisioning,
         private EventDispatcherInterface $events,
         private LoggerInterface $logger,
+        private DirectUploadCheck $uploads,
     ) {
     }
 
@@ -78,6 +80,7 @@ final readonly class StorageHandler implements RequestHandlerInterface
             'region' => $s3?->region,
             'provider' => $s3 === null ? null : ($s3->endpoint === null ? 'Amazon S3' : (string) parse_url($s3->endpoint, PHP_URL_HOST)),
             'cdn' => $this->site->storage->cdnUrl,
+            'upload_mode' => $this->uploadMode($request),
             'settings_path' => SettingsHandler::PATH,
             'action' => self::PATH,
             'providers' => $providers,
@@ -85,6 +88,22 @@ final readonly class StorageHandler implements RequestHandlerInterface
             'chosen' => $chosen,
             'problem' => $problem,
         ], $problem === null ? 200 : 422);
+    }
+
+    /**
+     * How large files reach the site, and why.
+     */
+    private function uploadMode(ServerRequestInterface $request): Message
+    {
+        $uri = $request->getUri();
+        $port = $uri->getPort();
+
+        return match ($this->uploads->status($uri->getScheme() . '://' . $uri->getHost() . ($port === null ? '' : ':' . $port))) {
+            DirectUploadCheck::READY => new Message('Large files go straight from the browser to the bucket.'),
+            DirectUploadCheck::NO_CORS => new Message('Large files go through this server, because the bucket doesn’t allow uploads from this site’s address (its CORS rules).'),
+            DirectUploadCheck::UNREACHABLE => new Message('Large files go through this server, because the bucket can’t be reached to check its upload rules.'),
+            default => new Message('Large files go through this server, because the site doesn’t keep its files in a bucket.'),
+        };
     }
 
     /**

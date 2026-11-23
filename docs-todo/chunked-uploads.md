@@ -10,4 +10,7 @@ Who uses it: anyone who uploads media; whoever runs the install sets the folder 
 - `site:media:uploads <site> [--purge-expired]`; `schedule:run` removes abandoned uploads.
 - Several web servers must share the upload folder.
 
-How-to: `docs/how-to/upload-large-files.md`. Decision: ADR-0054.
+- On a site with cloud storage, files go straight from the browser to the bucket when its CORS rules allow it. The
+  storage screen says which mode is used and why.
+
+How-to: `docs/how-to/upload-large-files.md`. Decisions: ADR-0054, ADR-0055.

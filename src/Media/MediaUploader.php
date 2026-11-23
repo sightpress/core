@@ -12,6 +12,7 @@ use Psr\Http\Message\UploadedFileInterface;
 use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\Contract\MediaUploaded;
 use SightPress\Core\Media\Entity\Media;
+use SightPress\Core\Media\Upload\IncomingFile;
 use Throwable;
 
 /**
@@ -25,6 +26,9 @@ use Throwable;
  */
 final readonly class MediaUploader
 {
+    /** How much of a file in the bucket is read to tell its real type. */
+    public const int SNIFF_BYTES = 1024 * 1024;
+
     private const string STORE_FAILED = 'The server couldn\'t store the upload. Try again, and ask your site administrator if it keeps happening.';
 
     public function __construct(
@@ -88,6 +92,63 @@ final readonly class MediaUploader
         return $this->add($localFile, $clientName, null, $maxPixels);
     }
 
+    /**
+     * Adds a file that was sent straight to the bucket, with the checks of a normal upload: its real type from its
+     * first bytes, its size, and its checksum from a stream. A picture is fetched and re-encoded; any other file is
+     * copied to its final place inside the bucket. The incoming file is deleted once it is no longer needed.
+     *
+     * @throws MediaException when the file is refused; the incoming file is left for the caller to delete
+     */
+    public function adopt(IncomingFile $file, string $clientName, ?int $uploadedBy): UploadResult
+    {
+        $size = $file->size();
+        if ($size === 0) {
+            throw new MediaException('The file is empty. Choose another file.');
+        }
+        $start = $file->start(self::SNIFF_BYTES);
+        $detected = new finfo(FILEINFO_MIME_TYPE)->buffer($start);
+        $format = $this->allowed(is_string($detected) ? $detected : '', $clientName, $size, $start, true);
+
+        if ($format->kind === MediaKind::Image) {
+            $local = tempnam(sys_get_temp_dir(), 'sp-upload-');
+            $local = is_string($local) ? $local : throw new MediaException(self::STORE_FAILED);
+            try {
+                $file->saveTo($local);
+                $result = $this->upload($local, $clientName, $uploadedBy);
+            } finally {
+                unlink($local);
+            }
+            $file->delete();
+
+            return $result;
+        }
+
+        $checksum = $file->sha256();
+        $existing = $this->media->findByChecksum($checksum);
+        if ($existing !== null) {
+            $file->delete();
+
+            return new UploadResult($existing, true);
+        }
+
+        $key = bin2hex(random_bytes(16));
+        $fileName = FileName::safe($clientName, $format->extension);
+        $path = MediaFiles::path($key, $format->extension);
+        $file->copyTo($path);
+        try {
+            $media = new Media($key, $checksum, $format, $fileName, FileName::original($clientName, $fileName), $size, null, null, [], $uploadedBy, $this->clock->now());
+            $this->media->save($media);
+        } catch (Throwable $exception) {
+            $this->files->deletePaths([$path]);
+
+            throw $exception;
+        }
+        $file->delete();
+        $this->events->dispatch(new MediaUploaded((int) $media->id(), $key, $format->kind, $uploadedBy));
+
+        return new UploadResult($media, false);
+    }
+
     private function add(string $localFile, string $clientName, ?int $uploadedBy, ?int $importPixels): UploadResult
     {
         $size = is_file($localFile) && is_readable($localFile) ? filesize($localFile) : false;
@@ -99,17 +160,7 @@ final readonly class MediaUploader
         }
 
         $detected = new finfo(FILEINFO_MIME_TYPE)->file($localFile);
-        $format = $this->types->match(is_string($detected) ? $detected : '', $clientName);
-        if ($format === null) {
-            throw new MediaException(new Message('This type of file can\'t be uploaded. {types}', ['types' => $this->types->summary()]));
-        }
-        if ($format->mimeType === 'text/vtt' && !self::isWebVtt($localFile)) {
-            throw new MediaException('This captions file isn\'t in WebVTT format: its first line must be "WEBVTT".');
-        }
-        $max = $this->limits->maxBytes($format->kind);
-        if ($importPixels === null && $size > $max) {
-            throw new MediaException(new Message('The file is {size}; {kind} can be at most {max}.', ['size' => MediaLimits::describe($size), 'kind' => self::plural($format->kind), 'max' => MediaLimits::describe($max)]));
-        }
+        $format = $this->allowed(is_string($detected) ? $detected : '', $clientName, $size, (string) file_get_contents($localFile, length: 16), $importPixels === null);
 
         $checksum = (string) hash_file('sha256', $localFile);
         $existing = $this->media->findByChecksum($checksum);
@@ -168,10 +219,30 @@ final readonly class MediaUploader
         return new UploadResult($media, false);
     }
 
-    private static function isWebVtt(string $localFile): bool
+    /**
+     * The file's format, after the checks on its real type and size.
+     *
+     * @param string $start the first bytes of the file
+     */
+    private function allowed(string $detected, string $clientName, int $size, string $start, bool $limited): MediaFormat
     {
-        $start = (string) file_get_contents($localFile, length: 16);
+        $format = $this->types->match($detected, $clientName);
+        if ($format === null) {
+            throw new MediaException(new Message('This type of file can\'t be uploaded. {types}', ['types' => $this->types->summary()]));
+        }
+        if ($format->mimeType === 'text/vtt' && !self::isWebVtt($start)) {
+            throw new MediaException('This captions file isn\'t in WebVTT format: its first line must be "WEBVTT".');
+        }
+        $max = $this->limits->maxBytes($format->kind);
+        if ($limited && $size > $max) {
+            throw new MediaException(new Message('The file is {size}; {kind} can be at most {max}.', ['size' => MediaLimits::describe($size), 'kind' => self::plural($format->kind), 'max' => MediaLimits::describe($max)]));
+        }
 
+        return $format;
+    }
+
+    private static function isWebVtt(string $start): bool
+    {
         return preg_match('/^(?:\xEF\xBB\xBF)?WEBVTT(?:[ \t\r\n]|$)/', $start) === 1;
     }
 

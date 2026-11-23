@@ -87,6 +87,24 @@ final readonly class SiteS3Storage
     }
 
     /**
+     * The address browsers send parts to, as the S3 client builds it: `connect-src` must allow exactly this.
+     */
+    public function uploadOrigin(): string
+    {
+        if ($this->endpoint === null) {
+            return $this->region === 'us-east-1'
+                ? sprintf('https://%s.s3.amazonaws.com', $this->bucket)
+                : sprintf('https://%s.s3.%s.amazonaws.com', $this->bucket, $this->region);
+        }
+        $endpoint = rtrim($this->endpoint, '/');
+        if ($this->pathStyle) {
+            return $endpoint;
+        }
+
+        return (string) preg_replace('#^(https?://)#', '$1' . $this->bucket . '.', $endpoint);
+    }
+
+    /**
      * @return array<string, string|bool>
      */
     public function toArray(): array

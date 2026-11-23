@@ -22,6 +22,7 @@ use SightPress\Core\Media\Migrations\Version20261120100000 as MediaAltSuggested;
 use SightPress\Core\Media\Migrations\Version20261123100000 as MediaUploadRefusals;
 use SightPress\Core\Media\Migrations\Version20261123120000 as MediaChunkedUploads;
 use SightPress\Core\Media\Migrations\Version20261123130000 as MediaLargeFileSizes;
+use SightPress\Core\Media\Migrations\Version20261123140000 as MediaDirectUploads;
 use SightPress\Core\People\Migrations\Version20261116180000 as InvitationsTable;
 use SightPress\Core\Rbac\Migrations\Version20261114120000 as RbacTables;
 use SightPress\Core\Site\Migrations\Version20261114120000 as SiteSettingsTable;
@@ -49,6 +50,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(MediaUploadRefusals::class)]
 #[CoversClass(MediaChunkedUploads::class)]
 #[CoversClass(MediaLargeFileSizes::class)]
+#[CoversClass(MediaDirectUploads::class)]
 #[CoversClass(PageRedirectsTable::class)]
 #[CoversClass(PageSchedule::class)]
 #[CoversClass(\SightPress\Core\User\Migrations\Version20261118500000::class)]

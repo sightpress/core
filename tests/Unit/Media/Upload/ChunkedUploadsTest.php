@@ -10,10 +10,14 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
+use SightPress\Core\Http\Upload\DirectUploadCheck;
 use SightPress\Core\Http\Upload\ServerLimits;
+use SightPress\Core\Infrastructure\Storage\SiteFilesystems;
 use SightPress\Core\Media\MediaLimits;
 use SightPress\Core\Media\MediaTypes;
+use SightPress\Core\Media\Upload\BucketUploads;
 use SightPress\Core\Media\Upload\ChunkedUploads;
+use SightPress\Core\Media\Upload\DirectUploads;
 use SightPress\Core\Media\Upload\UploadCleanupJob;
 use SightPress\Core\Media\Upload\UploadFolder;
 use SightPress\Core\Media\Upload\UploadRefused;
@@ -27,6 +31,8 @@ use SightPress\Core\Tests\Support\ArrayContainer;
 use SightPress\Core\Tests\Support\MediaFixture;
 use SightPress\Core\Tests\Support\ServerLimitsFixture;
 use SightPress\Core\Tests\Support\SiteFixture;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\HttpClient\MockHttpClient;
 
 #[CoversClass(ChunkedUploads::class)]
 #[CoversClass(UploadCleanupJob::class)]
@@ -304,7 +310,7 @@ final class ChunkedUploadsTest extends TestCase
         self::assertSame(0, $uploads->purgeExpired());
 
         $this->media->clock->advance(2);
-        $job = new ScheduleDue($this->site, new ArrayContainer([ChunkedUploads::class => $uploads]), $this->media->clock->now());
+        $job = new ScheduleDue($this->site, $this->jobServices($uploads), $this->media->clock->now());
         new UploadCleanupJob()($job);
         self::assertSame(['Uploads: removed 1 expired session.'], $job->lines());
         self::assertNull($uploads->find($idle->id, 7));
@@ -312,7 +318,7 @@ final class ChunkedUploadsTest extends TestCase
         self::assertNotNull($uploads->find($finished->id, 7));
 
         $this->media->clock->advance(5 * 86400);
-        $quiet = new ScheduleDue($this->site, new ArrayContainer([ChunkedUploads::class => $uploads]), $this->media->clock->now());
+        $quiet = new ScheduleDue($this->site, $this->jobServices($uploads), $this->media->clock->now());
         new UploadCleanupJob()($quiet);
         self::assertNotNull($uploads->find($finished->id, 7));
         self::assertSame([], $quiet->lines());
@@ -320,7 +326,7 @@ final class ChunkedUploadsTest extends TestCase
         $this->media->clock->advance(86400);
         $two = $uploads->create(7, 'x.csv', 'text/csv', 5);
         $this->media->clock->advance(86401);
-        $last = new ScheduleDue($this->site, new ArrayContainer([ChunkedUploads::class => $uploads]), $this->media->clock->now());
+        $last = new ScheduleDue($this->site, $this->jobServices($uploads), $this->media->clock->now());
         new UploadCleanupJob()($last);
         self::assertSame(['Uploads: removed 2 expired sessions.'], $last->lines());
         self::assertNull($uploads->find($two->id, 7));
@@ -355,6 +361,18 @@ final class ChunkedUploadsTest extends TestCase
         $unknown = new UploadFolder($this->config($this->parts()), $this->site, static fn (string $path): false => false);
         self::assertNull($unknown->free());
         $unknown->delete(str_repeat('a', 32));
+    }
+
+    private function jobServices(ChunkedUploads $uploads): ArrayContainer
+    {
+        $sessions = new UploadSessions($this->media->database->connection);
+        $bucket = new BucketUploads($this->site, new SiteFilesystems(SiteFixture::secretBox(), '/tmp'));
+        $check = new DirectUploadCheck($this->site, new MockHttpClient(), new ArrayAdapter());
+
+        return new ArrayContainer([
+            ChunkedUploads::class => $uploads,
+            DirectUploads::class => new DirectUploads($sessions, $bucket, $check, $uploads, $this->media->uploader(), $this->media->clock),
+        ]);
     }
 
     /**

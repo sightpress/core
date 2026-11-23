@@ -47,6 +47,7 @@ use SightPress\Core\Module\SiteModuleStore;
 use SightPress\Core\Navigation\AdminNavigation;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
 use SightPress\Core\Http\Upload\ServerLimits;
+use SightPress\Core\Http\Upload\DirectUploadCheck;
 use SightPress\Core\Http\Upload\ServerNotice;
 use SightPress\Core\Http\Upload\UploadLimits;
 use SightPress\Core\Media\MediaLimits;
@@ -54,6 +55,7 @@ use SightPress\Core\Media\UploadAllowance;
 use SightPress\Core\Media\UploadRefusals;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 use function DI\autowire;
 use function DI\factory;
@@ -165,6 +167,11 @@ final class SiteContainerFactory
                 Services::get($container, ServerLimits::class),
             )),
             MediaUrlSigner::class => factory(static fn (ContainerInterface $container): MediaUrlSigner => new MediaUrlSigner($config->secret, $site->id, Services::get($container, ClockInterface::class))),
+            DirectUploadCheck::class => factory(static fn (ContainerInterface $container): DirectUploadCheck => new DirectUploadCheck(
+                Services::get($container, Site::class),
+                Services::get($container, HttpClientInterface::class),
+                new FilesystemAdapter('direct-upload-' . $site->id, 0, $config->cacheDir),
+            )),
             UploadRefusals::class => autowire(),
             ServerNotice::class => autowire(),
             Connection::class => factory(static fn (): Connection => new ReflectionClass(Connection::class)->newLazyProxy(
@@ -187,6 +194,7 @@ final class SiteContainerFactory
             ),
             EntityManager::class => get(EntityManagerInterface::class),
             FilesystemOperator::class => factory(static fn (): FilesystemOperator => new SiteFilesystems($secretBox, $config->sitesDir)->forSite($site)),
+            SiteFilesystems::class => factory(static fn (): SiteFilesystems => new SiteFilesystems($secretBox, $config->sitesDir)),
             ListenerProviderInterface::class => factory(static fn (ContainerInterface $container): ListenerProviderInterface => new ListenerProvider(
                 $container,
                 Services::get($container, ModuleRegistry::class),

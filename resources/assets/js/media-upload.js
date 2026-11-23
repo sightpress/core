@@ -3,7 +3,8 @@
 // it survives a lost connection and a page reload (choosing the same file again resumes it), and can be paused,
 // resumed and cancelled. Progress is in the <progress> bar and announced in the polite live region
 // (#media-upload-status) every 10 %. The server names the page to go to when the upload ends. Without JavaScript the
-// form is sent the usual way.
+// form is sent the usual way. On a site with cloud storage, large files go straight from the browser to the bucket
+// with signed part addresses, and through the server only when the bucket doesn't allow it.
 (() => {
   'use strict';
 
@@ -260,6 +261,276 @@
     }
   };
 
+  const api = (method, url, body) => new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open(method, url);
+    Object.entries(csrf()).forEach(([name, value]) => request.setRequestHeader(name, value));
+    request.setRequestHeader('Accept', 'application/json');
+    if (body !== undefined) {
+      request.setRequestHeader('Content-Type', 'application/json');
+    }
+    request.addEventListener('load', () => {
+      let json = {};
+      try { json = JSON.parse(request.responseText || '{}'); } catch { json = {}; }
+      resolve({ status: request.status, json, retryAfter: request.getResponseHeader('Retry-After') });
+    });
+    request.addEventListener('error', () => reject(new Error('network')));
+    request.send(body === undefined ? null : JSON.stringify(body));
+  });
+
+  // One part, straight to the bucket. No header is added: the address is signed for exactly this request.
+  const putPart = (url, blob, onProgress, onRequest) => new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open('PUT', url);
+    request.upload.addEventListener('progress', (event) => onProgress(event.loaded));
+    request.addEventListener('load', () => resolve({ status: request.status, etag: request.getResponseHeader('ETag') }));
+    request.addEventListener('error', () => reject(new Error('network')));
+    request.addEventListener('abort', () => reject(new DOMException('stopped', 'AbortError')));
+    onRequest(request);
+    request.send(blob);
+  });
+
+  class UseServer extends Error {}
+
+  // Sends a file straight to the bucket. Falls back to the server (sendInParts) when the bucket can't take it.
+  const sendDirect = async (file) => {
+    const key = `${storageKey(file)}:direct`;
+    let id = recall(key);
+    let plan = null;
+    let received = {};
+    if (id) {
+      const found = await api('GET', `${data.direct}/${id}`).catch(() => null);
+      if (found?.status === 200 && found.json.location) {
+        forget(key);
+        window.location.assign(found.json.location);
+        return;
+      }
+      if (found?.status === 200 && found.json.state === 'receiving') {
+        plan = found.json;
+        received = found.json.received ?? {};
+      } else if (found?.status === 200) {
+        plan = { validating: true };
+      } else {
+        forget(key);
+        id = null;
+      }
+    }
+    if (!plan) {
+      const started = await api('POST', data.direct, { name: file.name, type: file.type, size: file.size });
+      if (started.json.location) {
+        window.location.assign(started.json.location);
+        return;
+      }
+      if (started.status !== 201) {
+        throw new UseServer();
+      }
+      plan = started.json;
+      ({ id } = started.json);
+      remember(key, id);
+    }
+
+    let paused = false;
+    let cancelled = false;
+    let current = null;
+    let wake = null;
+    let announced = -10;
+    const done = () => Object.keys(received).reduce((sum, n) => sum + Math.min(plan.partBytes, file.size - (Number(n) - 1) * plan.partBytes), 0);
+    const show = (bytes) => {
+      const percent = Math.min(100, Math.floor((bytes / file.size) * 100));
+      bar.value = percent;
+      const step = Math.floor(percent / 10) * 10;
+      if (step > announced) {
+        announced = step;
+        status.textContent = say(data.textProgress, { name: file.name, percent: step });
+      }
+    };
+    const percentNow = () => Math.floor((done() / file.size) * 100);
+    const setPaused = (value, message) => {
+      paused = value;
+      pause.hidden = value;
+      resume.hidden = !value;
+      (value ? resume : pause).focus();
+      status.textContent = message;
+    };
+    const onPause = () => { setPaused(true, say(data.textPaused, { name: file.name, percent: percentNow() })); current?.abort(); };
+    const onResume = () => { setPaused(false, say(data.textResumed, { name: file.name, percent: percentNow() })); wake?.(); };
+    const onCancel = () => { cancelled = true; current?.abort(); wake?.(); };
+    pause.addEventListener('click', onPause);
+    resume.addEventListener('click', onResume);
+    cancel.addEventListener('click', onCancel);
+    const stopListening = () => {
+      pause.removeEventListener('click', onPause);
+      resume.removeEventListener('click', onResume);
+      cancel.removeEventListener('click', onCancel);
+    };
+    const hideControls = () => {
+      if (controls.contains(document.activeElement)) {
+        status.tabIndex = -1;
+        status.focus();
+      }
+      controls.hidden = true;
+    };
+    const reset = () => {
+      stopListening();
+      controls.hidden = true;
+      bar.parentElement.hidden = true;
+      bar.value = 0;
+      if (button instanceof HTMLButtonElement) {
+        button.disabled = false;
+      }
+      button?.focus();
+    };
+    const useServer = async () => {
+      stopListening();
+      await api('DELETE', `${data.direct}/${id}`).catch(() => null);
+      forget(key);
+      throw new UseServer();
+    };
+
+    controls.hidden = false;
+    pause.hidden = false;
+    resume.hidden = true;
+    bar.parentElement.hidden = false;
+    if (button instanceof HTMLButtonElement) {
+      button.disabled = true;
+    }
+
+    if (!plan.validating) {
+      show(done());
+      let urls = {};
+      let failures = 0;
+      let sentAny = false;
+      for (let number = 1; number <= plan.parts;) {
+        if (cancelled) {
+          await api('DELETE', `${data.direct}/${id}`).catch(() => null);
+          forget(key);
+          reset();
+          status.textContent = say(data.textCancelled, { name: file.name });
+          return;
+        }
+        if (paused) {
+          await new Promise((resolve) => { wake = resolve; });
+          urls = {}; // they may have expired during the pause
+          continue;
+        }
+        if (received[number]) {
+          number += 1;
+          continue;
+        }
+        try {
+          if (!urls[number]) {
+            const wanted = [];
+            for (let n = number; n <= plan.parts && wanted.length < plan.batch; n += 1) {
+              if (!received[n]) {
+                wanted.push(n);
+              }
+            }
+            const signed = await api('POST', `${data.direct}/${id}/urls`, { parts: wanted });
+            if (signed.status === 429) {
+              await wait(Math.min(60, Number(signed.retryAfter) || 5) * 1000);
+              continue;
+            }
+            if (signed.status !== 200) {
+              throw new Error('refused');
+            }
+            urls = signed.json.urls;
+          }
+          const start = (number - 1) * plan.partBytes;
+          const before = done();
+          const answer = await putPart(urls[number], file.slice(start, start + plan.partBytes), (sent) => show(before + sent), (request) => { current = request; });
+          current = null;
+          if (answer.status === 200 && answer.etag) {
+            received[number] = answer.etag.replaceAll('"', '');
+            sentAny = true;
+            failures = 0;
+            show(done());
+            number += 1;
+            continue;
+          }
+          if (answer.status === 200 && !sentAny) {
+            await useServer(); // the bucket hides the ETag from the browser: its CORS rules are incomplete
+          }
+          if (answer.status === 403) {
+            urls = {};
+          }
+          throw new Error('refused');
+        } catch (error) {
+          current = null;
+          if (error instanceof UseServer) {
+            throw error;
+          }
+          if (error instanceof DOMException && error.name === 'AbortError') {
+            continue;
+          }
+          if (!sentAny && Object.keys(received).length === 0) {
+            await useServer(); // the browser wasn't allowed to reach the bucket at all
+          }
+          failures += 1;
+          if (failures > RETRIES) {
+            failures = 0;
+            setPaused(true, data.textOffline);
+            continue;
+          }
+          status.textContent = data.textRetrying;
+          await wait(1000 * 2 ** (failures - 1));
+        }
+      }
+      hideControls();
+      status.textContent = say(data.textChecking, { name: file.name });
+      for (let tries = 0; ; tries += 1) {
+        const joined = await api('POST', `${data.direct}/${id}/complete`, { parts: received }).catch(() => null);
+        if (joined?.status === 202) {
+          break;
+        }
+        if (joined?.json?.location) {
+          stopListening();
+          forget(key);
+          window.location.assign(joined.json.location);
+          return;
+        }
+        if (tries >= RETRIES) {
+          controls.hidden = false;
+          setPaused(true, data.textOffline);
+          await new Promise((resolve) => { wake = resolve; });
+          hideControls();
+          tries = 0;
+        } else {
+          await wait(1000 * 2 ** tries);
+        }
+      }
+    } else {
+      hideControls();
+    }
+
+    status.textContent = say(data.textChecking, { name: file.name });
+    for (;;) {
+      await wait(1500);
+      const checked = await api('GET', `${data.direct}/${id}`).catch(() => null);
+      if (checked?.json?.location) {
+        stopListening();
+        forget(key);
+        window.location.assign(checked.json.location);
+        return;
+      }
+    }
+  };
+
+  const sendLarge = (file) => {
+    if (!data.direct) {
+      return sendInParts(file);
+    }
+
+    return sendDirect(file).catch((error) => {
+      if (!(error instanceof UseServer)) {
+        throw error;
+      }
+      const started = sendInParts(file);
+      status.textContent = data.textFallback;
+
+      return started;
+    });
+  };
+
   const sendWhole = (file) => {
     const request = new XMLHttpRequest();
     let announced = -10;
@@ -313,7 +584,7 @@
     }
     event.preventDefault();
     if (chunkBytes > 0 && file.size > chunkBytes && controls && pause && resume && cancel) {
-      sendInParts(file).catch(() => form.submit());
+      sendLarge(file).catch(() => form.submit());
     } else {
       sendWhole(file);
     }

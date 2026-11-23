@@ -67,6 +67,29 @@ final readonly class ChunkedUploads
      */
     public function create(int $userId, string $name, string $type, int $size): UploadSession
     {
+        $name = $this->admit($userId, $name, $type, $size);
+        if (!$this->folder->prepare()) {
+            throw new UploadRefused(507, new Message('The server can\'t store uploads right now. Ask the person who runs it to check the upload folder.'));
+        }
+        $free = $this->folder->free();
+        if ($free !== null && $free < $size + $this->sessions->outstandingBytes()) {
+            throw new UploadRefused(507, new Message('The server doesn\'t have enough free space for this file. Ask the person who runs it to free some space.'));
+        }
+
+        $now = $this->clock->now();
+        $session = new UploadSession(bin2hex(random_bytes(16)), $userId, $name, $size, 0, $now, $now);
+        $this->sessions->add($session);
+
+        return $session;
+    }
+
+    /**
+     * The checks every large upload gets before its first part, wherever it is going.
+     *
+     * @return string the file name, cleaned
+     */
+    public function admit(int $userId, string $name, string $type, int $size): string
+    {
         $name = mb_substr(trim(str_replace(["\0", '/', '\\'], '', $name)), 0, 255);
         if ($name === '') {
             throw new UploadRefused(400, new Message('Choose a file to upload.'));
@@ -92,19 +115,8 @@ final readonly class ChunkedUploads
         if ($active['bytes'] + $size > 2 * $this->config->maxChunkedBytes) {
             throw new UploadRefused(429, new Message('Your uploads in progress are too large together. Finish or cancel one first.'));
         }
-        if (!$this->folder->prepare()) {
-            throw new UploadRefused(507, new Message('The server can\'t store uploads right now. Ask the person who runs it to check the upload folder.'));
-        }
-        $free = $this->folder->free();
-        if ($free !== null && $free < $size + $this->sessions->outstandingBytes()) {
-            throw new UploadRefused(507, new Message('The server doesn\'t have enough free space for this file. Ask the person who runs it to free some space.'));
-        }
 
-        $now = $this->clock->now();
-        $session = new UploadSession(bin2hex(random_bytes(16)), $userId, $name, $size, 0, $now, $now);
-        $this->sessions->add($session);
-
-        return $session;
+        return $name;
     }
 
     /**
@@ -114,7 +126,7 @@ final readonly class ChunkedUploads
     {
         $session = $this->sessions->find($id);
 
-        return $session?->userId === $userId ? $session : null;
+        return $session?->userId === $userId && !$session->isDirect() ? $session : null;
     }
 
     /**

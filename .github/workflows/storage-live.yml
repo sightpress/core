@@ -74,7 +74,7 @@ jobs:
           SIGHTPRESS_TEST_S3_ENDPOINT: http://127.0.0.1:9000
           SIGHTPRESS_TEST_S3_KEY: ci-storage-key
           SIGHTPRESS_TEST_S3_SECRET: ci-storage-secret
-        run: vendor/bin/phpunit --testsuite integration --no-coverage --filter StorageProvisioningLiveTest::testBucketAndExpiryRuleOnMinio
+        run: vendor/bin/phpunit --testsuite integration --no-coverage --filter 'StorageProvisioningLiveTest::testBucketAndExpiryRuleOnMinio|DirectUploadLiveTest'
 
       - name: Test on AWS
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.target == 'aws' }}

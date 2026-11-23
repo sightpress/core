@@ -63,6 +63,17 @@ final class SiteFilesystemsTest extends TestCase
         self::assertArrayNotHasKey('sites/one/.sightpress-storage-check', $this->s3->objects);
     }
 
+    public function testStopsUnfinishedUploadsUnderThePrefixOnly(): void
+    {
+        $this->s3->uploads = [
+            'mine' => ['key' => 'sites/one/incoming/a', 'parts' => [1 => 'x']],
+        ];
+
+        $this->filesystems()->abortUnfinishedUploads(self::bucket());
+
+        self::assertSame([], $this->s3->uploads);
+    }
+
     public function testPicksTheStorageOfTheSite(): void
     {
         $project = new TestProject();

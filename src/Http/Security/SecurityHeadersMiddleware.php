@@ -33,7 +33,7 @@ final readonly class SecurityHeadersMiddleware implements MiddlewareInterface
         $response = $handler->handle($request->withAttribute(CspNonce::class, $nonce));
 
         $headers = [
-            'Content-Security-Policy' => $this->contentSecurityPolicy($nonce, $https, $this->cdn($request)),
+            'Content-Security-Policy' => $this->contentSecurityPolicy($nonce, $https, $this->cdn($request), $this->uploadBucket($request)),
             'X-Content-Type-Options' => 'nosniff',
             'Referrer-Policy' => 'strict-origin-when-cross-origin',
             'Permissions-Policy' => self::PERMISSIONS_POLICY,
@@ -68,7 +68,24 @@ final readonly class SecurityHeadersMiddleware implements MiddlewareInterface
         return $cdn === null ? '' : ' ' . $cdn;
     }
 
-    private function contentSecurityPolicy(CspNonce $nonce, bool $https, string $cdn): string
+    /**
+     * The site's bucket, where the media library sends large files. Only that screen may connect to it.
+     */
+    private function uploadBucket(ServerRequestInterface $request): string
+    {
+        if ($request->getUri()->getPath() !== '/admin/media') {
+            return '';
+        }
+        try {
+            $storage = $this->sites?->findByDomain($request->getUri()->getHost())?->storage;
+        } catch (SiteRegistryException) {
+            return '';
+        }
+
+        return $storage?->isCloud() === true && $storage->s3 !== null ? ' ' . $storage->s3->uploadOrigin() : '';
+    }
+
+    private function contentSecurityPolicy(CspNonce $nonce, bool $https, string $cdn, string $bucket = ''): string
     {
         $policy = [
             "default-src 'self'",
@@ -76,7 +93,7 @@ final readonly class SecurityHeadersMiddleware implements MiddlewareInterface
             "style-src 'self'{$cdn} 'nonce-{$nonce->value}'",
             "img-src 'self'{$cdn} data:",
             "font-src 'self'{$cdn}",
-            "connect-src 'self'",
+            "connect-src 'self'{$bucket}",
             "media-src 'self'{$cdn}",
             "object-src 'none'",
             "base-uri 'self'",

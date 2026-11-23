@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Media;
 
 use SightPress\Core\Tests\Support\Text;
+use Doctrine\ORM\Exception\EntityManagerClosed;
 use Nyholm\Psr7\Stream;
 use Nyholm\Psr7\UploadedFile;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -18,6 +19,7 @@ use SightPress\Core\Media\MediaFiles;
 use SightPress\Core\Media\MediaLimits;
 use SightPress\Core\Media\MediaUploader;
 use SightPress\Core\Media\UploadResult;
+use SightPress\Core\Tests\Support\FakeIncomingFile;
 use SightPress\Core\Tests\Support\MediaFixture;
 
 #[CoversClass(MediaUploader::class)]
@@ -199,6 +201,37 @@ final class MediaUploaderTest extends TestCase
         $this->expectExceptionMessage('disk full');
 
         $this->fixture->uploader()->uploadFile($upload, null);
+    }
+
+    public function testAnEmptyFileInTheBucketIsRefused(): void
+    {
+        $file = new FakeIncomingFile('');
+
+        try {
+            $this->fixture->uploader()->adopt($file, 'empty.csv', 7);
+            self::fail('An empty file must be refused.');
+        } catch (MediaException $exception) {
+            self::assertSame('The file is empty. Choose another file.', $exception->getMessage());
+        }
+        self::assertFalse($file->deleted, 'the caller deletes a refused file');
+    }
+
+    public function testACopyWhoseRowCantBeSavedIsRemoved(): void
+    {
+        $storage = $this->fixture->storage;
+        $entities = $this->fixture->database->entityManager;
+        $file = new FakeIncomingFile("name,points\nAda,10\n", static function (string $path, string $contents) use ($storage, $entities): void {
+            $storage->write($path, $contents);
+            $entities->close();
+        });
+
+        try {
+            $this->fixture->uploader()->adopt($file, 'points.csv', 7);
+            self::fail('The row can\'t be saved.');
+        } catch (EntityManagerClosed) {
+            self::assertSame([], $this->fixture->stored());
+            self::assertFalse($file->deleted, 'the incoming file stays, so the check can run again');
+        }
     }
 
     /**

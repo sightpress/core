@@ -2755,6 +2755,30 @@
         <target>Languages:</target>
       </segment>
     </unit>
+    <unit id="5432a31676f46b9e">
+      <segment>
+        <source>Large files go straight from the browser to the bucket.</source>
+        <target>Large files go straight from the browser to the bucket.</target>
+      </segment>
+    </unit>
+    <unit id="b6e1a4cce648c1df">
+      <segment>
+        <source>Large files go through this server, because the bucket can’t be reached to check its upload rules.</source>
+        <target>Large files go through this server, because the bucket can’t be reached to check its upload rules.</target>
+      </segment>
+    </unit>
+    <unit id="af344a468f59ee3e">
+      <segment>
+        <source>Large files go through this server, because the bucket doesn’t allow uploads from this site’s address (its CORS rules).</source>
+        <target>Large files go through this server, because the bucket doesn’t allow uploads from this site’s address (its CORS rules).</target>
+      </segment>
+    </unit>
+    <unit id="00e85dfb8c3a8f10">
+      <segment>
+        <source>Large files go through this server, because the site doesn’t keep its files in a bucket.</source>
+        <target>Large files go through this server, because the site doesn’t keep its files in a bucket.</target>
+      </segment>
+    </unit>
     <unit id="13b3946395824ca9">
       <segment>
         <source>Larger text</source>
@@ -6827,6 +6851,12 @@
       <segment>
         <source>This type of file can't be uploaded. {types}</source>
         <target>This type of file can't be uploaded. {types}</target>
+      </segment>
+    </unit>
+    <unit id="b1380a0310abc29a">
+      <segment>
+        <source>This upload goes through the server, because the storage bucket doesn’t accept uploads from the browser.</source>
+        <target>This upload goes through the server, because the storage bucket doesn’t accept uploads from the browser.</target>
       </segment>
     </unit>
     <unit id="319bcebc6189e79f">

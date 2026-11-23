@@ -86,7 +86,8 @@
 {% endblock %}
 {% block scripts %}
 {{ parent() }}
-<script src="{{ asset('js/media-upload.js') }}" data-form="{{ form.id }}" data-chunk-bytes="{{ chunk_bytes }}" data-uploads="/admin/media/uploads"
+<script src="{{ asset('js/media-upload.js') }}" data-form="{{ form.id }}" data-chunk-bytes="{{ chunk_bytes }}" data-uploads="/admin/media/uploads"{% if direct %} data-direct="/admin/media/direct"{% endif %}
+    data-text-fallback="{{ t('This upload goes through the server, because the storage bucket doesn’t accept uploads from the browser.') }}"
     data-text-progress="{{ t('Uploading {name}: {percent}%', {name: '{name}', percent: '{percent}'}) }}"
     data-text-paused="{{ t('Upload of {name} paused at {percent}%.', {name: '{name}', percent: '{percent}'}) }}"
     data-text-resumed="{{ t('Resuming {name} from {percent}%.', {name: '{name}', percent: '{percent}'}) }}"

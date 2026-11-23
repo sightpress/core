@@ -1,7 +1,7 @@
 {#
     Storage (/admin/settings/storage): where the site's files are kept and, when the server allows it, setting up cloud
     storage in two steps (choose a provider, read the plan, confirm). Never shows a key.
-    Context: `cloud`, `bucket`, `region`, `provider`, `cdn`, `settings_path`, `action`, `providers`, `plan`, `chosen`, `problem`.
+    Context: `cloud`, `bucket`, `region`, `provider`, `cdn`, `upload_mode`, `settings_path`, `action`, `providers`, `plan`, `chosen`, `problem`.
 #}
 {% extends '@admin/layout.html.twig' %}
 {% block title %}{{ t('File storage') }}{% endblock %}
@@ -25,6 +25,7 @@
 {% if cdn %}
 <p>{{ t('Visitors get the site’s public files through a content delivery network: {address}', {address: cdn}) }}</p>
 {% endif %}
+<p>{{ t(upload_mode) }}</p>
 <p>{{ t('The person who runs the server changes where files are kept.') }}</p>
 {% if plan %}
 <section aria-labelledby="storage-plan">

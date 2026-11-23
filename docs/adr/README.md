@@ -72,5 +72,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0052](0052-command-line-media-import.md) | Command-line media import | Proposed |
 | [0053](0053-cloud-storage-provisioning.md) | Cloud storage provisioning | Proposed |
 | [0054](0054-chunked-uploads-to-a-temporary-folder.md) | Chunked uploads to a temporary folder | Proposed |
+| [0055](0055-direct-to-bucket-uploads.md) | Direct-to-bucket uploads | Proposed |
 
 When an ADR's status changes, update it here too.

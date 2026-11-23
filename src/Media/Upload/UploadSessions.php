@@ -34,6 +34,10 @@ final readonly class UploadSessions
             'updated_at' => $session->updatedAt,
             'completed_at' => $session->completedAt,
             'media_id' => $session->mediaId,
+            'mode' => $session->mode,
+            'state' => $session->state,
+            'remote_id' => $session->remoteId,
+            'part_bytes' => $session->partBytes,
         ], self::DATES);
     }
 
@@ -51,7 +55,38 @@ final readonly class UploadSessions
 
     public function complete(string $id, int $mediaId, DateTimeImmutable $now): void
     {
-        $this->connection->update(self::TABLE, ['completed_at' => $now, 'updated_at' => $now, 'media_id' => $mediaId], ['id' => $id], self::DATES);
+        $this->connection->update(self::TABLE, ['completed_at' => $now, 'updated_at' => $now, 'media_id' => $mediaId, 'state' => UploadSession::RECEIVING], ['id' => $id], self::DATES);
+    }
+
+    /**
+     * Moves a session from one state to another. False when it wasn't in `$from`, so only one process wins.
+     */
+    public function transition(string $id, string $from, string $to, DateTimeImmutable $now): bool
+    {
+        return (int) $this->connection->update(self::TABLE, ['state' => $to, 'updated_at' => $now], ['id' => $id, 'state' => $from], ['updated_at' => Types::DATETIME_IMMUTABLE]) === 1;
+    }
+
+    /**
+     * @param array<mixed> $reason
+     */
+    public function refuse(string $id, array $reason, DateTimeImmutable $now): void
+    {
+        $this->connection->update(self::TABLE, ['state' => UploadSession::REFUSED, 'refusal' => $reason, 'updated_at' => $now], ['id' => $id], ['updated_at' => Types::DATETIME_IMMUTABLE, 'refusal' => Types::JSON]);
+    }
+
+    /**
+     * Direct uploads waiting to be checked, and those whose check stopped before `$staleBefore`.
+     *
+     * @return list<UploadSession>
+     */
+    public function awaitingValidation(DateTimeImmutable $staleBefore): array
+    {
+        $format = $this->connection->getDatabasePlatform()->getDateTimeFormatString();
+
+        return array_map(self::session(...), $this->connection->fetchAllAssociative(
+            'SELECT * FROM ' . self::TABLE . ' WHERE mode = ? AND (state = ? OR (state = ? AND updated_at < ?)) ORDER BY updated_at',
+            [UploadSession::DIRECT, UploadSession::VALIDATING, UploadSession::PROCESSING, $staleBefore->format($format)],
+        ));
     }
 
     public function delete(string $id): void
@@ -77,7 +112,7 @@ final readonly class UploadSessions
      */
     public function outstandingBytes(): int
     {
-        $bytes = $this->connection->fetchOne('SELECT COALESCE(SUM(total_bytes - received_bytes), 0) FROM ' . self::TABLE . ' WHERE completed_at IS NULL');
+        $bytes = $this->connection->fetchOne('SELECT COALESCE(SUM(total_bytes - received_bytes), 0) FROM ' . self::TABLE . ' WHERE completed_at IS NULL AND mode = ?', [UploadSession::TEMP]);
 
         return is_numeric($bytes) ? (int) $bytes : 0;
     }
@@ -93,13 +128,13 @@ final readonly class UploadSessions
     /**
      * @return list<UploadSession> unfinished and idle since `$idleBefore`, or finished before `$finishedBefore`
      */
-    public function expired(DateTimeImmutable $idleBefore, DateTimeImmutable $finishedBefore): array
+    public function expired(DateTimeImmutable $idleBefore, DateTimeImmutable $finishedBefore, string $mode = UploadSession::TEMP): array
     {
         $format = $this->connection->getDatabasePlatform()->getDateTimeFormatString();
 
         return array_map(self::session(...), $this->connection->fetchAllAssociative(
-            'SELECT * FROM ' . self::TABLE . ' WHERE (completed_at IS NULL AND updated_at < ?) OR completed_at < ?',
-            [$idleBefore->format($format), $finishedBefore->format($format)],
+            'SELECT * FROM ' . self::TABLE . ' WHERE mode = ? AND ((completed_at IS NULL AND updated_at < ?) OR completed_at < ?)',
+            [$mode, $idleBefore->format($format), $finishedBefore->format($format)],
         ));
     }
 
@@ -118,7 +153,22 @@ final readonly class UploadSessions
             self::date($row['updated_at']),
             $row['completed_at'] === null ? null : self::date($row['completed_at']),
             $row['media_id'] === null ? null : self::number($row['media_id']),
+            self::text($row['mode']),
+            self::text($row['state']),
+            $row['remote_id'] === null ? null : self::text($row['remote_id']),
+            $row['part_bytes'] === null ? null : self::number($row['part_bytes']),
+            self::refusal($row['refusal']),
         );
+    }
+
+    /**
+     * @return array<mixed>|null
+     */
+    private static function refusal(mixed $value): ?array
+    {
+        $decoded = is_string($value) ? json_decode($value, true) : null;
+
+        return is_array($decoded) ? $decoded : null;
     }
 
     private static function text(mixed $value): string

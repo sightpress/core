@@ -18,6 +18,7 @@ use SightPress\Core\Media\MediaFormat;
 use SightPress\Core\Media\MediaRepository;
 use SightPress\Core\Media\Upload\ChunkedUploads;
 use SightPress\Core\Media\Upload\UploadRefused;
+use SightPress\Core\Media\Upload\UploadSession;
 use SightPress\Core\Media\Upload\UploadSessions;
 use SightPress\Core\Tests\Support\KernelSite;
 
@@ -93,6 +94,29 @@ final class ChunkedUploadTest extends TestCase
         $found = Services::get($container, MediaRepository::class)->findByKey(str_repeat('c', 32));
         self::assertNotNull($found);
         self::assertSame($large, $found->size());
+    }
+
+    public function testDirectUploadStatesWorkOnThisDatabase(): void
+    {
+        $sessions = Services::get($this->site->container(), UploadSessions::class);
+        $now = new \DateTimeImmutable('2026-11-23 12:00:00 UTC');
+        $id = str_repeat('e', 32);
+        $sessions->add(new UploadSession($id, 1, 'Talk.mp4', 5 * 1024 ** 3, 0, $now, $now, mode: UploadSession::DIRECT, remoteId: str_repeat('r', 900), partBytes: 8 * 1024 * 1024));
+        self::assertSame(0, $sessions->outstandingBytes(), 'a direct upload takes no room on this server');
+
+        self::assertTrue($sessions->transition($id, UploadSession::RECEIVING, UploadSession::VALIDATING, $now));
+        self::assertFalse($sessions->transition($id, UploadSession::RECEIVING, UploadSession::VALIDATING, $now));
+        self::assertSame([$id], array_map(static fn (UploadSession $s): string => $s->id, $sessions->awaitingValidation($now)));
+
+        self::assertTrue($sessions->transition($id, UploadSession::VALIDATING, UploadSession::PROCESSING, $now));
+        self::assertSame([], $sessions->awaitingValidation($now->modify('-1 hour')));
+        self::assertCount(1, $sessions->awaitingValidation($now->modify('+1 hour')));
+
+        $sessions->refuse($id, ['text' => 'Refused.', 'parameters' => []], $now);
+        $found = $sessions->find($id);
+        self::assertSame([UploadSession::REFUSED, str_repeat('r', 900), 8 * 1024 * 1024, 'Refused.'], [$found?->state, $found?->remoteId, $found?->partBytes, $found?->refusal['text'] ?? null]);
+        self::assertCount(1, $sessions->expired($now->modify('+1 hour'), $now, UploadSession::DIRECT));
+        self::assertSame([], $sessions->expired($now->modify('+1 hour'), $now));
     }
 
     public function testAFakeFileLeavesNothingBehind(): void

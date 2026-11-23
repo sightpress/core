@@ -52,6 +52,16 @@ final readonly class SiteFilesystems
 
     public function bucket(SiteS3Storage $s3): FilesystemOperator
     {
+        return new Filesystem(new AwsS3V3Adapter($this->client($s3), $s3->bucket, $s3->prefix));
+    }
+
+    /**
+     * The S3 client for a site's bucket.
+     *
+     * @throws StorageException when the optional packages are missing or the keys can't be read
+     */
+    public function client(SiteS3Storage $s3): S3Client
+    {
         if (array_filter($this->packages, static fn (string $class): bool => !class_exists($class)) !== []) {
             throw new StorageException('Install league/flysystem-aws-s3-v3 to keep files in S3.');
         }
@@ -70,9 +80,25 @@ final readonly class SiteFilesystems
         if ($s3->endpoint !== null) {
             $options['endpoint'] = $s3->endpoint;
         }
-        $client = $this->clients === null ? new S3Client($options) : ($this->clients)($options);
 
-        return new Filesystem(new AwsS3V3Adapter($client, $s3->bucket, $s3->prefix));
+        return $this->clients === null ? new S3Client($options) : ($this->clients)($options);
+    }
+
+    /**
+     * Stops every unfinished multipart upload under the site's prefix: their parts are stored, but no listing of
+     * files shows them.
+     */
+    public function abortUnfinishedUploads(SiteS3Storage $s3): void
+    {
+        $client = $this->client($s3);
+        foreach ($client->getPaginator('ListMultipartUploads', ['Bucket' => $s3->bucket, 'Prefix' => $s3->prefix . '/']) as $page) {
+            $uploads = $page['Uploads'] ?? [];
+            foreach (is_array($uploads) ? $uploads : [] as $upload) {
+                if (is_array($upload) && is_string($upload['Key'] ?? null) && is_string($upload['UploadId'] ?? null)) {
+                    $client->abortMultipartUpload(['Bucket' => $s3->bucket, 'Key' => $upload['Key'], 'UploadId' => $upload['UploadId']]);
+                }
+            }
+        }
     }
 
     /**

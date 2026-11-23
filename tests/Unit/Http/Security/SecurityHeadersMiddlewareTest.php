@@ -23,6 +23,7 @@ use SightPress\Core\Tests\Support\SiteFixture;
 #[UsesClass(\SightPress\Core\Tenant\Site::class)]
 #[UsesClass(\SightPress\Core\Tenant\SiteMediaLimits::class)]
 #[UsesClass(\SightPress\Core\Tenant\SiteStorage::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteS3Storage::class)]
 #[CoversClass(CspNonce::class)]
 final class SecurityHeadersMiddlewareTest extends TestCase
 {
@@ -100,6 +101,33 @@ final class SecurityHeadersMiddlewareTest extends TestCase
         $this->expectException(LogicException::class);
 
         CspNonce::fromRequest(new ServerRequest('GET', '/'));
+    }
+
+    public function testOnlyTheMediaLibraryMayConnectToTheSitesBucket(): void
+    {
+        $box = \SightPress\Core\Tests\Support\SiteFixture::secretBox();
+        $site = \SightPress\Core\Tests\Support\SiteFixture::site();
+        $s3 = new \SightPress\Core\Tenant\SiteS3Storage('media-bucket', 'eu-west-2', null, 'sites/one', false, $box->encrypt('id'), $box->encrypt('secret'));
+        $sites = self::createStub(\SightPress\Core\Tenant\SiteRepository::class);
+        $sites->method('findByDomain')->willReturn($site->withStorage($site->storage->withS3($s3)->switchedToS3()));
+        $policy = static fn (string $path): string => new SecurityHeadersMiddleware($sites)
+            ->process(new ServerRequest('GET', 'https://demo.example' . $path), new CallbackHandler(static fn (): Response => new Response()))
+            ->getHeaderLine('Content-Security-Policy');
+
+        self::assertStringContainsString("connect-src 'self' https://media-bucket.s3.eu-west-2.amazonaws.com;", $policy('/admin/media'));
+        self::assertStringContainsString("connect-src 'self';", $policy('/admin/pages'));
+    }
+
+    public function testABrokenRegistryLeavesTheMediaLibraryWithoutABucket(): void
+    {
+        $sites = self::createStub(\SightPress\Core\Tenant\SiteRepository::class);
+        $sites->method('findByDomain')->willThrowException(new \SightPress\Core\Tenant\SiteRegistryException('broken'));
+
+        $policy = new SecurityHeadersMiddleware($sites)
+            ->process(new ServerRequest('GET', 'https://demo.example/admin/media'), new CallbackHandler(static fn (): Response => new Response()))
+            ->getHeaderLine('Content-Security-Policy');
+
+        self::assertStringContainsString("connect-src 'self';", $policy);
     }
 
     public function testASitesCdnMayServeStylesFontsAndMediaButNeverScripts(): void

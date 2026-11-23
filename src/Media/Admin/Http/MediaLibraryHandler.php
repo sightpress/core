@@ -111,6 +111,7 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
             'pages' => $pages,
             'total' => $total,
             'chunk_bytes' => $this->chunked->chunkBytes(),
+            'direct' => $this->site->storage->isCloud(),
             'server_problems' => $actor->has(self::SETTINGS) ? $this->notice->visible() : [],
         ], $error === null ? 200 : 422);
     }
