@@ -6,19 +6,26 @@ namespace SightPress\Core\Tests\Unit\Http\Upload;
 
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
+use DateTimeImmutable;
+use Doctrine\DBAL\DriverManager;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Http\Upload\RequestOverflowMiddleware;
 use SightPress\Core\Http\Upload\RequestTooLargeException;
 use SightPress\Core\Http\Upload\RequestTooLargeHandler;
 use SightPress\Core\Tests\Support\CallbackHandler;
+use SightPress\Core\Infrastructure\Clock\FrozenClock;
+use SightPress\Core\Media\UploadRefusals;
 use SightPress\Core\Tests\Support\ServerLimitsFixture;
 
 #[CoversClass(RequestOverflowMiddleware::class)]
 #[CoversClass(RequestTooLargeException::class)]
 #[CoversClass(RequestTooLargeHandler::class)]
 #[UsesNamespace('SightPress\Core\Http\Upload')]
+#[UsesClass(\SightPress\Core\Infrastructure\Clock\FrozenClock::class)]
+#[UsesClass(\SightPress\Core\Media\UploadRefusals::class)]
 final class RequestOverflowTest extends TestCase
 {
     public function testARequestLargerThanPhpReadsIsTooLargeNotAnExpiredForm(): void
@@ -66,12 +73,17 @@ final class RequestOverflowTest extends TestCase
         $request = new ServerRequest('GET', 'https://demo.example' . RequestTooLargeHandler::PATH, ['Referer' => 'https://demo.example/account']);
 
         try {
-            new RequestTooLargeHandler(ServerLimitsFixture::standard(proxy: 9 * ServerLimitsFixture::MB))->handle($request);
+            new RequestTooLargeHandler(ServerLimitsFixture::standard(proxy: 9 * ServerLimitsFixture::MB), $this->refusals())->handle($request);
             self::fail('Expected a 413.');
         } catch (RequestTooLargeException $exception) {
             self::assertSame(8 * ServerLimitsFixture::MB, $exception->limit);
             self::assertSame('/account', $exception->back);
         }
+    }
+
+    private function refusals(): UploadRefusals
+    {
+        return new UploadRefusals(DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]), new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')));
     }
 
     private function middleware(): RequestOverflowMiddleware

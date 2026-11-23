@@ -30,6 +30,7 @@ use SightPress\Core\Http\Security\MembersOnlyMiddleware;
 use SightPress\Core\Http\Security\SecurityHeadersMiddleware;
 use SightPress\Core\Http\Session\SessionMiddleware;
 use SightPress\Core\Http\Upload\RequestOverflowMiddleware;
+use SightPress\Core\Http\Upload\UploadProbeMiddleware;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Module\ComposerModuleDiscovery;
 use SightPress\Core\Module\CoreModules;
@@ -123,6 +124,8 @@ final readonly class Kernel
         $app->add(RateLimitMiddleware::class);
         $app->add(SiteResolverMiddleware::class);
         $app->add(NoSiteConfiguredMiddleware::class);
+        // A signed upload probe measures the web server alone, so nothing else may refuse it first.
+        $app->add(UploadProbeMiddleware::class);
         $app->add(ErrorHandlingMiddleware::class);
         $app->add(SecurityHeadersMiddleware::class);
         new RouteInstaller($container, $policy)->install($app, $registry);

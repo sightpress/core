@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Http\Upload;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +17,7 @@ use SightPress\Core\Tests\Support\ServerLimitsFixture;
 #[CoversClass(IniSize::class)]
 #[CoversClass(ServerLimits::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
 final class ServerLimitsTest extends TestCase
 {
     private const int MB = ServerLimitsFixture::MB;

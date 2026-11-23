@@ -274,6 +274,7 @@ final class AuthFixture implements MailSender
             new ImageManager(Driver::class, autoOrientation: true, decodeAnimation: false, strip: true),
             $this->storage(),
             $this->clock,
+            ServerLimitsFixture::allowance(),
         );
     }
 

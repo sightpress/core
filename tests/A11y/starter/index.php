@@ -50,7 +50,7 @@ if (!is_file($project . '/config/sites.php')) {
         'log' => ['path' => $project . '/var/log/test.log'],
         'session' => ['path' => $project . '/var/sessions'],
     ], true) . ';');
-    file_put_contents($project . '/config/sites.php', '<?php return ' . var_export(['version' => 1, 'sites' => []], true) . ';');
+    file_put_contents($project . '/config/sites.php', '<?php return ' . var_export(['version' => 2, 'sites' => []], true) . ';');
     // The registry of the site before the reset may still be in OPcache.
     if (function_exists('opcache_invalidate')) {
         opcache_invalidate($project . '/config/sites.php', true);

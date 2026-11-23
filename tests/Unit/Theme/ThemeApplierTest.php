@@ -29,6 +29,7 @@ use SightPress\Theme\ThemeRequirement;
 #[UsesClass(ThemeChecker::class)]
 #[UsesNamespace('SightPress\Core\Theme')]
 #[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
 final class ThemeApplierTest extends TestCase
 {
     private ArraySiteSettings $settings;

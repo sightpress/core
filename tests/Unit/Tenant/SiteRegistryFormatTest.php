@@ -23,12 +23,13 @@ use SightPress\Core\Tests\Support\SiteFixture;
 #[UsesClass(SiteStorage::class)]
 #[UsesClass(SecretBox::class)]
 #[UsesClass(LocaleCode::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteMediaLimits::class)]
 final class SiteRegistryFormatTest extends TestCase
 {
     public function testReadsTheSitesKeyedBySlug(): void
     {
         $sites = SiteRegistryFormat::parse([
-            'version' => 1,
+            'version' => 2,
             'sites' => [
                 'demo' => SiteFixture::entry('demo'),
                 'blog' => SiteFixture::entry('blog', [
@@ -48,7 +49,7 @@ final class SiteRegistryFormatTest extends TestCase
 
     public function testAnEmptyRegistryHasNoSites(): void
     {
-        self::assertSame([], SiteRegistryFormat::parse(['version' => 1], 'config/sites.php'));
+        self::assertSame([], SiteRegistryFormat::parse(['version' => 2], 'config/sites.php'));
     }
 
     public function testOptionalKeysHaveDefaults(): void
@@ -56,7 +57,7 @@ final class SiteRegistryFormatTest extends TestCase
         $entry = SiteFixture::entry();
         unset($entry['storage'], $entry['default_timezone']);
 
-        $site = SiteRegistryFormat::parse(['version' => 1, 'sites' => ['demo' => $entry]], 'x')['demo'];
+        $site = SiteRegistryFormat::parse(['version' => 2, 'sites' => ['demo' => $entry]], 'x')['demo'];
 
         self::assertSame('UTC', $site->defaultTimezone);
         self::assertSame('local', $site->storage->adapter);
@@ -65,7 +66,7 @@ final class SiteRegistryFormatTest extends TestCase
     public function testExportsWhatItReads(): void
     {
         $registry = [
-            'version' => 1,
+            'version' => 2,
             'sites' => [
                 'blog' => SiteFixture::entry('blog', ['storage' => ['adapter' => 'local', 'path' => '/srv/blog']]),
                 'demo' => SiteFixture::entry('demo'),
@@ -76,17 +77,24 @@ final class SiteRegistryFormatTest extends TestCase
         self::assertSame($registry, SiteRegistryFormat::export(array_reverse($sites)));
     }
 
+    public function testAnOlderFileWithoutSitesHasNothingToConvert(): void
+    {
+        self::assertSame([], SiteRegistryFormat::parse(['version' => 1, 'sites' => []], 'sites.php'));
+        self::assertSame([], SiteRegistryFormat::parse(['version' => 1], 'sites.php'));
+    }
+
     /**
      * @return iterable<string, array{mixed, string}>
      */
     public static function invalid(): iterable
     {
         yield 'not an array' => ['sites', 'config/sites.php must return an array.'];
-        yield 'unknown top key' => [['version' => 1, 'site' => []], 'config/sites.php: unknown key "site"; use version and sites.'];
+        yield 'unknown top key' => [['version' => 2, 'site' => []], 'config/sites.php: unknown key "site"; use version and sites.'];
         yield 'no version' => [['sites' => []], 'config/sites.php: "version" must be a whole number, at least 1.'];
         yield 'version zero' => [['version' => 0], '"version" must be a whole number, at least 1.'];
-        yield 'newer version' => [['version' => 2], 'uses format version 2, made by a newer SightPress; this version reads up to 1.'];
-        yield 'sites not an array' => [['version' => 1, 'sites' => 'demo'], '"sites" must be an array keyed by site slug.'];
+        yield 'newer version' => [['version' => 3], 'uses format version 3, made by a newer SightPress; this version reads up to 2.'];
+        yield 'older version with sites' => [['version' => 1, 'sites' => ['demo' => SiteFixture::entry('demo')]], 'uses format version 1; this version of SightPress needs 2. Run `bin/sightpress site:registry:upgrade`.'];
+        yield 'sites not an array' => [['version' => 2, 'sites' => 'demo'], '"sites" must be an array keyed by site slug.'];
         yield 'site not an array' => [self::with('demo', 'x'), 'config/sites.php: site "demo": must be an array.'];
         yield 'bad slug' => [self::with('Demo', SiteFixture::entry()), 'site "Demo": "slug" is not valid'];
         yield 'unknown key' => [self::with('demo', ['colour' => 'red'] + SiteFixture::entry()), 'site "demo": unknown key "colour".'];
@@ -104,11 +112,11 @@ final class SiteRegistryFormatTest extends TestCase
         yield 'created at' => [self::entry(['created_at' => '14/11/2026']), '"created_at" is not valid: use a UTC date'];
         yield 'created at overflow' => [self::entry(['created_at' => '2026-02-30T09:30:00Z']), '"created_at" is not valid'];
         yield 'same id' => [
-            ['version' => 1, 'sites' => ['a' => SiteFixture::entry('a'), 'b' => SiteFixture::entry('b', ['id' => SiteFixture::id('a')])]],
+            ['version' => 2, 'sites' => ['a' => SiteFixture::entry('a'), 'b' => SiteFixture::entry('b', ['id' => SiteFixture::id('a')])]],
             'config/sites.php: site "b": "id" is already used by site "a".',
         ];
         yield 'same domain' => [
-            ['version' => 1, 'sites' => ['a' => SiteFixture::entry('a'), 'b' => SiteFixture::entry('b', ['domains' => ['b.example', 'a.example']])]],
+            ['version' => 2, 'sites' => ['a' => SiteFixture::entry('a'), 'b' => SiteFixture::entry('b', ['domains' => ['b.example', 'a.example']])]],
             'config/sites.php: site "b": "domains[1]" is already used by site "a".',
         ];
     }
@@ -140,7 +148,7 @@ final class SiteRegistryFormatTest extends TestCase
      */
     private static function with(string $slug, mixed $entry): array
     {
-        return ['version' => 1, 'sites' => [$slug => $entry]];
+        return ['version' => 2, 'sites' => [$slug => $entry]];
     }
 
     /**

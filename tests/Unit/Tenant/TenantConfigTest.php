@@ -21,6 +21,9 @@ use SightPress\Core\Tenant\TenantConfigException;
 #[UsesClass(Environment::class)]
 #[UsesClass(LocaleCode::class)]
 #[UsesClass(IniSize::class)]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteMediaLimits::class)]
+#[UsesClass(\SightPress\Core\Tenant\TenantMediaLimits::class)]
 final class TenantConfigTest extends TestCase
 {
     public function testEmptyConfigGetsDefaults(): void

@@ -75,7 +75,7 @@ final readonly class ServerLimitsCheck
             );
         }
 
-        $memory = $this->memoryNeeded();
+        $memory = self::memoryFor($this->limits->imagePixels);
         if ($server->memoryLimit !== null && $server->memoryLimit < $memory) {
             $problems[] = new Message(
                 'The server setting memory_limit ({memory}) is too low to resize pictures of up to {pixels} million pixels. Raise it to at least {needed}.',
@@ -156,10 +156,12 @@ final readonly class ServerLimitsCheck
     }
 
     /**
+     * The `memory_limit` needed to resize pictures of this many pixels, in steps of 64 MB.
+     *
      * @return positive-int
      */
-    private function memoryNeeded(): int
+    public static function memoryFor(int $pixels): int
     {
-        return max(1, (int) ceil($this->limits->imagePixels * self::BYTES_PER_PIXEL / self::MEMORY_STEP)) * self::MEMORY_STEP;
+        return max(1, (int) ceil($pixels * self::BYTES_PER_PIXEL / self::MEMORY_STEP)) * self::MEMORY_STEP;
     }
 }

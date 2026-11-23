@@ -10,6 +10,7 @@
  * `/_test/invitation?email=…&role=…&first_name=…` invites someone from Ada and answers with the invitation code (the
  * test site sends no email); `/_test/starter` writes the starter pages of a new site (I-4) in its languages;
  * `/_test/analytics` stores 60 days of analytics figures ending yesterday (AN-3).
+ * `/_test/upload-refused` counts one upload the web server refused (M-5b).
  * Test mailbox: the site keeps every email it would send in its folder, and `/_test/mail?to=…` answers with the
  * latest one to that address as JSON (to, subject, text, html), or 404.
  *
@@ -109,7 +110,7 @@ if (!is_file($project . '/config/sites.php')) {
         'log' => ['path' => $project . '/var/log/test.log'],
         'session' => ['path' => $project . '/var/sessions'],
     ], true) . ';');
-    file_put_contents($project . '/config/sites.php', '<?php return ' . var_export(['version' => 1, 'sites' => ['demo' => [
+    file_put_contents($project . '/config/sites.php', '<?php return ' . var_export(['version' => 2, 'sites' => ['demo' => [
         'id' => '7b1e4c2a-9d3f-4e8b-a6c5-1f2e3d4c5b6a',
         'name' => 'Riverside Library',
         'status' => 'enabled',
@@ -254,6 +255,14 @@ if ($path === '/_test/layouts') {
 if ($path === '/_test/starter') {
     $kernel = boot($project, $environment);
     Services::get(site($kernel), StarterContent::class)->create('Ada Lovelace', 'http://127.0.0.1', 'ada@example.org', null);
+    http_response_code(204);
+
+    return;
+}
+
+if ($path === '/_test/upload-refused') {
+    // Upload limits (M-5b): the web server refused one upload, so admins see the notice.
+    Services::get(site(boot($project, $environment)), \SightPress\Core\Media\UploadRefusals::class)->record();
     http_response_code(204);
 
     return;

@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Admin\Contract\AdminScreens;
-use SightPress\Core\Http\Upload\ServerLimitsCheck;
+use SightPress\Core\Http\Upload\ServerNotice;
 use SightPress\Core\Theme\Contract\ThemeStatus;
 use SightPress\Core\Page\Contract\PageChange;
 use SightPress\Core\Page\Contract\PageOverview;
@@ -22,7 +22,7 @@ use SightPress\Core\User\Contract\AccountDirectory;
 
 /**
  * `/admin`: the dashboard. People who manage the settings first see the server settings that stop uploads or
- * saves from working ({@see ServerLimitsCheck}); then "Ask the assistant" while the AI assistant is on and the
+ * saves from working ({@see ServerNotice}); then "Ask the assistant" while the AI assistant is on and the
  * person may use it; then the widgets of the site's modules the person may see (for
  * example analytics' "Last 7 days"); then people who write pages see their drafts, people who publish see the pages
  * waiting for review, and everyone sees the latest changes with who made them.
@@ -36,7 +36,7 @@ final readonly class DashboardHandler implements RequestHandlerInterface
         private AdminScreens $screens,
         private PageOverview $pages,
         private AccountDirectory $accounts,
-        private ServerLimitsCheck $check,
+        private ServerNotice $notice,
         private AdminShell $shell,
         private DashboardWidgets $widgets,
         private LoggerInterface $logger,
@@ -59,7 +59,7 @@ final readonly class DashboardHandler implements RequestHandlerInterface
         }
 
         return $this->screens->render($request, '@admin/dashboard.html.twig', [
-            'server_problems' => $actor->has('settings.manage') ? $this->check->problems() : [],
+            'server_problems' => $actor->has('settings.manage') ? $this->notice->visible() : [],
             'theme_problem' => $actor->has('theme.apply') ? $this->theme->problem() : null,
             'widgets' => $this->widgets($request, $actor),
             'assistant' => $this->assistant->panel($actor, '/admin'),

@@ -43,7 +43,7 @@ final class KernelSite
         $this->project = new TestProject($tenant);
         $dsn = TestDatabases::dsn($name, $this->project->path());
         $this->project->directory->write('config/sites.php', '<?php return ' . var_export([
-            'version' => 1,
+            'version' => \SightPress\Core\Tenant\SiteRegistryFormat::VERSION,
             'sites' => ['demo' => SiteFixture::entry('demo', [
                 'domains' => $domains,
                 'default_locale' => $locales[0],

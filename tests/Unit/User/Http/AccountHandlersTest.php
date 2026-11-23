@@ -85,7 +85,7 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
         self::assertMatchesRegularExpression('#<img class="avatar avatar--large" src="/avatars/[0-9a-f]{32}\.svg" alt="Zoë"#', $html);
         self::assertStringContainsString('Until you upload a picture, your initials are shown.', $html);
         self::assertStringContainsString('enctype="multipart/form-data"', $html);
-        self::assertStringContainsString('<input type="file" id="picture-picture" accept="image/jpeg,image/png,image/webp" name="picture"', $html);
+        self::assertStringContainsString('<input type="file" id="picture-picture" accept="image/jpeg,image/png,image/webp"', $html);
         self::assertStringNotContainsString('Remove picture', $html);
         self::assertStringNotContainsString('Go to the admin panel', $html, 'members never see a link to the admin');
         self::assertStringContainsString('<a href="/account/email">Change your email address</a>', $html);
@@ -258,7 +258,7 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
 
     private function pages(?Site $site = null): AccountPages
     {
-        return new AccountPages($this->auth->templates, $this->auth->http, $this->auth->users, $site ?? $this->auth->site, $this->auth->translations);
+        return new AccountPages($this->auth->templates, $this->auth->http, $this->auth->users, $site ?? $this->auth->site, $this->auth->translations, $this->auth->avatars());
     }
 
     /**

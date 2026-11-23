@@ -12,6 +12,7 @@ use SightPress\Core\Media\Contract\MediaLibrary;
 use SightPress\Core\Media\Contract\MediaPictures;
 use SightPress\Core\Media\Contract\MediaUrlGenerator;
 use SightPress\Core\Http\Upload\RequestTooLargeHandler;
+use SightPress\Core\Media\Command\SiteMediaLimitsCommand;
 use SightPress\Core\Media\Command\SystemCheckCommand;
 use SightPress\Core\Media\Http\MediaFileHandler;
 use SightPress\Module\ModuleInterface;
@@ -48,7 +49,7 @@ final class MediaModule implements ModuleInterface
             ImageManagerInterface::class,
             static fn (): ImageManagerInterface => new ImageManager(Driver::class, autoOrientation: true, decodeAnimation: true, strip: true),
         );
-        foreach ([MediaTypes::class, MediaLimits::class, ImageProcessor::class, MediaFiles::class] as $class) {
+        foreach ([MediaTypes::class, ImageProcessor::class, MediaFiles::class] as $class) {
             $services->autowire($class);
         }
         $services->autowire(MediaRepository::class, public: true);
@@ -59,6 +60,7 @@ final class MediaModule implements ModuleInterface
         $services->autowire(UploadAllowance::class, public: true);
         $services->autowire(RequestTooLargeHandler::class);
         $registrar->commands()->add(SystemCheckCommand::class);
+        $registrar->commands()->add(SiteMediaLimitsCommand::class);
         $services->autowire(OriginMediaUrlGenerator::class, MediaUrlGenerator::class, public: true);
         $services->autowire(MediaAccess::class);
         $services->autowire(MediaFileHandler::class);

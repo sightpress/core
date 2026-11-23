@@ -27,8 +27,8 @@ final class UpgradeRegistryCommandTest extends CommandTestCase
 
     public function testACurrentRegistryNeedsNothing(): void
     {
-        self::assertSame(Command::SUCCESS, $this->execute($this->command('<?php return ["version" => 1];')));
-        self::assertSame(['The site registry already uses format version 1. Nothing to do.'], $this->lines);
+        self::assertSame(Command::SUCCESS, $this->execute($this->command('<?php return ["version" => 2];')));
+        self::assertSame(['The site registry already uses format version 2. Nothing to do.'], $this->lines);
     }
 
     public function testUpgradesAndRemindsToReloadPhpFpm(): void
@@ -53,7 +53,7 @@ final class UpgradeRegistryCommandTest extends CommandTestCase
      * @param array<int, \Closure(array<mixed>): array<mixed>> $steps
      * @param positive-int                                    $target
      */
-    private function command(string $contents, array $steps = [], int $target = 1): UpgradeRegistryCommand
+    private function command(string $contents, array $steps = [], int $target = 2): UpgradeRegistryCommand
     {
         $file = new SiteRegistryFile($this->directory->write('sites.php', $contents));
 

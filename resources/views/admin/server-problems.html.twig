@@ -13,6 +13,10 @@
             {%- endfor %}
         </ul>
         <p><a href="https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/">{{ t('How to fix upload size limits') }}</a></p>
+        <form action="/admin/server-notice/hide" method="post">
+            {{ csrf_fields() }}
+            <button type="submit" class="button button--secondary">{{ t('Hide until this changes') }}</button>
+        </form>
     </div>
 </section>
 {%- endif %}

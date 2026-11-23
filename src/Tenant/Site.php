@@ -56,6 +56,7 @@ final readonly class Site
      * @param string       $databaseDsn     encrypted with {@see SecretBox}
      * @param list<string> $locales         every locale of the site, the default one included
      * @param string       $defaultTimezone IANA time zone for showing dates to visitors
+     * @param SiteMediaLimits $mediaLimits   the site's own upload limits, over the tenant's (`site:media:limits`)
      */
     public function __construct(
         string $id,
@@ -70,6 +71,7 @@ final readonly class Site
         array $locales,
         string $defaultTimezone,
         DateTimeImmutable $createdAt,
+        public SiteMediaLimits $mediaLimits = new SiteMediaLimits(),
     ) {
         $this->id = self::matches($id, self::ID_PATTERN, 'id', 'use a UUID');
         $this->slug = self::matches($slug, self::SLUG_PATTERN, 'slug', 'use lower-case letters, digits and hyphens');
@@ -115,6 +117,7 @@ final readonly class Site
             $this->locales,
             $this->defaultTimezone,
             $this->createdAt,
+            $this->mediaLimits,
         );
     }
 
@@ -153,6 +156,7 @@ final readonly class Site
             $languages,
             $timezone,
             $this->createdAt,
+            $this->mediaLimits,
         );
     }
 
@@ -178,6 +182,7 @@ final readonly class Site
             $locales,
             $this->defaultTimezone,
             $this->createdAt,
+            $this->mediaLimits,
         );
     }
 
@@ -201,6 +206,29 @@ final readonly class Site
             $this->locales,
             $this->defaultTimezone,
             $this->createdAt,
+            $this->mediaLimits,
+        );
+    }
+
+    /**
+     * The same site with other upload limits of its own.
+     */
+    public function withMediaLimits(SiteMediaLimits $limits): self
+    {
+        return new self(
+            $this->id,
+            $this->slug,
+            $this->name,
+            $this->status,
+            $this->ownerType,
+            $this->domains,
+            $this->databaseDsn,
+            $this->storage,
+            $this->defaultLocale,
+            $this->locales,
+            $this->defaultTimezone,
+            $this->createdAt,
+            $limits,
         );
     }
 

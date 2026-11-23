@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Tenant;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +16,7 @@ use SightPress\Core\Tenant\TenantConfigException;
 #[CoversClass(TenantAssistant::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
 #[UsesNamespace('SightPress\Core\Http\Upload')]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
 final class TenantAssistantTest extends TestCase
 {
     public function testHasNoDefaultAndLetsSitesChooseUnlessConfigured(): void

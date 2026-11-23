@@ -22,6 +22,7 @@ use SightPress\Core\Tests\Support\SiteFixture;
 #[CoversClass(SiteStorage::class)]
 #[UsesClass(SecretBox::class)]
 #[UsesClass(LocaleCode::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteMediaLimits::class)]
 final class SiteTest extends TestCase
 {
     public function testHoldsTheSite(): void

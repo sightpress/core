@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Site\Command;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Site\Command\ClearCacheCommand;
@@ -15,6 +16,7 @@ use SightPress\Core\Tests\Support\TemporaryDirectory;
 
 #[CoversClass(ClearCacheCommand::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
 final class ClearCacheCommandTest extends TestCase
 {
     public function testEmptiesTheCacheFolder(): void

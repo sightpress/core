@@ -31,6 +31,9 @@ use SightPress\Core\Tests\Support\FakeModule;
 #[UsesClass(TenantConfig::class)]
 #[UsesClass(\SightPress\Core\Tenant\Environment::class)]
 #[UsesClass(\SightPress\Core\Tenant\LocaleCode::class)]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteMediaLimits::class)]
+#[UsesClass(\SightPress\Core\Tenant\TenantMediaLimits::class)]
 final class ModulePolicyTest extends TestCase
 {
     public function testLocksWinThenTheSitesChoicesThenTheDefaults(): void

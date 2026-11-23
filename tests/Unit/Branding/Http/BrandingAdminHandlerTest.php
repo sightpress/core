@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Branding\Http;
 
 use SightPress\Core\Tests\Support\Text;
+use SightPress\Core\Tests\Support\ServerLimitsFixture;
 use Nyholm\Psr7\Stream;
 use Nyholm\Psr7\UploadedFile;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -99,7 +100,7 @@ final class BrandingAdminHandlerTest extends TestCase
         $html = (string) $this->handle('GET')->getBody();
         self::assertStringContainsString('<section class="error-summary" id="branding-errors"', $html);
         self::assertStringContainsString('<a href="#icon-file">', $html);
-        self::assertStringContainsString('aria-invalid="true" aria-describedby="icon-file-error"', $html);
+        self::assertStringContainsString('aria-invalid="true" aria-describedby="icon-file-hint icon-file-error"', $html);
         self::assertStringNotContainsString('branding-errors', (string) $this->handle('GET')->getBody(), 'shown once');
 
         foreach ([
@@ -137,6 +138,6 @@ final class BrandingAdminHandlerTest extends TestCase
             $request = $request->withUploadedFiles(['file' => $file]);
         }
 
-        return new BrandingAdminHandler($this->admin->shell(), $this->branding->service(), $this->branding->site, $this->events)->handle($request);
+        return new BrandingAdminHandler($this->admin->shell(), $this->branding->service(), $this->branding->site, $this->events, ServerLimitsFixture::allowance())->handle($request);
     }
 }

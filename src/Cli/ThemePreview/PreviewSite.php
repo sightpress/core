@@ -21,6 +21,7 @@ use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
 use SightPress\Core\Page\PageRepository;
 use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Tenant\SiteRegistryFormat;
 use SightPress\Core\Theme\SiteTheme;
 use SightPress\Core\Theme\ThemeRegistry;
 use SightPress\Core\Tenant\SiteContainerFactory;
@@ -127,7 +128,7 @@ final readonly class PreviewSite
             'log' => ['path' => $this->workspace . '/var/log/preview.log'],
             'session' => ['path' => $this->workspace . '/var/sessions'],
         ], true) . ';');
-        file_put_contents($this->workspace . '/config/sites.php', '<?php return ' . var_export(['version' => 1, 'sites' => []], true) . ';');
+        file_put_contents($this->workspace . '/config/sites.php', '<?php return ' . var_export(['version' => SiteRegistryFormat::VERSION, 'sites' => []], true) . ';');
 
         $config = new TenantConfigLoader()->load($this->workspace, ['APP_ENV' => 'production', 'APP_SECRET' => self::SECRET]);
         $kernel = Kernel::fromConfig($config, [

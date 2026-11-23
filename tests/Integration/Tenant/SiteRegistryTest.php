@@ -59,14 +59,14 @@ final class SiteRegistryTest extends TestCase
 
         $upgrade = $this->console(['command' => 'site:registry:upgrade']);
         self::assertSame(0, $upgrade->getStatusCode());
-        self::assertStringContainsString('already uses format version 1', $upgrade->getDisplay());
+        self::assertStringContainsString('already uses format version 2', $upgrade->getDisplay());
     }
 
     public function testTheCheckNamesWhatIsWrongWithAHandEditedFile(): void
     {
         file_put_contents(
             $this->project->path() . '/config/sites.php',
-            '<?php return ' . var_export(['version' => 1, 'sites' => [
+            '<?php return ' . var_export(['version' => 2, 'sites' => [
                 'demo' => SiteFixture::entry('demo', ['status' => 'paused']),
             ]], true) . ';',
         );

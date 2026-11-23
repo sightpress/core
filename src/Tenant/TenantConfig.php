@@ -41,6 +41,7 @@ final readonly class TenantConfig
      *                                            null when not stated
      * @param TenantAssistant $assistant          `assistant`: the AI assistant's tenant default and limits
      * @param TenantThemes    $themes             `themes`: which installed themes sites may use, and new sites' theme
+     * @param TenantMediaLimits $mediaLimits      `media.limits`: every site's upload limits, and the ceiling of a site's own
      */
     public function __construct(
         public string $projectDir,
@@ -64,6 +65,7 @@ final readonly class TenantConfig
         public ?int $uploadProxyBodyLimit = null,
         public TenantAssistant $assistant = new TenantAssistant(),
         public TenantThemes $themes = new TenantThemes(),
+        public TenantMediaLimits $mediaLimits = new TenantMediaLimits(),
     ) {
     }
 
@@ -110,6 +112,7 @@ final readonly class TenantConfig
             uploadProxyBodyLimit: self::bodyLimit($uploads),
             assistant: TenantAssistant::fromArray(self::section($config, 'assistant'), $environment),
             themes: TenantThemes::fromArray(self::section($config, 'themes')),
+            mediaLimits: TenantMediaLimits::fromArray(self::section($config, 'media')),
         );
     }
 

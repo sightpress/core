@@ -45,6 +45,7 @@ use stdClass;
 #[UsesNamespace('SightPress\Core\Module')]
 #[UsesNamespace('SightPress\Core\Infrastructure\Event')]
 #[UsesNamespace('SightPress\Core\Infrastructure\Search')]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
 final class SiteContainerFactoryTest extends TestCase
 {
     private TemporaryDirectory $directory;

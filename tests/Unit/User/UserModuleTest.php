@@ -6,6 +6,7 @@ namespace SightPress\Core\Tests\Unit\User;
 
 use SightPress\Core\Tests\Support\Text;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Module\ModuleCandidate;
@@ -25,6 +26,9 @@ use SightPress\Core\User\UserRepository;
 #[UsesNamespace('SightPress\Core\Site')]
 #[UsesNamespace('SightPress\Core\User')]
 #[UsesNamespace('SightPress\Core\Infrastructure')]
+#[UsesClass(\SightPress\Core\Http\Upload\ServerLimits::class)]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
+#[UsesClass(\SightPress\Core\Media\UploadAllowance::class)]
 final class UserModuleTest extends TestCase
 {
     public function testIsRequiredAndRegistersItsTableRepositoryAndPermissions(): void
@@ -52,6 +56,7 @@ final class UserModuleTest extends TestCase
         self::assertInstanceOf(\SightPress\Core\User\Avatar\AvatarService::class, $factory(new \DI\ContainerBuilder()->addDefinitions([
             \League\Flysystem\FilesystemOperator::class => new \League\Flysystem\Filesystem(new \League\Flysystem\Local\LocalFilesystemAdapter(sys_get_temp_dir(), lazyRootCreation: true)),
             \Psr\Clock\ClockInterface::class => new \SightPress\Core\Tests\Support\FixedClock(),
+            \SightPress\Core\Http\Upload\UploadLimits::class => \SightPress\Core\Tests\Support\ServerLimitsFixture::allowance(),
         ])->build()));
         self::assertSame(
             ['user.account' => ['/account', ['GET', 'POST']], 'user.account.picture' => ['/account/picture', ['POST']], 'user.account.language' => ['/account/language', ['POST']], 'user.account.preferences' => ['/account/preferences', ['POST']], 'user.account.picture.remove' => ['/account/picture/remove', ['POST']], 'user.avatar' => ['/avatars/{file}', ['GET', 'HEAD']]],

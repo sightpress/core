@@ -80,7 +80,7 @@ final class CheckRegistryCommandTest extends CommandTestCase
      */
     private function command(array $sites, ?string $secret): CheckRegistryCommand
     {
-        $file = $this->directory->write('sites.php', '<?php return ' . var_export(['version' => 1, 'sites' => $sites], true) . ';');
+        $file = $this->directory->write('sites.php', '<?php return ' . var_export(['version' => 2, 'sites' => $sites], true) . ';');
 
         return new CheckRegistryCommand(new FileSiteRepository(new SiteRegistryFile($file)), new SecretBox($secret));
     }

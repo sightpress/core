@@ -33,6 +33,7 @@ use SightPress\Module\Routing\Route;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
+use SightPress\Core\Http\Upload\UploadLimits;
 use SightPress\Module\ModuleRequirement;
 
 /**
@@ -67,6 +68,7 @@ final class UserModule implements ModuleInterface
             new ImageManager(Driver::class, autoOrientation: true, decodeAnimation: false, strip: true),
             Services::get($c, FilesystemOperator::class),
             Services::get($c, ClockInterface::class),
+            Services::get($c, UploadLimits::class),
         ));
         foreach ([AccountPages::class, AccountHandler::class, AccountPictureHandler::class, AvatarFileHandler::class, AccountLanguageHandler::class, AccountPreferencesHandler::class] as $class) {
             $registrar->services()->autowire($class);

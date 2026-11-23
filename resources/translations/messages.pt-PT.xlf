@@ -109,10 +109,10 @@
         <target>Um bloco "{label}" não pode ficar dentro de outro bloco.</target>
       </segment>
     </unit>
-    <unit id="201fa15e6ed200aa">
+    <unit id="baa4fa476d7ebde2">
       <segment>
-        <source>A JPEG, PNG or WebP picture, up to {max_bytes} MB. It is cropped to a square from the middle.</source>
-        <target>Uma imagem JPEG, PNG ou WebP, até {max_bytes} MB. É recortada num quadrado a partir do centro.</target>
+        <source>A JPEG, PNG or WebP picture, up to {max}. It is cropped to a square from the middle.</source>
+        <target>Uma imagem JPEG, PNG ou WebP, até {max}. É recortada num quadrado a partir do centro.</target>
       </segment>
     </unit>
     <unit id="0e90718a0675813c">
@@ -2323,6 +2323,12 @@
         <target>Esconder as páginas debaixo de</target>
       </segment>
     </unit>
+    <unit id="6e6369c776c80c95">
+      <segment>
+        <source>Hide until this changes</source>
+        <target>Ocultar até isto mudar</target>
+      </segment>
+    </unit>
     <unit id="3a78695388b38b5c">
       <segment>
         <source>Home</source>
@@ -2741,6 +2747,12 @@
       <segment>
         <source>Largest file you can upload: {sizes}.</source>
         <target>Maior ficheiro que pode carregar: {sizes}.</target>
+      </segment>
+    </unit>
+    <unit id="49f63147cb65f3e0">
+      <segment>
+        <source>Largest file: {max}.</source>
+        <target>Tamanho máximo do ficheiro: {max}.</target>
       </segment>
     </unit>
     <unit id="b77eef699049a981">
@@ -5587,12 +5599,6 @@
         <target>O ficheiro está vazio. Escolha outro ficheiro.</target>
       </segment>
     </unit>
-    <unit id="ffc1cc061f6bf856">
-      <segment>
-        <source>The file is larger than 5 MB. Make it smaller and try again.</source>
-        <target>O ficheiro tem mais de 5 MB. Reduza-o e tente outra vez.</target>
-      </segment>
-    </unit>
     <unit id="ffd9b5df0adaef26">
       <segment>
         <source>The file is larger than this server accepts. Make it smaller and try again.</source>
@@ -5603,6 +5609,12 @@
       <segment>
         <source>The file is larger than this server accepts. Make it smaller or ask your site administrator to raise the limit.</source>
         <target>O ficheiro é maior do que este servidor aceita. Reduza-o ou peça à pessoa que administra o site para aumentar o limite.</target>
+      </segment>
+    </unit>
+    <unit id="be5654e05712ce8f">
+      <segment>
+        <source>The file is larger than {max}. Make it smaller and try again.</source>
+        <target>O ficheiro tem mais de {max}. Reduza-o e tente outra vez.</target>
       </segment>
     </unit>
     <unit id="0cd06ab592105d45">
@@ -5735,6 +5747,12 @@
       <segment>
         <source>The new address must be in the same language as the old one ({language}).</source>
         <target>O novo endereço tem de estar no mesmo idioma que o antigo ({language}).</target>
+      </segment>
+    </unit>
+    <unit id="52eaaf1d36e2377c">
+      <segment>
+        <source>The notice is hidden until the result changes.</source>
+        <target>O aviso fica oculto até o resultado mudar.</target>
       </segment>
     </unit>
     <unit id="1d54593dd201420c">
@@ -5911,6 +5929,18 @@
         <target>A página, todas as traduções e todas as versões anteriores são eliminadas. Isto não pode ser desfeito.</target>
       </segment>
     </unit>
+    <unit id="450c219f67c8cdc7">
+      <segment>
+        <source>The person who runs the server sets these limits.</source>
+        <target>Estes limites são definidos por quem administra o servidor.</target>
+      </segment>
+    </unit>
+    <unit id="8151bac7046619d7">
+      <segment>
+        <source>The picture can be at most {max}.</source>
+        <target>A imagem pode ter, no máximo, {max}.</target>
+      </segment>
+    </unit>
     <unit id="d3ef3d7557dbe39a">
       <segment>
         <source>The picture could not be drawn.</source>
@@ -5927,12 +5957,6 @@
       <segment>
         <source>The picture is only decoration: screen readers skip it</source>
         <target>A imagem é só decoração: os leitores de ecrã ignoram-na</target>
-      </segment>
-    </unit>
-    <unit id="067d0b2e0fb650cf">
-      <segment>
-        <source>The picture must be smaller than {max_bytes} MB.</source>
-        <target>A imagem tem de ter menos de {max_bytes} MB.</target>
       </segment>
     </unit>
     <unit id="87a46a41a2e809ec">
@@ -8291,6 +8315,12 @@
       <segment>
         <source>{count, plural, one {# second} other {# seconds}}</source>
         <target>{count, plural, one {# segundo} other {# segundos}}</target>
+      </segment>
+    </unit>
+    <unit id="183b4ba002fd8422">
+      <segment>
+        <source>{count, plural, one {# upload was} other {# uploads were}} refused by the web server in the last 7 days because the file was too large. Check the limits, or tell the people uploading how large a file can be.</source>
+        <target>{count, plural, one {# carregamento foi recusado} other {# carregamentos foram recusados}} pelo servidor web nos últimos 7 dias porque o ficheiro era demasiado grande. Verifique os limites ou indique a quem carrega ficheiros o tamanho máximo.</target>
       </segment>
     </unit>
     <unit id="97a243c336302306">

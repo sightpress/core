@@ -20,7 +20,7 @@ use SightPress\Core\Media\Entity\Media;
 use SightPress\Core\Media\MediaLimits;
 use SightPress\Core\Media\MediaRepository;
 use SightPress\Core\Media\MediaTypes;
-use SightPress\Core\Http\Upload\ServerLimitsCheck;
+use SightPress\Core\Http\Upload\ServerNotice;
 use SightPress\Core\Media\UploadAllowance;
 use SightPress\Core\Tenant\Site;
 
@@ -31,7 +31,7 @@ use SightPress\Core\Tenant\Site;
  *
  * The field's hint gives the largest file of each kind that can be uploaded ({@see UploadAllowance}), and the
  * browser refuses a larger one before sending it. People who manage the settings also see the server settings that
- * stop uploads from working ({@see ServerLimitsCheck}).
+ * stop uploads from working ({@see ServerNotice}).
  */
 final readonly class MediaLibraryHandler implements RequestHandlerInterface
 {
@@ -47,7 +47,7 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
         private MediaUrlGenerator $urls,
         private Site $site,
         private UploadAllowance $allowance,
-        private ServerLimitsCheck $check,
+        private ServerNotice $notice,
     ) {
     }
 
@@ -102,7 +102,7 @@ final readonly class MediaLibraryHandler implements RequestHandlerInterface
             'page' => $page,
             'pages' => $pages,
             'total' => $total,
-            'server_problems' => $actor->has(self::SETTINGS) ? $this->check->problems() : [],
+            'server_problems' => $actor->has(self::SETTINGS) ? $this->notice->visible() : [],
         ], $error === null ? 200 : 422);
     }
 }

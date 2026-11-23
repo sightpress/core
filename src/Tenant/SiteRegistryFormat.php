@@ -6,6 +6,7 @@ namespace SightPress\Core\Tenant;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use InvalidArgumentException;
 
 /**
  * Reads and writes the array in `config/sites.php` (ADR-0002): a format `version` and a `sites` map keyed by slug.
@@ -16,7 +17,7 @@ use DateTimeZone;
 final class SiteRegistryFormat
 {
     /** The format this version of core reads and writes; `site:registry:upgrade` moves older files to it. */
-    public const int VERSION = 1;
+    public const int VERSION = 2;
 
     public const string DATE_FORMAT = 'Y-m-d\TH:i:s\Z';
 
@@ -32,9 +33,10 @@ final class SiteRegistryFormat
         'locales',
         'default_timezone',
         'created_at',
+        'media_limits',
     ];
 
-    private const array OPTIONAL = ['storage', 'default_timezone'];
+    private const array OPTIONAL = ['storage', 'default_timezone', 'media_limits'];
 
     /**
      * @param string $source the file, for error messages
@@ -52,7 +54,12 @@ final class SiteRegistryFormat
             }
         }
 
-        self::assertCurrentVersion(self::version($registry, $source), $source);
+        // An older file without sites has nothing to convert. The skeleton ships one, and changing it would make
+        // `git pull` conflict on every install that has added a site; the next write stores the current version.
+        $version = self::version($registry, $source);
+        if ($version > self::VERSION || ($version < self::VERSION && ($registry['sites'] ?? []) !== [])) {
+            self::assertCurrentVersion($version, $source);
+        }
 
         $sites = $registry['sites'] ?? [];
         if (!is_array($sites)) {
@@ -120,6 +127,19 @@ final class SiteRegistryFormat
     }
 
     /**
+     * How to move a registry to the next format, by the version it upgrades from.
+     *
+     * @return array<int, \Closure(array<mixed>): array<mixed>>
+     */
+    public static function upgradeSteps(): array
+    {
+        return [
+            // Version 2 adds the optional `media_limits` of a site; what version 1 stored stays as it is.
+            1 => static fn (array $registry): array => $registry,
+        ];
+    }
+
+    /**
      * @param array<Site> $sites
      *
      * @return array{version: int, sites: array<string, array<string, mixed>>}
@@ -148,6 +168,9 @@ final class SiteRegistryFormat
                 'default_timezone' => $site->defaultTimezone,
                 'created_at' => $site->createdAt->format(self::DATE_FORMAT),
             ];
+            if (!$site->mediaLimits->isEmpty()) {
+                $exported[$site->slug]['media_limits'] = $site->mediaLimits->toArray();
+            }
         }
 
         return ['version' => self::VERSION, 'sites' => $exported];
@@ -155,10 +178,6 @@ final class SiteRegistryFormat
 
     private static function assertCurrentVersion(int $version, string $source): void
     {
-        if ($version === self::VERSION) {
-            return;
-        }
-
         $messages = [
             -1 => '%s uses format version %d; this version of SightPress needs %d. '
                 . 'Run `bin/sightpress site:registry:upgrade`.',
@@ -215,7 +234,24 @@ final class SiteRegistryFormat
             locales: self::strings($data, 'locales'),
             defaultTimezone: self::string($data + ['default_timezone' => 'UTC'], 'default_timezone'),
             createdAt: self::date($data),
+            mediaLimits: self::mediaLimits($data),
         );
+    }
+
+    /**
+     * @param array<mixed> $data
+     */
+    private static function mediaLimits(array $data): SiteMediaLimits
+    {
+        $limits = $data['media_limits'] ?? [];
+        if (!is_array($limits)) {
+            throw new SiteRegistryException('"media_limits" must be an array.');
+        }
+        try {
+            return SiteMediaLimits::fromArray($limits);
+        } catch (InvalidArgumentException $exception) {
+            throw new SiteRegistryException('"media_limits": ' . $exception->getMessage(), previous: $exception);
+        }
     }
 
     /**

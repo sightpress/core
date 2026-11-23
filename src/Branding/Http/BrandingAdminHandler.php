@@ -18,6 +18,7 @@ use SightPress\Core\Branding\BrandingException;
 use SightPress\Core\Branding\BrandingService;
 use SightPress\Core\Branding\BrandingState;
 use SightPress\Core\Http\Session\Session;
+use SightPress\Core\Http\Upload\UploadLimits;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Site\Contract\SettingsChanged;
 use SightPress\Core\Tenant\Site;
@@ -43,6 +44,7 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
         private BrandingService $branding,
         private Site $site,
         private EventDispatcherInterface $events,
+        private UploadLimits $uploads,
     ) {
     }
 
@@ -99,7 +101,7 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
                 throw new BrandingException('Choose a picture to upload.');
             }
             if ($uploaded) {
-                $this->branding->set($asset, self::bytes($upload), $alts[$this->site->defaultLocale] ?? null);
+                $this->branding->set($asset, $this->bytes($upload), $alts[$this->site->defaultLocale] ?? null);
             }
             if ($asset !== BrandAsset::Icon && $alts !== []) {
                 $this->branding->describe($asset, $alts);
@@ -145,6 +147,8 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
                 BrandAsset::ShareImage => new Message('Shown when someone shares a page of the site. At least {share_width} × {share_height} pixels: JPEG, PNG or WebP. A larger picture is cropped from the middle.', ['share_width' => (string) BrandImages::SHARE_WIDTH, 'share_height' => (string) BrandImages::SHARE_HEIGHT]),
             },
             'accept' => $asset === BrandAsset::ShareImage ? 'image/jpeg,image/png,image/webp' : 'image/svg+xml,image/png,image/webp',
+            'max_size' => new Message('Largest file: {max}.', ['max' => $this->uploads->describe($this->uploads->pictureLimit(BrandImages::MAX_BYTES))]),
+            'max_bytes' => $this->uploads->pictureLimit(BrandImages::MAX_BYTES),
             'uploaded' => $state->isUploaded($asset),
             'preview' => $file === null ? null : ($asset === BrandAsset::Icon ? '/' : '/branding/') . $file . '?v=' . rawurlencode($state->version),
             'preview_alt' => match ($asset) {
@@ -170,7 +174,7 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
         };
     }
 
-    private static function bytes(UploadedFileInterface $upload): string
+    private function bytes(UploadedFileInterface $upload): string
     {
         if ($upload->getError() !== UPLOAD_ERR_OK) {
             throw new BrandingException(match ($upload->getError()) {
@@ -179,8 +183,9 @@ final readonly class BrandingAdminHandler implements RequestHandlerInterface
                 default => 'The file could not be uploaded. Try again.',
             });
         }
-        if (($upload->getSize() ?? 0) > BrandImages::MAX_BYTES) {
-            throw new BrandingException('The file is larger than 5 MB. Make it smaller and try again.');
+        $max = $this->uploads->pictureLimit(BrandImages::MAX_BYTES);
+        if (($upload->getSize() ?? 0) > $max) {
+            throw new BrandingException(new Message('The file is larger than {max}. Make it smaller and try again.', ['max' => $this->uploads->describe($max)]));
         }
 
         return (string) $upload->getStream();

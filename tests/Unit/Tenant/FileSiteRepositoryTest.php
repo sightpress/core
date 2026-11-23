@@ -26,6 +26,7 @@ use SightPress\Core\Tests\Support\TemporaryDirectory;
 #[UsesClass(SiteStorage::class)]
 #[UsesClass(SecretBox::class)]
 #[UsesClass(LocaleCode::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteMediaLimits::class)]
 final class FileSiteRepositoryTest extends TestCase
 {
     private TemporaryDirectory $directory;
@@ -66,7 +67,7 @@ final class FileSiteRepositoryTest extends TestCase
 
     public function testAnInvalidFileFailsWhenFirstUsed(): void
     {
-        $this->directory->write('sites.php', '<?php return ["version" => 1, "sites" => ["demo" => []]];');
+        $this->directory->write('sites.php', '<?php return ["version" => 2, "sites" => ["demo" => []]];');
         $repository = new FileSiteRepository(new SiteRegistryFile($this->directory->path . '/sites.php'));
 
         $this->expectException(SiteRegistryException::class);
@@ -112,7 +113,7 @@ final class FileSiteRepositoryTest extends TestCase
      */
     private function repository(array $sites): FileSiteRepository
     {
-        $this->directory->write('sites.php', '<?php return ' . var_export(['version' => 1, 'sites' => $sites], true) . ';');
+        $this->directory->write('sites.php', '<?php return ' . var_export(['version' => 2, 'sites' => $sites], true) . ';');
 
         return new FileSiteRepository(new SiteRegistryFile($this->directory->path . '/sites.php'));
     }

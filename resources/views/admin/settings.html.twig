@@ -24,6 +24,7 @@
         {{ f.field(form, 'timezone') }}
         {{ f.field(form, 'visibility') }}
         <p>{{ t('The site is run by {owner}.', {owner: t(owner)}) }}</p>
+        <p>{{ t(upload_limits) }} {{ t('The person who runs the server sets these limits.') }}</p>
     </fieldset>
     {%- for section in sections %}
     <fieldset class="admin-panel">

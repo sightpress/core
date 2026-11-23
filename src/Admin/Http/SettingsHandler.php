@@ -21,6 +21,7 @@ use SightPress\Core\Http\Form\TimezoneChoices;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Seo\Contract\SiteVerification;
+use SightPress\Core\Http\Upload\UploadLimits;
 use SightPress\Core\Site\Contract\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
@@ -63,6 +64,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
         private SiteSettings $settings,
         private Site $site,
         private EventDispatcherInterface $events,
+        private UploadLimits $uploads,
     ) {
     }
 
@@ -120,6 +122,7 @@ final readonly class SettingsHandler implements RequestHandlerInterface
                 array_values(array_unique([$this->site->defaultLocale, ...$this->site->locales])),
             ),
             'languages_path' => LanguagesHandler::PATH,
+            'upload_limits' => $this->uploads->summary(),
             'sign_up_open' => SignUp::isOpen($this->settings->get(SignUp::SETTING)),
         ], $form->submitted && !$form->isValid() ? 422 : 200);
     }

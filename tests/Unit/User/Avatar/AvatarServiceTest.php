@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Tests\Support\AuthFixture;
+use SightPress\Core\Tests\Support\ServerLimitsFixture;
 use SightPress\Core\Tests\Support\MediaFixture;
 use SightPress\Core\User\Avatar\AvatarException;
 use SightPress\Core\User\Avatar\AvatarGenerator;
@@ -121,7 +122,7 @@ final class AvatarServiceTest extends TestCase
         $cases = [
             'SVG pictures can\'t be used as a profile picture. Upload a JPEG, PNG or WebP picture.' => self::upload($svg, 'me.svg'),
             'The file must be a JPEG, PNG or WebP picture.' => self::upload('<?php echo "hi";', 'me.png'),
-            'The picture must be smaller than 5 MB.' => self::upload('x', 'big.jpg', UPLOAD_ERR_INI_SIZE),
+            'The picture can be at most 5 MB.' => self::upload('x', 'big.jpg', UPLOAD_ERR_INI_SIZE),
             'Choose a picture to upload.' => self::upload('', 'none.jpg', UPLOAD_ERR_NO_FILE),
             'The picture didn\'t arrive. Try uploading it again.' => self::upload('x', 'half.jpg', UPLOAD_ERR_PARTIAL),
         ];
@@ -183,7 +184,7 @@ final class AvatarServiceTest extends TestCase
         $user = $this->auth->user();
         $storage = self::createStub(FilesystemOperator::class);
         $storage->method('write')->willThrowException(UnableToWriteFile::atLocation('avatars/x.svg'));
-        $broken = new AvatarService(new AvatarGenerator(), new ImageManager(Driver::class), $storage, $this->auth->clock);
+        $broken = new AvatarService(new AvatarGenerator(), new ImageManager(Driver::class), $storage, $this->auth->clock, ServerLimitsFixture::allowance());
 
         try {
             $broken->generate($user);
@@ -195,8 +196,17 @@ final class AvatarServiceTest extends TestCase
         $this->avatars->generate($user);
         $undeletable = self::createStub(FilesystemOperator::class);
         $undeletable->method('delete')->willThrowException(new \League\Flysystem\UnableToDeleteFile('avatars/x.svg'));
-        new AvatarService(new AvatarGenerator(), new ImageManager(Driver::class), $undeletable, $this->auth->clock)->generate($user);
+        new AvatarService(new AvatarGenerator(), new ImageManager(Driver::class), $undeletable, $this->auth->clock, ServerLimitsFixture::allowance())->generate($user);
         self::assertSame(AvatarKind::Generated, $user->avatarKind());
+    }
+
+    public function testTheLargestPictureFollowsTheSitesLimits(): void
+    {
+        $small = new AvatarService(new AvatarGenerator(), new ImageManager(Driver::class), self::createStub(FilesystemOperator::class), $this->auth->clock, ServerLimitsFixture::allowance(ServerLimitsFixture::standard(upload: 2 * ServerLimitsFixture::MB)));
+
+        self::assertSame(2 * ServerLimitsFixture::MB, $small->maxBytes());
+        self::assertSame('2 MB', $small->maxSize());
+        self::assertSame('5 MB', $this->avatars->maxSize());
     }
 
     public function testWithoutAnAvatarThereIsNoAddress(): void

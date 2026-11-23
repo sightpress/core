@@ -44,6 +44,7 @@ final readonly class AccountPages
         private UserRepository $users,
         private Site $site,
         private Translations $translations,
+        private AvatarService $avatars,
     ) {
     }
 
@@ -96,14 +97,15 @@ final readonly class AccountPages
         ]);
     }
 
-    public static function picture(): Form
+    public function picture(): Form
     {
         return Form::create('picture', new Field(
             'picture',
             'New picture',
             FieldType::File,
-            hint: new Message('A JPEG, PNG or WebP picture, up to {max_bytes} MB. It is cropped to a square from the middle.', ['max_bytes' => (string) AvatarService::MAX_BYTES / 1024 / 1024]),
+            hint: new Message('A JPEG, PNG or WebP picture, up to {max}. It is cropped to a square from the middle.', ['max' => $this->avatars->maxSize()]),
             accept: 'image/jpeg,image/png,image/webp',
+            maxBytes: $this->avatars->maxBytes(),
         ));
     }
 
@@ -137,7 +139,7 @@ final readonly class AccountPages
             'avatar_url' => AvatarService::url($user, 256),
             'avatar_uploaded' => $user->avatarKind() === AvatarKind::Uploaded,
             'details' => $details ?? $this->details($user),
-            'picture' => $picture ?? self::picture(),
+            'picture' => $picture ?? $this->picture(),
             'admin_preferences' => Actor::fromRequest($request)->has(self::ADMIN_ACCESS) ? self::adminPreferences($user) : null,
             'failed' => $failed,
         ];

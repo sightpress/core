@@ -13,6 +13,7 @@ use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Clock\ClockInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use SightPress\Core\Http\Upload\UploadLimits;
 use SightPress\Core\User\AvatarKind;
 use SightPress\Core\User\Entity\User;
 
@@ -53,6 +54,7 @@ final readonly class AvatarService
         private ImageManagerInterface $images,
         private FilesystemOperator $storage,
         private ClockInterface $clock,
+        private UploadLimits $limits,
     ) {
     }
 
@@ -87,8 +89,9 @@ final readonly class AvatarService
     public function upload(User $user, UploadedFileInterface $upload): void
     {
         $error = $upload->getError();
-        if ($error === UPLOAD_ERR_INI_SIZE || $error === UPLOAD_ERR_FORM_SIZE || $upload->getSize() > self::MAX_BYTES) {
-            throw new AvatarException(new Message('The picture must be smaller than {max_bytes} MB.', ['max_bytes' => (string) self::MAX_BYTES / 1024 / 1024]));
+        $max = $this->maxBytes();
+        if ($error === UPLOAD_ERR_INI_SIZE || $error === UPLOAD_ERR_FORM_SIZE || $upload->getSize() > $max) {
+            throw new AvatarException(new Message('The picture can be at most {max}.', ['max' => $this->limits->describe($max)]));
         }
         if ($error === UPLOAD_ERR_NO_FILE) {
             throw new AvatarException('Choose a picture to upload.');
@@ -107,6 +110,24 @@ final readonly class AvatarService
                 unlink($local);
             }
         }
+    }
+
+    /**
+     * The largest picture someone can upload as their avatar on this site.
+     *
+     * @return positive-int
+     */
+    public function maxBytes(): int
+    {
+        return $this->limits->pictureLimit(self::MAX_BYTES);
+    }
+
+    /**
+     * The largest picture, in words.
+     */
+    public function maxSize(): string
+    {
+        return $this->limits->describe($this->maxBytes());
     }
 
     /**

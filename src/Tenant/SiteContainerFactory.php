@@ -44,6 +44,12 @@ use SightPress\Core\Infrastructure\Search\SearchExtensions;
 use SightPress\Core\Module\SiteModuleStore;
 use SightPress\Core\Navigation\AdminNavigation;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
+use SightPress\Core\Http\Upload\ServerLimits;
+use SightPress\Core\Http\Upload\ServerNotice;
+use SightPress\Core\Http\Upload\UploadLimits;
+use SightPress\Core\Media\MediaLimits;
+use SightPress\Core\Media\UploadAllowance;
+use SightPress\Core\Media\UploadRefusals;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
@@ -150,6 +156,14 @@ final class SiteContainerFactory
                     return $site;
                 }
             }),
+            MediaLimits::class => factory(static fn (): MediaLimits => $config->mediaLimits->forSite($site)),
+            // Shared upload services, not a module's: every module's upload form uses them, whichever modules are on.
+            UploadLimits::class => factory(static fn (ContainerInterface $container): UploadLimits => new UploadAllowance(
+                Services::get($container, MediaLimits::class),
+                Services::get($container, ServerLimits::class),
+            )),
+            UploadRefusals::class => autowire(),
+            ServerNotice::class => autowire(),
             Connection::class => factory(static fn (): Connection => new ReflectionClass(Connection::class)->newLazyProxy(
                 static fn (): Connection => DriverManager::getConnection(
                     DatabaseDsn::parse($secretBox->decrypt($site->databaseDsn))->connectionParams(),

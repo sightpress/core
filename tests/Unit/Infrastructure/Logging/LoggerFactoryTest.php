@@ -19,6 +19,9 @@ use SightPress\Core\Tests\Support\TemporaryDirectory;
 #[UsesClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]
 #[UsesClass(LocaleCode::class)]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteMediaLimits::class)]
+#[UsesClass(\SightPress\Core\Tenant\TenantMediaLimits::class)]
 final class LoggerFactoryTest extends TestCase
 {
     public function testItWritesToTheConfiguredFileAtTheConfiguredLevel(): void

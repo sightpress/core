@@ -6,6 +6,7 @@ namespace SightPress\Core\Media;
 
 use SightPress\Core\Http\Upload\ServerLimits;
 use SightPress\Core\Media\Contract\MediaKind;
+use SightPress\Core\Http\Upload\UploadLimits;
 use SightPress\Core\Template\Message;
 
 /**
@@ -13,7 +14,7 @@ use SightPress\Core\Template\Message;
  * one request can carry ({@see ServerLimits::requestLimit()}). Shown next to the upload field, and checked in the
  * browser before a file is sent.
  */
-final readonly class UploadAllowance
+final readonly class UploadAllowance implements UploadLimits
 {
     public function __construct(
         private MediaLimits $limits,
@@ -27,6 +28,16 @@ final readonly class UploadAllowance
     public function maxBytes(MediaKind $kind): int
     {
         return $this->server->cap($this->limits->maxBytes($kind));
+    }
+
+    public function pictureLimit(int $ownLimit): int
+    {
+        return min($ownLimit, $this->maxBytes(MediaKind::Image));
+    }
+
+    public function describe(int $bytes): string
+    {
+        return MediaLimits::describe($bytes);
     }
 
     /**

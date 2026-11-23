@@ -14,14 +14,15 @@ use Closure;
 final readonly class SiteRegistryUpgrader
 {
     /**
-     * @param array<int, Closure(array<mixed>): array<mixed>> $steps  keyed by the version each step upgrades from
+     * @param array<int, Closure(array<mixed>): array<mixed>>|null $steps keyed by the version each step upgrades from;
+     *                                                                 {@see SiteRegistryFormat::upgradeSteps()} by default
      * @param positive-int                                    $target   the version to upgrade to
      * @param (Closure(array<mixed>, string): mixed)|null      $validate checks the result before it is written;
      *                                                                   {@see SiteRegistryFormat::parse()} by default
      */
     public function __construct(
         private SiteRegistryFile $file,
-        private array $steps = [],
+        private ?array $steps = null,
         private int $target = SiteRegistryFormat::VERSION,
         private ?Closure $validate = null,
     ) {
@@ -54,7 +55,7 @@ final readonly class SiteRegistryUpgrader
             }
 
             for (; $version < $this->target; $version++) {
-                $step = $this->steps[$version] ?? throw new SiteRegistryException(sprintf(
+                $step = ($this->steps ?? SiteRegistryFormat::upgradeSteps())[$version] ?? throw new SiteRegistryException(sprintf(
                     'There is no upgrade of %s from format version %d.',
                     $this->file->path,
                     $version,

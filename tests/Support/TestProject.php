@@ -22,7 +22,7 @@ final readonly class TestProject
             'log' => ['path' => $this->directory->path . '/var/log/test.log'],
         ], true) . ';');
         $this->directory->write('config/sites.php', '<?php return ' . var_export([
-            'version' => 1,
+            'version' => \SightPress\Core\Tenant\SiteRegistryFormat::VERSION,
             'sites' => $sites,
         ], true) . ';');
     }

@@ -4,7 +4,15 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Support;
 
+use Doctrine\DBAL\Connection;
+use Psr\Clock\ClockInterface;
 use SightPress\Core\Http\Upload\ServerLimits;
+use SightPress\Core\Http\Upload\ServerLimitsCheck;
+use SightPress\Core\Http\Upload\ServerNotice;
+use SightPress\Core\Media\MediaLimits;
+use SightPress\Core\Media\UploadAllowance;
+use SightPress\Core\Media\UploadRefusals;
+use SightPress\Core\Site\Contract\SiteSettings;
 
 /**
  * Server limits for tests: the skeleton's recommended *standard* values, PHP's own defaults, or anything else.
@@ -26,6 +34,19 @@ final class ServerLimitsFixture
         ?int $tempFree = 10240 * self::MB,
     ): ServerLimits {
         return new ServerLimits($upload, $post, $memory, 20, $inputVars, $proxy, '/tmp', $tempWritable, $tempFree);
+    }
+
+    /**
+     * The admin notice for these limits, on a site's database.
+     */
+    public static function notice(ServerLimits $server, Connection $connection, SiteSettings $settings, ClockInterface $clock): ServerNotice
+    {
+        return new ServerNotice(new ServerLimitsCheck(new MediaLimits(), $server), new UploadRefusals($connection, $clock), $settings);
+    }
+
+    public static function allowance(?ServerLimits $server = null, MediaLimits $limits = new MediaLimits()): UploadAllowance
+    {
+        return new UploadAllowance($limits, $server ?? self::standard());
     }
 
     /**

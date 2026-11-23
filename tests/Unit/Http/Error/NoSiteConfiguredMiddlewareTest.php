@@ -85,7 +85,7 @@ final class NoSiteConfiguredMiddlewareTest extends TestCase
     private function middleware(bool $hasSites): NoSiteConfiguredMiddleware
     {
         $file = $this->directory->write('sites.php', '<?php return ' . var_export([
-            'version' => 1,
+            'version' => 2,
             'sites' => $hasSites ? ['demo' => SiteFixture::entry()] : [],
         ], true) . ';');
 

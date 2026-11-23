@@ -63,7 +63,7 @@ test('empty names are explained in the error summary, which gets focus', async (
 test('a picture is uploaded and removed, and each result is announced', async ({ page }) => {
   await signIn(page, ADMIN_SITE, 'cleo@example.org', '/account');
   await expect(page.getByLabel('New picture')).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp');
-  await expect(page.getByLabel('New picture')).toHaveAccessibleDescription('A JPEG, PNG or WebP picture, up to 5 MB. It is cropped to a square from the middle.');
+  await expect(page.getByLabel('New picture')).toHaveAccessibleDescription(/^A JPEG, PNG or WebP picture, up to [\d.]+ MB\. It is cropped to a square from the middle\.$/);
 
   await page.getByLabel('New picture').setInputFiles({ name: 'me.png', mimeType: 'image/png', buffer: PNG });
   await page.getByRole('button', { name: 'Upload picture' }).click();

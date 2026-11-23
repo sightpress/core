@@ -351,7 +351,7 @@ final class MediaAdminHandlersTest extends TestCase
             new OriginMediaUrlGenerator(),
             $this->admin->auth->site,
             new UploadAllowance(new MediaLimits(), $server),
-            new ServerLimitsCheck(new MediaLimits(), $server),
+            ServerLimitsFixture::notice($server, $this->admin->auth->database->connection, $this->admin->auth->database->settings(), $this->admin->auth->clock),
         )
             ->handle($this->request($actor, 'GET', MediaAdmin::PATH . $query));
     }

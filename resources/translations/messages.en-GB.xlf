@@ -109,10 +109,10 @@
         <target>A &quot;{label}&quot; block can't sit inside another block.</target>
       </segment>
     </unit>
-    <unit id="201fa15e6ed200aa">
+    <unit id="baa4fa476d7ebde2">
       <segment>
-        <source>A JPEG, PNG or WebP picture, up to {max_bytes} MB. It is cropped to a square from the middle.</source>
-        <target>A JPEG, PNG or WebP picture, up to {max_bytes} MB. It is cropped to a square from the middle.</target>
+        <source>A JPEG, PNG or WebP picture, up to {max}. It is cropped to a square from the middle.</source>
+        <target>A JPEG, PNG or WebP picture, up to {max}. It is cropped to a square from the middle.</target>
       </segment>
     </unit>
     <unit id="0e90718a0675813c">
@@ -2323,6 +2323,12 @@
         <target>Hide the pages under</target>
       </segment>
     </unit>
+    <unit id="6e6369c776c80c95">
+      <segment>
+        <source>Hide until this changes</source>
+        <target>Hide until this changes</target>
+      </segment>
+    </unit>
     <unit id="3a78695388b38b5c">
       <segment>
         <source>Home</source>
@@ -2741,6 +2747,12 @@
       <segment>
         <source>Largest file you can upload: {sizes}.</source>
         <target>Largest file you can upload: {sizes}.</target>
+      </segment>
+    </unit>
+    <unit id="49f63147cb65f3e0">
+      <segment>
+        <source>Largest file: {max}.</source>
+        <target>Largest file: {max}.</target>
       </segment>
     </unit>
     <unit id="b77eef699049a981">
@@ -5587,12 +5599,6 @@
         <target>The file is empty. Choose another file.</target>
       </segment>
     </unit>
-    <unit id="ffc1cc061f6bf856">
-      <segment>
-        <source>The file is larger than 5 MB. Make it smaller and try again.</source>
-        <target>The file is larger than 5 MB. Make it smaller and try again.</target>
-      </segment>
-    </unit>
     <unit id="ffd9b5df0adaef26">
       <segment>
         <source>The file is larger than this server accepts. Make it smaller and try again.</source>
@@ -5603,6 +5609,12 @@
       <segment>
         <source>The file is larger than this server accepts. Make it smaller or ask your site administrator to raise the limit.</source>
         <target>The file is larger than this server accepts. Make it smaller or ask your site administrator to raise the limit.</target>
+      </segment>
+    </unit>
+    <unit id="be5654e05712ce8f">
+      <segment>
+        <source>The file is larger than {max}. Make it smaller and try again.</source>
+        <target>The file is larger than {max}. Make it smaller and try again.</target>
       </segment>
     </unit>
     <unit id="0cd06ab592105d45">
@@ -5735,6 +5747,12 @@
       <segment>
         <source>The new address must be in the same language as the old one ({language}).</source>
         <target>The new address must be in the same language as the old one ({language}).</target>
+      </segment>
+    </unit>
+    <unit id="52eaaf1d36e2377c">
+      <segment>
+        <source>The notice is hidden until the result changes.</source>
+        <target>The notice is hidden until the result changes.</target>
       </segment>
     </unit>
     <unit id="1d54593dd201420c">
@@ -5911,6 +5929,18 @@
         <target>The page, every translation and every older version of it are deleted. This can’t be undone.</target>
       </segment>
     </unit>
+    <unit id="450c219f67c8cdc7">
+      <segment>
+        <source>The person who runs the server sets these limits.</source>
+        <target>The person who runs the server sets these limits.</target>
+      </segment>
+    </unit>
+    <unit id="8151bac7046619d7">
+      <segment>
+        <source>The picture can be at most {max}.</source>
+        <target>The picture can be at most {max}.</target>
+      </segment>
+    </unit>
     <unit id="d3ef3d7557dbe39a">
       <segment>
         <source>The picture could not be drawn.</source>
@@ -5927,12 +5957,6 @@
       <segment>
         <source>The picture is only decoration: screen readers skip it</source>
         <target>The picture is only decoration: screen readers skip it</target>
-      </segment>
-    </unit>
-    <unit id="067d0b2e0fb650cf">
-      <segment>
-        <source>The picture must be smaller than {max_bytes} MB.</source>
-        <target>The picture must be smaller than {max_bytes} MB.</target>
       </segment>
     </unit>
     <unit id="87a46a41a2e809ec">
@@ -8291,6 +8315,12 @@
       <segment>
         <source>{count, plural, one {# second} other {# seconds}}</source>
         <target>{count, plural, one {# second} other {# seconds}}</target>
+      </segment>
+    </unit>
+    <unit id="183b4ba002fd8422">
+      <segment>
+        <source>{count, plural, one {# upload was} other {# uploads were}} refused by the web server in the last 7 days because the file was too large. Check the limits, or tell the people uploading how large a file can be.</source>
+        <target>{count, plural, one {# upload was} other {# uploads were}} refused by the web server in the last 7 days because the file was too large. Check the limits, or tell the people uploading how large a file can be.</target>
       </segment>
     </unit>
     <unit id="97a243c336302306">

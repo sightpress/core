@@ -51,6 +51,8 @@ use SightPress\Core\Template\TwigFactory;
 use SightPress\Core\Template\Viewer;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Http\Upload\ServerLimits;
+use SightPress\Core\Http\Upload\UploadProbe;
+use SightPress\Core\Media\MediaLimits;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Environment;
@@ -144,6 +146,8 @@ final class CoreServices
             // Outgoing requests (IndexNow pings, which are off by default) never wait long.
             HttpClientInterface::class => factory(static fn (): HttpClientInterface => HttpClient::create(['timeout' => 5, 'max_redirects' => 0])),
             ServerLimits::class => factory(static fn (): ServerLimits => ServerLimits::current($config)),
+            MediaLimits::class => factory(static fn (): MediaLimits => $config->mediaLimits->defaults),
+            UploadProbe::class => autowire()->constructorParameter('secret', $config->secret),
             ErrorResponder::class => autowire()
                 ->constructorParameter('debug', $config->debug)
                 ->constructorParameter('noindex', !$config->environment->isProduction())

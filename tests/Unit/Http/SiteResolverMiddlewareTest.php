@@ -33,6 +33,7 @@ use Throwable;
 #[UsesClass(SecretBox::class)]
 #[UsesClass(\SightPress\Core\Template\Viewer::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
 final class SiteResolverMiddlewareTest extends TestCase
 {
     public function testAnEnabledSiteGetsItsContext(): void

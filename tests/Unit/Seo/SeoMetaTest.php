@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Seo;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Seo\RobotsPolicy;
@@ -15,6 +16,7 @@ use SightPress\Core\Tenant\TenantConfigLoader;
 #[CoversClass(SeoMeta::class)]
 #[CoversClass(RobotsPolicy::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
 final class SeoMetaTest extends TestCase
 {
     public function testTheTitleFallsBackToThePageTitleAndTheSiteName(): void

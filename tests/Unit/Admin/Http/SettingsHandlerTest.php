@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Tests\Unit\Admin\Http;
 
 use SightPress\Core\Tests\Support\Text;
+use SightPress\Core\Tests\Support\ServerLimitsFixture;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
@@ -225,6 +226,7 @@ final class SettingsHandlerTest extends TestCase
             $this->fixture->auth->database->settings(),
             $site ?? $this->fixture->auth->site,
             $this->events,
+            ServerLimitsFixture::allowance(),
         );
 
         return $handler->handle($this->fixture->request($user ?? $this->admin, $method, '/admin/settings', $body, $this->session));

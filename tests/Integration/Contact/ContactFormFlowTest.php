@@ -54,7 +54,7 @@ final class ContactFormFlowTest extends TestCase
         $this->project = new TestProject();
         $dsn = TestDatabases::dsn('contact', $this->project->path());
         $this->project->directory->write('config/sites.php', '<?php return ' . var_export([
-            'version' => 1,
+            'version' => 2,
             'sites' => ['demo' => SiteFixture::entry('demo', [
                 'domains' => ['example.org'],
                 'db_dsn' => SiteFixture::secretBox()->encrypt($dsn),

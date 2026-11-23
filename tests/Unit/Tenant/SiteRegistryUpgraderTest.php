@@ -11,11 +11,16 @@ use SightPress\Core\Tenant\SiteRegistryException;
 use SightPress\Core\Tenant\SiteRegistryFile;
 use SightPress\Core\Tenant\SiteRegistryFormat;
 use SightPress\Core\Tenant\SiteRegistryUpgrader;
+use SightPress\Core\Tests\Support\SiteFixture;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
 
 #[CoversClass(SiteRegistryUpgrader::class)]
+#[CoversClass(SiteRegistryFormat::class)]
 #[UsesClass(SiteRegistryFile::class)]
-#[UsesClass(SiteRegistryFormat::class)]
+#[UsesClass(\SightPress\Core\Infrastructure\Crypto\SecretBox::class)]
+#[UsesClass(\SightPress\Core\Tenant\Site::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteMediaLimits::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteStorage::class)]
 final class SiteRegistryUpgraderTest extends TestCase
 {
     private TemporaryDirectory $directory;
@@ -32,9 +37,9 @@ final class SiteRegistryUpgraderTest extends TestCase
 
     public function testACurrentFileIsLeftAsItIs(): void
     {
-        $file = $this->file('<?php return ["version" => 1, "sites" => []];');
+        $file = $this->file('<?php return ["version" => 2, "sites" => []];');
 
-        self::assertSame([1, 1], new SiteRegistryUpgrader($file)->upgrade());
+        self::assertSame([2, 2], new SiteRegistryUpgrader($file)->upgrade());
         self::assertFileDoesNotExist($file->path . '.bak');
     }
 
@@ -53,17 +58,27 @@ final class SiteRegistryUpgraderTest extends TestCase
 
     public function testAnInvalidResultIsNotWritten(): void
     {
-        $file = $this->file('<?php return ["version" => 1, "sites" => []];');
-        $upgrader = new SiteRegistryUpgrader($file, [1 => static fn (array $registry): array => $registry], 2);
+        $file = $this->file('<?php return ["version" => 1];');
+        $upgrader = new SiteRegistryUpgrader($file, [1 => static fn (array $registry): array => ['sites' => 'none'] + $registry], 2);
 
         try {
             $upgrader->upgrade();
             self::fail('The invalid result was written.');
         } catch (SiteRegistryException $exception) {
-            self::assertStringContainsString('uses format version 2, made by a newer SightPress', $exception->getMessage());
+            self::assertStringContainsString('"sites" must be an array', $exception->getMessage());
         }
 
-        self::assertSame(['version' => 1, 'sites' => []], $file->read());
+        self::assertSame(['version' => 1], $file->read());
+    }
+
+    public function testVersionOneMovesToVersionTwoAndKeepsItsSites(): void
+    {
+        $entry = SiteFixture::entry('demo');
+        $file = $this->file('<?php return ' . var_export(['version' => 1, 'sites' => ['demo' => $entry]], true) . ';');
+
+        self::assertSame([1, 2], new SiteRegistryUpgrader($file)->upgrade());
+        self::assertSame(['version' => 2, 'sites' => ['demo' => $entry]], $file->read());
+        self::assertFileExists($file->path . '.bak');
     }
 
     public function testAMissingStepStopsTheUpgrade(): void
@@ -81,7 +96,7 @@ final class SiteRegistryUpgraderTest extends TestCase
         $file = $this->file('<?php return ["version" => 4];');
 
         $this->expectException(SiteRegistryException::class);
-        $this->expectExceptionMessage('uses format version 4, made by a newer SightPress; this version reads up to 1.');
+        $this->expectExceptionMessage('uses format version 4, made by a newer SightPress; this version reads up to 2.');
 
         new SiteRegistryUpgrader($file)->upgrade();
     }

@@ -25,6 +25,7 @@ use Stringable;
 #[UsesClass(Message::class)]
 #[UsesClass(TemplatePaths::class)]
 #[UsesNamespace('SightPress\Core\Tenant')]
+#[UsesClass(\SightPress\Core\Media\MediaLimits::class)]
 final class SiteThemeTest extends TestCase
 {
     /** @var list<string> */

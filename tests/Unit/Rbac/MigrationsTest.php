@@ -19,6 +19,7 @@ use SightPress\Core\Page\Migrations\Version20261118200000 as PageRedirectsTable;
 use SightPress\Core\Page\Migrations\Version20261118300000 as PageSchedule;
 use SightPress\Core\Media\Migrations\Version20261118100000 as MediaTranscripts;
 use SightPress\Core\Media\Migrations\Version20261120100000 as MediaAltSuggested;
+use SightPress\Core\Media\Migrations\Version20261123100000 as MediaUploadRefusals;
 use SightPress\Core\People\Migrations\Version20261116180000 as InvitationsTable;
 use SightPress\Core\Rbac\Migrations\Version20261114120000 as RbacTables;
 use SightPress\Core\Site\Migrations\Version20261114120000 as SiteSettingsTable;
@@ -43,6 +44,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(PageMachineDrafted::class)]
 #[CoversClass(MediaTranscripts::class)]
 #[CoversClass(MediaAltSuggested::class)]
+#[CoversClass(MediaUploadRefusals::class)]
 #[CoversClass(PageRedirectsTable::class)]
 #[CoversClass(PageSchedule::class)]
 #[CoversClass(\SightPress\Core\User\Migrations\Version20261118500000::class)]
@@ -58,7 +60,7 @@ final class MigrationsTest extends TestCase
         $database = new CoreSiteDatabase();
 
         self::assertSame(
-            ['analytics_daily', 'analytics_hit', 'analytics_salt', 'audit_log', 'auth_remember_tokens', 'invitations', 'media', 'menu_items', 'migration_versions', 'page_redirects', 'page_revisions', 'page_translations', 'pages', 'permissions', 'role_permission', 'roles', 'search_document', 'search_posting', 'search_word', 'site_module', 'site_settings', 'user_role', 'users', 'verification_code'],
+            ['analytics_daily', 'analytics_hit', 'analytics_salt', 'audit_log', 'auth_remember_tokens', 'invitations', 'media', 'menu_items', 'migration_versions', 'page_redirects', 'page_revisions', 'page_translations', 'pages', 'permissions', 'role_permission', 'roles', 'search_document', 'search_posting', 'search_word', 'site_module', 'site_settings', 'upload_refusal', 'user_role', 'users', 'verification_code'],
             $database->tables(),
         );
         $descriptions = array_map(

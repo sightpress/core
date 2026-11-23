@@ -4,22 +4,45 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Media\Command;
 
+use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Http\Upload\ServerLimits;
 use SightPress\Core\Http\Upload\ServerLimitsCheck;
+use SightPress\Core\Http\Upload\UploadProbe;
+use SightPress\Core\Http\Upload\UploadProbeClient;
+use SightPress\Core\Infrastructure\Clock\FrozenClock;
+use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Media\Command\SystemCheckCommand;
 use SightPress\Core\Media\MediaLimits;
+use SightPress\Core\Tenant\SiteContainerFactory;
+use SightPress\Core\Tenant\SiteRepository;
+use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tests\Support\ArrayCommandInput;
+use SightPress\Core\Tests\Support\ArrayContainer;
 use SightPress\Core\Tests\Support\RecordingOutput;
 use SightPress\Core\Tests\Support\ServerLimitsFixture;
 use SightPress\Module\Console\Command;
+use SightPress\Module\Console\CommandParameter;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 
 #[CoversClass(SystemCheckCommand::class)]
 #[UsesNamespace('SightPress\Core\Http\Upload')]
 #[UsesNamespace('SightPress\Core\Media')]
 #[UsesNamespace('SightPress\Core\Template')]
+#[UsesClass(\SightPress\Core\Infrastructure\Clock\FrozenClock::class)]
+#[UsesClass(\SightPress\Core\Infrastructure\Crypto\SecretBox::class)]
+#[UsesClass(\SightPress\Core\Tenant\Environment::class)]
+#[UsesClass(\SightPress\Core\Tenant\LocaleCode::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteContainerFactory::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteMediaLimits::class)]
+#[UsesClass(\SightPress\Core\Tenant\TenantAssistant::class)]
+#[UsesClass(\SightPress\Core\Tenant\TenantConfig::class)]
+#[UsesClass(\SightPress\Core\Tenant\TenantMediaLimits::class)]
+#[UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
 final class SystemCheckCommandTest extends TestCase
 {
     public function testDescribesItself(): void
@@ -28,7 +51,7 @@ final class SystemCheckCommandTest extends TestCase
 
         self::assertSame('system:check', $command->name());
         self::assertStringStartsWith('Checks the server\'s upload and input limits', $command->description());
-        self::assertSame([], $command->parameters());
+        self::assertSame(['site', 'probe-url', 'recommend'], array_map(static fn (CommandParameter $parameter): string => $parameter->name, $command->parameters()));
     }
 
     public function testTheRecommendedValuesPass(): void
@@ -78,8 +101,50 @@ final class SystemCheckCommandTest extends TestCase
         self::assertContains('  Folder for files being uploaded: /tmp (missing or not writable)', $output->lines);
     }
 
-    private function command(ServerLimits $server): SystemCheckCommand
+    public function testTheProbeConfirmsTheWebServersLimit(): void
     {
-        return new SystemCheckCommand($server, new MediaLimits(), new ServerLimitsCheck(new MediaLimits(), $server));
+        $output = new RecordingOutput();
+
+        $status = $this->command(ServerLimitsFixture::standard(), 65)->run(new ArrayCommandInput([], ['probe-url' => 'http://nginx']), $output);
+
+        self::assertSame(Command::SUCCESS, $status);
+        self::assertContains('Probe: the web server accepts 65 MB and refuses 66 MB.', $output->lines);
+    }
+
+    public function testTheProbeSaysWhenTheStatedLimitIsWrong(): void
+    {
+        $output = new RecordingOutput();
+
+        $status = $this->command(ServerLimitsFixture::standard(), 10)->run(new ArrayCommandInput([], ['probe-url' => 'http://nginx']), $output);
+
+        self::assertSame(Command::FAILURE, $status);
+        self::assertContains('Probe: the web server accepts 10 MB and refuses 11 MB.', $output->lines);
+        self::assertStringContainsString('The web server refuses requests of 11 MB, but uploads.proxy_body_limit', $output->errors[0]);
+    }
+
+    public function testTheProbeSaysWhenNothingWasRefused(): void
+    {
+        $output = new RecordingOutput();
+
+        $status = $this->command(ServerLimitsFixture::standard(), 1000)->run(new ArrayCommandInput([], ['probe-url' => 'http://nginx']), $output);
+
+        self::assertSame(Command::SUCCESS, $status);
+        self::assertContains('Probe: the web server accepted every size tried, up to 66 MB.', $output->lines);
+    }
+
+    private function command(ServerLimits $server, int $webServerMegabytes = 65): SystemCheckCommand
+    {
+        $sites = self::createStub(SiteRepository::class);
+        $config = TenantConfig::fromArray([], '/tmp/sightpress-test');
+        $secretBox = new SecretBox(str_repeat('k', 32));
+        $containers = new SiteContainerFactory(new ArrayContainer([]), $secretBox, $config);
+
+        return new SystemCheckCommand($server, new MediaLimits(), new ServerLimitsCheck(new MediaLimits(), $server), $sites, $containers, $config, new UploadProbeClient(new MockHttpClient(static function (string $method, string $url) use ($webServerMegabytes): MockResponse {
+            parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+
+            return (int) $query['bytes'] <= $webServerMegabytes * ServerLimitsFixture::MB
+                ? new MockResponse('', ['http_code' => 204, 'response_headers' => [UploadProbe::ANSWER_HEADER . ': accepted']])
+                : new MockResponse('', ['http_code' => 413]);
+        }), new UploadProbe(str_repeat('s', 32), new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')))));
     }
 }

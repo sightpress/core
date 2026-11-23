@@ -57,7 +57,7 @@ if (!is_file($project . '/config/sites.php')) {
         'log' => ['path' => $project . '/var/log/test.log'],
         'session' => ['path' => $project . '/var/sessions'],
     ], true) . ';');
-    file_put_contents($project . '/config/sites.php', '<?php return ' . var_export(['version' => 1, 'sites' => ['demo' => [
+    file_put_contents($project . '/config/sites.php', '<?php return ' . var_export(['version' => 2, 'sites' => ['demo' => [
         'id' => '3f0c2b9e-5d7a-4c1e-8b2f-0a6d9e4c7b1a',
         'name' => 'Riverside Library',
         'status' => 'enabled',

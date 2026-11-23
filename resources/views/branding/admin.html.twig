@@ -33,7 +33,8 @@
         <div class="field{% if invalid %} field--error{% endif %}">
             <label for="{{ a.asset }}-file">{{ t('New picture') }} {{ t('(optional)') }}</label>
             {%- if invalid %}<p class="field-error" id="{{ a.asset }}-file-error"><span class="visually-hidden">{{ t('Error:') }}</span> {{ t(error.message) }}</p>{% endif %}
-            <input type="file" id="{{ a.asset }}-file" name="file" accept="{{ a.accept }}"{% if invalid %} aria-invalid="true" aria-describedby="{{ a.asset }}-file-error"{% endif %}>
+            <p class="field-hint" id="{{ a.asset }}-file-hint">{{ t(a.max_size) }}</p>
+            <input type="file" id="{{ a.asset }}-file" name="file" accept="{{ a.accept }}"{% if invalid %} aria-invalid="true"{% endif %} aria-describedby="{{ a.asset }}-file-hint{% if invalid %} {{ a.asset }}-file-error{% endif %}">
         </div>
         {%- for language in a.languages %}
         <div class="field">

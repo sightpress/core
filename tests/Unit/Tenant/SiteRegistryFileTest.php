@@ -28,7 +28,7 @@ final class SiteRegistryFileTest extends TestCase
 
     public function testAMissingFileIsAnEmptyRegistry(): void
     {
-        self::assertSame(['version' => 1, 'sites' => []], $this->file()->read());
+        self::assertSame(['version' => 2, 'sites' => []], $this->file()->read());
     }
 
     public function testReadsWhatTheFileReturns(): void
@@ -40,22 +40,22 @@ final class SiteRegistryFileTest extends TestCase
 
     public function testWritesAPhpFileWithTheNewArrayAndKeepsABackup(): void
     {
-        $this->directory->write('sites.php', '<?php return ["version" => 1, "sites" => []];');
+        $this->directory->write('sites.php', '<?php return ["version" => 2, "sites" => []];');
         chmod($this->directory->path . '/sites.php', 0o640);
         $file = $this->file();
 
         $file->update(static function (mixed $current): array {
-            self::assertSame(['version' => 1, 'sites' => []], $current);
+            self::assertSame(['version' => 2, 'sites' => []], $current);
 
-            return ['version' => 1, 'sites' => ['demo' => ['name' => "It's <b>"]]];
+            return ['version' => 2, 'sites' => ['demo' => ['name' => "It's <b>"]]];
         });
 
-        self::assertSame(['version' => 1, 'sites' => ['demo' => ['name' => "It's <b>"]]], $file->read());
+        self::assertSame(['version' => 2, 'sites' => ['demo' => ['name' => "It's <b>"]]], $file->read());
         $contents = (string) file_get_contents($file->path);
         self::assertStringStartsWith("<?php\n\ndeclare(strict_types=1);\n", $contents);
         self::assertStringContainsString("*/\n\nreturn array (", $contents);
         self::assertSame(
-            '<?php return ["version" => 1, "sites" => []];',
+            '<?php return ["version" => 2, "sites" => []];',
             file_get_contents($file->path . '.bak'),
         );
         self::assertSame(0o640, fileperms($file->path) & 0o777);
@@ -66,9 +66,9 @@ final class SiteRegistryFileTest extends TestCase
     {
         $file = $this->file();
 
-        $file->update(static fn (): array => ['version' => 1, 'sites' => []]);
+        $file->update(static fn (): array => ['version' => 2, 'sites' => []]);
 
-        self::assertSame(['version' => 1, 'sites' => []], $file->read());
+        self::assertSame(['version' => 2, 'sites' => []], $file->read());
         self::assertFileDoesNotExist($file->path . '.bak');
     }
 
@@ -93,19 +93,19 @@ final class SiteRegistryFileTest extends TestCase
 
     public function testAReadOnlyFolderCannotBeWritten(): void
     {
-        $this->directory->write('sites.php', '<?php return ["version" => 1];');
+        $this->directory->write('sites.php', '<?php return ["version" => 2];');
         $this->directory->write('sites.php.lock', '');
         chmod($this->directory->path, 0o555);
         $file = $this->file();
 
         try {
-            $file->update(static fn (): array => ['version' => 1, 'sites' => []]);
+            $file->update(static fn (): array => ['version' => 2, 'sites' => []]);
             self::fail('The read-only folder was written.');
         } catch (SiteRegistryException $exception) {
             self::assertStringContainsString('could not be written: check that its folder is writable.', $exception->getMessage());
         }
 
-        self::assertSame(['version' => 1], $file->read());
+        self::assertSame(['version' => 2], $file->read());
     }
 
     private function file(): SiteRegistryFile

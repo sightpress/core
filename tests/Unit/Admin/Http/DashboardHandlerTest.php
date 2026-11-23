@@ -134,7 +134,7 @@ final class DashboardHandlerTest extends TestCase
             $this->admin->shell(),
             new PageOverviewQuery($this->admin->auth->database->entityManager, $this->pages->site),
             $this->admin->auth->users,
-            new ServerLimitsCheck(new MediaLimits(), $server ?? ServerLimitsFixture::standard()),
+            ServerLimitsFixture::notice($server ?? ServerLimitsFixture::standard(), $this->admin->auth->database->connection, $this->admin->auth->database->settings(), $this->admin->auth->clock),
             $this->admin->shell(),
             FakeWidgets::widgets(),
             $widgets->logger(),
