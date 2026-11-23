@@ -8899,5 +8899,119 @@
         <target>Esta imagem tem {width} × {height} píxeis e precisa de cerca de {memory} MB de memória. Execute novamente a importação com --memory-limit={memory}M.</target>
       </segment>
     </unit>
+    <unit id="64eba803c611ee2c">
+      <segment>
+        <source>A CloudFront CDN that fetches public files from {host}, so private files stay protected</source>
+        <target>Uma CDN CloudFront que obtém os ficheiros públicos de {host}, para que os ficheiros privados continuem protegidos</target>
+      </segment>
+    </unit>
+    <unit id="0322ecc42375d6cc">
+      <segment>
+        <source>A private R2 bucket “{bucket}” in the {region} jurisdiction</source>
+        <target>Um bucket privado R2 “{bucket}” na jurisdição {region}</target>
+      </segment>
+    </unit>
+    <unit id="5036b6a6b251c094">
+      <segment>
+        <source>A private S3 bucket “{bucket}” in {region}, with all public access blocked</source>
+        <target>Um bucket privado S3 “{bucket}” em {region}, com todo o acesso público bloqueado</target>
+      </segment>
+    </unit>
+    <unit id="4073ea45312c94b0">
+      <segment>
+        <source>A separate public bucket “{bucket}” at {domain}. Private files are never put in it</source>
+        <target>Um bucket público separado “{bucket}” em {domain}. Nunca são lá colocados ficheiros privados</target>
+      </segment>
+    </unit>
+    <unit id="ff5f8738d06b8367">
+      <segment>
+        <source>Browser uploads allowed only from: {origins}</source>
+        <target>Carregamentos pelo navegador permitidos apenas a partir de: {origins}</target>
+      </segment>
+    </unit>
+    <unit id="19766ed6ccb2f4a3">
+      <segment>
+        <source>Cancel</source>
+        <target>Cancelar</target>
+      </segment>
+    </unit>
+    <unit id="8caf499c05fab744">
+      <segment>
+        <source>Choose a provider.</source>
+        <target>Escolha um fornecedor.</target>
+      </segment>
+    </unit>
+    <unit id="1ee8deb9112c983a">
+      <segment>
+        <source>Cloud storage couldn’t be set up. The person who runs the server can see why in the log.</source>
+        <target>Não foi possível configurar o armazenamento na nuvem. A pessoa que gere o servidor pode ver o motivo no registo.</target>
+      </segment>
+    </unit>
+    <unit id="c49ec8bce5cf81a6">
+      <segment>
+        <source>Cloud storage has been set up. The site keeps using its current storage until the person who runs the server moves it.</source>
+        <target>O armazenamento na nuvem foi configurado. O site continua a usar o armazenamento atual até a pessoa que gere o servidor o mudar.</target>
+      </segment>
+    </unit>
+    <unit id="ce639829f86d2a30">
+      <segment>
+        <source>Files stay in the location above. CloudFront keeps copies of public files in Europe and North America, which is an international transfer.</source>
+        <target>Os ficheiros ficam na localização indicada. O CloudFront guarda cópias dos ficheiros públicos na Europa e na América do Norte, o que constitui uma transferência internacional.</target>
+      </segment>
+    </unit>
+    <unit id="08f632b5b7755c94">
+      <segment>
+        <source>Files stay in the location above. R2 has no UK-only location. Files in a public bucket are cached worldwide by Cloudflare, which is an international transfer.</source>
+        <target>Os ficheiros ficam na localização indicada. O R2 não tem uma localização exclusiva do Reino Unido. A Cloudflare guarda em cache, em todo o mundo, os ficheiros de um bucket público, o que constitui uma transferência internacional.</target>
+      </segment>
+    </unit>
+    <unit id="ab2badcd05e59064">
+      <segment>
+        <source>Location: {location}</source>
+        <target>Localização: {location}</target>
+      </segment>
+    </unit>
+    <unit id="6267daa832cbe0c4">
+      <segment>
+        <source>Nothing changes until you have read the plan and confirmed it.</source>
+        <target>Nada muda até ter lido o plano e o confirmar.</target>
+      </segment>
+    </unit>
+    <unit id="44ab76a0ef16ff47">
+      <segment>
+        <source>Set up cloud storage</source>
+        <target>Configurar o armazenamento na nuvem</target>
+      </segment>
+    </unit>
+    <unit id="d761dce5caabfad4">
+      <segment>
+        <source>Show the plan</source>
+        <target>Mostrar o plano</target>
+      </segment>
+    </unit>
+    <unit id="2ef404105ce3b401">
+      <segment>
+        <source>This contacts {provider}, a third party, and creates the items below in its account. It may cost money.</source>
+        <target>Isto contacta {provider}, um terceiro, e cria na respetiva conta os elementos abaixo. Pode ter custos.</target>
+      </segment>
+    </unit>
+    <unit id="061721359597d124">
+      <segment>
+        <source>This location is not the default for this site ({default}), so storing files there may be an international transfer.</source>
+        <target>Esta localização não é a predefinida deste site ({default}), pelo que guardar lá ficheiros pode ser uma transferência internacional.</target>
+      </segment>
+    </unit>
+    <unit id="f5e89c1ccfc77d31">
+      <segment>
+        <source>Unfinished uploads removed after 1 day, and temporary uploads after 2 days</source>
+        <target>Os carregamentos por concluir são removidos após 1 dia e os temporários após 2 dias</target>
+      </segment>
+    </unit>
+    <unit id="ec6c95517a990435">
+      <segment>
+        <source>What will be set up</source>
+        <target>O que vai ser configurado</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

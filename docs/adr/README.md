@@ -70,5 +70,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0050](0050-per-site-upload-limits.md) | Per-site upload limits, the upload probe and refused-upload counts | Proposed |
 | [0051](0051-cdn-delivery-and-signed-media-urls.md) | CDN delivery and signed media addresses | Proposed |
 | [0052](0052-command-line-media-import.md) | Command-line media import | Proposed |
+| [0053](0053-cloud-storage-provisioning.md) | Cloud storage provisioning | Proposed |
 
 When an ADR's status changes, update it here too.

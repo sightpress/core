@@ -168,6 +168,7 @@ final readonly class AuditRecorder
             'branding.icon' => 'Icon',
             'branding.share_image' => 'Share picture',
             'media.limits' => 'Upload limits',
+            'storage.provisioned' => 'Cloud storage set up',
             'analytics.retention_months' => 'How long analytics are kept',
             'assistant.provider' => 'AI service',
             'assistant.model' => 'AI model',

@@ -10,4 +10,16 @@ Who uses it: whoever runs the install. Site admins can read the status under **S
 - `site:storage:migrate <site> [--delete-source]` copies and checks every file, then switches the site.
 - `site:purge` also removes the site's bucket folder and its default local folder.
 
-Decision: ADR-0046.
+## Setting up a bucket and CDN
+
+- Set the provider's keys for this run: `SIGHTPRESS_AWS_ACCESS_KEY_ID` + `SIGHTPRESS_AWS_SECRET_ACCESS_KEY`, or
+  `SIGHTPRESS_CLOUDFLARE_ACCOUNT_ID` + `SIGHTPRESS_CLOUDFLARE_API_TOKEN` (+ `SIGHTPRESS_CLOUDFLARE_ZONE_ID` for
+  `--domain`). They are never saved.
+- `site:storage:provision <site> --provider=aws|cloudflare [--region=] [--bucket=] [--domain=] --dry-run` prints the
+  plan and contacts nobody. Run it again without `--dry-run` to create everything. Running it twice is safe.
+- The site doesn't change until you connect the bucket with `site:storage:s3`, move files with `site:storage:migrate`
+  and, once the CDN is deployed, turn it on with `site:storage:cdn`.
+- To let site admins do this from **Site settings → File storage**, set `SIGHTPRESS_PROVISION_FROM_ADMIN=1` and the
+  keys in the web server's environment. They can then create resources that cost money in that account.
+
+Decision: ADR-0046, ADR-0053.

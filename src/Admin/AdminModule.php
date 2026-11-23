@@ -56,7 +56,7 @@ final class AdminModule implements ModuleInterface
         $registrar->services()->autowire(RemoveLanguageHandler::class);
         $registrar->routes()->add(new Route('admin.dashboard', '/admin', DashboardHandler::class, middleware: [AdminAccessMiddleware::class]));
         $registrar->routes()->add(new Route('admin.settings', SettingsHandler::PATH, SettingsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
-        $registrar->routes()->add(new Route('admin.storage', StorageHandler::PATH, StorageHandler::class, middleware: [AdminAccessMiddleware::class]));
+        $registrar->routes()->add(new Route('admin.storage', StorageHandler::PATH, StorageHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->routes()->add(new Route('admin.server_notice.hide', HideServerNoticeHandler::PATH, HideServerNoticeHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $registrar->routes()->add(new Route('admin.languages', LanguagesHandler::PATH, LanguagesHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->routes()->add(new Route('admin.languages.remove', RemoveLanguageHandler::PATH, RemoveLanguageHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));

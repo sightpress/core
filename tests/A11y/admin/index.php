@@ -82,6 +82,13 @@ $path = (string) parse_url(is_string($uri) ? $uri : '/', PHP_URL_PATH);
 $environment = ['APP_ENV' => 'test', 'APP_SECRET' => SECRET];
 $mailbox = $project . '/mail';
 
+// The `provisioning` copy (M-3) offers cloud storage set-up. The spec stops at the plan, so these keys are never sent.
+if (basename($project) === 'sightpress-a11y-provisioning') {
+    putenv('SIGHTPRESS_PROVISION_FROM_ADMIN=1');
+    putenv('SIGHTPRESS_AWS_ACCESS_KEY_ID=not-a-real-key');
+    putenv('SIGHTPRESS_AWS_SECRET_ACCESS_KEY=not-a-real-secret');
+}
+
 if ($path === '/_test/reset') {
     exec('rm -rf ' . escapeshellarg($project));
     http_response_code(204);

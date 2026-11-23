@@ -1,0 +1,95 @@
+# Provisioning against real services. MinIO runs on demand and on pull requests labelled `storage-live`. AWS and
+# Cloudflare only run when started by hand: they create real resources in the test account, under the bucket given.
+name: Storage live
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Where to run
+        type: choice
+        options: [minio, aws, cloudflare]
+        default: minio
+      bucket:
+        description: Test bucket (AWS and Cloudflare only)
+        required: false
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  live:
+    name: provisioning on ${{ inputs.target || 'minio' }}
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'storage-live')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: core
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: core
+      - uses: actions/checkout@v7
+        with:
+          repository: sightpress/module-interface
+          path: module-interface
+      - uses: actions/checkout@v7
+        with:
+          repository: sightpress/theme-interface
+          path: theme-interface
+      - uses: actions/checkout@v7
+        with:
+          repository: sightpress/theme-default
+          path: theme-default
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+          extensions: pdo_sqlite, intl, gd, exif
+          ini-values: date.timezone=UTC, memory_limit=512M
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Start MinIO
+        if: ${{ (inputs.target || 'minio') == 'minio' }}
+        run: |
+          docker run -d --name minio -p 127.0.0.1:9000:9000 \
+            -e MINIO_ROOT_USER=ci-storage-key -e MINIO_ROOT_PASSWORD=ci-storage-secret \
+            pgsty/minio:RELEASE.2026-08-04T00-00-00Z server /data
+          timeout 60 sh -c 'until curl -fs http://127.0.0.1:9000/minio/health/live; do sleep 1; done'
+
+      - name: Test on MinIO
+        if: ${{ (inputs.target || 'minio') == 'minio' }}
+        env:
+          SIGHTPRESS_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+          SIGHTPRESS_TEST_S3_KEY: ci-storage-key
+          SIGHTPRESS_TEST_S3_SECRET: ci-storage-secret
+        run: vendor/bin/phpunit --testsuite integration --no-coverage --filter StorageProvisioningLiveTest::testBucketAndExpiryRuleOnMinio
+
+      - name: Test on AWS
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.target == 'aws' }}
+        env:
+          SIGHTPRESS_LIVE_PROVIDER: aws
+          SIGHTPRESS_LIVE_BUCKET: ${{ inputs.bucket }}
+          SIGHTPRESS_AWS_ACCESS_KEY_ID: ${{ secrets.SIGHTPRESS_LIVE_AWS_ACCESS_KEY_ID }}
+          SIGHTPRESS_AWS_SECRET_ACCESS_KEY: ${{ secrets.SIGHTPRESS_LIVE_AWS_SECRET_ACCESS_KEY }}
+        run: vendor/bin/phpunit --testsuite integration --no-coverage --filter StorageProvisioningLiveTest::testRealProviderTwice
+
+      - name: Test on Cloudflare
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.target == 'cloudflare' }}
+        env:
+          SIGHTPRESS_LIVE_PROVIDER: cloudflare
+          SIGHTPRESS_LIVE_BUCKET: ${{ inputs.bucket }}
+          SIGHTPRESS_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.SIGHTPRESS_LIVE_CLOUDFLARE_ACCOUNT_ID }}
+          SIGHTPRESS_CLOUDFLARE_API_TOKEN: ${{ secrets.SIGHTPRESS_LIVE_CLOUDFLARE_API_TOKEN }}
+        run: vendor/bin/phpunit --testsuite integration --no-coverage --filter StorageProvisioningLiveTest::testRealProviderTwice

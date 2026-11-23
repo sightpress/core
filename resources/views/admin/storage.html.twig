@@ -1,11 +1,13 @@
 {#
-    Storage (/admin/settings/storage): read-only status of where the site's files are kept. Never shows a key.
-    Context: `cloud`, `bucket`, `region`, `provider`, `cdn`, `settings_path`.
+    Storage (/admin/settings/storage): where the site's files are kept and, when the server allows it, setting up cloud
+    storage in two steps (choose a provider, read the plan, confirm). Never shows a key.
+    Context: `cloud`, `bucket`, `region`, `provider`, `cdn`, `settings_path`, `action`, `providers`, `plan`, `chosen`, `problem`.
 #}
 {% extends '@admin/layout.html.twig' %}
 {% block title %}{{ t('File storage') }}{% endblock %}
 {% block content %}
 <h1>{{ t('File storage') }}</h1>
+{% if problem %}<p role="alert">{{ t(problem) }}</p>{% endif %}
 {% if cloud %}
 <p>{{ t('This site keeps its files in a cloud storage bucket.') }}</p>
 {% elseif bucket %}
@@ -24,5 +26,33 @@
 <p>{{ t('Visitors get the site’s public files through a content delivery network: {address}', {address: cdn}) }}</p>
 {% endif %}
 <p>{{ t('The person who runs the server changes where files are kept.') }}</p>
+{% if plan %}
+<section aria-labelledby="storage-plan">
+    <h2 id="storage-plan">{{ t('What will be set up') }}</h2>
+    <p>{{ t('This contacts {provider}, a third party, and creates the items below in its account. It may cost money.', {provider: plan.provider}) }}</p>
+    <p>{{ t('Location: {location}', {location: plan.location}) }}</p>
+    <ul>{% for step in plan.steps %}<li>{{ t(step) }}</li>{% endfor %}</ul>
+    <p>{{ t(plan.transfer) }}</p>
+    <form action="{{ action }}" method="post">
+        {{ csrf_fields() }}
+        <input type="hidden" name="provider" value="{{ chosen }}">
+        <input type="hidden" name="confirm" value="1">
+        <button type="submit">{{ t('Set up cloud storage') }}</button>
+    </form>
+    <p><a href="{{ action }}">{{ t('Cancel') }}</a></p>
+</section>
+{% elseif providers %}
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <fieldset class="admin-panel">
+        <legend>{{ t('Set up cloud storage') }}</legend>
+        <p>{{ t('Nothing changes until you have read the plan and confirmed it.') }}</p>
+        {% for value, label in providers %}
+        <p><input type="radio" id="provider-{{ value }}" name="provider" value="{{ value }}"{% if loop.first %} checked{% endif %}> <label for="provider-{{ value }}">{{ label }}</label></p>
+        {% endfor %}
+        <button type="submit">{{ t('Show the plan') }}</button>
+    </fieldset>
+</form>
+{% endif %}
 <p><a href="{{ settings_path }}">{{ t('Back to site settings') }}</a></p>
 {% endblock %}

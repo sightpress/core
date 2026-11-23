@@ -8899,5 +8899,119 @@
         <target>This picture is {width} × {height} pixels and needs about {memory} MB of memory. Run the import again with --memory-limit={memory}M.</target>
       </segment>
     </unit>
+    <unit id="64eba803c611ee2c">
+      <segment>
+        <source>A CloudFront CDN that fetches public files from {host}, so private files stay protected</source>
+        <target>A CloudFront CDN that fetches public files from {host}, so private files stay protected</target>
+      </segment>
+    </unit>
+    <unit id="0322ecc42375d6cc">
+      <segment>
+        <source>A private R2 bucket “{bucket}” in the {region} jurisdiction</source>
+        <target>A private R2 bucket “{bucket}” in the {region} jurisdiction</target>
+      </segment>
+    </unit>
+    <unit id="5036b6a6b251c094">
+      <segment>
+        <source>A private S3 bucket “{bucket}” in {region}, with all public access blocked</source>
+        <target>A private S3 bucket “{bucket}” in {region}, with all public access blocked</target>
+      </segment>
+    </unit>
+    <unit id="4073ea45312c94b0">
+      <segment>
+        <source>A separate public bucket “{bucket}” at {domain}. Private files are never put in it</source>
+        <target>A separate public bucket “{bucket}” at {domain}. Private files are never put in it</target>
+      </segment>
+    </unit>
+    <unit id="ff5f8738d06b8367">
+      <segment>
+        <source>Browser uploads allowed only from: {origins}</source>
+        <target>Browser uploads allowed only from: {origins}</target>
+      </segment>
+    </unit>
+    <unit id="19766ed6ccb2f4a3">
+      <segment>
+        <source>Cancel</source>
+        <target>Cancel</target>
+      </segment>
+    </unit>
+    <unit id="8caf499c05fab744">
+      <segment>
+        <source>Choose a provider.</source>
+        <target>Choose a provider.</target>
+      </segment>
+    </unit>
+    <unit id="1ee8deb9112c983a">
+      <segment>
+        <source>Cloud storage couldn’t be set up. The person who runs the server can see why in the log.</source>
+        <target>Cloud storage couldn’t be set up. The person who runs the server can see why in the log.</target>
+      </segment>
+    </unit>
+    <unit id="c49ec8bce5cf81a6">
+      <segment>
+        <source>Cloud storage has been set up. The site keeps using its current storage until the person who runs the server moves it.</source>
+        <target>Cloud storage has been set up. The site keeps using its current storage until the person who runs the server moves it.</target>
+      </segment>
+    </unit>
+    <unit id="ce639829f86d2a30">
+      <segment>
+        <source>Files stay in the location above. CloudFront keeps copies of public files in Europe and North America, which is an international transfer.</source>
+        <target>Files stay in the location above. CloudFront keeps copies of public files in Europe and North America, which is an international transfer.</target>
+      </segment>
+    </unit>
+    <unit id="08f632b5b7755c94">
+      <segment>
+        <source>Files stay in the location above. R2 has no UK-only location. Files in a public bucket are cached worldwide by Cloudflare, which is an international transfer.</source>
+        <target>Files stay in the location above. R2 has no UK-only location. Files in a public bucket are cached worldwide by Cloudflare, which is an international transfer.</target>
+      </segment>
+    </unit>
+    <unit id="ab2badcd05e59064">
+      <segment>
+        <source>Location: {location}</source>
+        <target>Location: {location}</target>
+      </segment>
+    </unit>
+    <unit id="6267daa832cbe0c4">
+      <segment>
+        <source>Nothing changes until you have read the plan and confirmed it.</source>
+        <target>Nothing changes until you have read the plan and confirmed it.</target>
+      </segment>
+    </unit>
+    <unit id="44ab76a0ef16ff47">
+      <segment>
+        <source>Set up cloud storage</source>
+        <target>Set up cloud storage</target>
+      </segment>
+    </unit>
+    <unit id="d761dce5caabfad4">
+      <segment>
+        <source>Show the plan</source>
+        <target>Show the plan</target>
+      </segment>
+    </unit>
+    <unit id="2ef404105ce3b401">
+      <segment>
+        <source>This contacts {provider}, a third party, and creates the items below in its account. It may cost money.</source>
+        <target>This contacts {provider}, a third party, and creates the items below in its account. It may cost money.</target>
+      </segment>
+    </unit>
+    <unit id="061721359597d124">
+      <segment>
+        <source>This location is not the default for this site ({default}), so storing files there may be an international transfer.</source>
+        <target>This location is not the default for this site ({default}), so storing files there may be an international transfer.</target>
+      </segment>
+    </unit>
+    <unit id="f5e89c1ccfc77d31">
+      <segment>
+        <source>Unfinished uploads removed after 1 day, and temporary uploads after 2 days</source>
+        <target>Unfinished uploads removed after 1 day, and temporary uploads after 2 days</target>
+      </segment>
+    </unit>
+    <unit id="ec6c95517a990435">
+      <segment>
+        <source>What will be set up</source>
+        <target>What will be set up</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

@@ -46,6 +46,7 @@ final class SiteModuleTest extends TestCase
                 \SightPress\Core\Site\Command\ChangeSiteDatabaseCommand::class,
             \SightPress\Core\Site\Command\SiteStorageS3Command::class,
             \SightPress\Core\Site\Command\SiteStorageMigrateCommand::class,
+            \SightPress\Core\Site\Command\SiteStorageProvisionCommand::class,
                 \SightPress\Core\Site\Command\AddSiteLocaleCommand::class,
                 \SightPress\Core\Site\Command\RemoveSiteLocaleCommand::class,
                 \SightPress\Core\Site\Command\DefaultSiteLocaleCommand::class,
