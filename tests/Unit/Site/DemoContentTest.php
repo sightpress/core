@@ -122,6 +122,11 @@ final class DemoContentTest extends TestCase
         }
         self::assertSame('every-block/under', $subpage?->translation('pt-PT')?->path());
         self::assertSame('every-block', $this->pages->redirects()->find('en-GB', 'visit')?->target());
+        foreach (['landing', 'sidebar', 'full-width'] as $layout) {
+            $inLayout = $this->pages->repository()->findByPath('en-GB', $layout . '-page')?->page();
+            self::assertSame([$layout, PageState::Published], [$inLayout?->layout(), $inLayout?->state()]);
+            self::assertTrue($inLayout?->translation('pt-PT')?->isPublished(), 'copied into pt-PT and published there');
+        }
 
         $main = $this->menus->tree(MenuName::Main);
         self::assertSame([$page->id(), $members?->id()], array_map(static fn (MenuNode $node) => $node->item->pageId(), $main));
@@ -129,6 +134,7 @@ final class DemoContentTest extends TestCase
         self::assertSame([
             'Added the demo page "Every kind of block" (/every-block) and a page under it.',
             'Added a page for members only (/for-members), a page in the trash (/old-news) and a redirect from /visit to /every-block.',
+            'Added a page in each of the landing, sidebar and full-width layouts.',
             'Copied the demo pages into pt-PT and published them there, to translate.',
         ], array_slice($event->lines(), 4));
     }

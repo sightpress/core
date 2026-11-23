@@ -14,7 +14,9 @@
  * Copies: the environment variable SIGHTPRESS_A11Y_SITE names a copy with its own folder (default `demo`, the crawl's
  * site on port 8087, written in en-GB, pt-PT and he; `journeys` on port 8086 for tests/A11y/journeys.spec.ts, in en-GB
  * and pt-PT; `search` on port 8074 for tests/A11y/search.spec.ts; `members` on port 8073, a members-only site for the
- * crawl), so specs never reset each other's site. Sign-up is open on `demo` and `journeys`. Its search index is built after site:create.
+ * crawl; `themed` on port 8064, on a second installed theme; `cloud` on port 8063, with its files in MinIO and a CDN
+ * address; `mediajourney` on port 8062 for tests/A11y/journeys-themes-media.spec.ts), so specs never reset each
+ * other's site. Sign-up is open on `demo` and `journeys`. Its search index is built after site:create.
  * The site's address uses the port it is served on.
  *
  * `/_test/schedule` runs `schedule:run` once and answers with what it printed.
@@ -34,6 +36,7 @@ use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Site\Contract\SiteVisibility;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
+use SightPress\Core\Tests\Support\Theme\HarbourTheme;
 use SightPress\Core\User\UserRepository;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -43,6 +46,28 @@ require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
 const SECRET = 'a11y-secret-0123456789abcdef0123456789abcdef';
 const PASSWORD = 'Correct horse battery staple 7!';
+// The skeleton's MinIO service with its development keys.
+const S3_ENDPOINT = 'http://127.0.0.1:9000';
+const S3_KEY = 'sightpress';
+const S3_SECRET = 'sightpress-secret';
+
+/**
+ * Connects the demo site to a new folder of the MinIO bucket and moves its files there.
+ *
+ * @param callable(array<string, mixed>): void $command runs a console command, and throws when it fails
+ */
+function moveToBucket(callable $command, string $prefix): void
+{
+    $bucket = 'sightpress-a11y';
+    $s3 = new Aws\S3\S3Client(['version' => 'latest', 'region' => 'eu-west-2', 'endpoint' => S3_ENDPOINT, 'use_path_style_endpoint' => true, 'credentials' => ['key' => S3_KEY, 'secret' => S3_SECRET]]);
+    if (!$s3->doesBucketExistV2($bucket)) {
+        $s3->createBucket(['Bucket' => $bucket]);
+    }
+    putenv('SIGHTPRESS_S3_ACCESS_KEY=' . S3_KEY);
+    putenv('SIGHTPRESS_S3_SECRET_KEY=' . S3_SECRET);
+    $command(['command' => 'site:storage:s3', 'slug' => 'demo', '--bucket' => $bucket, '--region' => 'eu-west-2', '--endpoint' => S3_ENDPOINT, '--prefix' => $prefix . '-' . bin2hex(random_bytes(4)), '--path-style' => true]);
+    $command(['command' => 'site:storage:migrate', 'slug' => 'demo', '--delete-source' => true]);
+}
 
 $copy = getenv('SIGHTPRESS_A11Y_SITE');
 $copy = is_string($copy) && preg_match('/^[a-z]+$/', $copy) === 1 ? $copy : 'demo';
@@ -50,7 +75,7 @@ $project = sys_get_temp_dir() . '/sightpress-a11y-' . $copy;
 // The crawl's site is written in three languages, one of them right to left; the journeys' site in two.
 $locales = match ($copy) {
     'demo' => 'en-GB,pt-PT,he',
-    'journeys' => 'en-GB,pt-PT',
+    'journeys', 'mediajourney' => 'en-GB,pt-PT',
     default => 'en-GB',
 };
 $port = is_numeric($_SERVER['SERVER_PORT'] ?? null) ? (int) $_SERVER['SERVER_PORT'] : 8087;
@@ -72,10 +97,20 @@ if (!is_file($project . '/config/sites.php')) {
     file_put_contents($project . '/config/tenant.php', '<?php return ' . var_export([
         'log' => ['path' => $project . '/var/log/test.log'],
         'session' => ['path' => $project . '/var/sessions'],
-    ], true) . ';');
+    ] + ($copy === 'mediajourney' ? [
+        'media' => ['limits' => ['document' => '2G', 'max' => ['document' => '2G']]],
+        'uploads' => ['temp_path' => $project . '/var/uploads', 'max_chunked_bytes' => '2G'],
+    ] : []), true) . ';');
     file_put_contents($project . '/config/sites.php', '<?php return ' . var_export(['version' => 2, 'sites' => []], true) . ';');
     if (function_exists('opcache_invalidate')) {
         opcache_invalidate($project . '/config/sites.php', true);
+    }
+    // The `themed` copy has a second theme installed, as Composer would list it.
+    if ($copy === 'themed') {
+        @mkdir($project . '/vendor/composer', 0o777, true);
+        file_put_contents($project . '/vendor/composer/installed.json', (string) json_encode(['packages' => [
+            ['name' => 'acme/theme-harbour', 'type' => 'sightpress-theme', 'extra' => ['sightpress' => ['theme' => HarbourTheme::class]]],
+        ]]));
     }
     $kernel = Kernel::boot($project, $environment);
     $console = $kernel->console();
@@ -119,6 +154,87 @@ if (!is_file($project . '/config/sites.php')) {
         $user->setPasswordHash($hash, new DateTimeImmutable());
         $users->save($user);
     }
+    $command = static function (array $input) use ($console): void {
+        if ($console->run(new ArrayInput($input), $result = new BufferedOutput()) !== 0) {
+            throw new RuntimeException('A command failed (' . json_encode($input) . '): ' . $result->fetch());
+        }
+    };
+    if ($copy === 'themed') {
+        $command(['command' => 'site:theme:apply', 'slug' => 'demo', 'theme' => 'acme-harbour']);
+        $command(['command' => 'theme:publish-assets', '--no-screenshot' => true]);
+    }
+    // The `cloud` copy keeps its files in MinIO (the skeleton's service) and delivers them through a CDN address,
+    // which the crawl answers in the browser.
+    if ($copy === 'cloud') {
+        moveToBucket($command, 'crawl');
+        $command(['command' => 'site:storage:cdn', 'slug' => 'demo', '--url' => 'https://cdn.sightpress.test']);
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($project . '/config/sites.php', true);
+        }
+    }
+}
+
+// The published theme previews are static files the web server sends.
+if (str_starts_with($path, '/themes/') && !str_contains($path, '..') && is_file($project . '/public' . $path)) {
+    $types = ['html' => 'text/html; charset=utf-8', 'css' => 'text/css', 'js' => 'text/javascript', 'png' => 'image/png', 'jpg' => 'image/jpeg', 'svg' => 'image/svg+xml', 'woff2' => 'font/woff2'];
+    header('Content-Type: ' . ($types[pathinfo($path, PATHINFO_EXTENSION)] ?? 'application/octet-stream'));
+    readfile($project . '/public' . $path);
+
+    return;
+}
+
+// What an operator does on the server, for the themes and media journeys (journeys-themes-media.spec.ts).
+if ($copy === 'mediajourney' && str_starts_with($path, '/_test/journey/')) {
+    $console = Kernel::boot($project, $environment)->console();
+    $console->setAutoExit(false);
+    $output = new BufferedOutput();
+    $status = 0;
+    $command = static function (array $input) use ($console, $output, &$status): void {
+        $status = $console->run(new ArrayInput($input), $output);
+        if ($status !== 0) {
+            throw new RuntimeException('A command failed (' . json_encode($input) . '): ' . $output->fetch());
+        }
+    };
+    $folder = $project . '/import';
+    switch (substr($path, strlen('/_test/journey/'))) {
+        case 'install-theme':
+        case 'remove-theme':
+            @mkdir($project . '/vendor/composer', 0o777, true);
+            file_put_contents($project . '/vendor/composer/installed.json', (string) json_encode(['packages' => $path === '/_test/journey/install-theme'
+                ? [['name' => 'acme/theme-harbour', 'type' => 'sightpress-theme', 'extra' => ['sightpress' => ['theme' => HarbourTheme::class]]]]
+                : []]));
+            break;
+        case 'theme-list':
+            $command(['command' => 'theme:list']);
+            break;
+        case 'import':
+            @mkdir($folder . '/inner', 0o777, true);
+            file_put_contents($folder . '/first.txt', "The first imported file.\n");
+            file_put_contents($folder . '/inner/second.txt', "The second imported file.\n");
+            file_put_contents($folder . '/inner/fake.pdf', "<!doctype html><script>alert(1)</script>\n");
+            $status = $console->run(new ArrayInput(['command' => 'site:media:import', 'site' => 'demo', 'paths' => [$folder], '--recursive' => true, '--publish' => true]), $output);
+            break;
+        case 'bucket':
+            moveToBucket($command, 'journey');
+            break;
+        case 'media':
+            $kernel = Kernel::boot($project, $environment);
+            $site = Services::get($kernel->container(), SiteRepository::class)->find('demo') ?? throw new LogicException('No site.');
+            $library = Services::get(Services::get($kernel->container(), SiteContainerFactory::class)->forSite($site), SightPress\Core\Media\MediaRepository::class);
+            $found = array_values(array_filter($library->newest(100), static fn ($media): bool => $media->originalName() === ($_GET['name'] ?? '')));
+            header('Content-Type: application/json');
+            echo json_encode($found === [] ? null : ['id' => $found[0]->id(), 'checksum' => $found[0]->checksum()]);
+
+            return;
+        default:
+            http_response_code(404);
+
+            return;
+    }
+    header('Content-Type: application/json');
+    echo json_encode(['status' => $status, 'output' => $output->fetch()]);
+
+    return;
 }
 
 // Runs `schedule:run` once (P-3), as the scheduler would, and answers with what it printed.

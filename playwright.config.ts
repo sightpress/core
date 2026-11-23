@@ -61,6 +61,26 @@ export default defineConfig({
       stdout: 'ignore',
       stderr: 'ignore',
     },
+    // Demo copies for the M3 crawl (crawl-themes-storage.spec.ts): one on a second theme, one with its files in the
+    // skeleton's MinIO and a CDN address.
+    ...Object.entries({ themed: 8064, cloud: 8063 }).map(([copy, port]) => ({
+      command: `SIGHTPRESS_A11Y_SITE=${copy} php -S 127.0.0.1:${port} tests/A11y/demo/index.php`,
+      url: `http://127.0.0.1:${port}/robots.txt`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 180_000,
+      stdout: 'ignore' as const,
+      stderr: 'ignore' as const,
+    })),
+    // The themes and media journeys (journeys-themes-media.spec.ts). Several workers, because the page keeps asking
+    // about an upload while the scheduler checks it; no opcode cache, because the journey rewrites the site registry.
+    {
+      command: 'SIGHTPRESS_A11Y_SITE=mediajourney PHP_CLI_SERVER_WORKERS=4 php -d opcache.enable_cli=0 -d opcache.enable=0 -S 127.0.0.1:8062 tests/A11y/demo/index.php',
+      url: 'http://127.0.0.1:8062/robots.txt',
+      reuseExistingServer: !process.env.CI,
+      timeout: 180_000,
+      stdout: 'ignore',
+      stderr: 'ignore',
+    },
     // A second copy of the demo site, with its test mailbox, for the journeys from start to finish (journeys.spec.ts).
     {
       command: 'SIGHTPRESS_A11Y_SITE=journeys php -S 127.0.0.1:8086 tests/A11y/demo/index.php',

@@ -3,7 +3,8 @@
 # starter page of a site made with site:create (tests/A11y/starter.spec.ts), and a crawl of a demo site made with
 # site:create --with-demo-content checks every public page and every admin screen as each role (tests/A11y/crawl.spec.ts),
 # and a second copy of it runs the journeys from start to finish with the codes read from its emails
-# (tests/A11y/journeys.spec.ts).
+# (tests/A11y/journeys.spec.ts). Other copies crawl a second theme and a site in MinIO behind a CDN address, and walk
+# through themes and large uploads (crawl-themes-storage.spec.ts, journeys-themes-media.spec.ts).
 # Core is mounted into the skeleton through its path repository, so this branch of core is tested.
 # Playwright also starts core's component gallery (tests/A11y/gallery) on PHP's built-in web server, which needs
 # PHP and core's Composer dependencies on the runner.
@@ -25,7 +26,7 @@ jobs:
   axe:
     name: Playwright and axe
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v7
         with:

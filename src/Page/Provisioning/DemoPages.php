@@ -16,7 +16,7 @@ use SightPress\Core\Site\Contract\SiteProvisioning;
 /**
  * Demo content, step 3 of 4: a published page with one block of every kind core has, using the demo media files,
  * and a published page under it written by the demo contributor; a published page for members only, a page in the
- * trash and a redirect (`/visit` → `/every-block`). On a site in several languages, these pages are copied into every
+ * trash, a redirect (`/visit` → `/every-block`) and a page in each optional layout. On a site in several languages, these pages are copied into every
  * other language and published there, so the demo has translations (as "Translate from" starts them: to translate).
  * Shares `demo.page`, `demo.subpage` and `demo.members`.
  */
@@ -94,13 +94,25 @@ final readonly class DemoPages
             [$text('<p>This page is in the trash.</p>')],
         ), null, $event->adminId());
         $old->changeState(PageState::Trash, $now);
+        $layouts = [];
+        foreach (['landing' => 'A landing page', 'sidebar' => 'A page with a sidebar', 'full-width' => 'A full-width page'] as $layout => $title) {
+            $layouts[$layout] = $editor->create($locale, new PageContent(
+                $title,
+                $layout . '-page',
+                sprintf('A demo page in the %s layout.', $layout),
+                sprintf('A demo page that shows the %s layout of the site\'s theme.', $layout),
+                [$heading('About this layout'), $text('<p>Themes that don\'t have this layout show this page in their standard one.</p>')],
+            ), null, $event->adminId());
+            $layouts[$layout]->setLayout($layout, $now);
+            $layouts[$layout]->changeState(PageState::Published, $now);
+        }
         Services::get($event->services, PageRepository::class)->flush();
         $translated = [];
         foreach ($event->site->locales as $other) {
             if ($other === $locale) {
                 continue;
             }
-            foreach ([$page, $subpage, $members] as $demo) {
+            foreach ([$page, $subpage, $members, ...array_values($layouts)] as $demo) {
                 $editor->translate($demo, $other, $locale, $event->adminId());
                 $editor->publishTranslation($demo, $other, true, $event->adminId());
             }
@@ -112,6 +124,7 @@ final readonly class DemoPages
         $event->share('demo.members', (int) $members->id());
         $event->report('Added the demo page "Every kind of block" (/every-block) and a page under it.');
         $event->report('Added a page for members only (/for-members), a page in the trash (/old-news) and a redirect from /visit to /every-block.');
+        $event->report('Added a page in each of the landing, sidebar and full-width layouts.');
         if ($translated !== []) {
             $event->report(sprintf('Copied the demo pages into %s and published them there, to translate.', implode(', ', $translated)));
         }

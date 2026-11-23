@@ -1,0 +1,5 @@
+body { background: var(--color-background); color: var(--color-text); }
+a { color: var(--color-link); }
+a:visited { color: var(--color-link-visited); }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+input, select, textarea, button { min-height: 2.75rem; }
