@@ -31,6 +31,7 @@ use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Page\PageLinkQuery;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Module\Event\RoleChanged;
+use SightPress\Core\Rbac\Contract\RoleEdited;
 use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tests\Support\BlockFixture;
 use SightPress\Core\Tests\Support\FixedClock;
@@ -183,6 +184,40 @@ final class AuditRecorderTest extends TestCase
         self::assertSame(['assistant.used', 'assistant', 'seo_meta', 4, ['task' => 'seo_meta', 'provider' => 'anthropic', 'model' => 'claude-haiku-5-5', 'input_tokens' => 300, 'output_tokens' => 40, 'outcome' => 'ok']], [$entries[44]->action, $entries[44]->entityType, $entries[44]->entityId, $entries[44]->actorId, $entries[44]->details]);
         self::assertSame(['theme.applied', 'theme', 'acme-harbour', null, ['previous' => null]], [$entries[47]->action, $entries[47]->entityType, $entries[47]->entityId, $entries[47]->actorId, $entries[47]->details]);
         self::assertSame(['theme.colours_changed', ['colours' => ['dark.link']]], [$entries[48]->action, $entries[48]->details]);
-        self::assertCount(24, AuditRecorder::EVENTS);
+        self::assertCount(25, AuditRecorder::EVENTS);
+    }
+
+    public function testWritesASentenceForEachChangeToARole(): void
+    {
+        $pages = new PageFixture();
+        $media = new BlockFixture([], $pages->database);
+        $log = new AuditLog($pages->database->connection);
+        $registry = ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue(CoreModules::candidates())->resolve(new ModuleSelection()));
+        $recorder = new AuditRecorder($log, new FixedClock(), new PageLinkQuery($pages->database->entityManager, $pages->addresses(), $pages->database->settings()), $media->media(), new UserRepository($pages->database->entityManager), $pages->site, SettingCatalogue::fromRegistry($registry));
+
+        foreach ([
+            new RoleEdited(RoleEdited::CREATED, 'shop', 'Shop staff', 1, ['admin.access', 'media.upload']),
+            new RoleEdited(RoleEdited::CREATED, 'guest', 'Guest', null),
+            new RoleEdited(RoleEdited::RENAMED, 'shop', 'Shop team', 1, from: 'Shop staff'),
+            new RoleEdited(RoleEdited::PERMISSIONS, 'shop', 'Shop team', 1, ['menu.manage'], ['media.upload']),
+            new RoleEdited(RoleEdited::PERMISSIONS, 'shop', 'Shop team', 1, [], ['menu.manage']),
+            new RoleEdited(RoleEdited::DELETED, 'guest', 'Guest', null),
+        ] as $event) {
+            $recorder($event);
+        }
+
+        $entries = array_reverse($log->find(new AuditFilter(entityType: 'role'), 10));
+        self::assertSame([
+            'Created the role “Shop staff” with admin.access, media.upload.',
+            'Created the role “Guest”.',
+            'Renamed the role “Shop staff” to “Shop team”.',
+            'Changed what the role “Shop team” may do: gave menu.manage; took away media.upload.',
+            'Changed what the role “Shop team” may do: took away menu.manage.',
+            'Deleted the role “Guest”.',
+        ], array_map(static fn ($entry): string => $entry->summary, $entries));
+        self::assertSame(['role.created', 'role', 'shop', 1, ['label' => 'Shop staff', 'added' => ['admin.access', 'media.upload']]], [$entries[0]->action, $entries[0]->entityType, $entries[0]->entityId, $entries[0]->actorId, $entries[0]->details]);
+        self::assertSame(['label' => 'Shop team', 'from' => 'Shop staff'], $entries[2]->details);
+        self::assertSame(['role.permissions_changed', ['label' => 'Shop team', 'added' => ['menu.manage'], 'removed' => ['media.upload']]], [$entries[3]->action, $entries[3]->details]);
+        self::assertNull($entries[5]->actorId);
     }
 }

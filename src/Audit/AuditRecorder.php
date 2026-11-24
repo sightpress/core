@@ -31,6 +31,7 @@ use SightPress\Module\Event\RevisionRestored;
 use SightPress\Module\Event\ScheduledStepFailed;
 use SightPress\Module\Event\TranslationPublished;
 use SightPress\Module\Event\RoleChanged;
+use SightPress\Core\Rbac\Contract\RoleEdited;
 use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\Site;
@@ -52,7 +53,7 @@ final readonly class AuditRecorder
         PageCloned::class, PagePurged::class, RedirectChanged::class, RevisionRestored::class,
         PageScheduled::class, ScheduledStepFailed::class,
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
-        MenuChanged::class, RoleChanged::class, AccountChanged::class, AccountRegistered::class, SettingsChanged::class,
+        MenuChanged::class, RoleChanged::class, RoleEdited::class, AccountChanged::class, AccountRegistered::class, SettingsChanged::class,
         SiteModuleChanged::class, AnalyticsDataDeleted::class, AssistantUsed::class, ThemeApplied::class, ThemeColoursChanged::class,
     ];
 
@@ -113,6 +114,15 @@ final readonly class AuditRecorder
             $event instanceof MediaDeleted => $this->entry($event->deletedBy, 'media.deleted', 'media', $event->mediaId, sprintf('Deleted “%s”.', $event->originalName), []),
             $event instanceof MenuChanged => $this->entry($event->actorId, 'menu.' . $event->change, 'menu', $event->menu, sprintf('%s: %s %s.', MenuName::tryFrom($event->menu)?->label() ?? ucfirst($event->menu), str_replace('_', ' ', ucfirst($event->change)), $event->pageId === null ? sprintf('the link to %s', $event->url ?? 'an address') : sprintf('the entry for %s', $this->page($event->pageId))), array_filter(['item' => $event->itemId, 'page' => $event->pageId, 'url' => $event->url], static fn (mixed $value): bool => $value !== null)),
             $event instanceof RoleChanged => $this->entry($event->changedBy, 'user.role_changed', 'user', $event->userId, sprintf('Changed the role of %s from %s to %s.', $this->person($event->userId), $event->from ?? 'none', $event->to), ['from' => $event->from, 'to' => $event->to]),
+            $event instanceof RoleEdited => $this->entry($event->actorId, 'role.' . $event->change, 'role', $event->role, match ($event->change) {
+                RoleEdited::CREATED => sprintf('Created the role “%s”%s.', $event->label, $event->added === [] ? '' : ' with ' . implode(', ', $event->added)),
+                RoleEdited::RENAMED => sprintf('Renamed the role “%s” to “%s”.', $event->from, $event->label),
+                RoleEdited::DELETED => sprintf('Deleted the role “%s”.', $event->label),
+                default => sprintf('Changed what the role “%s” may do: %s.', $event->label, implode('; ', array_filter([
+                    $event->added === [] ? null : 'gave ' . implode(', ', $event->added),
+                    $event->removed === [] ? null : 'took away ' . implode(', ', $event->removed),
+                ]))),
+            }, array_filter(['label' => $event->label, 'added' => $event->added, 'removed' => $event->removed, 'from' => $event->from], static fn (array|string|null $value): bool => $value !== null && $value !== [])),
             $event instanceof AccountChanged => $this->entry($event->changedBy, 'user.changed', 'user', $event->userId, sprintf('Changed the %s of %s.', self::words($event->fields), $this->person($event->userId)), ['fields' => $event->fields]),
             $event instanceof AccountRegistered => $this->entry($event->userId, 'user.registered', 'user', $event->userId, $event->refusedRole === null
                 ? sprintf('%s signed up and confirmed their email address, with the “%s” role.', $this->person($event->userId), $event->role)

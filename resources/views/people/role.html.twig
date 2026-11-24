@@ -1,0 +1,54 @@
+{#
+    One role (/admin/roles/{name}) or a new one (/admin/roles/new), X-4. Admin and Member can't be changed, so their
+    page says what they can do. Other roles have a form: the name, then one group of checkboxes per area (fieldset and
+    legend, each permission with its description). Errors go to the error summary and to their field.
+    Context: `role` (RoleSummary, null when new), `form`, `areas` (names of the checkbox fields), `permissions`
+    (labels of what the role holds), `error` (a refusal for a built-in role), `action`, `delete`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ role ? t(role.label) : t('Create a role') }}{% endblock %}
+{% block content %}
+<p><a href="/admin/roles">{{ t('Back to roles') }}</a></p>
+<h1>{{ role ? t(role.label) : t('Create a role') }}</h1>
+{%- if role %}
+<p>{{ t('{count, plural, =0 {Nobody has this role.} one {# person has this role.} other {# people have this role.}}', {count: role.people}) }} {{ t('On the command line it is called {name}.', {name: role.name}) }}</p>
+{%- endif %}
+{%- if error %}
+<section class="error-summary" id="role-errors" aria-labelledby="role-errors-title" tabindex="-1" autofocus>
+    <h2 id="role-errors-title">{{ t('There is a problem') }}</h2>
+    <p>{{ t(error) }}</p>
+</section>
+{%- endif %}
+{%- if role and role.fixed %}
+{%- if role.name == 'admin' %}
+<p>{{ t('Admins can do everything, including managing roles. This role always has every permission, so it can’t be changed, renamed or deleted.') }}</p>
+{%- else %}
+<p>{{ t('Members can sign in and read members-only pages, and look after their own account. This role never has any permission, so it can’t be changed, renamed or deleted.') }}</p>
+{%- endif %}
+{%- else %}
+{%- if role.signUp ?? false %}
+<p>{{ t('People who sign up get this role, so it can only have permissions that are safe for people you don’t know.') }}</p>
+{%- endif %}
+<p>{{ t('Tick what people with this role may do. A role with any permission can also use the admin panel. Features that are off aren’t listed; the role keeps what it had for them.') }}</p>
+{{ f.error_summary(form) }}
+{{ f.start(form, action) }}
+    {{ f.field(form, 'label') }}
+    {%- for area in areas %}
+    {{ f.field(form, area) }}
+    {%- endfor %}
+    {{ f.submit(role ? t('Save role') : t('Create role')) }}
+{{ f.end() }}
+{%- if delete %}
+<p><a href="{{ delete }}">{{ t('Delete this role') }}</a></p>
+{%- endif %}
+{%- endif %}
+{%- if role and role.fixed and permissions is not empty %}
+<h2>{{ t('Permissions') }}</h2>
+<ul>
+    {%- for permission in permissions %}
+    <li>{{ t(permission) }}</li>
+    {%- endfor %}
+</ul>
+{%- endif %}
+{% endblock %}

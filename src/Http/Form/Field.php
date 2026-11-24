@@ -34,6 +34,8 @@ final readonly class Field
      * @param int|array<string, int>|null $maxBytes  for a file field: the largest file, checked in the browser before
      *                                               the form is sent; or limits by the start of the file's type
      *                                               (`image`, `video`, `audio`, and `*` for the rest)
+     * @param array<string, string|Message> $choiceHints for checkboxes and radios: a short description of an option,
+     *                                               value => text, shown under it and read with it
      */
     public function __construct(
         public string $name,
@@ -49,6 +51,7 @@ final readonly class Field
         public ?string $inputmode = null,
         public bool $localeChoices = false,
         public int|array|null $maxBytes = null,
+        public array $choiceHints = [],
     ) {
         if (preg_match('/^[a-z][a-z0-9_]*$/', $name) !== 1) {
             throw new InvalidArgumentException(sprintf(

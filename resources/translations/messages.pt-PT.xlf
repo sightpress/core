@@ -9349,5 +9349,275 @@
         <target>os tempos têm de ter a forma "00:01.000 --&gt; 00:04.000"</target>
       </segment>
     </unit>
+    <unit id="e5a3f4c90179b606">
+      <segment>
+        <source>A role is a set of things people may do on the site. Everyone has one role; change it on their page in People.</source>
+        <target>Uma função é um conjunto de coisas que as pessoas podem fazer no site. Cada pessoa tem uma função; altere-a na página dela em Pessoas.</target>
+      </segment>
+    </unit>
+    <unit id="dbaf2035e46ffbd2">
+      <segment>
+        <source>A role name is 1 to 50 lower-case letters, digits and “_”, starting with a letter, for example shop_staff.</source>
+        <target>O nome de uma função tem de 1 a 50 letras minúsculas, algarismos e “_”, e começa por uma letra, por exemplo shop_staff.</target>
+      </segment>
+    </unit>
+    <unit id="638343fec7c02a4a">
+      <segment>
+        <source>Admin panel</source>
+        <target>Administração</target>
+      </segment>
+    </unit>
+    <unit id="f5b3895329080106">
+      <segment>
+        <source>Admins can do everything, including managing roles. This role always has every permission, so it can’t be changed, renamed or deleted.</source>
+        <target>Os administradores podem fazer tudo, incluindo gerir funções. Esta função tem sempre todas as permissões, por isso não pode ser alterada, renomeada nem eliminada.</target>
+      </segment>
+    </unit>
+    <unit id="a52ace420f2175d0">
+      <segment>
+        <source>All</source>
+        <target>Todas</target>
+      </segment>
+    </unit>
+    <unit id="094ed2c476dd7ccf">
+      <segment>
+        <source>Back to roles</source>
+        <target>Voltar às funções</target>
+      </segment>
+    </unit>
+    <unit id="4eda6dada8aafb78">
+      <segment>
+        <source>Back to the role</source>
+        <target>Voltar à função</target>
+      </segment>
+    </unit>
+    <unit id="3953e7e2e07f4eed">
+      <segment>
+        <source>Built in, can’t be changed</source>
+        <target>Incluída, não pode ser alterada</target>
+      </segment>
+    </unit>
+    <unit id="0d8b5e44ccb94153">
+      <segment>
+        <source>Create a role</source>
+        <target>Criar uma função</target>
+      </segment>
+    </unit>
+    <unit id="221163d6e73f1c7b">
+      <segment>
+        <source>Create role</source>
+        <target>Criar função</target>
+      </segment>
+    </unit>
+    <unit id="d0a153c13e756c67">
+      <segment>
+        <source>Created the role “{role}”. Give it to people on their page in People.</source>
+        <target>A função “{role}” foi criada. Atribua-a às pessoas na página de cada uma em Pessoas.</target>
+      </segment>
+    </unit>
+    <unit id="f049fc90389d5fcd">
+      <segment>
+        <source>Delete the role</source>
+        <target>Eliminar a função</target>
+      </segment>
+    </unit>
+    <unit id="128ca9a7e4d71503">
+      <segment>
+        <source>Delete the role “{role}”?</source>
+        <target>Eliminar a função “{role}”?</target>
+      </segment>
+    </unit>
+    <unit id="cafc0e689028164a">
+      <segment>
+        <source>Delete this role</source>
+        <target>Eliminar esta função</target>
+      </segment>
+    </unit>
+    <unit id="79deaae9cc906957">
+      <segment>
+        <source>Deleted the role “{role}”.</source>
+        <target>A função “{role}” foi eliminada.</target>
+      </segment>
+    </unit>
+    <unit id="d56622bc90d126fa">
+      <segment>
+        <source>Enter a name for the role of 1 to 100 characters.</source>
+        <target>Escreva um nome para a função, com 1 a 100 carateres.</target>
+      </segment>
+    </unit>
+    <unit id="73da308c7d4fd3b6">
+      <segment>
+        <source>Every role on the site</source>
+        <target>Todas as funções do site</target>
+      </segment>
+    </unit>
+    <unit id="51f43c9f2e9e3ef4">
+      <segment>
+        <source>For example “Shop staff”. It is shown next to each person who has it.</source>
+        <target>Por exemplo “Equipa da loja”. Aparece ao lado de cada pessoa que a tem.</target>
+      </segment>
+    </unit>
+    <unit id="fdce5da2cec2ff02">
+      <segment>
+        <source>Keep it</source>
+        <target>Manter</target>
+      </segment>
+    </unit>
+    <unit id="3828ed5c36c15b64">
+      <segment>
+        <source>Members can sign in and read members-only pages, and look after their own account. This role never has any permission, so it can’t be changed, renamed or deleted.</source>
+        <target>Os membros podem iniciar sessão, ler as páginas só para membros e tratar da própria conta. Esta função nunca tem permissões, por isso não pode ser alterada, renomeada nem eliminada.</target>
+      </segment>
+    </unit>
+    <unit id="dfc578882381da69">
+      <segment>
+        <source>Name of the role</source>
+        <target>Nome da função</target>
+      </segment>
+    </unit>
+    <unit id="4cacd06b790fc2cd">
+      <segment>
+        <source>Nobody has this role. Deleting it can’t be undone.</source>
+        <target>Ninguém tem esta função. Eliminá-la não pode ser desfeito.</target>
+      </segment>
+    </unit>
+    <unit id="8a7525b1492fb848">
+      <segment>
+        <source>Notes</source>
+        <target>Notas</target>
+      </segment>
+    </unit>
+    <unit id="18b2ce1dafe6ff93">
+      <segment>
+        <source>On the command line it is called {name}.</source>
+        <target>Na linha de comandos chama-se {name}.</target>
+      </segment>
+    </unit>
+    <unit id="bd51c48cde80fe46">
+      <segment>
+        <source>Other: {area}</source>
+        <target>Outras: {area}</target>
+      </segment>
+    </unit>
+    <unit id="25e00d5aa73c4256">
+      <segment>
+        <source>People who sign up get this role, so it can only have permissions that are safe for people you don’t know.</source>
+        <target>Quem se regista recebe esta função, por isso só pode ter permissões seguras para pessoas que não conhece.</target>
+      </segment>
+    </unit>
+    <unit id="abccc78cc93c0793">
+      <segment>
+        <source>Permissions</source>
+        <target>Permissões</target>
+      </segment>
+    </unit>
+    <unit id="c25337055464f8d3">
+      <segment>
+        <source>Roles</source>
+        <target>Funções</target>
+      </segment>
+    </unit>
+    <unit id="c7523b152e8bba1e">
+      <segment>
+        <source>Save role</source>
+        <target>Guardar função</target>
+      </segment>
+    </unit>
+    <unit id="6bc76a59dc267534">
+      <segment>
+        <source>Saved the role “{role}”.</source>
+        <target>A função “{role}” foi guardada.</target>
+      </segment>
+    </unit>
+    <unit id="965c32a868a4141e">
+      <segment>
+        <source>The Admin role always has every permission, so it can’t be changed.</source>
+        <target>A função Administrador tem sempre todas as permissões, por isso não pode ser alterada.</target>
+      </segment>
+    </unit>
+    <unit id="2817649d4188ceb4">
+      <segment>
+        <source>The Member role never has any permission, so it can’t be changed.</source>
+        <target>A função Membro nunca tem permissões, por isso não pode ser alterada.</target>
+      </segment>
+    </unit>
+    <unit id="9b268861b605448a">
+      <segment>
+        <source>There is already a role called “{label}”. Choose another name.</source>
+        <target>Já existe uma função chamada “{label}”. Escolha outro nome.</target>
+      </segment>
+    </unit>
+    <unit id="497ad551de16255a">
+      <segment>
+        <source>There is already a role called “{name}”.</source>
+        <target>Já existe uma função chamada “{name}”.</target>
+      </segment>
+    </unit>
+    <unit id="0c2de29548df81c5">
+      <segment>
+        <source>There is no permission called “{permission}” that this site can use.</source>
+        <target>Não existe nenhuma permissão chamada “{permission}” que este site possa usar.</target>
+      </segment>
+    </unit>
+    <unit id="0988c20751297f8b">
+      <segment>
+        <source>There is no role called “{name}”. See the roles with site:role:list.</source>
+        <target>Não existe nenhuma função chamada “{name}”. Veja as funções com site:role:list.</target>
+      </segment>
+    </unit>
+    <unit id="ad165f3375ded546">
+      <segment>
+        <source>This role can’t be deleted</source>
+        <target>Esta função não pode ser eliminada</target>
+      </segment>
+    </unit>
+    <unit id="1619a8704cce8359">
+      <segment>
+        <source>Tick what people with this role may do. A role with any permission can also use the admin panel. Features that are off aren’t listed; the role keeps what it had for them.</source>
+        <target>Assinale o que as pessoas com esta função podem fazer. Uma função com alguma permissão também pode usar a administração. As funcionalidades desligadas não aparecem; a função mantém o que tinha para elas.</target>
+      </segment>
+    </unit>
+    <unit id="caddf330ce278d7e">
+      <segment>
+        <source>You manage roles through the “{role}” role, so you can’t take “Manage roles” away from it. Ask another admin to do it.</source>
+        <target>Gere as funções através da função “{role}”, por isso não lhe pode retirar “Gerir funções”. Peça a outro administrador.</target>
+      </segment>
+    </unit>
+    <unit id="c11e0096b9e28d89">
+      <segment>
+        <source>{count, plural, =0 {Nobody has this role.} one {# person has this role.} other {# people have this role.}}</source>
+        <target>{count, plural, =0 {Ninguém tem esta função.} one {# pessoa tem esta função.} other {# pessoas têm esta função.}}</target>
+      </segment>
+    </unit>
+    <unit id="f44b7d28822e34a3">
+      <segment>
+        <source>{count, plural, one {# person has} other {# people have}} the “{role}” role. Give them another role first.</source>
+        <target>{count, plural, one {# pessoa tem} other {# pessoas têm}} a função “{role}”. Atribua-lhes outra função primeiro.</target>
+      </segment>
+    </unit>
+    <unit id="15d9b2a6f95a74a3">
+      <segment>
+        <source>“{role}” is built in, so it can’t be deleted.</source>
+        <target>“{role}” vem incluída, por isso não pode ser eliminada.</target>
+      </segment>
+    </unit>
+    <unit id="13b6afa6893c2461">
+      <segment>
+        <source>“{role}” is the role of people who sign up, and they can’t get “{permission}”: it isn’t safe for people you don’t know. Choose another sign-up role first.</source>
+        <target>“{role}” é a função de quem se regista, e essas pessoas não podem ter “{permission}”: não é seguro para pessoas que não conhece. Escolha primeiro outra função de registo.</target>
+      </segment>
+    </unit>
+    <unit id="bd7acfcc48e7a450">
+      <segment>
+        <source>“{role}” is the role of people who sign up. Choose another sign-up role in the sign-up settings first.</source>
+        <target>“{role}” é a função de quem se regista. Escolha primeiro outra função de registo nas definições de registo.</target>
+      </segment>
+    </unit>
+    <unit id="5ce253d53811d94c">
+      <segment>
+        <source>“{role}” keeps “Use the admin panel” while it has other permissions. Take those away first.</source>
+        <target>“{role}” mantém “Usar a administração” enquanto tiver outras permissões. Retire-as primeiro.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

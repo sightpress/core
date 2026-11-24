@@ -9349,5 +9349,275 @@
         <target>the timing must look like &quot;00:01.000 --&gt; 00:04.000&quot;</target>
       </segment>
     </unit>
+    <unit id="e5a3f4c90179b606">
+      <segment>
+        <source>A role is a set of things people may do on the site. Everyone has one role; change it on their page in People.</source>
+        <target>A role is a set of things people may do on the site. Everyone has one role; change it on their page in People.</target>
+      </segment>
+    </unit>
+    <unit id="dbaf2035e46ffbd2">
+      <segment>
+        <source>A role name is 1 to 50 lower-case letters, digits and “_”, starting with a letter, for example shop_staff.</source>
+        <target>A role name is 1 to 50 lower-case letters, digits and “_”, starting with a letter, for example shop_staff.</target>
+      </segment>
+    </unit>
+    <unit id="638343fec7c02a4a">
+      <segment>
+        <source>Admin panel</source>
+        <target>Admin panel</target>
+      </segment>
+    </unit>
+    <unit id="f5b3895329080106">
+      <segment>
+        <source>Admins can do everything, including managing roles. This role always has every permission, so it can’t be changed, renamed or deleted.</source>
+        <target>Admins can do everything, including managing roles. This role always has every permission, so it can’t be changed, renamed or deleted.</target>
+      </segment>
+    </unit>
+    <unit id="a52ace420f2175d0">
+      <segment>
+        <source>All</source>
+        <target>All</target>
+      </segment>
+    </unit>
+    <unit id="094ed2c476dd7ccf">
+      <segment>
+        <source>Back to roles</source>
+        <target>Back to roles</target>
+      </segment>
+    </unit>
+    <unit id="4eda6dada8aafb78">
+      <segment>
+        <source>Back to the role</source>
+        <target>Back to the role</target>
+      </segment>
+    </unit>
+    <unit id="3953e7e2e07f4eed">
+      <segment>
+        <source>Built in, can’t be changed</source>
+        <target>Built in, can’t be changed</target>
+      </segment>
+    </unit>
+    <unit id="0d8b5e44ccb94153">
+      <segment>
+        <source>Create a role</source>
+        <target>Create a role</target>
+      </segment>
+    </unit>
+    <unit id="221163d6e73f1c7b">
+      <segment>
+        <source>Create role</source>
+        <target>Create role</target>
+      </segment>
+    </unit>
+    <unit id="d0a153c13e756c67">
+      <segment>
+        <source>Created the role “{role}”. Give it to people on their page in People.</source>
+        <target>Created the role “{role}”. Give it to people on their page in People.</target>
+      </segment>
+    </unit>
+    <unit id="f049fc90389d5fcd">
+      <segment>
+        <source>Delete the role</source>
+        <target>Delete the role</target>
+      </segment>
+    </unit>
+    <unit id="128ca9a7e4d71503">
+      <segment>
+        <source>Delete the role “{role}”?</source>
+        <target>Delete the role “{role}”?</target>
+      </segment>
+    </unit>
+    <unit id="cafc0e689028164a">
+      <segment>
+        <source>Delete this role</source>
+        <target>Delete this role</target>
+      </segment>
+    </unit>
+    <unit id="79deaae9cc906957">
+      <segment>
+        <source>Deleted the role “{role}”.</source>
+        <target>Deleted the role “{role}”.</target>
+      </segment>
+    </unit>
+    <unit id="d56622bc90d126fa">
+      <segment>
+        <source>Enter a name for the role of 1 to 100 characters.</source>
+        <target>Enter a name for the role of 1 to 100 characters.</target>
+      </segment>
+    </unit>
+    <unit id="73da308c7d4fd3b6">
+      <segment>
+        <source>Every role on the site</source>
+        <target>Every role on the site</target>
+      </segment>
+    </unit>
+    <unit id="51f43c9f2e9e3ef4">
+      <segment>
+        <source>For example “Shop staff”. It is shown next to each person who has it.</source>
+        <target>For example “Shop staff”. It is shown next to each person who has it.</target>
+      </segment>
+    </unit>
+    <unit id="fdce5da2cec2ff02">
+      <segment>
+        <source>Keep it</source>
+        <target>Keep it</target>
+      </segment>
+    </unit>
+    <unit id="3828ed5c36c15b64">
+      <segment>
+        <source>Members can sign in and read members-only pages, and look after their own account. This role never has any permission, so it can’t be changed, renamed or deleted.</source>
+        <target>Members can sign in and read members-only pages, and look after their own account. This role never has any permission, so it can’t be changed, renamed or deleted.</target>
+      </segment>
+    </unit>
+    <unit id="dfc578882381da69">
+      <segment>
+        <source>Name of the role</source>
+        <target>Name of the role</target>
+      </segment>
+    </unit>
+    <unit id="4cacd06b790fc2cd">
+      <segment>
+        <source>Nobody has this role. Deleting it can’t be undone.</source>
+        <target>Nobody has this role. Deleting it can’t be undone.</target>
+      </segment>
+    </unit>
+    <unit id="8a7525b1492fb848">
+      <segment>
+        <source>Notes</source>
+        <target>Notes</target>
+      </segment>
+    </unit>
+    <unit id="18b2ce1dafe6ff93">
+      <segment>
+        <source>On the command line it is called {name}.</source>
+        <target>On the command line it is called {name}.</target>
+      </segment>
+    </unit>
+    <unit id="bd51c48cde80fe46">
+      <segment>
+        <source>Other: {area}</source>
+        <target>Other: {area}</target>
+      </segment>
+    </unit>
+    <unit id="25e00d5aa73c4256">
+      <segment>
+        <source>People who sign up get this role, so it can only have permissions that are safe for people you don’t know.</source>
+        <target>People who sign up get this role, so it can only have permissions that are safe for people you don’t know.</target>
+      </segment>
+    </unit>
+    <unit id="abccc78cc93c0793">
+      <segment>
+        <source>Permissions</source>
+        <target>Permissions</target>
+      </segment>
+    </unit>
+    <unit id="c25337055464f8d3">
+      <segment>
+        <source>Roles</source>
+        <target>Roles</target>
+      </segment>
+    </unit>
+    <unit id="c7523b152e8bba1e">
+      <segment>
+        <source>Save role</source>
+        <target>Save role</target>
+      </segment>
+    </unit>
+    <unit id="6bc76a59dc267534">
+      <segment>
+        <source>Saved the role “{role}”.</source>
+        <target>Saved the role “{role}”.</target>
+      </segment>
+    </unit>
+    <unit id="965c32a868a4141e">
+      <segment>
+        <source>The Admin role always has every permission, so it can’t be changed.</source>
+        <target>The Admin role always has every permission, so it can’t be changed.</target>
+      </segment>
+    </unit>
+    <unit id="2817649d4188ceb4">
+      <segment>
+        <source>The Member role never has any permission, so it can’t be changed.</source>
+        <target>The Member role never has any permission, so it can’t be changed.</target>
+      </segment>
+    </unit>
+    <unit id="9b268861b605448a">
+      <segment>
+        <source>There is already a role called “{label}”. Choose another name.</source>
+        <target>There is already a role called “{label}”. Choose another name.</target>
+      </segment>
+    </unit>
+    <unit id="497ad551de16255a">
+      <segment>
+        <source>There is already a role called “{name}”.</source>
+        <target>There is already a role called “{name}”.</target>
+      </segment>
+    </unit>
+    <unit id="0c2de29548df81c5">
+      <segment>
+        <source>There is no permission called “{permission}” that this site can use.</source>
+        <target>There is no permission called “{permission}” that this site can use.</target>
+      </segment>
+    </unit>
+    <unit id="0988c20751297f8b">
+      <segment>
+        <source>There is no role called “{name}”. See the roles with site:role:list.</source>
+        <target>There is no role called “{name}”. See the roles with site:role:list.</target>
+      </segment>
+    </unit>
+    <unit id="ad165f3375ded546">
+      <segment>
+        <source>This role can’t be deleted</source>
+        <target>This role can’t be deleted</target>
+      </segment>
+    </unit>
+    <unit id="1619a8704cce8359">
+      <segment>
+        <source>Tick what people with this role may do. A role with any permission can also use the admin panel. Features that are off aren’t listed; the role keeps what it had for them.</source>
+        <target>Tick what people with this role may do. A role with any permission can also use the admin panel. Features that are off aren’t listed; the role keeps what it had for them.</target>
+      </segment>
+    </unit>
+    <unit id="caddf330ce278d7e">
+      <segment>
+        <source>You manage roles through the “{role}” role, so you can’t take “Manage roles” away from it. Ask another admin to do it.</source>
+        <target>You manage roles through the “{role}” role, so you can’t take “Manage roles” away from it. Ask another admin to do it.</target>
+      </segment>
+    </unit>
+    <unit id="c11e0096b9e28d89">
+      <segment>
+        <source>{count, plural, =0 {Nobody has this role.} one {# person has this role.} other {# people have this role.}}</source>
+        <target>{count, plural, =0 {Nobody has this role.} one {# person has this role.} other {# people have this role.}}</target>
+      </segment>
+    </unit>
+    <unit id="f44b7d28822e34a3">
+      <segment>
+        <source>{count, plural, one {# person has} other {# people have}} the “{role}” role. Give them another role first.</source>
+        <target>{count, plural, one {# person has} other {# people have}} the “{role}” role. Give them another role first.</target>
+      </segment>
+    </unit>
+    <unit id="15d9b2a6f95a74a3">
+      <segment>
+        <source>“{role}” is built in, so it can’t be deleted.</source>
+        <target>“{role}” is built in, so it can’t be deleted.</target>
+      </segment>
+    </unit>
+    <unit id="13b6afa6893c2461">
+      <segment>
+        <source>“{role}” is the role of people who sign up, and they can’t get “{permission}”: it isn’t safe for people you don’t know. Choose another sign-up role first.</source>
+        <target>“{role}” is the role of people who sign up, and they can’t get “{permission}”: it isn’t safe for people you don’t know. Choose another sign-up role first.</target>
+      </segment>
+    </unit>
+    <unit id="bd7acfcc48e7a450">
+      <segment>
+        <source>“{role}” is the role of people who sign up. Choose another sign-up role in the sign-up settings first.</source>
+        <target>“{role}” is the role of people who sign up. Choose another sign-up role in the sign-up settings first.</target>
+      </segment>
+    </unit>
+    <unit id="5ce253d53811d94c">
+      <segment>
+        <source>“{role}” keeps “Use the admin panel” while it has other permissions. Take those away first.</source>
+        <target>“{role}” keeps “Use the admin panel” while it has other permissions. Take those away first.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

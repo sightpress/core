@@ -226,7 +226,7 @@ const SCREENS: Record<'admin' | 'editor' | 'contributor', string[]> = {
   admin: [
     '/account', '/admin', '/admin/analytics', '/admin/analytics/delete', '/admin/appearance', '/admin/appearance/colours', '/admin/audit', '/admin/features', '/admin/media', '/admin/media/{id}', '/admin/media/{id}/delete', '/admin/menus', '/admin/menus/{id}',
     '/admin/pages', '/admin/pages/new', '/admin/pages/{id}', '/admin/pages/{id}/revisions', '/admin/pages/{id}/revisions/{id}', '/admin/redirects', '/admin/settings', '/admin/settings/branding', '/admin/settings/languages', '/admin/settings/sign-up', '/admin/settings/storage',
-    '/admin/users', '/admin/users/invite', '/admin/users/{id}',
+    '/admin/roles', '/admin/roles/new', '/admin/roles/{name}', '/admin/users', '/admin/users/invite', '/admin/users/{id}',
   ],
   editor: [
     '/account', '/admin', '/admin/analytics', '/admin/media', '/admin/media/{id}', '/admin/media/{id}/delete', '/admin/menus', '/admin/menus/{id}', '/admin/pages',
@@ -244,8 +244,8 @@ for (const [role, email] of [['admin', 'ada@example.org'], ['editor', 'bea@examp
     const visited: string[] = [];
     while (queue.length > 0 && visited.length < 40) {
       const path = queue.shift() as string;
-      // One screen of each kind: /admin/pages/12 and /admin/pages/13 are the same screen.
-      const kind = path.replace(/\/\d+/g, '/{id}');
+      // One screen of each kind: /admin/pages/12 and /admin/pages/13 are the same screen, and so are two roles.
+      const kind = path.replace(/\/\d+/g, '/{id}').replace(/^\/admin\/roles\/(?!new$)[a-z][a-z0-9_]*/, '/admin/roles/{name}');
       if (seen.has(kind)) {
         continue;
       }

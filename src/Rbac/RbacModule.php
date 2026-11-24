@@ -8,6 +8,7 @@ use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\Contract\PermissionHolders;
 use SightPress\Core\Rbac\Contract\PermissionLookup;
 use SightPress\Core\Rbac\Contract\RoleGrants;
+use SightPress\Core\Rbac\Contract\Roles;
 use SightPress\Core\Rbac\Contract\SignUpRoles;
 use SightPress\Core\Rbac\Provisioning\SeedRoles;
 use SightPress\Core\Site\Contract\SiteProvisioning;
@@ -47,6 +48,7 @@ final class RbacModule implements ModuleInterface
         $registrar->services()->autowire(RegistrationRole::class, public: true);
         $registrar->services()->autowire(RegistrationRole::class, SignUpRoles::class, public: true);
         $registrar->services()->autowire(RoleManager::class, public: true);
+        $registrar->services()->autowire(RoleAdministration::class, Roles::class, public: true);
         $registrar->services()->autowire(RoleGrantPolicy::class, RoleGrants::class, public: true);
         $registrar->services()->autowire(RbacSeeder::class, public: true);
         $registrar->subscribers()->listen(SiteProvisioning::class, SeedRoles::class, SiteProvisioning::ROLES);

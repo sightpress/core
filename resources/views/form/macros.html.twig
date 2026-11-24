@@ -79,9 +79,13 @@
                 {%- for optionValue, optionLabel in field.choices %}
                     {%- set optionId = form.optionId(name, loop.index0) %}
                     {%- set checked = type == 'radios' ? value == optionValue ~ '' : (optionValue ~ '') in value %}
+                    {%- set optionHint = field.choiceHints[optionValue] ?? null %}
                 <div class="field-option">
-                    <input type="{{ type == 'radios' ? 'radio' : 'checkbox' }}" id="{{ optionId }}" name="{{ name }}{{ type == 'checkboxes' ? '[]' }}" value="{{ optionValue }}"{% if checked %} checked{% endif %}{% if invalid %} aria-invalid="true"{% endif %}>
+                    <input type="{{ type == 'radios' ? 'radio' : 'checkbox' }}" id="{{ optionId }}" name="{{ name }}{{ type == 'checkboxes' ? '[]' }}" value="{{ optionValue }}"{% if checked %} checked{% endif %}{% if invalid %} aria-invalid="true"{% endif %}{% if optionHint %} aria-describedby="{{ optionId }}-hint"{% endif %}>
                     <label for="{{ optionId }}">{{ t(optionLabel) }}</label>
+                    {%- if optionHint %}
+                    <p class="field-hint field-option__hint" id="{{ optionId }}-hint">{{ t(optionHint) }}</p>
+                    {%- endif %}
                 </div>
                 {%- endfor %}
             </fieldset>

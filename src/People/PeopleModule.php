@@ -4,7 +4,15 @@ declare(strict_types=1);
 
 namespace SightPress\Core\People;
 
+use SightPress\Core\People\Command\CreateRoleCommand;
+use SightPress\Core\People\Command\DeleteRoleCommand;
+use SightPress\Core\People\Command\GrantRoleCommand;
+use SightPress\Core\People\Command\ListRolesCommand;
+use SightPress\Core\People\Command\RevokeRoleCommand;
 use SightPress\Core\People\Http\AcceptInvitationHandler;
+use SightPress\Core\People\Http\DeleteRoleHandler;
+use SightPress\Core\People\Http\RoleHandler;
+use SightPress\Core\People\Http\RolesHandler;
 use SightPress\Core\People\Http\InvitationCodeHandler;
 use SightPress\Core\People\Http\InvitationPages;
 use SightPress\Core\People\Http\InviteHandler;
@@ -23,8 +31,8 @@ use SightPress\Module\Routing\Route;
 /**
  * The people who run a site: invitations (admins invite with any role, editors invite contributors — D3) with an
  * invitation code, the "Accept an invitation" pages where invited people type it and set up their account, and
- * the admin screens for users and for who may sign up (the sign-up pages themselves are the auth module's). Always
- * on.
+ * the admin screens for users, for roles (X-4) and for who may sign up (the sign-up pages themselves are the auth
+ * module's), and the `site:role:*` commands. Always on.
  */
 final class PeopleModule implements ModuleInterface
 {
@@ -52,7 +60,7 @@ final class PeopleModule implements ModuleInterface
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/people');
 
         $services = $registrar->services();
-        foreach ([Invitations::class, InvitationMailer::class, InviteHandler::class, InvitationPages::class, InvitationCodeHandler::class, AcceptInvitationHandler::class, UsersHandler::class, UserHandler::class, UserStatusHandler::class, SignUpSettingsHandler::class] as $class) {
+        foreach ([Invitations::class, InvitationMailer::class, InviteHandler::class, InvitationPages::class, InvitationCodeHandler::class, AcceptInvitationHandler::class, UsersHandler::class, UserHandler::class, UserStatusHandler::class, SignUpSettingsHandler::class, RolesHandler::class, RoleHandler::class, DeleteRoleHandler::class] as $class) {
             $services->autowire($class);
         }
 
@@ -66,6 +74,15 @@ final class PeopleModule implements ModuleInterface
         $routes->add(new Route('people.invitation.account', AcceptInvitationHandler::PATH, AcceptInvitationHandler::class, ['GET', 'POST']));
         $routes->add(new Route('people.sign_up', SignUpSettingsHandler::PATH, SignUpSettingsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('people.users', 'People', 'people.users', UsersHandler::PERMISSION, position: 40));
+        $role = RolesHandler::PATH . '/{' . RoleHandler::NAME_ATTRIBUTE . ':[a-z][a-z0-9_]*}';
+        $routes->add(new Route('people.roles', RolesHandler::PATH, RolesHandler::class, middleware: [AdminAccessMiddleware::class]));
+        $routes->add(new Route('people.role.new', RoleHandler::NEW_PATH, RoleHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('people.role', $role, RoleHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('people.role.delete', $role . '/delete', DeleteRoleHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $registrar->adminMenu()->add(new AdminMenuItem('people.invite', 'Invite someone', 'people.invite', InviteHandler::PERMISSION, position: 50));
+        $registrar->adminMenu()->add(new AdminMenuItem('people.roles', 'Roles', 'people.roles', RolesHandler::PERMISSION, position: 52));
+        foreach ([ListRolesCommand::class, CreateRoleCommand::class, GrantRoleCommand::class, RevokeRoleCommand::class, DeleteRoleCommand::class] as $command) {
+            $registrar->commands()->add($command);
+        }
     }
 }

@@ -14,7 +14,7 @@ example "Editor". Every site starts with four roles:
 
 ## Who uses it
 
-- **Site admins** change roles (permission `role.manage`) and the sign-up role.
+- **Site admins** change roles (permission `role.manage`, see `custom-roles.md`) and the sign-up role.
 - **Developers** add permissions from their module (`$registrar->permissions()->add(...)`); they are copied into
   every site and given to their default roles (and to Admin).
 

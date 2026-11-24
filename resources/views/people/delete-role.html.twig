@@ -1,0 +1,25 @@
+{#
+    Asks before deleting a role (/admin/roles/{name}/delete, X-4), or says why it can't be deleted.
+    Context: `role`, `problem` (null when it can be deleted), `error_count`, `action`, `cancel`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Delete the role “{role}”?', {role: t(role.label)}) }}{% endblock %}
+{% block content %}
+<h1>{{ t('Delete the role “{role}”?', {role: t(role.label)}) }}</h1>
+{%- if problem %}
+<section class="error-summary" id="delete-role-errors" aria-labelledby="delete-role-errors-title" tabindex="-1" autofocus>
+    <h2 id="delete-role-errors-title">{{ t('This role can’t be deleted') }}</h2>
+    <p>{{ t(problem) }}</p>
+</section>
+<p><a href="{{ cancel }}">{{ t('Back to the role') }}</a></p>
+{%- else %}
+<p>{{ t('Nobody has this role. Deleting it can’t be undone.') }}</p>
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <div class="page-editor__workflow">
+        <button type="submit" class="button button--danger">{{ t('Delete the role') }}</button>
+        <a href="{{ cancel }}">{{ t('Keep it') }}</a>
+    </div>
+</form>
+{%- endif %}
+{% endblock %}

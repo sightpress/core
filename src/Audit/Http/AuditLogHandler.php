@@ -42,6 +42,7 @@ final readonly class AuditLogHandler implements RequestHandlerInterface
         'media' => 'Media',
         'menu' => 'Menus',
         'user' => 'People',
+        'role' => 'Roles',
         'settings' => 'Site settings',
         'feature' => 'Features',
         'assistant' => 'AI assistant',

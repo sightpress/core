@@ -23,6 +23,9 @@ use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\Rbac\RbacSeeder;
 use SightPress\Core\Rbac\RegistrationRole;
 use SightPress\Core\Rbac\RoleManager;
+use SightPress\Core\Rbac\RoleAdministration;
+use SightPress\Core\Tenant\EnabledModules;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Rbac\RoleRepository;
 use SightPress\Core\Site\DbalSiteSettings;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -102,6 +105,11 @@ final class CoreSiteDatabase
     public function manager(): RoleManager
     {
         return new RoleManager($this->roles(), $this->registrationRole());
+    }
+
+    public function roleAdministration(EventDispatcherInterface $events = new RecordingEvents()): RoleAdministration
+    {
+        return new RoleAdministration($this->roles(), $this->manager(), $this->registrationRole(), new EnabledModules($this->registry), $events);
     }
 
     public function seeder(): RbacSeeder

@@ -1,0 +1,40 @@
+{#
+    The site's roles (/admin/roles, X-4): a data table with a caption, each role's name linking to its page, how many
+    permissions it has and how many people have it, and a note for built-in roles and the sign-up role.
+    Context: `rows` [{role: RoleSummary, path}], `new`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ t('Roles') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Roles') }}</h1>
+<p>{{ t('A role is a set of things people may do on the site. Everyone has one role; change it on their page in People.') }}</p>
+<p><a class="button" href="{{ new }}">{{ t('Create a role') }}</a></p>
+<div class="table-wrap" role="region" aria-labelledby="roles-caption" tabindex="0">
+    <table>
+        <caption id="roles-caption">{{ t('Every role on the site') }}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{ t('Role') }}</th>
+                <th scope="col">{{ t('Permissions') }}</th>
+                <th scope="col">{{ t('People') }}</th>
+                <th scope="col">{{ t('Notes') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%- for row in rows %}
+            <tr>
+                <th scope="row"><a href="{{ row.path }}">{{ t(row.role.label) }}</a></th>
+                <td>{{ row.role.name == 'admin' ? t('All') : row.role.permissions|length }}</td>
+                <td>{{ row.role.people }}</td>
+                <td>
+                    {%- set notes = [] %}
+                    {%- if row.role.fixed %}{% set notes = notes|merge([t('Built in, can’t be changed')]) %}{% endif %}
+                    {%- if row.role.signUp %}{% set notes = notes|merge([t('Role of people who sign up')]) %}{% endif %}
+                    {{- notes|join('. ') -}}
+                </td>
+            </tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
