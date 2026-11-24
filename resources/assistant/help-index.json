@@ -6,7 +6,7 @@
             "page": "Getting started",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/getting-started/",
-            "text": "This guide shows you how to run SightPress on your own computer, create your first website and sign in to its admin\npanel, so that you can try it out. You don't need to know how to program. It takes about 30 minutes, most of which is\nwaiting for downloads.\n\n!!! note \"What you can try today\"\n\n    You can create a website with ready-made pages, write, schedule and publish pages, translate them into other\n    languages, upload pictures and other files, invite people or let them sign up, make pages members-only, search\n    the website, read its visitor statistics, turn features on or off, and set up an optional AI assistant with your\n    own key. Running SightPress on a public server is not covered yet.",
+            "text": "This guide shows you how to run SightPress on your own computer, create your first website and sign in to its admin\npanel, so that you can try it out. You don't need to know how to program. It takes about 30 minutes, most of which is\nwaiting for downloads.\n\n!!! note \"What you can try today\"\n\n    You can create a website with ready-made pages, write, schedule and publish pages, translate them into other\n    languages, upload pictures and other files, invite people or let them sign up, make pages members-only, search\n    the website, read its visitor statistics, turn features on or off, change its theme, colours and page layouts, add\n    captions and transcripts, keep files in the cloud, and set up an optional AI assistant with your own key. Running SightPress on a public server is not covered yet.",
             "needs": []
         },
         {
@@ -115,7 +115,7 @@
             "page": "Getting started",
             "heading": "What to do next",
             "url": "https://docs.sightpress.org/latest/getting-started/#what-to-do-next",
-            "text": "The [how-to guides](how-to/index.md) show you how to write and publish pages, add a language and translate a page,\nschedule, move or restore pages, make a site members-only, let people sign up, turn features on or off, search the\nwebsite, read its analytics, set up the AI assistant and run SightPress in the background. To move an older\ninstallation to this version, see [Update SightPress](how-to/update-sightpress.md).\n\nTo start your website in more than one language, give `site:create` a list in `--locale`, for example\n`--locale=en-GB,pt-PT`: every starter page is then written in each language. See\n[Add a language and translate a page](how-to/add-a-language.md) to add one later, and\n[Turn features on or off](how-to/turn-features-on-or-off.md) to choose the optional features.\n\nYou can help improve SightPress without being a developer: see [Report a problem](how-to/report-a-problem.md) and\nthe other guides under *Help improve SightPress*.\n\nThe reference pages explain [roles](reference/roles-and-permissions.md), [blocks](reference/blocks.md),\n[search and AI visibility](reference/search-and-ai.md) and the [command line tool](reference/command-line.md).",
+            "text": "The [how-to guides](how-to/index.md) show you how to write and publish pages, add a language and translate a page,\nschedule, move or restore pages, make a site members-only, let people sign up, turn features on or off, search the\nwebsite, read its analytics, set up the AI assistant and run SightPress in the background. To move an older\ninstallation to this version, see [Update SightPress](how-to/update-sightpress.md).\n\nTo start your website in more than one language, give `site:create` a list in `--locale`, for example\n`--locale=en-GB,pt-PT`: every starter page is then written in each language. See\n[Add a language and translate a page](how-to/add-a-language.md) to add one later, and\n[Turn features on or off](how-to/turn-features-on-or-off.md) to choose the optional features.\n\nYou can help improve SightPress without being a developer: see [Report a problem](how-to/report-a-problem.md) and\nthe other guides under *Help improve SightPress*.\n\nTo change how your website looks, see [Install and change a theme](how-to/install-and-change-a-theme.md) and\n[Choose a page layout](how-to/choose-a-page-layout.md). Your files are kept in the `sites` folder on your computer. To\nkeep them elsewhere, see [Keep your files in the cloud](how-to/keep-files-in-the-cloud.md). For big files, see\n[Upload large files](how-to/upload-large-files.md) and [Import files from a folder](how-to/import-files.md). To make\nvideos and recordings accessible, see [Add captions and transcripts](how-to/add-captions-and",
             "needs": [
                 "settings.manage"
             ]
@@ -191,6 +191,50 @@
             ]
         },
         {
+            "id": "bf5a73d9d50f",
+            "page": "Add captions and transcripts",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/add-captions-and-transcripts/",
+            "text": "**Captions** show the words and important sounds of a video as it plays. A **transcript** gives the same information\nas text that anyone can read, including people using a screen reader or a braille display. SightPress asks for them\nbefore a page with a video or recording can be published.",
+            "needs": []
+        },
+        {
+            "id": "663782609fa1",
+            "page": "Add captions and transcripts",
+            "heading": "Add captions to a video",
+            "url": "https://docs.sightpress.org/latest/how-to/add-captions-and-transcripts/#add-captions-to-a-video",
+            "text": "Captions are a WebVTT file, with a name ending in `.vtt`. Many video and subtitle tools can export one.\n\n1. In the admin menu, choose **Media**, then open the video.\n2. Find the **Captions** heading. There is one file field per language of the website.\n3. Choose the file under **Captions file in …**, then choose **Upload captions in …**.\n4. You should see \"The captions have been saved.\" If the file has a mistake, it is refused with the line to fix, for\n   example \"line 3: the cue must end after it starts\".\n\nVisitors get a captions choice per language in the video player. It starts on the language of the page, or else the\nwebsite's main language.",
+            "needs": [
+                "media.upload"
+            ]
+        },
+        {
+            "id": "f3317fab2bb8",
+            "page": "Add captions and transcripts",
+            "heading": "Write a transcript",
+            "url": "https://docs.sightpress.org/latest/how-to/add-captions-and-transcripts/#write-a-transcript",
+            "text": "1. In **Media**, open the video or recording.\n2. Write the transcript for each language. Include who is speaking and any important sounds.\n3. Choose **Save details**.\n\nVisitors open it with the **Transcript** button under the player, by mouse or keyboard. Transcripts of public files\nare also in each page's Markdown version and in `llms-full.txt`, for AI readers.\n\n!!! note \"A video with no speech\"\n\n    A video with no speech still needs a description of what happens in its transcript.",
+            "needs": [
+                "media.upload"
+            ]
+        },
+        {
+            "id": "d6bf653aa0bf",
+            "page": "Add captions and transcripts",
+            "heading": "Tidy a transcript with the AI assistant",
+            "url": "https://docs.sightpress.org/latest/how-to/add-captions-and-transcripts/#tidy-a-transcript-with-the-ai-assistant",
+            "text": "If the [AI assistant](use-the-ai-assistant.md) is on, it can add punctuation, paragraphs and speaker labels to a saved\ntranscript of up to 6,000 characters. It can't change the words: an answer that does is refused.\n\n1. Choose **Tidy up the transcript**, then **Insert**.\n2. Read the result against the recording, and correct it.\n3. Tick **I checked the transcript against the recording**, then choose **Save details**.\n\nUntil someone has checked it, pages that show it can't be published.",
+            "needs": []
+        },
+        {
+            "id": "5c3686beafe0",
+            "page": "Add captions and transcripts",
+            "heading": "Privacy",
+            "url": "https://docs.sightpress.org/latest/how-to/add-captions-and-transcripts/#privacy",
+            "text": "Captions and transcripts can name or quote people. They are deleted with the file.",
+            "needs": []
+        },
+        {
             "id": "7c4c69cfd709",
             "page": "Change the ports SightPress uses",
             "heading": "",
@@ -252,6 +296,86 @@
             "heading": "Change your email address",
             "url": "https://docs.sightpress.org/latest/how-to/change-your-email-or-password/#change-your-email-address",
             "text": "1. On *My account*, choose **Change your email address**.\n2. Type the **New email address** and your **Current password**, then choose **Send the code**.\n3. We email a 6-digit code to the **new** address. The email has no link.\n4. Type the code on the next page and choose **Confirm my new email address**. You should see \"Your email address is\n   now …. Sign in with it from now on.\"\n\nYour old address gets an email saying that the address was changed, with the new one partly hidden and no link.\nUntil you type the code, nothing changes. See [Codes we send you](codes-we-send-you.md).\n\nEvery change is written to the website's audit log, without the passwords.",
+            "needs": []
+        },
+        {
+            "id": "b6f45b8ba422",
+            "page": "Choose a page layout",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/choose-a-page-layout/",
+            "text": "A **layout** decides how a page's content is arranged. You choose one for each page. Your words and blocks stay the\nsame when you change it.\n\n1. In the admin menu, choose **Pages**, then open a page, or choose to add a new one.\n2. Find **Layout** and choose one.\n3. Save the page, then open it to check how it reads.\n\n| Layout | What it does | Good for |\n| --- | --- | --- |\n| **Home page** | The title and summary as a large introduction. | The first page of the website. |\n| **Standard page** | One comfortable reading column. | Most pages. |\n| **Landing** | A wide introduction band, then content in full-width sections. | A single campaign or call to action. |\n| **Sidebar** | Content with a side column of related links and notes. It lists the pages in the same section. | A section with several related pages. |\n| **Full width** | Content across the whole page width. | Wide galleries and tables. |\n\nOn narrow screens and when zoomed in, every layout becomes one column, so nothing needs sideways scrolling.",
+            "needs": []
+        },
+        {
+            "id": "28d472da1eee",
+            "page": "Choose a page layout",
+            "heading": "When you change theme",
+            "url": "https://docs.sightpress.org/latest/how-to/choose-a-page-layout/#when-you-change-theme",
+            "text": "Not every theme has every layout. Before you switch to a theme that lacks one, the **Appearance** screen lists the\npages affected. They are shown in the standard layout, and they keep their own layout for when you switch back. See\n[Install and change a theme](install-and-change-a-theme.md).",
+            "needs": []
+        },
+        {
+            "id": "719de266d4a6",
+            "page": "Choose upload limits",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/choose-upload-limits/",
+            "text": "This guide helps whoever runs a SightPress installation decide how large a file each website accepts. A brochure\nwebsite might keep small pictures and no large videos, while a podcast needs long audio files.",
+            "needs": []
+        },
+        {
+            "id": "4d3020e642c9",
+            "page": "Choose upload limits",
+            "heading": "The two kinds of limit",
+            "url": "https://docs.sightpress.org/latest/how-to/choose-upload-limits/#the-two-kinds-of-limit",
+            "text": "- **Website limits** say how large a picture, video, audio file or document can be. Each website can have its own.\n- **Server limits** say how much the server takes in one upload. They are the same for every website. If you need to\n  change them, see [Fix upload size limits](fix-upload-size-limits.md).\n\nPeople can upload the **smaller** of the two. Website admins see the result in **Site settings** and next to each\nupload field, but they can't change it.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "946141493861",
+            "page": "Choose upload limits",
+            "heading": "Recommended values",
+            "url": "https://docs.sightpress.org/latest/how-to/choose-upload-limits/#recommended-values",
+            "text": "| Kind of installation       | `UPLOAD_MAX_SIZE` | `PHP_MEMORY_LIMIT` | Website limits                                                    |\n|----------------------------|-------------------|--------------------|-------------------------------------------------------------------|\n| **Standard** (the default) | `64M`             | `256M`             | Pictures 20 MB, documents 50 MB, audio 200 MB, video 1 GB         |\n| **Small or shared hosting** | `32M`            | `256M`             | Pictures 20 MB, documents 20 MB, audio and video 32 MB            |\n| **Lots of media**          | `64M`             | `512M` | Larger audio and video, and pictures up to 50 million pixels |\n\nWith JavaScript, SightPress [sends large files in parts](upload-large-files.md), so a file can be larger than\n`UPLOAD_MAX_SIZE`, up to the website's limit. Without JavaScript, a file can't be larger than `UPLOAD_MAX_SIZE`.",
+            "needs": []
+        },
+        {
+            "id": "fa008f42502b",
+            "page": "Choose upload limits",
+            "heading": "See a website's limits",
+            "url": "https://docs.sightpress.org/latest/how-to/choose-upload-limits/#see-a-websites-limits",
+            "text": "Type this in the `skeleton` folder, replacing `demo` with the website's short name:\n\n```sh\ndocker compose exec php bin/sightpress site:media:limits demo\n```\n\nYou should see each kind of file, its limit, and whether it is **this site**'s own value or the **install default**.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "6530e926424f",
+            "page": "Choose upload limits",
+            "heading": "Change a website's limits",
+            "url": "https://docs.sightpress.org/latest/how-to/choose-upload-limits/#change-a-websites-limits",
+            "text": "1. Lowering a limit needs no preparation. To **raise** one above the default, first set the most any website may\n   use in `config/tenant.php`:\n\n    ```php\n    'media' => [\n        'limits' => [\n            'max' => ['audio' => '500M'],\n        ],\n    ],\n    ```\n\n2. Set the website's limit:\n\n    ```sh\n    docker compose exec php bin/sightpress site:media:limits demo --audio=500M\n    ```\n\n    You should see **The upload limits of \"demo\" have been saved.** A value above the maximum is refused, and the\n    message says what the maximum is.\n\n3. Find out which server values that limit needs:\n\n    ```sh\n    docker compose exec php bin/sightpress system:check --site=demo --recommend\n    ```\n\n    It prints lines ready to copy into `.env`, or into the settings of PHP, nginx, Apache or Caddy. Leave out\n    `--site=demo` to get the values that suit all your websites.\n\n4. If the values differ from yours, change them and restart, as in\n   [Fix upload size limits](fix-upload-size-limits.md).\n\nTo go back to the installation's limits:\n\n```sh\ndocker compose exec php bin/sightpress site:media:limits demo --reset\n```",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "98b9e877f15b",
+            "page": "Choose upload limits",
+            "heading": "Check what the web server really accepts",
+            "url": "https://docs.sightpress.org/latest/how-to/choose-upload-limits/#check-what-the-web-server-really-accepts",
+            "text": "SightPress can't read the web server's limit, so it can test it by sending empty files of growing sizes. Nothing is\nstored. In the standard Docker setup:\n\n```sh\ndocker compose exec php bin/sightpress system:check --probe-url=http://nginx\n```\n\nYou should see a line such as **Probe: the web server accepts 65 MB and refuses 66 MB.** If that is less than\nSightPress was told, the command says which setting to correct.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "1e2c29129b72",
+            "page": "Choose upload limits",
+            "heading": "If something goes wrong",
+            "url": "https://docs.sightpress.org/latest/how-to/choose-upload-limits/#if-something-goes-wrong",
+            "text": "**\"The audio limit of 600 MB is above the most this install allows\"**\n:   Raise `max` in `config/tenant.php` (step 1), or choose a lower value.\n\n**The new limit doesn't show on the upload form**\n:   The server's limit is probably lower. Run the command in step 3 and change the values it prints.\n\n**\"The probe got the answer 404\"**\n:   The address doesn't reach this SightPress. In Docker, use `http://nginx` and run the command with\n    `docker compose exec php`.",
             "needs": []
         },
         {
@@ -387,7 +511,7 @@
             "page": "Fix upload size limits",
             "heading": "What you see",
             "url": "https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/#what-you-see",
-            "text": "- Next to the upload field in **Media**, everyone sees the largest file they can upload, for example \"Largest file\n  you can upload: pictures 20 MB, documents 50 MB, audio files 64 MB and videos 64 MB.\"\n- If you choose a file that is too large, the browser refuses it before sending it. The reason appears under the\n  field, which gets focus, so screen readers read it out.\n- If something too large is sent anyway, you see a page called **This is too large to send**. It says how much the\n  server accepts and has a **Go back to the form** link.\n- Admins see a warning called **Your server’s settings stop some uploads** on the dashboard and in **Media**. Each\n  point names a server setting and the value it needs. Editors and contributors don't see it.",
+            "text": "- Next to the upload field in **Media**, everyone sees the largest file they can upload, for example \"Largest file\n  you can upload: pictures 20 MB, documents 50 MB, audio files 200 MB and videos 1 GB.\" Large files are\n  [sent in parts](upload-large-files.md). Without JavaScript the lower server limit applies, and the hint says so.\n- If you choose a file that is too large, the browser refuses it before sending it. The reason appears under the\n  field, which gets focus, so screen readers read it out.\n- If something too large is sent anyway, you see a page called **This is too large to send**. It says how much the\n  server accepts and has a **Go back to the form** link.\n- Admins see a warning called **Your server’s settings stop some uploads** on the dashboard and in **Media**. Each\n  point names a server setting and the value it needs. It also says how many uploads the web server refused in the\n  last 7 days. Editors and contributors don't see it.\n- To put the warning away, choose **Hide until this changes**. It comes back by itself if the result changes.",
             "needs": [
                 "media.upload"
             ]
@@ -413,10 +537,51 @@
         {
             "id": "83a03dcede58",
             "page": "Fix upload size limits",
+            "heading": "Choose how large each website's files can be",
+            "url": "https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/#choose-how-large-each-websites-files-can-be",
+            "text": "To give one website larger or smaller limits than the others, see [Choose upload limits](choose-upload-limits.md).",
+            "needs": []
+        },
+        {
+            "id": "6d9d4c11e8da",
+            "page": "Fix upload size limits",
             "heading": "Large audio files and videos",
             "url": "https://docs.sightpress.org/latest/how-to/fix-upload-size-limits/#large-audio-files-and-videos",
-            "text": "The website accepts audio files up to 200 MB and videos up to 1 GB, but for now one upload can't be larger than\n`UPLOAD_MAX_SIZE`. A later version will send large files in parts, so they can be larger than the server's limit.\n`system:check` mentions this as a note, not a problem.",
+            "text": "The website accepts audio files up to 200 MB and videos up to 1 GB. With JavaScript, SightPress\n[sends large files in parts](upload-large-files.md), so they can be larger than `UPLOAD_MAX_SIZE`. Without JavaScript,\none upload can't be larger than `UPLOAD_MAX_SIZE`. `system:check` mentions this lower limit as a note, not a problem.",
             "needs": []
+        },
+        {
+            "id": "5bdf2cf982bb",
+            "page": "Import files from a folder",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/import-files/",
+            "text": "If you have many files, or files too large for the browser, you can add them to a website's media library from the\nserver. This is done by whoever runs your SightPress installation. Website limits on file size don't apply, but every\nsafety check does.\n\nStart each command with `docker compose run --rm --no-deps php`, as in\n[Try the command line tool](try-the-command-line-tool.md). The folder must be one the command can read: with Docker,\nput it inside the `skeleton` folder.\n\n1. Import a folder into the website `demo`, including the folders inside it:\n\n    ```sh\n    bin/sightpress site:media:import demo imports/ --recursive\n    ```\n\n2. Read the result. Each file gets a line, then a summary such as `Imported: 12. Already present: 1. Refused: 1.`\n3. Open **Media** in the admin panel. New files are unpublished until you describe and publish them.",
+            "needs": [
+                "media.upload",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "de59ac38e25b",
+            "page": "Import files from a folder",
+            "heading": "Options",
+            "url": "https://docs.sightpress.org/latest/how-to/import-files/#options",
+            "text": "| Option | What it does |\n| --- | --- |\n| `--recursive` | Also imports the files inside folders. |\n| `--publish` | Publishes the new files straight away. |\n| `--alt=\"…\"` | Gives every new picture this description. Use it only if it is true of all of them. |\n| `--locale=pt-PT` | The language of that description. The default is the website's main language. |\n| `--memory-limit=2G` | Gives this run more memory, for very large pictures. |",
+            "needs": [
+                "media.upload",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "d2f068ba6ba3",
+            "page": "Import files from a folder",
+            "heading": "What happens to each file",
+            "url": "https://docs.sightpress.org/latest/how-to/import-files/#what-happens-to-each-file",
+            "text": "- **Imported:** the file passed the checks and is in the library.\n- **Already present:** the library already has exactly this file, so it isn't stored twice.\n- **Refused:** the line says why, for example that a file isn't really the type its name says. The import carries on\n  with the other files, and the command ends with an error so that scripts notice.\n\nA very large picture is refused with the memory it needs. Run the command again with `--memory-limit=` and that value.",
+            "needs": [
+                "media.upload",
+                "settings.manage"
+            ]
         },
         {
             "id": "b6ea26678059",
@@ -431,7 +596,7 @@
             "page": "How-to guides",
             "heading": "Your website",
             "url": "https://docs.sightpress.org/latest/how-to/#your-website",
-            "text": "- [Create a website](create-a-site.md) with the command line tool, and give its first admin a setup code.\n- [Write and publish a page](write-and-publish-a-page.md), from a draft through review to the public website.\n- [Schedule a page](schedule-a-page.md) to be published, or taken off the website, at a set time.\n- [Restore an older version of a page](restore-an-older-version.md), and see what changed, word by word.\n- [Move or rename a page without breaking links](move-or-rename-a-page.md), and look after the redirects.\n- [Put a page in the trash and get it back](put-a-page-in-the-trash.md), archive it, copy it or delete it for good.\n- [Add a language and translate a page](add-a-language.md).\n- [Make a website or a page members-only](make-a-site-members-only.md).\n- [Let people sign up](let-people-sign-up.md) for an account, confirmed with an emailed code.\n- [Turn features on or off](turn-features-on-or-off.md) for one website, and delete a feature's data.\n- [Search your website](search-your-website.md) from any page, and leave a page out of the search.\n- [See who visits your website](see-who-visits-your-website.md): the Analytics screen, its charts and tables, and\n  what is and isn't counted.",
+            "text": "- [Plan your website](plan-a-site.md): choose the right options and content for what you need.\n- [Create a website](create-a-site.md) with the command line tool, and give its first admin a setup code.\n- [Write and publish a page](write-and-publish-a-page.md), from a draft through review to the public website.\n- [Schedule a page](schedule-a-page.md) to be published, or taken off the website, at a set time.\n- [Restore an older version of a page](restore-an-older-version.md), and see what changed, word by word.\n- [Move or rename a page without breaking links](move-or-rename-a-page.md), and look after the redirects.\n- [Put a page in the trash and get it back](put-a-page-in-the-trash.md), archive it, copy it or delete it for good.\n- [Add a language and translate a page](add-a-language.md).\n- [Make a website or a page members-only](make-a-site-members-only.md).\n- [Let people sign up](let-people-sign-up.md) for an account, confirmed with an emailed code.\n- [Turn features on or off](turn-features-on-or-off.md) for one website, and delete a feature's data.\n- [Install and change a theme](install-and-change-a-theme.md): install themes on the server, and choose one for each website.\n- [Choose a page layout](choose-a-page-layout.md): home, standard, landing, sidebar or full width.\n- [Add captions and transcripts](add-captions-and-transcripts.md) to videos and recordings, in each language.\n- [Search your website](search-your-website.md) from any page, and leave a page out of the search.\n- ",
             "needs": [
                 "analytics.view"
             ]
@@ -449,7 +614,7 @@
             "page": "How-to guides",
             "heading": "Running SightPress",
             "url": "https://docs.sightpress.org/latest/how-to/#running-sightpress",
-            "text": "- [Update SightPress](update-sightpress.md) to a newer version, keeping every website.\n\n- [Fix upload size limits](fix-upload-size-limits.md): what the admin warning means, and how to let larger files in.\n- [Run SightPress in the background](run-in-the-background.md), so that you can close the terminal.\n- [Change the ports SightPress uses](change-the-ports.md), if another program already uses them.\n- [Start a database server](start-a-database.md): MySQL, MariaDB or PostgreSQL.",
+            "text": "- [Update SightPress](update-sightpress.md) to a newer version, keeping every website.\n\n- [Keep your files in the cloud](keep-files-in-the-cloud.md): AWS, Cloudflare or another service, with a CDN.\n- [Upload large files](upload-large-files.md): send big files in parts, and pause, resume or cancel.\n- [Import files from a folder](import-files.md) on the server, of any size.\n- [Fix upload size limits](fix-upload-size-limits.md): what the admin warning means, and how to let larger files in.\n- [Choose upload limits](choose-upload-limits.md): how large a file each website accepts.\n- [Run SightPress in the background](run-in-the-background.md), so that you can close the terminal.\n- [Change the ports SightPress uses](change-the-ports.md), if another program already uses them.\n- [Start a database server](start-a-database.md): MySQL, MariaDB or PostgreSQL.",
             "needs": []
         },
         {
@@ -457,7 +622,7 @@
             "page": "How-to guides",
             "heading": "Checking the built-in tools",
             "url": "https://docs.sightpress.org/latest/how-to/#checking-the-built-in-tools",
-            "text": "- [Open the test e-mail inbox](open-the-test-email-inbox.md), which catches every e-mail SightPress sends.\n- [Open the file storage console](open-the-file-storage-console.md), which later versions will use for uploaded files.\n- [Try the command line tool](try-the-command-line-tool.md).",
+            "text": "- [Open the test e-mail inbox](open-the-test-email-inbox.md), which catches every e-mail SightPress sends.\n- [Open the file storage console](open-the-file-storage-console.md), a local service for trying cloud storage.\n- [Try the command line tool](try-the-command-line-tool.md).",
             "needs": []
         },
         {
@@ -473,7 +638,7 @@
             "page": "How-to guides",
             "heading": "Help improve SightPress",
             "url": "https://docs.sightpress.org/latest/how-to/#help-improve-sightpress",
-            "text": "You don't need to be a developer for any of these. Everyone who takes part follows our\n[Code of Conduct](https://github.com/sightpress/docs/blob/main/CODE_OF_CONDUCT.md).\n\n- [Report a problem](report-a-problem.md), including accessibility barriers, with or without a GitHub account.\n- [Translate SightPress](translate-sightpress.md) into a language you speak fluently.\n- [Review the interface](review-the-interface.md) as a sighted person, and describe a screenshot in words.\n- [Test with assistive technology](test-with-assistive-technology.md) before each release.",
+            "text": "You don't need to be a developer for any of these. Everyone who takes part follows our\n[Code of Conduct](https://github.com/sightpress/docs/blob/main/CODE_OF_CONDUCT.md).\n\n- [Report a problem](report-a-problem.md), including accessibility barriers, with or without a GitHub account.\n- [Translate SightPress](translate-sightpress.md) into a language you speak fluently.\n- [Review the interface](review-the-interface.md) as a sighted person, and describe a screenshot in words.\n- [Review a theme change](review-a-theme-change.md) from the preview every theme pull request gets.\n- [Test with assistive technology](test-with-assistive-technology.md) before each release.",
             "needs": []
         },
         {
@@ -481,7 +646,7 @@
             "page": "How-to guides",
             "heading": "Reference",
             "url": "https://docs.sightpress.org/latest/how-to/#reference",
-            "text": "- [Roles and permissions](../reference/roles-and-permissions.md): what admins, editors, contributors and members can do.\n- [Blocks](../reference/blocks.md): every kind of content block and its fields.\n- [Search and AI visibility](../reference/search-and-ai.md): how pages appear in search engines and AI search.\n- [Command line reference](../reference/command-line.md): every command of `bin/sightpress`.",
+            "text": "- [Roles and permissions](../reference/roles-and-permissions.md): what admins, editors, contributors and members can do.\n- [Blocks](../reference/blocks.md): every kind of content block and its fields.\n- [Search and AI visibility](../reference/search-and-ai.md): how pages appear in search engines and AI search.\n- [Command line reference](../reference/command-line.md): every command of `bin/sightpress`.\n- [Theme contract](../reference/theme-contract.md): what a theme can rely on and must provide.",
             "needs": [
                 "settings.manage"
             ]
@@ -493,6 +658,162 @@
             "url": "https://docs.sightpress.org/latest/how-to/#coming-later",
             "text": "Putting SightPress on a public server is not covered yet. A guide will appear here when it is ready.",
             "needs": []
+        },
+        {
+            "id": "bc9861689f66",
+            "page": "Install and change a theme",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/install-and-change-a-theme/",
+            "text": "A **theme** decides how your websites look: colours, fonts, spacing and the layout of the pages. Every SightPress\ninstallation has the **default theme**, and you can install more. Each website then uses one of the installed\nthemes, and you can change it at any time. Your pages and their content stay the same: only the look changes.\n\nInstalling a theme is done by whoever runs your SightPress installation, on the server. Choosing a theme for a\nwebsite is done by one of its **admins**.\n\n!!! note \"No theme is installed from the admin panel\"\n\n    For safety, themes are never uploaded through the website. They are installed on the server, the same way as\n    SightPress itself.",
+            "needs": []
+        },
+        {
+            "id": "af789e701efc",
+            "page": "Install and change a theme",
+            "heading": "Install a theme",
+            "url": "https://docs.sightpress.org/latest/how-to/install-and-change-a-theme/#install-a-theme",
+            "text": "You need the name of the theme's package, for example `acme/theme-harbour`. Run these in your project folder. With Docker,\nput `docker compose run --rm --no-deps php` in front of each one, as in\n[Try the command line tool](try-the-command-line-tool.md):\n\n1. Install the package: `composer require acme/theme-harbour`.\n2. Let SightPress notice it: `bin/sightpress cache:clear`.\n3. Check it: `bin/sightpress theme:validate acme-harbour`. You should see \"The theme … passes\". If it fails, the\n   message says what is wrong, for example a colour pair that is too hard to read, with the colours and the ratio.\n   A theme that fails can't be used until its author fixes it.\n4. See every theme: `bin/sightpress theme:list`. Each line shows the theme, its version, whether websites may use it,\n   and which websites use it.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "1b47034a6c9b",
+            "page": "Install and change a theme",
+            "heading": "Choose which themes websites may use",
+            "url": "https://docs.sightpress.org/latest/how-to/install-and-change-a-theme/#choose-which-themes-websites-may-use",
+            "text": "By default, every installed theme can be used by every website, and new websites start with the default theme. To\nchange that, edit `config/tenant.php`:\n\n```php\n'themes' => [\n    // Only these themes can be chosen; null means every installed theme.\n    'allowed' => ['default', 'acme-harbour'],\n    // The theme of new websites. It must be one of the allowed themes.\n    'default' => 'acme-harbour',\n],\n```\n\nIf the default theme isn't one of the allowed themes, SightPress won't start and says why.",
+            "needs": []
+        },
+        {
+            "id": "f4452e8a9ee3",
+            "page": "Install and change a theme",
+            "heading": "Change the theme of a website",
+            "url": "https://docs.sightpress.org/latest/how-to/install-and-change-a-theme/#change-the-theme-of-a-website",
+            "text": "In the admin panel (you need to be an admin of the website):\n\n1. In the admin menu, choose **Appearance**.\n2. You should see one section for each installed theme, with its name as a heading, what it is like, and its\n   **Status** in words, for example \"The site's theme\" or \"Available\". If a picture of the theme was made, it is\n   there with a description; otherwise the description is written out.\n3. To look first, choose **Preview …** (it opens in a new tab): a sample page with every kind of block in that theme.\n4. Choose **Use …**. If some pages use a layout the theme doesn't have, a page lists them first: they will be shown\n   in the standard layout, and they keep their own layout for later. Choose **Use …** again to go ahead, or\n   **Keep the current theme**.\n5. A message at the top says the theme is now the site's theme. Screen readers read the message out.\n\nOr from the command line: `bin/sightpress site:theme:apply demo acme-harbour` (the website's short name, then the\ntheme). SightPress checks the theme again before it applies it, and the website's activity log records the change.\n\nOpen the website: it now has the new look. The other websites keep theirs.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "cf6780b66222",
+            "page": "Install and change a theme",
+            "heading": "Change the colours of the theme",
+            "url": "https://docs.sightpress.org/latest/how-to/install-and-change-a-theme/#change-the-colours-of-the-theme",
+            "text": "1. On the **Appearance** screen, choose **Change the colours of the site's theme**.\n2. You should see two groups, **Light mode** and **Dark mode**, each with the background, text, links, buttons and\n   highlights, text on buttons, borders and the focus outline. Each colour is written as `#` and six digits or\n   letters, for example `#0a57c2`.\n3. Change a colour and choose **Save the colours**.\n4. If the colour is too hard to read against the colours next to it, SightPress refuses it and says which colours\n   clash and by how much, for example \"on-primary on primary has a contrast of 2.14:1 in light mode; it needs at\n   least 4.5:1\". What you typed is kept, so you can adjust it.\n5. To undo your changes, choose **Use the theme's own colours**.\n\nThe admin panel keeps its own colours whatever you choose.",
+            "needs": []
+        },
+        {
+            "id": "95f42b003f76",
+            "page": "Install and change a theme",
+            "heading": "Choose a layout for each page",
+            "url": "https://docs.sightpress.org/latest/how-to/install-and-change-a-theme/#choose-a-layout-for-each-page",
+            "text": "Themes offer layouts such as **Landing**, **Sidebar** and **Full width**. See\n[Choose a page layout](choose-a-page-layout.md).",
+            "needs": []
+        },
+        {
+            "id": "9d3e0fa1c413",
+            "page": "Install and change a theme",
+            "heading": "Pictures of each theme",
+            "url": "https://docs.sightpress.org/latest/how-to/install-and-change-a-theme/#pictures-of-each-theme",
+            "text": "The pictures and previews on the **Appearance** screen are made on the server by\n`bin/sightpress theme:publish-assets`, which runs after every `composer install` and `composer update`. Pictures\nneed Node.js and the Chromium browser on the server; without them, the screen describes each theme in words and\nstill links to its preview.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "950bd375b94f",
+            "page": "Install and change a theme",
+            "heading": "Remove a theme",
+            "url": "https://docs.sightpress.org/latest/how-to/install-and-change-a-theme/#remove-a-theme",
+            "text": "1. Run `bin/sightpress theme:list` to see which websites use the theme.\n2. Give those websites another theme first (see above).\n3. Remove the package: `composer remove acme/theme-harbour`, then `bin/sightpress cache:clear`.\n\nIf a website still used the theme, nothing breaks: the website is shown in the default theme. Its admins see\n\"Your site is shown in the default theme\" on the dashboard, with the reason, and the server log notes it too.\nChoosing a theme for the website again makes the message go away.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "282bc3c1e644",
+            "page": "Install and change a theme",
+            "heading": "The admin panel keeps its look",
+            "url": "https://docs.sightpress.org/latest/how-to/install-and-change-a-theme/#the-admin-panel-keeps-its-look",
+            "text": "The admin panel always uses the look of the default theme, whatever theme a website has. Admins can always find\ntheir way around, and the admin panel keeps its contrast.",
+            "needs": []
+        },
+        {
+            "id": "90bf81b968f7",
+            "page": "Keep your files in the cloud",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-files-in-the-cloud/",
+            "text": "By default, a website keeps its pictures, videos and other files on your server. You can move them to **cloud\nstorage** instead, and let a **CDN** (content delivery network) deliver public files from near each visitor. Both are\noptional. Nothing is sent to another company unless you set it up.\n\nThis is done by whoever runs your SightPress installation, with the command line tool. Start each command with\n`docker compose run --rm --no-deps php`, as in [Try the command line tool](try-the-command-line-tool.md). The examples\nuse a website called `demo`.\n\n!!! warning \"Before you start\"\n\n    - **It may cost money.** AWS and Cloudflare charge for storage and traffic. Check their prices first.\n    - **Your files move to another company.** Files can contain personal data, so say so in your privacy notice. If\n      the location is outside your country, that may be an international transfer of personal data.\n    - **Keep a copy** of the `sites` folder until you have checked the website.",
+            "needs": []
+        },
+        {
+            "id": "f21c996321f2",
+            "page": "Keep your files in the cloud",
+            "heading": "Which service to use",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-files-in-the-cloud/#which-service-to-use",
+            "text": "SightPress works with any S3-compatible service, such as AWS S3, Cloudflare R2, DigitalOcean Spaces or MinIO.\n\nSightPress can create what you need at **AWS** or **Cloudflare**. For another service, create a private bucket in its\ncontrol panel and go to [Connect the bucket](#connect-the-bucket).",
+            "needs": []
+        },
+        {
+            "id": "ecac8b201c29",
+            "page": "Keep your files in the cloud",
+            "heading": "Create the bucket and CDN",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-files-in-the-cloud/#create-the-bucket-and-cdn",
+            "text": "1. Put your provider's keys in the environment for this one run. SightPress never saves them.\n    - AWS: `SIGHTPRESS_AWS_ACCESS_KEY_ID` and `SIGHTPRESS_AWS_SECRET_ACCESS_KEY`.\n    - Cloudflare: `SIGHTPRESS_CLOUDFLARE_ACCOUNT_ID` and `SIGHTPRESS_CLOUDFLARE_API_TOKEN`. To use your own domain with\n      `--domain`, also set `SIGHTPRESS_CLOUDFLARE_ZONE_ID`.\n2. Read the plan. This contacts nobody and changes nothing:\n\n    ```sh\n    bin/sightpress site:storage:provision demo --provider=aws --dry-run\n    ```\n\n    You should see each item that will be created and its location.\n3. Run the same command without `--dry-run` to create them. It is safe to run it twice.\n\n**What is created.** At AWS: a private bucket, a CloudFront CDN that alone can read it, permission for browsers to\nupload to it from your website, and rules that clear unfinished uploads. At Cloudflare: an R2 bucket with the same\nupload permission and rules, and a public address if you use `--domain`.\n\n**Where it is created.** The location follows the website's time zone:\n\n| Website's time zone | AWS | Cloudflare R2 |\n| --- | --- | --- |\n| United Kingdom | London (`eu-west-2`) | EU, because R2 has no UK location |\n| EU, EEA or Switzerland | Frankfurt (`eu-central-1`) | EU |\n| Anywhere else | You choose with `--region` | You choose with `--region` (`eu`, `us` or `default`) |\n\nCreating these doesn't change your website yet.\n\nTo let the website's admins do this under **Site settings**, then **File storage**, set\n`SIGHTPRESS_PR",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "3aeff802985d",
+            "page": "Keep your files in the cloud",
+            "heading": "Connect the bucket",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-files-in-the-cloud/#connect-the-bucket",
+            "text": "1. Create keys limited to this bucket in your provider's control panel, and set them as `SIGHTPRESS_S3_ACCESS_KEY` and\n   `SIGHTPRESS_S3_SECRET_KEY`. SightPress stores them encrypted.\n2. Connect the bucket. For a provider other than AWS, add its address with `--endpoint`. MinIO also needs\n   `--path-style`.\n\n    ```sh\n    bin/sightpress site:storage:s3 demo --bucket=my-bucket --region=eu-west-2\n    ```\n\n    You should see that the bucket works and has been saved. The website still uses its local files.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "462fbf16c3e1",
+            "page": "Keep your files in the cloud",
+            "heading": "Move the files",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-files-in-the-cloud/#move-the-files",
+            "text": "```sh\nbin/sightpress site:storage:migrate demo\n```\n\nSightPress copies each file, checks it arrived intact, and then switches the website. If it stops, run it again and it\ngoes on from where it was. Your local copies stay until you are sure. To delete them after the check, run the command\nagain with `--delete-source`. This can't be undone.\n\nOpen the website and check that its pictures and files appear.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "900814bdfbe3",
+            "page": "Keep your files in the cloud",
+            "heading": "Turn on the CDN",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-files-in-the-cloud/#turn-on-the-cdn",
+            "text": "1. Set the CDN to fetch from your website, forward its host name, include the query string in its cache key, and not\n   forward cookies.\n2. Turn it on, with an address that starts with `https://`, and publish the theme's files:\n\n    ```sh\n    bin/sightpress site:storage:cdn demo --url=https://cdn.example.org\n    bin/sightpress theme:publish-assets\n    ```\n\nTo stop using it, run `bin/sightpress site:storage:cdn demo --remove`.\n\nPrivate files stay protected. Unpublished files and every file of a members-only website use signed addresses that\nstop working after a short time. After you unpublish a file or make a website members-only, a copy on the CDN can last\nup to five minutes.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "4f55d8565e00",
+            "page": "Keep your files in the cloud",
+            "heading": "Check it",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-files-in-the-cloud/#check-it",
+            "text": "Website admins can see where files are kept under **Site settings**, then **File storage**: the provider, the bucket,\nthe region and the CDN address. Keys are never shown.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "d566a6f97cdc",
+            "page": "Keep your files in the cloud",
+            "heading": "If something goes wrong",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-files-in-the-cloud/#if-something-goes-wrong",
+            "text": "**The command says the bucket can't be reached or the keys are wrong**\n:   Nothing was changed. Check the bucket name, the region, the address and the keys, then run it again.\n\n**Large uploads say they're using the server instead**\n:   The bucket doesn't allow uploads from your website's address. Files still upload, through your server. Add your\n    website's address to the bucket's CORS rules, allowing `PUT` and exposing `ETag`.\n\n**A website is deleted**\n:   `site:purge` also removes that website's folder in the bucket.",
+            "needs": [
+                "settings.manage"
+            ]
         },
         {
             "id": "41c8884e7898",
@@ -608,8 +929,10 @@
             "page": "Open the file storage console",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/how-to/open-the-file-storage-console/",
-            "text": "SightPress comes with a file storage program called MinIO, which has its own web console. This guide shows you how\nto sign in to it.\n\n1. Start SightPress (see [Getting started](../getting-started.md)).\n2. In your web browser, go to <http://localhost:9001>.\n3. You should see the MinIO sign-in page.\n4. Sign in with the user name `sightpress` and the password `sightpress-secret`.\n5. You should see the MinIO console. There are no files yet.\n\nIn this version, websites don't use MinIO yet. Each website keeps its uploaded files, such as pictures and documents,\nin its own folder inside the `sites` folder of the `skeleton`. A later version will let websites store their files in\nMinIO or another storage service.\n\nIf you changed `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` or `MINIO_CONSOLE_PORT` in your `.env` file, use your\nvalues instead. These settings only take effect the first time the storage starts.",
-            "needs": []
+            "text": "SightPress comes with a file storage program called MinIO, which has its own web console. This guide shows you how\nto sign in to it.\n\n1. Start SightPress (see [Getting started](../getting-started.md)).\n2. In your web browser, go to <http://localhost:9001>.\n3. You should see the MinIO sign-in page.\n4. Sign in with the user name `sightpress` and the password `sightpress-secret`.\n5. You should see the MinIO console. There are no files yet.\n\nBy default, each website keeps its uploaded files, such as pictures and documents, in its own folder inside the\n`sites` folder of the `skeleton`, so MinIO stays empty. The `site:storage:s3` command can move\na website's storage to MinIO or another S3-compatible service.\n\nIf you changed `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` or `MINIO_CONSOLE_PORT` in your `.env` file, use your\nvalues instead. These settings only take effect the first time the storage starts.",
+            "needs": [
+                "settings.manage"
+            ]
         },
         {
             "id": "84824c116dea",
@@ -617,6 +940,144 @@
             "heading": "",
             "url": "https://docs.sightpress.org/latest/how-to/open-the-test-email-inbox/",
             "text": "When SightPress runs on your computer, it never sends real e-mail. Every message goes to a test inbox called\nMailpit instead, so you can read it without anything leaving your computer. This guide shows you how to open it.\n\n1. Start SightPress (see [Getting started](../getting-started.md)).\n2. In your web browser, go to <http://localhost:8025>.\n3. You should see the Mailpit inbox. It is empty for now, with a message saying there are no messages.\n\nSightPress sends e-mail when:\n\n- someone forgets their password and asks for a code;\n- someone is invited to help with a website;\n- a page is sent for review: every editor and admin is told;\n- a visitor sends a message with a contact form.\n\nEach of these messages appears here a moment later. Choose a message to read it.\n\nThe inbox only gets messages when your `.env` file has the line `MAILER_DSN=smtp://mailpit:1025`. The file you copied\nfrom `.env.example` in [Getting started](../getting-started.md) already has it. Without it, SightPress sends nothing.\n\nIf you changed `MAILPIT_UI_PORT` in your `.env` file, use that number instead of `8025`.",
+            "needs": []
+        },
+        {
+            "id": "8c4b34780353",
+            "page": "Plan your website",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/",
+            "text": "This guide helps you decide how to set up a SightPress website before you build it. Answer a few questions about what\nthe website needs. The guide then suggests the settings to choose and the content to write.\n\nYou don't need to be technical to do the planning. Some choices are made by whoever runs your SightPress installation,\nand this guide says which ones.\n\n!!! note \"Which version this guide describes\"\n\n    This guide describes version 0.4. If you run 0.3, update first: it has no cloud storage, other themes, extra page\n    layouts or per-website upload limits. See [Update SightPress](update-sightpress.md).",
+            "needs": []
+        },
+        {
+            "id": "7dff39d73f5b",
+            "page": "Plan your website",
+            "heading": "Step 1: Answer these questions",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#step-1-answer-these-questions",
+            "text": "Write down your answers. Each one points to a choice in the next steps.\n\n| Question | Why it matters |\n| --- | --- |\n| Who is the website for, and what must they be able to do? | Decides your pages and calls to action. |\n| Is it public, or only for members? | Decides who can read it and whether search engines can find it. |\n| Who will write, check and publish pages? | Decides the roles you give people. |\n| Which languages do you need? | Decides how much translation to plan for. |\n| Will you publish large videos, audio or many files? | Decides file storage and upload limits. |\n| Do you expect a few visitors or a lot? | Decides the database and whether you need a CDN. |\n| Will you run one website or several? | Decides what to set for every website and what to set for each one. |\n| Do you want visitor figures or an AI assistant? | Decides which optional features to turn on. |",
+            "needs": []
+        },
+        {
+            "id": "30e86d4b80da",
+            "page": "Plan your website",
+            "heading": "Step 2: Start from the closest kind of website",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#step-2-start-from-the-closest-kind-of-website",
+            "text": "Pick the row closest to yours. You can change every choice later.\n\n| Kind of website | Database | Files | Access | People | Features |\n| --- | --- | --- | --- | --- | --- |\n| Personal website or portfolio | SQLite | On the server | Public | One admin | Search off if there are few pages |\n| Small business | SQLite | On the server | Public | One admin, perhaps an editor | Search and analytics |\n| Charity or community group | SQLite or MariaDB | On the server | Public, with some members-only pages | Admin, editor, volunteer contributors | Search and analytics |\n| Podcast or media project | MariaDB or PostgreSQL | Cloud storage and a CDN | Public | Admin and editors | Search and analytics |\n| School, library or museum | MariaDB or PostgreSQL | Server, or cloud storage if there is a lot of media | Public | Web editor, staff as contributors | Search and analytics |\n| Public service or health information | MariaDB or PostgreSQL | Server or cloud storage | Public | Editors approve every page | Search, and analytics if your policy allows it |\n| Private club or staff website | SQLite or MariaDB | On the server | Members-only | Admin, editors, members | Search |\n| Agency or group of websites | MariaDB or PostgreSQL | Cloud storage per website | Set per website | Separate people per website | Defaults set for all websites |",
+            "needs": []
+        },
+        {
+            "id": "deab96f1ff18",
+            "page": "Plan your website",
+            "heading": "Database",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#database",
+            "text": "Each website has its own database. You choose it when you [create the website](create-a-site.md).\n\n| Choose | When |\n| --- | --- |\n| **SQLite** | One small or medium website on one server. It is a single file and needs nothing else. |\n| **MariaDB or MySQL** | Several people edit at once, the website is busy, or your host already provides it. |\n| **PostgreSQL** | Your organisation already uses it, or the website is large and busy. |\n\nYou can move later, but SightPress doesn't copy the data for you. See `site:db:change` in the\n[command line reference](../reference/command-line.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "39cdf97bd448",
+            "page": "Plan your website",
+            "heading": "File storage",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#file-storage",
+            "text": "| Choose | When |\n| --- | --- |\n| **On the server** (the default) | Pictures and documents, and a server with enough disk space. |\n| **Cloud storage** | Lots of media, large files, or more than one server. Works with AWS, Cloudflare and other S3-compatible services. |\n| **Cloud storage with a CDN** | Visitors in many countries, or popular audio and video. A CDN delivers public files from near each visitor. |\n\nWhoever runs the installation sets up cloud storage with the command line tool. This example uses AWS in London:\n\n```sh\nbin/sightpress site:storage:provision demo --provider=aws --region=eu-west-2 --dry-run\nbin/sightpress site:storage:provision demo --provider=aws --region=eu-west-2\nbin/sightpress site:storage:s3 demo --bucket=your-bucket --region=eu-west-2\nbin/sightpress site:storage:migrate demo\nbin/sightpress site:storage:cdn demo --url=https://files.example.org\n```\n\n- The first command only shows the plan. It creates nothing and contacts nobody.\n- The second needs your provider's keys in the server's environment: `SIGHTPRESS_AWS_ACCESS_KEY_ID` and\n  `SIGHTPRESS_AWS_SECRET_ACCESS_KEY`. For Cloudflare, use `--provider=cloudflare` with\n  `SIGHTPRESS_CLOUDFLARE_ACCOUNT_ID` and `SIGHTPRESS_CLOUDFLARE_API_TOKEN`.\n- The third needs keys limited to this bucket, in `SIGHTPRESS_S3_ACCESS_KEY` and `SIGHTPRESS_S3_SECRET_KEY`. For a\n  provider other than AWS, also give its address with `--endpoint`.\n- The website keeps using its current files until `site:storage:migrate` has copi",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "70651cddf8b5",
+            "page": "Plan your website",
+            "heading": "Upload limits",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#upload-limits",
+            "text": "| Kind of website | Suggested setup |\n| --- | --- |\n| Brochure website, or shared hosting | The **Small or shared hosting** values |\n| Most websites | The **Standard** values, which need no change |\n| Podcast, video or photography | The **Lots of media** values, with higher audio and video limits for that website |\n\n[Choose upload limits](choose-upload-limits.md) gives the exact values. To add many files at once, or very large ones,\nuse `site:media:import`, which applies the same safety checks.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "fc8c9a62ac12",
+            "page": "Plan your website",
+            "heading": "Who can read and join",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#who-can-read-and-join",
+            "text": "- **Public** is the default. Search engines and AI services can find the pages.\n- **Some pages for members** suits reports or resources for a group. See\n  [Make a website or a page members-only](make-a-site-members-only.md).\n- **The whole website for members** hides every page from search engines and AI services.\n- **Open sign-up** suits communities. Keep new people as **Member**. See [Let people sign up](let-people-sign-up.md).\n- **Invitation only** is the default, and suits most teams and private websites.",
+            "needs": []
+        },
+        {
+            "id": "a3c5a492a514",
+            "page": "Plan your website",
+            "heading": "Roles",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#roles",
+            "text": "Give each person the lowest role that lets them do their work. Try to have at least two people who can publish, so\nthat someone can cover absences.\n\n| Role | Give it to |\n| --- | --- |\n| **Admin** | The one or two people responsible for the website. |\n| **Editor** | People who check and publish pages. |\n| **Contributor** | People who write, such as volunteers or staff, whose pages need approval. |\n| **Member** | People who only read members-only pages. |\n\nSee [Roles and permissions](../reference/roles-and-permissions.md).",
+            "needs": []
+        },
+        {
+            "id": "19278e70a09b",
+            "page": "Plan your website",
+            "heading": "Languages",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#languages",
+            "text": "Choose one main language, then add others only when someone can keep them up to date. A page without a translation is\nbetter than an old one. The admin panel is available in British English, Spanish and European Portuguese, and a website\ncan publish in other languages. See [Add a language](add-a-language.md).",
+            "needs": []
+        },
+        {
+            "id": "be15980430bf",
+            "page": "Plan your website",
+            "heading": "Look and layout",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#look-and-layout",
+            "text": "Start with the default theme. You can install other themes and change the colours on the\n**Appearance** screen, and SightPress checks that they stay readable. Choose a layout for each page:\n\n| Layout | Good for |\n| --- | --- |\n| **Home page** | The first page, with a large introduction. |\n| **Standard page** | Most pages. |\n| **Landing** | A single campaign or call to action. |\n| **Sidebar** | A section with several related pages. |\n| **Full width** | Wide galleries and tables. |\n\nSee [Choose a page layout](choose-a-page-layout.md) and [Install and change a theme](install-and-change-a-theme.md).",
+            "needs": []
+        },
+        {
+            "id": "6040db3464ec",
+            "page": "Plan your website",
+            "heading": "Optional features",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#optional-features",
+            "text": "| Feature | New websites | Turn it on when | Think about |\n| --- | --- | --- | --- |\n| [Site search](search-your-website.md) | On | The website has more than a handful of pages. | Leave private or duplicate pages out of the search. |\n| [Analytics](see-who-visits-your-website.md) | On | You will act on the figures. | You can keep them for 1 to 25 months. |\n| [AI assistant](use-the-ai-assistant.md) | Off | You want help drafting, and have an API key and a budget. | Check where the service processes data. A person checks every suggestion. |\n\nIf you run several websites, set the defaults for all of them in `config/tenant.php`. See\n[Turn features on or off](turn-features-on-or-off.md).",
+            "needs": []
+        },
+        {
+            "id": "3d44f96f4ba3",
+            "page": "Plan your website",
+            "heading": "Search engines and AI services",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#search-engines-and-ai-services",
+            "text": "In **Site settings**, under **Search & AI**, choose whether AI services may read your pages:\n\n- **Allow all** suits most websites that want to be found.\n- **AI search only** lets AI assistants link to you, and asks crawlers that train AI models to stay out.\n- **Block all** asks every AI crawler to stay out.\n\nSee [Search and AI visibility](../reference/search-and-ai.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "8c64fcb2d501",
+            "page": "Plan your website",
+            "heading": "Step 4: Plan your content",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#step-4-plan-your-content",
+            "text": "Every new website starts with a home page, About, Contact, a privacy notice, terms of use and an accessibility\nstatement. These are starting points. **Read and rewrite each one**, especially the privacy notice and terms, so they\nare true for your organisation.\n\n| Kind of website | Suggested pages | Most useful blocks |\n| --- | --- | --- |\n| Personal website | Home, About me, Projects, CV, Contact | Text, Image, File download |\n| Portfolio | Home, Work, one page per project, About, Commissions | Gallery, Columns, Video, Contact form |\n| Small business | Home, What we offer, Prices, About us, Find us, Contact | Call to action, Gallery, Contact form |\n| Charity or community group | Home, What we do, Get involved, Donate or volunteer, Annual reports, Contact | Call to action, Video, File download |\n| Podcast or media project | Home, Episodes, one page per episode, Guests, About | Audio with a transcript, File download |\n| School, library or museum | Home, Visit us, Opening hours, What's on, Accessibility, Policies, Contact | Video, Audio, File download |\n| Public service or health information | Home, one page per service, How to apply, Forms, Accessibility, Contact | Heading, Text, File download |\n| Private club or staff website | Home, News, Guides, Documents, People, Contact | Text, File download |\n\nFor every website, plan to:\n\n- write one clear purpose for each page, and put the most important thing first;\n- use short headings in order, so that screen reader users can move thr",
+            "needs": []
+        },
+        {
+            "id": "52f677f0b798",
+            "page": "Plan your website",
+            "heading": "Step 5: Check before you launch",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#step-5-check-before-you-launch",
+            "text": "- [ ] The name, logo, contact details and time zone are right in **Site settings**.\n- [ ] Every ready-made page has been read and rewritten.\n- [ ] The contact form reaches the right person.\n- [ ] Each person has the right role, and at least two people can publish.\n- [ ] Every page passes the accessibility checks.\n- [ ] You have tried the main tasks with a keyboard alone, and with a screen reader if you can.\n- [ ] `site:seo:check` reports no duplicate titles.\n- [ ] Whoever runs the installation has a copy of the `sites` folder, the databases and `APP_SECRET`.\n- [ ] Someone is responsible for updates, and has read [Update SightPress](update-sightpress.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "db94e00a0966",
+            "page": "Plan your website",
+            "heading": "What to plan around today",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#what-to-plan-around-today",
+            "text": "SightPress doesn't do the following yet. If your website depends on one of them, plan another way or wait.\n\n- **A guide for a public server.** Getting started covers your own computer. Have someone experienced set up HTTPS,\n  backups and updates.\n- **Several web servers.** Sign-in sessions are kept in files, so servers must share them, and share the upload folder.\n- **Shops and payments, event booking, or a blog with an RSS feed.** Podcasts can publish episodes as pages, but\n  SightPress doesn't produce a podcast feed.\n- **Custom roles.** Use the four built-in roles.\n- **Sign-in by phone or text message.** Sign-in uses an email address and a password.\n- **Limiting sign-up to one email domain.** Use invitations instead.\n- **Tools to download or delete someone's personal data.** If privacy law applies to you, such as UK or EU GDPR, plan\n  how you will answer these requests.",
+            "needs": []
+        },
+        {
+            "id": "b98e12246a67",
+            "page": "Plan your website",
+            "heading": "Where to go next",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#where-to-go-next",
+            "text": "1. Follow [Getting started](../getting-started.md) to run SightPress.\n2. [Create your website](create-a-site.md) with the choices you made.\n3. [Write and publish your first page](write-and-publish-a-page.md).",
             "needs": []
         },
         {
@@ -745,6 +1206,46 @@
             "heading": "Bring a version back",
             "url": "https://docs.sightpress.org/latest/how-to/restore-an-older-version/#bring-a-version-back",
             "text": "1. On the version's screen, choose **Restore version 3** (with that version's number).\n2. You should see \"Restored version 3 as version 5. Nothing was published: the page is still a draft.\" The newer\n   versions stay in the list, so you can change your mind.\n\nRestoring brings back the title, address, search fields and blocks. It doesn't change the layout, who can read the\npage or its place on the website.\n\n**While the page is published, restoring is refused**, because visitors would see the old text straight away. Choose\n**Unpublish** first (or make that translation a draft), restore the version, check it, and publish again.\n\nA version with a block that no longer exists can't be restored: copy what you need from it instead.",
+            "needs": []
+        },
+        {
+            "id": "8eb627ad3acf",
+            "page": "Review a theme change",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/review-a-theme-change/",
+            "text": "When someone changes a theme, for example the default theme's colours or the layout of its pages, the change arrives\nas a pull request on GitHub. You can see exactly what it looks like without installing anything: every theme pull\nrequest comes with a preview you download and open in your browser. You don't need to know anything about code.",
+            "needs": []
+        },
+        {
+            "id": "6fd4727476e2",
+            "page": "Review a theme change",
+            "heading": "Find the preview",
+            "url": "https://docs.sightpress.org/latest/how-to/review-a-theme-change/#find-the-preview",
+            "text": "1. Open the pull request on GitHub.\n2. Find the comment titled **Theme preview**, near the top of the conversation. A new change to the pull request\n   updates the same comment; it never adds another one.\n3. The comment says, in words, what the theme looks like, and how many accessibility problems the automatic check\n   found in light mode, dark mode and forced colours (Windows contrast themes). \"No violations\" in all three is the\n   goal.\n4. Select **Download the preview**. GitHub asks you to sign in first; the download is a zip file and is kept for 30\n   days.",
+            "needs": []
+        },
+        {
+            "id": "8aac713e0364",
+            "page": "Review a theme change",
+            "heading": "Open it",
+            "url": "https://docs.sightpress.org/latest/how-to/review-a-theme-change/#open-it",
+            "text": "1. Unzip the file.\n2. Open `index.html` in any browser. It works offline: nothing in it loads from the internet, and it needs no server.\n\nThe page is the same for every theme, so you can compare one theme with another:\n\n- a top bar with the site name and links to each part of the page;\n- a band with the theme's name, its description and a **Download** button;\n- one example of every kind of block: headings, text, a button, a picture, a file, two columns, a gallery, a\n  recording, a video, and a contact form (it can't send anything: it's a preview);\n- the footer.\n\nThe zip also holds `screenshot.png` and `screenshot-dark.png`, the top of the page in light and dark mode,\n`page.png`, the whole page, and `axe.txt`, the full report of the accessibility check.",
+            "needs": []
+        },
+        {
+            "id": "8ca2f976f955",
+            "page": "Review a theme change",
+            "heading": "What to check",
+            "url": "https://docs.sightpress.org/latest/how-to/review-a-theme-change/#what-to-check",
+            "text": "Go through the page as you would for [Review the interface](review-the-interface.md):\n\n1. **Contrast.** Is any text, link, button or border hard to see? Switch your computer or browser to dark mode and\n   look again, and try a contrast theme on Windows.\n2. **Focus.** Press <kbd>Tab</kbd> again and again. Can you always see where you are?\n3. **Zoom and small screens.** Zoom to 200% and 400%, and make the window very narrow. Is anything cut off, on top of\n   something else, or only readable by scrolling sideways?\n4. **The description.** Does the description in the comment match what you see? It is what people who can't see\n   the screenshots get instead, so it must be right.\n5. **The change itself.** The pull request says what it changes. Does the page show that, and nothing else?",
+            "needs": []
+        },
+        {
+            "id": "5b7451fbb444",
+            "page": "Review a theme change",
+            "heading": "Describe what you see",
+            "url": "https://docs.sightpress.org/latest/how-to/review-a-theme-change/#describe-what-you-see",
+            "text": "Write your review as a comment on the pull request. Whoever reads it may be blind, so say it in words:\n\n- where on the page, and in which mode, for example \"The Pictures and files part, in dark mode, at 200% zoom\";\n- what is wrong, for example \"The file link is dark blue on the dark background and hard to read\";\n- what you expected, for example \"The link should be as light as the other links in dark mode\".\n\nIf you add a screenshot, describe it in the same words. If everything looks right, say so too: \"Checked in light\nand dark mode at 100% and 200% zoom; looks good\" helps as much as finding a problem.",
             "needs": []
         },
         {
@@ -1008,7 +1509,7 @@
             "page": "Start a database server",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/how-to/start-a-database/",
-            "text": "SightPress keeps its data in a single file on disk (an SQLite database), so it doesn't need a separate database\nserver. If you want to try one, SightPress can start MySQL, MariaDB or PostgreSQL for you. This guide shows you how.\n\n!!! note \"Not used yet\"\n\n    At this stage SightPress starts the database server but doesn't store anything in it. You can check that it\n    runs. Later versions will let you use it for your sites.",
+            "text": "A website can keep its data in a single file on disk (an SQLite database), so it doesn't need a separate database\nserver. If you want to use one, SightPress can start MySQL, MariaDB or PostgreSQL for you. This guide shows you how.\n\n!!! note \"Using it for a website\"\n\n    Starting a database server doesn't move any website to it. Choose the database when you\n    [create a website](create-a-site.md), with `--db-engine` and the `--db-host`, `--db-name`, `--db-user` and\n    `--db-password` options. The server's host name is `mysql`, `mariadb` or `postgres`.",
             "needs": []
         },
         {
@@ -1236,7 +1737,7 @@
             "page": "Update SightPress",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/",
-            "text": "This guide shows you how to move an installation to a newer version of SightPress, keeping every website, page,\naccount, menu and setting. It is written for **0.1 to 0.3**, the first update with new database tables.\n\n!!! warning \"Make a copy first\"\n\n    Before you update, make a copy of the `skeleton` folder, including the `sites` folder and the `.env` file, and of\n    every website's database if it isn't an SQLite file in `sites`. Without the `APP_SECRET` from `.env`, SightPress\n    can't open the websites' databases.",
+            "text": "This guide shows you how to move an installation to a newer version of SightPress, keeping every website, page,\naccount, menu and setting. It covers updates up to **0.4**.\n\n!!! warning \"Make a copy first\"\n\n    Before you update, make a copy of the `skeleton` folder, including the `sites` folder and the `.env` file, and of\n    every website's database if it isn't an SQLite file in `sites`. Without the `APP_SECRET` from `.env`, SightPress\n    can't open the websites' databases.",
             "needs": []
         },
         {
@@ -1244,7 +1745,7 @@
             "page": "Update SightPress",
             "heading": "Update",
             "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/#update",
-            "text": "Type these commands in the `skeleton` folder.\n\n1. Stop SightPress: press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the window where it runs, or type `docker compose down`.\n2. Get the new skeleton:\n\n    ```sh\n    git pull\n    ```\n\n    If Git says that your changes to `config/tenant.php` or another file would be overwritten, see\n    [New settings in 0.3](#new-settings-in-03) and copy the new parts in by hand.\n\n3. Get the new version of SightPress itself:\n\n    ```sh\n    docker compose run --rm --no-deps php composer update\n    ```\n\n4. Update the database tables of every website:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:migrate --all\n    ```\n\n    You should see one line per website saying how many database migrations ran. One website failing doesn't stop\n    the others; run it again for that website once the problem is fixed.\n\n5. Build the search index of each website, replacing `demo` with its short name:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:search:reindex demo\n    ```\n\n6. Start SightPress again with `docker compose up`. The **scheduler** starts with it now (see below).\n7. Check: sign in to a website. The admin menu now has **Features**, **Analytics** and **Redirects**, and your pages,\n   people and menus are as they were.",
+            "text": "Type these commands in the `skeleton` folder.\n\n1. Stop SightPress: press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the window where it runs, or type `docker compose down`.\n2. Get the new skeleton:\n\n    ```sh\n    git pull\n    ```\n\n    If Git says that your changes to `config/tenant.php` or another file would be overwritten, see\n    [New settings in 0.3](#new-settings-in-03) and copy the new parts in by hand.\n\n3. Get the new version of SightPress itself:\n\n    ```sh\n    docker compose run --rm --no-deps php composer update\n    ```\n\n4. Update the list of websites to the new format (from 0.4 on, it can hold each website's upload limits):\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:registry:upgrade\n    ```\n\n    You should see that the file was upgraded, or that there is nothing to do. The old file is kept as\n    `config/sites.php.bak`.\n\n5. Update the database tables of every website:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:migrate --all\n    ```\n\n    You should see one line per website saying how many database migrations ran. One website failing doesn't stop\n    the others; run it again for that website once the problem is fixed.\n\n6. Build the search index of each website, replacing `demo` with its short name:\n\n    ```sh\n    docker compose run --rm --no-deps php bin/sightpress site:search:reindex demo\n    ```\n\n7. Start SightPress again with `docker compose up`. The **scheduler** starts with it now (see below).\n8. Check: sign in to ",
             "needs": [
                 "analytics.view",
                 "module.manage",
@@ -1276,9 +1777,73 @@
         {
             "id": "a34b959c7c1c",
             "page": "Update SightPress",
+            "heading": "New in 0.4",
+            "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/#new-in-04",
+            "text": "Follow the same steps. Step 4 is needed for this update. After it:\n\n- **The look of your websites stays the same.** The default theme now comes as its own package, which Composer\n  installs. `composer update` also publishes the theme files and previews.\n- **Your files stay where they are.** Nothing moves to the cloud unless you [set it up](keep-files-in-the-cloud.md).\n- A **published page with a video without captions, or a recording without a transcript, stays published**, but the\n  publish check asks for them the next time it is published. See\n  [Add captions and transcripts](add-captions-and-transcripts.md).\n\n`config/tenant.php` has new optional sections. Copy them from the new skeleton if Git can't merge them:\n\n- `themes`: which installed themes websites may use, and the theme of new websites.\n- `media.limits`: every website's upload limits and the most a website may set.\n- `uploads.temp_path` and `uploads.max_chunked_bytes`: where large files wait while their parts arrive, and the largest\n  file that can be sent in parts.",
+            "needs": []
+        },
+        {
+            "id": "18040030a06b",
+            "page": "Update SightPress",
             "heading": "If something goes wrong",
             "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/#if-something-goes-wrong",
-            "text": "**A website shows an error page after the update**\n:   Its database tables are older than the code. Run `site:migrate` for it (step 4) and read the message it prints.\n\n**`composer update` fails**\n:   Check that you are in the `skeleton` folder and that SightPress is stopped, then try again. Your websites are\n    not changed until step 4.\n\n**Search finds nothing**\n:   Pages are added to the search index when they are published or changed. Run step 5 for that website to add\n    the pages that were already there.",
+            "text": "**A website shows an error page after the update**\n:   Its database tables are older than the code. Run `site:migrate` for it (step 5) and read the message it prints.\n\n**An error says `config/sites.php` uses an older format version**\n:   Run `site:registry:upgrade` (step 4).\n\n**`composer update` fails**\n:   Check that you are in the `skeleton` folder and that SightPress is stopped, then try again. Your websites are\n    not changed until step 4.\n\n**Search finds nothing**\n:   Pages are added to the search index when they are published or changed. Run step 6 for that website to add\n    the pages that were already there.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "20787da4ae94",
+            "page": "Upload large files",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/upload-large-files/",
+            "text": "SightPress sends large files in small parts. If your connection drops, or you close the page, you can carry on from\nwhere the upload stopped instead of starting again.\n\nIf your website keeps its files in **cloud storage**, large files go straight from your browser to the storage, which\nis faster and doesn't load your server. If the storage doesn't allow that, SightPress sends the file through your\nserver instead and says so. You don't need to do anything different.",
+            "needs": []
+        },
+        {
+            "id": "df64d80d1ec9",
+            "page": "Upload large files",
+            "heading": "Upload a large file",
+            "url": "https://docs.sightpress.org/latest/how-to/upload-large-files/#upload-a-large-file",
+            "text": "1. In the admin, open **Media**.\n2. Under **Upload a file**, choose your file. The hint under the field says the largest file of each kind.\n3. Choose **Upload**.\n\nA progress bar shows how far the upload has gone. Screen readers hear the progress every 10%. When it finishes,\nSightPress checks the file and opens its page, so you can describe it.",
+            "needs": [
+                "media.upload"
+            ]
+        },
+        {
+            "id": "124ac1cb085e",
+            "page": "Upload large files",
+            "heading": "Pause, resume or cancel",
+            "url": "https://docs.sightpress.org/latest/how-to/upload-large-files/#pause-resume-or-cancel",
+            "text": "While a large file is uploading, three buttons work by keyboard or mouse:\n\n- **Pause** stops sending. Focus moves to **Resume**.\n- **Resume** carries on from where it stopped.\n- **Cancel upload** stops and deletes what was sent so far.",
+            "needs": []
+        },
+        {
+            "id": "29bf934ae13f",
+            "page": "Upload large files",
+            "heading": "If the upload stops",
+            "url": "https://docs.sightpress.org/latest/how-to/upload-large-files/#if-the-upload-stops",
+            "text": "- **The connection dropped.** SightPress tries again by itself. If it still can't connect, it pauses and asks you to\n  choose **Resume**.\n- **You closed or reloaded the page.** Open **Media**, choose **the same file** and choose **Upload**. It carries on\n  from where it stopped, on the same computer and browser, for up to 24 hours.",
+            "needs": [
+                "media.upload"
+            ]
+        },
+        {
+            "id": "a535e02195ae",
+            "page": "Upload large files",
+            "heading": "If the file is refused",
+            "url": "https://docs.sightpress.org/latest/how-to/upload-large-files/#if-the-file-is-refused",
+            "text": "SightPress checks what a file really is once it has arrived, whatever its name says. A file of a type it doesn't\naccept is deleted, and **Media** explains why.",
+            "needs": [
+                "media.upload"
+            ]
+        },
+        {
+            "id": "d6c61ecaecf7",
+            "page": "Upload large files",
+            "heading": "For whoever runs the server",
+            "url": "https://docs.sightpress.org/latest/how-to/upload-large-files/#for-whoever-runs-the-server",
+            "text": "- To see which way large files travel, and why, open **Site settings**, then **File storage**. For files to go straight\n  to cloud storage, its CORS rules must allow `PUT` from your website's address and expose `ETag`. `site:storage:provision`\n  sets this up on AWS and Cloudflare.\n- Files that go through the server wait in `var/uploads`. To use another folder, set `uploads.temp_path` in `config/tenant.php`. It\n  can't be inside `public`.\n- The largest file that can be sent in parts is 5 GB. To change it, set `uploads.max_chunked_bytes`. Each website's own\n  limits still apply, see [Choose upload limits](choose-upload-limits.md).\n- If your website runs on **several servers**, they must share the upload folder. Otherwise people see a message saying\n  the server doesn't have the file's earlier parts.\n- Abandoned uploads are removed after 24 hours by the [scheduler](run-in-the-background.md). To see the uploads in\n  progress, or remove abandoned ones now:\n\n    ```sh\n    docker compose exec php bin/sightpress site:media:uploads demo\n    docker compose exec php bin/sightpress site:media:uploads demo --purge-expired\n    ```\n\nWithout JavaScript, a file is sent in one piece, so the lower server limit applies. See\n[Fix upload size limits](fix-upload-size-limits.md).",
             "needs": [
                 "settings.manage"
             ]
@@ -1495,7 +2060,7 @@
             "page": "SightPress documentation",
             "heading": "Where to go next",
             "url": "https://docs.sightpress.org/latest/#where-to-go-next",
-            "text": "- To see what SightPress can do, with ideas for websites, read [What you can build](what-you-can-build.md).\n- The source code lives on GitHub in the [SightPress organisation](https://github.com/sightpress).\n- To run SightPress on your own computer, follow [Getting started](getting-started.md).\n- The [how-to guides](how-to/index.md) show you how to do one task at a time, such as\n  [creating a website](how-to/create-a-site.md) or [writing and publishing a page](how-to/write-and-publish-a-page.md).\n- The reference pages explain [roles and permissions](reference/roles-and-permissions.md), [blocks](reference/blocks.md),\n  [search and AI visibility](reference/search-and-ai.md) and the [command line tool](reference/command-line.md).",
+            "text": "- To see what SightPress can do, with ideas for websites, read [What you can build](what-you-can-build.md).\n- The source code lives on GitHub in the [SightPress organisation](https://github.com/sightpress).\n- To run SightPress on your own computer, follow [Getting started](getting-started.md).\n- To make a theme of your own, follow the tutorial [Create a theme](tutorials/create-a-theme.md).\n- The [how-to guides](how-to/index.md) show you how to do one task at a time, such as\n  [creating a website](how-to/create-a-site.md) or [writing and publishing a page](how-to/write-and-publish-a-page.md).\n- The reference pages explain [roles and permissions](reference/roles-and-permissions.md), [blocks](reference/blocks.md),\n  [search and AI visibility](reference/search-and-ai.md) and the [command line tool](reference/command-line.md).",
             "needs": []
         },
         {
@@ -1667,7 +2232,7 @@
             "page": "Command line reference",
             "heading": "Look after websites",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#look-after-websites",
-            "text": "| Command | What it does |\n| --- | --- |\n| `site:list` | Lists the websites: status, domains, language, time zone and database (engine, host and name only). |\n| `site:migrate <slug>` or `site:migrate --all` | Updates a website's database tables after an update of SightPress. `--all` updates every website that isn't deleted; one failure doesn't stop the others. |\n| `site:db:change <slug> [--db= or the --db-… parts] [--migrate]` | Points a **disabled** website at another database, asked for in parts like in `site:create`. **Nothing is copied**: move the data first. The new database must be up to date, or add `--migrate`. If anything fails, the website keeps its old database. |\n| `site:seo:check <slug>` | Checks what search engines will find: titles longer than 60 characters, missing or too long descriptions, pages left out of search and why. Ends with an error when two pages have the same title. See [Search and AI visibility](search-and-ai.md). |\n\n| `system:check` | Lists the server's upload and input limits, the largest file of each kind that can be uploaded, and the settings to change. Ends with an error when something must be fixed. Run it with `docker compose exec php` so it reads the same settings as the website. See [Fix upload size limits](../how-to/fix-upload-size-limits.md). |\n\nTo move a website to another database:\n\n```sh\nbin/sightpress site:disable demo\n# copy the data to the new database with your database's own tools\nbin/sightpress site:db:change demo --db=postgres",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:list` | Lists the websites: status, domains, language, time zone and database (engine, host and name only). |\n| `site:migrate <slug>` or `site:migrate --all` | Updates a website's database tables after an update of SightPress. `--all` updates every website that isn't deleted; one failure doesn't stop the others. |\n| `site:db:change <slug> [--db= or the --db-… parts] [--migrate]` | Points a **disabled** website at another database, asked for in parts like in `site:create`. **Nothing is copied**: move the data first. The new database must be up to date, or add `--migrate`. If anything fails, the website keeps its old database. |\n| `site:seo:check <slug>` | Checks what search engines will find: titles longer than 60 characters, missing or too long descriptions, pages left out of search and why. Ends with an error when two pages have the same title. See [Search and AI visibility](search-and-ai.md). |\n\n| `system:check [--site=<slug>] [--probe-url=<address>] [--recommend]` | Lists the server's upload and input limits, the largest file of each kind that can be uploaded, and the settings to change. Ends with an error when something must be fixed. `--site` checks one website's limits and counts the uploads refused for it. `--probe-url` sends test requests to find the web server's real limit. `--recommend` prints the server values the limits need. Run it with `docker compose exec php` so it reads the same settings as the website. See [Ch",
             "needs": [
                 "settings.manage"
             ]
@@ -1753,17 +2318,87 @@
             ]
         },
         {
+            "id": "013befba9752",
+            "page": "Command line reference",
+            "heading": "Files and cloud storage",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#files-and-cloud-storage",
+            "text": "See [Keep your files in the cloud](../how-to/keep-files-in-the-cloud.md) and\n[Import files from a folder](../how-to/import-files.md).\n\n| Command | What it does |\n| --- | --- |\n| `site:storage:provision <slug> --provider=aws\\|cloudflare [--region=] [--bucket=] [--domain=] [--dry-run]` | Creates a bucket, its upload rules and a CDN at AWS or Cloudflare. `--dry-run` prints the plan and contacts nobody. The provider's keys come from the environment and are never saved. The website doesn't change. |\n| `site:storage:s3 <slug> --bucket= --region= [--endpoint=] [--prefix=] [--path-style]` | Connects a website to an S3-compatible bucket after checking it works. The keys come from `SIGHTPRESS_S3_ACCESS_KEY` and `SIGHTPRESS_S3_SECRET_KEY`, and are stored encrypted. |\n| `site:storage:migrate <slug> [--delete-source]` | Copies a website's files to its bucket, checks each one and switches the website. It can be run again if it stops. `--delete-source` deletes the local copies after the check, which can't be undone. |\n| `site:storage:cdn <slug> [--url=] [--remove]` | Shows, sets or removes the `https://` CDN address that delivers a website's public files. Run `theme:publish-assets` after setting it. |\n| `site:media:import <slug> <path>… [--recursive] [--publish] [--alt=] [--locale=] [--memory-limit=]` | Adds files of any size from the server to the media library, with every safety check. Ends with an error if any file was refused, after trying the others. |\n| `site:media:uploads <slug> [--p",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
             "id": "01df99a46768",
             "page": "Command line reference",
-            "heading": "theme:validate",
-            "url": "https://docs.sightpress.org/latest/reference/command-line/#themevalidate",
-            "text": "```text\ntheme:validate [<path>]\n```\n\nChecks a theme's colour contrast, in light and dark mode and with and without more contrast, and its base font size,\nagainst WCAG 2.2 AA, and says what to fix. Without a path, it checks the active theme. It ends with an error when a\ncheck fails.",
+            "heading": "Themes",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#themes",
+            "text": "See [Install and change a theme](../how-to/install-and-change-a-theme.md).",
             "needs": [
                 "settings.manage"
             ]
         },
         {
             "id": "d75ce85b8132",
+            "page": "Command line reference",
+            "heading": "theme:list",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#themelist",
+            "text": "```text\ntheme:list\n```\n\nLists the installed themes: id, name, version, whether websites may use it (or why it can't be used), whether new\nwebsites start with it, and the websites that use it. Websites whose theme isn't installed any more are listed as\nerrors; they are shown in the default theme.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "cc1833133621",
+            "page": "Command line reference",
+            "heading": "theme:validate",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#themevalidate",
+            "text": "```text\ntheme:validate [<theme>|<path>] [--axe]\n```\n\nChecks a theme the way it is checked before it is applied, and says what to fix:\n\n- `theme.json` and the theme's manifest agree;\n- the colour contrast passes in light and dark mode, with and without more contrast, chart colours included, against\n  WCAG 2.2 AA, and the base font size is at least 16 px;\n- the required templates are there, and the page shell includes SightPress's `<head>` partial;\n- the theme ships no screenshot or preview output.\n\nGive an installed theme's id or the folder of a theme. Without one, it checks every installed theme. `--axe` also\nscans the theme's preview page with axe in light, dark and forced-colours mode; this needs Node.js and Playwright's\nChromium. It ends with an error when a check fails.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "312dbf4d5a57",
+            "page": "Command line reference",
+            "heading": "theme:preview",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#themepreview",
+            "text": "```text\ntheme:preview <theme|path> [--out=build/theme-preview/<id>] [--locale=en-GB] [--screenshot]\n```\n\nWrites the theme's preview page to a folder that opens in any browser without a server or an internet connection: a\ntop bar, a band with the theme's name and a Download button, one block of every kind, and the footer. `--screenshot`\nalso writes `screenshot.png`, `screenshot-dark.png` and `page.png` (needs Node.js and Playwright's Chromium). Theme\nauthors can run the same commands without a project with `vendor/bin/sightpress-theme`.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "79e894cb59e4",
+            "page": "Command line reference",
+            "heading": "site:theme:apply",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#sitethemeapply",
+            "text": "```text\nsite:theme:apply <site> <theme>\n```\n\nApplies an installed theme to a website. The theme must be allowed (`themes.allowed` in `config/tenant.php`) and pass\nthe checks of `theme:validate`. The website's activity log records the change.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "1fe64e756e32",
+            "page": "Command line reference",
+            "heading": "theme:publish-assets",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#themepublish-assets",
+            "text": "```text\ntheme:publish-assets [--no-screenshot]\n```\n\nWrites the preview page of every installed theme to `public/themes/<theme>/<version>/preview/`, with its screenshots\nwhere Node.js and Chromium are installed, for the **Appearance** screen. The project runs it after `composer install`\nand `composer update`.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "56d1a68a2cb9",
+            "page": "Command line reference",
+            "heading": "cache:clear",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#cacheclear",
+            "text": "```text\ncache:clear\n```\n\nEmpties the cache folder. Run it after installing or removing a theme or a module with Composer.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "20767fa0a1d7",
             "page": "Command line reference",
             "heading": "Database addresses",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#database-addresses",
@@ -1923,6 +2558,184 @@
             ]
         },
         {
+            "id": "b14803e04685",
+            "page": "Theme contract",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/",
+            "text": "<!-- Generated by tools/theme-contract-reference.php from theme-interface. Don't edit by hand. -->\n\nThis page lists what a SightPress theme can rely on and must provide. It is generated from the `sightpress/theme-interface`\npackage. To build a theme step by step, follow the [Create a theme](../tutorials/create-a-theme.md) tutorial.\n\nA theme is presentation only: design tokens, Twig templates, assets and translations. Anything with behaviour is a\nmodule.",
+            "needs": []
+        },
+        {
+            "id": "2d90c9896547",
+            "page": "Theme contract",
+            "heading": "theme.json",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/#themejson",
+            "text": "| Key | Required | What it is |\n| --- | --- | --- |\n| `name` | Yes | The theme id; must equal the id in the theme's manifest. |\n| `label` | Yes | Name shown to people. |\n| `version` | Yes | The theme's version (Semantic Versioning); must equal the version in the theme's manifest. |\n| `colors` | Yes | The colours for light and dark mode, and optionally for more contrast. |\n| `typography` | Yes | Fonts and text sizes. |\n| `spacing` | No | The spacing scale. |\n| `radius` | No | Corner radii. |\n| `focus` | No | The focus outline. |\n| `contrast` | No | Colour pairs core checks in every colour mode: text needs 4.5:1, interface colours 3:1 (WCAG 2.2 AA). |\n| `chart` | No | Which of the theme's colours the data series of a chart use, in order; without it they use chart-1 to chart-4. Core checks each series colour for 3:1 and chart-text for 4.5:1 on background and surface in every colour mode. |",
+            "needs": []
+        },
+        {
+            "id": "c8604ba6fcf3",
+            "page": "Theme contract",
+            "heading": "Token groups",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/#token-groups",
+            "text": "Each group becomes CSS custom properties with this prefix.\n\n| Group | Prefix |\n| --- | --- |\n| `typography` | `--font-` |\n| `spacing` | `--space-` |\n| `radius` | `--radius-` |\n| `focus` | `--focus-` |\n\nCharts use the colours `chart-1`, `chart-2`, `chart-3`, `chart-4`, `chart-grid`, `chart-text`.",
+            "needs": []
+        },
+        {
+            "id": "e28bfea1bcd2",
+            "page": "Theme contract",
+            "heading": "Layouts",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/#layouts",
+            "text": "| Id | Name | Required | What it is |\n| --- | --- | --- | --- |\n| `default` | Default | Yes | One column at a comfortable reading width. |\n| `home` | Home | Yes | An introduction band, then content at full page width. |\n| `search` | Search results | Yes | The search form and the list of results. |\n| `landing` | Landing | No | A wide introduction band, then content in full-width sections. |\n| `sidebar` | Sidebar | No | Content with a side column for related links and notes. |\n| `full-width` | Full width | No | Content across the whole page width, without a reading column. |",
+            "needs": []
+        },
+        {
+            "id": "7e060fe15dd6",
+            "page": "Theme contract",
+            "heading": "master.html.twig",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/#masterhtmltwig",
+            "text": "Page shell every page extends. Sets lang and dir on <html> from the page's language, includes the core <head> partial, makes \"Skip to main content\" the first thing to tab to, and has the landmarks <header>, <nav aria-label> for each menu and the language switcher, the site's <search> form (partials/search-form.html.twig, when search_action is set), <main id=\"content\"> and <footer>. Shows messages at the top of <main> through partials/messages.html.twig. The <title> is document_title when set, else the title block and the site name, with \"Error: \" in front when the form has errors. Main menu items may have children, up to three levels, shown as nested lists that work without JavaScript.\n\nTwig blocks: `title`, `head`, `brand`, `breadcrumbs`, `main`, `footer`, `scripts`.\n\n| Variable | Type | Required | What it is |\n| --- | --- | --- | --- |\n| `site_name` | `string` | No | The site's name. |\n| `locale` | `string` | No | BCP 47 tag of the page's language; else current_locale(). |\n| `document_title` | `string` | No | The whole <title>, when core sets it (SEO title, search results). |\n| `home_url` | `string` | No | The home page in the page's language; else \"/\". |\n| `branding_logo` | `array{url: string, alt: string, width: int, height: int}` | No | The uploaded logo, shown instead of the site's name in the header link. |\n| `main_menu` | `list<array{label: string, url: string, current?: bool, children?: list<array<string, mixed>>}>` | No | Items of the main menu; current marks the pa",
+            "needs": []
+        },
+        {
+            "id": "b1a3471ea58c",
+            "page": "Theme contract",
+            "heading": "layouts/default.html.twig",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/#layoutsdefaulthtmltwig",
+            "text": "One column at a comfortable reading width: the title, the lead, then the content.\n\nTwig blocks: `content`.\n\n| Variable | Type | Required | What it is |\n| --- | --- | --- | --- |\n| `title` | `string` | Yes | The page title, shown as the only <h1>. |\n| `lead` | `string` | No | A short summary shown under the title. |\n| `updated_at` | `DateTimeInterface` | No | When the page last changed (UTC), shown as \"Last updated\" with user_date in a <time datetime>. |",
+            "needs": []
+        },
+        {
+            "id": "f3a27b23da25",
+            "page": "Theme contract",
+            "heading": "layouts/home.html.twig",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/#layoutshomehtmltwig",
+            "text": "An introduction band with the title and lead, then the content at full page width.\n\nTwig blocks: `hero`, `content`.\n\n| Variable | Type | Required | What it is |\n| --- | --- | --- | --- |\n| `title` | `string` | Yes | The page title, shown as the only <h1>. |\n| `lead` | `string` | No | A short summary shown under the title. |\n| `updated_at` | `DateTimeInterface` | No | When the page last changed (UTC), shown as \"Last updated\" with user_date in a <time datetime>. |",
+            "needs": []
+        },
+        {
+            "id": "7296b7c698ee",
+            "page": "Theme contract",
+            "heading": "layouts/search.html.twig",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/#layoutssearchhtmltwig",
+            "text": "Site search: the title as the only <h1> (what was searched for and how many results there are; core also puts it in <title>, so screen readers announce both when the page loads, without a live region), the search form, then the results as a numbered list (<ol start=\"first\">), each with its title as a link in an <h2>, its trail and its extract with the matched words in <mark>. When nothing was found, nothing was searched for yet, or there were too many searches, the page says so in words, with tips.\n\nTwig blocks: `content`.\n\n| Variable | Type | Required | What it is |\n| --- | --- | --- | --- |\n| `title` | `string` | Yes | The heading, for example \"3 results for “river”\". |\n| `query` | `string` | Yes | What was searched for; empty before a search. |\n| `action` | `string` | Yes | Where the search form searches. |\n| `state` | `'results'\\|'none'\\|'empty'\\|'busy'` | Yes | results; none found; empty (nothing searched for yet); busy (too many searches, see retry_minutes). |\n| `total` | `int` | Yes | How many results there are in all. |\n| `first` | `int` | Yes | The number of the first result on this page. |\n| `matched_all` | `bool` | Yes | False when no page has every word, so results have some of them. |\n| `results` | `list<array{title: string, url: string, excerpt: string, locale: string, trail: string, extract: list<array{text: string, mark: bool}>}>` | Yes | The results on this page, best first; excerpt is plain text, extract the same text in pieces, mark true for matched words; ",
+            "needs": []
+        },
+        {
+            "id": "59449b1ed0a9",
+            "page": "Theme contract",
+            "heading": "partials/messages.html.twig",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/#partialsmessageshtmltwig",
+            "text": "Messages in a polite live region (role=\"status\") that is always there, even when empty, so screen readers know it. Core's own views include it too.\n\n| Variable | Type | Required | What it is |\n| --- | --- | --- | --- |\n| `messages` | `list<string>` | Yes | The messages; may be empty. |",
+            "needs": []
+        },
+        {
+            "id": "07f9f88247b7",
+            "page": "Theme contract",
+            "heading": "partials/search-form.html.twig",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/#partialssearch-formhtmltwig",
+            "text": "A search form in a <search> landmark named by its visible label (aria-labelledby), with a search input named \"q\" and a visible \"Search\" button, sent with GET. Works the same without JavaScript. The shell and the search layout both include it, so its ids start with id.\n\n| Variable | Type | Required | What it is |\n| --- | --- | --- | --- |\n| `action` | `string` | Yes | URL the form is sent to with GET. |\n| `query` | `string` | No | What was searched for, to fill the input. |\n| `id` | `string` | No | Start of the form's ids, \"search\" by default, so a page can have two forms. |\n| `label` | `string` | No | The visible label, \"Search this site\" by default. |",
+            "needs": []
+        },
+        {
+            "id": "3d86ea5e2ffc",
+            "page": "Theme contract",
+            "heading": "Twig functions and filters",
+            "url": "https://docs.sightpress.org/latest/reference/theme-contract/#twig-functions-and-filters",
+            "text": "| Name | Kind | Use | What it does |\n| --- | --- | --- | --- |\n| `asset` | function | `asset(string path): string` | URL of a file in the theme's assets/ folder, with its version in the name so it can be cached. The generated design tokens are at asset('tokens.css'). |\n| `t` | function | `t(string message, array parameters = {}, string domain = 'messages'): string` | The message translated to the page's language; write messages in British English. |\n| `can` | function | `can(string permission): bool` | Whether the person viewing the page has the permission on this site. |\n| `csp_nonce` | function | `csp_nonce(): string` | The Content Security Policy nonce for this response, for the rare inline <script> or <style>. |\n| `csrf_fields` | function | `csrf_fields(): string` | The hidden inputs that protect a POST form against cross-site request forgery (already escaped). |\n| `current_locale` | function | `current_locale(): string` | The BCP 47 tag of the language the page is shown in, for example en-GB. |\n| `text_direction` | function | `text_direction(string locale): string` | The writing direction of a language, \"ltr\" or \"rtl\", for the dir attribute. |\n| `user_datetime` | filter | `user_datetime(?DateTimeInterface value, string style = 'medium'): string` | A date and time in the viewer's language and time zone; an empty string for null. |\n| `user_date` | filter | `user_date(?DateTimeInterface value, string style = 'long'): string` | A date in the viewer's language and time zone; ",
+            "needs": []
+        },
+        {
+            "id": "4581656e5c3d",
+            "page": "Create a theme",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/",
+            "text": "In this tutorial you make a SightPress theme of your own, \"Harbour\". You start from the theme template, change its\ncolours, override a template, add a layout, check and preview it, install it on a website, and publish it. You need\nsome experience with the command line, PHP and CSS. The template already has everything a theme needs, and the checks\ntell you in words when something isn't right.\n\nYou need:\n\n- PHP 8.5 and Composer 2;\n- a SightPress project to try the theme in (see [Getting started](../getting-started.md));\n- for screenshots only: Node.js and Playwright's Chromium (`npx playwright install chromium`).",
+            "needs": []
+        },
+        {
+            "id": "36d0b53e62f3",
+            "page": "Create a theme",
+            "heading": "1. Create your theme from the template",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/#1-create-your-theme-from-the-template",
+            "text": "```sh\ncomposer create-project sightpress/theme-template harbour\ncd harbour\ncomposer check\n```\n\nYou should see each check pass, ending with:\n\n```text\nThe theme \"My theme\" passes: 172 colour pairs checked in light and dark mode, with and without more contrast; the base font size is at least 16 px; the required templates are there; it ships no screenshot.\n```\n\nOn GitHub, you can instead open the [theme template](https://github.com/sightpress/theme-template) and choose\n**Use this template**, then clone your new repository and run `composer install`.",
+            "needs": []
+        },
+        {
+            "id": "9db84099cac0",
+            "page": "Create a theme",
+            "heading": "2. Make it yours",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/#2-make-it-yours",
+            "text": "A theme has an id: lower-case words joined by hyphens, starting with your vendor name. Ours is `acme-harbour`.\n\n1. In `composer.json`, change `name` to `acme/theme-harbour`, and write your own `description` and `homepage`.\n2. In `src/MyTheme.php`, change `ID` to `acme-harbour`. Change the name to `Harbour` and write a description of one\n   or two sentences. Fill in `author`.\n3. In `theme.json`, change `name` to `acme-harbour` and `label` to `Harbour`.\n4. Write `previewDescription`: what the top of your theme's preview page looks like, for people who can't see its\n   screenshot. Describe the look, not the file. For example: \"A dark blue top bar with the site name in white, a pale\n   blue band with a large heading and a yellow Download button.\"\n\nThe template's README lists the rest: renaming the class and its namespace when you want to.",
+            "needs": []
+        },
+        {
+            "id": "278b6bbca0a0",
+            "page": "Create a theme",
+            "heading": "3. Change the colours",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/#3-change-the-colours",
+            "text": "Colours are design tokens in `theme.json`, one set for light mode and one for dark mode. Try a light blue for buttons\nand highlights in light mode:\n\n```json\n\"primary\": \"#7fb3ff\",\n```\n\nRun the checks:\n\n```sh\ncomposer check\n```\n\nThey fail, and say why:\n\n```text\nThe theme \"Harbour\" fails with 3 problems:\n1. In light mode, text \"on-primary\" (#ffffff) on \"primary\" (#7fb3ff) has a contrast of 2.14:1; it needs at least 4.50:1.\n2. In light mode, interface colour \"primary\" (#7fb3ff) on \"background\" (#ffffff) has a contrast of 2.14:1; it needs at least 3.00:1.\n3. In light mode, interface colour \"primary\" (#7fb3ff) on \"surface\" (#f3f4f6) has a contrast of 1.94:1; it needs at least 3.00:1.\n```\n\nWhite text on a light blue is too hard to read, and the light blue itself is hard to see on the white page. Use a darker blue, and run the checks again:\n\n```json\n\"primary\": \"#0b4f8a\",\n```\n\nEvery colour pair in the `contrast` section of `theme.json` is checked in light and dark mode, with and without \"more\ncontrast\": text needs 4.5:1, borders and other interface colours 3:1. Chart colours are always checked.",
+            "needs": []
+        },
+        {
+            "id": "a55aadbec036",
+            "page": "Create a theme",
+            "heading": "4. Override a template",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/#4-override-a-template",
+            "text": "A theme's templates are in `templates/`. Change the footer of every page: in `templates/master.html.twig`, replace the\n`footer` block with:\n\n```twig\n{% block footer %}<p>{{ site_name }}, made with the Harbour theme.</p>{% endblock %}\n```\n\nA template you don't have comes from the default theme, so you only keep the ones you change. Keep the shell's skip\nlink, its landmarks and `{% include '@seo/head.html.twig' %}`: the checks refuse a shell without that line, because\nit holds every page's description, canonical address and structured data.",
+            "needs": []
+        },
+        {
+            "id": "d02867c58ff7",
+            "page": "Create a theme",
+            "heading": "5. Add a layout",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/#5-add-a-layout",
+            "text": "Editors choose a layout for each page. Besides the required ones (`default`, `home`, `search`), a theme can have the\nstandard layouts `landing`, `sidebar` and `full-width`. Add `sidebar`:\n\n1. In `src/MyTheme.php`, list it in the manifest:\n\n    ```php\n    layouts: [...LayoutDefinition::required(), new LayoutDefinition(LayoutDefinition::SIDEBAR, 'Sidebar')],\n    ```\n\n2. Create `templates/layouts/sidebar.html.twig`:\n\n    ```twig\n    {% extends 'master.html.twig' %}\n    {% block title %}{{ title }}{% endblock %}\n    {% block main %}\n    {%- set side = block('aside') is defined ? block('aside')|trim : '' %}\n    <div class=\"container\">\n        <h1>{{ title }}</h1>\n        {%- if lead is defined and lead is not empty %}<p class=\"lead\">{{ lead }}</p>{% endif %}\n        {% block content %}{% endblock %}\n        {%- if side %}\n        <aside aria-labelledby=\"page-aside-title\">{{ side|raw }}</aside>\n        {%- endif %}\n    </div>\n    {% endblock %}\n    {% block aside %}{% endblock %}\n    ```\n\nSightPress fills the `aside` block with \"In this section\", the pages around this one, starting with a heading whose\nid is `page-aside-title`. When there's nothing to show, the page has no `<aside>`. A page whose layout a theme doesn't\nhave is shown in the standard layout, and keeps its own for the next theme that has it.",
+            "needs": []
+        },
+        {
+            "id": "92a989b47fa7",
+            "page": "Create a theme",
+            "heading": "6. Check it",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/#6-check-it",
+            "text": "```sh\ncomposer check\n```\n\nBesides the code style, static analysis and tests, this runs `theme:validate`, the checks SightPress runs before it\napplies a theme. It also refuses a screenshot or a `build/` folder that would end up in your package.",
+            "needs": []
+        },
+        {
+            "id": "eccc8fd5ada1",
+            "page": "Create a theme",
+            "heading": "7. Preview it",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/#7-preview-it",
+            "text": "```sh\ncomposer preview\n```\n\nOpen `build/theme-preview/acme-harbour/index.html` in any browser. It works offline and needs no PHP. It is the same\npage for every theme, so you can compare them:\n\n- a top bar with links to each part of the page;\n- a band with your theme's name, description and a **Download** button;\n- one block of every kind;\n- the footer.\n\nGo through it with the keyboard alone, at 200% and 400% zoom, in dark mode and with a contrast theme.\n\nWith Node.js and Chromium installed, `composer preview -- --screenshot` also writes `screenshot.png`,\n`screenshot-dark.png` and `page.png` in the same folder. Use them for your README. Never commit them: your theme's\nreleases get them attached automatically.",
+            "needs": []
+        },
+        {
+            "id": "c272c23f1a63",
+            "page": "Create a theme",
+            "heading": "8. Try it on a website",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/#8-try-it-on-a-website",
+            "text": "In your SightPress project, add the theme as a path repository, so changes show up as you make them:\n\n```sh\ncomposer config repositories.harbour '{\"type\": \"path\", \"url\": \"../harbour\", \"options\": {\"symlink\": true}}'\ncomposer require acme/theme-harbour:@dev\nbin/sightpress cache:clear\nbin/sightpress theme:validate acme-harbour\n```\n\nThen apply it, from the command line:\n\n```sh\nbin/sightpress site:theme:apply demo acme-harbour\n```\n\nor in the admin panel, under **Appearance**: choose **Use Harbour**. If pages use a layout your theme doesn't have,\nSightPress lists them first. To see the screenshot in the theme picker, run `bin/sightpress theme:publish-assets`.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "f98fb7a836b7",
+            "page": "Create a theme",
+            "heading": "9. Open a pull request",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/#9-open-a-pull-request",
+            "text": "Push your theme to GitHub and open a pull request with a change. The template's workflows add two things:\n\n- **a download**: the preview page, its screenshots and an accessibility report, in one zip;\n- **a comment** on the pull request with the download link, your `previewDescription` and the accessibility result in\n  light mode, dark mode and forced colours.\n\nA reviewer can judge the change without installing anything (see [Review a theme change](../how-to/review-a-theme-change.md)).",
+            "needs": []
+        },
+        {
+            "id": "56fc2e435694",
+            "page": "Create a theme",
+            "heading": "10. Publish it",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-theme/#10-publish-it",
+            "text": "1. Merge your pull requests. Release Please keeps a release pull request open; merging it tags the release and\n   attaches the preview and the screenshots to it.\n2. Submit your repository on [packagist.org](https://packagist.org/packages/submit) and turn on its GitHub hook (or\n   add the `PACKAGIST_USERNAME` and `PACKAGIST_API_TOKEN` secrets the release workflow uses).\n3. Anyone running SightPress can now install your theme with `composer require acme/theme-harbour`.\n\nThat's it: you have made, checked, previewed, applied and published a theme.",
+            "needs": []
+        },
+        {
             "id": "e6d6a6bb1366",
             "page": "What you can build with SightPress",
             "heading": "",
@@ -1935,7 +2748,7 @@
             "page": "What you can build with SightPress",
             "heading": "What you can do today",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#what-you-can-do-today",
-            "text": "This is the first version of SightPress (0.1). It already gives you the following.",
+            "text": "SightPress is still at an early stage, and this page follows the newest documentation. Features marked **next\nrelease** are finished but aren't in version 0.3 yet. SightPress already gives you the following.",
             "needs": []
         },
         {
@@ -1991,13 +2804,29 @@
         {
             "id": "a18966f717b1",
             "page": "What you can build with SightPress",
+            "heading": "Reach more people and understand your visitors",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#reach-more-people-and-understand-your-visitors",
+            "text": "- **Several languages.** Publish a website in more than one language. See\n  [Add a language and translate a page](how-to/add-a-language.md).\n- **Site search.** Visitors can search your pages. See [Search your website](how-to/search-your-website.md).\n- **Analytics.** See how many people visit and what they read. See\n  [See who visits your website](how-to/see-who-visits-your-website.md).\n- **An AI assistant.** Turn it on if you want help drafting, with your own API key. A person checks every suggestion.\n  See [Use the AI assistant](how-to/use-the-ai-assistant.md).",
+            "needs": []
+        },
+        {
+            "id": "762f968198fa",
+            "page": "What you can build with SightPress",
+            "heading": "Choose how your website looks and where its files live",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#choose-how-your-website-looks-and-where-its-files-live",
+            "text": "- **Themes and colours.** Install other themes, and change the colours on the **Appearance** screen.\n  See [Install and change a theme](how-to/install-and-change-a-theme.md).\n- **Large files.** Send big files in parts, and pause or resume them. See\n  [Upload large files](how-to/upload-large-files.md).\n- **Cloud storage and a CDN.** Keep a website's files with an S3-compatible service, and deliver public\n  files from near each visitor.",
+            "needs": []
+        },
+        {
+            "id": "1cf7d36c43fa",
+            "page": "What you can build with SightPress",
             "heading": "Ideas for websites",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#ideas-for-websites",
             "text": "These ideas use only what SightPress can do today. Each one lists the blocks and features that help most.",
             "needs": []
         },
         {
-            "id": "762f968198fa",
+            "id": "e44b8a2399d9",
             "page": "What you can build with SightPress",
             "heading": "A website for a small business",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-website-for-a-small-business",
@@ -2005,7 +2834,7 @@
             "needs": []
         },
         {
-            "id": "1cf7d36c43fa",
+            "id": "7ecbaab49bf0",
             "page": "What you can build with SightPress",
             "heading": "A charity or community group",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-charity-or-community-group",
@@ -2013,7 +2842,7 @@
             "needs": []
         },
         {
-            "id": "e44b8a2399d9",
+            "id": "28646942c704",
             "page": "What you can build with SightPress",
             "heading": "A podcast or audio project",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-podcast-or-audio-project",
@@ -2021,7 +2850,7 @@
             "needs": []
         },
         {
-            "id": "7ecbaab49bf0",
+            "id": "06884d1aa47f",
             "page": "What you can build with SightPress",
             "heading": "A portfolio",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-portfolio",
@@ -2029,7 +2858,7 @@
             "needs": []
         },
         {
-            "id": "28646942c704",
+            "id": "4a53271a82d8",
             "page": "What you can build with SightPress",
             "heading": "A school, library or museum",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-school-library-or-museum",
@@ -2037,7 +2866,7 @@
             "needs": []
         },
         {
-            "id": "06884d1aa47f",
+            "id": "dd00911cafaa",
             "page": "What you can build with SightPress",
             "heading": "An accessibility-first information website",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#an-accessibility-first-information-website",
@@ -2045,7 +2874,7 @@
             "needs": []
         },
         {
-            "id": "4a53271a82d8",
+            "id": "976e75e82130",
             "page": "What you can build with SightPress",
             "heading": "A personal website or blog-style journal",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-personal-website-or-blog-style-journal",
@@ -2053,7 +2882,7 @@
             "needs": []
         },
         {
-            "id": "dd00911cafaa",
+            "id": "c3bc7dae4342",
             "page": "What you can build with SightPress",
             "heading": "Several websites for an agency or organisation",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#several-websites-for-an-agency-or-organisation",
@@ -2061,19 +2890,19 @@
             "needs": []
         },
         {
-            "id": "976e75e82130",
+            "id": "0778221bfc55",
             "page": "What you can build with SightPress",
             "heading": "Coming later",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#coming-later",
-            "text": "Later versions of SightPress add more, such as more themes, add-on modules and putting SightPress on a public server.\nThe [Getting started](getting-started.md) guide and the [how-to guides](how-to/index.md) are updated as each feature\narrives.",
+            "text": "Later versions of SightPress add more, such as add-on modules and a guide to putting SightPress on a public server.\nThe [Getting started](getting-started.md) guide and the [how-to guides](how-to/index.md) are updated as each feature\narrives.",
             "needs": []
         },
         {
-            "id": "c3bc7dae4342",
+            "id": "46b91183eb03",
             "page": "What you can build with SightPress",
             "heading": "Where to go next",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#where-to-go-next",
-            "text": "- To try SightPress on your own computer, follow [Getting started](getting-started.md).\n- To build your first website, follow [Create a website](how-to/create-a-site.md), then\n  [Write and publish a page](how-to/write-and-publish-a-page.md).",
+            "text": "- To decide which options and content suit your website, read [Plan your website](how-to/plan-a-site.md).\n- To try SightPress on your own computer, follow [Getting started](getting-started.md).\n- To build your first website, follow [Create a website](how-to/create-a-site.md), then\n  [Write and publish a page](how-to/write-and-publish-a-page.md).",
             "needs": []
         }
     ]
