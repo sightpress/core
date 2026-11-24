@@ -74,5 +74,13 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0054](0054-chunked-uploads-to-a-temporary-folder.md) | Chunked uploads to a temporary folder | Accepted |
 | [0055](0055-direct-to-bucket-uploads.md) | Direct-to-bucket uploads | Accepted |
 | [0056](0056-captions-and-transcripts.md) | Captions and transcripts | Accepted |
+| [0057](0057-module-contract-audit.md) | Module contract audit: what an external module can reach (`module-interface` 0.5 scope) | Proposed |
+| [0058](0058-public-events-in-the-module-contract.md) | Public events in the module contract | Proposed |
+| [0059](0059-module-screens-viewer-site-settings-audit.md) | Module screens, the viewer, site information, settings, audit and translations | Proposed |
+| [0060](0060-module-seo-contributions.md) | Module SEO contributions: sitemap, `llms.txt` and JSON-LD | Proposed |
+| [0061](0061-scheduled-jobs-for-modules.md) | Scheduled jobs for modules | Proposed |
+| [0062](0062-route-permissions-and-critical-routes.md) | Route permissions and critical routes | Proposed |
+| [0063](0063-sms-provider-contract.md) | Text message (SMS) provider contract | Proposed |
+| [0064](0064-block-variants-options-and-icons.md) | Block variants, shared options and icons in the module contract | Proposed |
 
 When an ADR's status changes, update it here too.
