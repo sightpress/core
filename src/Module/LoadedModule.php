@@ -13,13 +13,16 @@ use SightPress\Module\ModuleManifest;
 final readonly class LoadedModule
 {
     /**
-     * @param non-empty-string $source `sightpress/core` or the Composer package name
+     * @param non-empty-string $source   `sightpress/core` or the Composer package name
+     * @param bool             $external installed as a package of its own, so a problem with it leaves it out
+     *                                   rather than stopping the tenant (ADR-0065)
      */
     public function __construct(
         public ModuleInterface $module,
         public ModuleManifest $manifest,
         public string $source,
         public ?ModuleAbout $about = null,
+        public bool $external = false,
     ) {
     }
 

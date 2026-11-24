@@ -20,6 +20,7 @@ use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\Module\Registered;
 use SightPress\Core\Module\ServiceDefinition;
+use SightPress\Core\Module\UnavailableModule;
 use SightPress\Core\Module\ViewPath;
 use SightPress\Core\Tests\Support\CallbackHandler;
 use SightPress\Core\Tests\Support\FakeModule;
@@ -55,6 +56,7 @@ use stdClass;
 #[UsesClass(ModuleLoader::class)]
 #[UsesClass(ModuleCatalogue::class)]
 #[UsesClass(ModuleCandidate::class)]
+#[UsesClass(UnavailableModule::class)]
 #[UsesClass(ModuleSelection::class)]
 #[UsesClass(LoadedModule::class)]
 final class ModuleRegistryTest extends TestCase
@@ -430,6 +432,43 @@ final class ModuleRegistryTest extends TestCase
         );
 
         $registry->assertCanUse('blog', 'media.public');
+    }
+
+    public function testAnExternalModuleThatFailsToRegisterIsLeftOutWithTheModulesThatNeedIt(): void
+    {
+        $route = static fn (string $name, string $path): Closure => static fn (ModuleRegistrar $r) => $r->routes()->add(new Route($name, $path, CallbackHandler::class));
+        $catalogue = new ModuleLoader('0.2.0')->catalogue([
+            new ModuleCandidate(new FakeModule('site', required: true, register: $route('home', '/')), 'sightpress/core'),
+            new ModuleCandidate(new FakeModule('acme.broken', register: static function (ModuleRegistrar $r): void {
+                $r->routes()->add(new Route('acme.broken', '/broken', CallbackHandler::class));
+                throw new \RuntimeException('Settings file missing.');
+            }), 'acme/broken', '*'),
+            new ModuleCandidate(new FakeModule('acme.invalid', register: static fn (ModuleRegistrar $r) => $r->permissions()->add(new Permission('Not Valid', 'Label'))), 'acme/invalid', '*'),
+            new ModuleCandidate(new FakeModule('acme.addon', ['acme.broken' => '*']), 'acme/addon', '*'),
+            new ModuleCandidate(new FakeModule('acme.events', register: $route('acme.events', '/events')), 'acme/events', '*'),
+        ]);
+
+        $registry = ModuleRegistry::register($catalogue->resolve(new ModuleSelection()));
+
+        self::assertSame(['site', 'acme.events'], $registry->modules());
+        self::assertSame(['home', 'acme.events'], array_map(static fn (Registered $route): string => $route->item->name, $registry->routes()));
+        self::assertSame([
+            'acme.broken (acme/broken): It could not register: Settings file missing.',
+            'acme.invalid (acme/invalid): It could not register: Permission name is not valid ("Not Valid"): use at least two lower-case words joined by dots, for example "events.manage".',
+            'acme.addon (acme/addon): It needs module "acme.broken", which could not start.',
+        ], array_map(static fn (UnavailableModule $module): string => $module->identity() . ': ' . $module->reason, $registry->failures()));
+
+        $without = $catalogue->without($registry->failures());
+        self::assertSame(['site', 'acme.events'], $without->ids());
+        self::assertSame($registry->failures(), $without->unavailable());
+    }
+
+    public function testACoreModuleThatFailsToRegisterStopsTheTenant(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Settings file missing.');
+
+        $this->registry(new FakeModule('site', register: static fn (ModuleRegistrar $r) => throw new \RuntimeException('Settings file missing.')));
     }
 
     private function registry(FakeModule ...$modules): ModuleRegistry

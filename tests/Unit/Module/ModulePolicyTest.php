@@ -91,9 +91,22 @@ final class ModulePolicyTest extends TestCase
      */
     public static function invalidConfigs(): iterable
     {
-        yield 'unknown default' => [['acme.nope' => true], [], 'Tenant setting "modules.defaults" names module "acme.nope", which is not installed.'];
         yield 'required lock' => [[], ['site' => false], 'Tenant setting "modules.locked" names module "site", which is always on.'];
         yield 'lock needs a locked-off module' => [[], ['acme.calendar' => true, 'acme.events' => false], 'Tenant setting "modules.locked" turns module "acme.calendar" on but module "acme.events", which it requires, off.'];
+    }
+
+    public function testSettingsThatNameAModuleThatIsntInstalledAreLeftOutAndReported(): void
+    {
+        $policy = ModulePolicy::fromConfig($this->catalogue(), $this->config(['acme.nope' => true, 'acme.events' => false], ['acme.gone' => true, 'acme.calendar' => false]));
+
+        self::assertSame([
+            ['setting' => 'modules.defaults', 'id' => 'acme.nope'],
+            ['setting' => 'modules.locked', 'id' => 'acme.gone'],
+        ], $policy->missing());
+        self::assertFalse($policy->defaultFor('acme.events'));
+        self::assertFalse($policy->lock('acme.calendar'));
+        self::assertNull($policy->lock('acme.gone'));
+        self::assertSame([], ModulePolicy::fromConfig($this->catalogue(), $this->config([], []))->missing());
     }
 
     public function testAModuleIsDescribedByItsPackageOrByItsId(): void

@@ -23,6 +23,7 @@ use SightPress\Module\Search\SearchDocumentProvider;
 use SightPress\Module\Seo\SeoProvider;
 use SightPress\Module\Sms\SmsProvider;
 use SightPress\Module\Setting\Setting;
+use Throwable;
 
 /**
  * Everything the modules that are on registered, each item tied to its module. Built once per container by
@@ -103,8 +104,13 @@ final class ModuleRegistry
     /** @var array<string, Registered<BlockIcon>> */
     private array $blockIcons = [];
 
+    /** @var list<UnavailableModule> */
+    private array $failures = [];
+
     /**
-     * Lets every module register, in the given (dependency) order.
+     * Lets every module register, in the given (dependency) order. An external module that fails to register is
+     * left out with everything it registered so far, and so are the modules that need it (ADR-0065); a failure in
+     * one of core's modules stops the tenant.
      *
      * @param list<LoadedModule> $modules
      */
@@ -113,18 +119,38 @@ final class ModuleRegistry
         $registry = new self();
         foreach ($modules as $module) {
             $id = $module->id();
-            $registry->requires[$id] = $module->requiredIds();
+            $failed = array_values(array_intersect($module->requiredIds(), array_map(static fn (UnavailableModule $failure): ?string => $failure->id, $registry->failures)));
+            if ($failed !== []) {
+                $registry->failures[] = new UnavailableModule($module->source, $id, sprintf('It needs module "%s", which could not start.', $failed[0]));
+                continue;
+            }
+            $before = clone $registry;
             try {
+                $registry->requires[$id] = $module->requiredIds();
                 $module->module->register(new ModuleScopedRegistrar($id, $registry));
-            } catch (InvalidValueException $exception) {
-                throw new ModuleException(
-                    sprintf('Module "%s" could not register: %s', $id, $exception->getMessage()),
-                    previous: $exception,
-                );
+            } catch (Throwable $exception) {
+                if (!$module->external) {
+                    throw $exception instanceof InvalidValueException ? new ModuleException(
+                        sprintf('Module "%s" could not register: %s', $id, $exception->getMessage()),
+                        previous: $exception,
+                    ) : $exception;
+                }
+                $registry = $before;
+                $registry->failures[] = new UnavailableModule($module->source, $id, sprintf('It could not register: %s', $exception->getMessage()));
             }
         }
 
         return $registry;
+    }
+
+    /**
+     * The external modules that were left out because they, or a module they need, failed to register.
+     *
+     * @return list<UnavailableModule>
+     */
+    public function failures(): array
+    {
+        return $this->failures;
     }
 
     /**

@@ -13,4 +13,6 @@ use RuntimeException;
  */
 final class ModuleException extends RuntimeException
 {
+    /** @var non-empty-string|null the module it is about, when the loader knows it */
+    public ?string $moduleId = null;
 }

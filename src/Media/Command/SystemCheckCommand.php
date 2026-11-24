@@ -16,6 +16,7 @@ use SightPress\Core\Media\UploadAllowance;
 use SightPress\Core\Media\UploadRefusals;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
+use SightPress\Core\Tenant\SiteModules;
 use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Tenant\SiteStatus;
 use SightPress\Core\Tenant\TenantConfig;
@@ -27,7 +28,8 @@ use SightPress\Module\Console\CommandParameterType;
 
 /**
  * `system:check`: the server's upload and input limits, the largest file of each kind that can be uploaded, and
- * the settings to change ({@see ServerLimitsCheck}). Exits with 1 when something must be fixed, for CI and
+ * the settings to change ({@see ServerLimitsCheck}), and modules that are unavailable or named in `config/tenant.php`
+ * without being installed ({@see SiteModules::problems()}). Exits with 1 when something must be fixed, for CI and
  * monitoring.
  *
  * Run it the way the web server runs PHP (in the skeleton: `docker compose exec php bin/sightpress system:check`):
@@ -43,6 +45,7 @@ final readonly class SystemCheckCommand implements Command
         private SiteContainerFactory $containers,
         private TenantConfig $config,
         private UploadProbeClient $probe,
+        private SiteModules $modules,
     ) {
     }
 
@@ -138,6 +141,8 @@ final readonly class SystemCheckCommand implements Command
         if ($input->flag('recommend')) {
             $this->recommend($site, $limits, $output);
         }
+        // Modules that can't be used, and tenant settings naming a module that isn't installed (ADR-0065).
+        array_push($problems, ...$this->modules->problems());
         foreach ($problems as $problem) {
             $output->error($problem);
         }

@@ -13,6 +13,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use SightPress\Core\Cli\ConsoleApplicationFactory;
 use SightPress\Core\Http\AfterResponse;
 use SightPress\Core\Http\Csrf\CsrfMiddleware;
@@ -35,11 +36,13 @@ use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Module\ComposerModuleDiscovery;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleCandidate;
+use SightPress\Core\Module\ModuleDiscovery;
 use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModulePolicy;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\Module\ModuleServices;
+use SightPress\Core\Module\UnavailableModuleLog;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tenant\TenantConfigLoader;
@@ -89,13 +92,20 @@ final readonly class Kernel
         ?array $modules = null,
         ?ModuleSelection $selection = null,
     ): self {
-        $modules ??= [
-            ...CoreModules::candidates(),
-            ...ComposerModuleDiscovery::forProject($config->projectDir)->candidates(),
-        ];
-        $catalogue = new ModuleLoader(self::contractVersion())->catalogue($modules);
+        $cacheDir = $config->debug ? null : $config->cacheDir;
+        $discovery = $modules === null ? ComposerModuleDiscovery::forProject($config->projectDir, $cacheDir)->discover() : new ModuleDiscovery();
+        // An external module with a problem is left out as unavailable; only a broken core module stops the tenant
+        // (ADR-0065).
+        $catalogue = new ModuleLoader(self::contractVersion())->catalogue(
+            $modules ?? [...CoreModules::candidates(), ...$discovery->candidates],
+            $discovery->unavailable,
+        );
         $policy = ModulePolicy::fromConfig($catalogue, $config);
         $registry = ModuleRegistry::register($catalogue->resolve($selection ?? $policy->tenantSelection()));
+        if ($registry->failures() !== []) {
+            $catalogue = $catalogue->without($registry->failures());
+            $policy = ModulePolicy::fromConfig($catalogue, $config);
+        }
 
         $core = CoreServices::definitions($config, $registry, $policy);
         $container = new ContainerBuilder()
@@ -129,6 +139,9 @@ final readonly class Kernel
         $app->add(ErrorHandlingMiddleware::class);
         $app->add(SecurityHeadersMiddleware::class);
         new RouteInstaller($container, $policy)->install($app, $registry);
+        if ($catalogue->unavailable() !== []) {
+            UnavailableModuleLog::inCacheFolder(Services::get($container, LoggerInterface::class), $cacheDir)->report($catalogue->unavailable());
+        }
 
         return new self($config, $container, $app, $registry);
     }

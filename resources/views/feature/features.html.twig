@@ -4,7 +4,10 @@
     in words, what turning it off does, and one button in its own form: "Turn on …" (posts here) or "Turn off …"
     (posts to the confirmation page). A feature the organisation set has no button; an off feature with data has a
     link to delete it.
-    Context: `features` [{feature: FeatureState, anchor, has_data}], `action`, `turn_off`, `delete_data`.
+    Then the modules that can't be used (`unavailable`, with the reason for the server administrator) and those the
+    site had on whose package was removed (`missing`, their ids).
+    Context: `features` [{feature: FeatureState, anchor, has_data}], `unavailable` [UnavailableModule], `missing`
+    [string], `action`, `turn_off`, `delete_data`.
 #}
 {% extends '@admin/layout.html.twig' %}
 {% block title %}{{ t('Features') }}{% endblock %}
@@ -51,4 +54,27 @@
 {%- else %}
 <p>{{ t('There are no optional features to turn on or off. Features installed later are listed here.') }}</p>
 {%- endfor %}
+{%- if missing is not empty %}
+<section class="admin-panel" aria-labelledby="features-missing">
+    <h2 id="features-missing">{{ t('Features that were removed') }}</h2>
+    <p>{{ t('These features are on for this site, but they are no longer installed. The site works without them and their data is kept: ask whoever runs the server to install them again to bring them back.') }}</p>
+    <ul>
+        {%- for id in missing %}
+        <li>{{ id }}</li>
+        {%- endfor %}
+    </ul>
+</section>
+{%- endif %}
+{%- if unavailable is not empty %}
+<section class="admin-panel" aria-labelledby="features-unavailable">
+    <h2 id="features-unavailable">{{ t('Features that can’t be used') }}</h2>
+    <p>{{ t('These features are installed but can’t be used on any site. Everything else keeps working. Give the reason to whoever runs the server.') }}</p>
+    <dl>
+        {%- for module in unavailable %}
+        <dt>{{ module.identity }}</dt>
+        <dd>{{ module.reason }}</dd>
+        {%- endfor %}
+    </dl>
+</section>
+{%- endif %}
 {% endblock %}

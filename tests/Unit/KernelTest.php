@@ -21,6 +21,7 @@ use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\Tenant\TenantConfigLoader;
 use SightPress\Core\Tests\Support\Modules\HelloHandler;
 use SightPress\Core\Tests\Support\FakeModule;
+use SightPress\Core\Tests\Support\Modules\BrokenModule;
 use SightPress\Core\Tests\Support\Modules\ExampleCommand;
 use SightPress\Core\Tests\Support\Modules\ExampleModule;
 use SightPress\Core\Tests\Support\SiteFixture;
@@ -229,6 +230,32 @@ final class KernelTest extends TestCase
         self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'search', 'analytics', 'assistant', 'audit', 'acme.example'], $kernel->modules()->modules());
         self::assertTrue($kernel->console()->has('site:registry:check'));
         self::assertNotSame('', Kernel::contractVersion());
+    }
+
+    public function testBrokenExternalModulesAreLeftOutAndTheTenantKeepsWorking(): void
+    {
+        BrokenModule::$failAt = 'register';
+        $project = $this->project(sites: ['demo' => SiteFixture::entry()]);
+        $contract = ['sightpress/module-interface' => '*'];
+        $project->directory->write('vendor/composer/installed.json', (string) json_encode(['packages' => [
+            ['name' => 'acme/example', 'require' => $contract, 'extra' => ['sightpress' => ['module' => ExampleModule::class]]],
+            ['name' => 'acme/missing', 'require' => $contract, 'extra' => ['sightpress' => ['module' => 'Acme\\Missing\\Module']]],
+            ['name' => 'acme/broken', 'require' => $contract, 'extra' => ['sightpress' => ['module' => BrokenModule::class]]],
+        ]]));
+
+        $kernel = Kernel::boot($project->path(), ['APP_ENV' => 'production', 'APP_SECRET' => SiteFixture::SECRET]);
+
+        self::assertContains('acme.example', $kernel->modules()->modules());
+        self::assertNotContains(BrokenModule::ID, $kernel->modules()->modules());
+        self::assertNotContains('acme.broken.home', array_map(static fn ($route): string => $route->item->name, $kernel->modules()->routes()), 'what it registered before failing is gone');
+        $cache = $project->path() . '/var/cache/production';
+        self::assertFileExists($cache . '/modules.php');
+        self::assertSame(
+            "acme/missing: The module class Acme\\Missing\\Module does not exist. Check \"extra.sightpress.module\" and the package's autoload.\n"
+            . 'acme.broken (acme/broken): It could not register: A required setting is missing.',
+            file_get_contents($cache . '/modules-unavailable.txt'),
+        );
+        BrokenModule::$failAt = 'create';
     }
 
     public function testAModuleProblemStopsTheBoot(): void

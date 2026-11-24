@@ -16,6 +16,11 @@ use SightPress\Core\Http\Upload\UploadProbeClient;
 use SightPress\Core\Infrastructure\Clock\FrozenClock;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Media\Command\SystemCheckCommand;
+use SightPress\Core\Module\ModuleCatalogue;
+use SightPress\Core\Module\ModulePolicy;
+use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Core\Tenant\SiteMigrator;
+use SightPress\Core\Tenant\SiteModules;
 use SightPress\Core\Media\MediaLimits;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
@@ -43,6 +48,11 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 #[UsesClass(\SightPress\Core\Tenant\TenantConfig::class)]
 #[UsesClass(\SightPress\Core\Tenant\TenantMediaLimits::class)]
 #[UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
+#[UsesClass(SiteModules::class)]
+#[UsesClass(SiteMigrator::class)]
+#[UsesClass(ModulePolicy::class)]
+#[UsesClass(ModuleCatalogue::class)]
+#[UsesClass(ModuleRegistry::class)]
 final class SystemCheckCommandTest extends TestCase
 {
     public function testDescribesItself(): void
@@ -139,12 +149,14 @@ final class SystemCheckCommandTest extends TestCase
         $secretBox = new SecretBox(str_repeat('k', 32));
         $containers = new SiteContainerFactory(new ArrayContainer([]), $secretBox, $config);
 
+        $modules = new SiteModules(new ModulePolicy(new ModuleCatalogue([])), new SiteMigrator($containers, new ModuleRegistry()), $containers, new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')));
+
         return new SystemCheckCommand($server, new MediaLimits(), new ServerLimitsCheck(new MediaLimits(), $server), $sites, $containers, $config, new UploadProbeClient(new MockHttpClient(static function (string $method, string $url) use ($webServerMegabytes): MockResponse {
             parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
 
             return (int) $query['bytes'] <= $webServerMegabytes * ServerLimitsFixture::MB
                 ? new MockResponse('', ['http_code' => 204, 'response_headers' => [UploadProbe::ANSWER_HEADER . ': accepted']])
                 : new MockResponse('', ['http_code' => 413]);
-        }), new UploadProbe(str_repeat('s', 32), new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')))));
+        }), new UploadProbe(str_repeat('s', 32), new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')))), $modules);
     }
 }

@@ -15,7 +15,8 @@
  * latest one to that address as JSON (to, subject, text, html), or 404.
  *
  * The `features` copy (F-2) also has two optional modules of a test package: "Events" (on, with an event in its table)
- * and "acme.calendar" (off, needs Events).
+ * and "acme.calendar" (off, needs Events), an unavailable one ("acme.tickets", which needs a module that isn't
+ * installed) and, on the site, one that was on before its package was removed ("acme.newsletter", X-1).
  * The `assistant` copy (A-3) has the AI assistant on with the pretend "Test AI" service of a test package (nothing
  * leaves the server); `/_test/assistant` chooses it with a key and a model that sees pictures, so the assistant is
  * ready, and `/_test/picture` adds a picture to the media library and answers with its id. The `translate` copy
@@ -49,6 +50,8 @@ use SightPress\Core\Kernel;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleAbout;
 use SightPress\Core\Module\ModuleCandidate;
+use SightPress\Core\Module\SiteModuleStore;
+use SightPress\Core\Tests\Support\FakeModule;
 use SightPress\Core\Tenant\TenantConfigLoader;
 use SightPress\Core\Tests\Support\Modules\CalendarModule;
 use SightPress\Core\Tests\Support\Modules\EventsModule;
@@ -175,6 +178,8 @@ if (!is_file($project . '/config/sites.php')) {
     $editor->create('en-GB', new PageContent('Volunteer with us'), authorId: $people['editor'] ?? null);
     if ($kernel->modules()->has(EventsModule::ID)) {
         Services::get($site, Connection::class)->insert('acme_event', ['title' => 'Book fair']);
+        // X-1: a module the site had on whose package was removed.
+        Services::get($site, SiteModuleStore::class)->save('acme.newsletter', true, new DateTimeImmutable(), null);
     }
     if ($kernel->modules()->has(TestAssistantModule::ID)) {
         $demo = Services::get($kernel->container(), SiteRepository::class)->find('demo') ?? throw new LogicException('No site.');
@@ -407,6 +412,8 @@ function boot(string $project, array $environment): Kernel
         ...CoreModules::candidates(),
         new ModuleCandidate(new EventsModule(), 'acme/events', '*', $about),
         new ModuleCandidate(new CalendarModule(), 'acme/events', '*', $about),
+        // X-1: an installed module that can't be used, listed with the reason.
+        new ModuleCandidate(new FakeModule('acme.tickets', ['acme.box_office' => '^1.0']), 'acme/tickets', '*'),
     ]);
 }
 

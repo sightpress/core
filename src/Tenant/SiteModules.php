@@ -12,6 +12,7 @@ use SightPress\Core\Module\LoadedModule;
 use SightPress\Core\Module\ModulePolicy;
 use SightPress\Core\Module\ModuleSelection;
 use SightPress\Core\Module\SiteModuleStore;
+use SightPress\Core\Module\UnavailableModule;
 use SightPress\Core\Template\Message;
 
 /**
@@ -46,6 +47,59 @@ final readonly class SiteModules
         $on = array_fill_keys($this->onIds($this->selection($site)), true);
 
         return array_map(fn (LoadedModule $module): SiteModuleState => $this->state($module, $on), $this->policy->optional());
+    }
+
+    /**
+     * The installed external modules that can't be used on any site, and why (ADR-0065).
+     *
+     * @return list<UnavailableModule>
+     */
+    public function unavailable(): array
+    {
+        return $this->policy->catalogue()->unavailable();
+    }
+
+    /**
+     * Modules the site turned on that aren't installed any more (their package was removed): the site works without
+     * them, their data stays, and reinstalling the package brings them back on.
+     *
+     * @return list<string> their ids
+     */
+    public function missing(Site $site): array
+    {
+        $catalogue = $this->policy->catalogue();
+        $unavailable = array_map(static fn (UnavailableModule $module): ?string => $module->id, $catalogue->unavailable());
+        $missing = [];
+        foreach (Services::get($this->containers->forSite($site), SiteModuleStore::class)->choices() as $id => $on) {
+            if ($on && !$catalogue->has($id) && !in_array($id, $unavailable, true)) {
+                $missing[] = $id;
+            }
+        }
+
+        return $missing;
+    }
+
+    /**
+     * What `system:check` reports about the tenant's modules: unavailable modules, and settings in
+     * `config/tenant.php` that name a module that isn't installed.
+     *
+     * @return list<string>
+     */
+    public function problems(): array
+    {
+        $problems = [];
+        foreach ($this->unavailable() as $module) {
+            $problems[] = sprintf('Module %s is unavailable, so no site uses it: %s', $module->identity(), $module->reason);
+        }
+        foreach ($this->policy->missing() as $entry) {
+            $problems[] = sprintf(
+                'Tenant setting "%s" in config/tenant.php names module "%s", which is not installed or is unavailable, so the setting is ignored. Install the module again, or remove the setting.',
+                $entry['setting'],
+                $entry['id'],
+            );
+        }
+
+        return $problems;
     }
 
     /**

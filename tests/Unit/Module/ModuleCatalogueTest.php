@@ -13,6 +13,7 @@ use SightPress\Core\Module\ModuleCatalogue;
 use SightPress\Core\Module\ModuleException;
 use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleSelection;
+use SightPress\Core\Module\UnavailableModule;
 use SightPress\Core\Tests\Support\FakeModule;
 
 #[CoversClass(ModuleCatalogue::class)]
@@ -20,6 +21,7 @@ use SightPress\Core\Tests\Support\FakeModule;
 #[UsesClass(ModuleLoader::class)]
 #[UsesClass(ModuleCandidate::class)]
 #[UsesClass(LoadedModule::class)]
+#[UsesClass(UnavailableModule::class)]
 final class ModuleCatalogueTest extends TestCase
 {
     public function testEachModuleComesAfterTheModulesItRequires(): void
@@ -255,5 +257,23 @@ final class ModuleCatalogueTest extends TestCase
     private function ids(array $modules): array
     {
         return array_map(static fn (LoadedModule $module): string => $module->id(), $modules);
+    }
+
+    public function testModulesThatFailedToRegisterAreLeftOutAsUnavailable(): void
+    {
+        $broken = new UnavailableModule('acme/old', null, 'It does not load.');
+        $catalogue = new ModuleCatalogue([], [$broken]);
+        self::assertSame([$broken], $catalogue->unavailable());
+
+        $catalogue = new ModuleLoader('0.2.0')->catalogue([
+            new ModuleCandidate(new FakeModule('acme.events'), 'acme/events', '*'),
+            new ModuleCandidate(new FakeModule('acme.tours'), 'acme/tours', '*'),
+        ], [$broken]);
+        $failed = new UnavailableModule('acme/events', 'acme.events', 'It could not register: no settings.');
+        $without = $catalogue->without([$failed]);
+
+        self::assertSame(['acme.tours'], $without->ids());
+        self::assertSame([$broken, $failed], $without->unavailable());
+        self::assertSame(['acme.events', 'acme.tours'], $catalogue->ids(), 'the catalogue itself is unchanged');
     }
 }

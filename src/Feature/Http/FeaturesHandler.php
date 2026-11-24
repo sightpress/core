@@ -21,6 +21,9 @@ use Slim\Exception\HttpForbiddenException;
  * (in words), what turning it off does and one button: "Turn on …" (a POST form here) or "Turn off …" (which asks
  * first, {@see TurnOffFeatureHandler}). A feature the organisation set has no button. Needs `module.manage`.
  *
+ * Below them it lists the installed modules that can't be used (with the reason, ADR-0065) and those the site had on
+ * whose package was removed (their data is kept, and reinstalling brings them back).
+ *
  * After a change the screen comes back at the feature's heading (`#feature-<id>`), with the result in the live
  * region.
  */
@@ -80,6 +83,8 @@ final readonly class FeaturesHandler implements RequestHandlerInterface
                 'anchor' => self::anchor($feature->id),
                 'has_data' => !$feature->on && !$feature->locked && $this->features->hasData($this->site, $feature->id),
             ], $this->features->all($this->site)),
+            'unavailable' => $this->features->unavailable(),
+            'missing' => $this->features->missing($this->site),
             'action' => self::PATH,
             'turn_off' => TurnOffFeatureHandler::PATH,
             'delete_data' => DeleteFeatureDataHandler::PATH,

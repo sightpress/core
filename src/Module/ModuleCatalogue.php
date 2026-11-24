@@ -14,10 +14,36 @@ use UnexpectedValueException;
 final readonly class ModuleCatalogue
 {
     /**
-     * @param array<string, LoadedModule> $modules by id, in discovery order
+     * @param array<string, LoadedModule> $modules     by id, in discovery order
+     * @param list<UnavailableModule>     $unavailable installed external modules that were left out, and why
      */
-    public function __construct(private array $modules)
+    public function __construct(private array $modules, private array $unavailable = [])
     {
+    }
+
+    /**
+     * The installed external modules that can't be used, and why (ADR-0065).
+     *
+     * @return list<UnavailableModule>
+     */
+    public function unavailable(): array
+    {
+        return $this->unavailable;
+    }
+
+    /**
+     * The same catalogue without modules that turned out to be unavailable (they failed to register).
+     *
+     * @param list<UnavailableModule> $failures
+     */
+    public function without(array $failures): self
+    {
+        $modules = $this->modules;
+        foreach ($failures as $failure) {
+            unset($modules[(string) $failure->id]);
+        }
+
+        return new self($modules, [...$this->unavailable, ...$failures]);
     }
 
     public function has(string $id): bool

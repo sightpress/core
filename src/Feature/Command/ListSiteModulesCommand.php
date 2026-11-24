@@ -10,7 +10,8 @@ use SightPress\Module\Console\CommandInput;
 use SightPress\Module\Console\CommandParameter;
 
 /**
- * `site:module:list <slug>`: each optional module with its id, its name and whether it is on for the site.
+ * `site:module:list <slug>`: each optional module with its id, its name and whether it is on for the site, then the
+ * modules that are unavailable (with the reason) and those the site had on whose package was removed.
  */
 final readonly class ListSiteModulesCommand extends SiteModuleCommand
 {
@@ -43,6 +44,14 @@ final readonly class ListSiteModulesCommand extends SiteModuleCommand
             );
         }
 
-        return [$lines === [] ? [sprintf('The site "%s" has no optional modules: every installed module is always on.', $slug)] : $lines, null];
+        $lines = $lines === [] ? [sprintf('The site "%s" has no optional modules: every installed module is always on.', $slug)] : $lines;
+        foreach ($modules->unavailable() as $module) {
+            $lines[] = sprintf('%s: unavailable, so it is off for every site. %s', $module->identity(), $module->reason);
+        }
+        foreach ($modules->missing($site) as $id) {
+            $lines[] = sprintf('%s: turned on for this site but no longer installed. Its data is kept; install its package again to bring it back.', $id);
+        }
+
+        return [$lines, null];
     }
 }

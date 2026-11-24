@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Seo;
 
+use SightPress\Core\Infrastructure\Seo\SeoExtensions;
 use SightPress\Core\Template\LanguageName;
+use SightPress\Module\Seo\SeoEntry;
 use DateTimeZone;
 use Psr\Cache\CacheItemPoolInterface;
 use SightPress\Core\Page\Contract\IndexedPage;
@@ -28,11 +30,19 @@ use XMLWriter;
  * and points them to the sitemap, and names the AI crawlers the site's {@see AiCrawlerPolicy} keeps out; on an
  * install that isn't in production, or on a members-only site ({@see SiteVisibility}), it keeps them out of
  * everything (and the sitemap and `llms.txt` list nothing, as no page is public).
+ *
+ * The public pages of the site's modules ({@see SeoExtensions}, ADR-0060) are listed after core's, in the sitemap
+ * and in `llms.txt` (linked to their Markdown version when they have one), except on installs that aren't in
+ * production and on members-only sites. As core can't tell when a module's content changes, files that list module
+ * pages are kept for {@see MODULE_CACHE_SECONDS} at most.
  */
 final class SeoFiles
 {
     /** `llms-full.txt` stops adding pages beyond this size, and says so. */
     public const int FULL_TEXT_MAX_BYTES = 500_000;
+
+    /** How long files are kept when the site's modules add pages to them. */
+    public const int MODULE_CACHE_SECONDS = 3600;
 
     /** Paths crawlers have no business in. */
     public const array PRIVATE_PATHS = ['/admin', '/account', '/login', '/logout', '/contact-form'];
@@ -47,6 +57,7 @@ final class SeoFiles
         private readonly AiCrawlerPolicy $aiCrawlers,
         private readonly MarkdownPages $documents,
         private readonly SiteSettings $settings,
+        private readonly SeoExtensions $modules,
         ?CacheItemPoolInterface $cache = null,
     ) {
         $this->cache = $cache;
@@ -144,6 +155,11 @@ final class SeoFiles
         foreach ($this->indexable() as $page) {
             $latest[$page->locale] = max($latest[$page->locale] ?? $page->updatedAt, $page->updatedAt);
         }
+        foreach ($this->site->locales as $locale) {
+            foreach ($this->moduleEntries($locale) as $entry) {
+                $latest[$locale] = max($latest[$locale] ?? $entry->updatedAt, $entry->updatedAt);
+            }
+        }
         $xml = new XMLWriter();
         $xml->openMemory();
         $xml->setIndent(true);
@@ -198,10 +214,53 @@ final class SeoFiles
             }
             $xml->endElement();
         }
+        foreach ($only === null ? $this->site->locales : [$only] as $locale) {
+            foreach ($this->moduleEntries($locale) as $entry) {
+                $this->writeEntry($xml, $base, $entry);
+            }
+        }
         $xml->endElement();
         $xml->endDocument();
 
         return $xml->outputMemory();
+    }
+
+    /**
+     * One module page in a sitemap, with its other languages (those the site has) as alternates.
+     */
+    private function writeEntry(XMLWriter $xml, string $base, SeoEntry $entry): void
+    {
+        $xml->startElement('url');
+        $xml->writeElement('loc', $base . $entry->path);
+        $xml->writeElement('lastmod', $entry->updatedAt->format(DATE_W3C));
+        $alternates = [$entry->locale => $entry->path] + array_intersect_key($entry->alternates, array_flip($this->site->locales));
+        if (count($alternates) > 1) {
+            if (isset($alternates[$this->site->defaultLocale])) {
+                $alternates['x-default'] = $alternates[$this->site->defaultLocale];
+            }
+            foreach ($alternates as $locale => $path) {
+                $xml->startElement('xhtml:link');
+                $xml->writeAttribute('rel', 'alternate');
+                $xml->writeAttribute('hreflang', $locale);
+                $xml->writeAttribute('href', $base . $path);
+                $xml->endElement();
+            }
+        }
+        $xml->endElement();
+    }
+
+    /**
+     * The module pages in one of the site's languages, or none where nothing is public (ADR-0060).
+     *
+     * @return list<SeoEntry>
+     */
+    private function moduleEntries(string $locale): array
+    {
+        if (!$this->robots->isProduction() || SiteVisibility::isMembersOnly($this->settings)) {
+            return [];
+        }
+
+        return array_values(array_filter($this->modules->entries($locale), static fn (SeoEntry $entry): bool => $entry->locale === $locale));
     }
 
     private function buildRobots(string $base): string
@@ -239,16 +298,19 @@ final class SeoFiles
         $lines[] = 'Every page of this website is also available as Markdown: add `.md` to its address (`/index.md` for the home page).';
         $byLocale = [];
         foreach ($pages as $page) {
-            $byLocale[$page->locale][] = $page;
+            $notes = $page->description ?? $page->summary;
+            $byLocale[$page->locale][] = sprintf('- [%s](%s%s)%s', self::linkText($page->title), $base, $page->markdownUrl(), $notes === null ? '' : ': ' . self::oneLine($notes));
         }
-        foreach ($byLocale as $locale => $localePages) {
+        foreach ($this->site->locales as $locale) {
+            foreach ($this->moduleEntries($locale) as $entry) {
+                $byLocale[$locale][] = sprintf('- [%s](%s%s)%s', self::linkText($entry->title), $base, $entry->markdownPath ?? $entry->path, $entry->description === null ? '' : ': ' . self::oneLine($entry->description));
+            }
+        }
+        foreach ($byLocale as $locale => $links) {
             $lines[] = '';
             $lines[] = count($byLocale) > 1 ? sprintf('## Pages in %s (%s)', new LanguageName($locale), $locale) : '## Pages';
             $lines[] = '';
-            foreach ($localePages as $page) {
-                $notes = $page->description ?? $page->summary;
-                $lines[] = sprintf('- [%s](%s%s)%s', self::linkText($page->title), $base, $page->markdownUrl(), $notes === null ? '' : ': ' . self::oneLine($notes));
-            }
+            array_push($lines, ...$links);
         }
         $lines[] = '';
         $lines[] = '## Optional';
@@ -320,7 +382,11 @@ final class SeoFiles
             return $item->get();
         }
         $contents = $build($base);
-        $this->cache()->save($item->set($contents));
+        $item->set($contents);
+        if ($this->modules->hasProviders()) {
+            $item->expiresAfter(self::MODULE_CACHE_SECONDS);
+        }
+        $this->cache()->save($item);
 
         return $contents;
     }

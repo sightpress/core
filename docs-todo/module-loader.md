@@ -23,7 +23,7 @@ A module is a Composer package that requires `sightpress/module-interface` and n
 ```json
 {
     "require": {
-        "sightpress/module-interface": "^0.4"
+        "sightpress/module-interface": "^0.5"
     },
     "extra": {
         "sightpress": {
@@ -38,18 +38,33 @@ creatable without arguments.
 
 ## Rules the loader checks
 
-Each problem stops SightPress from starting, with a message that names the modules involved and what to do:
+A problem with one of **core's own** modules stops SightPress from starting, with a message that names the modules
+involved and what to do: that is a broken install.
 
-| Problem | Message (example) |
+A problem with a module **installed as a package** (an external module) never stops SightPress (X-1, ADR-0065). The
+module is left out of every site as **unavailable**, together with the modules that need it, and the reason is shown
+on the *Features* screen ("Features that can’t be used"), by `site:module:list`, by `system:check` (which then exits
+with 1) and once in the log (again only when the list changes, or after `cache:clear`). Everything else keeps
+working.
+
+| Problem | Reason (example) |
 | --- | --- |
-| Two modules use the same id | Two modules use the id "acme.events": one from acme/events and one from other/events. |
-| The module needs another contract version | Module "acme.events" from acme/events works with sightpress/module-interface ^0.1, but 0.2.0 is installed. |
-| A required module is missing | Module "acme.events" requires module "calendar", which is not installed. |
-| A required module has the wrong version | Module "page" requires module "user" ^2.0, but version 1.4.0 is installed. |
-| A required module is off | Module "gallery" requires module "media", which is off. |
-| Modules require each other in a loop | These modules require each other in a loop, so none of them can start: a → b → c → a. |
-| Two modules register the same thing | Route "events.list" is registered twice: by module "acme.events" and by module "other.events". |
-| Two modules replace the search back-end | Module "b" replaces the search back-end with B\Backend, but module "a" already replaced it with A\Backend. Turn one of them off. |
+| `extra.sightpress.module` isn't a class name or a list | "extra.sightpress.module" must be a module class name or a list of them. |
+| The package doesn't require the contract | It declares a SightPress module but does not require sightpress/module-interface. |
+| The class doesn't exist, isn't a module or needs arguments | The module class Acme\Events\EventsModule does not exist. Check "extra.sightpress.module" and the package's autoload. |
+| The class fails while being created, or its manifest is invalid | The module … from acme/events has an invalid manifest: … |
+| The module needs another contract version | Module "acme.events" from acme/events works with sightpress/module-interface ^0.1, but 0.5.0 is installed. |
+| Two modules use the same id | Two modules use the id "acme.events": one from acme/events and one from other/events. Remove one of them. |
+| A module it needs is missing, unavailable or the wrong version | It needs module "acme.calendar" ^2.0, but version 1.4.0 is installed. |
+| Modules need each other in a loop | It needs modules that need it in turn, in a loop, so none of them can start. |
+| It fails while registering (an exception, an invalid value, a clash) | It could not register: Route "events.list" is registered twice … |
+
+What an external module registered before it failed is dropped with it. On a development checkout of
+`sightpress/module-interface` without a version alias (`dev-<branch>`) the contract version isn't compared.
+
+Packages that declare a module are read from `vendor/composer/installed.json` and kept in the cache folder
+(`modules.php`) until that file changes (`composer require` / `remove` / `update`) or `cache:clear` empties the folder.
+In debug mode nothing is cached.
 
 Modules start in dependency order: a module always registers after the modules it requires. Otherwise the
 order is the order they were found (core's first).
@@ -60,10 +75,37 @@ order is the order they were found (core's first).
 - A module can't be turned off while another module that is on requires it: turn that one off first.
 - A module can't be turned on until the modules it requires are on.
 - A module that is off registers nothing: its pages answer "Page not found" and its commands are not listed.
+- On a site where an optional module is off, its block types aren't in the editor and its blocks aren't shown; a page
+  that still holds one can't be saved until the block is removed or the module turned on again.
 - Console commands: when someone runs a command at a terminal and leaves out a required argument or option, the
   console asks for it, using the parameter's description as the question (so write descriptions that read as a
   question or a prompt, ending with ":" or "?"). With `--no-interaction`, or when input doesn't come from a
   terminal (scripts, cron), it never asks and a missing required option stops the command.
+
+## SEO
+
+A module lists its public pages with `seo()` (`SeoProvider`, ADR-0060). They are added after core's pages to the
+sitemap (with their other languages as alternates) and to `llms.txt` (linked to their Markdown version when they have
+one). Nothing is added on installs that aren't in production, on members-only sites, or on sites where the module is
+off. The files are rebuilt when a module is turned on or off and, because core can't see a module's content change,
+at least every hour while a module adds pages (`SeoFiles::MODULE_CACHE_SECONDS`). A provider that fails is left out
+and logged; the rest of the file is still served. `llms-full.txt` keeps core's pages only.
+
+## Removing a module, and rolling back
+
+- **Turning it off for a site** (Features screen or `site:module:disable`) keeps its tables and data; turning it on
+  again brings everything back.
+- **Deleting its data** (only while it is off) undoes its migrations, newest first.
+- **Uninstalling the package** (`composer remove`) while sites have it on: those sites keep working without it, its
+  data stays, and the *Features* screen and `site:module:list` say "turned on for this site but no longer installed".
+  Reinstalling the package brings it back on with its data. To get rid of the data, reinstall it, turn it off and
+  delete its data, then remove the package.
+- A `modules.defaults` or `modules.locked` entry in `config/tenant.php` for a module that isn't installed (or is
+  unavailable) is ignored, and `system:check` reports it as an error until the entry is removed or the package is
+  installed again.
+
+Core's own modules go through the same code (turning off, data deletion), but a problem with one of them still stops
+SightPress from starting.
 
 ## Services between modules
 

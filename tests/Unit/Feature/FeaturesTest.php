@@ -232,6 +232,41 @@ final class FeaturesTest extends TestCase
         self::assertSame("acme.events (Events): off\nacme.calendar (acme.calendar): off\n", $this->stdout);
     }
 
+    public function testUnavailableAndRemovedModulesAreReportedAndTheSiteKeepsWorking(): void
+    {
+        $this->connection()->insert('acme_event', ['title' => 'Book fair']);
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:module:enable', 'slug' => 'demo', 'module' => CalendarModule::ID]));
+        $this->console(['command' => 'system:check']);
+        self::assertStringNotContainsString('Module ', $this->stderr, 'nothing to report about modules yet');
+
+        // The calendar's package is removed, and a module that needs a package that isn't installed is added.
+        $this->boot(['locked' => [CalendarModule::ID => true]], [
+            new ModuleCandidate(new EventsModule(), 'acme/events', '*'),
+            new ModuleCandidate(new \SightPress\Core\Tests\Support\FakeModule('acme.old', ['acme.tickets' => '^1.0']), 'acme/old', '*'),
+        ]);
+        self::assertSame([200, 404], [$this->get('/events'), $this->get('/calendar')]);
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:module:list', 'slug' => 'demo']));
+        self::assertStringContainsString("acme.events (acme.events): on\nacme.old (acme/old): unavailable, so it is off for every site. It needs module \"acme.tickets\", which is not installed or is unavailable.\n", $this->stdout);
+        self::assertStringContainsString('acme.calendar: turned on for this site but no longer installed. Its data is kept; install its package again to bring it back.', $this->stdout);
+        self::assertSame(Command::FAILURE, $this->console(['command' => 'system:check']));
+        self::assertStringContainsString('Module acme.old (acme/old) is unavailable, so no site uses it:', $this->stderr);
+        self::assertStringContainsString('Tenant setting "modules.locked" in config/tenant.php names module "acme.calendar", which is not installed or is unavailable', $this->stderr);
+
+        $screen = (string) $this->signedIn('ada@example.org')->request('GET', '/admin/features')->getBody();
+        self::assertStringContainsString('<h2 id="features-missing">Features that were removed</h2>', $screen);
+        self::assertStringContainsString('<li>acme.calendar</li>', $screen);
+        self::assertStringContainsString('<h2 id="features-unavailable">Features that can’t be used</h2>', $screen);
+        self::assertStringContainsString('<dt>acme.old (acme/old)</dt>', $screen);
+
+        // Reinstalling the package brings it back, on, with its data.
+        $this->boot();
+        self::assertSame([200, 200], [$this->get('/events'), $this->get('/calendar')]);
+        self::assertSame(['Book fair'], $this->connection()->createQueryBuilder()->select('title')->from('acme_event')->fetchFirstColumn());
+        $screen = (string) $this->signedIn('ada@example.org')->request('GET', '/admin/features')->getBody();
+        self::assertStringNotContainsString('features-missing', $screen);
+        self::assertStringNotContainsString('features-unavailable', $screen);
+    }
+
     public function testWithoutOptionalModulesThereIsNothingToSwitch(): void
     {
         $this->project->remove();
@@ -337,9 +372,10 @@ final class FeaturesTest extends TestCase
     }
 
     /**
-     * @param array<string, array<string, bool>> $modules `modules` of the tenant config
+     * @param array<string, array<string, bool>> $modules  `modules` of the tenant config
+     * @param list<ModuleCandidate>|null         $packages the external modules installed; null: Events and Calendar
      */
-    private function boot(array $modules = []): void
+    private function boot(array $modules = [], ?array $packages = null): void
     {
         if (!isset($this->project)) {
             $this->project = new TestProject(['modules' => $modules]);
@@ -354,8 +390,10 @@ final class FeaturesTest extends TestCase
             new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => 'test', 'APP_SECRET' => SiteFixture::SECRET]),
             [
                 ...self::coreModules(),
-                new ModuleCandidate(new EventsModule(), 'acme/events', '*', $about),
-                new ModuleCandidate(new CalendarModule(), 'acme/events', '*', $about),
+                ...$packages ?? [
+                    new ModuleCandidate(new EventsModule(), 'acme/events', '*', $about),
+                    new ModuleCandidate(new CalendarModule(), 'acme/events', '*', $about),
+                ],
             ],
         );
     }

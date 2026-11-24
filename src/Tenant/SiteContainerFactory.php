@@ -50,6 +50,9 @@ use SightPress\Core\Infrastructure\Dashboard\DashboardWidgets;
 use SightPress\Core\Infrastructure\Assistant\AssistantAccess;
 use SightPress\Core\Infrastructure\Assistant\AssistantExtensions;
 use SightPress\Core\Infrastructure\Search\SearchExtensions;
+use SightPress\Core\Infrastructure\Seo\SeoExtensions;
+use SightPress\Core\Content\BlockTypeCatalogue;
+use Psr\Log\LoggerInterface;
 use SightPress\Core\Module\SiteModuleStore;
 use SightPress\Core\Navigation\AdminNavigation;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
@@ -223,6 +226,11 @@ final class SiteContainerFactory
                 $container,
                 Services::get($container, ModuleRegistry::class),
             )),
+            SeoExtensions::class => factory(static fn (ContainerInterface $container): SeoExtensions => new SeoExtensions(
+                $container,
+                Services::get($container, ModuleRegistry::class),
+                Services::get($container, LoggerInterface::class),
+            )),
             AssistantExtensions::class => factory(static fn (ContainerInterface $container): AssistantExtensions => new AssistantExtensions(
                 $container,
                 Services::get($container, ModuleRegistry::class),
@@ -292,6 +300,11 @@ final class SiteContainerFactory
             )),
             SettingCatalogue::class => factory(static fn (ContainerInterface $container): SettingCatalogue => SettingCatalogue::fromRegistry(
                 Services::get($container, ModuleRegistry::class),
+            )),
+            // A module that is off adds no block type to the site's editor, and its blocks aren't shown (ADR-0057).
+            BlockTypeCatalogue::class => factory(static fn (ContainerInterface $container): BlockTypeCatalogue => BlockTypeCatalogue::fromRegistry(
+                Services::get($container, ModuleRegistry::class),
+                $container,
             )),
         ];
     }

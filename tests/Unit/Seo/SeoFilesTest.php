@@ -22,6 +22,13 @@ use SightPress\Core\Seo\RobotsPolicy;
 use SightPress\Core\Seo\SeoCachePurger;
 use SightPress\Core\Seo\SeoFiles;
 use SightPress\Core\Tenant\TenantConfigLoader;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use SightPress\Core\Infrastructure\Seo\SeoExtensions;
+use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Core\Tests\Support\ArrayContainer;
+use SightPress\Core\Tests\Support\Modules\ToursSeoProvider;
+use SightPress\Module\Seo\SeoProvider;
 use SightPress\Core\Tests\Support\PageFixture;
 use SightPress\Core\Tests\Support\TestProject;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -32,6 +39,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 #[CoversClass(PageIndexQuery::class)]
 #[CoversClass(IndexedPage::class)]
 #[CoversClass(AiCrawlerPolicy::class)]
+#[CoversClass(SeoExtensions::class)]
 #[UsesNamespace('SightPress\Core')]
 final class SeoFilesTest extends TestCase
 {
@@ -232,11 +240,67 @@ final class SeoFilesTest extends TestCase
         self::assertSame(['sitemap', 'sitemap', 'robots', 'llms', 'llms_full'], $kinds, 'what it showed, for analytics');
     }
 
+    public function testListsTheModulesPublicPagesInTheSitemapAndLlmsTxt(): void
+    {
+        ToursSeoProvider::$fail = false;
+        $this->pages->published('Home');
+        $cache = new ArrayAdapter();
+        $files = $this->files('production', $cache, modules: $this->modules([ToursSeoProvider::class => new ToursSeoProvider()]));
+
+        self::assertStringContainsString("<loc>https://demo.example/sitemap-pt-pt.xml</loc>\n  <lastmod>2026-12-02T00:00:00+00:00</lastmod>", $files->sitemap('https://demo.example'));
+        $english = (string) $files->localeSitemap('https://demo.example', 'en-GB');
+        self::assertStringContainsString("<loc>https://demo.example/tours/river</loc>\n  <lastmod>2026-12-01T09:30:00+00:00</lastmod>", $english);
+        self::assertStringContainsString('<xhtml:link rel="alternate" hreflang="pt-PT" href="https://demo.example/pt-pt/visitas/rio"/>', $english);
+        self::assertStringContainsString('<xhtml:link rel="alternate" hreflang="x-default" href="https://demo.example/tours/river"/>', $english);
+        self::assertStringNotContainsString('/fr/', $english, 'languages the site doesn\'t have are left out');
+        self::assertStringContainsString("<loc>https://demo.example/talks/maps</loc>\n  <lastmod>2026-11-30T09:30:00+00:00</lastmod>\n </url>", $english, 'no alternates');
+        self::assertStringContainsString('<loc>https://demo.example/pt-pt/visitas/rio</loc>', (string) $files->localeSitemap('https://demo.example', 'pt-PT'));
+
+        $llms = $files->llms('https://demo.example');
+        self::assertStringContainsString("- [River \\[walk\\]](https://demo.example/tours/river.md): A walk along the river.\n- [Old maps](https://demo.example/talks/maps)\n", $llms);
+        self::assertStringContainsString("## Pages in European Portuguese (pt-PT)\n\n- [Passeio do rio](https://demo.example/pt-pt/visitas/rio.md)\n", $llms);
+        self::assertStringNotContainsString('visitas', $files->llmsFull('https://demo.example'), 'llms-full.txt has core\'s pages only (ADR-0060)');
+
+        $single = $this->files('production', new ArrayAdapter(), site: PageFixture::site(['en-GB']), modules: $this->modules([ToursSeoProvider::class => new ToursSeoProvider()]));
+        self::assertStringContainsString('<loc>https://demo.example/tours/river</loc>', $single->sitemap('https://demo.example'));
+        self::assertStringNotContainsString('hreflang', $single->sitemap('https://demo.example'), 'one language: no alternates');
+
+        // Nothing outside production, nor on a members-only site.
+        self::assertStringNotContainsString('tours', (string) $this->files('staging', new ArrayAdapter(), modules: $this->modules([ToursSeoProvider::class => new ToursSeoProvider()]))->localeSitemap('https://demo.example', 'en-GB'));
+        $this->pages->database->settings()->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+        $files->purge();
+        self::assertStringNotContainsString('tours', $files->llms('https://demo.example'));
+    }
+
+    public function testAModuleWhoseProviderFailsIsLeftOutAndLogged(): void
+    {
+        ToursSeoProvider::$fail = true;
+        $this->pages->published('Home');
+        $logger = new \SightPress\Core\Tests\Support\RecordingLogger();
+        $files = $this->files('production', new ArrayAdapter(), modules: $this->modules([ToursSeoProvider::class => new ToursSeoProvider()], $logger));
+
+        self::assertStringContainsString('<loc>https://demo.example/</loc>', (string) $files->localeSitemap('https://demo.example', 'en-GB'));
+        self::assertStringContainsString('The tours table is missing.', implode("\n", $logger->messages()));
+        ToursSeoProvider::$fail = false;
+    }
+
+    public function testAProviderMustBeAProvider(): void
+    {
+        $registry = new ModuleRegistry();
+        $registry->addSeoProvider('acme.tours', ToursSeoProvider::class);
+        $modules = new SeoExtensions(new ArrayContainer([ToursSeoProvider::class => new \stdClass()]), $registry, new NullLogger());
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('SEO provider ' . ToursSeoProvider::class . ' of module "acme.tours" is not a ' . SeoProvider::class . '.');
+
+        $modules->entries('en-GB');
+    }
+
     public function testKeepsItsCacheInTheTenantsCacheFolderByDefault(): void
     {
         $this->pages->published('Home');
         $config = new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => 'production']);
-        $files = new SeoFiles($this->index(), $this->policy('production'), $this->pages->site, $config, $this->aiCrawlers(), $this->documents(), $this->pages->database->settings());
+        $files = new SeoFiles($this->index(), $this->policy('production'), $this->pages->site, $config, $this->aiCrawlers(), $this->documents(), $this->pages->database->settings(), $this->modules());
 
         self::assertStringContainsString('<loc>https://demo.example/</loc>', (string) $files->localeSitemap('https://demo.example', 'en-GB'));
         self::assertDirectoryExists($config->cacheDir . '/seo-' . $this->pages->site->id);
@@ -253,9 +317,24 @@ final class SeoFilesTest extends TestCase
         return new RobotsPolicy(new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]));
     }
 
-    private function files(string $environment, ArrayAdapter $cache, ?MarkdownPages $documents = null, ?\SightPress\Core\Tenant\Site $site = null): SeoFiles
+    private function files(string $environment, ArrayAdapter $cache, ?MarkdownPages $documents = null, ?\SightPress\Core\Tenant\Site $site = null, ?SeoExtensions $modules = null): SeoFiles
     {
-        return new SeoFiles($this->index(), $this->policy($environment), $site ?? $this->pages->site, new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]), $this->aiCrawlers(), $documents ?? $this->documents(), $this->pages->database->settings(), $cache);
+        return new SeoFiles($this->index(), $this->policy($environment), $site ?? $this->pages->site, new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => $environment]), $this->aiCrawlers(), $documents ?? $this->documents(), $this->pages->database->settings(), $modules ?? $this->modules(), $cache);
+    }
+
+    /**
+     * The SEO providers of the site's modules: none, or the given ones.
+     *
+     * @param array<class-string<SeoProvider>, SeoProvider> $providers
+     */
+    private function modules(array $providers = [], ?LoggerInterface $logger = null): SeoExtensions
+    {
+        $registry = new ModuleRegistry();
+        foreach (array_keys($providers) as $class) {
+            $registry->addSeoProvider('acme.tours', $class);
+        }
+
+        return new SeoExtensions(new ArrayContainer($providers), $registry, $logger ?? new NullLogger());
     }
 
     private function aiCrawlers(): AiCrawlerPolicy

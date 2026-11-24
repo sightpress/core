@@ -12,7 +12,10 @@ use PHPUnit\Framework\TestCase;
 use SightPress\Core\Module\ComposerModuleDiscovery;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleCandidate;
+use SightPress\Core\Module\ModuleDiscovery;
 use SightPress\Core\Module\ModuleException;
+use SightPress\Core\Module\UnavailableModule;
+use SightPress\Core\Tests\Support\Modules\BrokenModule;
 use SightPress\Core\Tests\Support\Modules\ExampleModule;
 use SightPress\Core\Tests\Support\Modules\ModuleWithArguments;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
@@ -21,6 +24,8 @@ use stdClass;
 
 #[CoversClass(ComposerModuleDiscovery::class)]
 #[CoversClass(CoreModules::class)]
+#[CoversClass(ModuleDiscovery::class)]
+#[UsesClass(UnavailableModule::class)]
 #[UsesNamespace('SightPress\Core\Search')]
 #[UsesNamespace('SightPress\Core\Analytics')]
 #[UsesNamespace('SightPress\Core\Assistant')]
@@ -72,7 +77,7 @@ final class ComposerModuleDiscoveryTest extends TestCase
 
     public function testAProjectWithoutInstalledPackagesHasNoExternalModules(): void
     {
-        self::assertSame([], ComposerModuleDiscovery::forProject($this->project->path . '/')->candidates());
+        self::assertSame([], ComposerModuleDiscovery::forProject($this->project->path . '/')->discover()->candidates);
     }
 
     public function testFindsModulesDeclaredInPackageExtras(): void
@@ -96,7 +101,9 @@ final class ComposerModuleDiscoveryTest extends TestCase
             ['name' => 'acme/other', 'extra' => ['branch-alias' => []]],
         ]);
 
-        $candidates = ComposerModuleDiscovery::forProject($this->project->path)->candidates();
+        $discovery = ComposerModuleDiscovery::forProject($this->project->path)->discover();
+        $candidates = $discovery->candidates;
+        self::assertSame([], $discovery->unavailable);
 
         self::assertCount(3, $candidates);
         self::assertInstanceOf(ExampleModule::class, $candidates[0]->module);
@@ -116,18 +123,60 @@ final class ComposerModuleDiscoveryTest extends TestCase
         $this->expectException(ModuleException::class);
         $this->expectExceptionMessageMatches('/^Could not read the installed packages from .+installed\.json: .+ Run composer install again\.$/');
 
-        ComposerModuleDiscovery::forProject($this->project->path)->candidates();
+        ComposerModuleDiscovery::forProject($this->project->path)->discover();
     }
 
     public function testAFileWithoutPackagesHasNoModules(): void
     {
         $this->project->write('vendor/composer/installed.json', '[]');
 
-        self::assertSame([], ComposerModuleDiscovery::forProject($this->project->path)->candidates());
+        self::assertSame([], ComposerModuleDiscovery::forProject($this->project->path)->discover()->candidates);
+    }
+
+    public function testWhatPackagesDeclareIsCachedUntilInstalledJsonChanges(): void
+    {
+        $example = ['name' => 'acme/example', 'require' => ['sightpress/module-interface' => '^0.2'], 'extra' => ['sightpress' => ['module' => ExampleModule::class]]];
+        $this->installed([$example]);
+        $cacheDir = $this->project->path . '/var/cache/prod';
+
+        self::assertCount(1, ComposerModuleDiscovery::forProject($this->project->path, $cacheDir . '/')->discover()->candidates);
+        self::assertFileExists($cacheDir . '/modules.php');
+
+        // Read from the cache: what the file now says is ignored while installed.json is the same.
+        $cached = (string) file_get_contents($cacheDir . '/modules.php');
+        file_put_contents($cacheDir . '/modules.php', str_replace('acme/example', 'acme/cached', $cached));
+        self::assertSame('acme/cached', ComposerModuleDiscovery::forProject($this->project->path, $cacheDir)->discover()->candidates[0]->source);
+
+        // installed.json changed (composer require/remove): read again and the cache is rewritten.
+        $this->installed([$example, ['name' => 'acme/second'] + $example]);
+        self::assertSame(['acme/example', 'acme/second'], array_map(
+            static fn (ModuleCandidate $candidate): string => $candidate->source,
+            ComposerModuleDiscovery::forProject($this->project->path, $cacheDir)->discover()->candidates,
+        ));
+        self::assertStringContainsString('acme/second', (string) file_get_contents($cacheDir . '/modules.php'));
+
+        // cache:clear empties the folder: read again.
+        unlink($cacheDir . '/modules.php');
+        self::assertCount(2, ComposerModuleDiscovery::forProject($this->project->path, $cacheDir)->discover()->candidates);
+    }
+
+    public function testABrokenPackageIsUnavailableAndTheOthersAreStillFound(): void
+    {
+        BrokenModule::$failAt = 'create';
+        $contract = ['sightpress/module-interface' => '^0.2'];
+        $this->installed([
+            ['name' => 'acme/broken', 'require' => $contract, 'extra' => ['sightpress' => ['module' => [BrokenModule::class, ExampleModule::class]]]],
+            ['name' => 'acme/example', 'require' => $contract, 'extra' => ['sightpress' => ['module' => ExampleModule::class]]],
+        ]);
+
+        $discovery = ComposerModuleDiscovery::forProject($this->project->path)->discover();
+
+        self::assertSame(['acme/broken', 'acme/example'], array_map(static fn (ModuleCandidate $candidate): string => $candidate->source, $discovery->candidates));
+        self::assertEquals([new UnavailableModule('acme/broken', null, 'The module could not connect to its licence server.')], $discovery->unavailable);
     }
 
     /**
-     * @return iterable<string, array{array<mixed>, string}>
+     * @return iterable<string, array{array<mixed>, non-empty-string, string}>
      */
     public static function invalidPackages(): iterable
     {
@@ -135,47 +184,48 @@ final class ComposerModuleDiscoveryTest extends TestCase
 
         yield 'module is not a class name or list' => [
             ['name' => 'acme/bad', 'require' => $contract, 'extra' => ['sightpress' => ['module' => ['a' => 'b']]]],
-            'Package acme/bad: "extra.sightpress.module" must be a module class name or a list of them.',
+            'acme/bad', '"extra.sightpress.module" must be a module class name or a list of them.',
         ];
         yield 'module list is empty' => [
             ['require' => $contract, 'extra' => ['sightpress' => ['module' => []]]],
-            'Package an unnamed package: "extra.sightpress.module" must be a module class name or a list of them.',
+            'an unnamed package', '"extra.sightpress.module" must be a module class name or a list of them.',
         ];
         yield 'no contract requirement' => [
             ['name' => 'acme/bad', 'extra' => ['sightpress' => ['module' => ExampleModule::class]]],
-            'Package acme/bad declares a SightPress module but does not require sightpress/module-interface. '
+            'acme/bad', 'It declares a SightPress module but does not require sightpress/module-interface. '
                 . 'Add it to the package\'s "require" with the versions the module works with.',
         ];
         yield 'class does not exist' => [
             ['name' => 'acme/bad', 'require' => $contract, 'extra' => ['sightpress' => ['module' => 'Acme\Missing']]],
-            'Package acme/bad names a module class that does not exist: Acme\Missing.',
+            'acme/bad', 'The module class Acme\Missing does not exist. Check "extra.sightpress.module" and the package\'s autoload.',
         ];
         yield 'class is not a string' => [
             ['name' => 'acme/bad', 'require' => $contract, 'extra' => ['sightpress' => ['module' => [42]]]],
-            'Package acme/bad names a module class that does not exist: int.',
+            'acme/bad', 'The module class int does not exist. Check "extra.sightpress.module" and the package\'s autoload.',
         ];
         yield 'class is not a module' => [
             ['name' => 'acme/bad', 'require' => $contract, 'extra' => ['sightpress' => ['module' => stdClass::class]]],
-            'Package acme/bad: stdClass must implement ' . ModuleInterface::class . '.',
+            'acme/bad', 'stdClass must implement ' . ModuleInterface::class . '.',
         ];
         yield 'constructor needs arguments' => [
             ['name' => 'acme/bad', 'require' => $contract, 'extra' => ['sightpress' => ['module' => ModuleWithArguments::class]]],
-            'Package acme/bad: module ' . ModuleWithArguments::class . ' must be a class that can be created without arguments.',
+            'acme/bad', 'The module ' . ModuleWithArguments::class . ' must be a class that can be created without arguments.',
         ];
     }
 
     /**
-     * @param array<mixed> $package
+     * @param array<mixed>     $package
+     * @param non-empty-string $source
      */
     #[DataProvider('invalidPackages')]
-    public function testInvalidModuleDeclarationsSayWhatIsWrong(array $package, string $message): void
+    public function testInvalidModuleDeclarationsAreUnavailableWithTheReason(array $package, string $source, string $reason): void
     {
         $this->installed([$package]);
 
-        $this->expectException(ModuleException::class);
-        $this->expectExceptionMessage($message);
+        $discovery = ComposerModuleDiscovery::forProject($this->project->path)->discover();
 
-        ComposerModuleDiscovery::forProject($this->project->path)->candidates();
+        self::assertSame([], $discovery->candidates);
+        self::assertEquals([new UnavailableModule($source, null, $reason)], $discovery->unavailable);
     }
 
     /**

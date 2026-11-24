@@ -6487,6 +6487,30 @@
         <target>Não há funcionalidades opcionais para ativar ou desativar. As que forem instaladas mais tarde aparecem aqui.</target>
       </segment>
     </unit>
+    <unit id="678479c7f7487531">
+      <segment>
+        <source>Features that were removed</source>
+        <target>Funcionalidades removidas</target>
+      </segment>
+    </unit>
+    <unit id="f969054419804c34">
+      <segment>
+        <source>These features are on for this site, but they are no longer installed. The site works without them and their data is kept: ask whoever runs the server to install them again to bring them back.</source>
+        <target>Estas funcionalidades estão ativas neste site, mas já não estão instaladas. O site funciona sem elas e os dados delas são guardados: peça a quem gere o servidor que as volte a instalar para as recuperar.</target>
+      </segment>
+    </unit>
+    <unit id="52a1146608bec51e">
+      <segment>
+        <source>Features that can’t be used</source>
+        <target>Funcionalidades que não podem ser usadas</target>
+      </segment>
+    </unit>
+    <unit id="20f15ec43e2a8d26">
+      <segment>
+        <source>These features are installed but can’t be used on any site. Everything else keeps working. Give the reason to whoever runs the server.</source>
+        <target>Estas funcionalidades estão instaladas, mas não podem ser usadas em nenhum site. Tudo o resto continua a funcionar. Indique o motivo a quem gere o servidor.</target>
+      </segment>
+    </unit>
     <unit id="df8a1676f61cc666">
       <segment>
         <source>There are no pages yet.</source>

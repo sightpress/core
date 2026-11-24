@@ -1,7 +1,7 @@
 // Features (F-2) on the admin test site, which has two optional modules: an admin turns "Events" off by keyboard
 // through the confirmation page, comes back with focus on its heading and the result in the live region, its pages
 // answer "not found", and turns it on again; the same works without JavaScript. No axe violations in light and dark
-// mode, in forced colours or at 320 px.
+// mode, in forced colours or at 320 px. Modules that were removed or can't be used are listed below (X-1).
 import { expect, test } from '@playwright/test';
 import { ADMIN_SITES, expectNoViolations, signIn } from './support/admin-site';
 
@@ -52,6 +52,18 @@ test('the features screen passes axe in forced colours and at 320 px', async ({ 
   await expectNoViolations(page);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
   expect(overflow).toBe(false);
+});
+
+test('features that were removed or can’t be used are listed with what to do (X-1)', async ({ page }) => {
+  await signIn(page, SITE, 'ada@example.org', '/admin/features');
+  await expect(page.getByRole('heading', { level: 2, name: 'Features that were removed' })).toBeVisible();
+  await expect(page.getByRole('listitem').filter({ hasText: 'acme.newsletter' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'Features that can’t be used' })).toBeVisible();
+  await expect(page.getByRole('term')).toHaveText('acme.tickets (acme/tickets)');
+  await expect(page.getByRole('definition')).toHaveText('It needs module "acme.box_office", which is not installed or is unavailable.');
+  await expectNoViolations(page);
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await expectNoViolations(page);
 });
 
 test.describe('without JavaScript', () => {

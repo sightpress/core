@@ -21,30 +21,35 @@ use SightPress\Core\Tenant\TenantConfig;
 final readonly class ModulePolicy
 {
     /**
-     * @param array<string, bool> $defaults module id => on for new sites
-     * @param array<string, bool> $locks    module id => on or off for every site
+     * @param array<string, bool>                       $defaults module id => on for new sites
+     * @param array<string, bool>                       $locks    module id => on or off for every site
+     * @param list<array{setting: string, id: string}>  $missing  tenant settings that name a module that isn't
+     *                                                            installed or is unavailable
      */
     public function __construct(
         private ModuleCatalogue $catalogue,
         private array $defaults = [],
         private array $locks = [],
+        private array $missing = [],
     ) {
     }
 
     /**
-     * The tenant's policy, after checking that `modules.defaults` and `modules.locked` name optional modules that
-     * are installed and that no module is locked on while a module it requires is locked off.
+     * The tenant's policy, after checking that `modules.defaults` and `modules.locked` name optional modules and
+     * that no module is locked on while a module it requires is locked off.
+     *
+     * A setting that names a module that isn't installed (its package was removed, or it is unavailable) is left out
+     * and reported by `system:check` ({@see missing()}) rather than stopping the tenant.
      */
     public static function fromConfig(ModuleCatalogue $catalogue, TenantConfig $config): self
     {
+        $missing = [];
+        $known = [];
         foreach (['defaults' => $config->moduleDefaults, 'locked' => $config->moduleLocks] as $key => $switches) {
-            foreach (array_keys($switches) as $id) {
+            foreach ($switches as $id => $on) {
                 if (!$catalogue->has($id)) {
-                    throw new ModuleException(sprintf(
-                        'Tenant setting "modules.%s" names module "%s", which is not installed. Remove it, or install the module.',
-                        $key,
-                        $id,
-                    ));
+                    $missing[] = ['setting' => 'modules.' . $key, 'id' => $id];
+                    continue;
                 }
                 if ($catalogue->get($id)->manifest->required) {
                     throw new ModuleException(sprintf(
@@ -53,12 +58,15 @@ final readonly class ModulePolicy
                         $id,
                     ));
                 }
+                $known[$key][$id] = $on;
             }
         }
+        $defaults = $known['defaults'] ?? [];
+        $locks = $known['locked'] ?? [];
 
-        foreach ($config->moduleLocks as $id => $on) {
+        foreach ($locks as $id => $on) {
             foreach ($on ? $catalogue->get($id)->requiredIds() : [] as $required) {
-                if (($config->moduleLocks[$required] ?? true) === false) {
+                if (($locks[$required] ?? true) === false) {
                     throw new ModuleException(sprintf(
                         'Tenant setting "modules.locked" turns module "%s" on but module "%s", which it requires, off. Change one of them.',
                         $id,
@@ -68,7 +76,17 @@ final readonly class ModulePolicy
             }
         }
 
-        return new self($catalogue, $config->moduleDefaults, $config->moduleLocks);
+        return new self($catalogue, $defaults, $locks, $missing);
+    }
+
+    /**
+     * Tenant settings that name a module that isn't installed or is unavailable, which `system:check` reports.
+     *
+     * @return list<array{setting: string, id: string}>
+     */
+    public function missing(): array
+    {
+        return $this->missing;
     }
 
     public function catalogue(): ModuleCatalogue

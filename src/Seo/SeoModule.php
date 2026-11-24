@@ -13,6 +13,7 @@ use SightPress\Module\Event\PageSaved;
 use SightPress\Module\Event\PageTransitioned;
 use SightPress\Module\Event\TranslationPublished;
 use SightPress\Module\Event\SettingsChanged;
+use SightPress\Module\Event\SiteModuleChanged;
 use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Seo\Command\CheckSeoCommand;
 use SightPress\Core\Seo\Contract\SiteVerification;
@@ -56,7 +57,7 @@ final class SeoModule implements ModuleInterface
 
         $subscribers = $registrar->subscribers();
         $subscribers->listen(PublicPageRendering::class, SeoHead::class, SeoHead::PRIORITY);
-        foreach ([PageCreated::class, PageSaved::class, PageMoved::class, PageTransitioned::class, TranslationPublished::class, PagePurged::class, SettingsChanged::class, MediaChanged::class, MediaDeleted::class] as $event) {
+        foreach ([PageCreated::class, PageSaved::class, PageMoved::class, PageTransitioned::class, TranslationPublished::class, PagePurged::class, SettingsChanged::class, MediaChanged::class, MediaDeleted::class, SiteModuleChanged::class] as $event) {
             $subscribers->listen($event, SeoCachePurger::class);
         }
         $subscribers->listen(PageTransitioned::class, IndexNow::class);

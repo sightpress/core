@@ -28,6 +28,13 @@ button: "Your organisation chose this for every site, so it can’t be changed h
 
 When there are no optional modules: "There are no optional features to turn on or off."
 
+Below the features (X-1), only when there are any:
+
+- **Features that were removed**: modules this site had on whose package is no longer installed. The site works
+  without them and their data is kept; installing the package again turns them back on.
+- **Features that can’t be used**: installed modules that are unavailable on every site, each with the reason for
+  whoever runs the server (a description list: the module and its package, then the reason).
+
 ## Rules
 
 - Turning on runs the module's database migrations first, then gives the admin role the module's permissions.
@@ -39,7 +46,8 @@ When there are no optional modules: "There are no optional features to turn on o
 
 ## Command line
 
-- `site:module:list <slug>`: each optional module's id, name and whether it is on ("…, set by the tenant").
+- `site:module:list <slug>`: each optional module's id, name and whether it is on ("…, set by the tenant"), then the
+  unavailable modules with the reason and the modules that were on but whose package was removed.
 - `site:module:enable <slug> <module>` and `site:module:disable <slug> <module> [--purge-data]`. Changes are written
   to the `sites` log and the site's audit log (with no person).
 - `site:create <slug> --without=<module>[,<module>…]`: the site starts with those modules off, and their migrations
@@ -56,8 +64,9 @@ When there are no optional modules: "There are no optional features to turn on o
 ],
 ```
 
-Unknown or required module ids, and a module locked on while a module it needs is locked off, stop SightPress from
-starting, with a message naming them. A module locked off isn't loaded at all.
+Required module ids, and a module locked on while a module it needs is locked off, stop SightPress from starting, with
+a message naming them. A module id that isn't installed (or is unavailable) is ignored and reported by `system:check`
+(X-1). A module locked off isn't loaded at all.
 
 ## For module authors
 

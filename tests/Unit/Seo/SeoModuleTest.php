@@ -35,7 +35,8 @@ final class SeoModuleTest extends TestCase
         $listeners = array_values(array_filter($registry->listeners(), static fn ($l) => $l->module === 'seo'));
         self::assertSame([PublicPageRendering::class, SeoHead::class, 10], [$listeners[0]->item->event, $listeners[0]->item->listener, $listeners[0]->item->priority]);
         self::assertContains([PageSaved::class, SeoCachePurger::class], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $listeners));
-        self::assertCount(11, $listeners);
+        self::assertCount(12, $listeners);
+        self::assertContains([\SightPress\Module\Event\SiteModuleChanged::class, SeoCachePurger::class], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $listeners));
         self::assertContains([\SightPress\Module\Event\MediaChanged::class, SeoCachePurger::class], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $listeners));
         self::assertContains([\SightPress\Module\Event\PagePurged::class, SeoCachePurger::class], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $listeners));
         self::assertContains([\SightPress\Module\Event\TranslationPublished::class, SeoCachePurger::class], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $listeners));
