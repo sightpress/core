@@ -123,7 +123,7 @@ final class InviteHandlerTest extends TestCase
         self::assertStringContainsString('<a href="#invite-email">There is already an account for max@example.org.</a>', (string) $taken->getBody());
 
         $policy = self::createStub(EmailPolicy::class);
-        $policy->method('problem')->willReturn('Only addresses at example.org can join.');
+        $policy->method('problem')->willReturn(new \SightPress\Core\Template\Message('Only addresses at example.org can join.'));
         $refused = $this->handle($ada, ['email' => 'nia@elsewhere.example', 'role' => 'member'], policy: $policy);
         self::assertStringContainsString('Only addresses at example.org can join.', (string) $refused->getBody());
         self::assertSame([], Text::of($this->invitations()->open()));

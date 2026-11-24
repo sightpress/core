@@ -172,9 +172,9 @@ final class AccountSignInDetailsTest extends TestCase
         $same = (string) $this->changeEmail($ada, ' ADA@example.org ', AuthFixture::PASSWORD)->getBody();
         $wrong = (string) $this->changeEmail($ada, 'ada@new.example', 'Not my password 1!')->getBody();
         $refused = (string) $this->emailHandler(new class () implements EmailPolicy {
-            public function problem(string $email): string
+            public function problem(string $email): \SightPress\Core\Template\Message
             {
-                return 'Use your work address.';
+                return new \SightPress\Core\Template\Message('Use your work address.');
             }
         })->handle($this->request($ada, 'POST', '/account/email', ['new_email' => 'ada@new.example', 'current_password' => AuthFixture::PASSWORD]))->getBody();
 

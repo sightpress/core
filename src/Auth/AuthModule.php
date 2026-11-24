@@ -91,7 +91,11 @@ final class AuthModule implements ModuleInterface
         $services->autowire(EvenTiming::class, public: true);
         $services->autowire(SessionAuthenticator::class, Authenticator::class);
         $services->autowire(PasswordRules::class, Passwords::class, public: true);
-        $services->autowire(AnyEmailPolicy::class, EmailPolicy::class, public: true);
+        $services->factory(EmailPolicy::class, static function (ContainerInterface $c): EmailPolicy {
+            $policies = Services::get($c, TenantConfig::class)->policies;
+
+            return $policies->emailDomains === null ? new AnyEmailPolicy() : new DomainsEmailPolicy($policies);
+        }, public: true);
         foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class, SelfRegistration::class, RegistrationMailer::class, RegisterHandler::class, RegisterCodeHandler::class, ForgetUnconfirmedAccounts::class, EmailChange::class, ChangePasswordHandler::class, ChangeEmailHandler::class, ChangeEmailCodeHandler::class] as $class) {
             $services->autowire($class);
         }

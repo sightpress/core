@@ -53,7 +53,7 @@ final readonly class EmailChange
     /**
      * What is wrong with the new address, in plain words, or null when a code can be sent to it.
      */
-    public function problem(Account $account, string $email): ?string
+    public function problem(Account $account, string $email): string|Message|null
     {
         if (self::normalise($email) === self::normalise($account->email())) {
             return 'That is already your email address. Enter the new one.';

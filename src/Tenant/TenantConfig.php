@@ -46,6 +46,8 @@ final readonly class TenantConfig
      * @param TenantMediaLimits $mediaLimits      `media.limits`: every site's upload limits, and the ceiling of a site's own
      * @param non-empty-string $uploadTempPath    `uploads.temp_path`: where files sent in parts wait, never under `public/`
      * @param positive-int     $maxChunkedBytes   `uploads.max_chunked_bytes`: the largest file that can be sent in parts
+     * @param TenantPolicies   $policies          `domain_policy` and `email_policy`: the domains sites may use and the
+     *                                            email addresses that may join (X-5)
      */
     public function __construct(
         public string $projectDir,
@@ -72,6 +74,7 @@ final readonly class TenantConfig
         public TenantMediaLimits $mediaLimits = new TenantMediaLimits(),
         public string $uploadTempPath = '/tmp/sightpress-uploads',
         public int $maxChunkedBytes = self::DEFAULT_MAX_CHUNKED_BYTES,
+        public TenantPolicies $policies = new TenantPolicies(),
     ) {
     }
 
@@ -121,6 +124,7 @@ final readonly class TenantConfig
             mediaLimits: TenantMediaLimits::fromArray(self::section($config, 'media')),
             uploadTempPath: self::uploadTempPath($uploads, $projectDir),
             maxChunkedBytes: self::maxChunkedBytes($uploads),
+            policies: TenantPolicies::fromArray($config),
         );
     }
 

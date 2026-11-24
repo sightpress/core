@@ -1,6 +1,6 @@
 {% extends 'layouts/default.html.twig' %}
 {% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% block content %}
-<p>{{ reason }}</p>
+<p>{{ t(reason) }}</p>
 <p><a href="/login">{{ t('Go to sign in') }}</a></p>
 {% endblock %}

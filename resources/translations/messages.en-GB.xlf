@@ -9619,5 +9619,17 @@
         <target>“{role}” keeps “Use the admin panel” while it has other permissions. Take those away first.</target>
       </segment>
     </unit>
+    <unit id="00d07bcf7be10f76">
+      <segment>
+        <source>Only email addresses at {domains} can join this site. Use an address there.</source>
+        <target>Only email addresses at {domains} can join this site. Use an address there.</target>
+      </segment>
+    </unit>
+    <unit id="9160d7b8d33d67d0">
+      <segment>
+        <source>{domain} can’t be used: sites here must use {allowed} or a name under it, such as www.{allowed}.</source>
+        <target>{domain} can’t be used: sites here must use {allowed} or a name under it, such as www.{allowed}.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

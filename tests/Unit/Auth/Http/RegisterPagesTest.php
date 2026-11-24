@@ -181,7 +181,7 @@ final class RegisterPagesTest extends TestCase
         self::assertStringContainsString('Your password must not be your email address.', $same);
 
         $policy = self::createStub(EmailPolicy::class);
-        $policy->method('problem')->willReturn('Only addresses at example.com can join.');
+        $policy->method('problem')->willReturn(new \SightPress\Core\Template\Message('Only addresses at example.com can join.'));
         $refused = $this->post(policy: $policy);
         self::assertSame(422, $refused->getStatusCode());
         self::assertStringContainsString('Only addresses at example.com can join.', (string) $refused->getBody());

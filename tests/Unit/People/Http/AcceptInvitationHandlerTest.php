@@ -183,7 +183,7 @@ final class AcceptInvitationHandlerTest extends TestCase
         self::assertNotNull($this->invitations->findOpen($invitation->id));
 
         $policy = self::createStub(EmailPolicy::class);
-        $policy->method('problem')->willReturn('Only addresses at example.com can join.');
+        $policy->method('problem')->willReturn(new \SightPress\Core\Template\Message('Only addresses at example.com can join.'));
         $refused = $this->handle(policy: $policy);
         self::assertSame(403, $refused->getStatusCode());
         self::assertStringContainsString('<p>Only addresses at example.com can join.</p>', (string) $refused->getBody());

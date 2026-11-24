@@ -9619,5 +9619,17 @@
         <target>“{role}” conserva “Usar la administración” mientras tenga otros permisos. Quítalos primero.</target>
       </segment>
     </unit>
+    <unit id="00d07bcf7be10f76">
+      <segment>
+        <source>Only email addresses at {domains} can join this site. Use an address there.</source>
+        <target>Solo las direcciones de correo de {domains} pueden unirse a este sitio. Usa una dirección de ese dominio.</target>
+      </segment>
+    </unit>
+    <unit id="9160d7b8d33d67d0">
+      <segment>
+        <source>{domain} can’t be used: sites here must use {allowed} or a name under it, such as www.{allowed}.</source>
+        <target>No se puede usar {domain}: los sitios de aquí deben usar {allowed} o un nombre dentro de él, como www.{allowed}.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

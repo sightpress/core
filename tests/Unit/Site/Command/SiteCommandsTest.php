@@ -232,6 +232,22 @@ final class SiteCommandsTest extends TestCase
         self::assertFileDoesNotExist($this->database('demo'));
     }
 
+    public function testTheTenantsPoliciesDecideTheDomainsAndTheFirstAdmin(): void
+    {
+        $this->project->remove();
+        $this->project = new TestProject(['domain_policy' => ['subdomain_of' => 'example.org'], 'email_policy' => ['domains' => ['example.org']]]);
+
+        self::assertSame(Command::INVALID, $this->create('demo'));
+        self::assertSame("demo.example can’t be used: sites here must use example.org or a name under it, such as www.example.org.\n", $this->stderr);
+        self::assertSame(Command::INVALID, $this->create('demo', ['--domain' => 'news.example.org, evil-example.org']));
+        self::assertStringStartsWith('evil-example.org can’t be used', $this->stderr);
+        self::assertSame(Command::INVALID, $this->create('demo', ['--domain' => 'news.example.org', '--admin-email' => 'ada@mail.example.org']));
+        self::assertSame("Only email addresses at example.org can join this site. Use an address there.\n", $this->stderr);
+
+        self::assertSame(Command::SUCCESS, $this->create('demo', ['--domain' => 'News.Example.ORG., bücher.example.org']), $this->stderr);
+        self::assertSame(['news.example.org', 'xn--bcher-kva.example.org'], $this->sites()->find('demo')?->domains);
+    }
+
     public function testASlugOrADomainCanOnlyBeUsedOnce(): void
     {
         $this->create('demo');

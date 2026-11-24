@@ -16,6 +16,7 @@ use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Tenant\TenantConfigException;
 
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantAssistant::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantPolicies::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
 #[CoversClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]

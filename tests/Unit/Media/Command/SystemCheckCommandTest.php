@@ -48,6 +48,11 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 #[UsesClass(\SightPress\Core\Tenant\TenantConfig::class)]
 #[UsesClass(\SightPress\Core\Tenant\TenantMediaLimits::class)]
 #[UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
+#[UsesClass(\SightPress\Core\Tenant\TenantPolicies::class)]
+#[UsesClass(\SightPress\Core\Tenant\PolicyReport::class)]
+#[UsesClass(\SightPress\Core\Tenant\DomainName::class)]
+#[UsesClass(\SightPress\Core\Tenant\Site::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteStorage::class)]
 #[UsesClass(SiteModules::class)]
 #[UsesClass(SiteMigrator::class)]
 #[UsesClass(ModulePolicy::class)]
@@ -142,10 +147,26 @@ final class SystemCheckCommandTest extends TestCase
         self::assertContains('Probe: the web server accepted every size tried, up to 66 MB.', $output->lines);
     }
 
-    private function command(ServerLimits $server, int $webServerMegabytes = 65): SystemCheckCommand
+    public function testSitesOutsideATightenedPolicyAreNotesNotProblems(): void
     {
+        $output = new RecordingOutput();
         $sites = self::createStub(SiteRepository::class);
-        $config = TenantConfig::fromArray([], '/tmp/sightpress-test');
+        $sites->method('all')->willReturn([\SightPress\Core\Tests\Support\SiteFixture::site('old', ['old.test'])]);
+
+        $status = $this->command(ServerLimitsFixture::standard(), sites: $sites, tenant: ['domain_policy' => ['subdomain_of' => 'example.org']])->run(new ArrayCommandInput(), $output);
+
+        self::assertSame(Command::SUCCESS, $status);
+        self::assertContains('Note: Site "old" uses old.test, outside domain_policy (example.org and names under it). It keeps working; new domains must follow the policy.', $output->lines);
+        self::assertSame('No problems found.', $output->lines[array_key_last($output->lines)]);
+    }
+
+    /**
+     * @param array<mixed> $tenant
+     */
+    private function command(ServerLimits $server, int $webServerMegabytes = 65, ?SiteRepository $sites = null, array $tenant = []): SystemCheckCommand
+    {
+        $sites ??= self::createStub(SiteRepository::class);
+        $config = TenantConfig::fromArray($tenant, '/tmp/sightpress-test');
         $secretBox = new SecretBox(str_repeat('k', 32));
         $containers = new SiteContainerFactory(new ArrayContainer([]), $secretBox, $config);
 
@@ -157,6 +178,6 @@ final class SystemCheckCommandTest extends TestCase
             return (int) $query['bytes'] <= $webServerMegabytes * ServerLimitsFixture::MB
                 ? new MockResponse('', ['http_code' => 204, 'response_headers' => [UploadProbe::ANSWER_HEADER . ': accepted']])
                 : new MockResponse('', ['http_code' => 413]);
-        }), new UploadProbe(str_repeat('s', 32), new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')))), $modules);
+        }), new UploadProbe(str_repeat('s', 32), new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')))), $modules, new \SightPress\Core\Tenant\PolicyReport($sites, $containers, $config));
     }
 }

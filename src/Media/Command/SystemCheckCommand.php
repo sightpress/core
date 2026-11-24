@@ -14,6 +14,7 @@ use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\MediaLimits;
 use SightPress\Core\Media\UploadAllowance;
 use SightPress\Core\Media\UploadRefusals;
+use SightPress\Core\Tenant\PolicyReport;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteModules;
@@ -29,7 +30,8 @@ use SightPress\Module\Console\CommandParameterType;
 /**
  * `system:check`: the server's upload and input limits, the largest file of each kind that can be uploaded, and
  * the settings to change ({@see ServerLimitsCheck}), and modules that are unavailable or named in `config/tenant.php`
- * without being installed ({@see SiteModules::problems()}). Exits with 1 when something must be fixed, for CI and
+ * without being installed ({@see SiteModules::problems()}), and sites and accounts outside the tenant's policies
+ * ({@see PolicyReport}, as notes). Exits with 1 when something must be fixed, for CI and
  * monitoring.
  *
  * Run it the way the web server runs PHP (in the skeleton: `docker compose exec php bin/sightpress system:check`):
@@ -46,6 +48,7 @@ final readonly class SystemCheckCommand implements Command
         private TenantConfig $config,
         private UploadProbeClient $probe,
         private SiteModules $modules,
+        private PolicyReport $policies,
     ) {
     }
 
@@ -140,6 +143,10 @@ final readonly class SystemCheckCommand implements Command
         }
         if ($input->flag('recommend')) {
             $this->recommend($site, $limits, $output);
+        }
+        // Sites and accounts outside a policy that was tightened keep working (X-5): notes, not problems.
+        foreach ($this->policies->notes() as $note) {
+            $output->line('Note: ' . $note);
         }
         // Modules that can't be used, and tenant settings naming a module that isn't installed (ADR-0065).
         array_push($problems, ...$this->modules->problems());

@@ -77,7 +77,6 @@ final class AuthModuleTest extends TestCase
         $commands = array_values(array_filter($registry->commands(), static fn ($c) => $c->module === 'auth'));
         self::assertSame([CreateAdminCommand::class], array_map(static fn ($c) => $c->item, $commands));
         self::assertTrue($registry->services()[VerificationCodes::class]->item->public);
-        self::assertSame(\SightPress\Core\Auth\AnyEmailPolicy::class, $registry->services()[\SightPress\Core\Auth\Contract\EmailPolicy::class]->item->class);
         self::assertTrue($registry->services()[\SightPress\Core\Auth\Contract\EmailPolicy::class]->item->public);
         $scheduled = array_values(array_filter($listeners, static fn ($l) => $l->item->event === \SightPress\Core\Site\Contract\ScheduleDue::class));
         self::assertSame([\SightPress\Core\Auth\Registration\ForgetUnconfirmedAccounts::class], array_map(static fn ($l) => $l->item->listener, $scheduled));
@@ -102,6 +101,19 @@ final class AuthModuleTest extends TestCase
 
         $this->expectExceptionMessage('Verification codes need APP_SECRET');
         $factory($container(null));
+    }
+
+    public function testTheEmailPolicyFollowsTheTenantSetting(): void
+    {
+        $factory = new AuthFixture()->database->registry->services()[\SightPress\Core\Auth\Contract\EmailPolicy::class]->item->factory;
+        self::assertNotNull($factory);
+        $policy = static fn (array $tenant) => $factory(new ContainerBuilder()->addDefinitions([TenantConfig::class => TenantConfig::fromArray($tenant, '/project')])->build());
+
+        self::assertInstanceOf(\SightPress\Core\Auth\AnyEmailPolicy::class, $policy([]));
+        $domains = $policy(['email_policy' => ['domains' => ['example.org']]]);
+        self::assertInstanceOf(\SightPress\Core\Auth\DomainsEmailPolicy::class, $domains);
+        self::assertNull($domains->problem('ada@EXAMPLE.org'));
+        self::assertSame('Only email addresses at example.org can join this site. Use an address there.', (string) $domains->problem('ada@evil-example.org'));
     }
 
     public function testTheMigrationCreatesAndDropsTheTokenTable(): void

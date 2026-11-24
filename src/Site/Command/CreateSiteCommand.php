@@ -18,6 +18,7 @@ use SightPress\Core\Site\Contract\FirstAdmin;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\OwnerType;
+use SightPress\Core\Tenant\DomainName;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteModuleException;
@@ -139,7 +140,7 @@ final readonly class CreateSiteCommand implements Command
                 $option,
                 true,
                 label: 'First admin\'s email',
-                normalise: self::email(...),
+                normalise: $this->email(...),
             ),
             new CommandParameter('admin-first-name', 'First name of the first admin:', $option, true, label: 'First admin\'s first name'),
             new CommandParameter('admin-last-name', 'Last name of the first admin:', $option, true, label: 'First admin\'s last name'),
@@ -263,7 +264,8 @@ final readonly class CreateSiteCommand implements Command
     }
 
     /**
-     * Lower-case domains joined by ", ", without https://, paths or trailing dots; each one must be free.
+     * Lower-case domains joined by ", ", without https://, paths or trailing dots, international ones in their ASCII
+     * form; each one must be free and allowed by the tenant's `domain_policy` (X-5).
      */
     private function domains(string $value): string
     {
@@ -279,6 +281,10 @@ final readonly class CreateSiteCommand implements Command
             if ($owner !== null) {
                 throw new InvalidArgumentException(sprintf('The domain %s already belongs to the site "%s".', $domain, $owner->slug));
             }
+            $problem = $this->config->policies->domainProblem($domain);
+            if ($problem !== null) {
+                throw new InvalidArgumentException((string) $problem);
+            }
         }
 
         return implode(', ', $domains);
@@ -293,7 +299,7 @@ final readonly class CreateSiteCommand implements Command
         $parts = preg_split('/[\s,]+/', $value, -1, PREG_SPLIT_NO_EMPTY);
         foreach ($parts === false ? [] : $parts as $domain) {
             $domain = (string) preg_replace('#^[a-z][a-z0-9+.-]*://#i', '', mb_strtolower($domain));
-            $domain = rtrim(explode('/', $domain)[0], '.');
+            $domain = DomainName::normalise(explode('/', $domain)[0]);
             if ($domain !== '') {
                 $domains[] = $domain;
             }
@@ -330,11 +336,18 @@ final readonly class CreateSiteCommand implements Command
         throw new InvalidArgumentException(sprintf('"%s" is not a time zone: use one such as Europe/London.', $timezone));
     }
 
-    private static function email(string $email): string
+    /**
+     * A lower-case address the tenant's `email_policy` allows (X-5).
+     */
+    private function email(string $email): string
     {
         $email = mb_strtolower($email);
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             throw new InvalidArgumentException(sprintf('"%s" is not an email address: type one such as ada@example.org.', $email));
+        }
+        $problem = $this->config->policies->emailProblem($email);
+        if ($problem !== null) {
+            throw new InvalidArgumentException((string) $problem);
         }
 
         return $email;
