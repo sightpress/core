@@ -1,6 +1,6 @@
 # 0050 — Per-site upload limits, the upload probe and refused-upload counts
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-23
 
 ## Context

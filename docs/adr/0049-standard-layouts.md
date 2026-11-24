@@ -1,6 +1,6 @@
 # 0049 — Themes: the standard layouts, the side column, and switching to a theme without a layout
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-20
 
 ## Context

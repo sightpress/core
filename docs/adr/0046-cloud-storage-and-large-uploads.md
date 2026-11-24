@@ -1,6 +1,6 @@
 # 0046 — Cloud storage per site and how large files get there
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-23
 
 ## Context

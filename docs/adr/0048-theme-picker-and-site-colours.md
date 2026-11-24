@@ -1,6 +1,6 @@
 # 0048 — Themes: the admin theme picker, published previews and a site's own colours
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-20
 
 ## Context

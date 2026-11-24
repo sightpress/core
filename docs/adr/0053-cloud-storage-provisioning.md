@@ -1,6 +1,6 @@
 # 0053 — Cloud storage provisioning
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-23
 
 ## Context

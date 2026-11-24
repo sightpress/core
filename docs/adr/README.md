@@ -62,17 +62,17 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0042](0042-assistant-drafting-tasks-and-unchecked-alt-text.md) | AI assistant: drafting tasks, checked output, and alt text that needs a person | Accepted |
 | [0043](0043-assistant-help-from-the-documentation.md) | AI assistant: help answered from the documentation | Accepted |
 | [0044](0044-assistant-drafted-translations.md) | AI assistant: translations drafted by the assistant, checked by a person | Accepted |
-| [0045](0045-theme-architecture-and-preview.md) | Themes: the architecture in theme-interface, and the static preview page | Proposed |
-| [0046](0046-cloud-storage-and-large-uploads.md) | Cloud storage per site and how large files get there | Proposed |
-| [0047](0047-theme-discovery-and-per-site-themes.md) | Themes: discovery, a theme per site, and an admin that keeps the default theme | Proposed |
-| [0048](0048-theme-picker-and-site-colours.md) | Themes: the admin theme picker, published previews and a site's own colours | Proposed |
-| [0049](0049-standard-layouts.md) | Themes: the standard layouts, the side column, and switching to a theme without a layout | Proposed |
-| [0050](0050-per-site-upload-limits.md) | Per-site upload limits, the upload probe and refused-upload counts | Proposed |
-| [0051](0051-cdn-delivery-and-signed-media-urls.md) | CDN delivery and signed media addresses | Proposed |
-| [0052](0052-command-line-media-import.md) | Command-line media import | Proposed |
-| [0053](0053-cloud-storage-provisioning.md) | Cloud storage provisioning | Proposed |
-| [0054](0054-chunked-uploads-to-a-temporary-folder.md) | Chunked uploads to a temporary folder | Proposed |
-| [0055](0055-direct-to-bucket-uploads.md) | Direct-to-bucket uploads | Proposed |
-| [0056](0056-captions-and-transcripts.md) | Captions and transcripts | Proposed |
+| [0045](0045-theme-architecture-and-preview.md) | Themes: the architecture in theme-interface, and the static preview page | Accepted |
+| [0046](0046-cloud-storage-and-large-uploads.md) | Cloud storage per site and how large files get there | Accepted |
+| [0047](0047-theme-discovery-and-per-site-themes.md) | Themes: discovery, a theme per site, and an admin that keeps the default theme | Accepted |
+| [0048](0048-theme-picker-and-site-colours.md) | Themes: the admin theme picker, published previews and a site's own colours | Accepted |
+| [0049](0049-standard-layouts.md) | Themes: the standard layouts, the side column, and switching to a theme without a layout | Accepted |
+| [0050](0050-per-site-upload-limits.md) | Per-site upload limits, the upload probe and refused-upload counts | Accepted |
+| [0051](0051-cdn-delivery-and-signed-media-urls.md) | CDN delivery and signed media addresses | Accepted |
+| [0052](0052-command-line-media-import.md) | Command-line media import | Accepted |
+| [0053](0053-cloud-storage-provisioning.md) | Cloud storage provisioning | Accepted |
+| [0054](0054-chunked-uploads-to-a-temporary-folder.md) | Chunked uploads to a temporary folder | Accepted |
+| [0055](0055-direct-to-bucket-uploads.md) | Direct-to-bucket uploads | Accepted |
+| [0056](0056-captions-and-transcripts.md) | Captions and transcripts | Accepted |
 
 When an ADR's status changes, update it here too.

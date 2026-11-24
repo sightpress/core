@@ -1,6 +1,6 @@
 # 0054 — Chunked uploads to a temporary folder
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-23
 
 ## Context

@@ -1,6 +1,6 @@
 # 0056 — Captions and transcripts
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-23
 
 ## Context

@@ -1,6 +1,6 @@
 # 0045 — Themes: the architecture in theme-interface, and the static preview page
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-20
 
 ## Context

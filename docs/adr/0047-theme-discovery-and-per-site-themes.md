@@ -1,6 +1,6 @@
 # 0047 — Themes: discovery, a theme per site, and an admin that keeps the default theme
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-20
 
 ## Context
