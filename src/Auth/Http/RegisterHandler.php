@@ -33,7 +33,8 @@ use Slim\Exception\HttpNotFoundException;
 use Symfony\Component\Validator\Constraints\Length;
 
 /**
- * `/register` — "Create an account", while the site lets anyone sign up (404 otherwise). The visitor gives their
+ * `/register` — "Create an account", while the site lets anyone sign up, or people at the organisation's domains on a
+ * members-only site (X-7: then the page says which, and other addresses are refused); 404 otherwise. The visitor gives their
  * names, an optional display name, their email address, their time zone (prefilled from the browser when it can say),
  * their language on a site written in several, and a password that meets the site's policy. Then they type the code
  * we emailed them ({@see RegisterCodeHandler}).
@@ -116,7 +117,7 @@ final readonly class RegisterHandler implements RequestHandlerInterface
         }
         $form = $this->validator->submit($form, $body);
         $email = mb_strtolower(trim($form->text('email')));
-        $problem = $form->error('email') === null ? $this->emailPolicy->problem($email) : null;
+        $problem = $form->error('email') === null ? $this->emailPolicy->problem($email) ?? $this->registration->problem($email) : null;
         if ($problem !== null) {
             $form = $form->withErrors(['email' => $problem]);
         }
@@ -168,6 +169,7 @@ final readonly class RegisterHandler implements RequestHandlerInterface
     {
         return $this->pages->page($request, 'register.html.twig', [
             'title' => new Message('Create an account on {site}', ['site' => $this->site->name]),
+            'domains' => self::listed($this->registration->onlyDomains()),
             'form' => $form,
             'honeypot' => self::HONEYPOT,
             'action' => self::PATH . ($return === null ? '' : '?' . http_build_query(['return' => $return])),
@@ -175,6 +177,14 @@ final readonly class RegisterHandler implements RequestHandlerInterface
         ], $status);
     }
 
+
+    /**
+     * @param non-empty-list<string>|null $domains
+     */
+    private static function listed(?array $domains): ?Message
+    {
+        return $domains === null ? null : Message::list($domains);
+    }
 
     private static function client(ServerRequestInterface $request): string
     {

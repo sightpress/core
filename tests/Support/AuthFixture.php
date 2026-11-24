@@ -17,6 +17,8 @@ use SightPress\Core\Auth\VerificationCodeStore;
 use SightPress\Core\Auth\RememberTokens;
 use SightPress\Core\Auth\Registration\RegistrationMailer;
 use SightPress\Core\Auth\Registration\SelfRegistration;
+use SightPress\Core\Auth\Registration\TenantDomainRegistration;
+use SightPress\Core\Tenant\TenantConfig;
 use SightPress\Core\Rbac\RoleGrantPolicy;
 use SightPress\Core\User\AccountRegistrar;
 use SightPress\Core\Auth\SessionAuthenticator;
@@ -229,8 +231,10 @@ final class AuthFixture implements MailSender
 
     /**
      * Self-registration against this fixture's database, mail and clock; events go to the given dispatcher.
+     *
+     * @param array<mixed> $tenant what `config/tenant.php` would return (for domain registration)
      */
-    public function selfRegistration(RecordingEvents $events = new RecordingEvents()): SelfRegistration
+    public function selfRegistration(RecordingEvents $events = new RecordingEvents(), array $tenant = []): SelfRegistration
     {
         return new SelfRegistration(
             $this->database->settings(),
@@ -242,7 +246,18 @@ final class AuthFixture implements MailSender
             $this->database->registrationRole(),
             new RoleGrantPolicy($this->database->roles(), new RecordingEvents()),
             $events,
+            $this->domainRegistration($tenant),
         );
+    }
+
+    /**
+     * Domain registration (X-7) for this fixture's site under these tenant settings.
+     *
+     * @param array<mixed> $tenant what `config/tenant.php` would return
+     */
+    public function domainRegistration(array $tenant = []): TenantDomainRegistration
+    {
+        return new TenantDomainRegistration(TenantConfig::fromArray($tenant, '/project'), $this->database->settings());
     }
 
     public function authenticator(): SessionAuthenticator

@@ -149,7 +149,7 @@ final class SelfRegistrationFlowTest extends TestCase
         self::assertSame(['member'], array_map(static fn ($role) => $role->name(), $roles->rolesOf((int) $nia?->id())));
         $entries = Services::get($this->site->container(), AuditLog::class)->find(new AuditFilter(), 20);
         $registered = array_values(array_filter($entries, static fn ($entry): bool => $entry->action === 'user.registered'));
-        self::assertSame(['role' => 'member', 'refused_role' => 'editor'], $registered[0]->details);
+        self::assertSame(['role' => 'member', 'refused_role' => 'editor', 'source' => 'self'], $registered[0]->details);
     }
 
     public function testTheScheduleKeepsAnAccountThatIsLessThanAWeekOld(): void

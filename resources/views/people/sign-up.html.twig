@@ -1,6 +1,7 @@
 {#
     Sign-up settings (/admin/settings/sign-up): whether anyone may create an account, and the role they get (only
-    sign-up-safe roles are offered). What is set now is said in words first. Errors go to the error summary.
+    sign-up-safe roles are offered), and whether registration with an organisation email address stays on (only when
+    the organisation offers it to this members-only site). What is set now is said in words first. Errors go to the error summary.
     Context: `form`, `action`, `open`, `role` (label of the role new accounts get), `settings_path`.
 #}
 {% extends '@admin/layout.html.twig' %}
@@ -14,6 +15,9 @@
 {{ f.start(form, action) }}
     {{ f.field(form, 'open') }}
     {{ f.field(form, 'role') }}
+    {%- if form.has('domain_registration') %}
+    {{ f.field(form, 'domain_registration') }}
+    {%- endif %}
     {{ f.submit(t('Save sign-up settings')) }}
 {{ f.end() }}
 {% endblock %}

@@ -9,7 +9,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Admin\Contract\AdminScreens;
+use SightPress\Core\Auth\Contract\DomainRegistration;
 use SightPress\Core\Auth\Contract\SignUp;
+use SightPress\Core\Template\Message;
 use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
@@ -22,7 +24,8 @@ use Slim\Exception\HttpForbiddenException;
 
 /**
  * `/admin/settings/sign-up` — "Sign-up": whether anyone may create an account on the site (off by default: only
- * invited people join) and the role they get. The role list only has sign-up-safe roles (ADR-0014), and the server
+ * invited people join) and the role they get; and, when the organisation offers domain registration to this
+ * members-only site (X-7), whether the site keeps it on — admins can only turn it off. The role list only has sign-up-safe roles (ADR-0014), and the server
  * refuses any other, whatever is sent. Needs `settings.manage`; changes are announced and audited
  * ({@see SettingsChanged}).
  */
@@ -41,19 +44,35 @@ final readonly class SignUpSettingsHandler implements RequestHandlerInterface
         private SiteSettings $settings,
         private SignUpRoles $registrationRole,
         private EventDispatcherInterface $events,
+        private DomainRegistration $domainRegistration,
     ) {
     }
 
     /**
-     * @param array<string, string> $roles sign-up-safe roles, name => label
+     * @param array<string, string>       $roles   sign-up-safe roles, name => label
+     * @param non-empty-list<string>|null $domains the organisation's domains when it offers domain registration to
+     *                                             this site (X-7); null otherwise, and the question isn't asked
      */
-    public static function form(array $roles): Form
+    public static function form(array $roles, ?array $domains = null): Form
     {
-        return Form::create(
-            'sign-up',
+        $fields = [
             new Field('open', 'Let anyone create an account', FieldType::Checkbox, hint: 'When this is off, only people you invite can join. When it is on, the sign-in page has a “Create an account” link, and people confirm their email address with a code before they can sign in.', required: false),
             new Field('role', 'Role of people who sign up', FieldType::Select, hint: 'Only roles that are safe to give to people you don’t know are listed. “Member” can read members-only pages and nothing more.', choices: $roles),
-        );
+        ];
+        if ($domains !== null) {
+            $fields[] = new Field(
+                'domain_registration',
+                'Registration with an organisation email address',
+                FieldType::Radios,
+                hint: new Message('Your organisation lets people with an email address at {domains} create an account on members-only sites, even when anyone else can’t. They confirm their address with a code and get the role above.', ['domains' => Message::list($domains)]),
+                choices: [
+                    DomainRegistration::TENANT => 'On, as your organisation set it',
+                    DomainRegistration::OFF => 'Off for this site',
+                ],
+            );
+        }
+
+        return Form::create('sign-up', ...$fields);
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -65,10 +84,15 @@ final readonly class SignUpSettingsHandler implements RequestHandlerInterface
         $roles = $this->registrationRole->choices();
         $open = SignUp::isOpen($this->settings->get(SignUp::SETTING));
         $current = $this->registrationRole->forNewAccount();
-        $form = self::form($roles)->withValues(['open' => $open ? '1' : '', 'role' => $current]);
+        $domains = $this->domainRegistration->offered();
+        $form = self::form($roles, $domains)->withValues([
+            'open' => $open ? '1' : '',
+            'role' => $current,
+            'domain_registration' => $this->domainRegistration->isTurnedOff() ? DomainRegistration::OFF : DomainRegistration::TENANT,
+        ]);
         if ($request->getMethod() === 'POST') {
             $body = $request->getParsedBody();
-            $form = $this->validator->submit(self::form($roles), is_array($body) ? $body : []);
+            $form = $this->validator->submit(self::form($roles, $domains), is_array($body) ? $body : []);
             if ($form->isValid()) {
                 try {
                     $changed = $this->save($form, $open);
@@ -112,6 +136,10 @@ final readonly class SignUpSettingsHandler implements RequestHandlerInterface
         if ($wanted !== $open) {
             $this->settings->set(SignUp::SETTING, $wanted ? '1' : '0');
             $changed[] = SignUp::SETTING;
+        }
+        if ($form->has('domain_registration') && ($form->text('domain_registration') === DomainRegistration::OFF) !== $this->domainRegistration->isTurnedOff()) {
+            $this->settings->set(DomainRegistration::SETTING, $form->text('domain_registration'));
+            $changed[] = DomainRegistration::SETTING;
         }
 
         return $changed;

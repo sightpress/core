@@ -66,6 +66,8 @@ use SightPress\Core\People\Invitations;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\RbacSeeder;
 use SightPress\Core\Rbac\RoleRepository;
+use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Site\Contract\SiteVisibility;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\User\Avatar\AvatarService;
@@ -116,9 +118,14 @@ if (str_starts_with($path, '/themes/') && !str_contains($path, '..') && is_file(
 
 if (!is_file($project . '/config/sites.php')) {
     @mkdir($project . '/config', 0o777, true);
+    // The `domains` copy (X-7): an organisation that lets people at example.org register on its members-only sites.
+    $policies = basename($project) === 'sightpress-a11y-domains'
+        ? ['email_policy' => ['domains' => ['example.org']], 'domain_registration' => 'on']
+        : [];
     file_put_contents($project . '/config/tenant.php', '<?php return ' . var_export([
         'log' => ['path' => $project . '/var/log/test.log'],
         'session' => ['path' => $project . '/var/sessions'],
+        ...$policies,
     ], true) . ';');
     file_put_contents($project . '/config/sites.php', '<?php return ' . var_export(['version' => 2, 'sites' => ['demo' => [
         'id' => '7b1e4c2a-9d3f-4e8b-a6c5-1f2e3d4c5b6a',
@@ -148,6 +155,9 @@ if (!is_file($project . '/config/sites.php')) {
         new MigratorConfiguration(),
     );
     Services::get($site, RbacSeeder::class)->seed();
+    if ($policies !== []) {
+        Services::get($site, SiteSettings::class)->set(SiteVisibility::SETTING, SiteVisibility::MEMBERS);
+    }
     $roles = Services::get($site, RoleRepository::class);
     $hash = new PasswordHasher(['memory_cost' => 8, 'time_cost' => 1, 'threads' => 1])->hash(PASSWORD);
     $people = [];

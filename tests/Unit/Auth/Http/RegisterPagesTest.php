@@ -38,6 +38,9 @@ final class RegisterPagesTest extends TestCase
 
     private Session $session;
 
+    /** @var array<mixed> tenant settings */
+    private array $tenant = [];
+
     protected function setUp(): void
     {
         $this->auth = new AuthFixture();
@@ -51,6 +54,44 @@ final class RegisterPagesTest extends TestCase
 
         $this->expectException(HttpNotFoundException::class);
         $this->register();
+    }
+
+    public function testOnAMembersOnlySiteOnlyPeopleAtTheOrganisationsDomainsRegister(): void
+    {
+        $this->tenant = ['domain_registration' => ['domains' => ['example.org']]];
+        $settings = $this->auth->database->settings();
+        $settings->set(SignUp::SETTING, '0');
+        $settings->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+
+        $page = (string) $this->register()->getBody();
+        self::assertStringContainsString('<p>Use your email address at example.org. Only people with an address there can create an account on this site.</p>', $page);
+
+        $refused = $this->post(['email' => 'nia@evil-example.org']);
+        self::assertSame(422, $refused->getStatusCode());
+        self::assertStringContainsString('Only people with an email address at example.org can create an account here. Use your address there.', (string) $refused->getBody());
+        self::assertSame([], $this->auth->sent);
+
+        self::assertSame(303, $this->post(['email' => 'Nia@EXAMPLE.ORG'])->getStatusCode());
+        self::assertCount(1, $this->auth->sent);
+    }
+
+    public function testDomainRegistrationTurnedOffOrOnAPublicSiteShowsNoForm(): void
+    {
+        $this->tenant = ['domain_registration' => ['domains' => ['example.org']]];
+        $settings = $this->auth->database->settings();
+        $settings->set(SignUp::SETTING, '0');
+        $settings->set(\SightPress\Core\Auth\Contract\DomainRegistration::SETTING, 'off');
+        $settings->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+        foreach (['members', 'public'] as $visibility) {
+            $settings->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, $visibility);
+            try {
+                $this->register();
+                self::fail('The form is there on a ' . $visibility . ' site.');
+            } catch (HttpNotFoundException) {
+                $settings->set(\SightPress\Core\Auth\Contract\DomainRegistration::SETTING, 'tenant');
+            }
+        }
+        self::assertStringNotContainsString('Use your email address at', (string) $this->registerOpen()->getBody());
     }
 
     public function testAsksForEverythingAnAccountNeedsWithLabelsAndHints(): void
@@ -313,6 +354,13 @@ final class RegisterPagesTest extends TestCase
         return $this->handler($site, $policy, $limiters)->handle($this->auth->request('POST', 'https://demo.example' . $uri, $body, session: $this->session));
     }
 
+    private function registerOpen(): ResponseInterface
+    {
+        $this->auth->database->settings()->set(SignUp::SETTING, '1');
+
+        return $this->register();
+    }
+
     private function register(string $uri = '/register'): ResponseInterface
     {
         return $this->handler()->handle($this->auth->request('GET', 'https://demo.example' . $uri, session: $this->session));
@@ -325,7 +373,7 @@ final class RegisterPagesTest extends TestCase
         return new RegisterHandler(
             $auth->pages(),
             $auth->validator(),
-            $auth->selfRegistration(),
+            $auth->selfRegistration(tenant: $this->tenant),
             $auth->passwords(),
             $policy ?? new AnyEmailPolicy(),
             $limiters ?? $auth->limiters,

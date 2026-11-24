@@ -33,6 +33,7 @@ use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Module\Event\RoleChanged;
 use SightPress\Core\Rbac\Contract\RoleEdited;
 use SightPress\Module\Event\SettingsChanged;
+use SightPress\Module\Event\AccountRegistered;
 use SightPress\Core\Tests\Support\BlockFixture;
 use SightPress\Core\Tests\Support\FixedClock;
 use SightPress\Core\Tests\Support\PageFixture;
@@ -55,9 +56,10 @@ final class AuditRecorderTest extends TestCase
         $users->save($zoe);
         $log = new AuditLog($pages->database->connection);
         $registry = ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue(CoreModules::candidates())->resolve(new ModuleSelection()));
-        $recorder = new AuditRecorder($log, new FixedClock(), new PageLinkQuery($pages->database->entityManager, $pages->addresses(), $pages->database->settings()), $media->media(), $users, $pages->site, SettingCatalogue::fromRegistry($registry));
+        $recorder = new AuditRecorder($log, new FixedClock(), new PageLinkQuery($pages->database->entityManager, $pages->addresses(), $pages->database->settings()), $media->media(), $users, $pages->site, SettingCatalogue::fromRegistry($registry), $pages->database->settings());
         $page = (int) $about->id();
         $user = (int) $zoe->id();
+        $pages->database->settings()->set('people.registration', '1');
 
         foreach ([
             new PageCreated($page, 'en-GB', 3),
@@ -177,8 +179,8 @@ final class AuditRecorderTest extends TestCase
         self::assertSame(['page.revision_restored', 4, ['locale' => 'pt-PT', 'restored' => 2, 'revision' => 5]], [$entries[31]->action, $entries[31]->actorId, $entries[31]->details]);
         self::assertSame(['page.scheduled', ['publish_at' => '2026-12-01T09:00:00+00:00', 'unpublish_at' => '2026-12-31T18:00:00+00:00']], [$entries[32]->action, $entries[32]->details]);
         self::assertSame(['page.schedule_failed', null, ['transition' => 'unpublish', 'reason' => 'no permission']], [$entries[36]->action, $entries[36]->actorId, $entries[36]->details]);
-        self::assertSame(['user.registered', 'user', (string) $user, $user, ['role' => 'member']], [$entries[37]->action, $entries[37]->entityType, $entries[37]->entityId, $entries[37]->actorId, $entries[37]->details]);
-        self::assertSame(['role' => 'member', 'refused_role' => 'editor'], $entries[38]->details);
+        self::assertSame(['user.registered', 'user', (string) $user, $user, ['role' => 'member', 'source' => 'self']], [$entries[37]->action, $entries[37]->entityType, $entries[37]->entityId, $entries[37]->actorId, $entries[37]->details]);
+        self::assertSame(['role' => 'member', 'refused_role' => 'editor', 'source' => 'self'], $entries[38]->details);
         self::assertSame(['feature.data_deleted', 'feature', 'acme.events', null, ['module' => 'acme.events']], [$entries[42]->action, $entries[42]->entityType, $entries[42]->entityId, $entries[42]->actorId, $entries[42]->details]);
         self::assertSame(['analytics.deleted', 'settings', null, 1, 'Deleted all analytics data.'], [$entries[43]->action, $entries[43]->entityType, $entries[43]->entityId, $entries[43]->actorId, $entries[43]->summary]);
         self::assertSame(['assistant.used', 'assistant', 'seo_meta', 4, ['task' => 'seo_meta', 'provider' => 'anthropic', 'model' => 'claude-haiku-5-5', 'input_tokens' => 300, 'output_tokens' => 40, 'outcome' => 'ok']], [$entries[44]->action, $entries[44]->entityType, $entries[44]->entityId, $entries[44]->actorId, $entries[44]->details]);
@@ -187,13 +189,33 @@ final class AuditRecorderTest extends TestCase
         self::assertCount(25, AuditRecorder::EVENTS);
     }
 
+    public function testARegistrationWhileSignUpIsOffCameFromTheOrganisationsDomains(): void
+    {
+        $pages = new PageFixture();
+        $media = new BlockFixture([], $pages->database);
+        $users = new UserRepository($pages->database->entityManager);
+        $nia = new User('nia@example.org', 'Nia', 'Lind', 'UTC', new DateTimeImmutable());
+        $users->save($nia);
+        $log = new AuditLog($pages->database->connection);
+        $registry = ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue(CoreModules::candidates())->resolve(new ModuleSelection()));
+        $recorder = new AuditRecorder($log, new FixedClock(), new PageLinkQuery($pages->database->entityManager, $pages->addresses(), $pages->database->settings()), $media->media(), $users, $pages->site, SettingCatalogue::fromRegistry($registry), $pages->database->settings());
+
+        $recorder(new AccountRegistered((int) $nia->id(), 'member'));
+        $recorder(new SettingsChanged(['people.domain_registration'], 1));
+
+        $entries = array_reverse($log->find(new AuditFilter(), 10));
+        self::assertSame('Nia registered with their organisation email address and confirmed it, with the “member” role.', $entries[0]->summary);
+        self::assertSame(['role' => 'member', 'source' => 'domain'], $entries[0]->details);
+        self::assertSame('Changed the site settings: Registration with an organisation email address.', $entries[1]->summary);
+    }
+
     public function testWritesASentenceForEachChangeToARole(): void
     {
         $pages = new PageFixture();
         $media = new BlockFixture([], $pages->database);
         $log = new AuditLog($pages->database->connection);
         $registry = ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue(CoreModules::candidates())->resolve(new ModuleSelection()));
-        $recorder = new AuditRecorder($log, new FixedClock(), new PageLinkQuery($pages->database->entityManager, $pages->addresses(), $pages->database->settings()), $media->media(), new UserRepository($pages->database->entityManager), $pages->site, SettingCatalogue::fromRegistry($registry));
+        $recorder = new AuditRecorder($log, new FixedClock(), new PageLinkQuery($pages->database->entityManager, $pages->addresses(), $pages->database->settings()), $media->media(), new UserRepository($pages->database->entityManager), $pages->site, SettingCatalogue::fromRegistry($registry), $pages->database->settings());
 
         foreach ([
             new RoleEdited(RoleEdited::CREATED, 'shop', 'Shop staff', 1, ['admin.access', 'media.upload']),

@@ -9631,5 +9631,47 @@
         <target>Não é possível usar {domain}: os sites aqui têm de usar {allowed} ou um nome dentro dele, como www.{allowed}.</target>
       </segment>
     </unit>
+    <unit id="f62f081608f99179">
+      <segment>
+        <source>Off for this site</source>
+        <target>Desligado neste site</target>
+      </segment>
+    </unit>
+    <unit id="60c520eeb8558e7d">
+      <segment>
+        <source>On, as your organisation set it</source>
+        <target>Ligado, como a sua organização definiu</target>
+      </segment>
+    </unit>
+    <unit id="bb9d1aaff9947693">
+      <segment>
+        <source>Only people with an email address at {domains} can create an account here. Use your address there.</source>
+        <target>Só pessoas com um endereço de email em {domains} podem criar uma conta aqui. Use o seu endereço desse domínio.</target>
+      </segment>
+    </unit>
+    <unit id="117a23fc08475b88">
+      <segment>
+        <source>Register with your organisation email</source>
+        <target>Registe-se com o email da sua organização</target>
+      </segment>
+    </unit>
+    <unit id="6596bdbaf3e01ea8">
+      <segment>
+        <source>Registration with an organisation email address</source>
+        <target>Registo com o endereço de email da organização</target>
+      </segment>
+    </unit>
+    <unit id="0fb575293eefaeb3">
+      <segment>
+        <source>Use your email address at {domains}. Only people with an address there can create an account on this site.</source>
+        <target>Use o seu endereço de email em {domains}. Só pessoas com um endereço desse domínio podem criar uma conta neste site.</target>
+      </segment>
+    </unit>
+    <unit id="a63eeec25c99fee3">
+      <segment>
+        <source>Your organisation lets people with an email address at {domains} create an account on members-only sites, even when anyone else can’t. They confirm their address with a code and get the role above.</source>
+        <target>A sua organização deixa as pessoas com um endereço de email em {domains} criar uma conta em sites só para membros, mesmo quando mais ninguém pode. Confirmam o endereço com um código e recebem a função acima.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

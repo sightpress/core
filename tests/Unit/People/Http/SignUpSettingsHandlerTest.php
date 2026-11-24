@@ -92,6 +92,32 @@ final class SignUpSettingsHandlerTest extends TestCase
         self::assertSame('0', $this->fixture->auth->database->settings()->get(SignUp::SETTING));
     }
 
+    public function testAMembersOnlySiteCanTurnTheOrganisationsDomainRegistrationOffButNeverOn(): void
+    {
+        $tenant = ['domain_registration' => ['domains' => ['example.org', 'example.com']]];
+        $settings = $this->fixture->auth->database->settings();
+        self::assertStringNotContainsString('Registration with an organisation email address', (string) $this->handle('GET', tenant: $tenant)->getBody(), 'a public site');
+
+        $settings->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+        $html = (string) $this->handle('GET', tenant: $tenant)->getBody();
+        self::assertStringContainsString('<legend>Registration with an organisation email address</legend>', $html);
+        self::assertStringContainsString('Your organisation lets people with an email address at example.org and example.com create an account on members-only sites', $html);
+        self::assertStringContainsString('value="tenant" checked', $html);
+
+        $this->handle('POST', ['role' => 'member', 'domain_registration' => 'off'], tenant: $tenant);
+        self::assertSame('off', $settings->get(\SightPress\Core\Auth\Contract\DomainRegistration::SETTING));
+        self::assertEquals([new SettingsChanged([\SightPress\Core\Auth\Contract\DomainRegistration::SETTING], (int) $this->admin->id())], $this->events->events);
+        self::assertStringContainsString('value="off" checked', (string) $this->handle('GET', tenant: $tenant)->getBody());
+
+        $forged = $this->handle('POST', ['role' => 'member', 'domain_registration' => 'on'], tenant: $tenant);
+        self::assertSame(422, $forged->getStatusCode());
+        $this->handle('POST', ['role' => 'member', 'domain_registration' => 'tenant'], tenant: $tenant);
+        self::assertSame('tenant', $settings->get(\SightPress\Core\Auth\Contract\DomainRegistration::SETTING));
+
+        $this->handle('POST', ['role' => 'member', 'domain_registration' => 'off']);
+        self::assertSame('tenant', $settings->get(\SightPress\Core\Auth\Contract\DomainRegistration::SETTING), 'not offered by the tenant: nothing to change');
+    }
+
     public function testAnUnsafeRoleIsRefusedWhateverIsSent(): void
     {
         $response = $this->handle('POST', ['open' => '1', 'role' => 'admin']);
@@ -119,12 +145,13 @@ final class SignUpSettingsHandlerTest extends TestCase
 
     /**
      * @param array<string, string> $body
+     * @param array<mixed>          $tenant
      */
-    private function handle(string $method, array $body = [], ?User $user = null, ?SignUpRoles $roles = null): ResponseInterface
+    private function handle(string $method, array $body = [], ?User $user = null, ?SignUpRoles $roles = null, array $tenant = []): ResponseInterface
     {
         $auth = $this->fixture->auth;
 
-        return new SignUpSettingsHandler($this->fixture->shell(), $auth->validator(), $auth->database->settings(), $roles ?? $auth->database->registrationRole(), $this->events)
+        return new SignUpSettingsHandler($this->fixture->shell(), $auth->validator(), $auth->database->settings(), $roles ?? $auth->database->registrationRole(), $this->events, $auth->domainRegistration($tenant))
             ->handle($this->fixture->request($user ?? $this->admin, $method, SignUpSettingsHandler::PATH, $body, $this->session));
     }
 }

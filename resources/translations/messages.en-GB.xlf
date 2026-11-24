@@ -9631,5 +9631,47 @@
         <target>{domain} can’t be used: sites here must use {allowed} or a name under it, such as www.{allowed}.</target>
       </segment>
     </unit>
+    <unit id="f62f081608f99179">
+      <segment>
+        <source>Off for this site</source>
+        <target>Off for this site</target>
+      </segment>
+    </unit>
+    <unit id="60c520eeb8558e7d">
+      <segment>
+        <source>On, as your organisation set it</source>
+        <target>On, as your organisation set it</target>
+      </segment>
+    </unit>
+    <unit id="bb9d1aaff9947693">
+      <segment>
+        <source>Only people with an email address at {domains} can create an account here. Use your address there.</source>
+        <target>Only people with an email address at {domains} can create an account here. Use your address there.</target>
+      </segment>
+    </unit>
+    <unit id="117a23fc08475b88">
+      <segment>
+        <source>Register with your organisation email</source>
+        <target>Register with your organisation email</target>
+      </segment>
+    </unit>
+    <unit id="6596bdbaf3e01ea8">
+      <segment>
+        <source>Registration with an organisation email address</source>
+        <target>Registration with an organisation email address</target>
+      </segment>
+    </unit>
+    <unit id="0fb575293eefaeb3">
+      <segment>
+        <source>Use your email address at {domains}. Only people with an address there can create an account on this site.</source>
+        <target>Use your email address at {domains}. Only people with an address there can create an account on this site.</target>
+      </segment>
+    </unit>
+    <unit id="a63eeec25c99fee3">
+      <segment>
+        <source>Your organisation lets people with an email address at {domains} create an account on members-only sites, even when anyone else can’t. They confirm their address with a code and get the role above.</source>
+        <target>Your organisation lets people with an email address at {domains} create an account on members-only sites, even when anyone else can’t. They confirm their address with a code and get the role above.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

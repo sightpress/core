@@ -45,6 +45,14 @@ final class TenantPoliciesTest extends TestCase
         self::assertSame(['example.org', 'xn--bcher-kva.example'], $policies->emailDomains);
     }
 
+    public function testDomainRegistrationUsesTheEmailDomainsOrSomeOfThem(): void
+    {
+        self::assertNull(TenantPolicies::fromArray(['domain_registration' => 'off'])->registrationDomains);
+        self::assertSame(['example.org', 'example.com'], TenantPolicies::fromArray(['email_policy' => ['domains' => ['example.org', 'example.com']], 'domain_registration' => 'on'])->registrationDomains);
+        self::assertSame(['example.com'], TenantPolicies::fromArray(['email_policy' => ['domains' => ['example.org', 'example.com']], 'domain_registration' => ['domains' => ['EXAMPLE.com', 'example.com.']]])->registrationDomains);
+        self::assertSame(['xn--bcher-kva.example'], TenantPolicies::fromArray(['domain_registration' => ['domains' => ['bücher.example']]])->registrationDomains, 'any domain while email_policy is any');
+    }
+
     /**
      * @return iterable<string, array{array<mixed>, string}>
      */
@@ -60,6 +68,11 @@ final class TenantPoliciesTest extends TestCase
         yield 'an email policy without domains' => [['email_policy' => ['domains' => []]], $email];
         yield 'an email policy with a list that isn\'t one' => [['email_policy' => ['domains' => 'example.org']], $email];
         yield 'an email policy with a domain that isn\'t text' => [['email_policy' => ['domains' => [7]]], 'Tenant setting "email_policy.domains" has "", which is not a domain such as example.org.'];
+        yield 'domain registration on without email domains' => [['domain_registration' => 'on'], 'Tenant setting "domain_registration" is \'on\', which uses the domains of "email_policy", but "email_policy" is \'any\'.'];
+        yield 'domain registration that is a word' => [['domain_registration' => 'yes'], 'Tenant setting "domain_registration" must be \'off\', \'on\' or [\'domains\' => [\'example.org\', …]] with at least one domain.'];
+        yield 'domain registration without domains' => [['domain_registration' => ['domains' => []]], 'Tenant setting "domain_registration" must be \'off\', \'on\' or'];
+        yield 'domain registration with a domain that isn\'t text' => [['domain_registration' => ['domains' => [false]]], 'Tenant setting "domain_registration.domains" has "", which is not a domain such as example.org.'];
+        yield 'domain registration outside the email domains' => [['email_policy' => ['domains' => ['example.org']], 'domain_registration' => ['domains' => ['mail.example.org']]], 'Tenant setting "domain_registration.domains" has "mail.example.org", which is not one of the "email_policy" domains.'];
         yield 'an email policy with an address' => [['email_policy' => ['domains' => ['@example.org']]], 'Tenant setting "email_policy.domains" has "@example.org", which is not a domain such as example.org.'];
     }
 

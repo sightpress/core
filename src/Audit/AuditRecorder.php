@@ -31,6 +31,8 @@ use SightPress\Module\Event\RevisionRestored;
 use SightPress\Module\Event\ScheduledStepFailed;
 use SightPress\Module\Event\TranslationPublished;
 use SightPress\Module\Event\RoleChanged;
+use SightPress\Core\Auth\Contract\SignUp;
+use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Rbac\Contract\RoleEdited;
 use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tenant\LocaleCode;
@@ -65,6 +67,7 @@ final readonly class AuditRecorder
         private Accounts $accounts,
         private Site $site,
         private SettingCatalogue $settings,
+        private SiteSettings $siteSettings,
     ) {
     }
 
@@ -124,9 +127,7 @@ final readonly class AuditRecorder
                 ]))),
             }, array_filter(['label' => $event->label, 'added' => $event->added, 'removed' => $event->removed, 'from' => $event->from], static fn (array|string|null $value): bool => $value !== null && $value !== [])),
             $event instanceof AccountChanged => $this->entry($event->changedBy, 'user.changed', 'user', $event->userId, sprintf('Changed the %s of %s.', self::words($event->fields), $this->person($event->userId)), ['fields' => $event->fields]),
-            $event instanceof AccountRegistered => $this->entry($event->userId, 'user.registered', 'user', $event->userId, $event->refusedRole === null
-                ? sprintf('%s signed up and confirmed their email address, with the “%s” role.', $this->person($event->userId), $event->role)
-                : sprintf('%s signed up and confirmed their email address. The sign-up role “%s” isn’t safe for people who sign up, so they got “%s” instead.', $this->person($event->userId), $event->refusedRole, $event->role), array_filter(['role' => $event->role, 'refused_role' => $event->refusedRole], static fn (?string $value): bool => $value !== null)),
+            $event instanceof AccountRegistered => $this->registered($event),
             $event instanceof SiteModuleChanged => $this->entry($event->actorId, 'feature.' . $event->change, 'feature', $event->moduleId, sprintf(match ($event->change) {
                 SiteModuleChanged::ENABLED => 'Turned on %s.',
                 SiteModuleChanged::DISABLED => 'Turned off %s.',
@@ -160,6 +161,20 @@ final readonly class AuditRecorder
         return new AuditEntry($this->clock->now(), $actorId, $action, $type, $id === null ? null : (string) $id, $summary, $details);
     }
 
+    /**
+     * Someone signed up. While the site's sign-up is off, only domain registration lets people in (X-7), so the
+     * entry says the account came from the organisation's domains (source `domain`); otherwise from sign-up (`self`).
+     */
+    private function registered(AccountRegistered $event): AuditEntry
+    {
+        $domain = !SignUp::isOpen($this->siteSettings->get(SignUp::SETTING));
+        $how = $domain ? 'registered with their organisation email address and confirmed it' : 'signed up and confirmed their email address';
+
+        return $this->entry($event->userId, 'user.registered', 'user', $event->userId, $event->refusedRole === null
+            ? sprintf('%s %s, with the “%s” role.', $this->person($event->userId), $how, $event->role)
+            : sprintf('%s %s. The sign-up role “%s” isn’t safe for people who sign up, so they got “%s” instead.', $this->person($event->userId), $how, $event->refusedRole, $event->role), array_filter(['role' => $event->role, 'refused_role' => $event->refusedRole, 'source' => $domain ? 'domain' : 'self'], static fn (?string $value): bool => $value !== null));
+    }
+
     private function setting(string $key): string
     {
         $setting = $this->settings->get($key);
@@ -175,6 +190,7 @@ final readonly class AuditRecorder
             'site.visibility' => 'Who can read the site',
             'people.registration' => 'Let anyone create an account',
             'rbac.registration_role' => 'Role of people who sign up',
+            'people.domain_registration' => 'Registration with an organisation email address',
             'branding.logo' => 'Logo',
             'branding.icon' => 'Icon',
             'branding.share_image' => 'Share picture',

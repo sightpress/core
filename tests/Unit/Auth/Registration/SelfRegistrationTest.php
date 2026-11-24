@@ -23,6 +23,7 @@ use Symfony\Component\Mime\Email;
 #[CoversClass(SelfRegistration::class)]
 #[CoversClass(RegistrationMailer::class)]
 #[CoversClass(RegistrationDetails::class)]
+#[CoversClass(\SightPress\Core\Auth\Registration\TenantDomainRegistration::class)]
 #[UsesNamespace('SightPress\Core')]
 final class SelfRegistrationTest extends TestCase
 {
@@ -50,6 +51,41 @@ final class SelfRegistrationTest extends TestCase
 
         $this->auth->database->settings()->set(SignUp::SETTING, '0');
         self::assertFalse($this->registration->isOpen());
+    }
+
+    public function testOnAMembersOnlySitePeopleAtTheOrganisationsDomainsMaySignUp(): void
+    {
+        $tenant = ['email_policy' => ['domains' => ['example.org', 'example.com']], 'domain_registration' => ['domains' => ['example.org']]];
+        $settings = $this->auth->database->settings();
+        $registration = $this->auth->selfRegistration($this->events, $tenant);
+        $domains = $this->auth->domainRegistration($tenant);
+
+        self::assertNull($domains->offered(), 'a public site');
+        self::assertFalse($registration->isOpen());
+
+        $settings->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+        self::assertSame(['example.org'], $domains->offered());
+        self::assertSame(['example.org'], $domains->domains());
+        self::assertTrue($registration->isOpen());
+        self::assertFalse($registration->isOpenToAnyone());
+        self::assertSame(['example.org'], $registration->onlyDomains());
+        self::assertNull($registration->problem('Nia@EXAMPLE.org'));
+        foreach (['nia@example.com', 'nia@mail.example.org', 'nia@evil-example.org', 'nia@example.org.evil.test'] as $refused) {
+            self::assertSame('Only people with an email address at example.org can create an account here. Use your address there.', (string) $registration->problem($refused), $refused);
+        }
+
+        $settings->set(SignUp::SETTING, '1');
+        self::assertNull($registration->onlyDomains(), 'sign-up open to anyone is not affected');
+        self::assertNull($registration->problem('nia@example.com'));
+
+        $settings->set(SignUp::SETTING, '0');
+        $settings->set(\SightPress\Core\Auth\Contract\DomainRegistration::SETTING, 'off');
+        self::assertTrue($domains->isTurnedOff());
+        self::assertSame(['example.org'], $domains->offered());
+        self::assertNull($domains->domains());
+        self::assertFalse($registration->isOpen());
+        self::assertFalse($this->auth->domainRegistration()->isTurnedOff() && $this->auth->domainRegistration()->domains() !== null);
+        self::assertNull($this->auth->domainRegistration()->offered(), 'off for the tenant');
     }
 
     public function testEmailsACodeWithoutALinkAndTheAccountCantSignInUntilItIsTyped(): void

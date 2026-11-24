@@ -7,6 +7,7 @@ namespace SightPress\Core\Auth\Registration;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use SightPress\Core\Auth\Contract\CodeStatus;
+use SightPress\Core\Auth\Contract\DomainRegistration;
 use SightPress\Core\Auth\Contract\Passwords;
 use SightPress\Core\Auth\Contract\SignUp;
 use SightPress\Core\Auth\Contract\TooManyCodes;
@@ -20,10 +21,13 @@ use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\User\Contract\Account;
 use SightPress\Core\User\Contract\Accounts;
 use SightPress\Core\User\Contract\UnverifiedAccounts;
+use SightPress\Core\Template\Message;
+use SightPress\Core\Tenant\DomainName;
 
 /**
- * Self-registration (U-1): while the site lets anyone sign up ({@see SignUp::SETTING}, off by default), a visitor
- * makes an account that can't sign in until they type the six-digit code we email them (purpose `email_verify`, never
+ * Self-registration (U-1): while the site lets anyone sign up ({@see SignUp::SETTING}, off by default) — or, on a
+ * members-only site with domain registration (X-7, {@see DomainRegistration}), anyone with an address at the
+ * organisation's domains — a visitor makes an account that can't sign in until they type the six-digit code we email them (purpose `email_verify`, never
  * a link). Then it gets the site's sign-up role — `member` unless an admin chose another sign-up-safe role — and its
  * avatar.
  *
@@ -42,12 +46,45 @@ final readonly class SelfRegistration
         private SignUpRoles $registrationRole,
         private RoleGrants $roles,
         private EventDispatcherInterface $events,
+        private DomainRegistration $domainRegistration,
     ) {
     }
 
+    /**
+     * Whether someone can make their own account: anyone may, or people at the organisation's domains may.
+     */
     public function isOpen(): bool
     {
+        return $this->isOpenToAnyone() || $this->domainRegistration->domains() !== null;
+    }
+
+    public function isOpenToAnyone(): bool
+    {
         return SignUp::isOpen($this->settings->get(SignUp::SETTING));
+    }
+
+    /**
+     * The domains whose addresses may sign up, while only those may (sign-up is off but domain registration is on);
+     * null when anyone may, or nobody.
+     *
+     * @return non-empty-list<string>|null
+     */
+    public function onlyDomains(): ?array
+    {
+        return $this->isOpenToAnyone() ? null : $this->domainRegistration->domains();
+    }
+
+    /**
+     * Why the address may not sign up here, or null when it may.
+     */
+    public function problem(string $email): ?Message
+    {
+        $domains = $this->onlyDomains();
+        if ($domains === null || in_array(DomainName::ofEmail($email), $domains, true)) {
+            return null;
+        }
+
+        return new Message('Only people with an email address at {domains} can create an account here. Use your address there.', ['domains' => Message::list($domains)]);
     }
 
     /**

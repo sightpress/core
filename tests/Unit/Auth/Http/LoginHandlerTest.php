@@ -29,6 +29,9 @@ final class LoginHandlerTest extends TestCase
 {
     private AuthFixture $auth;
 
+    /** @var array<mixed> tenant settings for domain registration */
+    private array $tenant = [];
+
     protected function setUp(): void
     {
         $this->auth = new AuthFixture();
@@ -72,6 +75,25 @@ final class LoginHandlerTest extends TestCase
         $this->auth->database->settings()->set(SignUp::SETTING, '1');
         self::assertStringContainsString('<p>New here? <a href="/register">Create an account</a></p>', (string) $this->handle($this->auth->request())->getBody());
         self::assertStringContainsString('<a href="/register?return=%2Fmembers">Create an account</a>', (string) $this->handle($this->auth->request(uri: 'https://demo.example/login?return=/members'))->getBody());
+    }
+
+    public function testAMembersOnlySiteWithDomainRegistrationLinksToItWhileSignUpIsOff(): void
+    {
+        $this->tenant = ['domain_registration' => ['domains' => ['example.org']]];
+        $settings = $this->auth->database->settings();
+        self::assertStringNotContainsString('Register with your organisation email', (string) $this->handle($this->auth->request())->getBody(), 'a public site');
+
+        $settings->set(\SightPress\Core\Site\Contract\SiteVisibility::SETTING, 'members');
+        self::assertStringContainsString('<p>New here? <a href="/register?return=%2Fdocs">Register with your organisation email</a></p>', (string) $this->handle($this->auth->request(uri: 'https://demo.example/login?return=/docs'))->getBody());
+
+        $settings->set(SignUp::SETTING, '1');
+        $html = (string) $this->handle($this->auth->request())->getBody();
+        self::assertStringContainsString('Create an account', $html);
+        self::assertStringNotContainsString('Register with your organisation email', $html);
+
+        $settings->set(SignUp::SETTING, '0');
+        $settings->set(\SightPress\Core\Auth\Contract\DomainRegistration::SETTING, 'off');
+        self::assertStringNotContainsString('New here?', (string) $this->handle($this->auth->request())->getBody());
     }
 
     public function testSomeoneWhoHasntConfirmedTheirAddressIsSentToTheCodePage(): void
@@ -205,6 +227,7 @@ final class LoginHandlerTest extends TestCase
             $this->auth->database->roles(),
             $this->auth->rememberTokens(),
             $this->auth->database->settings(),
+            $this->auth->domainRegistration($this->tenant),
         )->handle($request);
     }
 

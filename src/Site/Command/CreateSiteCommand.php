@@ -14,7 +14,9 @@ use SightPress\Core\Infrastructure\Database\DatabaseDsnException;
 use SightPress\Core\Infrastructure\Database\DatabaseProvisioner;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Logging\LoggerFactory;
+use SightPress\Core\Auth\Contract\DomainRegistration;
 use SightPress\Core\Site\Contract\FirstAdmin;
+use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\OwnerType;
@@ -152,6 +154,13 @@ final readonly class CreateSiteCommand implements Command
                 normalise: $this->without(...),
             ),
             new CommandParameter(
+                'domain-registration',
+                'Whether the site follows the organisation\'s domain registration (tenant, the default) or turns it off (off). It only applies to members-only sites.',
+                $option,
+                label: 'Domain registration',
+                normalise: self::domainRegistration(...),
+            ),
+            new CommandParameter(
                 'with-demo-content',
                 'Add demo content for trying SightPress out? That is a page with every kind of block, its media files and an account for each role.',
                 CommandParameterType::Flag,
@@ -189,6 +198,9 @@ final readonly class CreateSiteCommand implements Command
             $services = $this->containers->forSite($site);
             $provisioning = new SiteProvisioning($site, $services, $admin, $url, $input->flag('with-demo-content'));
             Services::get($services, EventDispatcherInterface::class)->dispatch($provisioning);
+            if ($input->option('domain-registration') === DomainRegistration::OFF) {
+                Services::get($services, SiteSettings::class)->set(DomainRegistration::SETTING, DomainRegistration::OFF);
+            }
             $this->sites->save($site);
         } catch (Throwable $exception) {
             $output->error(sprintf(
@@ -334,6 +346,19 @@ final readonly class CreateSiteCommand implements Command
         }
 
         throw new InvalidArgumentException(sprintf('"%s" is not a time zone: use one such as Europe/London.', $timezone));
+    }
+
+    /**
+     * `tenant` or `off` (X-7): a site can turn the organisation's domain registration off, never on.
+     */
+    private static function domainRegistration(string $value): string
+    {
+        $value = strtolower(trim($value));
+        if (!in_array($value, [DomainRegistration::TENANT, DomainRegistration::OFF], true)) {
+            throw new InvalidArgumentException(sprintf('"%s" is not a choice for --domain-registration: use tenant or off.', $value));
+        }
+
+        return $value;
     }
 
     /**

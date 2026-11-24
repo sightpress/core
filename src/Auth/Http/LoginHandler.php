@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Auth\CodeSession;
+use SightPress\Core\Auth\Contract\DomainRegistration;
 use SightPress\Core\Auth\Contract\SignUp;
 use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Auth\RememberTokens;
@@ -27,7 +28,8 @@ use SightPress\Core\Site\Contract\SiteVisibility;
 /**
  * `/login`, shared by every role: the sign-in form, and signing in. Afterwards people go back to the page they came
  * from (`?return=`, or the referring page of this site), never to `/admin` without `admin.access`. "Keep me signed
- * in" is unticked by default. While the site lets people sign up, the page links to the sign-up form; someone who
+ * in" is unticked by default. While the site lets people sign up, the page links to the sign-up form ("Register with
+ * your organisation email" when only people at the organisation's domains may, X-7); someone who
  * signed up but hasn't confirmed their email address goes to the page where they type the code.
  */
 final readonly class LoginHandler implements RequestHandlerInterface
@@ -41,6 +43,7 @@ final readonly class LoginHandler implements RequestHandlerInterface
         private PermissionLookup $permissions,
         private RememberTokens $rememberTokens,
         private SiteSettings $settings,
+        private DomainRegistration $domainRegistration,
     ) {
     }
 
@@ -127,12 +130,15 @@ final readonly class LoginHandler implements RequestHandlerInterface
     private function show(ServerRequestInterface $request, Form $form, ?string $return, int $status = 200): ResponseInterface
     {
         $local = ReturnTarget::localPath($return);
+        $open = SignUp::isOpen($this->settings->get(SignUp::SETTING));
+        $signUp = SignUp::PATH . ($local === null ? '' : '?' . http_build_query(['return' => $local]));
 
         return $this->pages->page($request, 'login.html.twig', [
             'form' => $form,
             'action' => '/login' . ($local === null ? '' : '?' . http_build_query(['return' => $local])),
             'members_only' => SiteVisibility::isMembersOnly($this->settings),
-            'sign_up' => SignUp::isOpen($this->settings->get(SignUp::SETTING)) ? SignUp::PATH . ($local === null ? '' : '?' . http_build_query(['return' => $local])) : null,
+            'sign_up' => $open ? $signUp : null,
+            'domain_sign_up' => !$open && $this->domainRegistration->domains() !== null ? $signUp : null,
         ], $status);
     }
 }

@@ -1,14 +1,18 @@
 {#
-    "Create an account" (/register), like the sign-in page, while the site lets anyone sign up. Never indexed. On a fresh
+    "Create an account" (/register), like the sign-in page, while the site lets anyone sign up, or people at the
+    organisation's domains (`domains`, X-7: then the page says so first). Never indexed. On a fresh
     form the time zone is prefilled from the browser (js/timezone.js); without JavaScript the site's time zone stays
     selected. The "{{ honeypot }}" field is hidden from everyone and only bots fill it in.
-    Context: `title`, `form`, `honeypot`, `action`, `sign_in`.
+    Context: `title`, `domains` (a Message listing them, or null), `form`, `honeypot`, `action`, `sign_in`.
 #}
 {% extends '@auth/layout.html.twig' %}
 {% import 'form/macros.html.twig' as f %}
 {% block title %}{{ t(title) }}{% endblock %}
 {% block content %}
 <h1>{{ t(title) }}</h1>
+{%- if domains|default(null) %}
+<p>{{ t('Use your email address at {domains}. Only people with an address there can create an account on this site.', {domains: domains}) }}</p>
+{%- endif %}
 <p>{{ t('All fields are needed unless they say “optional”. After this, we email you a 6-digit code to type on the next page.') }}</p>
 {{ f.error_summary(form) }}
 {{ f.start(form, action) }}

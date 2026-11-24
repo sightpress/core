@@ -9631,5 +9631,47 @@
         <target>No se puede usar {domain}: los sitios de aquí deben usar {allowed} o un nombre dentro de él, como www.{allowed}.</target>
       </segment>
     </unit>
+    <unit id="f62f081608f99179">
+      <segment>
+        <source>Off for this site</source>
+        <target>Desactivado en este sitio</target>
+      </segment>
+    </unit>
+    <unit id="60c520eeb8558e7d">
+      <segment>
+        <source>On, as your organisation set it</source>
+        <target>Activado, como lo configuró tu organización</target>
+      </segment>
+    </unit>
+    <unit id="bb9d1aaff9947693">
+      <segment>
+        <source>Only people with an email address at {domains} can create an account here. Use your address there.</source>
+        <target>Solo las personas con una dirección de correo de {domains} pueden crear una cuenta aquí. Usa tu dirección de ese dominio.</target>
+      </segment>
+    </unit>
+    <unit id="117a23fc08475b88">
+      <segment>
+        <source>Register with your organisation email</source>
+        <target>Regístrate con el correo de tu organización</target>
+      </segment>
+    </unit>
+    <unit id="6596bdbaf3e01ea8">
+      <segment>
+        <source>Registration with an organisation email address</source>
+        <target>Registro con la dirección de correo de la organización</target>
+      </segment>
+    </unit>
+    <unit id="0fb575293eefaeb3">
+      <segment>
+        <source>Use your email address at {domains}. Only people with an address there can create an account on this site.</source>
+        <target>Usa tu dirección de correo de {domains}. Solo las personas con una dirección de ese dominio pueden crear una cuenta en este sitio.</target>
+      </segment>
+    </unit>
+    <unit id="a63eeec25c99fee3">
+      <segment>
+        <source>Your organisation lets people with an email address at {domains} create an account on members-only sites, even when anyone else can’t. They confirm their address with a code and get the role above.</source>
+        <target>Tu organización permite que las personas con una dirección de correo de {domains} creen una cuenta en sitios solo para miembros, aunque nadie más pueda. Confirman su dirección con un código y reciben el rol de arriba.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

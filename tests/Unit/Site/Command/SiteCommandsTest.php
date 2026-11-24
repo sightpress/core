@@ -248,6 +248,18 @@ final class SiteCommandsTest extends TestCase
         self::assertSame(['news.example.org', 'xn--bcher-kva.example.org'], $this->sites()->find('demo')?->domains);
     }
 
+    public function testASiteCanStartWithTheOrganisationsDomainRegistrationOff(): void
+    {
+        self::assertSame(Command::INVALID, $this->create('demo', ['--domain-registration' => 'on']));
+        self::assertSame("\"on\" is not a choice for --domain-registration: use tenant or off.\n", $this->stderr);
+
+        self::assertSame(Command::SUCCESS, $this->create('demo', ['--domain-registration' => ' OFF ']), $this->stderr);
+        self::assertSame(Command::SUCCESS, $this->create('docs', ['--domain-registration' => 'tenant']), $this->stderr);
+
+        self::assertSame('off', $this->setting('demo', \SightPress\Core\Auth\Contract\DomainRegistration::SETTING));
+        self::assertNull($this->setting('docs', \SightPress\Core\Auth\Contract\DomainRegistration::SETTING));
+    }
+
     public function testASlugOrADomainCanOnlyBeUsedOnce(): void
     {
         $this->create('demo');
@@ -588,6 +600,13 @@ final class SiteCommandsTest extends TestCase
     private function sites(): SiteRepository
     {
         return Services::get($this->kernel()->container(), SiteRepository::class);
+    }
+
+    private function setting(string $slug, string $key): ?string
+    {
+        $kernel = $this->kernel();
+
+        return Services::get(Services::get($kernel->container(), \SightPress\Core\Tenant\SiteContainerFactory::class)->forSite($this->site($slug)), \SightPress\Core\Site\Contract\SiteSettings::class)->get($key);
     }
 
     private function site(string $slug): Site

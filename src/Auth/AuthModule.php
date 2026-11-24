@@ -8,7 +8,9 @@ use Doctrine\DBAL\Connection;
 use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
 use SightPress\Core\Auth\Command\CreateAdminCommand;
+use SightPress\Core\Auth\Contract\DomainRegistration;
 use SightPress\Core\Auth\Contract\EmailPolicy;
+use SightPress\Core\Auth\Registration\TenantDomainRegistration;
 use SightPress\Core\Auth\Contract\Passwords;
 use SightPress\Core\Auth\Contract\SignUp;
 use SightPress\Core\Auth\Contract\VerificationCodes;
@@ -96,6 +98,7 @@ final class AuthModule implements ModuleInterface
 
             return $policies->emailDomains === null ? new AnyEmailPolicy() : new DomainsEmailPolicy($policies);
         }, public: true);
+        $services->autowire(TenantDomainRegistration::class, DomainRegistration::class, public: true);
         foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class, SelfRegistration::class, RegistrationMailer::class, RegisterHandler::class, RegisterCodeHandler::class, ForgetUnconfirmedAccounts::class, EmailChange::class, ChangePasswordHandler::class, ChangeEmailHandler::class, ChangeEmailCodeHandler::class] as $class) {
             $services->autowire($class);
         }
