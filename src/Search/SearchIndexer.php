@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace SightPress\Core\Search;
 
 use Psr\Log\LoggerInterface;
-use SightPress\Core\Media\Contract\MediaChanged;
-use SightPress\Core\Media\Contract\MediaDeleted;
-use SightPress\Core\Page\Contract\PageMoved;
-use SightPress\Core\Page\Contract\PagePurged;
-use SightPress\Core\Page\Contract\PageSaved;
-use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Module\Event\MediaChanged;
+use SightPress\Module\Event\MediaDeleted;
+use SightPress\Module\Event\PageMoved;
+use SightPress\Module\Event\PagePurged;
+use SightPress\Module\Event\PageSaved;
+use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Page\Contract\SearchablePages;
-use SightPress\Core\Page\Contract\TranslationPublished;
-use SightPress\Core\Site\Contract\LocaleRemoved;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\TranslationPublished;
+use SightPress\Module\Event\LocaleRemoved;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteVisibility;
-use SightPress\Core\Tenant\SiteModuleChanged;
+use SightPress\Module\Event\SiteModuleChanged;
 use SightPress\Core\Tenant\Site;
 use Throwable;
 
@@ -70,11 +70,12 @@ final readonly class SearchIndexer
     }
 
     /**
-     * @param list<int> $ids
+     * @param list<int>             $ids
+     * @param non-empty-string|null $locale
      */
     private function pages(array $ids, ?string $locale = null): void
     {
-        $this->index->refresh(SearchablePages::SOURCE, self::refs($ids), $locale === '' ? null : $locale);
+        $this->index->refresh(SearchablePages::SOURCE, self::refs($ids), $locale);
     }
 
     /**

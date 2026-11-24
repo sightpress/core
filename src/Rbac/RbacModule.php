@@ -11,7 +11,7 @@ use SightPress\Core\Rbac\Contract\RoleGrants;
 use SightPress\Core\Rbac\Contract\SignUpRoles;
 use SightPress\Core\Rbac\Provisioning\SeedRoles;
 use SightPress\Core\Site\Contract\SiteProvisioning;
-use SightPress\Core\Tenant\SiteModuleChanged;
+use SightPress\Module\Event\SiteModuleChanged;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tenant;
 
+use SightPress\Module\Event\SiteModuleChanged;
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Infrastructure\Container\Services;

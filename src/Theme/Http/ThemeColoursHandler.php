@@ -15,7 +15,7 @@ use SightPress\Core\Http\Form\FormValidator;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Template\Message;
 use SightPress\Core\Theme\ColorMode;
-use SightPress\Core\Theme\Contract\ThemeColoursChanged;
+use SightPress\Module\Event\ThemeColoursChanged;
 use SightPress\Core\Theme\SiteTheme;
 use SightPress\Core\Theme\ThemeColours;
 use SightPress\Core\Theme\ThemeLoader;

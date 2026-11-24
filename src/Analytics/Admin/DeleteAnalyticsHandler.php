@@ -11,7 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Admin\Contract\AdminScreens;
 use SightPress\Core\Analytics\AnalyticsModule;
 use SightPress\Core\Analytics\AnalyticsStore;
-use SightPress\Core\Analytics\Contract\AnalyticsDataDeleted;
+use SightPress\Module\Event\AnalyticsDataDeleted;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Template\Message;
 use Slim\Exception\HttpForbiddenException;

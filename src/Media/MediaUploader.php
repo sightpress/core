@@ -10,7 +10,7 @@ use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use SightPress\Core\Media\Contract\MediaKind;
-use SightPress\Core\Media\Contract\MediaUploaded;
+use SightPress\Module\Event\MediaUploaded;
 use SightPress\Core\Media\Entity\Media;
 use SightPress\Core\Media\Upload\IncomingFile;
 use Throwable;
@@ -155,7 +155,7 @@ final readonly class MediaUploader
             throw $exception;
         }
         $file->delete();
-        $this->events->dispatch(new MediaUploaded((int) $media->id(), $key, $format->kind, $uploadedBy));
+        $this->events->dispatch(new MediaUploaded((int) $media->id(), $key, $format->kind->value, $uploadedBy));
 
         return new UploadResult($media, false);
     }
@@ -229,7 +229,7 @@ final readonly class MediaUploader
             throw $exception;
         }
 
-        $this->events->dispatch(new MediaUploaded((int) $media->id(), $key, $format->kind, $uploadedBy));
+        $this->events->dispatch(new MediaUploaded((int) $media->id(), $key, $format->kind->value, $uploadedBy));
 
         return new UploadResult($media, false);
     }

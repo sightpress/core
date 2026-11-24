@@ -7,9 +7,9 @@ namespace SightPress\Core\Page\Schedule;
 use DateTimeImmutable;
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use SightPress\Core\Page\Contract\PageScheduled;
+use SightPress\Module\Event\PageScheduled;
 use SightPress\Core\Page\Contract\PageTransition;
-use SightPress\Core\Page\Contract\ScheduledStepFailed;
+use SightPress\Module\Event\ScheduledStepFailed;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\PageException;
 use SightPress\Core\Page\PageRepository;
@@ -117,7 +117,7 @@ final readonly class PageSchedule
             $page->schedule($page->publishAt(), null, $by, $this->clock->now());
         }
         $this->pages->flush();
-        $this->events->dispatch(new ScheduledStepFailed((int) $page->id(), $transition, $reason, $by));
+        $this->events->dispatch(new ScheduledStepFailed((int) $page->id(), $transition->value, $reason, $by));
 
         return sprintf($transition === PageTransition::Publish ? 'Couldn’t publish “%s” on schedule: %s. Its publishing time was cleared.' : 'Couldn’t take “%s” off the site on schedule: %s. Its end time was cleared.', $title, $reason);
     }

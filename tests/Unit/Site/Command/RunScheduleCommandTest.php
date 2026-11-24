@@ -24,7 +24,13 @@ use SightPress\Core\Tenant\SiteStatus;
 use SightPress\Core\Tests\Support\SiteFixture;
 use SightPress\Core\Tests\Support\TestProject;
 use SightPress\Core\User\UserRepository;
+use SightPress\Core\Module\CoreModules;
+use SightPress\Core\Module\ModuleCandidate;
+use SightPress\Core\Tenant\TenantConfigLoader;
+use SightPress\Core\Tests\Support\FakeModule;
+use SightPress\Core\Tests\Support\Modules\ExampleScheduledJob;
 use SightPress\Module\Console\Command;
+use SightPress\Module\ModuleRegistrar;
 use Symfony\Component\Console\Tester\ApplicationTester;
 
 #[CoversClass(RunScheduleCommand::class)]
@@ -36,6 +42,9 @@ final class RunScheduleCommandTest extends TestCase
     private string $stdout = '';
 
     private string $stderr = '';
+
+    /** @var list<ModuleCandidate> */
+    private array $modules = [];
 
     protected function setUp(): void
     {
@@ -72,6 +81,24 @@ final class RunScheduleCommandTest extends TestCase
         self::assertStringEndsWith("; 1 failed.\n", $this->stdout);
     }
 
+    public function testRunsTheJobsOfModulesAndReportsTheOnesThatFail(): void
+    {
+        $this->modules = [new ModuleCandidate(new FakeModule('acme.events', register: static fn (ModuleRegistrar $r) => $r->schedule()->add(ExampleScheduledJob::class)), 'acme/events', '*')];
+        $this->console(['command' => 'site:create', 'slug' => 'demo', '--domain' => 'demo.example', '--db' => 'sqlite:///' . $this->project->path() . '/sites/demo.sqlite', '--owner-type' => 'organization', '--locale' => 'en-GB', '--admin-email' => 'ada@example.org', '--admin-first-name' => 'Ada', '--admin-last-name' => 'Lovelace']);
+
+        self::assertSame(Command::SUCCESS, $this->console());
+        self::assertMatchesRegularExpression('/^demo: Checked reminders at \d\d:\d\d\.$/m', $this->stdout);
+
+        ExampleScheduledJob::$fail = true;
+        try {
+            self::assertSame(Command::FAILURE, $this->console());
+        } finally {
+            ExampleScheduledJob::$fail = false;
+        }
+        self::assertSame('demo: the job ' . ExampleScheduledJob::class . ' of module "acme.events" failed: The reminder service is down.' . "\n", $this->stderr);
+        self::assertStringEndsWith("; 1 failed.\n", $this->stdout);
+    }
+
     public function testNeverRunsTwiceAtOnce(): void
     {
         $lock = new ScheduleLock($this->project->path() . '/' . RunScheduleCommand::LOCK_FILE);
@@ -105,7 +132,14 @@ final class RunScheduleCommandTest extends TestCase
 
     private function kernel(): Kernel
     {
-        return Kernel::boot($this->project->path(), ['APP_ENV' => 'test', 'APP_SECRET' => SiteFixture::SECRET]);
+        if ($this->modules === []) {
+            return Kernel::boot($this->project->path(), ['APP_ENV' => 'test', 'APP_SECRET' => SiteFixture::SECRET]);
+        }
+
+        return Kernel::fromConfig(
+            new TenantConfigLoader()->load($this->project->path(), ['APP_ENV' => 'test', 'APP_SECRET' => SiteFixture::SECRET]),
+            [...CoreModules::candidates(), ...$this->modules],
+        );
     }
 
     private function site(string $slug): Site

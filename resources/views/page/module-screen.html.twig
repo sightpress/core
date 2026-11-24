@@ -1,0 +1,13 @@
+{#
+    A module's public page (module-interface `Screens::public()`, ADR-0059) in the theme's shell: menus, skip link,
+    language links and footer come from the theme; the module's template draws the main content, starting with its
+    <h1>. `head` holds the description, canonical and alternate links and JSON-LD built from the page's SeoEntry.
+    Context: what ModuleScreens gives (`title`, `module_template`, `module_context`, `head` …).
+#}
+{% extends 'master.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block main %}
+<div class="container module-screen">
+    {% include module_template with module_context only %}
+</div>
+{% endblock %}

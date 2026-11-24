@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Site\Contract;
 
+use SightPress\Module\Event\LocaleRemoved;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Template\LanguageName;
 use SightPress\Core\Template\Message;
 use InvalidArgumentException;

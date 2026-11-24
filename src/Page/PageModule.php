@@ -25,7 +25,7 @@ use SightPress\Core\Page\Schedule\PageSchedule;
 use SightPress\Core\Page\Schedule\ScheduledPages;
 use SightPress\Core\Site\Contract\ScheduleDue;
 use SightPress\Core\Site\Contract\SiteProvisioning;
-use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Page\Contract\PublicPages;
 use SightPress\Core\Page\Publish\PublishChecker;
 use SightPress\Core\Page\Workflow\PageWorkflow;

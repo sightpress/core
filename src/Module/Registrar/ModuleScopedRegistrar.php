@@ -14,10 +14,14 @@ use SightPress\Module\Registrar\DashboardRegistrar;
 use SightPress\Module\Registrar\MigrationRegistrar;
 use SightPress\Module\Registrar\PermissionRegistrar;
 use SightPress\Module\Registrar\RouteRegistrar;
+use SightPress\Module\Registrar\ScheduleRegistrar;
 use SightPress\Module\Registrar\SearchRegistrar;
+use SightPress\Module\Registrar\SeoRegistrar;
 use SightPress\Module\Registrar\ServiceRegistrar;
 use SightPress\Module\Registrar\SettingRegistrar;
+use SightPress\Module\Registrar\SmsRegistrar;
 use SightPress\Module\Registrar\SubscriberRegistrar;
+use SightPress\Module\Registrar\TranslationRegistrar;
 use SightPress\Module\Registrar\ViewRegistrar;
 
 /**
@@ -98,5 +102,25 @@ final readonly class ModuleScopedRegistrar implements ModuleRegistrar
     public function assistant(): AssistantRegistrar
     {
         return new AssistantCollector($this->module, $this->registry);
+    }
+
+    public function seo(): SeoRegistrar
+    {
+        return new SeoCollector($this->module, $this->registry);
+    }
+
+    public function sms(): SmsRegistrar
+    {
+        return new SmsCollector($this->module, $this->registry);
+    }
+
+    public function schedule(): ScheduleRegistrar
+    {
+        return new ScheduleCollector($this->module, $this->registry);
+    }
+
+    public function translations(): TranslationRegistrar
+    {
+        return new TranslationCollector($this->module, $this->registry);
     }
 }

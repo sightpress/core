@@ -1,0 +1,3 @@
+{# The fixture module's event page (core draws the theme around it). #}
+<h1>{{ event.title }}</h1>
+<p>{{ t('Starts at', {}, 'acme_events') }} <time datetime="{{ event.starts_at }}">{{ event.starts_at }}</time></p>

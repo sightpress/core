@@ -6,7 +6,7 @@ namespace SightPress\Core\Assistant;
 
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use SightPress\Core\Assistant\Contract\AssistantUsed;
+use SightPress\Module\Event\AssistantUsed;
 use SightPress\Core\Http\RateLimit\RateLimiters;
 use SightPress\Core\Infrastructure\Assistant\AssistantExtensions;
 use SightPress\Core\Rbac\Contract\Actor;

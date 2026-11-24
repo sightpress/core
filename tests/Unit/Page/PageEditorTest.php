@@ -8,9 +8,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Block\Contract\InvalidBlocks;
-use SightPress\Core\Page\Contract\PageCreated;
-use SightPress\Core\Page\Contract\PageMoved;
-use SightPress\Core\Page\Contract\PageSaved;
+use SightPress\Module\Event\PageCreated;
+use SightPress\Module\Event\PageMoved;
+use SightPress\Module\Event\PageSaved;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageEditor;
@@ -21,14 +21,7 @@ use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Tests\Support\PageFixture;
 
 #[CoversClass(PageEditor::class)]
-#[CoversClass(PageCreated::class)]
-#[CoversClass(PageSaved::class)]
-#[CoversClass(PageMoved::class)]
-#[CoversClass(\SightPress\Core\Page\Contract\TranslationPublished::class)]
-#[CoversClass(\SightPress\Core\Page\Contract\PageCloned::class)]
-#[CoversClass(\SightPress\Core\Page\Contract\PagePurged::class)]
 #[CoversClass(PageShift::class)]
-#[CoversClass(\SightPress\Core\Page\Contract\RevisionRestored::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PageEditorTest extends TestCase
 {
@@ -384,7 +377,7 @@ final class PageEditorTest extends TestCase
         self::assertTrue($this->editor->publishTranslation($about, 'pt-PT', false, 5));
         self::assertTrue($about->translation('pt-PT')->isDraft());
         self::assertCount(2, $this->fixture->events);
-        self::assertEquals(new \SightPress\Core\Page\Contract\TranslationPublished((int) $about->id(), 'pt-PT', true, 3, 5), $this->fixture->events[0]);
+        self::assertEquals(new \SightPress\Module\Event\TranslationPublished((int) $about->id(), 'pt-PT', true, 3, 5), $this->fixture->events[0]);
         self::assertSame(4, $this->pages->lastRevisionNumber($about));
 
         $this->expectExceptionMessage('The page isn\'t written in "pt-PT" yet.');
@@ -485,7 +478,7 @@ final class PageEditorTest extends TestCase
         self::assertSame(1, $this->pages->lastRevisionNumber($copy));
         self::assertEquals([
             new PageCreated((int) $copy->id(), 'en-GB', 6),
-            new \SightPress\Core\Page\Contract\PageCloned((int) $copy->id(), (int) $about->id(), 6),
+            new \SightPress\Module\Event\PageCloned((int) $copy->id(), (int) $about->id(), 6),
         ], array_slice($this->fixture->events, 0, 2));
         self::assertSame('Hello', $about->translation('en-GB')?->blocks()[0]['data']['text'] ?? null, 'the original doesn\'t change');
     }
@@ -534,7 +527,7 @@ final class PageEditorTest extends TestCase
         foreach ([['en-GB', 'b'], ['pt-PT', 'be'], ['en-GB', 'b/child'], ['en-GB', 'old-b']] as [$locale, $path]) {
             self::assertTrue($redirects->find($locale, $path)?->isGone(), $path . ' is gone');
         }
-        self::assertEquals([new \SightPress\Core\Page\Contract\PagePurged($ids[0], 'B', $ids, 5)], $this->fixture->events);
+        self::assertEquals([new \SightPress\Module\Event\PagePurged($ids[0], 'B', $ids, 5)], $this->fixture->events);
 
         $page = $this->editor->create('en-GB', new PageContent('New B', 'b'));
         self::assertNull($redirects->find('en-GB', 'b'));
@@ -546,7 +539,7 @@ final class PageEditorTest extends TestCase
         $this->pages->flush();
         $this->editor->purge($nameless);
         $last = end($this->fixture->events);
-        self::assertInstanceOf(\SightPress\Core\Page\Contract\PagePurged::class, $last);
+        self::assertInstanceOf(\SightPress\Module\Event\PagePurged::class, $last);
         self::assertSame('page ' . $nameless->id(), $last->title);
         self::assertSame(2, $page->position());
     }
@@ -566,7 +559,7 @@ final class PageEditorTest extends TestCase
         self::assertSame([4, PageState::Draft], [$restored->number(), $page->state()]);
         self::assertEquals([
             new PageSaved((int) $page->id(), 'en-GB', 4, 7),
-            new \SightPress\Core\Page\Contract\RevisionRestored((int) $page->id(), 'en-GB', 1, 4, 7),
+            new \SightPress\Module\Event\RevisionRestored((int) $page->id(), 'en-GB', 1, 4, 7),
         ], $this->fixture->events);
 
         // A version of another page is refused.

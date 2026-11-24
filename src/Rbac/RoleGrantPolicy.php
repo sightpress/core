@@ -8,7 +8,7 @@ use SightPress\Core\Template\Message;
 use InvalidArgumentException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Rbac\Contract\Actor;
-use SightPress\Core\Rbac\Contract\RoleChanged;
+use SightPress\Module\Event\RoleChanged;
 use SightPress\Core\Rbac\Contract\RoleChoice;
 use SightPress\Core\Rbac\Contract\RoleGrants;
 use SightPress\Core\Rbac\Entity\Role;

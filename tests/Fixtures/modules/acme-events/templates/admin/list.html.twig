@@ -1,0 +1,20 @@
+{# The fixture module's admin screen content (core draws the shell and the <h1>). #}
+<p>{{ t('Showing up to {count} events per page.', {count: page_size}, 'acme_events') }}</p>
+{% if events is empty %}
+<p>{{ t('No events yet.', {}, 'acme_events') }}</p>
+{% else %}
+<ul class="acme-events">
+    {% for event in events %}<li><a href="/events/{{ event.slug }}">{{ event.title }}</a> <time datetime="{{ event.starts_at }}">{{ event.starts_at }}</time></li>{% endfor %}
+</ul>
+{% endif %}
+<h2>{{ t('Add an event', {}, 'acme_events') }}</h2>
+<form method="post" action="/admin/events" novalidate>
+    {{ csrf_fields() }}
+    <p><label for="title">{{ t('Name', {}, 'acme_events') }}</label>
+    {% if errors.title is defined %}<span id="title-error" class="field-error">{{ t('Error:') }} {{ errors.title }}</span>{% endif %}
+    <input id="title" name="title" type="text" required{% if errors.title is defined %} aria-invalid="true" aria-describedby="title-error"{% endif %}></p>
+    <p><label for="starts_at">{{ t('Starts at', {}, 'acme_events') }}</label>
+    {% if errors.starts_at is defined %}<span id="starts_at-error" class="field-error">{{ t('Error:') }} {{ errors.starts_at }}</span>{% endif %}
+    <input id="starts_at" name="starts_at" type="datetime-local" required{% if errors.starts_at is defined %} aria-invalid="true" aria-describedby="starts_at-error"{% endif %}></p>
+    <button type="submit" class="button">{{ t('Add event', {}, 'acme_events') }}</button>
+</form>

@@ -13,7 +13,7 @@ use SightPress\Core\Tests\Support\ArraySiteSettings;
 use SightPress\Core\Tests\Support\RecordingEvents;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
 use SightPress\Core\Tests\Support\Theme\HarbourTheme;
-use SightPress\Core\Theme\Contract\ThemeApplied;
+use SightPress\Module\Event\ThemeApplied;
 use SightPress\Core\Theme\SiteTheme;
 use SightPress\Core\Theme\ThemeApplier;
 use SightPress\Core\Theme\ThemeChecker;
@@ -25,7 +25,6 @@ use SightPress\Theme\ThemePaths;
 use SightPress\Theme\ThemeRequirement;
 
 #[CoversClass(ThemeApplier::class)]
-#[CoversClass(ThemeApplied::class)]
 #[UsesClass(ThemeChecker::class)]
 #[UsesNamespace('SightPress\Core\Theme')]
 #[UsesNamespace('SightPress\Core\Tenant')]

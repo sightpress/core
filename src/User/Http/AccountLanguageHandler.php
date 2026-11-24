@@ -16,7 +16,7 @@ use SightPress\Core\Template\Message;
 use SightPress\Core\Template\Translations;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\Site;
-use SightPress\Core\User\Contract\AccountChanged;
+use SightPress\Module\Event\AccountChanged;
 use SightPress\Core\User\UserRepository;
 use Slim\Exception\HttpBadRequestException;
 

@@ -14,7 +14,7 @@ use SightPress\Core\Http\Upload\DirectUploadCheck;
 use SightPress\Core\Infrastructure\Storage\Provisioning\ProvisioningException;
 use SightPress\Core\Infrastructure\Storage\Provisioning\StorageProvisioning;
 use SightPress\Core\Rbac\Contract\Actor;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Template\Message;
 use SightPress\Core\Tenant\Site;
 use Slim\Exception\HttpForbiddenException;

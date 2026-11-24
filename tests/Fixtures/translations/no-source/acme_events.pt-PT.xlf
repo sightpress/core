@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en-GB" trgLang="pt-PT">
+  <file id="acme_events">
+    <unit id="events"><segment><source>Events</source><target>Eventos</target></segment></unit>
+    <unit id="added"><segment><source>Added “{title}”.</source><target>“{title}” foi adicionado.</target></segment></unit>
+  </file>
+</xliff>

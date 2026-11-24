@@ -11,7 +11,7 @@ use SightPress\Core\Branding\Command\SiteBrandings;
 use SightPress\Core\Branding\Http\BrandingAdminHandler;
 use SightPress\Core\Branding\Http\BrandingFileHandler;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Core\Branding\Http\ManifestHandler;
 use SightPress\Core\Branding\Provisioning\DefaultBranding;

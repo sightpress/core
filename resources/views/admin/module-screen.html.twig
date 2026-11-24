@@ -1,0 +1,11 @@
+{#
+    A module's admin screen (module-interface `Screens::admin()`, ADR-0059): core's shell and the screen's <h1>, then
+    the module's own template with only the variables the module gave it.
+    Context: `module_title` (translated), `module_template`, `module_context`.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% block title %}{{ module_title }}{% endblock %}
+{% block content %}
+<h1>{{ module_title }}</h1>
+{% include module_template with module_context only %}
+{% endblock %}

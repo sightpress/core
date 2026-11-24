@@ -8,7 +8,7 @@ use DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\DisplayChanged;
 use SightPress\Core\Tenant\SiteContainerFactory;

@@ -8,7 +8,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use SensitiveParameter;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Crypto\SecretBoxException;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteSettings;
 
 /**

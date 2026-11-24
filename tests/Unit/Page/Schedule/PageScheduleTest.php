@@ -8,10 +8,10 @@ use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\Page\Contract\PageScheduled;
+use SightPress\Module\Event\PageScheduled;
 use SightPress\Core\Page\Contract\PageTransition;
-use SightPress\Core\Page\Contract\PageTransitioned;
-use SightPress\Core\Page\Contract\ScheduledStepFailed;
+use SightPress\Module\Event\PageTransitioned;
+use SightPress\Module\Event\ScheduledStepFailed;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageException;
@@ -28,8 +28,6 @@ use SightPress\Core\Tests\Support\PageAdminFixture;
 #[CoversClass(PageSchedule::class)]
 #[CoversClass(ScheduledPages::class)]
 #[CoversClass(ScheduleDue::class)]
-#[CoversClass(PageScheduled::class)]
-#[CoversClass(ScheduledStepFailed::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PageScheduleTest extends TestCase
 {
@@ -65,7 +63,7 @@ final class PageScheduleTest extends TestCase
         self::assertSame([], $this->schedule->run(new DateTimeImmutable('2026-10-25 01:32:00 UTC')), 'a second run does nothing');
 
         $published = array_values(array_filter($this->fixture->pages->events, static fn (object $event): bool => $event instanceof PageTransitioned));
-        self::assertEquals([new PageTransitioned((int) $page->id(), PageTransition::Publish, PageState::Approved, PageState::Published, $this->editor->userId, 'Published on schedule.')], $published);
+        self::assertEquals([new PageTransitioned((int) $page->id(), 'publish', 'approved', 'published', $this->editor->userId, 'Published on schedule.')], $published);
     }
 
     public function testAMissedRunCatchesUpAndTakesPagesOffTheSite(): void
@@ -110,7 +108,7 @@ final class PageScheduleTest extends TestCase
         ], $lines);
         self::assertSame([null, null], [$blocked->publishAt(), $orphan->unpublishAt()]);
         self::assertNotNull($blocked->unpublishAt(), 'the end time stays');
-        self::assertContainsEquals(new ScheduledStepFailed((int) $blocked->id(), PageTransition::Publish, 'the publish checks found errors', $this->editor->userId), $this->fixture->pages->events);
+        self::assertContainsEquals(new ScheduledStepFailed((int) $blocked->id(), PageTransition::Publish->value, 'the publish checks found errors', $this->editor->userId), $this->fixture->pages->events);
     }
 
     public function testChecksWhoSchedulesAndTheTimes(): void

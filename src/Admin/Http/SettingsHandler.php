@@ -22,7 +22,7 @@ use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Seo\Contract\SiteVerification;
 use SightPress\Core\Http\Upload\UploadLimits;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Site\Contract\SiteVisibility;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\User;
 
-use SightPress\Core\Site\Contract\LocaleRemoved;
+use SightPress\Module\Event\LocaleRemoved;
 
 /**
  * When the site stops being written in a language, the people who chose it get the site's default language again.

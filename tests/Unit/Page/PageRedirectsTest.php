@@ -7,7 +7,7 @@ namespace SightPress\Core\Tests\Unit\Page;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\Page\Contract\RedirectChanged;
+use SightPress\Module\Event\RedirectChanged;
 use SightPress\Core\Page\Entity\PageRedirect;
 use SightPress\Core\Page\PageException;
 use SightPress\Core\Page\PageRedirects;
@@ -15,7 +15,6 @@ use SightPress\Core\Tests\Support\PageFixture;
 
 #[CoversClass(PageRedirects::class)]
 #[CoversClass(PageRedirect::class)]
-#[CoversClass(RedirectChanged::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PageRedirectsTest extends TestCase
 {

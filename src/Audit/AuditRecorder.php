@@ -6,35 +6,36 @@ namespace SightPress\Core\Audit;
 
 use Psr\Clock\ClockInterface;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
-use SightPress\Core\Analytics\Contract\AnalyticsDataDeleted;
-use SightPress\Core\Assistant\Contract\AssistantUsed;
-use SightPress\Core\Theme\Contract\ThemeApplied;
-use SightPress\Core\Theme\Contract\ThemeColoursChanged;
-use SightPress\Core\Media\Contract\MediaChanged;
-use SightPress\Core\Media\Contract\MediaDeleted;
+use SightPress\Module\Event\AnalyticsDataDeleted;
+use SightPress\Module\Event\AssistantUsed;
+use SightPress\Module\Event\ThemeApplied;
+use SightPress\Module\Event\ThemeColoursChanged;
+use SightPress\Module\Event\MediaChanged;
+use SightPress\Module\Event\MediaDeleted;
 use SightPress\Core\Media\Contract\MediaLibrary;
-use SightPress\Core\Media\Contract\MediaUploaded;
-use SightPress\Core\Menu\Contract\MenuChanged;
-use SightPress\Core\Page\Contract\PageCloned;
-use SightPress\Core\Auth\Contract\AccountRegistered;
-use SightPress\Core\Page\Contract\PageCreated;
+use SightPress\Core\Menu\Contract\MenuName;
+use SightPress\Module\Event\MediaUploaded;
+use SightPress\Module\Event\MenuChanged;
+use SightPress\Module\Event\PageCloned;
+use SightPress\Module\Event\AccountRegistered;
+use SightPress\Module\Event\PageCreated;
 use SightPress\Core\Page\Contract\PageLinks;
-use SightPress\Core\Page\Contract\PageMoved;
-use SightPress\Core\Page\Contract\PagePurged;
-use SightPress\Core\Page\Contract\PageSaved;
-use SightPress\Core\Page\Contract\PageScheduled;
+use SightPress\Module\Event\PageMoved;
+use SightPress\Module\Event\PagePurged;
+use SightPress\Module\Event\PageSaved;
+use SightPress\Module\Event\PageScheduled;
 use SightPress\Core\Page\Contract\PageTransition;
-use SightPress\Core\Page\Contract\PageTransitioned;
-use SightPress\Core\Page\Contract\RedirectChanged;
-use SightPress\Core\Page\Contract\RevisionRestored;
-use SightPress\Core\Page\Contract\ScheduledStepFailed;
-use SightPress\Core\Page\Contract\TranslationPublished;
-use SightPress\Core\Rbac\Contract\RoleChanged;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\PageTransitioned;
+use SightPress\Module\Event\RedirectChanged;
+use SightPress\Module\Event\RevisionRestored;
+use SightPress\Module\Event\ScheduledStepFailed;
+use SightPress\Module\Event\TranslationPublished;
+use SightPress\Module\Event\RoleChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\Tenant\Site;
-use SightPress\Core\Tenant\SiteModuleChanged;
-use SightPress\Core\User\Contract\AccountChanged;
+use SightPress\Module\Event\SiteModuleChanged;
+use SightPress\Module\Event\AccountChanged;
 use SightPress\Core\User\Contract\Accounts;
 
 /**
@@ -72,7 +73,7 @@ final readonly class AuditRecorder
             $event instanceof PageCreated => $this->entry($event->authorId, 'page.created', 'page', $event->pageId, sprintf('Started the page %s.', $this->page($event->pageId)), ['locale' => $event->locale]),
             $event instanceof PageSaved => $this->entry($event->savedBy, 'page.saved', 'page', $event->pageId, sprintf('Saved %s (revision %d).', $this->page($event->pageId), $event->revision), ['locale' => $event->locale, 'revision' => $event->revision]),
             $event instanceof PageMoved => $this->entry($event->movedBy, 'page.moved', 'page', $event->pageId, sprintf('Moved %s.', $this->page($event->pageId)), ['from_parent' => $event->fromParentId, 'to_parent' => $event->toParentId, 'position' => $event->position]),
-            $event instanceof PageTransitioned => $this->entry($event->actorId, 'page.' . $event->transition->value, 'page', $event->pageId, sprintf(match ($event->transition) {
+            $event instanceof PageTransitioned => $this->entry($event->actorId, 'page.' . $event->transition, 'page', $event->pageId, sprintf(match (PageTransition::from($event->transition)) {
                 PageTransition::Submit => 'Sent %s for review.',
                 PageTransition::Reject => 'Sent %s back to draft.',
                 PageTransition::Approve => 'Approved %s.',
@@ -82,7 +83,7 @@ final readonly class AuditRecorder
                 PageTransition::Restore => 'Restored %s as a draft.',
                 PageTransition::Trash => 'Put %s in the trash.',
                 PageTransition::Untrash => 'Took %s out of the trash.',
-            }, $this->page($event->pageId)), array_filter(['from' => $event->from->value, 'to' => $event->to->value, 'comment' => $event->comment], static fn (?string $value): bool => $value !== null)),
+            }, $this->page($event->pageId)), array_filter(['from' => $event->from, 'to' => $event->to, 'comment' => $event->comment], static fn (?string $value): bool => $value !== null)),
             $event instanceof TranslationPublished => $this->entry($event->actorId, $event->published ? 'page.translation_published' : 'page.translation_drafted', 'page', $event->pageId, sprintf(
                 $event->published ? 'Published the %s translation of %s.' : 'Made the %s translation of %s a draft again.',
                 LocaleCode::describe($event->locale),
@@ -98,19 +99,19 @@ final readonly class AuditRecorder
                     $event->unpublishAt === null ? null : 'taken off the site at ' . $event->unpublishAt->format('Y-m-d H:i') . ' UTC',
                 ]))), ['publish_at' => $event->publishAt?->format(DATE_ATOM), 'unpublish_at' => $event->unpublishAt?->format(DATE_ATOM)]),
             $event instanceof ScheduledStepFailed => $this->entry($event->scheduledBy, 'page.schedule_failed', 'page', $event->pageId, sprintf(
-                $event->transition === PageTransition::Publish ? 'Couldn’t publish %s on schedule: %s.' : 'Couldn’t take %s off the site on schedule: %s.',
+                $event->transition === PageTransition::Publish->value ? 'Couldn’t publish %s on schedule: %s.' : 'Couldn’t take %s off the site on schedule: %s.',
                 $this->page($event->pageId),
                 $event->reason,
-            ), ['transition' => $event->transition->value, 'reason' => $event->reason]),
+            ), ['transition' => $event->transition, 'reason' => $event->reason]),
             $event instanceof RedirectChanged => $this->entry($event->actorId, 'redirect.' . $event->change, 'redirect', null, match (true) {
                 $event->change === RedirectChanged::ADDED => sprintf('Added a redirect from /%s to /%s (%s).', $event->from, (string) $event->to, LocaleCode::describe($event->locale)),
                 $event->to === null => sprintf('Removed the “gone” answer of /%s (%s).', $event->from, LocaleCode::describe($event->locale)),
                 default => sprintf('Removed the redirect from /%s to /%s (%s).', $event->from, $event->to, LocaleCode::describe($event->locale)),
             }, ['locale' => $event->locale, 'from' => $event->from, 'to' => $event->to]),
-            $event instanceof MediaUploaded => $this->entry($event->uploadedBy, 'media.uploaded', 'media', $event->mediaId, sprintf('Uploaded %s.', $this->file($event->mediaId)), ['kind' => $event->kind->value]),
+            $event instanceof MediaUploaded => $this->entry($event->uploadedBy, 'media.uploaded', 'media', $event->mediaId, sprintf('Uploaded %s.', $this->file($event->mediaId)), ['kind' => $event->kind]),
             $event instanceof MediaChanged => $this->entry($event->changedBy, 'media.changed', 'media', $event->mediaId, sprintf('Changed the %s of %s.', self::words($event->fields), $this->file($event->mediaId)), ['fields' => $event->fields]),
             $event instanceof MediaDeleted => $this->entry($event->deletedBy, 'media.deleted', 'media', $event->mediaId, sprintf('Deleted “%s”.', $event->originalName), []),
-            $event instanceof MenuChanged => $this->entry($event->actorId, 'menu.' . $event->change, 'menu', $event->menu->value, sprintf('%s: %s %s.', $event->menu->label(), str_replace('_', ' ', ucfirst($event->change)), $event->pageId === null ? sprintf('the link to %s', $event->url ?? 'an address') : sprintf('the entry for %s', $this->page($event->pageId))), array_filter(['item' => $event->itemId, 'page' => $event->pageId, 'url' => $event->url], static fn (mixed $value): bool => $value !== null)),
+            $event instanceof MenuChanged => $this->entry($event->actorId, 'menu.' . $event->change, 'menu', $event->menu, sprintf('%s: %s %s.', MenuName::tryFrom($event->menu)?->label() ?? ucfirst($event->menu), str_replace('_', ' ', ucfirst($event->change)), $event->pageId === null ? sprintf('the link to %s', $event->url ?? 'an address') : sprintf('the entry for %s', $this->page($event->pageId))), array_filter(['item' => $event->itemId, 'page' => $event->pageId, 'url' => $event->url], static fn (mixed $value): bool => $value !== null)),
             $event instanceof RoleChanged => $this->entry($event->changedBy, 'user.role_changed', 'user', $event->userId, sprintf('Changed the role of %s from %s to %s.', $this->person($event->userId), $event->from ?? 'none', $event->to), ['from' => $event->from, 'to' => $event->to]),
             $event instanceof AccountChanged => $this->entry($event->changedBy, 'user.changed', 'user', $event->userId, sprintf('Changed the %s of %s.', self::words($event->fields), $this->person($event->userId)), ['fields' => $event->fields]),
             $event instanceof AccountRegistered => $this->entry($event->userId, 'user.registered', 'user', $event->userId, $event->refusedRole === null

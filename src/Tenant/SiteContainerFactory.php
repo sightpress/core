@@ -13,6 +13,13 @@ use Doctrine\ORM\ORMSetup;
 use League\Flysystem\FilesystemOperator;
 use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
+use SightPress\Core\Admin\ModuleScreens;
+use SightPress\Core\Audit\ModuleAuditTrail;
+use SightPress\Core\Infrastructure\Settings\SiteSettingValues;
+use SightPress\Module\Audit\AuditTrail;
+use SightPress\Module\Http\Screens;
+use SightPress\Module\Setting\SettingValues;
+use SightPress\Module\Site\SiteInfo;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use ReflectionClass;
@@ -160,6 +167,16 @@ final class SiteContainerFactory
                     return $site;
                 }
             }),
+            // Who the site is, for modules (module-interface SiteInfo): read through Site, so admins' choices win.
+            SiteInfo::class => factory(static function (ContainerInterface $container): SiteInfo {
+                $current = Services::get($container, Site::class);
+
+                return new SiteInfo($current->id, $current->slug, $current->name, $current->defaultLocale, $current->locales);
+            }),
+            // module-interface services (ADR-0059): core's, not a module's, so any module may use them.
+            Screens::class => autowire(ModuleScreens::class),
+            SettingValues::class => autowire(SiteSettingValues::class),
+            AuditTrail::class => autowire(ModuleAuditTrail::class),
             MediaLimits::class => factory(static fn (): MediaLimits => $config->mediaLimits->forSite($site)),
             // Shared upload services, not a module's: every module's upload form uses them, whichever modules are on.
             UploadLimits::class => factory(static fn (ContainerInterface $container): UploadLimits => new UploadAllowance(

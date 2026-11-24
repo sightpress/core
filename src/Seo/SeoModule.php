@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Seo;
 
-use SightPress\Core\Media\Contract\MediaChanged;
-use SightPress\Core\Media\Contract\MediaDeleted;
-use SightPress\Core\Page\Contract\PageCreated;
-use SightPress\Core\Page\Contract\PageMoved;
-use SightPress\Core\Page\Contract\PagePurged;
-use SightPress\Core\Page\Contract\PageSaved;
-use SightPress\Core\Page\Contract\PageTransitioned;
-use SightPress\Core\Page\Contract\TranslationPublished;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\MediaChanged;
+use SightPress\Module\Event\MediaDeleted;
+use SightPress\Module\Event\PageCreated;
+use SightPress\Module\Event\PageMoved;
+use SightPress\Module\Event\PagePurged;
+use SightPress\Module\Event\PageSaved;
+use SightPress\Module\Event\PageTransitioned;
+use SightPress\Module\Event\TranslationPublished;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Seo\Command\CheckSeoCommand;
 use SightPress\Core\Seo\Contract\SiteVerification;

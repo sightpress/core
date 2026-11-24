@@ -22,7 +22,7 @@ use SightPress\Core\Tests\Support\Browser;
 use SightPress\Core\Tests\Support\SiteFixture;
 use SightPress\Core\Tests\Support\TestProject;
 use SightPress\Core\Tests\Support\Theme\HarbourTheme;
-use SightPress\Core\Theme\Contract\ThemeColoursChanged;
+use SightPress\Module\Event\ThemeColoursChanged;
 use SightPress\Core\Theme\Http\AppearanceHandler;
 use SightPress\Core\Theme\Http\ThemeColoursHandler;
 use SightPress\Core\Theme\PublishedPreviews;
@@ -39,7 +39,6 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 #[CoversClass(AppearanceHandler::class)]
 #[CoversClass(ThemeColoursHandler::class)]
 #[CoversClass(PublishedPreviews::class)]
-#[CoversClass(ThemeColoursChanged::class)]
 #[CoversClass(ThemeModule::class)]
 #[CoversClass(\SightPress\Core\Theme\ThemeChanged::class)]
 #[CoversClass(AuditRecorder::class)]

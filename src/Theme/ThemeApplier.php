@@ -7,7 +7,7 @@ namespace SightPress\Core\Theme;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Tenant\TenantConfig;
-use SightPress\Core\Theme\Contract\ThemeApplied;
+use SightPress\Module\Event\ThemeApplied;
 
 /**
  * Applies a theme to the site: it must be installed, usable with this SightPress, allowed by the tenant and pass

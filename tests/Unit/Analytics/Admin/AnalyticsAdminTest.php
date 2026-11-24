@@ -16,7 +16,7 @@ use SightPress\Core\Analytics\Admin\RetentionHandler;
 use SightPress\Core\Analytics\AnalyticsRetention;
 use SightPress\Core\Analytics\AnalyticsRollup;
 use SightPress\Core\Analytics\AnalyticsStore;
-use SightPress\Core\Analytics\Contract\AnalyticsDataDeleted;
+use SightPress\Module\Event\AnalyticsDataDeleted;
 use SightPress\Core\Auth\PasswordHasher;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Page\PageContent;
@@ -40,7 +40,6 @@ use SightPress\Core\User\UserRepository;
 #[CoversClass(RetentionHandler::class)]
 #[CoversClass(DeleteAnalyticsHandler::class)]
 #[CoversClass(AnalyticsWidget::class)]
-#[CoversClass(AnalyticsDataDeleted::class)]
 #[UsesNamespace('SightPress\Core')]
 final class AnalyticsAdminTest extends TestCase
 {

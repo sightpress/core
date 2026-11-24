@@ -13,7 +13,7 @@ use SightPress\Core\Auth\Contract\TooManyCodes;
 use SightPress\Core\Auth\Contract\VerificationChannel;
 use SightPress\Core\Auth\Contract\VerificationCodes;
 use SightPress\Core\Auth\Contract\VerificationPurpose;
-use SightPress\Core\Auth\Contract\AccountRegistered;
+use SightPress\Module\Event\AccountRegistered;
 use SightPress\Core\Rbac\Contract\RoleGrants;
 use SightPress\Core\Rbac\Contract\SignUpRoles;
 use SightPress\Core\Site\Contract\SiteSettings;

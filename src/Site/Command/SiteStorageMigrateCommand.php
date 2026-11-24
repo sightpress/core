@@ -11,7 +11,7 @@ use SightPress\Core\Infrastructure\Logging\LoggerFactory;
 use SightPress\Core\Infrastructure\Storage\SiteFilesystems;
 use SightPress\Core\Infrastructure\Storage\StorageException;
 use SightPress\Core\Infrastructure\Storage\StorageMigrator;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Tenant\SiteStatus;

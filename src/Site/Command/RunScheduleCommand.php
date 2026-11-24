@@ -6,6 +6,7 @@ namespace SightPress\Core\Site\Command;
 
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use SightPress\Core\Infrastructure\Schedule\ModuleJobs;
 use SightPress\Core\Site\Contract\ScheduleDue;
 use SightPress\Core\Site\ScheduleLock;
 use SightPress\Core\Tenant\Site;
@@ -73,10 +74,18 @@ final readonly class RunScheduleCommand implements Command
             $failed = 0;
             foreach ($sites as $site) {
                 try {
-                    $due = new ScheduleDue($site, $this->containers->forSite($site), $now);
+                    $container = $this->containers->forSite($site);
+                    $due = new ScheduleDue($site, $container, $now);
                     $this->events->dispatch($due);
-                    foreach ($due->lines() as $line) {
+                    $jobs = new ModuleJobs();
+                    foreach ([...$due->lines(), ...$jobs->run($container, $now)] as $line) {
                         $output->line(sprintf('%s: %s', $site->slug, $line));
+                    }
+                    foreach ($jobs->failures() as $failure) {
+                        $output->error(sprintf('%s: %s', $site->slug, $failure));
+                    }
+                    if ($jobs->failures() !== []) {
+                        ++$failed;
                     }
                 } catch (Throwable $exception) {
                     ++$failed;

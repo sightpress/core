@@ -13,7 +13,7 @@ use SightPress\Core\Admin\Http\LanguagesHandler;
 use SightPress\Core\Admin\Http\RemoveLanguageHandler;
 use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
-use SightPress\Core\Site\Contract\LocaleRemoved;
+use SightPress\Module\Event\LocaleRemoved;
 use SightPress\Core\Site\Contract\SiteLanguages;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Tests\Support\AdminFixture;

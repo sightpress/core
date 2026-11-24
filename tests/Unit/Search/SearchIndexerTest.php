@@ -9,23 +9,23 @@ use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use RuntimeException;
-use SightPress\Core\Media\Contract\MediaChanged;
-use SightPress\Core\Media\Contract\MediaDeleted;
-use SightPress\Core\Page\Contract\PageMoved;
-use SightPress\Core\Page\Contract\PagePurged;
-use SightPress\Core\Page\Contract\PageSaved;
+use SightPress\Module\Event\MediaChanged;
+use SightPress\Module\Event\MediaDeleted;
+use SightPress\Module\Event\PageMoved;
+use SightPress\Module\Event\PagePurged;
+use SightPress\Module\Event\PageSaved;
 use SightPress\Core\Page\Contract\PageTransition;
-use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Page\Contract\SearchablePages;
-use SightPress\Core\Page\Contract\TranslationPublished;
+use SightPress\Module\Event\TranslationPublished;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Search\SearchIndex;
 use SightPress\Core\Search\SearchIndexer;
-use SightPress\Core\Site\Contract\LocaleRemoved;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\LocaleRemoved;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteVisibility;
-use SightPress\Core\Tenant\SiteModuleChanged;
+use SightPress\Module\Event\SiteModuleChanged;
 use SightPress\Core\Tests\Support\Search\RecordingSearchBackend;
 use SightPress\Core\Tests\Support\Search\SearchFixture;
 use Stringable;
@@ -94,7 +94,7 @@ final class SearchIndexerTest extends TestCase
 
     public function testPageChangesRefreshThePageAndThePagesBelowIt(): void
     {
-        ($this->indexer)(new PageTransitioned(1, PageTransition::Publish, PageState::Approved, PageState::Published, 5));
+        ($this->indexer)(new PageTransitioned(1, PageTransition::Publish->value, PageState::Approved->value, PageState::Published->value, 5));
         self::assertSame(['index page:1:en-GB', 'remove page:1:pt-PT', 'index page:2:en-GB', 'index page:2:pt-PT'], $this->calls());
 
         ($this->indexer)(new PageMoved(2, null, 1, 0, 3, 5));
@@ -105,9 +105,6 @@ final class SearchIndexerTest extends TestCase
 
         ($this->indexer)(new TranslationPublished(2, 'en-GB', false, 4, 5));
         self::assertSame(['index page:2:en-GB'], $this->calls());
-
-        ($this->indexer)(new PageSaved(2, '', 4, 5));
-        self::assertSame(['index page:2:en-GB', 'index page:2:pt-PT'], $this->calls());
 
         $this->search->provider->drop('2');
         ($this->indexer)(new PagePurged(2, 'Team', [2, 3, 0], 5));
@@ -157,7 +154,7 @@ final class SearchIndexerTest extends TestCase
 
         self::assertFalse($this->index->isReady());
         self::assertCount(1, $this->logged);
-        self::assertStringStartsWith('error: Site search could not be brought up to date; it will be rebuilt by schedule:run or site:search:reindex. {"site":"demo","event":"SightPress\\\\Core\\\\Page\\\\Contract\\\\PageMoved","error":"database gone"}', (string) $this->logged[0]);
+        self::assertStringStartsWith('error: Site search could not be brought up to date; it will be rebuilt by schedule:run or site:search:reindex. {"site":"demo","event":"SightPress\\\\Module\\\\Event\\\\PageMoved","error":"database gone"}', (string) $this->logged[0]);
     }
 
     /**

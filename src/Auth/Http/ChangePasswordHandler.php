@@ -19,7 +19,7 @@ use SightPress\Core\Http\Form\FormValidator;
 use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\User\Contract\Account;
-use SightPress\Core\User\Contract\AccountChanged;
+use SightPress\Module\Event\AccountChanged;
 use SightPress\Core\User\Contract\Accounts;
 
 /**

@@ -16,6 +16,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Http\RouteInstaller;
+use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Module\ModuleCandidate;
 use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleRegistry;
@@ -32,6 +33,8 @@ use Slim\App;
 #[UsesClass(\SightPress\Core\Infrastructure\Container\Services::class)]
 #[UsesClass(\SightPress\Core\Tenant\SiteContext::class)]
 #[UsesClass(\SightPress\Core\Http\ModuleGate::class)]
+#[UsesClass(\SightPress\Core\Http\RoutePermissionMiddleware::class)]
+#[UsesClass(Actor::class)]
 final class RouteInstallerTest extends TestCase
 {
     public function testModuleRoutesAnswerThroughTheirMiddlewareInOrder(): void
@@ -56,6 +59,25 @@ final class RouteInstallerTest extends TestCase
 
         self::assertSame('first,second,hello ada', (string) $response->getBody());
         self::assertSame('/hello/grace', $app->getRouteCollector()->getRouteParser()->urlFor('acme.hello', ['name' => 'grace']));
+    }
+
+    public function testARoutePermissionIsCheckedBeforeTheRouteMiddleware(): void
+    {
+        $registry = ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue([
+            new ModuleCandidate(new FakeModule('acme', register: static function (ModuleRegistrar $r): void {
+                $r->routes()->add(new Route('acme.hello', '/hello/{name}', HelloHandler::class, middleware: [FirstMiddleware::class], permission: 'hello.say'));
+            }), 'sightpress/core'),
+        ])->resolve(new ModuleSelection()));
+        $app = new App(new Psr17Factory(), new Container());
+        $app->addRoutingMiddleware();
+        $tenant = new Container();
+        $tenant->set(\Psr\Http\Message\ResponseFactoryInterface::class, new Psr17Factory());
+
+        new RouteInstaller($tenant)->install($app, $registry);
+
+        self::assertSame(303, $app->handle(new ServerRequest('GET', '/hello/ada'))->getStatusCode(), 'signed out: to the sign-in page');
+        $allowed = new ServerRequest('GET', '/hello/ada')->withAttribute(Actor::class, new Actor(1, ['hello.say']));
+        self::assertSame('first,hello ada', (string) $app->handle($allowed)->getBody());
     }
 
     public function testRoutesThatCatchEveryAddressComeLastWhateverTheModuleOrder(): void

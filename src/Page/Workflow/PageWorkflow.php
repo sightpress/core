@@ -8,7 +8,7 @@ use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\Page\Contract\PageTransition;
-use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\PageRepository;
 use SightPress\Core\Page\Publish\PublishChecker;
@@ -100,9 +100,9 @@ final readonly class PageWorkflow
 
         $this->events->dispatch(new PageTransitioned(
             (int) $page->id(),
-            $transition,
-            $from,
-            $page->state(),
+            $transition->value,
+            $from->value,
+            $page->state()->value,
             $actor->userId,
             $comment === '' ? null : $comment,
         ));

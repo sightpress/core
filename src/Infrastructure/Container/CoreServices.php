@@ -91,7 +91,8 @@ final class CoreServices
             )),
             AssetUrls::class => autowire()->constructorParameter('version', \Composer\InstalledVersions::getReference('sightpress/core')),
             Translations::class => factory(static fn (): Translations => Translations::fromDirectories(
-                [dirname(TemplatePaths::core()) . '/translations'],
+                // Core's catalogue first, then each module's own domain (module-interface translations(), ADR-0059).
+                [dirname(TemplatePaths::core()) . '/translations', ...$modules->translations()],
                 $config->adminLocale,
             )),
             TemplateExtension::class => autowire()

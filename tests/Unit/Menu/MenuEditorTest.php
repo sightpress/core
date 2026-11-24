@@ -7,7 +7,7 @@ namespace SightPress\Core\Tests\Unit\Menu;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\Menu\Contract\MenuChanged;
+use SightPress\Module\Event\MenuChanged;
 use SightPress\Core\Menu\Contract\MenuName;
 use SightPress\Core\Menu\Entity\MenuItem;
 use SightPress\Core\Menu\MenuEditor;
@@ -18,7 +18,6 @@ use SightPress\Core\Tests\Support\RecordingEvents;
 
 #[CoversClass(MenuEditor::class)]
 #[CoversClass(MenuNode::class)]
-#[CoversClass(MenuChanged::class)]
 #[UsesNamespace('SightPress\Core')]
 final class MenuEditorTest extends TestCase
 {
@@ -49,7 +48,7 @@ final class MenuEditorTest extends TestCase
         self::assertSame($team, $tree[0]->children[0]->item);
         self::assertSame([1, 2], MenuNode::pageIds($tree));
         self::assertSame(1, $hours->position());
-        self::assertEquals(new MenuChanged(MenuName::Main, MenuChanged::ADDED, (int) $about->id(), 1, null, 7), $this->events->events[0]);
+        self::assertEquals(new MenuChanged(MenuName::Main->value, MenuChanged::ADDED, (int) $about->id(), 1, null, 7), $this->events->events[0]);
     }
 
     public function testMovesEntriesUpAndDown(): void
@@ -117,7 +116,7 @@ final class MenuEditorTest extends TestCase
 
         self::assertSame([$a, $c, $d], array_map(static fn (MenuNode $node) => $node->item, $this->menus->tree(MenuName::Main)));
         self::assertSame([0, 1, 2], [$a->position(), $c->position(), $d->position()]);
-        self::assertEquals(new MenuChanged(MenuName::Main, MenuChanged::REMOVED, $id, 2, null, 3), $this->last());
+        self::assertEquals(new MenuChanged(MenuName::Main->value, MenuChanged::REMOVED, $id, 2, null, 3), $this->last());
         self::assertNull($this->menus->find(999));
     }
 
@@ -130,7 +129,7 @@ final class MenuEditorTest extends TestCase
         $this->database->entityManager->clear();
         $saved = $this->menus->find((int) $item->id());
         self::assertSame(['Opening hours', ['pt-PT' => 'Horário'], true], [$saved?->label(), $saved?->labels(), $saved?->isMembersOnly()]);
-        self::assertEquals(new MenuChanged(MenuName::Footer, MenuChanged::CHANGED, (int) $item->id(), null, '/hours', 3), $this->last());
+        self::assertEquals(new MenuChanged(MenuName::Footer->value, MenuChanged::CHANGED, (int) $item->id(), null, '/hours', 3), $this->last());
     }
 
     public function testForgetsTheEntriesOfPagesDeletedForGood(): void

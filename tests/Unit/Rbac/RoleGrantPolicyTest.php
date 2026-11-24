@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Rbac\Contract\Actor;
-use SightPress\Core\Rbac\Contract\RoleChanged;
+use SightPress\Module\Event\RoleChanged;
 use SightPress\Core\Rbac\Contract\RoleChoice;
 use SightPress\Core\Rbac\RoleGrantPolicy;
 use SightPress\Core\Tests\Support\CoreSiteDatabase;
@@ -18,7 +18,6 @@ use SightPress\Core\Tests\Support\RecordingEvents;
 
 #[CoversClass(RoleGrantPolicy::class)]
 #[CoversClass(RoleChoice::class)]
-#[CoversClass(RoleChanged::class)]
 #[UsesNamespace('SightPress\Core')]
 final class RoleGrantPolicyTest extends TestCase
 {

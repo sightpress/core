@@ -11,7 +11,7 @@ use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\User\Avatar\AvatarException;
 use SightPress\Core\User\Avatar\AvatarService;
-use SightPress\Core\User\Contract\AccountChanged;
+use SightPress\Module\Event\AccountChanged;
 use SightPress\Core\User\UserRepository;
 
 /**

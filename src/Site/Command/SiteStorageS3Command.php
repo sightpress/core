@@ -10,7 +10,7 @@ use SightPress\Core\Infrastructure\Crypto\SecretBox;
 use SightPress\Core\Infrastructure\Logging\LoggerFactory;
 use SightPress\Core\Infrastructure\Storage\SiteFilesystems;
 use SightPress\Core\Infrastructure\Storage\StorageException;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRegistryException;
 use SightPress\Core\Tenant\SiteRepository;

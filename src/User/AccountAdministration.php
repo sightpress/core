@@ -8,7 +8,7 @@ use SightPress\Core\Template\Message;
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SightPress\Core\User\Avatar\AvatarService;
-use SightPress\Core\User\Contract\AccountChanged;
+use SightPress\Module\Event\AccountChanged;
 use SightPress\Core\User\Contract\AccountException;
 use SightPress\Core\User\Contract\AccountRoster;
 use SightPress\Core\User\Contract\AccountSummary;

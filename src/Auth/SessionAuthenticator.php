@@ -10,6 +10,7 @@ use SightPress\Core\Http\Security\Authenticator;
 use SightPress\Core\Http\Security\GrantedPermissions;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Rbac\Contract\Actor;
+use SightPress\Module\Access\Viewer;
 use SightPress\Core\Rbac\Contract\PermissionLookup;
 use SightPress\Core\User\Contract\Account;
 use SightPress\Core\User\Contract\AccountPreferences;
@@ -51,6 +52,7 @@ final readonly class SessionAuthenticator implements Authenticator
 
         $request = $request
             ->withAttribute(Actor::class, new Actor($id, $permissions))
+            ->withAttribute(Viewer::class, new Viewer($id, $permissions))
             ->withAttribute(GrantedPermissions::class, new GrantedPermissions($permissions));
         $preferences = $this->preferences->preferencesOf($id);
 

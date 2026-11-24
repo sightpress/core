@@ -6,7 +6,9 @@ namespace SightPress\Core\Module\Registrar;
 
 use SightPress\Core\Module\ModuleException;
 use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Module\Block\BlockIcon;
 use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockVariant;
 use SightPress\Module\Registrar\BlockTypeRegistrar;
 
 /**
@@ -35,5 +37,15 @@ final readonly class BlockTypeCollector implements BlockTypeRegistrar
         }
 
         $this->registry->addBlockType($this->module, $blockType);
+    }
+
+    public function addVariant(string $blockType, BlockVariant $variant): void
+    {
+        $this->registry->addBlockVariant($this->module, $blockType, $variant);
+    }
+
+    public function addIcon(BlockIcon $icon): void
+    {
+        $this->registry->addBlockIcon($this->module, $icon);
     }
 }

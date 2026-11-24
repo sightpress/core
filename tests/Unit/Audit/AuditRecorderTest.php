@@ -13,39 +13,33 @@ use SightPress\Core\Audit\AuditFilter;
 use SightPress\Core\Audit\AuditLog;
 use SightPress\Core\Audit\AuditRecorder;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
-use SightPress\Core\Media\Contract\MediaChanged;
-use SightPress\Core\Media\Contract\MediaDeleted;
+use SightPress\Module\Event\MediaChanged;
+use SightPress\Module\Event\MediaDeleted;
 use SightPress\Core\Media\Contract\MediaKind;
-use SightPress\Core\Media\Contract\MediaUploaded;
-use SightPress\Core\Menu\Contract\MenuChanged;
+use SightPress\Module\Event\MediaUploaded;
+use SightPress\Module\Event\MenuChanged;
 use SightPress\Core\Menu\Contract\MenuName;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
-use SightPress\Core\Page\Contract\PageCreated;
-use SightPress\Core\Page\Contract\PageMoved;
-use SightPress\Core\Page\Contract\PageSaved;
+use SightPress\Module\Event\PageCreated;
+use SightPress\Module\Event\PageMoved;
+use SightPress\Module\Event\PageSaved;
 use SightPress\Core\Page\Contract\PageTransition;
-use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Page\PageLinkQuery;
 use SightPress\Core\Rbac\Contract\PageState;
-use SightPress\Core\Rbac\Contract\RoleChanged;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\RoleChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tests\Support\BlockFixture;
 use SightPress\Core\Tests\Support\FixedClock;
 use SightPress\Core\Tests\Support\PageFixture;
-use SightPress\Core\User\Contract\AccountChanged;
+use SightPress\Module\Event\AccountChanged;
 use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\UserRepository;
 
 #[CoversClass(AuditRecorder::class)]
-#[CoversClass(\SightPress\Core\Page\Contract\PageCloned::class)]
-#[CoversClass(\SightPress\Core\Page\Contract\PagePurged::class)]
-#[CoversClass(\SightPress\Core\Page\Contract\RedirectChanged::class)]
-#[CoversClass(\SightPress\Core\Page\Contract\RevisionRestored::class)]
-#[CoversClass(\SightPress\Core\Page\Contract\PageScheduled::class)]
-#[CoversClass(\SightPress\Core\Page\Contract\ScheduledStepFailed::class)]
 #[UsesNamespace('SightPress\Core')]
 final class AuditRecorderTest extends TestCase
 {
@@ -68,53 +62,53 @@ final class AuditRecorderTest extends TestCase
             new PageCreated($page, 'en-GB', 3),
             new PageSaved($page, 'en-GB', 2, 3),
             new PageMoved($page, null, 9, 0, 3, 3),
-            new PageTransitioned($page, PageTransition::Submit, PageState::Draft, PageState::InReview, 3, 'Ready'),
-            new PageTransitioned(999, PageTransition::Reject, PageState::InReview, PageState::Draft, 4),
-            new PageTransitioned($page, PageTransition::Approve, PageState::InReview, PageState::Approved, 4),
-            new PageTransitioned($page, PageTransition::Publish, PageState::Approved, PageState::Published, 4),
-            new PageTransitioned($page, PageTransition::Unpublish, PageState::Published, PageState::Draft, 4),
-            new \SightPress\Core\Page\Contract\TranslationPublished($page, 'pt-PT', true, 4, 3),
-            new \SightPress\Core\Page\Contract\TranslationPublished($page, 'pt-PT', false, 5, 3),
-            new MediaUploaded($picture, 'k', MediaKind::Image, 3),
+            new PageTransitioned($page, PageTransition::Submit->value, PageState::Draft->value, PageState::InReview->value, 3, 'Ready'),
+            new PageTransitioned(999, PageTransition::Reject->value, PageState::InReview->value, PageState::Draft->value, 4),
+            new PageTransitioned($page, PageTransition::Approve->value, PageState::InReview->value, PageState::Approved->value, 4),
+            new PageTransitioned($page, PageTransition::Publish->value, PageState::Approved->value, PageState::Published->value, 4),
+            new PageTransitioned($page, PageTransition::Unpublish->value, PageState::Published->value, PageState::Draft->value, 4),
+            new \SightPress\Module\Event\TranslationPublished($page, 'pt-PT', true, 4, 3),
+            new \SightPress\Module\Event\TranslationPublished($page, 'pt-PT', false, 5, 3),
+            new MediaUploaded($picture, 'k', MediaKind::Image->value, 3),
             new MediaChanged($picture, 3, ['alt', 'caption']),
             new MediaChanged(999, 3, []),
             new MediaDeleted($picture, 'lighthouse.jpg', 3),
-            new MenuChanged(MenuName::Main, MenuChanged::MOVED_UP, 5, $page, null, 4),
-            new MenuChanged(MenuName::Footer, MenuChanged::ADDED, 6, null, 'https://example.org', 4),
-            new MenuChanged(MenuName::Footer, MenuChanged::REMOVED, 6, null, null, 4),
+            new MenuChanged(MenuName::Main->value, MenuChanged::MOVED_UP, 5, $page, null, 4),
+            new MenuChanged(MenuName::Footer->value, MenuChanged::ADDED, 6, null, 'https://example.org', 4),
+            new MenuChanged(MenuName::Footer->value, MenuChanged::REMOVED, 6, null, null, 4),
             new RoleChanged($user, 1, null, 'editor'),
             new RoleChanged(999, 1, 'editor', 'admin'),
             new AccountChanged($user, $user, ['display_name', 'avatar']),
             new SettingsChanged(['site.name', 'site.contact_email', 'branding.logo', 'branding.icon', 'branding.share_image', 'analytics.retention_months', 'site.default_locale', 'site.locales', 'site.default_timezone', 'acme.other'], 1),
-            new PageTransitioned($page, PageTransition::Archive, PageState::Published, PageState::Archived, 4),
-            new PageTransitioned($page, PageTransition::Restore, PageState::Archived, PageState::Draft, 4),
-            new PageTransitioned($page, PageTransition::Trash, PageState::Draft, PageState::Trash, 4),
-            new PageTransitioned($page, PageTransition::Untrash, PageState::Trash, PageState::Draft, 4),
-            new \SightPress\Core\Page\Contract\PageCloned($page, $page, 4),
-            new \SightPress\Core\Page\Contract\PagePurged(41, 'Old news', [41], 4),
-            new \SightPress\Core\Page\Contract\PagePurged(42, 'Archive', [42, 43, 44], 4),
-            new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::ADDED, 'pt-PT', 'antigo', 'novo', 4),
-            new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::REMOVED, 'en-GB', 'old', null, 4),
-            new \SightPress\Core\Page\Contract\RedirectChanged(\SightPress\Core\Page\Contract\RedirectChanged::REMOVED, 'en-GB', 'old', 'new', 4),
-            new \SightPress\Core\Page\Contract\RevisionRestored($page, 'pt-PT', 2, 5, 4),
-            new \SightPress\Core\Page\Contract\PageScheduled($page, new \DateTimeImmutable('2026-12-01 09:00:00'), new \DateTimeImmutable('2026-12-31 18:00:00'), 4),
-            new \SightPress\Core\Page\Contract\PageScheduled($page, null, new \DateTimeImmutable('2026-12-31 18:00:00'), 4),
-            new \SightPress\Core\Page\Contract\PageScheduled($page, null, null, 4),
-            new \SightPress\Core\Page\Contract\ScheduledStepFailed($page, PageTransition::Publish, 'the publish checks found errors', 4),
-            new \SightPress\Core\Page\Contract\ScheduledStepFailed($page, PageTransition::Unpublish, 'no permission', null),
-            new \SightPress\Core\Auth\Contract\AccountRegistered($user, 'member'),
-            new \SightPress\Core\Auth\Contract\AccountRegistered($user, 'member', 'editor'),
+            new PageTransitioned($page, PageTransition::Archive->value, PageState::Published->value, PageState::Archived->value, 4),
+            new PageTransitioned($page, PageTransition::Restore->value, PageState::Archived->value, PageState::Draft->value, 4),
+            new PageTransitioned($page, PageTransition::Trash->value, PageState::Draft->value, PageState::Trash->value, 4),
+            new PageTransitioned($page, PageTransition::Untrash->value, PageState::Trash->value, PageState::Draft->value, 4),
+            new \SightPress\Module\Event\PageCloned($page, $page, 4),
+            new \SightPress\Module\Event\PagePurged(41, 'Old news', [41], 4),
+            new \SightPress\Module\Event\PagePurged(42, 'Archive', [42, 43, 44], 4),
+            new \SightPress\Module\Event\RedirectChanged(\SightPress\Module\Event\RedirectChanged::ADDED, 'pt-PT', 'antigo', 'novo', 4),
+            new \SightPress\Module\Event\RedirectChanged(\SightPress\Module\Event\RedirectChanged::REMOVED, 'en-GB', 'old', null, 4),
+            new \SightPress\Module\Event\RedirectChanged(\SightPress\Module\Event\RedirectChanged::REMOVED, 'en-GB', 'old', 'new', 4),
+            new \SightPress\Module\Event\RevisionRestored($page, 'pt-PT', 2, 5, 4),
+            new \SightPress\Module\Event\PageScheduled($page, new \DateTimeImmutable('2026-12-01 09:00:00'), new \DateTimeImmutable('2026-12-31 18:00:00'), 4),
+            new \SightPress\Module\Event\PageScheduled($page, null, new \DateTimeImmutable('2026-12-31 18:00:00'), 4),
+            new \SightPress\Module\Event\PageScheduled($page, null, null, 4),
+            new \SightPress\Module\Event\ScheduledStepFailed($page, PageTransition::Publish->value, 'the publish checks found errors', 4),
+            new \SightPress\Module\Event\ScheduledStepFailed($page, PageTransition::Unpublish->value, 'no permission', null),
+            new \SightPress\Module\Event\AccountRegistered($user, 'member'),
+            new \SightPress\Module\Event\AccountRegistered($user, 'member', 'editor'),
             new SettingsChanged(['people.registration', 'rbac.registration_role', 'site.visibility'], 1),
-            new \SightPress\Core\Tenant\SiteModuleChanged('acme.events', 'Events', \SightPress\Core\Tenant\SiteModuleChanged::ENABLED, 1),
-            new \SightPress\Core\Tenant\SiteModuleChanged('acme.events', 'Events', \SightPress\Core\Tenant\SiteModuleChanged::DISABLED, 1),
-            new \SightPress\Core\Tenant\SiteModuleChanged('acme.events', 'Events', \SightPress\Core\Tenant\SiteModuleChanged::DATA_DELETED, null),
-            new \SightPress\Core\Analytics\Contract\AnalyticsDataDeleted(1),
-            new \SightPress\Core\Assistant\Contract\AssistantUsed(4, 'seo_meta', 'anthropic', 'claude-haiku-5-5', 300, 40, 'ok'),
-            new \SightPress\Core\Assistant\Contract\AssistantUsed(null, 'connection_test', 'openai', 'gpt-5', 0, 0, 'invalid_key'),
+            new \SightPress\Module\Event\SiteModuleChanged('acme.events', 'Events', \SightPress\Module\Event\SiteModuleChanged::ENABLED, 1),
+            new \SightPress\Module\Event\SiteModuleChanged('acme.events', 'Events', \SightPress\Module\Event\SiteModuleChanged::DISABLED, 1),
+            new \SightPress\Module\Event\SiteModuleChanged('acme.events', 'Events', \SightPress\Module\Event\SiteModuleChanged::DATA_DELETED, null),
+            new \SightPress\Module\Event\AnalyticsDataDeleted(1),
+            new \SightPress\Module\Event\AssistantUsed(4, 'seo_meta', 'anthropic', 'claude-haiku-5-5', 300, 40, 'ok'),
+            new \SightPress\Module\Event\AssistantUsed(null, 'connection_test', 'openai', 'gpt-5', 0, 0, 'invalid_key'),
             new SettingsChanged(['assistant.provider', 'assistant.model', 'assistant.base_url', 'assistant.key', 'assistant.monthly_budget', 'assistant.roles', 'storage.provisioned'], 1),
-            new \SightPress\Core\Theme\Contract\ThemeApplied('acme-harbour', 'Harbour', null, null),
-            new \SightPress\Core\Theme\Contract\ThemeColoursChanged('acme-harbour', 'Harbour', ['dark.link'], 1),
-            new \SightPress\Core\Theme\Contract\ThemeColoursChanged('acme-harbour', 'Harbour', [], 1),
+            new \SightPress\Module\Event\ThemeApplied('acme-harbour', 'Harbour', null, null),
+            new \SightPress\Module\Event\ThemeColoursChanged('acme-harbour', 'Harbour', ['dark.link'], 1),
+            new \SightPress\Module\Event\ThemeColoursChanged('acme-harbour', 'Harbour', [], 1),
             new \stdClass(),
         ] as $event) {
             $recorder($event);

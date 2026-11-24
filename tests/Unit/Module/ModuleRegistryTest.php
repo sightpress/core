@@ -32,9 +32,14 @@ use SightPress\Core\Tests\Support\Modules\ExampleEvent;
 use SightPress\Core\Tests\Support\Modules\ExampleMigrations;
 use SightPress\Core\Tests\Support\Modules\ExampleSearchBackend;
 use SightPress\Core\Tests\Support\Modules\ExampleSearchProvider;
+use SightPress\Core\Tests\Support\Modules\ExampleScheduledJob;
+use SightPress\Core\Tests\Support\Modules\ExampleSeoProvider;
+use SightPress\Core\Tests\Support\Modules\ExampleSmsProvider;
 use SightPress\Core\Tests\Support\Modules\RecordingListener;
 use SightPress\Module\Access\Permission;
 use SightPress\Module\Admin\AdminMenuItem;
+use SightPress\Module\Block\BlockIcon;
+use SightPress\Module\Block\BlockVariant;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\Routing\Route;
 use SightPress\Module\Setting\Setting;
@@ -54,6 +59,8 @@ use stdClass;
 #[UsesClass(LoadedModule::class)]
 final class ModuleRegistryTest extends TestCase
 {
+    private const string TRANSLATIONS = __DIR__ . '/../../Fixtures/modules/acme-events/translations';
+
     public function testRecordsEverythingAModuleRegistersAndWhoRegisteredIt(): void
     {
         $factory = static fn (): stdClass => new stdClass();
@@ -77,6 +84,12 @@ final class ModuleRegistryTest extends TestCase
                 $r->dashboard()->add(ExampleDashboardWidget::class);
                 $r->assistant()->addProvider(ExampleAssistantProvider::class);
                 $r->assistant()->addTask(ExampleAssistantTask::class);
+                $r->seo()->addProvider(ExampleSeoProvider::class);
+                $r->sms()->addProvider(ExampleSmsProvider::class);
+                $r->schedule()->add(ExampleScheduledJob::class);
+                $r->translations()->add(self::TRANSLATIONS . '/');
+                $r->blockTypes()->addVariant('quote', new BlockVariant('ticket', 'Ticket'));
+                $r->blockTypes()->addIcon(new BlockIcon('eventbrite', 'Eventbrite', '/icons/eventbrite.svg'));
             }),
         );
 
@@ -109,15 +122,24 @@ final class ModuleRegistryTest extends TestCase
         self::assertSame(ExampleAssistantProvider::class, $registry->assistantProviders()[0]->item);
         self::assertSame([ExampleAssistantTask::class], array_map(static fn (Registered $r) => $r->item, $registry->assistantTasks()));
 
+        self::assertSame(ExampleSeoProvider::class, $registry->seoProviders()[0]->item);
+        self::assertSame(ExampleSmsProvider::class, $registry->smsProviders()[0]->item);
+        self::assertSame(ExampleScheduledJob::class, $registry->scheduledJobs()[0]->item);
+        self::assertSame([self::TRANSLATIONS], $registry->translations());
+        self::assertSame(['quote', 'ticket'], [$registry->blockVariants()[0]->item['blockType'], $registry->blockVariants()[0]->item['variant']->name]);
+        self::assertSame('eventbrite', $registry->blockIcons()[0]->item->name);
+
         self::assertTrue($registry->has('acme.events'));
         self::assertFalse($registry->has('acme.other'));
         $without = $registry->only(['user']);
         self::assertSame(['user'], $without->modules());
         self::assertFalse($without->has('acme.events'));
-        self::assertSame([[], [], [], [], [], [], [], [], [], [], [], [], [], []], [
+        self::assertSame([[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []], [
             $without->services(), $without->routes(), $without->blockTypes(), $without->permissions(), $without->migrations(),
             $without->adminMenu(), $without->views(), $without->listeners(), $without->commands(), $without->settings(),
             $without->searchProviders(), $without->dashboardWidgets(), $without->assistantProviders(), $without->assistantTasks(),
+            $without->seoProviders(), $without->smsProviders(), $without->scheduledJobs(), $without->translations(),
+            $without->blockVariants(), $without->blockIcons(),
         ]);
         self::assertNull($without->searchBackend());
         $without->addRoute('user', new Route('events.again', '/events', CallbackHandler::class));
@@ -193,6 +215,30 @@ final class ModuleRegistryTest extends TestCase
         yield 'assistant task' => [
             static fn (ModuleRegistrar $r) => $r->assistant()->addTask(ExampleAssistantTask::class),
             'Assistant task "' . ExampleAssistantTask::class . '" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'SEO provider' => [
+            static fn (ModuleRegistrar $r) => $r->seo()->addProvider(ExampleSeoProvider::class),
+            'SEO provider "' . ExampleSeoProvider::class . '" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'text message provider' => [
+            static fn (ModuleRegistrar $r) => $r->sms()->addProvider(ExampleSmsProvider::class),
+            'Text message provider "' . ExampleSmsProvider::class . '" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'scheduled job' => [
+            static fn (ModuleRegistrar $r) => $r->schedule()->add(ExampleScheduledJob::class),
+            'Scheduled job "' . ExampleScheduledJob::class . '" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'translation folder' => [
+            static fn (ModuleRegistrar $r) => $r->translations()->add(self::TRANSLATIONS),
+            'Translation folder "' . self::TRANSLATIONS . '" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'block variant' => [
+            static fn (ModuleRegistrar $r) => $r->blockTypes()->addVariant('quote', new BlockVariant('card', 'Card')),
+            'Block variant "quote:card" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'icon' => [
+            static fn (ModuleRegistrar $r) => $r->blockTypes()->addIcon(new BlockIcon('rss', 'RSS', '/rss.svg')),
+            'Icon "rss" is registered twice: by module "first" and by module "second".',
         ];
     }
 
@@ -308,6 +354,30 @@ final class ModuleRegistryTest extends TestCase
         yield 'assistant provider is not a provider' => [
             static fn (ModuleRegistrar $r) => $r->assistant()->addProvider(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
             'Module "acme" registers assistant provider stdClass, which is not a class that implements SightPress\Module\Assistant\AssistantProvider.',
+        ];
+        yield 'SEO provider is not a provider' => [
+            static fn (ModuleRegistrar $r) => $r->seo()->addProvider(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers SEO provider stdClass, which is not a class that implements SightPress\Module\Seo\SeoProvider.',
+        ];
+        yield 'text message provider is not a provider' => [
+            static fn (ModuleRegistrar $r) => $r->sms()->addProvider(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers text message provider stdClass, which is not a class that implements SightPress\Module\Sms\SmsProvider.',
+        ];
+        yield 'scheduled job is not a job' => [
+            static fn (ModuleRegistrar $r) => $r->schedule()->add(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers scheduled job stdClass, which is not a class that implements SightPress\Module\Schedule\ScheduledJob.',
+        ];
+        yield 'translations folder is missing' => [
+            static fn (ModuleRegistrar $r) => $r->translations()->add('/nowhere'),
+            'Module "acme" registers translations in /nowhere, which is not a folder.',
+        ];
+        yield 'translations in core\'s domain' => [
+            static fn (ModuleRegistrar $r) => $r->translations()->add(dirname(__DIR__, 2) . '/Fixtures/translations/messages-domain'),
+            'Module "acme" registers translations in the "messages" domain, which is core\'s. Name its files after its own domain, for example "acme.en-GB.xlf".',
+        ];
+        yield 'translations without the source' => [
+            static fn (ModuleRegistrar $r) => $r->translations()->add(dirname(__DIR__, 2) . '/Fixtures/translations/no-source'),
+            'without an en-GB file, the source language.',
         ];
         yield 'assistant task is not a task' => [
             static fn (ModuleRegistrar $r) => $r->assistant()->addTask(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)

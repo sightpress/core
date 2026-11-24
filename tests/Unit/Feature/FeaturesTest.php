@@ -40,7 +40,7 @@ use SightPress\Core\Site\Command\CreateSiteCommand;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteMigrator;
-use SightPress\Core\Tenant\SiteModuleChanged;
+use SightPress\Module\Event\SiteModuleChanged;
 use SightPress\Core\Tenant\SiteModuleException;
 use SightPress\Core\Tenant\SiteModules;
 use SightPress\Core\Tenant\SiteModuleState;
@@ -65,7 +65,6 @@ use Symfony\Component\Console\Tester\ApplicationTester;
  */
 #[CoversClass(SiteModules::class)]
 #[CoversClass(SiteModuleState::class)]
-#[CoversClass(SiteModuleChanged::class)]
 #[CoversClass(SiteModuleException::class)]
 #[CoversClass(SiteModuleStore::class)]
 #[CoversClass(SiteMigrator::class)]

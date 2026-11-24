@@ -8,7 +8,7 @@ use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\Site\Contract\LocaleRemoved;
+use SightPress\Module\Event\LocaleRemoved;
 use SightPress\Core\Tests\Support\CoreSiteDatabase;
 use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\ForgetRemovedLocale;

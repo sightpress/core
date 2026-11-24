@@ -10,7 +10,7 @@ use League\Flysystem\FilesystemOperator;
 use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
 use SightPress\Core\Infrastructure\Container\Services;
-use SightPress\Core\Site\Contract\LocaleRemoved;
+use SightPress\Module\Event\LocaleRemoved;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\User\Avatar\AvatarGenerator;
 use SightPress\Core\User\Avatar\AvatarService;

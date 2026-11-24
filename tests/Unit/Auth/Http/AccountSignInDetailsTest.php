@@ -26,7 +26,7 @@ use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Tests\Support\AuthFixture;
 use SightPress\Core\Tests\Support\RecordingEvents;
 use SightPress\Core\Tests\Support\Text;
-use SightPress\Core\User\Contract\AccountChanged;
+use SightPress\Module\Event\AccountChanged;
 use SightPress\Core\User\Entity\User;
 use Symfony\Component\Mime\Email;
 

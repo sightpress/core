@@ -7,13 +7,12 @@ namespace SightPress\Core\Tests\Unit\Site\Contract;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Tests\Support\CoreSiteDatabase;
 use SightPress\Core\Tests\Support\PageFixture;
 
 #[CoversClass(SiteProfile::class)]
-#[CoversClass(SettingsChanged::class)]
 #[UsesNamespace('SightPress\Core')]
 final class SiteProfileTest extends TestCase
 {

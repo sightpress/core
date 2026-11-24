@@ -12,7 +12,7 @@ use Psr\Log\NullLogger;
 use SightPress\Core\Admin\Http\StorageHandler;
 use SightPress\Core\Http\Upload\DirectUploadCheck;
 use SightPress\Core\Infrastructure\Storage\Provisioning\StorageProvisioning;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteS3Storage;
 use SightPress\Core\Tenant\SiteStorage;

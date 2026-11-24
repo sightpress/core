@@ -9,14 +9,19 @@ use SightPress\Module\Access\Permission;
 use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\Assistant\AssistantProvider;
 use SightPress\Module\Assistant\AssistantTask;
+use SightPress\Module\Block\BlockIcon;
 use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockVariant;
 use SightPress\Module\Console\Command;
 use SightPress\Module\Dashboard\DashboardWidget;
 use SightPress\Module\Exception\InvalidValueException;
 use SightPress\Module\Migration\MigrationProvider;
 use SightPress\Module\Routing\Route;
 use SightPress\Module\Search\SearchBackend;
+use SightPress\Module\Schedule\ScheduledJob;
 use SightPress\Module\Search\SearchDocumentProvider;
+use SightPress\Module\Seo\SeoProvider;
+use SightPress\Module\Sms\SmsProvider;
 use SightPress\Module\Setting\Setting;
 
 /**
@@ -79,6 +84,24 @@ final class ModuleRegistry
 
     /** @var array<class-string<AssistantTask>, Registered<class-string<AssistantTask>>> */
     private array $assistantTasks = [];
+
+    /** @var array<class-string<SeoProvider>, Registered<class-string<SeoProvider>>> */
+    private array $seoProviders = [];
+
+    /** @var array<class-string<SmsProvider>, Registered<class-string<SmsProvider>>> */
+    private array $smsProviders = [];
+
+    /** @var array<class-string<ScheduledJob>, Registered<class-string<ScheduledJob>>> */
+    private array $scheduledJobs = [];
+
+    /** @var array<string, Registered<string>> folder → folder */
+    private array $translations = [];
+
+    /** @var array<string, Registered<array{blockType: string, variant: BlockVariant}>> `type:variant` → variant */
+    private array $blockVariants = [];
+
+    /** @var array<string, Registered<BlockIcon>> */
+    private array $blockIcons = [];
 
     /**
      * Lets every module register, in the given (dependency) order.
@@ -148,6 +171,12 @@ final class ModuleRegistry
         $copy->dashboardWidgets = self::keep($this->dashboardWidgets, $on);
         $copy->assistantProviders = self::keep($this->assistantProviders, $on);
         $copy->assistantTasks = self::keep($this->assistantTasks, $on);
+        $copy->seoProviders = self::keep($this->seoProviders, $on);
+        $copy->smsProviders = self::keep($this->smsProviders, $on);
+        $copy->scheduledJobs = self::keep($this->scheduledJobs, $on);
+        $copy->translations = self::keep($this->translations, $on);
+        $copy->blockVariants = self::keep($this->blockVariants, $on);
+        $copy->blockIcons = self::keep($this->blockIcons, $on);
 
         return $copy;
     }
@@ -440,6 +469,114 @@ final class ModuleRegistry
     public function assistantTasks(): array
     {
         return array_values($this->assistantTasks);
+    }
+
+    /**
+     * @param non-empty-string $module
+     * @param class-string<SeoProvider> $provider
+     */
+    public function addSeoProvider(string $module, string $provider): void
+    {
+        $this->unique($this->seoProviders, $provider, 'SEO provider', $module);
+        $this->seoProviders[$provider] = new Registered($module, $provider);
+    }
+
+    /**
+     * @param non-empty-string $module
+     * @param class-string<SmsProvider> $provider
+     */
+    public function addSmsProvider(string $module, string $provider): void
+    {
+        $this->unique($this->smsProviders, $provider, 'Text message provider', $module);
+        $this->smsProviders[$provider] = new Registered($module, $provider);
+    }
+
+    /**
+     * @param non-empty-string $module
+     * @param class-string<ScheduledJob> $job
+     */
+    public function addScheduledJob(string $module, string $job): void
+    {
+        $this->unique($this->scheduledJobs, $job, 'Scheduled job', $module);
+        $this->scheduledJobs[$job] = new Registered($module, $job);
+    }
+
+    /**
+     * @param non-empty-string $module
+     */
+    public function addTranslations(string $module, string $directory): void
+    {
+        $this->unique($this->translations, $directory, 'Translation folder', $module);
+        $this->translations[$directory] = new Registered($module, $directory);
+    }
+
+    /**
+     * @param non-empty-string $module
+     */
+    public function addBlockVariant(string $module, string $blockType, BlockVariant $variant): void
+    {
+        $key = $blockType . ':' . $variant->name;
+        $this->unique($this->blockVariants, $key, 'Block variant', $module);
+        $this->blockVariants[$key] = new Registered($module, ['blockType' => $blockType, 'variant' => $variant]);
+    }
+
+    /**
+     * @param non-empty-string $module
+     */
+    public function addBlockIcon(string $module, BlockIcon $icon): void
+    {
+        $this->unique($this->blockIcons, $icon->name, 'Icon', $module);
+        $this->blockIcons[$icon->name] = new Registered($module, $icon);
+    }
+
+    /**
+     * @return list<Registered<class-string<SeoProvider>>>
+     */
+    public function seoProviders(): array
+    {
+        return array_values($this->seoProviders);
+    }
+
+    /**
+     * @return list<Registered<class-string<SmsProvider>>>
+     */
+    public function smsProviders(): array
+    {
+        return array_values($this->smsProviders);
+    }
+
+    /**
+     * @return list<Registered<class-string<ScheduledJob>>>
+     */
+    public function scheduledJobs(): array
+    {
+        return array_values($this->scheduledJobs);
+    }
+
+    /**
+     * Folders of module translations, in registration order.
+     *
+     * @return list<string>
+     */
+    public function translations(): array
+    {
+        return array_keys($this->translations);
+    }
+
+    /**
+     * @return list<Registered<array{blockType: string, variant: BlockVariant}>>
+     */
+    public function blockVariants(): array
+    {
+        return array_values($this->blockVariants);
+    }
+
+    /**
+     * @return list<Registered<BlockIcon>>
+     */
+    public function blockIcons(): array
+    {
+        return array_values($this->blockIcons);
     }
 
     /**

@@ -7,7 +7,7 @@ namespace SightPress\Core\Page;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use SightPress\Core\Page\Contract\RedirectChanged;
+use SightPress\Module\Event\RedirectChanged;
 use SightPress\Core\Page\Entity\PageRedirect;
 use SightPress\Core\Template\Message;
 

@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use SightPress\Core\Menu\Contract\MenuName;
 use SightPress\Core\Menu\ForgetPurgedPages;
 use SightPress\Core\Menu\MenuEditor;
-use SightPress\Core\Page\Contract\PagePurged;
+use SightPress\Module\Event\PagePurged;
 use SightPress\Core\Tests\Support\CoreSiteDatabase;
 use SightPress\Core\Tests\Support\RecordingEvents;
 

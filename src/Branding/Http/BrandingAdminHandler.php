@@ -20,7 +20,7 @@ use SightPress\Core\Branding\BrandingState;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Http\Upload\UploadLimits;
 use SightPress\Core\Rbac\Contract\Actor;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tenant\Site;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpForbiddenException;

@@ -7,7 +7,7 @@ namespace SightPress\Core\Menu;
 use SightPress\Core\Template\Message;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use SightPress\Core\Menu\Contract\MenuChanged;
+use SightPress\Module\Event\MenuChanged;
 use SightPress\Core\Menu\Contract\MenuName;
 use SightPress\Core\Menu\Entity\MenuItem;
 
@@ -272,6 +272,6 @@ final readonly class MenuEditor
 
     private function changed(MenuItem $item, string $change, ?int $actorId): void
     {
-        $this->events->dispatch(new MenuChanged($item->menu(), $change, (int) $item->id(), $item->pageId(), $item->url(), $actorId));
+        $this->events->dispatch(new MenuChanged($item->menu()->value, $change, (int) $item->id(), $item->pageId(), $item->url(), $actorId));
     }
 }

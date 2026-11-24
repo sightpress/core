@@ -11,7 +11,7 @@ use SightPress\Core\Template\Message;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use SightPress\Core\Infrastructure\Mail\MailSender;
 use SightPress\Core\Page\Contract\PageTransition;
-use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Page\PageRepository;
 use SightPress\Core\Rbac\Contract\PermissionHolders;
 use SightPress\Core\Template\TemplateRenderer;
@@ -44,7 +44,7 @@ final readonly class ReviewRequestMailer
 
     public function __invoke(PageTransitioned $event): void
     {
-        $page = $event->transition === PageTransition::Submit ? $this->pages->find($event->pageId) : null;
+        $page = $event->transition === PageTransition::Submit->value ? $this->pages->find($event->pageId) : null;
         if ($page === null) {
             return;
         }

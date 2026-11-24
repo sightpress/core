@@ -23,7 +23,7 @@ use SightPress\Core\Site\Command\SiteStorageMigrateCommand;
 use SightPress\Core\Site\Command\SiteStorageProvisionCommand;
 use SightPress\Core\Site\Command\SiteStorageS3Command;
 use SightPress\Core\Site\Command\UpgradeRegistryCommand;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteLanguages;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;

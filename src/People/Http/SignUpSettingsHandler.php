@@ -16,7 +16,7 @@ use SightPress\Core\Http\Form\Form;
 use SightPress\Core\Http\Form\FormValidator;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\Contract\SignUpRoles;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteSettings;
 use Slim\Exception\HttpForbiddenException;
 

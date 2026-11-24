@@ -21,7 +21,7 @@ use SightPress\Core\Tests\Support\AuthFixture;
 use SightPress\Core\Tests\Support\MediaFixture;
 use SightPress\Core\Tests\Support\PageFixture;
 use SightPress\Core\User\AvatarKind;
-use SightPress\Core\User\Contract\AccountChanged;
+use SightPress\Module\Event\AccountChanged;
 use SightPress\Core\User\Entity\User;
 use SightPress\Core\User\Http\AccountHandler;
 use SightPress\Core\User\Http\AccountPages;
@@ -32,7 +32,6 @@ use SightPress\Core\User\Http\AccountPictureHandler;
 #[CoversClass(\SightPress\Core\User\Http\AccountLanguageHandler::class)]
 #[CoversClass(AccountPictureHandler::class)]
 #[CoversClass(\SightPress\Core\User\Http\AccountPreferencesHandler::class)]
-#[CoversClass(AccountChanged::class)]
 #[UsesNamespace('SightPress\Core')]
 final class AccountHandlersTest extends TestCase implements EventDispatcherInterface
 {

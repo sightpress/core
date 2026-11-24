@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use SightPress\Core\Media\Contract\MediaKind;
-use SightPress\Core\Media\Contract\MediaUploaded;
+use SightPress\Module\Event\MediaUploaded;
 use SightPress\Core\Media\MediaException;
 use SightPress\Core\Media\MediaFiles;
 use SightPress\Core\Media\MediaLimits;
@@ -24,7 +24,6 @@ use SightPress\Core\Tests\Support\MediaFixture;
 
 #[CoversClass(MediaUploader::class)]
 #[CoversClass(UploadResult::class)]
-#[CoversClass(MediaUploaded::class)]
 #[UsesNamespace('SightPress\Core')]
 final class MediaUploaderTest extends TestCase
 {
@@ -62,7 +61,7 @@ final class MediaUploaderTest extends TestCase
         self::assertSame(strlen($stored), $media->size());
         self::assertStringNotContainsString('SightPressCam', $stored);
 
-        self::assertEquals([new MediaUploaded($media->id(), $key, MediaKind::Image, 7)], Text::of($this->fixture->events));
+        self::assertEquals([new MediaUploaded($media->id(), $key, MediaKind::Image->value, 7)], Text::of($this->fixture->events));
         self::assertSame($media, $this->fixture->repository()->findByKey($key));
     }
 

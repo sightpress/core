@@ -6,8 +6,7 @@ namespace SightPress\Core\Seo;
 
 use Psr\Log\LoggerInterface;
 use SightPress\Core\Page\Contract\PageLinks;
-use SightPress\Core\Rbac\Contract\PageState;
-use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Site\Contract\SiteSettings;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\TenantConfig;
@@ -61,7 +60,7 @@ final readonly class IndexNow
 
     public function __invoke(PageTransitioned $event): void
     {
-        if (($event->from !== PageState::Published && $event->to !== PageState::Published)
+        if ((!$event->published() && !$event->unpublished())
             || !$this->isOn()
             || !$this->config->environment->isProduction()) {
             return;

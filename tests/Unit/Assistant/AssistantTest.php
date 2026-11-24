@@ -11,7 +11,7 @@ use SightPress\Core\Assistant\Assistant;
 use SightPress\Core\Assistant\AssistantError;
 use SightPress\Core\Assistant\AssistantResult;
 use SightPress\Core\Assistant\AssistantUse;
-use SightPress\Core\Assistant\Contract\AssistantUsed;
+use SightPress\Module\Event\AssistantUsed;
 use SightPress\Core\Assistant\SiteAssistantContext;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Tests\Support\Assistant\AssistantFixture;
@@ -28,7 +28,6 @@ use SightPress\Module\Exception\InvalidValueException;
 #[CoversClass(Assistant::class)]
 #[CoversClass(AssistantResult::class)]
 #[CoversClass(AssistantUse::class)]
-#[CoversClass(AssistantUsed::class)]
 #[UsesNamespace('SightPress\Core')]
 final class AssistantTest extends TestCase
 {

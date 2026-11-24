@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
-use SightPress\Core\Menu\Contract\MenuChanged;
+use SightPress\Module\Event\MenuChanged;
 use SightPress\Core\Menu\Contract\MenuName;
 use SightPress\Core\Menu\Entity\MenuItem;
 use SightPress\Core\Menu\Http\MenuAdminHandler;

@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Page\Contract\PageTransition;
-use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Page\Entity\Page;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\Workflow\PageMarkingStore;
@@ -30,7 +30,6 @@ use SightPress\Core\Theme\ThemePageColours;
 #[CoversClass(PageMarkingStore::class)]
 #[CoversClass(WorkflowException::class)]
 #[CoversClass(PageTransition::class)]
-#[CoversClass(PageTransitioned::class)]
 #[CoversClass(PublishBlocked::class)]
 #[UsesNamespace('SightPress\Core')]
 final class PageWorkflowTest extends TestCase
@@ -82,10 +81,10 @@ final class PageWorkflowTest extends TestCase
         $id = (int) $page->id();
         self::assertEquals(
             [
-                new PageTransitioned($id, PageTransition::Submit, PageState::Draft, PageState::InReview, 7),
-                new PageTransitioned($id, PageTransition::Approve, PageState::InReview, PageState::Approved, 3),
-                new PageTransitioned($id, PageTransition::Publish, PageState::Approved, PageState::Published, 3),
-                new PageTransitioned($id, PageTransition::Unpublish, PageState::Published, PageState::Draft, 3, 'Out of date'),
+                new PageTransitioned($id, PageTransition::Submit->value, PageState::Draft->value, PageState::InReview->value, 7),
+                new PageTransitioned($id, PageTransition::Approve->value, PageState::InReview->value, PageState::Approved->value, 3),
+                new PageTransitioned($id, PageTransition::Publish->value, PageState::Approved->value, PageState::Published->value, 3),
+                new PageTransitioned($id, PageTransition::Unpublish->value, PageState::Published->value, PageState::Draft->value, 3, 'Out of date'),
             ],
             array_values(array_filter($this->fixture->events, static fn (object $event): bool => $event instanceof PageTransitioned)),
         );
@@ -236,8 +235,8 @@ final class PageWorkflowTest extends TestCase
         $this->workflow->apply($about, PageTransition::Restore, $editor);
         self::assertSame(PageState::Draft, $about->state());
 
-        $steps = array_map(static fn (object $event): string => $event instanceof PageTransitioned ? $event->transition->value . ':' . $event->from->value . '>' . $event->to->value : '', $this->fixture->events);
-        self::assertSame(['archive:published>archived', 'trash:published>trash', 'trash:archived>trash', 'untrash:trash>draft', 'untrash:trash>draft', 'archive:draft>archived', 'restore:archived>draft'], array_values(array_filter($steps)));
+        $steps = array_map(static fn (object $event): string => $event instanceof PageTransitioned ? $event->transition . ':' . $event->from . '>' . $event->to : '', $this->fixture->events);
+        self::assertSame(['archive:published>archived', 'trash:published>trash', 'trash:archived>trash', 'untrash:trash>draft', 'untrash:trash>draft', 'archive:draft>archived', 'restore:archived>draft'], array_values(array_filter($steps, static fn (string $step): bool => $step !== '')));
     }
 
     public function testDescribesEachStep(): void

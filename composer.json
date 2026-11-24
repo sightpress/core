@@ -60,7 +60,7 @@
     "nyholm/psr7-server": "^1",
     "psr/clock": "^1",
     "psr/event-dispatcher": "^1",
-    "sightpress/module-interface": "^0.4",
+    "sightpress/module-interface": "^0.5",
     "sightpress/theme-default": "^0.3",
     "sightpress/theme-interface": "^0.2",
     "slim/csrf": "^1",
@@ -104,6 +104,7 @@
   },
   "autoload-dev": {
     "psr-4": {
+      "Acme\\Events\\": "tests/Fixtures/modules/acme-events/src/",
       "SightPress\\Core\\Tests\\": "tests/"
     }
   },

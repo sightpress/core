@@ -9,7 +9,7 @@ use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Logging\LoggerFactory;
 use SightPress\Core\Infrastructure\Storage\Provisioning\ProvisioningException;
 use SightPress\Core\Infrastructure\Storage\Provisioning\StorageProvisioning;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Tenant\SiteStatus;

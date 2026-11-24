@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Branding;
 
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
 

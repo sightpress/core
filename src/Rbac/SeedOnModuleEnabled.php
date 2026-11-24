@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Rbac;
 
-use SightPress\Core\Tenant\SiteModuleChanged;
+use SightPress\Module\Event\SiteModuleChanged;
 
 /**
  * When a site turns a module on, its permissions are stored and given to the admin role and the module's default

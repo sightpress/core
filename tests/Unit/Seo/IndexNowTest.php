@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use SightPress\Core\Page\Contract\PageTransition;
-use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Page\PageLinkQuery;
 use SightPress\Core\Rbac\Contract\PageState;
 use SightPress\Core\Seo\Http\IndexNowKeyHandler;
@@ -45,7 +45,7 @@ final class IndexNowTest extends TestCase
     {
         $page = $this->pages->published('About');
 
-        $this->indexNow('production')(new PageTransitioned((int) $page->id(), PageTransition::Publish, PageState::Approved, PageState::Published, 1));
+        $this->indexNow('production')(new PageTransitioned((int) $page->id(), PageTransition::Publish->value, PageState::Approved->value, PageState::Published->value, 1));
 
         self::assertSame([], $this->requests);
         $this->expectException(HttpNotFoundException::class);
@@ -58,12 +58,12 @@ final class IndexNowTest extends TestCase
         $about = $this->pages->published('About');
         $indexNow = $this->indexNow('production');
 
-        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Publish, PageState::Approved, PageState::Published, 1));
-        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Unpublish, PageState::Published, PageState::Draft, 1));
-        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Submit, PageState::Draft, PageState::InReview, 1));
-        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Archive, PageState::InReview, PageState::Archived, 1));
-        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Trash, PageState::Published, PageState::Trash, 1));
-        $indexNow(new PageTransitioned(999, PageTransition::Publish, PageState::Approved, PageState::Published, 1));
+        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Publish->value, PageState::Approved->value, PageState::Published->value, 1));
+        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Unpublish->value, PageState::Published->value, PageState::Draft->value, 1));
+        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Submit->value, PageState::Draft->value, PageState::InReview->value, 1));
+        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Archive->value, PageState::InReview->value, PageState::Archived->value, 1));
+        $indexNow(new PageTransitioned((int) $about->id(), PageTransition::Trash->value, PageState::Published->value, PageState::Trash->value, 1));
+        $indexNow(new PageTransitioned(999, PageTransition::Publish->value, PageState::Approved->value, PageState::Published->value, 1));
 
         self::assertCount(3, $this->requests, 'only steps to or from published, and only pages that exist');
         [$method, $url, $options] = $this->requests[0];
@@ -77,7 +77,7 @@ final class IndexNowTest extends TestCase
         self::assertSame([$key, 'text/plain; charset=utf-8', 'noindex'], [(string) $response->getBody(), $response->getHeaderLine('Content-Type'), $response->getHeaderLine('X-Robots-Tag')]);
 
         $this->requests = [];
-        $this->indexNow('test')(new PageTransitioned((int) $about->id(), PageTransition::Publish, PageState::Approved, PageState::Published, 1));
+        $this->indexNow('test')(new PageTransitioned((int) $about->id(), PageTransition::Publish->value, PageState::Approved->value, PageState::Published->value, 1));
         self::assertSame([], $this->requests, 'never outside production');
     }
 
@@ -87,7 +87,7 @@ final class IndexNowTest extends TestCase
         $this->pages->database->settings()->set(IndexNow::KEY_SETTING, 'not-a-key');
         $about = $this->pages->published('About');
 
-        $this->indexNow('production', fail: true)(new PageTransitioned((int) $about->id(), PageTransition::Publish, PageState::Approved, PageState::Published, 1));
+        $this->indexNow('production', fail: true)(new PageTransitioned((int) $about->id(), PageTransition::Publish->value, PageState::Approved->value, PageState::Published->value, 1));
 
         self::assertSame(['IndexNow could not be told about a page.'], $this->logged->getArrayCopy());
         self::assertMatchesRegularExpression('/^[0-9a-f]{32}$/', (string) $this->pages->database->settings()->get(IndexNow::KEY_SETTING), 'a bad key is replaced');

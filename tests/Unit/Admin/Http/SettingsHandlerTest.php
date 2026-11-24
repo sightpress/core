@@ -18,7 +18,7 @@ use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tests\Support\AdminFixture;

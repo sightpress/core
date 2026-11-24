@@ -7,7 +7,7 @@ namespace SightPress\Core\Analytics;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteSettings;
 
 /**

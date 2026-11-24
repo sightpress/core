@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Logging\LoggerFactory;
 use SightPress\Core\Media\MediaLimits;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
 use SightPress\Core\Tenant\SiteMediaLimits;

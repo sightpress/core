@@ -7,8 +7,8 @@ namespace SightPress\Core\Tests\Unit\Site\Contract;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\Site\Contract\LocaleRemoved;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\LocaleRemoved;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteLanguageException;
 use SightPress\Core\Site\Contract\SiteLanguages;
 use SightPress\Core\Site\Contract\SiteProfile;
@@ -18,7 +18,6 @@ use SightPress\Core\Tests\Support\PageFixture;
 use SightPress\Core\Tests\Support\RecordingEvents;
 
 #[CoversClass(SiteLanguages::class)]
-#[CoversClass(LocaleRemoved::class)]
 #[UsesNamespace('SightPress\Core')]
 final class SiteLanguagesTest extends TestCase
 {

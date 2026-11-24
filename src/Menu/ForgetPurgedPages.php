@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Menu;
 
-use SightPress\Core\Page\Contract\PagePurged;
+use SightPress\Module\Event\PagePurged;
 
 /**
  * When pages are deleted for good, their menu entries go too (the entries under them move up), so no menu keeps an

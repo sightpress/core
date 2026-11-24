@@ -8,8 +8,8 @@ use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\Media\Contract\MediaChanged;
-use SightPress\Core\Media\Contract\MediaDeleted;
+use SightPress\Module\Event\MediaChanged;
+use SightPress\Module\Event\MediaDeleted;
 use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\Entity\Media;
 use SightPress\Core\Media\MediaEditor;
@@ -18,8 +18,6 @@ use SightPress\Core\Media\MediaFormat;
 use SightPress\Core\Tests\Support\MediaFixture;
 
 #[CoversClass(MediaEditor::class)]
-#[CoversClass(MediaChanged::class)]
-#[CoversClass(MediaDeleted::class)]
 #[UsesNamespace('SightPress\Core')]
 final class MediaEditorTest extends TestCase
 {

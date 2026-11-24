@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Assistant\AssistantSettings;
 use SightPress\Core\Infrastructure\Crypto\SecretBox;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tests\Support\ArraySiteSettings;
 use SightPress\Core\Tests\Support\RecordingEvents;
 use SightPress\Core\Tests\Support\SiteFixture;

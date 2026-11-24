@@ -6,8 +6,8 @@ namespace SightPress\Core\Theme;
 
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\SiteContainerFactory;
-use SightPress\Core\Theme\Contract\ThemeApplied;
-use SightPress\Core\Theme\Contract\ThemeColoursChanged;
+use SightPress\Module\Event\ThemeApplied;
+use SightPress\Module\Event\ThemeColoursChanged;
 
 /**
  * The site's theme and colours are read when its container is built (template paths, Twig, `tokens.css`, asset

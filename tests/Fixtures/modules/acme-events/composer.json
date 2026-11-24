@@ -1,0 +1,21 @@
+{
+    "name": "acme/events",
+    "description": "Test fixture: an external SightPress module that uses only module-interface (stage 4, X-2).",
+    "type": "sightpress-module",
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "sightpress/module-interface": "^0.5",
+        "doctrine/dbal": "^4",
+        "doctrine/migrations": "^3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Acme\\Events\\": "src/"
+        }
+    },
+    "extra": {
+        "sightpress": {
+            "module": "Acme\\Events\\EventsModule"
+        }
+    }
+}

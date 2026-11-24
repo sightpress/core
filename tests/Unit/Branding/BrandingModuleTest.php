@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use SightPress\Core\Branding\BrandingModule;
 use SightPress\Core\Branding\BrandingService;
 use SightPress\Core\Branding\RenameListener;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Branding\Provisioning\DefaultBranding;
 use SightPress\Core\Module\CoreModules;
 use SightPress\Core\Module\ModuleLoader;

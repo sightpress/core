@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Page\Contract\PageTransition;
-use SightPress\Core\Page\Contract\PageTransitioned;
+use SightPress\Module\Event\PageTransitioned;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\Workflow\ReviewRequestMailer;
 use SightPress\Core\Rbac\Contract\PageState;
@@ -44,7 +44,7 @@ final class ReviewRequestMailerTest extends TestCase
         $page = $this->pages->editor()->create('en-GB', new PageContent('Opening times'));
         $id = (int) $page->id();
 
-        $this->mailer()(new PageTransitioned($id, PageTransition::Submit, PageState::Draft, PageState::InReview, (int) $author->id()));
+        $this->mailer()(new PageTransitioned($id, PageTransition::Submit->value, PageState::Draft->value, PageState::InReview->value, (int) $author->id()));
 
         self::assertSame(['ed@example.org', 'al@example.org', 'self@example.org'], Text::of($this->recipients()));
         $email = $this->auth->sent[0];
@@ -55,7 +55,7 @@ final class ReviewRequestMailerTest extends TestCase
         self::assertStringContainsString('<a href="https://demo.example/admin/pages/' . $id . '"', (string) $email->getHtmlBody());
 
         $this->auth->sent = [];
-        $this->mailer()(new PageTransitioned($id, PageTransition::Submit, PageState::Draft, PageState::InReview, (int) $editorWhoSubmits->id()));
+        $this->mailer()(new PageTransitioned($id, PageTransition::Submit->value, PageState::Draft->value, PageState::InReview->value, (int) $editorWhoSubmits->id()));
         self::assertSame(['ed@example.org', 'al@example.org'], Text::of($this->recipients()));
         self::assertNotNull($editor->id());
         self::assertNotNull($admin->id());
@@ -68,7 +68,7 @@ final class ReviewRequestMailerTest extends TestCase
         $page = $this->pages->editor()->create('pt-PT', new PageContent('Horário'));
         $mailer = new ReviewRequestMailer($this->pages->repository(), new RoleRepository($this->auth->database->entityManager), new UserRepository($this->auth->database->entityManager), $this->auth, $this->auth->templates, $this->auth->http, $site, new UserRepository($this->auth->database->entityManager), $this->auth->translations);
 
-        $mailer(new PageTransitioned((int) $page->id(), PageTransition::Submit, PageState::Draft, PageState::InReview, null));
+        $mailer(new PageTransitioned((int) $page->id(), PageTransition::Submit->value, PageState::Draft->value, PageState::InReview->value, null));
 
         self::assertSame('Please review "Horário" on Demo', Text::of($this->auth->sent[0]->getSubject()));
         self::assertStringContainsString('Someone submitted the page', (string) $this->auth->sent[0]->getTextBody());
@@ -79,8 +79,8 @@ final class ReviewRequestMailerTest extends TestCase
         $this->auth->user('ed@example.org', 'editor');
         $page = $this->pages->editor()->create('en-GB', new PageContent('Opening times'));
 
-        $this->mailer()(new PageTransitioned((int) $page->id(), PageTransition::Approve, PageState::InReview, PageState::Approved, null));
-        $this->mailer()(new PageTransitioned(99999, PageTransition::Submit, PageState::Draft, PageState::InReview, null));
+        $this->mailer()(new PageTransitioned((int) $page->id(), PageTransition::Approve->value, PageState::InReview->value, PageState::Approved->value, null));
+        $this->mailer()(new PageTransitioned(99999, PageTransition::Submit->value, PageState::Draft->value, PageState::InReview->value, null));
 
         self::assertSame([], Text::of($this->auth->sent));
     }

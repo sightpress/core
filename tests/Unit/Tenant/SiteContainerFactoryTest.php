@@ -166,6 +166,8 @@ final class SiteContainerFactoryTest extends TestCase
 
         $site = Services::get($factory->forSite($registry), Site::class);
         self::assertSame(['Riverside Reading Room', 'Asia/Tokyo', $registry->defaultLocale], [$site->name, $site->defaultTimezone, $site->defaultLocale], 'a language the site isn’t written in is ignored');
+        $info = Services::get($factory->forSite($registry), \SightPress\Module\Site\SiteInfo::class);
+        self::assertSame([$registry->id, 'demo', 'Riverside Reading Room', 'en-GB', ['en-GB']], [$info->id, $info->slug, $info->name, $info->defaultLocale, $info->locales], 'modules see the admins\' choices too');
 
         $settings->broken = true;
         $factory->reset();

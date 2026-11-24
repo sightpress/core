@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use SightPress\Core\Tests\Support\AuthFixture;
 use SightPress\Core\Tests\Support\RecordingEvents;
 use SightPress\Core\User\AccountAdministration;
-use SightPress\Core\User\Contract\AccountChanged;
+use SightPress\Module\Event\AccountChanged;
 use SightPress\Core\User\Contract\AccountException;
 use SightPress\Core\User\Contract\AccountSummary;
 

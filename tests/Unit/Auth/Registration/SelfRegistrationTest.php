@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
-use SightPress\Core\Auth\Contract\AccountRegistered;
+use SightPress\Module\Event\AccountRegistered;
 use SightPress\Core\Auth\Contract\SignUp;
 use SightPress\Core\Auth\Contract\TooManyCodes;
 use SightPress\Core\Auth\Registration\RegistrationDetails;
@@ -23,7 +23,6 @@ use Symfony\Component\Mime\Email;
 #[CoversClass(SelfRegistration::class)]
 #[CoversClass(RegistrationMailer::class)]
 #[CoversClass(RegistrationDetails::class)]
-#[CoversClass(AccountRegistered::class)]
 #[UsesNamespace('SightPress\Core')]
 final class SelfRegistrationTest extends TestCase
 {

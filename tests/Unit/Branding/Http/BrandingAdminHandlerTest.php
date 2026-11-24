@@ -21,7 +21,7 @@ use SightPress\Core\Tests\Support\AdminFixture;
 use SightPress\Core\Tests\Support\BrandingFixture;
 use SightPress\Core\Tests\Support\MediaFixture;
 use SightPress\Core\Tests\Support\RecordingEvents;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\User\Entity\User;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpForbiddenException;

@@ -8,7 +8,7 @@ use SightPress\Core\Menu\Http\MenuAdminHandler;
 use SightPress\Core\Menu\Http\MenuItemHandler;
 use SightPress\Core\Menu\Provisioning\DemoMenu;
 use SightPress\Core\Menu\Provisioning\StarterMenus;
-use SightPress\Core\Page\Contract\PagePurged;
+use SightPress\Module\Event\PagePurged;
 use SightPress\Core\Page\Contract\PublicPageRendering;
 use SightPress\Core\Page\Contract\PublicScreenRendering;
 use SightPress\Core\Site\Contract\SiteProvisioning;

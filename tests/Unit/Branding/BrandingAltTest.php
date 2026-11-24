@@ -11,7 +11,7 @@ use SightPress\Core\Branding\BrandAsset;
 use SightPress\Core\Branding\BrandingService;
 use SightPress\Core\Branding\BrandingState;
 use SightPress\Core\Branding\RenameListener;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Tenant\OwnerType;
 use SightPress\Core\Tests\Support\BrandingFixture;

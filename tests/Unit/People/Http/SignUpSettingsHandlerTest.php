@@ -14,7 +14,7 @@ use SightPress\Core\Http\Session\Session;
 use SightPress\Core\People\Http\SignUpSettingsHandler;
 use SightPress\Core\Rbac\Contract\SignUpRoles;
 use SightPress\Core\Rbac\RegistrationRole;
-use SightPress\Core\Site\Contract\SettingsChanged;
+use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tests\Support\AdminFixture;
 use SightPress\Core\Tests\Support\RecordingEvents;
 use SightPress\Core\Tests\Support\Text;
