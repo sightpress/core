@@ -75,6 +75,9 @@ async function textFile(name: string, megabytes: number): Promise<{ file: string
 }
 
 async function upload(page: Page, file: string): Promise<void> {
+  // Signing in ends on the media page without waiting for it to load; clicking before media-upload.js has bound
+  // its submit handler sends the whole file as a plain form, which the server refuses (413).
+  await page.waitForLoadState('load');
   await page.getByLabel('File to upload').setInputFiles(file);
   await page.getByRole('button', { name: 'Upload', exact: true }).click();
 }
