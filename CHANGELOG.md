@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.4.0](https://github.com/sightpress/core/compare/0.3.0...0.4.0) (2026-11-24)
+
+
+### Features
+
+* add captions per language, checked WebVTT files, and transcripts the assistant can tidy without changing the words (M-4) ([#104](https://github.com/sightpress/core/issues/104)) ([acdc193](https://github.com/sightpress/core/commit/acdc19300e6ba064fe4ad8816048bf3e7c13fa18))
+* add the Appearance screen to choose the site's theme and change its colours, and theme:publish-assets for its previews (T-2) ([#95](https://github.com/sightpress/core/issues/95)) ([e2dc9b2](https://github.com/sightpress/core/commit/e2dc9b258da4909de5c0eaca363a76fb459a995e))
+* add theme:preview, a static, offline preview page of a theme made from theme-interface's sample page (T-5) ([#89](https://github.com/sightpress/core/issues/89)) ([88a678c](https://github.com/sightpress/core/commit/88a678c380ad17ad583603e6aeda38fa88183055))
+* deliver public files through a CDN and protect private ones with short-lived signed addresses (M-2) ([#99](https://github.com/sightpress/core/issues/99)) ([c5fdad7](https://github.com/sightpress/core/commit/c5fdad76402838ba4538ac191980db578b58e32f))
+* find the themes installed with Composer, check them, and let each site use its own, with theme:list, theme:validate, site:theme:apply and cache:clear (T-1) ([#94](https://github.com/sightpress/core/issues/94)) ([94da8ad](https://github.com/sightpress/core/commit/94da8ad87356a56c2f10255613ea2f933f70eaeb))
+* import files of any size from the command line with the same safety checks (M-6) ([#100](https://github.com/sightpress/core/issues/100)) ([08f5427](https://github.com/sightpress/core/commit/08f5427ae8b007b91fba50fd7e7a9940793b1ec4))
+* let a site keep its files in S3-compatible storage, move them there safely, and remove them when purged (M-1) ([#98](https://github.com/sightpress/core/issues/98)) ([ba1ae33](https://github.com/sightpress/core/commit/ba1ae336d6b6c14597b1930139651cba8e60b362))
+* let each site have its own upload limits, find the web server's real limit, and tell admins about refused uploads (M-5b) ([#97](https://github.com/sightpress/core/issues/97)) ([4d23223](https://github.com/sightpress/core/commit/4d23223885c12b85372b54fcbdc4495c1863cf2b))
+* let editors use the landing, sidebar and full-width layouts, list a section's pages beside a sidebar page, and say which pages lose their layout before a theme change (T-3) ([#96](https://github.com/sightpress/core/issues/96)) ([4172ba9](https://github.com/sightpress/core/commit/4172ba917aef16ab8e74784981c6d30ec5f21535))
+* send large files straight from the browser to the site's bucket, with a safe fallback (M-8) ([#103](https://github.com/sightpress/core/issues/103)) ([257da70](https://github.com/sightpress/core/commit/257da7002ae944fb689945cb6e0a46418c9d6349))
+* send large files to the media library in parts, with pause, resume and recovery (M-7) ([#102](https://github.com/sightpress/core/issues/102)) ([795f86c](https://github.com/sightpress/core/commit/795f86ceeb8b4eca7059edc9f46f39eda335572f))
+* set up a site's cloud bucket, upload rules and CDN at AWS or Cloudflare (M-3) ([#101](https://github.com/sightpress/core/issues/101)) ([6134f35](https://github.com/sightpress/core/commit/6134f35cd040aeea2fe9ee2c9dfdf287bef4ecf4))
+* take the default theme from the sightpress/theme-default package and keep no theme files in core (T-0) ([#93](https://github.com/sightpress/core/issues/93)) ([a7aa7ce](https://github.com/sightpress/core/commit/a7aa7ce2a5c29212a19f9d4fd80412423d188369))
+
 ## [0.3.0](https://github.com/sightpress/core/compare/0.2.0...0.3.0) (2026-11-19)
 
 
