@@ -10087,5 +10087,155 @@
         <target>{code} is your code for {site}. It works for {duration}. Never share it.</target>
       </segment>
     </unit>
+    <unit id="69f795122451054b">
+      <segment>
+        <source>Being sent</source>
+        <target>Being sent</target>
+      </segment>
+    </unit>
+    <unit id="906115657390f367">
+      <segment>
+        <source>Delivered</source>
+        <target>Delivered</target>
+      </segment>
+    </unit>
+    <unit id="5c28c3f802c75a66">
+      <segment>
+        <source>For example 07700 900123, or with the country code. The test message counts towards the budget.</source>
+        <target>For example 07700 900123, or with the country code. The test message counts towards the budget.</target>
+      </segment>
+    </unit>
+    <unit id="882c6be5eba88fc2">
+      <segment>
+        <source>Latest messages</source>
+        <target>Latest messages</target>
+      </segment>
+    </unit>
+    <unit id="60a0157d2f087975">
+      <segment>
+        <source>Most of the budget is used.</source>
+        <target>Most of the budget is used.</target>
+      </segment>
+    </unit>
+    <unit id="0e1df050cc0f2816">
+      <segment>
+        <source>No text messages have been sent yet.</source>
+        <target>No text messages have been sent yet.</target>
+      </segment>
+    </unit>
+    <unit id="f498742c19d9bbdb">
+      <segment>
+        <source>Not delivered</source>
+        <target>Not delivered</target>
+      </segment>
+    </unit>
+    <unit id="7d31b83313991d4c">
+      <segment>
+        <source>Notification</source>
+        <target>Notification</target>
+      </segment>
+    </unit>
+    <unit id="f6c4186a4a5bc1ac">
+      <segment>
+        <source>Notifications stop when it runs out; security codes keep a small reserve.</source>
+        <target>Notifications stop when it runs out; security codes keep a small reserve.</target>
+      </segment>
+    </unit>
+    <unit id="0a4c58d81cbfaab3">
+      <segment>
+        <source>Only security codes can still be sent, from a small reserve, until next month. Ask whoever runs your sites to raise the budget.</source>
+        <target>Only security codes can still be sent, from a small reserve, until next month. Ask whoever runs your sites to raise the budget.</target>
+      </segment>
+    </unit>
+    <unit id="efbcd674b4f43dcc">
+      <segment>
+        <source>Parts</source>
+        <target>Parts</target>
+      </segment>
+    </unit>
+    <unit id="c5990d9a8b4de9b1">
+      <segment>
+        <source>Ready: messages are sent with {provider}.</source>
+        <target>Ready: messages are sent with {provider}.</target>
+      </segment>
+    </unit>
+    <unit id="125926006a27ef0d">
+      <segment>
+        <source>Security code</source>
+        <target>Security code</target>
+      </segment>
+    </unit>
+    <unit id="76c999c146c4f730">
+      <segment>
+        <source>Send a test message</source>
+        <target>Send a test message</target>
+      </segment>
+    </unit>
+    <unit id="c16bc82bf1f04ede">
+      <segment>
+        <source>Sent</source>
+        <target>Sent</target>
+      </segment>
+    </unit>
+    <unit id="63b56568a7048508">
+      <segment>
+        <source>Sent this month: {used, number} message parts. There is no limit.</source>
+        <target>Sent this month: {used, number} message parts. There is no limit.</target>
+      </segment>
+    </unit>
+    <unit id="24abafedc7884efe">
+      <segment>
+        <source>The budget is used up.</source>
+        <target>The budget is used up.</target>
+      </segment>
+    </unit>
+    <unit id="e75279a5fb11add2">
+      <segment>
+        <source>The test message is on its way to {phone}.</source>
+        <target>The test message is on its way to {phone}.</target>
+      </segment>
+    </unit>
+    <unit id="fd787ef3d46c9b82">
+      <segment>
+        <source>This month</source>
+        <target>This month</target>
+      </segment>
+    </unit>
+    <unit id="327f0f7c44e29215">
+      <segment>
+        <source>This site sends security codes and the notifications people choose by text message (SMS). Whoever runs your sites sets up the provider.</source>
+        <target>This site sends security codes and the notifications people choose by text message (SMS). Whoever runs your sites sets up the provider.</target>
+      </segment>
+    </unit>
+    <unit id="2bed9adb2ba65e60">
+      <segment>
+        <source>Used this month: {used, number} of {limit, number} message parts ({percent}%).</source>
+        <target>Used this month: {used, number} of {limit, number} message parts ({percent}%).</target>
+      </segment>
+    </unit>
+    <unit id="267024f89b7e5c06">
+      <segment>
+        <source>Waiting to be sent</source>
+        <target>Waiting to be sent</target>
+      </segment>
+    </unit>
+    <unit id="9c753e32b042a770">
+      <segment>
+        <source>Your organisation set up this provider.</source>
+        <target>Your organisation set up this provider.</target>
+      </segment>
+    </unit>
+    <unit id="84542053a6a23eaf">
+      <segment>
+        <source>{site}: a page is waiting for your review. Sign in to the admin panel to see it.</source>
+        <target>{site}: a page is waiting for your review. Sign in to the admin panel to see it.</target>
+      </segment>
+    </unit>
+    <unit id="f1a58d1f2c65ac6f">
+      <segment>
+        <source>The latest messages, newest first. Numbers are partly hidden and the text is never kept.</source>
+        <target>The latest messages, newest first. Numbers are partly hidden and the text is never kept.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

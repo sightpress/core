@@ -10087,5 +10087,155 @@
         <target>{code} é o seu código para {site}. Funciona durante {duration}. Nunca o partilhe.</target>
       </segment>
     </unit>
+    <unit id="69f795122451054b">
+      <segment>
+        <source>Being sent</source>
+        <target>A ser enviada</target>
+      </segment>
+    </unit>
+    <unit id="906115657390f367">
+      <segment>
+        <source>Delivered</source>
+        <target>Entregue</target>
+      </segment>
+    </unit>
+    <unit id="5c28c3f802c75a66">
+      <segment>
+        <source>For example 07700 900123, or with the country code. The test message counts towards the budget.</source>
+        <target>Por exemplo 912 345 678, ou com o indicativo do país. A mensagem de teste conta para o orçamento.</target>
+      </segment>
+    </unit>
+    <unit id="882c6be5eba88fc2">
+      <segment>
+        <source>Latest messages</source>
+        <target>Últimas mensagens</target>
+      </segment>
+    </unit>
+    <unit id="60a0157d2f087975">
+      <segment>
+        <source>Most of the budget is used.</source>
+        <target>A maior parte do orçamento já foi gasta.</target>
+      </segment>
+    </unit>
+    <unit id="0e1df050cc0f2816">
+      <segment>
+        <source>No text messages have been sent yet.</source>
+        <target>Ainda não foram enviadas mensagens de texto.</target>
+      </segment>
+    </unit>
+    <unit id="f498742c19d9bbdb">
+      <segment>
+        <source>Not delivered</source>
+        <target>Não entregue</target>
+      </segment>
+    </unit>
+    <unit id="7d31b83313991d4c">
+      <segment>
+        <source>Notification</source>
+        <target>Notificação</target>
+      </segment>
+    </unit>
+    <unit id="f6c4186a4a5bc1ac">
+      <segment>
+        <source>Notifications stop when it runs out; security codes keep a small reserve.</source>
+        <target>As notificações param quando acabar; os códigos de segurança têm uma pequena reserva.</target>
+      </segment>
+    </unit>
+    <unit id="0a4c58d81cbfaab3">
+      <segment>
+        <source>Only security codes can still be sent, from a small reserve, until next month. Ask whoever runs your sites to raise the budget.</source>
+        <target>Até ao próximo mês só se podem enviar códigos de segurança, de uma pequena reserva. Peça a quem gere os seus sites que aumente o orçamento.</target>
+      </segment>
+    </unit>
+    <unit id="efbcd674b4f43dcc">
+      <segment>
+        <source>Parts</source>
+        <target>Partes</target>
+      </segment>
+    </unit>
+    <unit id="c5990d9a8b4de9b1">
+      <segment>
+        <source>Ready: messages are sent with {provider}.</source>
+        <target>Pronto: as mensagens são enviadas com {provider}.</target>
+      </segment>
+    </unit>
+    <unit id="125926006a27ef0d">
+      <segment>
+        <source>Security code</source>
+        <target>Código de segurança</target>
+      </segment>
+    </unit>
+    <unit id="76c999c146c4f730">
+      <segment>
+        <source>Send a test message</source>
+        <target>Enviar uma mensagem de teste</target>
+      </segment>
+    </unit>
+    <unit id="c16bc82bf1f04ede">
+      <segment>
+        <source>Sent</source>
+        <target>Enviada</target>
+      </segment>
+    </unit>
+    <unit id="63b56568a7048508">
+      <segment>
+        <source>Sent this month: {used, number} message parts. There is no limit.</source>
+        <target>Enviadas este mês: {used, number} partes de mensagem. Não há limite.</target>
+      </segment>
+    </unit>
+    <unit id="24abafedc7884efe">
+      <segment>
+        <source>The budget is used up.</source>
+        <target>O orçamento acabou.</target>
+      </segment>
+    </unit>
+    <unit id="e75279a5fb11add2">
+      <segment>
+        <source>The test message is on its way to {phone}.</source>
+        <target>A mensagem de teste vai a caminho de {phone}.</target>
+      </segment>
+    </unit>
+    <unit id="fd787ef3d46c9b82">
+      <segment>
+        <source>This month</source>
+        <target>Este mês</target>
+      </segment>
+    </unit>
+    <unit id="327f0f7c44e29215">
+      <segment>
+        <source>This site sends security codes and the notifications people choose by text message (SMS). Whoever runs your sites sets up the provider.</source>
+        <target>Este site envia por mensagem de texto (SMS) códigos de segurança e as notificações que as pessoas escolhem. Quem gere os seus sites configura o fornecedor.</target>
+      </segment>
+    </unit>
+    <unit id="2bed9adb2ba65e60">
+      <segment>
+        <source>Used this month: {used, number} of {limit, number} message parts ({percent}%).</source>
+        <target>Gasto este mês: {used, number} de {limit, number} partes de mensagem ({percent}%).</target>
+      </segment>
+    </unit>
+    <unit id="267024f89b7e5c06">
+      <segment>
+        <source>Waiting to be sent</source>
+        <target>À espera de envio</target>
+      </segment>
+    </unit>
+    <unit id="9c753e32b042a770">
+      <segment>
+        <source>Your organisation set up this provider.</source>
+        <target>Foi a sua organização que configurou este fornecedor.</target>
+      </segment>
+    </unit>
+    <unit id="84542053a6a23eaf">
+      <segment>
+        <source>{site}: a page is waiting for your review. Sign in to the admin panel to see it.</source>
+        <target>{site}: tem uma página para rever. Entre no painel de administração para a ver.</target>
+      </segment>
+    </unit>
+    <unit id="f1a58d1f2c65ac6f">
+      <segment>
+        <source>The latest messages, newest first. Numbers are partly hidden and the text is never kept.</source>
+        <target>As últimas mensagens, da mais recente para a mais antiga. Os números estão parcialmente ocultos e o texto nunca é guardado.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

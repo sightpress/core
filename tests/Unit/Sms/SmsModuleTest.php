@@ -28,6 +28,7 @@ use SightPress\Core\Tenant\ModuleTurnOnCheck;
 #[CoversClass(SmsModule::class)]
 #[CoversClass(SmsMigrations::class)]
 #[CoversClass(Version20261125100000::class)]
+#[CoversClass(\SightPress\Core\Sms\Migrations\Version20261125300000::class)]
 #[UsesNamespace('SightPress\Core')]
 final class SmsModuleTest extends TestCase
 {
@@ -48,13 +49,16 @@ final class SmsModuleTest extends TestCase
         self::assertSame(SmsSetup::class, $registry->services()[ModuleTurnOnCheck::PREFIX . 'sms']->item->class);
         self::assertSame([TwilioProvider::class, VonageProvider::class], array_map(static fn ($provider) => $provider->item, $registry->smsProviders()));
         $routes = array_values(array_filter($registry->routes(), static fn ($route) => $route->module === 'sms'));
-        self::assertSame([['sms.webhook', '/_sms/webhook', ['POST'], []]], array_map(static fn ($route) => [$route->item->name, $route->item->path, $route->item->methods, $route->item->middleware], $routes));
+        self::assertSame([['sms.webhook', '/_sms/webhook', ['POST'], []], ['sms.admin', '/admin/sms', ['GET', 'POST'], [\SightPress\Core\Rbac\Contract\AdminAccessMiddleware::class]]], array_map(static fn ($route) => [$route->item->name, $route->item->path, $route->item->methods, $route->item->middleware], $routes));
         $permissions = array_values(array_filter($registry->permissions(), static fn ($permission) => $permission->module === 'sms'));
         self::assertSame([['sms.manage', ['admin']]], array_map(static fn ($permission) => [$permission->item->name, $permission->item->defaultRoles], $permissions));
         self::assertSame(
             [SetSmsCommand::class, RemoveSmsCommand::class, EnableSmsCommand::class, DisableSmsCommand::class, TestSmsCommand::class],
             array_values(array_map(static fn ($command) => $command->item, array_filter($registry->commands(), static fn ($command) => $command->module === 'sms'))),
         );
+        $menu = array_values(array_filter($registry->adminMenu(), static fn ($item) => $item->module === 'sms'));
+        self::assertSame([['Text messages', 'sms.manage', 'admin.settings']], array_map(static fn ($item) => [$item->item->label, $item->item->permission, $item->item->parent], $menu));
+        self::assertSame([[\SightPress\Core\Site\Contract\ScheduleDue::class, \SightPress\Core\Sms\SmsOutboxJob::class], [\SightPress\Core\Sms\Contract\TextMessageOptChanged::class, \SightPress\Core\Sms\TextRepliesToAccounts::class]], array_map(static fn ($listener) => [$listener->item->event, $listener->item->listener], array_values(array_filter($registry->listeners(), static fn ($listener) => $listener->module === 'sms'))));
         $migrations = new SmsMigrations();
         self::assertSame(['SightPress\Core\Sms\Migrations', true], [$migrations->namespace(), is_dir($migrations->directory())]);
     }
@@ -72,6 +76,12 @@ final class SmsModuleTest extends TestCase
             array_map(static fn ($column): string => $column->getObjectName()->toString(), $schema->getTable('sms_message')->getColumns()),
         );
         self::assertTrue($schema->hasTable('sms_opt_out') && $schema->hasTable('sms_webhook_report'));
+        $outbox = new \SightPress\Core\Sms\Migrations\Version20261125300000($connection, new \Psr\Log\NullLogger());
+        $outbox->up($schema);
+        self::assertSame('Add the to_e164 and kind columns to sms_message.', $outbox->getDescription());
+        self::assertTrue($schema->getTable('sms_message')->hasColumn('to_e164') && $schema->getTable('sms_message')->hasColumn('kind'));
+        $outbox->down($schema);
+        self::assertFalse($schema->getTable('sms_message')->hasColumn('to_e164'));
         $migration->down($schema);
         self::assertFalse($schema->hasTable('sms_message') || $schema->hasTable('sms_opt_out') || $schema->hasTable('sms_webhook_report'));
     }

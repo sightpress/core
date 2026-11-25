@@ -73,3 +73,28 @@ test('the step can be skipped', async ({ page }) => {
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(`${SITE}/admin`);
 });
+
+test('an admin checks the text messages screen and sends a test by keyboard', async ({ page, request }) => {
+  await signInAs(page, 'ada@example.org', '/admin/sms');
+  await page.getByRole('button', { name: 'Skip for now' }).click();
+  await expect(page).toHaveURL(`${SITE}/admin/sms`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Text messages');
+  await expect(page.getByText('Ready: messages are sent with Test SMS.')).toBeVisible();
+  await expect(page.getByText('No text messages have been sent yet.')).toBeVisible();
+  await expectNoViolations(page);
+
+  await page.getByLabel('Mobile number').fill('nonsense');
+  await page.getByLabel('Mobile number').press('Enter');
+  await expect(page.locator('#sms-test-errors')).toBeFocused();
+  await expect(page.getByLabel('Mobile number')).toHaveAttribute('aria-invalid', 'true');
+  await expectNoViolations(page);
+
+  await page.getByLabel('Mobile number').fill('07400 123456');
+  await page.getByLabel('Mobile number').press('Enter');
+  await expect(page.getByRole('status')).toHaveText('The test message is on its way to +44•••••••456.');
+  const table = page.getByRole('table', { name: 'The latest messages, newest first. Numbers are partly hidden and the text is never kept.' });
+  await expect(table.getByRole('cell', { name: '+44•••••••456' })).toBeVisible();
+  await expectNoViolations(page);
+  const text = await (await request.get(`${SITE}/_test/texts?to=%2B447400123456`)).json() as { text: string };
+  expect(text.text).toBe('Test message from Riverside Library: text messages work.');
+});

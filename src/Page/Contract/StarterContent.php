@@ -168,6 +168,7 @@ final readonly class StarterContent
             'date' => (string) new IntlDateFormatter(str_replace('-', '_', $locale), IntlDateFormatter::LONG, IntlDateFormatter::NONE, $this->site->defaultTimezone)->format($this->clock->now()),
             'links' => $this->links($locale),
             'analytics' => $this->modules->has('analytics'),
+            'text_messages' => $this->modules->has('sms'),
         ]);
         $blocks = [['type' => 'rich_text', 'version' => 1, 'data' => ['html' => $html]]];
         if ($slug === 'contact') {

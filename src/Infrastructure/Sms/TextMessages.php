@@ -15,6 +15,11 @@ use SightPress\Core\Sms\SmsSetup;
 use SightPress\Core\Template\Message;
 use SightPress\Core\Tenant\Site;
 use SightPress\Core\Tenant\TenantConfig;
+use SightPress\Core\Template\Translations;
+use SightPress\Core\Template\Viewer;
+use SightPress\Core\User\Contract\AccountPhones;
+use SightPress\Core\User\Contract\AccountPreferences;
+use SightPress\Module\Notification\NotificationChannel;
 use SightPress\Module\Sms\PhoneLookupResult;
 use SightPress\Module\Sms\PhoneNumber;
 use SightPress\Module\Sms\SmsMessage;
@@ -126,6 +131,49 @@ final readonly class TextMessages
     public function sendCode(PhoneNumber $to, string $text, ?int $accountId, ?string $client): void
     {
         $this->sender()->send(new SmsMessage($to, $text, SmsPurpose::SecurityCode), $accountId, $client);
+    }
+
+    /**
+     * How a notification reaches a person: always by email, and by text too while text messages are on and they chose
+     * this one, have a confirmed number and haven't replied STOP (N-4).
+     *
+     * @return list<NotificationChannel>
+     */
+    public function channelsFor(int $accountId, string $notification): array
+    {
+        return $this->textNumber($accountId, $notification) === null ? [NotificationChannel::Email] : [NotificationChannel::Email, NotificationChannel::Sms];
+    }
+
+    /**
+     * Puts a text notification in the outbox, in the person's language, when {@see channelsFor()} includes text. The
+     * text must hold no page content and no secret: say what happened and that the admin panel has the rest.
+     *
+     * @return bool whether it was queued
+     */
+    public function notify(int $accountId, string $notification, Message $text): bool
+    {
+        $number = $this->textNumber($accountId, $notification);
+        if ($number === null || $notification === '') {
+            return false;
+        }
+        $viewer = Viewer::recipient(Services::get($this->container, AccountPreferences::class)->preferencesOf($accountId), $this->site);
+        try {
+            $this->sender()->queue(new SmsMessage(new PhoneNumber($number), Services::get($this->container, Translations::class)->translate($text, [], $viewer->locale)), $accountId, $notification);
+        } catch (SmsRefused) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * The person's confirmed number when this notification goes to them by text, else null.
+     */
+    private function textNumber(int $accountId, string $notification): ?string
+    {
+        $phone = $this->isOn() ? Services::get($this->container, AccountPhones::class)->phoneOf($accountId) : null;
+
+        return $phone !== null && $phone->wants($notification) ? $phone->e164 : null;
     }
 
     /**

@@ -54,7 +54,58 @@ final readonly class SmsSender
      */
     public function send(SmsMessage $message, ?int $userId = null, ?string $client = null): SmsResult
     {
-        [$provider, $connection] = $this->ready();
+        [$provider] = $this->ready();
+        $hash = $this->guard($message, $provider, $userId, $client);
+
+        return $this->transmit($this->log->start($message, $hash, $provider->id(), $userId, $this->clock->now()), $message);
+    }
+
+    /**
+     * Puts a notification in the outbox for the next `schedule:run` (gap 8), after the checks that don't depend on
+     * when it is sent. Returns its id in the log.
+     *
+     * @param non-empty-string $kind which notification it is, for example `review_request`
+     *
+     * @throws SmsRefused
+     */
+    public function queue(SmsMessage $message, ?int $userId, string $kind): int
+    {
+        [$provider] = $this->ready();
+        $this->checkLocally($message->to, $provider);
+        if ($this->optOuts->stopped($this->hash->of($message->to))) {
+            throw new SmsRefused(SmsError::message(SmsFailure::OptedOut), SmsFailure::OptedOut);
+        }
+
+        return $this->log->start($message, $this->hash->of($message->to), $provider->id(), $userId, $this->clock->now(), queued: true, kind: $kind);
+    }
+
+    /**
+     * Sends a notification from the outbox that {@see SmsLog::claim()} took, with every check again (a STOP reply,
+     * the site's limit or the budget may have changed since it was queued). A refused one is marked failed.
+     *
+     * @throws SmsRefused
+     */
+    public function deliver(int $id, SmsMessage $message, ?int $userId): SmsResult
+    {
+        try {
+            [$provider] = $this->ready();
+            $this->guard($message, $provider, $userId, null);
+        } catch (SmsRefused $refused) {
+            $this->log->failed($id, $refused->failure->value ?? 'refused', $this->clock->now());
+
+            throw $refused;
+        }
+
+        return $this->transmit($id, $message);
+    }
+
+    /**
+     * Every check before a message goes: the number, STOP replies, the limits and the budget. Returns the number's hash.
+     *
+     * @throws SmsRefused
+     */
+    private function guard(SmsMessage $message, SmsProvider $provider, ?int $userId, ?string $client): string
+    {
         $this->checkLocally($message->to, $provider);
         $code = $message->purpose === SmsPurpose::SecurityCode;
         $hash = $this->hash->of($message->to);
@@ -71,7 +122,15 @@ final readonly class SmsSender
             throw new SmsRefused(new Message('This site has used its text message budget for this month. Ask whoever runs your sites to raise it.'), SmsFailure::NoCredit);
         }
 
-        $id = $this->log->start($message, $hash, $provider->id(), $userId, $this->clock->now());
+        return $hash;
+    }
+
+    /**
+     * @throws SmsRefused
+     */
+    private function transmit(int $id, SmsMessage $message): SmsResult
+    {
+        [$provider, $connection] = $this->ready();
         try {
             $result = $provider->send($message, $connection);
         } catch (SmsException $exception) {

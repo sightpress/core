@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Sms;
 
+use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
+use SightPress\Core\Sms\Admin\TextMessagesHandler;
 use SightPress\Core\Sms\Command\DisableSmsCommand;
 use SightPress\Core\Sms\Command\EnableSmsCommand;
 use SightPress\Core\Sms\Command\RemoveSmsCommand;
@@ -14,8 +16,10 @@ use SightPress\Core\Sms\Http\SmsHttp;
 use SightPress\Core\Sms\Http\SmsWebhookHandler;
 use SightPress\Core\Sms\Provider\TwilioProvider;
 use SightPress\Core\Sms\Provider\VonageProvider;
+use SightPress\Core\Site\Contract\ScheduleDue;
 use SightPress\Core\Tenant\ModuleTurnOnCheck;
 use SightPress\Module\Access\Permission;
+use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
@@ -56,6 +60,9 @@ final class SmsModule implements ModuleInterface
         foreach ([SmsSetup::class, SmsSender::class] as $class) {
             $services->autowire($class, public: true);
         }
+        $services->autowire(SmsOutbox::class);
+        $services->autowire(SmsOutboxJob::class);
+        $registrar->subscribers()->listen(ScheduleDue::class, SmsOutboxJob::class);
         $services->autowire(SmsSetup::class, ModuleTurnOnCheck::PREFIX . self::ID);
 
         $registrar->permissions()->add(new Permission(self::MANAGE, 'Manage text messages', 'See the text messages the site sent and its monthly budget, and send a test message.', ['admin']));
@@ -71,6 +78,11 @@ final class SmsModule implements ModuleInterface
 
         $services->autowire(SmsWebhookHandler::class);
         $registrar->routes()->add(new Route('sms.webhook', SmsWebhookHandler::PATH, SmsWebhookHandler::class, ['POST']));
+
+        $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/sms');
+        $services->autowire(TextMessagesHandler::class);
+        $registrar->routes()->add(new Route('sms.admin', TextMessagesHandler::PATH, TextMessagesHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $registrar->adminMenu()->add(new AdminMenuItem('sms.admin', 'Text messages', 'sms.admin', self::MANAGE, 'admin.settings', 30));
 
         foreach ([SetSmsCommand::class, RemoveSmsCommand::class, EnableSmsCommand::class, DisableSmsCommand::class, TestSmsCommand::class] as $command) {
             $registrar->commands()->add($command);

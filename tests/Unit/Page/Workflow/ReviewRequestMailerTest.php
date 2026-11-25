@@ -66,7 +66,7 @@ final class ReviewRequestMailerTest extends TestCase
         $this->auth->user('ed@example.org', 'editor');
         $site = PageFixture::site(['en-GB', 'pt-PT']);
         $page = $this->pages->editor()->create('pt-PT', new PageContent('Horário'));
-        $mailer = new ReviewRequestMailer($this->pages->repository(), new RoleRepository($this->auth->database->entityManager), new UserRepository($this->auth->database->entityManager), $this->auth, $this->auth->templates, $this->auth->http, $site, new UserRepository($this->auth->database->entityManager), $this->auth->translations);
+        $mailer = new ReviewRequestMailer($this->pages->repository(), new RoleRepository($this->auth->database->entityManager), new UserRepository($this->auth->database->entityManager), $this->auth, $this->auth->templates, $this->auth->http, $site, new UserRepository($this->auth->database->entityManager), $this->auth->translations, $this->auth->texts());
 
         $mailer(new PageTransitioned((int) $page->id(), PageTransition::Submit->value, PageState::Draft->value, PageState::InReview->value, null));
 
@@ -89,7 +89,7 @@ final class ReviewRequestMailerTest extends TestCase
     {
         $entityManager = $this->auth->database->entityManager;
 
-        return new ReviewRequestMailer($this->pages->repository(), new RoleRepository($entityManager), new UserRepository($entityManager), $this->auth, $this->auth->templates, $this->auth->http, $this->pages->site, new UserRepository($entityManager), $this->auth->translations);
+        return new ReviewRequestMailer($this->pages->repository(), new RoleRepository($entityManager), new UserRepository($entityManager), $this->auth, $this->auth->templates, $this->auth->http, $this->pages->site, new UserRepository($entityManager), $this->auth->translations, $this->auth->texts());
     }
 
     /**

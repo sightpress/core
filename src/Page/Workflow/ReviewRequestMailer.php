@@ -7,6 +7,7 @@ namespace SightPress\Core\Page\Workflow;
 use SightPress\Core\User\Contract\AccountPreferences;
 use SightPress\Core\Template\Viewer;
 use SightPress\Core\Template\Translations;
+use SightPress\Core\Infrastructure\Sms\TextMessages;
 use SightPress\Core\Template\Message;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use SightPress\Core\Infrastructure\Mail\MailSender;
@@ -29,6 +30,9 @@ final readonly class ReviewRequestMailer
     /** Address of a page in the admin's page editor (C-7.2). */
     public const string EDIT_PATH = '/admin/pages/%d';
 
+    /** The text notification people choose on My account (N-4). */
+    public const string TEXT_NOTIFICATION = 'review_request';
+
     public function __construct(
         private PageRepository $pages,
         private PermissionHolders $holders,
@@ -39,6 +43,7 @@ final readonly class ReviewRequestMailer
         private Site $site,
         private AccountPreferences $preferences,
         private Translations $translations,
+        private TextMessages $texts,
     ) {
     }
 
@@ -73,6 +78,8 @@ final readonly class ReviewRequestMailer
                 ->subject($this->translations->translate(new Message('Please review "{title}" on {site}', ['title' => $title, 'site' => $this->site->name]), [], $viewer->locale))
                 ->text($this->templates->render($own, '@page/email/review.txt.twig', $context))
                 ->html($this->templates->render($own, '@page/email/review.html.twig', $context)));
+            // By text too, for people who chose it (N-4): no page title or other content, and no link.
+            $this->texts->notify((int) $reviewer->id(), self::TEXT_NOTIFICATION, new Message('{site}: a page is waiting for your review. Sign in to the admin panel to see it.', ['site' => $this->site->name]));
         }
     }
 }

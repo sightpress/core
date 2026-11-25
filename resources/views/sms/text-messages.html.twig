@@ -1,0 +1,75 @@
+{#
+    Text messages (/admin/sms, N-4), for people with sms.manage: whether the site can send (and with which provider),
+    the budget used this month, the latest messages in a table (numbers masked, never the text) and "Send a test
+    message". After a refused test the error summary gets focus.
+    Context: see TextMessagesHandler.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Text messages') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Text messages') }}</h1>
+<p>{{ t('This site sends security codes and the notifications people choose by text message (SMS). Whoever runs your sites sets up the provider.') }}</p>
+{{ f.error_summary(form) }}
+<section class="admin-panel" aria-labelledby="sms-status-title">
+    <h2 id="sms-status-title">{{ t('Status') }}</h2>
+    {%- if ready %}
+    <p>{{ t('Ready: messages are sent with {provider}.', {provider: provider}) }}{% if from_organisation %} {{ t('Your organisation set up this provider.') }}{% endif %}</p>
+    {%- else %}
+    <p>{{ t('Not ready yet.') }} {{ t(problem) }}</p>
+    {%- endif %}
+</section>
+
+<section class="admin-panel" aria-labelledby="sms-budget-title">
+    <h2 id="sms-budget-title">{{ t('This month') }}</h2>
+    {%- if budget.limit > 0 %}
+    <p>{{ t('Used this month: {used, number} of {limit, number} message parts ({percent}%).', {used: budget.used, limit: budget.limit, percent: budget.percent}) }}</p>
+    {%- if budget.isUsedUp %}
+    <p class="notice notice--warning"><strong>{{ t('The budget is used up.') }}</strong> {{ t('Only security codes can still be sent, from a small reserve, until next month. Ask whoever runs your sites to raise the budget.') }}</p>
+    {%- elseif budget.isWarning %}
+    <p class="notice notice--warning"><strong>{{ t('Most of the budget is used.') }}</strong> {{ t('Notifications stop when it runs out; security codes keep a small reserve.') }}</p>
+    {%- endif %}
+    {%- else %}
+    <p>{{ t('Sent this month: {used, number} message parts. There is no limit.', {used: budget.used}) }}</p>
+    {%- endif %}
+</section>
+
+<section class="admin-panel" aria-labelledby="sms-test-title">
+    <h2 id="sms-test-title">{{ t('Send a test message') }}</h2>
+    {{ f.start(form, action) }}
+        {{ f.field(form, 'to') }}
+        {{ f.submit(t('Send a test message')) }}
+    {{ f.end() }}
+</section>
+
+<section class="admin-panel" aria-labelledby="sms-log-title">
+    <h2 id="sms-log-title">{{ t('Latest messages') }}</h2>
+    {%- if log is empty %}
+    <p>{{ t('No text messages have been sent yet.') }}</p>
+    {%- else %}
+    <table>
+        <caption>{{ t('The latest messages, newest first. Numbers are partly hidden and the text is never kept.') }}</caption>
+        <thead>
+            <tr><th scope="col">{{ t('When') }}</th><th scope="col">{{ t('What') }}</th><th scope="col">{{ t('To') }}</th><th scope="col">{{ t('Parts') }}</th><th scope="col">{{ t('What happened') }}</th></tr>
+        </thead>
+        <tbody>
+            {%- for message in log %}
+            <tr>
+                <td><time datetime="{{ message.at|date('Y-m-d\\TH:i:s\\Z', 'UTC') }}">{{ message.at|user_datetime }}</time></td>
+                <td>{{ message.purpose == 'security_code' ? t('Security code') : t('Notification') }}</td>
+                <td>{{ message.to }}</td>
+                <td>{{ message.parts }}</td>
+                <td>
+                    {%- if message.status == 'queued' %}{{ t('Waiting to be sent') }}
+                    {%- elseif message.status == 'sending' %}{{ t('Being sent') }}
+                    {%- elseif message.status == 'delivered' %}{{ t('Delivered') }}
+                    {%- elseif message.status == 'failed' %}{{ t('Not delivered') }}{% if message.failure %} ({{ message.failure|replace({'_': ' '}) }}){% endif %}
+                    {%- else %}{{ t('Sent') }}{% endif -%}
+                </td>
+            </tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+    {%- endif %}
+</section>
+{% endblock %}
