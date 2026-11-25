@@ -23,6 +23,8 @@ use SightPress\Core\Auth\Http\ChangePhoneCodeHandler;
 use SightPress\Core\Auth\Http\ChangePhoneHandler;
 use SightPress\Core\Auth\Account\PhoneChange;
 use SightPress\Core\Auth\PhonePrompt;
+use SightPress\Core\Auth\PasswordChangedNotice;
+use SightPress\Core\Auth\SignInIdentifier;
 use SightPress\Core\Auth\Account\EmailChange;
 use SightPress\Core\Auth\Http\ForgotPasswordHandler;
 use SightPress\Core\Auth\Http\LoginHandler;
@@ -103,7 +105,7 @@ final class AuthModule implements ModuleInterface
             return $policies->emailDomains === null ? new AnyEmailPolicy() : new DomainsEmailPolicy($policies);
         }, public: true);
         $services->autowire(TenantDomainRegistration::class, DomainRegistration::class, public: true);
-        foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class, SelfRegistration::class, RegistrationMailer::class, RegisterHandler::class, RegisterCodeHandler::class, ForgetUnconfirmedAccounts::class, EmailChange::class, ChangePasswordHandler::class, ChangeEmailHandler::class, ChangeEmailCodeHandler::class, PhoneChange::class, PhonePrompt::class, ChangePhoneHandler::class, ChangePhoneCodeHandler::class] as $class) {
+        foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class, SelfRegistration::class, RegistrationMailer::class, RegisterHandler::class, RegisterCodeHandler::class, ForgetUnconfirmedAccounts::class, EmailChange::class, ChangePasswordHandler::class, ChangeEmailHandler::class, ChangeEmailCodeHandler::class, PhoneChange::class, PhonePrompt::class, SignInIdentifier::class, PasswordChangedNotice::class, ChangePhoneHandler::class, ChangePhoneCodeHandler::class] as $class) {
             $services->autowire($class);
         }
 

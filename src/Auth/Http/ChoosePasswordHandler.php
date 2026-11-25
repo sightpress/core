@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Auth\CodeSession;
 use SightPress\Core\Auth\Contract\Passwords;
+use SightPress\Core\Auth\PasswordChangedNotice;
 use SightPress\Core\Auth\PasswordReset;
 use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
@@ -37,6 +38,7 @@ final readonly class ChoosePasswordHandler implements RequestHandlerInterface
         private Accounts $accounts,
         private ClockInterface $clock,
         private Passwords $passwords,
+        private PasswordChangedNotice $notice,
     ) {
     }
 
@@ -77,6 +79,10 @@ final readonly class ChoosePasswordHandler implements RequestHandlerInterface
 
         $first = $account->isPending();
         $this->reset->complete($account, $form->text('password'));
+        if (!$first) {
+            $this->notice->send($request, $account, $session->get(ResetCodeHandler::BY_TEXT) === true);
+        }
+        $session->remove(ResetCodeHandler::BY_TEXT);
         CodeSession::clear($session);
         Flash::add($session, $first
             ? 'Your password has been set. Sign in with it now.'

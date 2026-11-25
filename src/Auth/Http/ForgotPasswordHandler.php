@@ -12,6 +12,7 @@ use SightPress\Core\Auth\Contract\TooManyCodes;
 use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Auth\EvenTiming;
 use SightPress\Core\Auth\PasswordReset;
+use SightPress\Core\Auth\SignInIdentifier;
 use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
@@ -32,14 +33,24 @@ final readonly class ForgotPasswordHandler implements RequestHandlerInterface
         private FormValidator $validator,
         private PasswordReset $reset,
         private EvenTiming $timing,
+        private SignInIdentifier $identifiers,
     ) {
     }
 
-    public static function form(): Form
+    /**
+     * @param bool $phones whether a mobile number works too (N-5)
+     */
+    public static function form(bool $phones = false): Form
     {
         return Form::create(
             'forgot-password',
-            new Field(
+            $phones ? new Field(
+                'email',
+                'Email address or mobile number',
+                hint: 'The address or confirmed number you sign in with. Mobile numbers can start with + and the country code.',
+                autocomplete: 'username',
+                requiredMessage: 'Enter your email address or mobile number',
+            ) : new Field(
                 'email',
                 'Email address',
                 FieldType::Email,
@@ -52,15 +63,16 @@ final readonly class ForgotPasswordHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if ($request->getMethod() !== 'POST') {
-            return $this->pages->page($request, 'forgot.html.twig', ['form' => self::form()]);
+            return $this->pages->page($request, 'forgot.html.twig', ['form' => self::form($this->identifiers->phonesAccepted()), 'phones' => $this->identifiers->phonesAccepted()]);
         }
 
-        $form = $this->validator->submit(self::form(), AuthPages::body($request));
+        $phones = $this->identifiers->phonesAccepted();
+        $form = $this->validator->submit(self::form($phones), AuthPages::body($request));
         if (!$form->isValid()) {
-            return $this->pages->page($request, 'forgot.html.twig', ['form' => $form], 422);
+            return $this->pages->page($request, 'forgot.html.twig', ['form' => $form, 'phones' => $phones], 422);
         }
 
-        $email = mb_strtolower($form->text('email'));
+        $email = $this->identifiers->normalise($form->text('email'));
         $limited = $this->timing->run(function () use ($request, $email): ?TooManyCodes {
             try {
                 $this->reset->request($request, $email);
@@ -73,6 +85,7 @@ final readonly class ForgotPasswordHandler implements RequestHandlerInterface
         if ($limited !== null && !$limited->tooSoon) {
             return $this->pages->page($request, 'forgot.html.twig', [
                 'form' => $form->withErrors(['email' => AuthPages::tooManyAttempts('asked for a code', $limited->retryAfter)]),
+                'phones' => $phones,
             ], 429);
         }
 

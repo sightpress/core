@@ -328,7 +328,7 @@ final class AccountSignInDetailsTest extends TestCase
 
     private function passwordHandler(): ChangePasswordHandler
     {
-        return new ChangePasswordHandler($this->auth->pages(), $this->auth->validator(), $this->auth->users, $this->auth->signIn(), $this->auth->passwords(), $this->auth->rememberTokens(), $this->auth->clock, $this->events);
+        return new ChangePasswordHandler($this->auth->pages(), $this->auth->validator(), $this->auth->users, $this->auth->signIn(), $this->auth->passwords(), $this->auth->rememberTokens(), $this->auth->clock, $this->events, $this->auth->passwordChangedNotice());
     }
 
     private function emailChange(EmailPolicy $policy = new AnyEmailPolicy()): EmailChange

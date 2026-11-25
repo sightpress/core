@@ -29,6 +29,7 @@ final readonly class SignIn
     public const string SESSION_STAMP = 'auth.password_stamp';
 
     public function __construct(
+        private SignInIdentifier $identifiers,
         private Accounts $accounts,
         private PasswordHasher $hasher,
         private RateLimiters $limiters,
@@ -37,9 +38,15 @@ final readonly class SignIn
     ) {
     }
 
-    public function attempt(ServerRequestInterface $request, string $email, #[SensitiveParameter] string $password): SignInResult
+    /**
+     * Signs in with an email address or, while text messages are on, a confirmed mobile number (N-5). Wrong tries are
+     * counted per account when the identifier names one, so switching between the email address and the number
+     * doesn't start the count again; otherwise per identifier.
+     */
+    public function attempt(ServerRequestInterface $request, #[SensitiveParameter] string $identifier, #[SensitiveParameter] string $password): SignInResult
     {
-        $limiter = $this->limiter($request, $email);
+        $account = $this->identifiers->account($identifier);
+        $limiter = $this->limiter($request, $account === null ? 'id:' . $this->identifiers->normalise($identifier) : 'account:' . $account->id());
         $limit = $limiter->consume();
         if (!$limit->isAccepted()) {
             return SignInResult::throttled(
@@ -47,7 +54,6 @@ final readonly class SignIn
             );
         }
 
-        $account = $this->accounts->findAccountByEmail($email);
         $hash = $account?->passwordHash();
         if (!$this->hasher->verify($password, $hash) || $account === null || $hash === null) {
             return SignInResult::wrongCredentials();
@@ -76,7 +82,7 @@ final readonly class SignIn
      */
     public function confirmPassword(ServerRequestInterface $request, Account $account, #[SensitiveParameter] string $password): SignInResult
     {
-        $limiter = $this->limiter($request, $account->email());
+        $limiter = $this->limiter($request, 'account:' . $account->id());
         $limit = $limiter->consume();
         if (!$limit->isAccepted()) {
             return SignInResult::throttled(RateLimiters::secondsUntil($limit->getRetryAfter()));
@@ -131,11 +137,11 @@ final readonly class SignIn
         return $session->get(self::SESSION_SITE) === $this->site->id && is_int($user) ? $user : null;
     }
 
-    private function limiter(ServerRequestInterface $request, string $email): LimiterInterface
+    private function limiter(ServerRequestInterface $request, string $key): LimiterInterface
     {
         $address = $request->getServerParams()['REMOTE_ADDR'] ?? null;
 
-        return $this->limiters->limiter('sign_in', mb_strtolower(trim($email)) . '|' . (is_string($address) ? $address : 'unknown'));
+        return $this->limiters->limiter('sign_in', $key . '|' . (is_string($address) ? $address : 'unknown'));
     }
 
     private static function stamp(Account $account): string

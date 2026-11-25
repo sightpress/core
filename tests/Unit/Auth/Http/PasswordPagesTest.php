@@ -246,7 +246,7 @@ final class PasswordPagesTest extends TestCase
      */
     private function forgot(string $method, array $body = []): ResponseInterface
     {
-        return new ForgotPasswordHandler($this->auth->pages(), $this->auth->validator(), $this->auth->passwordReset(), $this->auth->timing())
+        return new ForgotPasswordHandler($this->auth->pages(), $this->auth->validator(), $this->auth->passwordReset(), $this->auth->timing(), $this->auth->identifiers())
             ->handle($this->auth->request($method, 'https://demo.example/login/forgot', $body, session: $this->session));
     }
 
@@ -273,7 +273,7 @@ final class PasswordPagesTest extends TestCase
      */
     private function choose(string $method, array $body = []): ResponseInterface
     {
-        return new ChoosePasswordHandler($this->auth->pages(), $this->auth->validator(), $this->auth->passwordReset(), $this->auth->users, $this->auth->clock, $this->auth->passwords())
+        return new ChoosePasswordHandler($this->auth->pages(), $this->auth->validator(), $this->auth->passwordReset(), $this->auth->users, $this->auth->clock, $this->auth->passwords(), $this->auth->passwordChangedNotice())
             ->handle($this->auth->request($method, 'https://demo.example/login/password', $body, session: $this->session));
     }
 }

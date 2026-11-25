@@ -3,7 +3,12 @@
 {% block title %}{{ t('Reset your password') }}{% endblock %}
 {% block content %}
 <h1>{{ t('Reset your password') }}</h1>
+{%- if phones|default(false) %}
+<p>{{ t('Enter the email address or the confirmed mobile number you sign in with. We will send you a 6-digit code to type on the next page: by text to a number, by email to an address.') }}</p>
+<p>{{ t('People who manage the site reset their password by email only, to keep it safe.') }}</p>
+{%- else %}
 <p>{{ t('Enter the email address you sign in with. We will email you a 6-digit code to type on the next page.') }}</p>
+{%- endif %}
 {{ f.error_summary(form) }}
 {{ f.start(form, '/login/forgot') }}
     {{ f.field(form, 'email') }}

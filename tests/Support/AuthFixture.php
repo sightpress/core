@@ -172,7 +172,12 @@ final class AuthFixture implements MailSender
 
     public function signIn(): SignIn
     {
-        return new SignIn($this->users, $this->hasher, $this->limiters, $this->clock, $this->site);
+        return new SignIn($this->identifiers(), $this->users, $this->hasher, $this->limiters, $this->clock, $this->site);
+    }
+
+    public function identifiers(): \SightPress\Core\Auth\SignInIdentifier
+    {
+        return new \SightPress\Core\Auth\SignInIdentifier($this->users, $this->users, $this->texts());
     }
 
     public function rememberTokens(): RememberTokens
@@ -214,7 +219,15 @@ final class AuthFixture implements MailSender
             $this->site,
             $this->users,
             $this->translations,
+            $this->identifiers(),
+            $this->texts(),
+            $this->database->roles(),
         );
+    }
+
+    public function passwordChangedNotice(): \SightPress\Core\Auth\PasswordChangedNotice
+    {
+        return new \SightPress\Core\Auth\PasswordChangedNotice($this, $this->templates, $this->translations, $this->users, $this->site);
     }
 
     /**

@@ -7,6 +7,9 @@ namespace SightPress\Core\Auth;
 use SightPress\Core\User\Contract\AccountPreferences;
 use SightPress\Core\Template\Viewer;
 use SightPress\Core\Template\Translations;
+use SightPress\Core\Infrastructure\Sms\TextMessages;
+use SightPress\Core\Rbac\Contract\PermissionLookup;
+use SightPress\Core\Sms\Contract\SmsRefused;
 use SightPress\Core\Template\Message;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Clock\ClockInterface;
@@ -47,8 +50,17 @@ final readonly class PasswordReset
         private Site $site,
         private AccountPreferences $preferences,
         private Translations $translations,
+        private SignInIdentifier $identifiers,
+        private TextMessages $texts,
+        private PermissionLookup $permissions,
     ) {
     }
+
+    /**
+     * Permissions that make an account manage the site: such accounts never reset their password by text (gap 9),
+     * because whoever controls the number (a SIM swap, a recycled number) could then take the site over.
+     */
+    public const array ADMIN_LEVEL = ['user.manage', 'role.manage', 'settings.manage', 'module.manage', 'security.manage'];
 
     public static function client(ServerRequestInterface $request): string
     {
@@ -59,12 +71,35 @@ final readonly class PasswordReset
 
     /**
      * Makes a code for the address and emails it if the address has an account that can sign in, or is waiting
-     * for its first password.
+     * for its first password. While text messages are on, a mobile number works too: the code goes by text to an
+     * account that confirmed the number and may reset that way ({@see mayResetByText()}). The answer is the same
+     * whether or not anything was sent.
      *
      * @throws TooManyCodes
      */
     public function request(ServerRequestInterface $request, string $email): void
     {
+        $phone = $this->identifiers->phone($email);
+        if ($phone !== null) {
+            $account = $this->identifiers->account($email);
+            $eligible = $account !== null && $account->isActive() && $this->mayResetByText($account) ? $account : null;
+            $code = $this->codes->request(VerificationPurpose::PasswordReset, VerificationChannel::Sms, $phone->e164, $eligible?->id(), self::client($request));
+            if ($eligible !== null) {
+                $viewer = Viewer::recipient($this->preferences->preferencesOf((int) $eligible->id()), $this->site);
+                try {
+                    $this->texts->sendCode($phone, $this->translations->translate(new Message('{code} is your code to reset your password for {site}. It works for {duration}. Never share it.', [
+                        'code' => $code->readable(),
+                        'site' => $this->site->name,
+                        'duration' => CodeEntry::duration(VerificationPurpose::PasswordReset->lifetime(VerificationChannel::Sms)),
+                    ]), [], $viewer->locale), $eligible->id(), self::client($request));
+                } catch (SmsRefused) {
+                    // Same answer either way: the person can still reset by email.
+                }
+            }
+
+            return;
+        }
+
         $account = $this->accounts->findAccountByEmail($email);
         $eligible = $account !== null && ($account->isActive() || $account->isPending()) ? $account : null;
         $code = $this->codes->request(
@@ -87,12 +122,17 @@ final readonly class PasswordReset
      */
     public function verify(ServerRequestInterface $request, VerificationPurpose $purpose, string $email, string $code): ?Account
     {
-        $check = $this->codes->check($purpose, VerificationChannel::Email, $email, $code, self::client($request));
+        $byText = $purpose === VerificationPurpose::PasswordReset && self::isPhone($email);
+        $check = $this->codes->check($purpose, $byText ? VerificationChannel::Sms : VerificationChannel::Email, $email, $code, self::client($request));
         if ($check->status === CodeStatus::Limited) {
             throw new TooManyCodes($check->retryAfter ?? 1);
         }
         $account = $check->isValid() && $check->accountId !== null ? $this->accounts->findAccount($check->accountId) : null;
-        if ($account === null || mb_strtolower($account->email()) !== mb_strtolower(trim($email))) {
+        $owner = $byText ? $this->identifiers->account($email) : $account;
+        if ($account === null || $owner?->id() !== $account->id() || (!$byText && mb_strtolower($account->email()) !== mb_strtolower(trim($email)))) {
+            return null;
+        }
+        if ($byText && !$this->mayResetByText($account)) {
             return null;
         }
         $usable = $purpose === VerificationPurpose::AccountSetup
@@ -100,6 +140,22 @@ final readonly class PasswordReset
             : $account->isActive() || $account->isPending();
 
         return $usable ? $account : null;
+    }
+
+    /**
+     * Whether a code by text may reset this account's password: not for accounts that manage the site (gap 9).
+     */
+    public function mayResetByText(Account $account): bool
+    {
+        return $account->id() !== null && array_intersect(self::ADMIN_LEVEL, $this->permissions->permissionNamesOf($account->id())) === [];
+    }
+
+    /**
+     * Whether a reset target is a mobile number (E.164) rather than an email address.
+     */
+    public static function isPhone(string $target): bool
+    {
+        return preg_match('/^\+[1-9]\d{6,14}$/', $target) === 1;
     }
 
     /**

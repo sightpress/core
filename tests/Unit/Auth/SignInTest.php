@@ -114,7 +114,7 @@ final class SignInTest extends TestCase
         $user = $this->auth->user();
         $old = $user->passwordHash();
         $stronger = new PasswordHasher(['memory_cost' => 16, 'time_cost' => 1, 'threads' => 1]);
-        $signIn = new SignIn($this->auth->users, $stronger, $this->auth->limiters, $this->auth->clock, $this->auth->site);
+        $signIn = new SignIn($this->auth->identifiers(), $this->auth->users, $stronger, $this->auth->limiters, $this->auth->clock, $this->auth->site);
 
         self::assertTrue($signIn->attempt($this->auth->request('POST'), 'ada@example.org', AuthFixture::PASSWORD)->succeeded());
         self::assertNotSame($old, $user->passwordHash());
@@ -136,7 +136,7 @@ final class SignInTest extends TestCase
         self::assertSame('old-id', $session->previousId(), 'the session gets a new id');
         self::assertTrue($session->get('kept'));
 
-        $other = new SignIn($this->auth->users, $this->auth->hasher, $this->auth->limiters, $this->auth->clock, SiteFixture::site('other'));
+        $other = new SignIn($this->auth->identifiers(), $this->auth->users, $this->auth->hasher, $this->auth->limiters, $this->auth->clock, SiteFixture::site('other'));
         self::assertNull($other->userId($request), 'a session of one site does not sign in to another');
 
         $user->setPasswordHash($this->auth->hasher->hash('another long password'), $this->auth->clock->now());

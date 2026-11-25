@@ -10237,5 +10237,89 @@
         <target>Los últimos mensajes, del más reciente al más antiguo. Los números están ocultos en parte y el texto nunca se guarda.</target>
       </segment>
     </unit>
+    <unit id="d71bbd85bc383410">
+      <segment>
+        <source>Email address or mobile number</source>
+        <target>Dirección de correo o número de móvil</target>
+      </segment>
+    </unit>
+    <unit id="4ea5e8ceaa84fb5e">
+      <segment>
+        <source>Enter a correct email address or mobile number, and password.</source>
+        <target>Escribe una dirección de correo o un número de móvil correctos, y la contraseña.</target>
+      </segment>
+    </unit>
+    <unit id="55d635a5bb1b3916">
+      <segment>
+        <source>Enter the email address or the confirmed mobile number you sign in with. We will send you a 6-digit code to type on the next page: by text to a number, by email to an address.</source>
+        <target>Escribe la dirección de correo o el número de móvil confirmado con el que entras. Te enviaremos un código de 6 cifras para escribir en la página siguiente: por mensaje de texto a un número, por correo a una dirección.</target>
+      </segment>
+    </unit>
+    <unit id="7d7f90f5fc555470">
+      <segment>
+        <source>Enter your email address or mobile number</source>
+        <target>Escribe tu dirección de correo o número de móvil</target>
+      </segment>
+    </unit>
+    <unit id="1424e6471439b90b">
+      <segment>
+        <source>If that number belongs to an account that may reset its password by text, we have sent it a 6-digit code. The code works for {duration}, and only once. If nothing comes, reset with your email address instead.</source>
+        <target>Si ese número pertenece a una cuenta que puede restablecer su contraseña por mensaje de texto, le hemos enviado un código de 6 cifras. El código funciona durante {duration}, y solo una vez. Si no llega nada, restablécela con tu dirección de correo.</target>
+      </segment>
+    </unit>
+    <unit id="2532965439f33708">
+      <segment>
+        <source>If you didn’t, choose “Forgot your password?” on the sign-in page of {site} to choose a new one, and contact the people who run it straight away.</source>
+        <target>Si no fuiste tú, elige «¿Olvidaste tu contraseña?» en la página de inicio de sesión de {site} para elegir una nueva, y contacta enseguida con quien lo gestiona.</target>
+      </segment>
+    </unit>
+    <unit id="623578e78c5daefd">
+      <segment>
+        <source>Mobile numbers can start with + and the country code.</source>
+        <target>Los números de móvil pueden empezar por + y el prefijo del país.</target>
+      </segment>
+    </unit>
+    <unit id="717764dc74737504">
+      <segment>
+        <source>People who manage the site reset their password by email only, to keep it safe.</source>
+        <target>Quienes gestionan el sitio solo restablecen su contraseña por correo, para mantenerlo seguro.</target>
+      </segment>
+    </unit>
+    <unit id="1dabed4f6fae709f">
+      <segment>
+        <source>The address or confirmed number you sign in with. Mobile numbers can start with + and the country code.</source>
+        <target>La dirección o el número confirmado con el que entras. Los números de móvil pueden empezar por + y el prefijo del país.</target>
+      </segment>
+    </unit>
+    <unit id="1b0617944b8f9d35">
+      <segment>
+        <source>The password of your account on {site} was changed</source>
+        <target>Se ha cambiado la contraseña de tu cuenta en {site}</target>
+      </segment>
+    </unit>
+    <unit id="f8e89d0d77a65070">
+      <segment>
+        <source>The password of your account on {site} was just changed, after a code we sent to your mobile number.</source>
+        <target>Se acaba de cambiar la contraseña de tu cuenta en {site}, tras un código que enviamos a tu número de móvil.</target>
+      </segment>
+    </unit>
+    <unit id="cb935b1c735b3692">
+      <segment>
+        <source>The password of your account on {site} was just changed.</source>
+        <target>Se acaba de cambiar la contraseña de tu cuenta en {site}.</target>
+      </segment>
+    </unit>
+    <unit id="15bfe031fcee8b0f">
+      <segment>
+        <source>Use your email address or another number</source>
+        <target>Usar tu dirección de correo u otro número</target>
+      </segment>
+    </unit>
+    <unit id="19dd89160431640b">
+      <segment>
+        <source>{code} is your code to reset your password for {site}. It works for {duration}. Never share it.</source>
+        <target>{code} es tu código para restablecer tu contraseña en {site}. Funciona durante {duration}. No lo compartas nunca.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

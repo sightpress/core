@@ -15,6 +15,7 @@ use SightPress\Core\Auth\RememberTokens;
 use SightPress\Core\Auth\PhonePrompt;
 use SightPress\Core\Auth\ReturnTarget;
 use SightPress\Core\Auth\SignIn;
+use SightPress\Core\Auth\SignInIdentifier;
 use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
 use SightPress\Core\Http\Form\Form;
@@ -24,6 +25,7 @@ use SightPress\Core\Http\Session\Flash;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Rbac\Contract\PermissionLookup;
 use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Template\Message;
 use SightPress\Core\Site\Contract\SiteVisibility;
 
 /**
@@ -37,6 +39,7 @@ final readonly class LoginHandler implements RequestHandlerInterface
 {
     public const string WRONG = 'Enter a correct email address and password.';
 
+
     public function __construct(
         private AuthPages $pages,
         private FormValidator $validator,
@@ -46,14 +49,20 @@ final readonly class LoginHandler implements RequestHandlerInterface
         private SiteSettings $settings,
         private DomainRegistration $domainRegistration,
         private PhonePrompt $phonePrompt,
+        private SignInIdentifier $identifiers,
     ) {
     }
 
-    public static function form(): Form
+    /**
+     * @param bool $phones whether a mobile number works too (N-5): the field then says so, and takes any text
+     */
+    public static function form(bool $phones = false): Form
     {
         return Form::create(
             'sign-in',
-            new Field('email', 'Email address', FieldType::Email, autocomplete: 'username'),
+            $phones
+                ? new Field('email', 'Email address or mobile number', hint: 'Mobile numbers can start with + and the country code.', autocomplete: 'username', requiredMessage: 'Enter your email address or mobile number')
+                : new Field('email', 'Email address', FieldType::Email, autocomplete: 'username'),
             new Field('password', 'Password', FieldType::Password, autocomplete: 'current-password'),
             new Field(
                 'remember',
@@ -74,10 +83,11 @@ final readonly class LoginHandler implements RequestHandlerInterface
         }
 
         if ($request->getMethod() !== 'POST') {
-            return $this->show($request, self::form(), $return);
+            return $this->show($request, self::form($this->identifiers->phonesAccepted()), $return);
         }
 
-        $form = $this->validator->submit(self::form(), AuthPages::body($request));
+        $phones = $this->identifiers->phonesAccepted();
+        $form = $this->validator->submit(self::form($phones), AuthPages::body($request));
         if (!$form->isValid()) {
             return $this->show($request, $form, $return, 422);
         }
@@ -96,7 +106,7 @@ final readonly class LoginHandler implements RequestHandlerInterface
             return $this->pages->redirect(SignUp::CODE_PATH);
         }
         if ($result->account === null) {
-            return $this->show($request, $form->withErrors(['email' => self::WRONG]), $return, 422);
+            return $this->show($request, $form->withErrors(['email' => $phones ? new Message('Enter a correct email address or mobile number, and password.') : self::WRONG]), $return, 422);
         }
 
         $this->signIn->start($request, $result->account);

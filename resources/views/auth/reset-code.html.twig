@@ -2,8 +2,12 @@
 {% block title %}{{ t('Enter your code') }}{% endblock %}
 {% block content %}
 <h1>{{ t('Enter your code') }}</h1>
+{%- if by_text|default(false) %}
+<p>{{ t('If that number belongs to an account that may reset its password by text, we have sent it a 6-digit code. The code works for {duration}, and only once. If nothing comes, reset with your email address instead.', {'duration': valid_for}) }}</p>
+{%- else %}
 <p>{{ t('If there is an account for that address, we have emailed it a 6-digit code. The code works for {duration}, and only once.', {'duration': valid_for}) }}</p>
+{%- endif %}
 <p>{{ t('We never send links. Type the code here, on this site.') }}</p>
-{% include '@auth/code-entry.html.twig' with {'submit': t('Continue'), 'resend': true} %}
-<p><a href="/login/forgot">{{ t('Use another email address') }}</a></p>
+{% include '@auth/code-entry.html.twig' with {'submit': t('Continue'), 'resend': true, 'by_text': by_text|default(false)} %}
+<p><a href="/login/forgot">{{ by_text|default(false) ? t('Use your email address or another number') : t('Use another email address') }}</a></p>
 {% endblock %}

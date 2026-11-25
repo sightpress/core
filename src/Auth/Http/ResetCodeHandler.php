@@ -33,6 +33,9 @@ final readonly class ResetCodeHandler implements RequestHandlerInterface
 
     public const string WRONG = 'That code is not right, or it no longer works. Check it and try again, or send a new code.';
 
+    /** Session key: the proved code came by text, for the email that tells the person about the change. */
+    public const string BY_TEXT = 'auth.reset.by_text';
+
     public function __construct(
         private AuthPages $pages,
         private FormValidator $validator,
@@ -44,7 +47,9 @@ final readonly class ResetCodeHandler implements RequestHandlerInterface
 
     public static function form(string $email): Form
     {
-        return Form::create('reset-code', CodeEntry::field(new Message('We sent it by email to {email}. You can type it with or without spaces.', ['email' => VerificationTarget::mask(VerificationChannel::Email, $email)])));
+        return Form::create('reset-code', CodeEntry::field(PasswordReset::isPhone($email)
+            ? new Message('We sent it by text message to {phone}. You can type it with or without spaces.', ['phone' => VerificationTarget::mask(VerificationChannel::Sms, $email)])
+            : new Message('We sent it by email to {email}. You can type it with or without spaces.', ['email' => VerificationTarget::mask(VerificationChannel::Email, $email)])));
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -77,6 +82,7 @@ final readonly class ResetCodeHandler implements RequestHandlerInterface
         }
 
         CodeSession::verified($session, VerificationPurpose::PasswordReset, (int) $account->id(), $this->clock->now()->getTimestamp());
+        $session->set(self::BY_TEXT, PasswordReset::isPhone($email));
 
         return $this->pages->redirect(ChoosePasswordHandler::PATH);
     }
@@ -98,17 +104,22 @@ final readonly class ResetCodeHandler implements RequestHandlerInterface
                 : AuthPages::tooManyAttempts('asked for a code', $limited->retryAfter)]), 429);
         }
 
-        Flash::add($session, new Message('We have sent a new code to {email}. The code we sent before no longer works.', ['email' => VerificationTarget::mask(VerificationChannel::Email, $email)]));
+        Flash::add($session, PasswordReset::isPhone($email)
+            ? new Message('We have sent a new code to {phone}. The code we sent before no longer works.', ['phone' => VerificationTarget::mask(VerificationChannel::Sms, $email)])
+            : new Message('We have sent a new code to {email}. The code we sent before no longer works.', ['email' => VerificationTarget::mask(VerificationChannel::Email, $email)]));
 
         return $this->pages->redirect(self::PATH);
     }
 
     private function show(ServerRequestInterface $request, Form $form, int $status = 200): ResponseInterface
     {
+        $byText = PasswordReset::isPhone(CodeSession::pending(Session::fromRequest($request), VerificationPurpose::PasswordReset) ?? '');
+
         return $this->pages->page($request, 'reset-code.html.twig', [
             'form' => $form,
             'action' => self::PATH,
-            'valid_for' => CodeEntry::duration(VerificationPurpose::PasswordReset->lifetime(VerificationChannel::Email)),
+            'by_text' => $byText,
+            'valid_for' => CodeEntry::duration(VerificationPurpose::PasswordReset->lifetime($byText ? VerificationChannel::Sms : VerificationChannel::Email)),
         ], $status);
     }
 }

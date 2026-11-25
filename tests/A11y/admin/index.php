@@ -26,8 +26,9 @@
  * vendor/composer/installed.json), and serves the previews `/_test/publish` (theme:publish-assets) writes to its public
  * folder (`/themes/…`), as a web server would; `/_test/layouts` adds published pages in the standard layouts (T-3).
  *
- * The `phone` copy (N-3 to N-6) has text messages on, with the pretend "Test SMS" service of a test package (nothing
- * leaves the server); `/_test/texts?to=+447…` answers with the latest text to that number as JSON (to, text), or 404.
+ * The `phone`, `phonesignin` and `twostep` copies (N-3 to N-6) have text messages on, with the pretend "Test SMS" service of a test package (nothing
+ * leaves the server); `/_test/texts?to=+447…` answers with the latest text to that number as JSON (to, text), or 404,
+ * and `/_test/phone?email=…&phone=+447…` gives an account a confirmed number.
  *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
@@ -90,7 +91,7 @@ $uri = $_SERVER['REQUEST_URI'] ?? '/';
 $path = (string) parse_url(is_string($uri) ? $uri : '/', PHP_URL_PATH);
 $environment = ['APP_ENV' => 'test', 'APP_SECRET' => SECRET];
 // The `phone` copy (N-3 to N-6) sends text messages with the pretend "Test SMS" service of a test package.
-$texting = basename($project) === 'sightpress-a11y-phone';
+$texting = in_array(basename($project), ['sightpress-a11y-phone', 'sightpress-a11y-phonesignin', 'sightpress-a11y-twostep'], true);
 if ($texting) {
     $environment['SMS_API_KEY'] = 'test-sms-key-0123';
 }
@@ -209,6 +210,22 @@ if (!is_file($project . '/config/sites.php')) {
         $demo = Services::get($kernel->container(), SiteRepository::class)->find('demo') ?? throw new LogicException('No site.');
         Services::get($kernel->container(), SiteModules::class)->turnOn($demo, 'assistant', null);
     }
+}
+
+if ($path === '/_test/phone') {
+    // Gives an account a confirmed mobile number: `?email=…&phone=+447…` (N-5, N-6).
+    $kernel = boot($project, $environment);
+    $users = Services::get(site($kernel), UserRepository::class);
+    $user = $users->findByEmail(is_string($_GET['email'] ?? null) ? $_GET['email'] : '');
+    if ($user === null || !is_string($_GET['phone'] ?? null)) {
+        http_response_code(404);
+
+        return;
+    }
+    $users->confirmPhone((int) $user->id(), $_GET['phone'], 'mobile GB');
+    http_response_code(204);
+
+    return;
 }
 
 if ($path === '/_test/texts') {
@@ -444,7 +461,7 @@ function boot(string $project, array $environment): Kernel
             new ModuleCandidate(new TestAssistantModule(), 'acme/test-ai'),
         ]);
     }
-    if (basename($project) === 'sightpress-a11y-phone') {
+    if (in_array(basename($project), ['sightpress-a11y-phone', 'sightpress-a11y-phonesignin', 'sightpress-a11y-twostep'], true)) {
         return Kernel::fromConfig(new TenantConfigLoader()->load($project, $environment), [
             ...CoreModules::candidates(),
             new ModuleCandidate(new TestSmsModule(), 'acme/test-sms'),

@@ -11,6 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Auth\Contract\Passwords;
 use SightPress\Core\Auth\RememberTokens;
+use SightPress\Core\Auth\PasswordChangedNotice;
 use SightPress\Core\Auth\SignIn;
 use SightPress\Core\Http\Form\Field;
 use SightPress\Core\Http\Form\FieldType;
@@ -43,6 +44,7 @@ final readonly class ChangePasswordHandler implements RequestHandlerInterface
         private RememberTokens $rememberTokens,
         private ClockInterface $clock,
         private EventDispatcherInterface $events,
+        private PasswordChangedNotice $notice,
     ) {
     }
 
@@ -86,6 +88,7 @@ final readonly class ChangePasswordHandler implements RequestHandlerInterface
         $this->rememberTokens->forgetUser((int) $account->id());
         $this->signIn->start($request, $account);
         $this->events->dispatch(new AccountChanged((int) $account->id(), $account->id(), ['password']));
+        $this->notice->send($request, $account);
         Flash::add(Session::fromRequest($request), 'Your password has been changed. You are still signed in here, and signed out everywhere else.');
 
         $response = $this->pages->redirect('/account');

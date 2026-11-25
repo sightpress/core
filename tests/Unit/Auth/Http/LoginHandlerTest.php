@@ -229,6 +229,7 @@ final class LoginHandlerTest extends TestCase
             $this->auth->database->settings(),
             $this->auth->domainRegistration($this->tenant),
             $this->auth->phonePrompt(),
+            $this->auth->identifiers(),
         )->handle($request);
     }
 
