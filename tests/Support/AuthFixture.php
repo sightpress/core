@@ -265,6 +265,27 @@ final class AuthFixture implements MailSender
         return new SessionAuthenticator($this->users, $this->database->roles(), $this->rememberTokens(), $this->signIn(), $this->users);
     }
 
+    /**
+     * Text messages as the site sees them: off unless a test gives a container where they are on.
+     *
+     * @param array<mixed> $tenant
+     */
+    public function texts(?\Psr\Container\ContainerInterface $container = null, ?\SightPress\Core\Module\ModuleRegistry $registry = null, array $tenant = []): \SightPress\Core\Infrastructure\Sms\TextMessages
+    {
+        return new \SightPress\Core\Infrastructure\Sms\TextMessages(
+            $container ?? new ArrayContainer(),
+            $registry ?? $this->database->registry,
+            new \SightPress\Core\Infrastructure\Sms\PhoneNumbers(),
+            $this->site,
+            \SightPress\Core\Tenant\TenantConfig::fromArray($tenant, '/srv/app'),
+        );
+    }
+
+    public function phonePrompt(): \SightPress\Core\Auth\PhonePrompt
+    {
+        return new \SightPress\Core\Auth\PhonePrompt($this->texts(), $this->users);
+    }
+
     public function pages(): AuthPages
     {
         return new AuthPages($this->templates, $this->http, $this->site);

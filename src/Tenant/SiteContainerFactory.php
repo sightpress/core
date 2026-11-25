@@ -51,6 +51,7 @@ use SightPress\Core\Infrastructure\Assistant\AssistantAccess;
 use SightPress\Core\Infrastructure\Assistant\AssistantExtensions;
 use SightPress\Core\Infrastructure\Sms\PhoneNumbers;
 use SightPress\Core\Infrastructure\Sms\SmsProviders;
+use SightPress\Core\Infrastructure\Sms\TextMessages;
 use SightPress\Core\Infrastructure\Search\SearchExtensions;
 use SightPress\Core\Infrastructure\Seo\SeoExtensions;
 use SightPress\Core\Content\BlockTypeCatalogue;
@@ -244,6 +245,13 @@ final class SiteContainerFactory
                 Services::get($container, ModuleRegistry::class),
             )),
             PhoneNumbers::class => autowire(),
+            TextMessages::class => factory(static fn (ContainerInterface $container): TextMessages => new TextMessages(
+                $container,
+                Services::get($container, ModuleRegistry::class),
+                Services::get($container, PhoneNumbers::class),
+                Services::get($container, Site::class),
+                $config,
+            )),
             AssistantAccess::class => factory(static fn (ContainerInterface $container): AssistantAccess => new AssistantAccess(
                 $container,
                 Services::get($container, ModuleRegistry::class),

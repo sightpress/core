@@ -18,7 +18,9 @@ use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Rbac\Contract\Actor;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Core\Template\TemplateRenderer;
+use SightPress\Core\Infrastructure\Sms\TextMessages;
 use SightPress\Core\Tenant\Site;
+use SightPress\Module\Sms\PhoneNumber;
 use SightPress\Core\User\Avatar\AvatarService;
 use SightPress\Core\User\AvatarKind;
 use SightPress\Core\User\Entity\User;
@@ -45,6 +47,7 @@ final readonly class AccountPages
         private Site $site,
         private Translations $translations,
         private AvatarService $avatars,
+        private TextMessages $texts,
     ) {
     }
 
@@ -141,6 +144,10 @@ final readonly class AccountPages
             'details' => $details ?? $this->details($user),
             'picture' => $picture ?? $this->picture(),
             'admin_preferences' => Actor::fromRequest($request)->has(self::ADMIN_ACCESS) ? self::adminPreferences($user) : null,
+            'phone' => $this->texts->isOn() ? [
+                'number' => $user->phone() === null ? null : $this->texts->national(new PhoneNumber($user->phone())),
+                'texts' => $user->wantsTexts(),
+            ] : null,
             'failed' => $failed,
         ];
         if ($failed !== null) {

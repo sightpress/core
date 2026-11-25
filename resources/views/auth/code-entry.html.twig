@@ -4,7 +4,8 @@
     sends itself (WCAG 3.2.2): the person presses the button. Errors go to the error summary, which gets focus.
 
     Context: `form` (with the `code` field), `action`, `submit` (button text), `before` (names of fields shown
-    above the code, optional) and `resend` (true to offer "Send a new code" as its own form, optional).
+    above the code, optional), `resend` (true to offer "Send a new code" as its own form, optional) and `by_text`
+    (true when the code went by text message, optional).
 #}
 {% import 'form/macros.html.twig' as f %}
 {{ f.error_summary(form) }}
@@ -18,7 +19,7 @@
 {%- if resend|default(false) %}
 <form action="{{ action }}" method="post" class="code-resend">
     {{ csrf_fields() }}
-    <p>{{ t('No email after a few minutes? Check your spam folder. You can ask for a new code once a minute.') }}</p>
+    <p>{{ by_text|default(false) ? t('No text message after a few minutes? Check the number. You can ask for a new code once a minute.') : t('No email after a few minutes? Check your spam folder. You can ask for a new code once a minute.') }}</p>
     <button type="submit" name="resend" value="1" class="button button--secondary">{{ t('Send a new code') }}</button>
 </form>
 {%- endif %}

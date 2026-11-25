@@ -9811,5 +9811,281 @@
         <target>Vonage</target>
       </segment>
     </unit>
+    <unit id="84f43fde984101fa">
+      <segment>
+        <source>A phone number must be in E.164 form, for example +447700900123.</source>
+        <target>Um número de telefone tem de estar no formato E.164, por exemplo +447700900123.</target>
+      </segment>
+    </unit>
+    <unit id="0d6c19077352e7d7">
+      <segment>
+        <source>Add a mobile number</source>
+        <target>Adicionar um número de telemóvel</target>
+      </segment>
+    </unit>
+    <unit id="2437591f77d77707">
+      <segment>
+        <source>Add your mobile number</source>
+        <target>Adicione o seu número de telemóvel</target>
+      </segment>
+    </unit>
+    <unit id="aadce5ee2650bce4">
+      <segment>
+        <source>Add your mobile number first, then choose the text messages you want.</source>
+        <target>Adicione primeiro o seu número de telemóvel e depois escolha as mensagens de texto que quer receber.</target>
+      </segment>
+    </unit>
+    <unit id="ad73a4627349564f">
+      <segment>
+        <source>Another account already uses this number.</source>
+        <target>Outra conta já usa este número.</target>
+      </segment>
+    </unit>
+    <unit id="5d8cc08e89d230a2">
+      <segment>
+        <source>Change your number</source>
+        <target>Alterar o seu número</target>
+      </segment>
+    </unit>
+    <unit id="8948baa783b01b32">
+      <segment>
+        <source>Change your number or your text messages</source>
+        <target>Alterar o seu número ou as suas mensagens de texto</target>
+      </segment>
+    </unit>
+    <unit id="d61ae0a48977c0bb">
+      <segment>
+        <source>Confirm my number</source>
+        <target>Confirmar o meu número</target>
+      </segment>
+    </unit>
+    <unit id="f212bb06f2d0b74b">
+      <segment>
+        <source>Confirm your mobile number</source>
+        <target>Confirme o seu número de telemóvel</target>
+      </segment>
+    </unit>
+    <unit id="701d021d08c54579">
+      <segment>
+        <source>Country</source>
+        <target>País</target>
+      </segment>
+    </unit>
+    <unit id="0fca31f7da2cfb58">
+      <segment>
+        <source>Enter a mobile number, like 07700 900123, or with the country code, like +44 7700 900123</source>
+        <target>Introduza um número de telemóvel, como 912 345 678, ou com o indicativo do país, como +351 912 345 678</target>
+      </segment>
+    </unit>
+    <unit id="3d3e0b4c3786383c">
+      <segment>
+        <source>Enter your mobile number</source>
+        <target>Introduza o seu número de telemóvel</target>
+      </segment>
+    </unit>
+    <unit id="16480e93b2730d1e">
+      <segment>
+        <source>For example 07700 900123. We send a 6-digit code to it by text message to check it is yours.</source>
+        <target>Por exemplo 912 345 678. Enviamos-lhe um código de 6 dígitos por mensagem de texto para confirmar que é seu.</target>
+      </segment>
+    </unit>
+    <unit id="7867ce08806de74d">
+      <segment>
+        <source>If this number can be used, we have sent it a 6-digit code by text message. The code works for {duration}, and only once.</source>
+        <target>Se este número puder ser usado, enviámos-lhe um código de 6 dígitos por mensagem de texto. O código funciona durante {duration}, e só uma vez.</target>
+      </segment>
+    </unit>
+    <unit id="187e80ba4d8a22bb">
+      <segment>
+        <source>Mobile number</source>
+        <target>Número de telemóvel</target>
+      </segment>
+    </unit>
+    <unit id="939a13f3a05eee33">
+      <segment>
+        <source>Mobile number and text messages</source>
+        <target>Número de telemóvel e mensagens de texto</target>
+      </segment>
+    </unit>
+    <unit id="a14070de1b22a860">
+      <segment>
+        <source>Mobile number:</source>
+        <target>Número de telemóvel:</target>
+      </segment>
+    </unit>
+    <unit id="754d6c9de308acfa">
+      <segment>
+        <source>No text message after a few minutes? Check the number. You can ask for a new code once a minute.</source>
+        <target>Não recebeu a mensagem após alguns minutos? Verifique o número. Pode pedir um novo código uma vez por minuto.</target>
+      </segment>
+    </unit>
+    <unit id="c11dd762153f6c9a">
+      <segment>
+        <source>Only the ones you choose below. Each one costs this site money, so we keep them short. You can stop them here at any time, or by replying STOP.</source>
+        <target>Só as que escolher abaixo. Cada uma custa dinheiro a este site, por isso são curtas. Pode pará-las aqui a qualquer momento, ou respondendo STOP.</target>
+      </segment>
+    </unit>
+    <unit id="9605dc9c88a30e20">
+      <segment>
+        <source>Remove my number</source>
+        <target>Remover o meu número</target>
+      </segment>
+    </unit>
+    <unit id="0b8389024990e427">
+      <segment>
+        <source>Remove your number</source>
+        <target>Remover o seu número</target>
+      </segment>
+    </unit>
+    <unit id="a18067d12376adc3">
+      <segment>
+        <source>Save my choices</source>
+        <target>Guardar as minhas escolhas</target>
+      </segment>
+    </unit>
+    <unit id="5b4ed22eb77f1fe9">
+      <segment>
+        <source>Send me text messages</source>
+        <target>Enviem-me mensagens de texto</target>
+      </segment>
+    </unit>
+    <unit id="b58eb52c8810b978">
+      <segment>
+        <source>Skip for now</source>
+        <target>Agora não</target>
+      </segment>
+    </unit>
+    <unit id="512662ed82c09f1d">
+      <segment>
+        <source>Text messages</source>
+        <target>Mensagens de texto</target>
+      </segment>
+    </unit>
+    <unit id="d7e8e1074d405f1c">
+      <segment>
+        <source>That is already your mobile number.</source>
+        <target>Esse já é o seu número de telemóvel.</target>
+      </segment>
+    </unit>
+    <unit id="b6042aa6d90d9b00">
+      <segment>
+        <source>The site forgets your number and sends you no more text messages. You can add a number again at any time.</source>
+        <target>O site esquece o seu número e não lhe envia mais mensagens de texto. Pode voltar a adicionar um número a qualquer momento.</target>
+      </segment>
+    </unit>
+    <unit id="60553e7618f3e137">
+      <segment>
+        <source>This site can send you text messages, if you want them. A mobile number also lets you sign in with it instead of your email address.</source>
+        <target>Este site pode enviar-lhe mensagens de texto, se as quiser. Com um número de telemóvel também pode entrar com ele em vez do seu endereço de email.</target>
+      </segment>
+    </unit>
+    <unit id="20e95999371f6fd9">
+      <segment>
+        <source>Use another number</source>
+        <target>Usar outro número</target>
+      </segment>
+    </unit>
+    <unit id="b4e2eb0a5d199d32">
+      <segment>
+        <source>We have sent a new code to {phone}. The code we sent before no longer works.</source>
+        <target>Enviámos um novo código para {phone}. O código que enviámos antes já não funciona.</target>
+      </segment>
+    </unit>
+    <unit id="92743ee7ea3d3ec1">
+      <segment>
+        <source>We send a 6-digit code to the number by text message. It becomes your number only once you type that code on the next page. We never send links.</source>
+        <target>Enviamos um código de 6 dígitos para o número por mensagem de texto. Só passa a ser o seu número quando escrever esse código na página seguinte. Nunca enviamos links.</target>
+      </segment>
+    </unit>
+    <unit id="cf4e11d55ef13f74">
+      <segment>
+        <source>We sent it by text message to {phone}. You can type it with or without spaces.</source>
+        <target>Enviámo-lo por mensagem de texto para {phone}. Pode escrevê-lo com ou sem espaços.</target>
+      </segment>
+    </unit>
+    <unit id="4d8184a1116099a5">
+      <segment>
+        <source>When a page is sent to you for review</source>
+        <target>Quando uma página lhe é enviada para revisão</target>
+      </segment>
+    </unit>
+    <unit id="4fbcac09d398d325">
+      <segment>
+        <source>Where the number is from. A number that starts with + and the country code works for any of them.</source>
+        <target>O país do número. Um número que comece por + e o indicativo do país funciona para qualquer um.</target>
+      </segment>
+    </unit>
+    <unit id="93a473219fddfc96">
+      <segment>
+        <source>Which text messages</source>
+        <target>Que mensagens de texto</target>
+      </segment>
+    </unit>
+    <unit id="3f2d4f795433852b">
+      <segment>
+        <source>You get no text messages.</source>
+        <target>Não recebe mensagens de texto.</target>
+      </segment>
+    </unit>
+    <unit id="2f27d71bc665afb5">
+      <segment>
+        <source>You get the text messages you chose.</source>
+        <target>Recebe as mensagens de texto que escolheu.</target>
+      </segment>
+    </unit>
+    <unit id="200c89e15c2784a7">
+      <segment>
+        <source>You haven’t added a mobile number.</source>
+        <target>Ainda não adicionou um número de telemóvel.</target>
+      </segment>
+    </unit>
+    <unit id="34baa810b1b9d328">
+      <segment>
+        <source>You will get no text messages from this site.</source>
+        <target>Não vai receber mensagens de texto deste site.</target>
+      </segment>
+    </unit>
+    <unit id="87e84eb7fb28dcf5">
+      <segment>
+        <source>You will get the text messages you chose.</source>
+        <target>Vai receber as mensagens de texto que escolheu.</target>
+      </segment>
+    </unit>
+    <unit id="f53a87b6a601d7d4">
+      <segment>
+        <source>Your mobile number</source>
+        <target>O seu número de telemóvel</target>
+      </segment>
+    </unit>
+    <unit id="dc9e00669b8a5d1e">
+      <segment>
+        <source>Your mobile number is now {phone}.</source>
+        <target>O seu número de telemóvel passou a ser {phone}.</target>
+      </segment>
+    </unit>
+    <unit id="af38ed86f5d5b2d7">
+      <segment>
+        <source>Your mobile number is removed. You get no more text messages from this site.</source>
+        <target>O seu número de telemóvel foi removido. Não vai receber mais mensagens de texto deste site.</target>
+      </segment>
+    </unit>
+    <unit id="f9affc8784546ade">
+      <segment>
+        <source>Your mobile number is {phone}.</source>
+        <target>O seu número de telemóvel é {phone}.</target>
+      </segment>
+    </unit>
+    <unit id="215b3e8caba59486">
+      <segment>
+        <source>Your number</source>
+        <target>O seu número</target>
+      </segment>
+    </unit>
+    <unit id="85e8d1a5675c96b0">
+      <segment>
+        <source>{code} is your code for {site}. It works for {duration}. Never share it.</source>
+        <target>{code} é o seu código para {site}. Funciona durante {duration}. Nunca o partilhe.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

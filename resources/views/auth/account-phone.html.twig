@@ -1,0 +1,60 @@
+{#
+    "Your mobile number" (/account/phone, N-3), from My account, and "Add your mobile number" right after signing in
+    (with "Skip for now" unless the organisation requires a number). Three parts, each its own form: the number
+    (country select + type=tel; a code goes to it and nothing changes until it is typed on the next page), the text
+    message choices (unticked until the person ticks them) and, when there is a number, "Remove my number". After a
+    refused form the error summary gets focus. Never indexed.
+    Context: `title`, `prompt`, `may_skip`, `current` (the number as written in its country, or null), `number`,
+    `texts`, `failed`, `action`.
+#}
+{% extends '@auth/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t(title) }}{% endblock %}
+{% block content %}
+<h1>{{ t(title) }}</h1>
+{%- if failed %}{{ f.error_summary(failed) }}{% endif %}
+{%- if prompt %}
+<p>{{ t('This site can send you text messages, if you want them. A mobile number also lets you sign in with it instead of your email address.') }}</p>
+{%- endif %}
+{%- if current %}
+<p>{{ t('Your mobile number is {phone}.', {'phone': current}) }}</p>
+{%- endif %}
+<section aria-labelledby="phone-number-title">
+    <h2 id="phone-number-title">{{ current ? t('Change your number') : t('Your number') }}</h2>
+    <p>{{ t('We send a 6-digit code to the number by text message. It becomes your number only once you type that code on the next page. We never send links.') }}</p>
+    {{ f.start(number, action) }}
+        <input type="hidden" name="op" value="number">
+        {{ f.field(number, 'country') }}
+        {{ f.field(number, 'phone') }}
+        {{ f.submit(t('Send the code')) }}
+    {{ f.end() }}
+</section>
+{%- if may_skip %}
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    <input type="hidden" name="op" value="skip">
+    <button type="submit" class="button button--secondary">{{ t('Skip for now') }}</button>
+</form>
+{%- endif %}
+{%- if current %}
+<section aria-labelledby="phone-texts-title">
+    <h2 id="phone-texts-title">{{ t('Text messages') }}</h2>
+    {{ f.start(texts, action) }}
+        <input type="hidden" name="op" value="texts">
+        {{ f.field(texts, 'texts') }}
+        {{ f.field(texts, 'notifications') }}
+        {{ f.submit(t('Save my choices')) }}
+    {{ f.end() }}
+</section>
+<section aria-labelledby="phone-remove-title">
+    <h2 id="phone-remove-title">{{ t('Remove your number') }}</h2>
+    <p>{{ t('The site forgets your number and sends you no more text messages. You can add a number again at any time.') }}</p>
+    <form action="{{ action }}" method="post">
+        {{ csrf_fields() }}
+        <input type="hidden" name="op" value="remove">
+        <button type="submit" class="button button--secondary">{{ t('Remove my number') }}</button>
+    </form>
+</section>
+{%- endif %}
+<p><a href="/account">{{ t('Back to My account') }}</a></p>
+{% endblock %}

@@ -73,6 +73,27 @@ final class User implements Account
     #[ORM\Column(name: 'admin_larger_text', type: Types::BOOLEAN, options: ['default' => false])]
     private bool $adminLargerText = false;
 
+    /** Only a number whose code was typed (N-3); unique on the site. */
+    #[ORM\Column(name: 'phone_e164', type: Types::STRING, length: 16, unique: true, nullable: true)]
+    private ?string $phoneE164 = null;
+
+    #[ORM\Column(name: 'phone_verified_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $phoneVerifiedAt = null;
+
+    /** What the provider's lookup said: line type and country, for example `mobile GB`. */
+    #[ORM\Column(name: 'phone_lookup', type: Types::STRING, length: 64, nullable: true)]
+    private ?string $phoneLookup = null;
+
+    #[ORM\Column(name: 'sms_consent_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $smsConsentAt = null;
+
+    #[ORM\Column(name: 'sms_opt_out_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $smsOptOutAt = null;
+
+    /** The notifications that go by text, comma-separated. */
+    #[ORM\Column(name: 'sms_notifications', type: Types::STRING, length: 255, nullable: true)]
+    private ?string $smsNotifications = null;
+
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $createdAt;
 
@@ -294,6 +315,114 @@ final class User implements Account
         $this->avatarKind = $kind;
         $this->avatarPath = $path;
         $this->avatarColor = $color;
+        $this->updatedAt = $now;
+    }
+
+    /**
+     * The confirmed mobile number in E.164 form, or null.
+     *
+     * @return non-empty-string|null
+     */
+    public function phone(): ?string
+    {
+        return $this->phoneE164 === '' ? null : $this->phoneE164;
+    }
+
+    public function phoneVerifiedAt(): ?DateTimeImmutable
+    {
+        return $this->phoneVerifiedAt;
+    }
+
+    public function phoneLookup(): ?string
+    {
+        return $this->phoneLookup;
+    }
+
+    /**
+     * The person typed the code sent to this number: it is theirs from now on, and the old one (if any) stops
+     * working at once.
+     */
+    public function confirmPhone(string $e164, ?string $lookup, DateTimeImmutable $now): void
+    {
+        if (preg_match('/^\+[1-9]\d{6,14}$/', $e164) !== 1) {
+            throw new UserException('A phone number must be in E.164 form, for example +447700900123.');
+        }
+        $this->phoneE164 = $e164;
+        $this->phoneLookup = $lookup === null ? null : mb_substr($lookup, 0, 64);
+        $this->phoneVerifiedAt = $now;
+        $this->updatedAt = $now;
+    }
+
+    /**
+     * Removes the number, which also stops text messages to it.
+     */
+    public function removePhone(DateTimeImmutable $now): void
+    {
+        $this->phoneE164 = null;
+        $this->phoneLookup = null;
+        $this->phoneVerifiedAt = null;
+        if ($this->smsConsentAt !== null) {
+            $this->smsOptOutAt = $now;
+        }
+        $this->smsConsentAt = null;
+        $this->updatedAt = $now;
+    }
+
+    /**
+     * Whether the person chose to get text messages, and hasn't stopped them.
+     */
+    public function wantsTexts(): bool
+    {
+        return $this->phoneE164 !== null && $this->smsConsentAt !== null && $this->smsOptOutAt === null;
+    }
+
+    public function smsConsentAt(): ?DateTimeImmutable
+    {
+        return $this->smsConsentAt;
+    }
+
+    public function smsOptOutAt(): ?DateTimeImmutable
+    {
+        return $this->smsOptOutAt;
+    }
+
+    /**
+     * @return list<string> the notifications that go by text
+     */
+    public function smsNotifications(): array
+    {
+        return array_values(array_filter(explode(',', $this->smsNotifications ?? ''), static fn (string $type): bool => $type !== ''));
+    }
+
+    /**
+     * The person ticked "Send me text messages" (with these notifications), or unticked it.
+     *
+     * @param list<string> $notifications
+     */
+    public function chooseTexts(bool $wanted, array $notifications, DateTimeImmutable $now): void
+    {
+        if ($wanted) {
+            $this->smsConsentAt ??= $now;
+            $this->smsOptOutAt = null;
+        } elseif ($this->smsConsentAt !== null) {
+            $this->smsConsentAt = null;
+            $this->smsOptOutAt = $now;
+        }
+        $types = array_values(array_unique(array_filter($notifications, static fn (string $type): bool => preg_match('/^[a-z][a-z0-9_.]{0,63}$/', $type) === 1)));
+        $this->smsNotifications = $types === [] ? null : mb_substr(implode(',', $types), 0, 255);
+        $this->updatedAt = $now;
+    }
+
+    /**
+     * The number replied STOP (or START) to the site's messages.
+     */
+    public function textReply(bool $stopped, DateTimeImmutable $now): void
+    {
+        if ($stopped) {
+            $this->smsOptOutAt ??= $now;
+        } elseif ($this->smsConsentAt !== null) {
+            $this->smsOptOutAt = null;
+        }
         $this->updatedAt = $now;
     }
 

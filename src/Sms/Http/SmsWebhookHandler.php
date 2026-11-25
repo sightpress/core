@@ -69,7 +69,7 @@ final readonly class SmsWebhookHandler implements RequestHandlerInterface
                 } else {
                     $this->optOuts->start($hash);
                 }
-                $this->events->dispatch(new TextMessageOptChanged($report->from->masked(), $hash, $report->stopped));
+                $this->events->dispatch(new TextMessageOptChanged($report->from, $report->from->masked(), $hash, $report->stopped));
             } else {
                 $this->log->receipt($provider->id(), $report->messageId, $report->status, $report->reason, $report->at);
             }

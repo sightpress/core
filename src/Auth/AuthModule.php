@@ -19,6 +19,10 @@ use SightPress\Core\Auth\Http\ChoosePasswordHandler;
 use SightPress\Core\Auth\Http\ChangePasswordHandler;
 use SightPress\Core\Auth\Http\ChangeEmailHandler;
 use SightPress\Core\Auth\Http\ChangeEmailCodeHandler;
+use SightPress\Core\Auth\Http\ChangePhoneCodeHandler;
+use SightPress\Core\Auth\Http\ChangePhoneHandler;
+use SightPress\Core\Auth\Account\PhoneChange;
+use SightPress\Core\Auth\PhonePrompt;
 use SightPress\Core\Auth\Account\EmailChange;
 use SightPress\Core\Auth\Http\ForgotPasswordHandler;
 use SightPress\Core\Auth\Http\LoginHandler;
@@ -99,7 +103,7 @@ final class AuthModule implements ModuleInterface
             return $policies->emailDomains === null ? new AnyEmailPolicy() : new DomainsEmailPolicy($policies);
         }, public: true);
         $services->autowire(TenantDomainRegistration::class, DomainRegistration::class, public: true);
-        foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class, SelfRegistration::class, RegistrationMailer::class, RegisterHandler::class, RegisterCodeHandler::class, ForgetUnconfirmedAccounts::class, EmailChange::class, ChangePasswordHandler::class, ChangeEmailHandler::class, ChangeEmailCodeHandler::class] as $class) {
+        foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class, SelfRegistration::class, RegistrationMailer::class, RegisterHandler::class, RegisterCodeHandler::class, ForgetUnconfirmedAccounts::class, EmailChange::class, ChangePasswordHandler::class, ChangeEmailHandler::class, ChangeEmailCodeHandler::class, PhoneChange::class, PhonePrompt::class, ChangePhoneHandler::class, ChangePhoneCodeHandler::class] as $class) {
             $services->autowire($class);
         }
 
@@ -133,5 +137,7 @@ final class AuthModule implements ModuleInterface
         $routes->add(new Route('auth.account.password', ChangePasswordHandler::PATH, ChangePasswordHandler::class, ['GET', 'POST']));
         $routes->add(new Route('auth.account.email', ChangeEmailHandler::PATH, ChangeEmailHandler::class, ['GET', 'POST']));
         $routes->add(new Route('auth.account.email.code', ChangeEmailCodeHandler::PATH, ChangeEmailCodeHandler::class, ['GET', 'POST']));
+        $routes->add(new Route('auth.account.phone', ChangePhoneHandler::PATH, ChangePhoneHandler::class, ['GET', 'POST']));
+        $routes->add(new Route('auth.account.phone.code', ChangePhoneCodeHandler::PATH, ChangePhoneCodeHandler::class, ['GET', 'POST']));
     }
 }

@@ -51,6 +51,30 @@ final class UserTest extends TestCase
         self::assertSame($this->now, $user->updatedAt());
     }
 
+    public function testKeepsAConfirmedMobileNumberAndTheTextChoices(): void
+    {
+        $user = new User('ada@example.org', 'Ada', 'Lovelace', 'UTC', new DateTimeImmutable('2026-11-01'));
+        $now = new DateTimeImmutable('2026-11-25 10:00:00');
+        self::assertSame([null, null, null, false, null, null, []], [$user->phone(), $user->phoneVerifiedAt(), $user->phoneLookup(), $user->wantsTexts(), $user->smsConsentAt(), $user->smsOptOutAt(), $user->smsNotifications()]);
+
+        $user->confirmPhone('+447400123456', 'mobile GB', $now);
+        $user->chooseTexts(true, ['review_request', 'review_request', 'Not valid!'], $now);
+        self::assertSame(['+447400123456', $now, 'mobile GB', true, $now, ['review_request']], [$user->phone(), $user->phoneVerifiedAt(), $user->phoneLookup(), $user->wantsTexts(), $user->smsConsentAt(), $user->smsNotifications()]);
+        $user->textReply(true, $now);
+        self::assertSame([false, $now], [$user->wantsTexts(), $user->smsOptOutAt()]);
+        $user->textReply(false, $now);
+        self::assertTrue($user->wantsTexts());
+
+        $user->removePhone($now);
+        self::assertSame([null, false, null, $now], [$user->phone(), $user->wantsTexts(), $user->smsConsentAt(), $user->smsOptOutAt()]);
+        $user->chooseTexts(false, [], $now);
+        $user->textReply(false, $now);
+        self::assertSame($now, $user->smsOptOutAt(), 'START does not opt in someone who never chose texts');
+
+        $this->expectException(\SightPress\Core\User\UserException::class);
+        $user->confirmPhone('07400 123456', null, $now);
+    }
+
     public function testTheDisplayNameWinsWhenSet(): void
     {
         $user = $this->user();

@@ -6,6 +6,11 @@ namespace SightPress\Core\User;
 
 use SightPress\Core\Template\Message;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Clock\ClockInterface;
+use SightPress\Core\Infrastructure\Clock\SystemClock;
+use SightPress\Core\User\Contract\AccountException;
+use SightPress\Core\User\Contract\AccountPhone;
+use SightPress\Core\User\Contract\AccountPhones;
 use SightPress\Core\User\Contract\Account;
 use SightPress\Core\Template\ViewerPreferences;
 use SightPress\Core\User\Contract\AccountDirectory;
@@ -16,10 +21,75 @@ use SightPress\Core\User\Entity\User;
 /**
  * The site's users, in the site's own database.
  */
-final readonly class UserRepository implements Accounts, AccountDirectory, AccountPreferences
+final readonly class UserRepository implements Accounts, AccountDirectory, AccountPreferences, AccountPhones
 {
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private ClockInterface $clock = new SystemClock(),
+    ) {
+    }
+
+    public function phoneOf(int $accountId): ?AccountPhone
     {
+        $user = $this->find($accountId);
+        if ($user === null) {
+            return null;
+        }
+        return new AccountPhone($user->phone(), $user->phoneVerifiedAt(), $user->wantsTexts(), $user->smsNotifications(), $user->smsOptOutAt());
+    }
+
+    public function accountWithPhone(string $e164): ?int
+    {
+        return $this->findByPhone($e164)?->id();
+    }
+
+    public function findByPhone(string $e164): ?User
+    {
+        return $e164 === '' ? null : $this->entityManager->getRepository(User::class)->findOneBy(['phoneE164' => $e164]);
+    }
+
+    public function confirmPhone(int $accountId, string $e164, ?string $lookup): void
+    {
+        $user = $this->find($accountId);
+        $holder = $this->findByPhone($e164);
+        if ($user === null || ($holder !== null && $holder !== $user)) {
+            throw new AccountException('Another account already uses this number.');
+        }
+        $user->confirmPhone($e164, $lookup, $this->clock->now());
+        $this->entityManager->flush();
+    }
+
+    public function removePhone(int $accountId): bool
+    {
+        $user = $this->find($accountId);
+        if ($user === null || $user->phone() === null) {
+            return false;
+        }
+        $user->removePhone($this->clock->now());
+        $this->entityManager->flush();
+
+        return true;
+    }
+
+    public function chooseTexts(int $accountId, bool $wanted, array $notifications): void
+    {
+        $user = $this->find($accountId);
+        if ($user !== null) {
+            $user->chooseTexts($wanted, $notifications, $this->clock->now());
+            $this->entityManager->flush();
+        }
+    }
+
+    public function textReply(string $e164, bool $stopped): ?int
+    {
+        $user = $this->findByPhone($e164);
+        if ($user === null) {
+            return null;
+        }
+        $user->textReply($stopped, $this->clock->now());
+        $this->entityManager->flush();
+
+        return $user->id();
     }
 
     /**

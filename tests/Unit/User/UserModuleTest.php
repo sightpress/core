@@ -51,6 +51,7 @@ final class UserModuleTest extends TestCase
         self::assertTrue($registry->services()[UserRepository::class]->item->public);
         self::assertSame(UserRepository::class, $registry->services()[\SightPress\Core\User\Contract\AccountDirectory::class]->item->class);
         self::assertSame(UserRepository::class, $registry->services()[\SightPress\Core\User\Contract\AccountPreferences::class]->item->class);
+        self::assertSame(UserRepository::class, $registry->services()[\SightPress\Core\User\Contract\AccountPhones::class]->item->class);
         $factory = $registry->services()[\SightPress\Core\User\Avatar\AvatarService::class]->item->factory;
         self::assertNotNull($factory);
         self::assertInstanceOf(\SightPress\Core\User\Avatar\AvatarService::class, $factory(new \DI\ContainerBuilder()->addDefinitions([

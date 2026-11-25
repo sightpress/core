@@ -26,6 +26,9 @@
  * vendor/composer/installed.json), and serves the previews `/_test/publish` (theme:publish-assets) writes to its public
  * folder (`/themes/…`), as a web server would; `/_test/layouts` adds published pages in the standard layouts (T-3).
  *
+ * The `phone` copy (N-3 to N-6) has text messages on, with the pretend "Test SMS" service of a test package (nothing
+ * leaves the server); `/_test/texts?to=+447…` answers with the latest text to that number as JSON (to, text), or 404.
+ *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
  */
@@ -56,6 +59,7 @@ use SightPress\Core\Tenant\TenantConfigLoader;
 use SightPress\Core\Tests\Support\Modules\CalendarModule;
 use SightPress\Core\Tests\Support\Modules\EventsModule;
 use SightPress\Core\Tests\Support\Modules\TestAssistantModule;
+use SightPress\Core\Tests\Support\Modules\TestSmsModule;
 use SightPress\Core\Tenant\SiteModules;
 use SightPress\Core\Page\Contract\PageTransition;
 use SightPress\Core\Page\Contract\StarterContent;
@@ -85,6 +89,11 @@ $project = sys_get_temp_dir() . '/sightpress-a11y-' . (is_string($copy) && preg_
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
 $path = (string) parse_url(is_string($uri) ? $uri : '/', PHP_URL_PATH);
 $environment = ['APP_ENV' => 'test', 'APP_SECRET' => SECRET];
+// The `phone` copy (N-3 to N-6) sends text messages with the pretend "Test SMS" service of a test package.
+$texting = basename($project) === 'sightpress-a11y-phone';
+if ($texting) {
+    $environment['SMS_API_KEY'] = 'test-sms-key-0123';
+}
 $mailbox = $project . '/mail';
 
 // The `provisioning` copy (M-3) offers cloud storage set-up. The spec stops at the plan, so these keys are never sent.
@@ -126,6 +135,7 @@ if (!is_file($project . '/config/sites.php')) {
         'log' => ['path' => $project . '/var/log/test.log'],
         'session' => ['path' => $project . '/var/sessions'],
         ...$policies,
+        ...($texting ? ['sms' => ['provider' => 'test_sms', 'sender' => 'Riverside']] : []),
     ], true) . ';');
     file_put_contents($project . '/config/sites.php', '<?php return ' . var_export(['version' => 2, 'sites' => ['demo' => [
         'id' => '7b1e4c2a-9d3f-4e8b-a6c5-1f2e3d4c5b6a',
@@ -191,10 +201,31 @@ if (!is_file($project . '/config/sites.php')) {
         // X-1: a module the site had on whose package was removed.
         Services::get($site, SiteModuleStore::class)->save('acme.newsletter', true, new DateTimeImmutable(), null);
     }
+    if ($texting) {
+        $demo = Services::get($kernel->container(), SiteRepository::class)->find('demo') ?? throw new LogicException('No site.');
+        Services::get($kernel->container(), SiteModules::class)->turnOn($demo, 'sms', null);
+    }
     if ($kernel->modules()->has(TestAssistantModule::ID)) {
         $demo = Services::get($kernel->container(), SiteRepository::class)->find('demo') ?? throw new LogicException('No site.');
         Services::get($kernel->container(), SiteModules::class)->turnOn($demo, 'assistant', null);
     }
+}
+
+if ($path === '/_test/texts') {
+    // The latest text message to a number (`?to=+447…`), as JSON, or 404.
+    $to = $_GET['to'] ?? null;
+    $texts = is_file($project . '/texts.json') ? json_decode((string) file_get_contents($project . '/texts.json'), true) : [];
+    foreach (array_reverse(is_array($texts) ? $texts : []) as $text) {
+        if (is_array($text) && ($text['to'] ?? null) === $to) {
+            header('Content-Type: application/json');
+            echo json_encode($text);
+
+            return;
+        }
+    }
+    http_response_code(404);
+
+    return;
 }
 
 if ($path === '/_test/assistant') {
@@ -411,6 +442,12 @@ function boot(string $project, array $environment): Kernel
         return Kernel::fromConfig(new TenantConfigLoader()->load($project, $environment), [
             ...CoreModules::candidates(),
             new ModuleCandidate(new TestAssistantModule(), 'acme/test-ai'),
+        ]);
+    }
+    if (basename($project) === 'sightpress-a11y-phone') {
+        return Kernel::fromConfig(new TenantConfigLoader()->load($project, $environment), [
+            ...CoreModules::candidates(),
+            new ModuleCandidate(new TestSmsModule(), 'acme/test-sms'),
         ]);
     }
     if (basename($project) !== 'sightpress-a11y-features') {

@@ -3,7 +3,8 @@
     address, each on its own page), profile picture and, for people who use the admin panel, admin preferences, in the
     site's theme. After a refused form, the error summary at the top gets focus and the <title> starts with "Error:".
     Context: `user`, `avatar_url`, `avatar_uploaded`, `details`, `picture`, `admin_preferences` (null for people
-    without admin access), `failed` (the form that was refused).
+    without admin access), `phone` (null while text messages are off; else the number as written in its country, or
+    null, and whether texts are on), `failed` (the form that was refused).
 #}
 {% extends 'layouts/default.html.twig' %}
 {% import 'form/macros.html.twig' as f %}
@@ -32,6 +33,19 @@
         <li><a href="/account/password">{{ t('Change your password') }}</a></li>
     </ul>
 </section>
+{%- if phone %}
+<section class="account-section" aria-labelledby="account-phone-title">
+    <h2 id="account-phone-title">{{ t('Mobile number and text messages') }}</h2>
+    {%- if phone.number %}
+    <p>{{ t('Mobile number:') }} {{ phone.number }}</p>
+    <p>{{ phone.texts ? t('You get the text messages you chose.') : t('You get no text messages.') }}</p>
+    <p><a href="/account/phone">{{ t('Change your number or your text messages') }}</a></p>
+    {%- else %}
+    <p>{{ t('You haven’t added a mobile number.') }}</p>
+    <p><a href="/account/phone">{{ t('Add a mobile number') }}</a></p>
+    {%- endif %}
+</section>
+{%- endif %}
 <section class="account-section" aria-labelledby="account-picture-title">
     <h2 id="account-picture-title">{{ t('Profile picture') }}</h2>
     {%- if avatar_url %}

@@ -257,7 +257,7 @@ final class AccountHandlersTest extends TestCase implements EventDispatcherInter
 
     private function pages(?Site $site = null): AccountPages
     {
-        return new AccountPages($this->auth->templates, $this->auth->http, $this->auth->users, $site ?? $this->auth->site, $this->auth->translations, $this->auth->avatars());
+        return new AccountPages($this->auth->templates, $this->auth->http, $this->auth->users, $site ?? $this->auth->site, $this->auth->translations, $this->auth->avatars(), $this->auth->texts());
     }
 
     /**

@@ -9,6 +9,7 @@ use SightPress\Core\Sms\Command\EnableSmsCommand;
 use SightPress\Core\Sms\Command\RemoveSmsCommand;
 use SightPress\Core\Sms\Command\SetSmsCommand;
 use SightPress\Core\Sms\Command\TestSmsCommand;
+use SightPress\Core\Sms\Contract\TextMessageOptChanged;
 use SightPress\Core\Sms\Http\SmsHttp;
 use SightPress\Core\Sms\Http\SmsWebhookHandler;
 use SightPress\Core\Sms\Provider\TwilioProvider;
@@ -64,6 +65,9 @@ final class SmsModule implements ModuleInterface
             $services->autowire($provider);
             $sms->addProvider($provider);
         }
+
+        $services->autowire(TextRepliesToAccounts::class);
+        $registrar->subscribers()->listen(TextMessageOptChanged::class, TextRepliesToAccounts::class);
 
         $services->autowire(SmsWebhookHandler::class);
         $registrar->routes()->add(new Route('sms.webhook', SmsWebhookHandler::PATH, SmsWebhookHandler::class, ['POST']));

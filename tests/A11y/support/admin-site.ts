@@ -34,6 +34,7 @@ export const ADMIN_SITES = {
   captions: 'http://127.0.0.1:8065',
   roles: 'http://127.0.0.1:8061',
   domains: 'http://127.0.0.1:8060',
+  phone: 'http://127.0.0.1:8059',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

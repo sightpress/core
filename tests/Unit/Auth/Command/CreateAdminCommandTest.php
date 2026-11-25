@@ -84,6 +84,23 @@ final class CreateAdminCommandTest extends TestCase
         self::assertStringContainsString('They go to http://localhost:8080/login/setup,', $this->stdout);
     }
 
+    public function testTheOperatorCanGiveTheAdminsMobileNumber(): void
+    {
+        $status = $this->createAdmin(['--email' => 'grace@example.org', '--first-name' => 'Grace', '--last-name' => 'Hopper', '--phone' => '07400 123456']);
+
+        self::assertSame(Command::SUCCESS, $status, $this->stderr);
+        self::assertStringContainsString('Their mobile number is +44•••••••456.', $this->stdout);
+        $grace = Services::get($this->services(), UserRepository::class)->findByEmail('grace@example.org');
+        self::assertSame(['+447400123456', 'operator'], [$grace?->phone(), $grace?->phoneLookup()]);
+
+        self::assertSame(Command::INVALID, $this->createAdmin(['--email' => 'alan@example.org', '--first-name' => 'Alan', '--last-name' => 'Turing', '--phone' => '+447400123456']));
+        self::assertStringContainsString('Another account of the site already has that mobile number.', $this->stderr);
+        self::assertSame(Command::INVALID, $this->createAdmin(['--email' => 'alan@example.org', '--first-name' => 'Alan', '--last-name' => 'Turing', '--phone' => '020 7946 0000']));
+        self::assertStringContainsString('That isn\'t a mobile number.', $this->stderr);
+        self::assertSame(Command::INVALID, $this->createAdmin(['--email' => 'alan@example.org', '--first-name' => 'Alan', '--last-name' => 'Turing', '--phone' => 'none']));
+        self::assertSame(Command::SUCCESS, $this->createAdmin(['--email' => 'grace@example.org', '--first-name' => 'Grace', '--last-name' => 'Hopper', '--phone' => '+447400123456']), 'their own number again');
+    }
+
     public function testAnAccountThatSignsInIsLeftAlone(): void
     {
         $users = Services::get($this->services(), UserRepository::class);

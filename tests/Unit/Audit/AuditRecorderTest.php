@@ -220,8 +220,8 @@ final class AuditRecorderTest extends TestCase
         foreach ([
             new \SightPress\Core\Sms\Contract\TextMessageTested(null, '+44•••••••456', 'twilio', true),
             new \SightPress\Core\Sms\Contract\TextMessageTested(3, '+44•••••••456', 'vonage', false, 'no_credit'),
-            new \SightPress\Core\Sms\Contract\TextMessageOptChanged('+44•••••••456', 'hash', true),
-            new \SightPress\Core\Sms\Contract\TextMessageOptChanged('+44•••••••456', 'hash', false),
+            new \SightPress\Core\Sms\Contract\TextMessageOptChanged(new \SightPress\Module\Sms\PhoneNumber('+447400123456'), '+44•••••••456', 'hash', true),
+            new \SightPress\Core\Sms\Contract\TextMessageOptChanged(new \SightPress\Module\Sms\PhoneNumber('+447400123456'), '+44•••••••456', 'hash', false),
             new SettingsChanged(['sms.provider', 'sms.account', 'sms.key', 'sms.sender', 'sms.region', 'sms.monthly_budget'], null),
         ] as $event) {
             $recorder($event);

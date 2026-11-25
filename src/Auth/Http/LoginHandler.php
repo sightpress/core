@@ -12,6 +12,7 @@ use SightPress\Core\Auth\Contract\DomainRegistration;
 use SightPress\Core\Auth\Contract\SignUp;
 use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Auth\RememberTokens;
+use SightPress\Core\Auth\PhonePrompt;
 use SightPress\Core\Auth\ReturnTarget;
 use SightPress\Core\Auth\SignIn;
 use SightPress\Core\Http\Form\Field;
@@ -44,6 +45,7 @@ final readonly class LoginHandler implements RequestHandlerInterface
         private RememberTokens $rememberTokens,
         private SiteSettings $settings,
         private DomainRegistration $domainRegistration,
+        private PhonePrompt $phonePrompt,
     ) {
     }
 
@@ -99,9 +101,11 @@ final readonly class LoginHandler implements RequestHandlerInterface
 
         $this->signIn->start($request, $result->account);
         $id = (int) $result->account->id();
-        $response = $this->pages->redirect(
+        $response = $this->pages->redirect($this->phonePrompt->after(
+            Session::fromRequest($request),
+            $result->account,
             ReturnTarget::for(new Actor($id, $this->permissions->permissionNamesOf($id)), $return),
-        );
+        ));
 
         return $form->value('remember') === '1'
             ? $response->withAddedHeader(

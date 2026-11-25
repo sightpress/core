@@ -8,6 +8,8 @@ use InvalidArgumentException;
 use SightPress\Core\Auth\Contract\VerificationCodes;
 use SightPress\Core\Auth\Provisioning\FirstSetupCode;
 use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Infrastructure\Sms\PhoneNumbers;
+use SightPress\Core\User\Contract\AccountPhones;
 use SightPress\Core\Rbac\Contract\RoleGrants;
 use SightPress\Core\Site\Contract\FirstAdmin;
 use SightPress\Core\Tenant\SiteContainerFactory;
@@ -54,6 +56,7 @@ final readonly class CreateAdminCommand implements Command
             new CommandParameter('first-name', 'First name of the admin:', $option, true),
             new CommandParameter('last-name', 'Last name of the admin:', $option, true),
             new CommandParameter('url', 'Address of the site the printed page starts with (default: https:// and the first domain).', $option),
+            new CommandParameter('phone', 'Mobile number of the admin, for text messages and two-step confirmation, for example +447700900123. You confirm it is theirs: no code is sent.', $option),
         ];
     }
 
@@ -75,6 +78,7 @@ final readonly class CreateAdminCommand implements Command
         }
         $url = trim($input->option('url') ?? '');
         $url = $url === '' ? 'https://' . $site->domains[0] : $url;
+        $phoneInput = trim($input->option('phone') ?? '');
 
         try {
             $services = $this->containers->forSite($site);
@@ -96,6 +100,21 @@ final readonly class CreateAdminCommand implements Command
                 $output->line(sprintf('The account of %s is still waiting for its password: here is a new code.', $account->email()));
             }
             $id = (int) $account->id();
+            if ($phoneInput !== '') {
+                $numbers = Services::get($services, PhoneNumbers::class);
+                $phone = $numbers->parse($phoneInput, $numbers->regionOf($site->defaultLocale));
+                $phones = Services::get($services, AccountPhones::class);
+                $holder = $phone === null ? null : $phones->accountWithPhone($phone->e164);
+                if ($phone === null || !$numbers->canReceiveTexts($phone) || ($holder !== null && $holder !== $id)) {
+                    $output->error($phone === null || !$numbers->canReceiveTexts($phone)
+                        ? 'That isn\'t a mobile number. Give it with the country code, for example --phone=+447700900123.'
+                        : 'Another account of the site already has that mobile number.');
+
+                    return self::INVALID;
+                }
+                $phones->confirmPhone($id, $phone->e164, 'operator');
+                $output->line(sprintf('Their mobile number is %s.', $phone->masked()));
+            }
             Services::get($services, RoleGrants::class)->assign($id, 'admin');
             $output->line(FirstSetupCode::instructions(Services::get($services, VerificationCodes::class), $id, $account->email(), $url));
         } finally {
