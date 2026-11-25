@@ -29,6 +29,7 @@ final readonly class MembersOnlyMiddleware implements MiddlewareInterface
     public const array OPEN = [
         '/login', '/login/', '/logout', '/register', '/register/', '/robots.txt', '/assets/', '/branding/',
         '/favicon.ico', '/apple-touch-icon.png', '/icon.svg', '/icon-192.png', '/icon-512.png', '/site.webmanifest',
+        '/_sms/webhook',
     ];
 
     public function __construct(private ResponseFactoryInterface $responses)

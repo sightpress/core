@@ -33,6 +33,8 @@ use SightPress\Module\Event\TranslationPublished;
 use SightPress\Module\Event\RoleChanged;
 use SightPress\Core\Auth\Contract\SignUp;
 use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Sms\Contract\TextMessageOptChanged;
+use SightPress\Core\Sms\Contract\TextMessageTested;
 use SightPress\Core\Rbac\Contract\RoleEdited;
 use SightPress\Module\Event\SettingsChanged;
 use SightPress\Core\Tenant\LocaleCode;
@@ -57,6 +59,7 @@ final readonly class AuditRecorder
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
         MenuChanged::class, RoleChanged::class, RoleEdited::class, AccountChanged::class, AccountRegistered::class, SettingsChanged::class,
         SiteModuleChanged::class, AnalyticsDataDeleted::class, AssistantUsed::class, ThemeApplied::class, ThemeColoursChanged::class,
+        TextMessageTested::class, TextMessageOptChanged::class,
     ];
 
     public function __construct(
@@ -145,6 +148,13 @@ final readonly class AuditRecorder
                 $event->model,
                 ...($event->outcome === 'ok' ? [$event->inputTokens + $event->outputTokens] : [str_replace('_', ' ', $event->outcome)]),
             ), ['task' => $event->task, 'provider' => $event->provider, 'model' => $event->model, 'input_tokens' => $event->inputTokens, 'output_tokens' => $event->outputTokens, 'outcome' => $event->outcome]),
+            $event instanceof TextMessageTested => $this->entry($event->actorId, 'sms.tested', 'sms', null, $event->sent
+                ? sprintf('Sent a test text message to %s with %s.', $event->maskedNumber, $event->provider)
+                : sprintf('Tried to send a test text message to %s with %s: %s.', $event->maskedNumber, $event->provider, str_replace('_', ' ', (string) $event->failure)), array_filter(['to' => $event->maskedNumber, 'provider' => $event->provider, 'failure' => $event->failure], static fn (?string $value): bool => $value !== null)),
+            $event instanceof TextMessageOptChanged => $this->entry(null, $event->stopped ? 'sms.opted_out' : 'sms.opted_in', 'sms', null, sprintf(
+                $event->stopped ? '%s replied STOP: it gets no more text notifications.' : '%s replied START: it gets text notifications again.',
+                $event->maskedNumber,
+            ), ['number' => $event->maskedNumber]),
             $event instanceof SettingsChanged => $this->entry($event->actorId, 'settings.changed', 'settings', null, sprintf('Changed the site settings: %s.', implode(', ', array_map($this->setting(...), $event->keys))), ['keys' => $event->keys]),
             default => null,
         };
@@ -203,6 +213,12 @@ final readonly class AuditRecorder
             'assistant.key' => 'AI service key',
             'assistant.monthly_budget' => 'AI assistant budget',
             'assistant.roles' => 'Who may use the AI assistant',
+            'sms.provider' => 'Text message provider',
+            'sms.account' => 'Text message account',
+            'sms.key' => 'Text message provider key',
+            'sms.sender' => 'Text message sender',
+            'sms.region' => 'Text message provider region',
+            'sms.monthly_budget' => 'Text message budget',
             default => $key,
         };
     }

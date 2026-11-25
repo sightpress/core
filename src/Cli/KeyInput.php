@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace SightPress\Core\Assistant\Command;
+namespace SightPress\Core\Cli;
 
 /**
  * Reads an API key from standard input (`--key-stdin`), so it never appears in the shell history or the process
- * list: `printf %s "$KEY" | bin/sightpress site:assistant:set …`. Only the first line counts.
+ * list: `printf %s "$KEY" | bin/sightpress site:assistant:set …` (or `site:sms:set`). Only the first line counts.
  */
 final readonly class KeyInput
 {

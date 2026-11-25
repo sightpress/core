@@ -9,6 +9,7 @@ use SightPress\Core\Assistant\AssistantError;
 use SightPress\Core\Assistant\AssistantSettings;
 use SightPress\Core\Assistant\AssistantSetup;
 use SightPress\Core\Assistant\Http\EndpointGuard;
+use SightPress\Core\Cli\KeyInput;
 use SightPress\Core\Infrastructure\Assistant\AssistantExtensions;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Tenant\Site;

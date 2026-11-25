@@ -29,6 +29,7 @@ use stdClass;
 #[UsesNamespace('SightPress\Core\Search')]
 #[UsesNamespace('SightPress\Core\Analytics')]
 #[UsesNamespace('SightPress\Core\Assistant')]
+#[UsesNamespace('SightPress\Core\Sms')]
 #[UsesClass(ModuleCandidate::class)]
 #[UsesClass(\SightPress\Core\Module\ModuleAbout::class)]
 #[UsesClass(\SightPress\Core\Site\SiteModule::class)]
@@ -67,7 +68,7 @@ final class ComposerModuleDiscoveryTest extends TestCase
     {
         $candidates = CoreModules::candidates();
 
-        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'search', 'analytics', 'assistant', 'audit'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'search', 'analytics', 'assistant', 'sms', 'audit'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
         self::assertSame('sightpress/core', $candidates[0]->source);
         foreach (CoreModules::entityPaths() as $path) {
             self::assertDirectoryExists($path);

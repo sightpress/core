@@ -23,6 +23,7 @@ use SightPress\Core\Rbac\RbacModule;
 use SightPress\Core\Search\SearchModule;
 use SightPress\Core\Seo\SeoModule;
 use SightPress\Core\Site\SiteModule;
+use SightPress\Core\Sms\SmsModule;
 use SightPress\Core\Theme\ThemeModule;
 use SightPress\Core\User\UserModule;
 
@@ -69,6 +70,11 @@ final class CoreModules
                 'AI assistant',
                 'Suggestions from an AI service you choose, with your own key: summaries, descriptions for search engines, alt text, drafts and answers to questions. Off until an admin chooses the service and enters its key. Nothing is sent to the service until someone asks for a suggestion, and every suggestion is checked by a person before it is used.',
                 'The assistant panel, the Suggest buttons and the AI assistant screen are removed. The settings, the key and the record of what was used are kept.',
+            )]),
+            new ModuleCandidate(new SmsModule(), 'sightpress/core', about: [SmsModule::ID => new ModuleAbout(
+                'Text messages',
+                'Text messages (SMS) through a provider your organisation sets up: people can add a mobile number to their account, get notifications by text if they choose to, and sign in with their number. Numbers are sent to the provider only to deliver messages and to check that they are real mobile numbers.',
+                'No text messages are sent, numbers can’t be added and phone sign-in stops. Numbers already on accounts and the record of messages sent are kept.',
             )]),
             new ModuleCandidate(new AuditModule(), 'sightpress/core'),
         ];

@@ -186,7 +186,7 @@ final class AuditRecorderTest extends TestCase
         self::assertSame(['assistant.used', 'assistant', 'seo_meta', 4, ['task' => 'seo_meta', 'provider' => 'anthropic', 'model' => 'claude-haiku-5-5', 'input_tokens' => 300, 'output_tokens' => 40, 'outcome' => 'ok']], [$entries[44]->action, $entries[44]->entityType, $entries[44]->entityId, $entries[44]->actorId, $entries[44]->details]);
         self::assertSame(['theme.applied', 'theme', 'acme-harbour', null, ['previous' => null]], [$entries[47]->action, $entries[47]->entityType, $entries[47]->entityId, $entries[47]->actorId, $entries[47]->details]);
         self::assertSame(['theme.colours_changed', ['colours' => ['dark.link']]], [$entries[48]->action, $entries[48]->details]);
-        self::assertCount(25, AuditRecorder::EVENTS);
+        self::assertCount(27, AuditRecorder::EVENTS);
     }
 
     public function testARegistrationWhileSignUpIsOffCameFromTheOrganisationsDomains(): void
@@ -207,6 +207,37 @@ final class AuditRecorderTest extends TestCase
         self::assertSame('Nia registered with their organisation email address and confirmed it, with the “member” role.', $entries[0]->summary);
         self::assertSame(['role' => 'member', 'source' => 'domain'], $entries[0]->details);
         self::assertSame('Changed the site settings: Registration with an organisation email address.', $entries[1]->summary);
+    }
+
+    public function testWritesASentenceForTextMessagesWithTheNumberMasked(): void
+    {
+        $pages = new PageFixture();
+        $media = new BlockFixture([], $pages->database);
+        $log = new AuditLog($pages->database->connection);
+        $registry = ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue(CoreModules::candidates())->resolve(new ModuleSelection()));
+        $recorder = new AuditRecorder($log, new FixedClock(), new PageLinkQuery($pages->database->entityManager, $pages->addresses(), $pages->database->settings()), $media->media(), new UserRepository($pages->database->entityManager), $pages->site, SettingCatalogue::fromRegistry($registry), $pages->database->settings());
+
+        foreach ([
+            new \SightPress\Core\Sms\Contract\TextMessageTested(null, '+44•••••••456', 'twilio', true),
+            new \SightPress\Core\Sms\Contract\TextMessageTested(3, '+44•••••••456', 'vonage', false, 'no_credit'),
+            new \SightPress\Core\Sms\Contract\TextMessageOptChanged('+44•••••••456', 'hash', true),
+            new \SightPress\Core\Sms\Contract\TextMessageOptChanged('+44•••••••456', 'hash', false),
+            new SettingsChanged(['sms.provider', 'sms.account', 'sms.key', 'sms.sender', 'sms.region', 'sms.monthly_budget'], null),
+        ] as $event) {
+            $recorder($event);
+        }
+
+        $entries = array_reverse($log->find(new AuditFilter(), 10));
+        self::assertSame([
+            'Sent a test text message to +44•••••••456 with twilio.',
+            'Tried to send a test text message to +44•••••••456 with vonage: no credit.',
+            '+44•••••••456 replied STOP: it gets no more text notifications.',
+            '+44•••••••456 replied START: it gets text notifications again.',
+            'Changed the site settings: Text message provider, Text message account, Text message provider key, Text message sender, Text message provider region, Text message budget.',
+        ], array_map(static fn (AuditEntry $e): string => $e->summary, $entries));
+        self::assertSame(['sms.tested', 'sms', null, null, ['to' => '+44•••••••456', 'provider' => 'twilio']], [$entries[0]->action, $entries[0]->entityType, $entries[0]->entityId, $entries[0]->actorId, $entries[0]->details]);
+        self::assertSame(['sms.tested', 3, ['to' => '+44•••••••456', 'provider' => 'vonage', 'failure' => 'no_credit']], [$entries[1]->action, $entries[1]->actorId, $entries[1]->details]);
+        self::assertSame(['sms.opted_out', 'sms.opted_in', ['number' => '+44•••••••456']], [$entries[2]->action, $entries[3]->action, $entries[2]->details]);
     }
 
     public function testWritesASentenceForEachChangeToARole(): void

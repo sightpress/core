@@ -26,6 +26,12 @@ final readonly class CsrfMiddleware implements MiddlewareInterface
 
     private const array STATE_CHANGING = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
+    /**
+     * Addresses a service calls without a session, which check a signature of their own instead: the text message
+     * provider's webhook (N-2).
+     */
+    public const array SIGNED = ['/_sms/webhook'];
+
     public function __construct(private ResponseFactoryInterface $responses)
     {
     }
@@ -35,7 +41,7 @@ final readonly class CsrfMiddleware implements MiddlewareInterface
         $tokens = new CsrfTokens(Session::fromRequest($request), $this->responses);
         $request = $request->withAttribute(CsrfTokens::class, $tokens);
 
-        if (in_array(strtoupper($request->getMethod()), self::STATE_CHANGING, true)) {
+        if (in_array(strtoupper($request->getMethod()), self::STATE_CHANGING, true) && !in_array($request->getUri()->getPath(), self::SIGNED, true)) {
             $guard = $tokens->guard();
             if ($request->hasHeader(self::NAME_HEADER) && $request->hasHeader(self::VALUE_HEADER)) {
                 $request = $request

@@ -48,6 +48,7 @@ final readonly class TenantConfig
      * @param positive-int     $maxChunkedBytes   `uploads.max_chunked_bytes`: the largest file that can be sent in parts
      * @param TenantPolicies   $policies          `domain_policy` and `email_policy`: the domains sites may use and the
      *                                            email addresses that may join (X-5)
+     * @param TenantSms        $sms               `sms`: text messages' tenant default provider, budget and limits (N-2)
      */
     public function __construct(
         public string $projectDir,
@@ -75,6 +76,7 @@ final readonly class TenantConfig
         public string $uploadTempPath = '/tmp/sightpress-uploads',
         public int $maxChunkedBytes = self::DEFAULT_MAX_CHUNKED_BYTES,
         public TenantPolicies $policies = new TenantPolicies(),
+        public TenantSms $sms = new TenantSms(),
     ) {
     }
 
@@ -125,6 +127,7 @@ final readonly class TenantConfig
             uploadTempPath: self::uploadTempPath($uploads, $projectDir),
             maxChunkedBytes: self::maxChunkedBytes($uploads),
             policies: TenantPolicies::fromArray($config),
+            sms: TenantSms::fromArray(self::section($config, 'sms'), $environment),
         );
     }
 

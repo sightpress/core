@@ -32,6 +32,8 @@ use stdClass;
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Infrastructure\Assistant\AssistantExtensions::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Infrastructure\Assistant\AssistantAccess::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Infrastructure\Sms\SmsProviders::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Infrastructure\Sms\PhoneNumbers::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Rbac\Contract\Actor::class)]
 #[CoversClass(SiteContainerFactory::class)]
 #[CoversClass(SiteContext::class)]
@@ -235,6 +237,8 @@ final class SiteContainerFactoryTest extends TestCase
         self::assertNull(Services::get($site, \SightPress\Core\Infrastructure\Assistant\AssistantAccess::class)->panel(new \SightPress\Core\Rbac\Contract\Actor(1), '/admin'), 'no assistant, no panel');
         self::assertTrue(Services::get($site, \SightPress\Core\Tenant\EnabledModules::class)->has('acme.events'));
         self::assertFalse(Services::get($site, \SightPress\Core\Tenant\EnabledModules::class)->has('search'));
+        self::assertSame([], Services::get($site, \SightPress\Core\Infrastructure\Sms\SmsProviders::class)->all(), 'no text message providers');
+        self::assertSame('GB', Services::get($site, \SightPress\Core\Infrastructure\Sms\PhoneNumbers::class)->regionOf('en-GB'));
     }
 
     public function testEachSiteKeepsItsFilesInItsOwnFolderCreatedOnFirstWrite(): void

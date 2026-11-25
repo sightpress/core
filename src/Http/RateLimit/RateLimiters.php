@@ -34,6 +34,25 @@ final class RateLimiters
         'assistant' => ['policy' => 'sliding_window', 'limit' => 20, 'interval' => '10 minutes'],
     ];
 
+    /**
+     * The text message limits (N-2) from the tenant's `sms.limits`: codes or messages per number, client address,
+     * account and site each hour, and number lookups per site each day.
+     *
+     * @param array{per_number: positive-int, per_client: positive-int, per_account: positive-int, per_site: positive-int, lookups_per_day: positive-int} $limits
+     *
+     * @return array<string, array{policy: string, limit: positive-int, interval: string}>
+     */
+    public static function smsPolicies(array $limits): array
+    {
+        return [
+            'sms_number' => ['policy' => 'sliding_window', 'limit' => $limits['per_number'], 'interval' => '1 hour'],
+            'sms_client' => ['policy' => 'sliding_window', 'limit' => $limits['per_client'], 'interval' => '1 hour'],
+            'sms_account' => ['policy' => 'sliding_window', 'limit' => $limits['per_account'], 'interval' => '1 hour'],
+            'sms_site' => ['policy' => 'sliding_window', 'limit' => $limits['per_site'], 'interval' => '1 hour'],
+            'sms_lookup' => ['policy' => 'sliding_window', 'limit' => $limits['lookups_per_day'], 'interval' => '1 day'],
+        ];
+    }
+
     /** @var array<string, RateLimiterFactory> */
     private array $factories = [];
 

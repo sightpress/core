@@ -48,6 +48,7 @@ use SightPress\Core\Tenant\SiteRepository;
 use SightPress\Core\Tenant\TenantConfigLoader;
 use SightPress\Core\Tests\Support\Browser;
 use SightPress\Core\Tests\Support\Modules\CalendarModule;
+use SightPress\Core\Tests\Support\Modules\CalendarTurnOnCheck;
 use SightPress\Core\Tests\Support\Modules\EventsModule;
 use SightPress\Core\Tests\Support\Modules\ExampleEvent;
 use SightPress\Core\Tests\Support\Modules\RecordingListener;
@@ -151,6 +152,19 @@ final class FeaturesTest extends TestCase
 
         self::assertSame(['Turned on Events.', 'Turned off Events.'], $this->audited());
         self::assertStringContainsString('Site "demo" module "acme.events" turned off.', $this->project->log());
+    }
+
+    public function testAModulesTurnOnCheckCanRefuse(): void
+    {
+        CalendarTurnOnCheck::$problem = 'The calendar needs a feed first.';
+        try {
+            self::assertSame(Command::FAILURE, $this->console(['command' => 'site:module:enable', 'slug' => 'demo', 'module' => CalendarModule::ID]));
+            self::assertStringContainsString('The calendar needs a feed first.', $this->stderr);
+            self::assertFalse($this->modules()->get($this->site(), CalendarModule::ID)->on);
+        } finally {
+            CalendarTurnOnCheck::$problem = null;
+        }
+        self::assertSame(Command::SUCCESS, $this->console(['command' => 'site:module:enable', 'slug' => 'demo', 'module' => CalendarModule::ID]), $this->stderr);
     }
 
     public function testAModuleNeedsTheModulesItRequiresAndTheReverse(): void

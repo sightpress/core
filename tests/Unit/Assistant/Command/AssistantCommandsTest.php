@@ -12,7 +12,7 @@ use SightPress\Core\Assistant\AssistantSettings;
 use SightPress\Core\Assistant\Command\AskAssistantCommand;
 use SightPress\Core\Assistant\Command\AssistantUsageCommand;
 use SightPress\Core\Assistant\Command\DisableAssistantCommand;
-use SightPress\Core\Assistant\Command\KeyInput;
+use SightPress\Core\Cli\KeyInput;
 use SightPress\Core\Assistant\Command\SetAssistantCommand;
 use SightPress\Core\Assistant\Command\SiteAssistantCommand;
 use SightPress\Core\Assistant\Command\TestAssistantCommand;

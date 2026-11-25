@@ -123,7 +123,7 @@ final readonly class SiteModules
      *
      * @return bool false when it was already on
      *
-     * @throws SiteModuleException when it is locked, or a module it needs is off
+     * @throws SiteModuleException when it is locked, a module it needs is off, or its {@see ModuleTurnOnCheck} refuses
      */
     public function turnOn(Site $site, string $id, ?int $actorId): bool
     {
@@ -140,6 +140,15 @@ final readonly class SiteModules
                     '{name} needs {required}, which is off. Turn on {required} first.',
                     ['name' => $module->name(), 'required' => $this->name($required)],
                 ));
+            }
+        }
+
+        $services = $this->containers->forSite($site);
+        if ($services->has(ModuleTurnOnCheck::PREFIX . $id)) {
+            $check = $services->get(ModuleTurnOnCheck::PREFIX . $id);
+            $problem = $check instanceof ModuleTurnOnCheck ? $check->problem() : null;
+            if ($problem !== null) {
+                throw new SiteModuleException($problem);
             }
         }
 

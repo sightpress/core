@@ -49,6 +49,8 @@ use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Infrastructure\Dashboard\DashboardWidgets;
 use SightPress\Core\Infrastructure\Assistant\AssistantAccess;
 use SightPress\Core\Infrastructure\Assistant\AssistantExtensions;
+use SightPress\Core\Infrastructure\Sms\PhoneNumbers;
+use SightPress\Core\Infrastructure\Sms\SmsProviders;
 use SightPress\Core\Infrastructure\Search\SearchExtensions;
 use SightPress\Core\Infrastructure\Seo\SeoExtensions;
 use SightPress\Core\Content\BlockTypeCatalogue;
@@ -154,6 +156,7 @@ final class SiteContainerFactory
         $secretBox = $this->secretBox;
         $config = $this->config;
         $entityPaths = $this->entityPaths;
+        $tenantModules = $this->modules;
 
         return [
             ...$this->moduleServices,
@@ -235,6 +238,12 @@ final class SiteContainerFactory
                 $container,
                 Services::get($container, ModuleRegistry::class),
             )),
+            SmsProviders::class => factory(static fn (ContainerInterface $container): SmsProviders => new SmsProviders(
+                $container,
+                $tenantModules ?? Services::get($container, ModuleRegistry::class),
+                Services::get($container, ModuleRegistry::class),
+            )),
+            PhoneNumbers::class => autowire(),
             AssistantAccess::class => factory(static fn (ContainerInterface $container): AssistantAccess => new AssistantAccess(
                 $container,
                 Services::get($container, ModuleRegistry::class),

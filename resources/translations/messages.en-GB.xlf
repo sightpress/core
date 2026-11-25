@@ -9673,5 +9673,143 @@
         <target>Your organisation lets people with an email address at {domains} create an account on members-only sites, even when anyone else can’t. They confirm their address with a code and get the role above.</target>
       </segment>
     </unit>
+    <unit id="e4bb7053d27c23fe">
+      <segment>
+        <source>Manage text messages</source>
+        <target>Manage text messages</target>
+      </segment>
+    </unit>
+    <unit id="00b53252cd97c7f9">
+      <segment>
+        <source>No text message provider is set up for this site yet.</source>
+        <target>No text message provider is set up for this site yet.</target>
+      </segment>
+    </unit>
+    <unit id="9003cc956719549a">
+      <segment>
+        <source>See the text messages the site sent and its monthly budget, and send a test message.</source>
+        <target>See the text messages the site sent and its monthly budget, and send a test message.</target>
+      </segment>
+    </unit>
+    <unit id="cc8915c21047b3fb">
+      <segment>
+        <source>Text messages aren’t set up for this site.</source>
+        <target>Text messages aren’t set up for this site.</target>
+      </segment>
+    </unit>
+    <unit id="7a8e8ab8ef5db165">
+      <segment>
+        <source>Text messages can’t be sent to numbers in this country from this site.</source>
+        <target>Text messages can’t be sent to numbers in this country from this site.</target>
+      </segment>
+    </unit>
+    <unit id="d3193f68506439c8">
+      <segment>
+        <source>Text messages can’t be sent to this number. Check it, or use another mobile number.</source>
+        <target>Text messages can’t be sent to this number. Check it, or use another mobile number.</target>
+      </segment>
+    </unit>
+    <unit id="04d6780ea5107e42">
+      <segment>
+        <source>Text messages can’t be turned on yet: {problem} Ask whoever runs your sites to set up a provider.</source>
+        <target>Text messages can’t be turned on yet: {problem} Ask whoever runs your sites to set up a provider.</target>
+      </segment>
+    </unit>
+    <unit id="9b4edabca3ddeae2">
+      <segment>
+        <source>The report didn’t come from the text message provider.</source>
+        <target>The report didn’t come from the text message provider.</target>
+      </segment>
+    </unit>
+    <unit id="1a50a7437682039a">
+      <segment>
+        <source>The text message account has no credit left. Ask whoever runs your sites to top it up.</source>
+        <target>The text message account has no credit left. Ask whoever runs your sites to top it up.</target>
+      </segment>
+    </unit>
+    <unit id="849fab424b636517">
+      <segment>
+        <source>The text message provider ({provider}) isn’t available any more.</source>
+        <target>The text message provider ({provider}) isn’t available any more.</target>
+      </segment>
+    </unit>
+    <unit id="b688029a7c30df46">
+      <segment>
+        <source>The text message provider can’t do this.</source>
+        <target>The text message provider can’t do this.</target>
+      </segment>
+    </unit>
+    <unit id="6bd3676549724209">
+      <segment>
+        <source>The text message provider couldn’t be reached. Try again later.</source>
+        <target>The text message provider couldn’t be reached. Try again later.</target>
+      </segment>
+    </unit>
+    <unit id="da3bffaa4d1cb552">
+      <segment>
+        <source>The text message provider didn’t answer in time. Try again.</source>
+        <target>The text message provider didn’t answer in time. Try again.</target>
+      </segment>
+    </unit>
+    <unit id="f0cb9a785ab22bd3">
+      <segment>
+        <source>The text message provider is busy. Try again in a few minutes.</source>
+        <target>The text message provider is busy. Try again in a few minutes.</target>
+      </segment>
+    </unit>
+    <unit id="d255fb89ec205030">
+      <segment>
+        <source>The text message provider refused the site’s key. Ask whoever runs your sites to check it.</source>
+        <target>The text message provider refused the site’s key. Ask whoever runs your sites to check it.</target>
+      </segment>
+    </unit>
+    <unit id="c94f2548555b803c">
+      <segment>
+        <source>The text message sender or region isn’t valid. Set the provider up again.</source>
+        <target>The text message sender or region isn’t valid. Set the provider up again.</target>
+      </segment>
+    </unit>
+    <unit id="cf4f7becbe853d8b">
+      <segment>
+        <source>There is no key for {provider} yet.</source>
+        <target>There is no key for {provider} yet.</target>
+      </segment>
+    </unit>
+    <unit id="dd2afb3ce9a805cf">
+      <segment>
+        <source>This isn’t a mobile number, so it can’t get text messages. Use a mobile number.</source>
+        <target>This isn’t a mobile number, so it can’t get text messages. Use a mobile number.</target>
+      </segment>
+    </unit>
+    <unit id="64ac55400f4c5129">
+      <segment>
+        <source>This number replied STOP to the site’s messages. Reply START to the site’s last message, or ask an admin for help.</source>
+        <target>This number replied STOP to the site’s messages. Reply START to the site’s last message, or ask an admin for help.</target>
+      </segment>
+    </unit>
+    <unit id="963e82faf8598a8d">
+      <segment>
+        <source>This site has used its text message budget for this month. Ask whoever runs your sites to raise it.</source>
+        <target>This site has used its text message budget for this month. Ask whoever runs your sites to raise it.</target>
+      </segment>
+    </unit>
+    <unit id="0869cc3462d227ff">
+      <segment>
+        <source>Too many text messages were asked for. Try again in {minutes, plural, one {# minute} other {# minutes}}.</source>
+        <target>Too many text messages were asked for. Try again in {minutes, plural, one {# minute} other {# minutes}}.</target>
+      </segment>
+    </unit>
+    <unit id="d722b1244c0090ed">
+      <segment>
+        <source>Twilio</source>
+        <target>Twilio</target>
+      </segment>
+    </unit>
+    <unit id="ce17e3b0390190a3">
+      <segment>
+        <source>Vonage</source>
+        <target>Vonage</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

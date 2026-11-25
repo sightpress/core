@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Support\Modules;
 
+use SightPress\Core\Tenant\ModuleTurnOnCheck;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
 use SightPress\Module\ModuleRegistrar;
@@ -25,5 +26,6 @@ final class CalendarModule implements ModuleInterface
     public function register(ModuleRegistrar $registrar): void
     {
         $registrar->routes()->add(new Route('acme.calendar.show', '/calendar', HelloHandler::class));
+        $registrar->services()->factory(ModuleTurnOnCheck::PREFIX . self::ID, static fn (): CalendarTurnOnCheck => new CalendarTurnOnCheck());
     }
 }

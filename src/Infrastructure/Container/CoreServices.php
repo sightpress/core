@@ -113,6 +113,7 @@ final class CoreServices
             ValidatorInterface::class => factory(static fn (): ValidatorInterface => Validation::createValidator()),
             RateLimiters::class => factory(static fn (): RateLimiters => new RateLimiters(
                 new CacheStorage(new FilesystemAdapter('rate_limits', 0, $config->cacheDir)),
+                RateLimiters::POLICIES + RateLimiters::smsPolicies($config->sms->limits),
             )),
             ListenerProviderInterface::class => autowire(ListenerProvider::class),
             EventDispatcherInterface::class => autowire(EventDispatcher::class),

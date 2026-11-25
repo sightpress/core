@@ -66,6 +66,13 @@ final class CsrfTest extends TestCase
         self::assertSame(2, $handled);
     }
 
+    public function testTheTextMessageWebhookChecksItsOwnSignatureInstead(): void
+    {
+        $response = $this->send(new ServerRequest('POST', 'https://example.org/_sms/webhook'), new Session(), static fn (): null => null);
+
+        self::assertSame(200, $response->getStatusCode());
+    }
+
     public function testAFormWithoutAValidTokenIsRefused(): void
     {
         $session = new Session();
