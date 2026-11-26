@@ -9,13 +9,15 @@ use SightPress\Core\Block\Rule\LinkTextRule;
 use SightPress\Core\Block\Schema\SchemaConstraints;
 use SightPress\Core\Block\SiteBlockContext;
 use SightPress\Module\Block\BlockContext;
-use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockOption;
+use SightPress\Module\Block\BlockStyles;
+use SightPress\Module\Block\StyledBlockType;
 
 /**
  * A link to download a file from the media library. The link text says what it is, followed by the file's type and
  * size ("Annual report (PDF, 2.3 MB)"), so people know what they get before they choose it.
  */
-final class FileDownloadBlock implements BlockType
+final class FileDownloadBlock implements StyledBlockType
 {
     public function name(): string
     {
@@ -43,6 +45,11 @@ final class FileDownloadBlock implements BlockType
                 'text' => ['title' => 'Link text', 'description' => 'What the file is, for example "Annual report 2026". Its type and size are added for you.', 'type' => 'string', 'minLength' => 1, 'maxLength' => 200],
             ],
         ];
+    }
+
+    public function styles(): BlockStyles
+    {
+        return new BlockStyles([], [BlockOption::Spacing]);
     }
 
     public function upgradeData(int $fromVersion, array $data): array

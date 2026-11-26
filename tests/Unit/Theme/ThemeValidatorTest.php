@@ -90,11 +90,25 @@ final class ThemeValidatorTest extends TestCase
         ], array_slice(array_map(static fn (ThemeIssue $i): string => $i->message, $faint->issues), 0, 2));
     }
 
+    public function testTheBlockBackgroundsEditorsCanChooseAreChecked(): void
+    {
+        $result = new ThemeValidator()->validate(self::theme(light: [
+            'text' => '#000000', 'background' => '#ffffff', 'border' => '#000000', 'link' => '#0000ee',
+            'surface' => '#f3f4f6', 'muted' => '#555555', 'accent' => '#0a57c2', 'on-accent' => '#0a0a0a',
+        ]));
+
+        self::assertSame([
+            'In light mode, text "text" (#000000) on "muted" (#555555) has a contrast of 2.81:1; it needs at least 4.50:1.',
+            'In light mode, text "link" (#0000ee) on "muted" (#555555) has a contrast of 1.26:1; it needs at least 4.50:1.',
+            'In light mode, text "on-accent" (#0a0a0a) on "accent" (#0a57c2) has a contrast of 2.97:1; it needs at least 4.50:1.',
+        ], array_slice(array_map(static fn (ThemeIssue $i): string => $i->message, $result->issues), 0, 3));
+    }
+
     public function testAThemeWithoutPairsFails(): void
     {
         $result = new ThemeValidator()->validate(self::theme(pairs: []));
 
-        self::assertSame(20, $result->checks, 'only the chart colours');
+        self::assertSame(24, $result->checks, 'only the chart colours and text on the block backgrounds');
         self::assertStringStartsWith('The theme declares no colour pairs under "contrast" in theme.json', $result->issues[0]->message);
         self::assertNull($result->issues[0]->pair);
         self::assertNull($result->issues[0]->mode);

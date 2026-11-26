@@ -6,13 +6,15 @@ namespace SightPress\Core\Block\Type;
 
 use SightPress\Core\Block\Html;
 use SightPress\Module\Block\BlockContext;
-use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockOption;
+use SightPress\Module\Block\BlockStyles;
+use SightPress\Module\Block\StyledBlockType;
 
 /**
  * A section heading, level 2 to 6 (the page title is the only level 1). Whether levels skip is checked across the
  * page when it is published.
  */
-final class HeadingBlock implements BlockType
+final class HeadingBlock implements StyledBlockType
 {
     public function name(): string
     {
@@ -40,6 +42,11 @@ final class HeadingBlock implements BlockType
                 'level' => ['title' => 'Level', 'description' => '2 starts a main part of the page, 3 a part of that, and so on. The page title is the only level 1.', 'type' => 'integer', 'minimum' => 2, 'maximum' => 6],
             ],
         ];
+    }
+
+    public function styles(): BlockStyles
+    {
+        return new BlockStyles([], [BlockOption::Align, BlockOption::Spacing]);
     }
 
     public function upgradeData(int $fromVersion, array $data): array

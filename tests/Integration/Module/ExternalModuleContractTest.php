@@ -13,6 +13,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SightPress\Core\Auth\PasswordHasher;
+use SightPress\Core\Content\BlockIconCatalogue;
+use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Infrastructure\Schedule\ModuleJobs;
 use SightPress\Core\Module\ModuleCandidate;
@@ -151,6 +153,18 @@ final class ExternalModuleContractTest extends TestCase
 
         Services::get($services, EventDispatcherInterface::class)->dispatch(new PageTransitioned(7, 'publish', 'approved', 'published', null));
         self::assertSame(['Noticed that page 7 was published.'], $this->connection()->createQueryBuilder()->select('summary')->from('audit_log')->where("event_action = 'acme.events.page_seen'")->fetchFirstColumn());
+    }
+
+    public function testAVariantOfACoreBlockAndAnIcon(): void
+    {
+        $services = $this->site->container();
+        $image = Services::get($services, BlockTypeCatalogue::class)->stylesOf('image');
+        self::assertNotNull($image);
+        self::assertSame(['plain', 'rounded', 'bordered', 'ticket'], array_map(static fn ($variant): string => $variant->name, $image->variants));
+
+        $icons = Services::get($services, BlockIconCatalogue::class);
+        self::assertSame('acme-tickets', $icons->forUrl('https://tickets.acme.test/open-day')?->name);
+        self::assertStringContainsString('aria-hidden="true"', (string) $icons->svg('acme-tickets'));
     }
 
     private function signedIn(string $email): Browser

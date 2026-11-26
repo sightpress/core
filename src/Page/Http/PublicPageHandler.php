@@ -355,7 +355,7 @@ final readonly class PublicPageHandler implements RequestHandlerInterface
      * address is the HTML page's; a page search engines shouldn't list says so in `X-Robots-Tag`.
      */
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      */
     private function markdown(ServerRequestInterface $request, PageTranslation $translation, array $blocks, string $address, string $baseUrl, Actor $actor): ResponseInterface
     {

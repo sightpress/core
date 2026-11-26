@@ -13,17 +13,17 @@ use SightPress\Module\Block\BlockContext;
 interface BlockRenderer
 {
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      */
     public function html(array $blocks, BlockContext $context): string;
 
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      */
     public function markdown(array $blocks, BlockContext $context): string;
 
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      *
      * @return list<array<string, mixed>>
      */

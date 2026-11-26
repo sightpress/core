@@ -22,7 +22,7 @@ final readonly class BlockOperation
     }
 
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      * @param string|null                                                         $addType the block type chosen for `add` on a list of blocks
      */
     public function apply(string $locale, array $blocks, string $op, ?string $addType = null): ?OperationResult
@@ -97,7 +97,7 @@ final readonly class BlockOperation
     private function result(array $document, string $listPointer, array $items, string|Message $message, string $focus): OperationResult
     {
         $blocks = Pointer::set($document, $listPointer, $items)['blocks'] ?? [];
-        /** @var list<array{type: string, version: int, data: array<string, mixed>}> $blocks */
+        /** @var list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks */
         return new OperationResult(array_values($blocks), new Message('{change} Save the page to keep this change.', ['change' => Message::of($message)]), $focus);
     }
 

@@ -63,6 +63,10 @@ final class PageContentTest extends TestCase
             'no data' => ['type' => 'heading', 'version' => 1],
             'list data' => ['type' => 'heading', 'version' => 1, 'data' => ['a']],
             'extra key' => ['type' => 'heading', 'version' => 1, 'data' => [], 'html' => '<p>'],
+            'styles and an extra key' => ['type' => 'heading', 'version' => 1, 'data' => [], 'styles' => [], 'html' => '<p>'],
+            'styles not a list of choices' => ['type' => 'heading', 'version' => 1, 'data' => [], 'styles' => 'center'],
+            'styles with a number key' => ['type' => 'heading', 'version' => 1, 'data' => [], 'styles' => ['center']],
+            'styles with a number value' => ['type' => 'heading', 'version' => 1, 'data' => [], 'styles' => ['align' => 1]],
         ] as $name => $block) {
             yield 'block ' . $name => [static fn () => new PageContent('About', null, null, null, [['type' => 'a', 'version' => 1, 'data' => []], $block]), 'Block 2 is not a block'];
         }
@@ -107,6 +111,17 @@ final class PageContentTest extends TestCase
         self::assertSame([], $content->blocks);
         self::assertSame(12, $changed->socialImage, 'the share image stays');
         self::assertSame(12, $changed->toArray()['social_image']);
+    }
+
+    public function testKeepsTheLooksOfABlock(): void
+    {
+        $content = new PageContent('About', blocks: [
+            ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'A', 'level' => 2], 'styles' => ['align' => 'center']],
+            ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'B', 'level' => 2], 'styles' => []],
+        ]);
+
+        self::assertSame(['align' => 'center'], $content->blocks[0]['styles'] ?? null);
+        self::assertSame(['type' => 'heading', 'version' => 1, 'data' => ['text' => 'B', 'level' => 2]], $content->blocks[1]);
     }
 
     /**

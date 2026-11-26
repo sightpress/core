@@ -331,6 +331,14 @@
         {%- for control in block.controls %}
         {{ e.control(control, focus) }}
         {%- endfor %}
+        {%- if block.styles is not empty %}
+        <fieldset class="block-editor__group block-editor__styles">
+            <legend>{{ t('Look of {block}', {block: block.short}) }}</legend>
+            {%- for control in block.styles %}
+            {{ e.control(control, focus) }}
+            {%- endfor %}
+        </fieldset>
+        {%- endif %}
         {%- if block.preview is not null %}
         <details class="block-editor__preview">
             <summary>{{ t('Preview of {block}', {block: block.short}) }}</summary>

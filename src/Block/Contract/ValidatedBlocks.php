@@ -14,7 +14,7 @@ use SightPress\Module\Block\A11ySeverity;
 final readonly class ValidatedBlocks
 {
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      * @param list<BlockIssue>                                                    $issues
      * @param list<int>                                                           $mediaIds files the blocks use
      * @param list<array{id: int, pointer: string}>                               $media    each use of a file, with

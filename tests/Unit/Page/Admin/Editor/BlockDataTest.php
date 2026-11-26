@@ -55,6 +55,19 @@ final class BlockDataTest extends TestCase
         self::assertSame([], $this->data->read('not a list'));
     }
 
+    public function testKeepsTheLooksThatAreNotTheDefault(): void
+    {
+        $blocks = $this->data->read([
+            ['type' => 'heading', 'version' => '1', 'data' => ['text' => 'A', 'level' => '2'], 'styles' => ['align' => 'center', 'spacing' => 'medium', 'width' => 'wide']],
+            ['type' => 'heading', 'version' => '1', 'data' => ['text' => 'B', 'level' => '2'], 'styles' => ['align' => 'start']],
+            ['type' => 'gone.block', 'version' => '1', 'kept' => '{}', 'styles' => ['align' => 'center']],
+        ]);
+
+        self::assertSame(['align' => 'center'], $blocks[0]['styles'] ?? null);
+        self::assertArrayNotHasKey('styles', $blocks[1]);
+        self::assertArrayNotHasKey('styles', $blocks[2]);
+    }
+
     public function testReadsTheBlocksInsideColumns(): void
     {
         $blocks = $this->data->read([['type' => 'columns', 'version' => '1', 'data' => ['columns' => [

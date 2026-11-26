@@ -9,13 +9,15 @@ use SightPress\Core\Block\Rule\AudioTranscriptRule;
 use SightPress\Core\Block\Schema\SchemaConstraints;
 use SightPress\Core\Block\SiteBlockContext;
 use SightPress\Module\Block\BlockContext;
-use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockOption;
+use SightPress\Module\Block\BlockStyles;
+use SightPress\Module\Block\StyledBlockType;
 
 /**
  * An audio file from the media library (a talk, a podcast episode) with a title and a transcript, which is needed
  * before the page can be published. It never plays by itself.
  */
-final class AudioBlock implements BlockType
+final class AudioBlock implements StyledBlockType
 {
     public function name(): string
     {
@@ -44,6 +46,11 @@ final class AudioBlock implements BlockType
                 'transcript' => ['title' => 'Transcript', 'description' => 'Everything said, as text, for people who can\'t hear the recording.', 'type' => 'string', 'maxLength' => VideoBlock::TRANSCRIPT_MAX_LENGTH],
             ],
         ];
+    }
+
+    public function styles(): BlockStyles
+    {
+        return new BlockStyles([], [BlockOption::Spacing]);
     }
 
     public function upgradeData(int $fromVersion, array $data): array

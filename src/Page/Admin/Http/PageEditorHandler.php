@@ -138,7 +138,7 @@ final readonly class PageEditorHandler implements RequestHandlerInterface
 
     /**
      * @param array<array-key, mixed>                                             $body
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      */
     private function change(ServerRequestInterface $request, Page $page, string $locale, array $body, array $blocks, string $op): ResponseInterface
     {
@@ -185,7 +185,7 @@ final readonly class PageEditorHandler implements RequestHandlerInterface
      * The blocks of an AI assistant draft (already checked by its task): headings and rich text only, the rest left
      * out; the editor checks them again when the page is saved.
      *
-     * @return list<array{type: string, version: int, data: array<string, mixed>}>
+     * @return list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}>
      */
     private static function draftedBlocks(string $json): array
     {

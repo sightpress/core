@@ -17,7 +17,7 @@ final readonly class IndexedPage
      *                                                                                        `/` for the home page
      * @param bool                                                                $public     whether everyone may read
      *                                                                                        it (else members only)
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      * @param bool                                                                $home       whether it is the
      *                                                                                        home page
      */

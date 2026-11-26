@@ -50,7 +50,7 @@ final class PageTranslation
     #[ORM\Column(type: Types::STRING, length: 300, nullable: true)]
     private ?string $description;
 
-    /** @var list<array{type: string, version: int, data: array<string, mixed>}> */
+    /** @var list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> */
     #[ORM\Column(type: Types::JSON)]
     private array $blocks;
 
@@ -140,7 +140,7 @@ final class PageTranslation
     }
 
     /**
-     * @return list<array{type: string, version: int, data: array<string, mixed>}>
+     * @return list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}>
      */
     public function blocks(): array
     {
@@ -268,7 +268,7 @@ final class PageTranslation
     }
 
     /**
-     * @return array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string, exclude_from_site_search: bool, draft: bool}
+     * @return array{title: string, slug: string, path: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string, exclude_from_site_search: bool, draft: bool}
      */
     public function snapshot(): array
     {

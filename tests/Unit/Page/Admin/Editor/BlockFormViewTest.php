@@ -122,6 +122,30 @@ final class BlockFormViewTest extends TestCase
         self::assertSame(['Something is wrong with this image.'], Text::of(self::get($editor->list, 'blocks', 1, 'errors')));
     }
 
+    public function testOffersAChoiceForEachLookOfTheBlock(): void
+    {
+        $editor = $this->view->build('en-GB', [
+            ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'A', 'level' => 2], 'styles' => ['align' => 'center']],
+            ['type' => 'image', 'version' => 1, 'data' => []],
+            ['type' => 'acme.every_field', 'version' => 1, 'data' => []],
+        ], ['/blocks/0/styles/spacing' => 'Choose one of: medium, none, small, large.']);
+
+        $heading = self::get($editor->list, 'blocks', 0);
+        self::assertSame(['/blocks/0/styles/align', '/blocks/0/styles/spacing'], Text::of([self::get($heading, 'styles', 0, 'pointer'), self::get($heading, 'styles', 1, 'pointer')]));
+        self::assertCount(2, self::items(self::get($heading, 'styles')));
+        self::assertSame(['select', '/blocks/0/styles/align', 'en-gb-blocks-0-styles-align', 'blocks[0][styles][align]', 'Text alignment', 'center', true], Text::of([
+            self::get($heading, 'styles', 0, 'kind'), self::get($heading, 'styles', 0, 'pointer'), self::get($heading, 'styles', 0, 'id'),
+            self::get($heading, 'styles', 0, 'name'), self::get($heading, 'styles', 0, 'label'), self::get($heading, 'styles', 0, 'value'),
+            self::get($heading, 'styles', 0, 'required'),
+        ]));
+        self::assertSame('Centred text is harder to read over more than a few lines.', Text::of(self::get($heading, 'styles', 0, 'hint')));
+        self::assertSame('medium', self::get($heading, 'styles', 1, 'value'), 'the default when nothing is stored');
+        self::assertSame(['Choose one of: medium, none, small, large.'], Text::of(self::get($heading, 'styles', 1, 'errors')));
+        self::assertSame(['id' => 'en-gb-blocks-0-styles-spacing', 'message' => 'Space above and below: Choose one of: medium, none, small, large.'], Text::of($editor->errors[0]));
+        self::assertSame(['plain' => 'Plain', 'rounded' => 'Rounded corners', 'bordered' => 'With a border'], Text::of(self::get($editor->list, 'blocks', 1, 'styles', 0, 'choices')));
+        self::assertSame([], self::get($editor->list, 'blocks', 2, 'styles'));
+    }
+
     public function testOffersTheBlockTypesInAlphabeticalOrder(): void
     {
         $top = $this->view->addable(true);

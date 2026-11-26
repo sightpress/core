@@ -13,7 +13,7 @@ final readonly class PublicPage
      * @param string                                                              $url    path of the page on the site,
      *                                                                                    with the locale prefix, for
      *                                                                                    example `/pt-br/sobre`
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      */
     public function __construct(
         public int $id,

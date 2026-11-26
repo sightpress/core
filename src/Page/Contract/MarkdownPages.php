@@ -13,7 +13,7 @@ use DateTimeImmutable;
 interface MarkdownPages
 {
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      * @param string                                                              $canonicalUrl the page's address
      *                                                                                          (absolute)
      * @param string                                                              $baseUrl      scheme and host

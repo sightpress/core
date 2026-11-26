@@ -6,10 +6,14 @@ namespace SightPress\Core\Theme;
 
 /**
  * Turns a theme's tokens into the CSS custom properties its stylesheet uses: light mode on `:root`, then dark mode
- * (`prefers-color-scheme: dark`), more contrast (`prefers-contrast: more`) and both together.
+ * (`prefers-color-scheme: dark`), more contrast (`prefers-contrast: more`) and both together. Core's default look
+ * for the block choices editors make follows (`resources/assets/css/blocks.css`, ADR-0064), so they work with every
+ * theme; it has no specificity, so the theme's own stylesheet wins.
  */
 final readonly class TokenStylesheet
 {
+    public const string BLOCK_STYLES = __DIR__ . '/../../resources/assets/css/blocks.css';
+
     public function compile(ThemeTokens $tokens): string
     {
         $root = ['color-scheme' => 'light dark'];
@@ -32,7 +36,9 @@ final readonly class TokenStylesheet
             $darkMore[$name] = $tokens->darkMore[$name] ?? $tokens->dark[$name];
         }
 
-        return $css . self::media('(prefers-contrast: more) and (prefers-color-scheme: dark)', self::colors($darkMore));
+        $css .= self::media('(prefers-contrast: more) and (prefers-color-scheme: dark)', self::colors($darkMore));
+
+        return $css . "\n" . (string) file_get_contents(self::BLOCK_STYLES);
     }
 
     /**

@@ -11,13 +11,15 @@ use SightPress\Core\Block\Rule\RichTextLinksRule;
 use SightPress\Core\Block\Schema\SchemaConstraints;
 use SightPress\Core\Block\SiteBlockContext;
 use SightPress\Module\Block\BlockContext;
-use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockOption;
+use SightPress\Module\Block\BlockStyles;
+use SightPress\Module\Block\StyledBlockType;
 
 /**
  * Formatted text: paragraphs, lists, links, emphasis, quotes and subheadings. The HTML is cleaned with an
  * allow-list when it is saved ({@see RichTextSanitizer}), so it is output as it is.
  */
-final class RichTextBlock implements BlockType
+final class RichTextBlock implements StyledBlockType
 {
     public function name(): string
     {
@@ -50,6 +52,11 @@ final class RichTextBlock implements BlockType
                 ],
             ],
         ];
+    }
+
+    public function styles(): BlockStyles
+    {
+        return new BlockStyles([], [BlockOption::Align, BlockOption::Background, BlockOption::Width, BlockOption::Spacing]);
     }
 
     public function upgradeData(int $fromVersion, array $data): array

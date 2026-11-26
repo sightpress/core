@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Editor;
 
+use SightPress\Core\Block\Contract\BlockStyleChoices;
 use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Module\Block\BlockType;
 
 /**
  * Turns the page editor's form back into blocks, following each block type's schema: text stays text, numbers
- * and media ids become whole numbers, a ticked box becomes `true`. Empty optional fields are left out, so the
+ * and media ids become whole numbers, a ticked box becomes `true`. A block's looks keep only the choices that aren't
+ * the default. Empty optional fields are left out, so the
  * block module can say what is missing. Nothing here decides whether the blocks can be saved: the block module
  * checks and cleans them when the page is saved.
  */
@@ -27,7 +29,7 @@ final readonly class BlockData
     /**
      * @param mixed $posted the `blocks` part of the form
      *
-     * @return list<array{type: string, version: int, data: array<string, mixed>}>
+     * @return list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}>
      */
     public function read(mixed $posted): array
     {
@@ -39,11 +41,12 @@ final readonly class BlockData
             $type = $this->types->get($block['type']);
             $version = $block['version'] ?? null;
             $data = is_array($block['data'] ?? null) ? $block['data'] : [];
+            $styles = BlockStyleChoices::clean($this->types->stylesOf($block['type']), $block['styles'] ?? null);
             $blocks[] = [
                 'type' => $block['type'],
                 'version' => is_numeric($version) ? max(1, (int) $version) : ($type?->version() ?? 1),
                 'data' => $type === null ? self::kept($block[self::KEPT] ?? null) : $this->object($type->schema(), $data),
-            ];
+            ] + ($styles === [] ? [] : ['styles' => $styles]);
         }
 
         return $blocks;
@@ -53,7 +56,7 @@ final readonly class BlockData
      * A new, empty block of the type: lists that need items (the two columns of a columns block, the first
      * picture of a gallery) get empty ones.
      *
-     * @return array{type: string, version: int, data: array<string, mixed>}
+     * @return array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}
      */
     public static function blank(BlockType $type): array
     {

@@ -13,7 +13,7 @@ use SightPress\Core\Template\Message;
 final readonly class OperationResult
 {
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      */
     public function __construct(
         public array $blocks,

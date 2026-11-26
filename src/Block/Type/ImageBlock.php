@@ -9,13 +9,16 @@ use SightPress\Core\Block\Rule\ImageAltRule;
 use SightPress\Core\Block\Schema\SchemaConstraints;
 use SightPress\Core\Block\SiteBlockContext;
 use SightPress\Module\Block\BlockContext;
-use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockOption;
+use SightPress\Module\Block\BlockStyles;
+use SightPress\Module\Block\StyledBlockType;
+use SightPress\Module\Block\BlockVariant;
 
 /**
  * A picture from the media library with its alt text (or marked as decorative) and an optional caption. The browser
  * gets every smaller copy to choose from, and the size, so the page doesn't jump while it loads.
  */
-final class ImageBlock implements BlockType
+final class ImageBlock implements StyledBlockType
 {
     public function name(): string
     {
@@ -45,6 +48,11 @@ final class ImageBlock implements BlockType
                 'caption' => ['title' => 'Caption', 'description' => 'Shown under the picture, for everyone.', 'type' => 'string', 'maxLength' => 2000],
             ],
         ];
+    }
+
+    public function styles(): BlockStyles
+    {
+        return new BlockStyles([new BlockVariant('plain', 'Plain'), new BlockVariant('rounded', 'Rounded corners'), new BlockVariant('bordered', 'With a border')], [BlockOption::Width, BlockOption::Spacing]);
     }
 
     public function upgradeData(int $fromVersion, array $data): array

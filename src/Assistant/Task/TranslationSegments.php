@@ -40,7 +40,7 @@ final class TranslationSegments
     public static function apply(TranslationSource $source, array $translated): TranslationSource
     {
         $next = 4;
-        /** @var list<array{type: string, version: int, data: array<string, mixed>}> $blocks */
+        /** @var list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks */
         $blocks = self::walk($source->blocks, static function () use ($translated, &$next): string {
             return $translated[$next++] ?? '';
         });

@@ -10,7 +10,8 @@ use SightPress\Core\Template\Message;
  * What an editor writes for one locale of a page: the title, the slug, the summary, the description for search
  * engines and the blocks. Checked and tidied when it is made, so a page never holds content that breaks these rules.
  *
- * Blocks are stored as `{ "type": "…", "version": n, "data": { … } }` (ADR-0005); the {@see PageEditor} has the
+ * Blocks are stored as `{ "type": "…", "version": n, "data": { … } }` (ADR-0005), with the block's looks in an
+ * optional `"styles": { … }` (ADR-0064); the {@see PageEditor} has the
  * block module check each block's data against its type when the page is saved.
  */
 final readonly class PageContent
@@ -32,7 +33,7 @@ final readonly class PageContent
 
     public ?string $description;
 
-    /** @var list<array{type: string, version: int, data: array<string, mixed>}> */
+    /** @var list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> */
     public array $blocks;
 
     /** Media id of the picture shared with links to this page (`og:image`), instead of the site's share image. */
@@ -121,7 +122,7 @@ final readonly class PageContent
     /**
      * The content as stored in a revision snapshot.
      *
-     * @return array{title: string, slug: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string, exclude_from_site_search: bool}
+     * @return array{title: string, slug: string, summary: ?string, description: ?string, blocks: list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}>, social_image: ?int, seo_title: ?string, noindex: bool, canonical_url: ?string, exclude_from_site_search: bool}
      */
     public function toArray(): array
     {
@@ -160,7 +161,7 @@ final readonly class PageContent
     /**
      * @param list<mixed> $blocks
      *
-     * @return list<array{type: string, version: int, data: array<string, mixed>}>
+     * @return list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}>
      */
     private static function blocks(array $blocks): array
     {
@@ -178,15 +179,35 @@ final readonly class PageContent
                 || $block['version'] < 1
                 || !is_array($block['data'] ?? null)
                 || ($block['data'] !== [] && array_is_list($block['data']))
-                || count($block) !== 3
+                || count($block) !== (array_key_exists('styles', $block) ? 4 : 3)
+                || !self::isStyles($block['styles'] ?? [])
             ) {
                 throw new PageException(new Message('Block {index} is not a block: it needs a type, a version from 1 up and its data, and nothing else.', ['index' => $index + 1]));
             }
             /** @var array<string, mixed> $data */
             $data = $block['data'];
-            $clean[] = ['type' => $block['type'], 'version' => $block['version'], 'data' => $data];
+            /** @var array<string, string> $styles */
+            $styles = $block['styles'] ?? [];
+            $clean[] = ['type' => $block['type'], 'version' => $block['version'], 'data' => $data] + ($styles === [] ? [] : ['styles' => $styles]);
         }
 
         return $clean;
+    }
+
+    /**
+     * Whether a block's looks are a set of choices: names and values that are both text.
+     */
+    private static function isStyles(mixed $styles): bool
+    {
+        if (!is_array($styles)) {
+            return false;
+        }
+        foreach ($styles as $key => $value) {
+            if (!is_string($key) || !is_string($value)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

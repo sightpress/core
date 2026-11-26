@@ -35,7 +35,7 @@ final class PublicPageRendering
      * @param ?string   $seoTitle      the title for search engines, when it differs from the page title
      * @param bool      $noindex       whether search engines are asked to leave the page out
      * @param ?string   $canonicalOverride the original's address, when the page copies another one
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      * @param string    $contentHtml   the page's blocks rendered as HTML
      */
     public function __construct(

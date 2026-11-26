@@ -10321,5 +10321,203 @@
         <target>{code} is your code to reset your password for {site}. It works for {duration}. Never share it.</target>
       </segment>
     </unit>
+    <unit id="a5c6fb18c9af89b2">
+      <segment>
+        <source>Accent</source>
+        <target>Accent</target>
+      </segment>
+    </unit>
+    <unit id="5d05060e95878651">
+      <segment>
+        <source>All in one row</source>
+        <target>All in one row</target>
+      </segment>
+    </unit>
+    <unit id="b8ac733133a175bc">
+      <segment>
+        <source>Button position</source>
+        <target>Button position</target>
+      </segment>
+    </unit>
+    <unit id="be3702e3f1af559a">
+      <segment>
+        <source>Card</source>
+        <target>Card</target>
+      </segment>
+    </unit>
+    <unit id="45c19322f7b9337e">
+      <segment>
+        <source>Centre</source>
+        <target>Centre</target>
+      </segment>
+    </unit>
+    <unit id="3f5b815842b3e6b3">
+      <segment>
+        <source>Centred text is harder to read over more than a few lines.</source>
+        <target>Centred text is harder to read over more than a few lines.</target>
+      </segment>
+    </unit>
+    <unit id="ed6ac2faa1ac7c63">
+      <segment>
+        <source>Choose one of: {values}.</source>
+        <target>Choose one of: {values}.</target>
+      </segment>
+    </unit>
+    <unit id="6588e9d52aeeccb2">
+      <segment>
+        <source>Colours come from the theme, so text on them always has enough contrast.</source>
+        <target>Colours come from the theme, so text on them always has enough contrast.</target>
+      </segment>
+    </unit>
+    <unit id="f9aac68565732662">
+      <segment>
+        <source>End (right in left-to-right languages)</source>
+        <target>End (right in left-to-right languages)</target>
+      </segment>
+    </unit>
+    <unit id="5b9a629f608fec7c">
+      <segment>
+        <source>Form layout</source>
+        <target>Form layout</target>
+      </segment>
+    </unit>
+    <unit id="946a027ae45fb800">
+      <segment>
+        <source>Form size</source>
+        <target>Form size</target>
+      </segment>
+    </unit>
+    <unit id="d34008d28f89d292">
+      <segment>
+        <source>Full width</source>
+        <target>Full width</target>
+      </segment>
+    </unit>
+    <unit id="5891a2d3026ad98b">
+      <segment>
+        <source>Labels above the fields</source>
+        <target>Labels above the fields</target>
+      </segment>
+    </unit>
+    <unit id="514da327fdd927b7">
+      <segment>
+        <source>Labels beside the fields</source>
+        <target>Labels beside the fields</target>
+      </segment>
+    </unit>
+    <unit id="b798b2cfd1f55d5b">
+      <segment>
+        <source>Labels beside the fields go back above them on narrow screens and when zoomed in.</source>
+        <target>Labels beside the fields go back above them on narrow screens and when zoomed in.</target>
+      </segment>
+    </unit>
+    <unit id="ab80540d98d27456">
+      <segment>
+        <source>Large</source>
+        <target>Large</target>
+      </segment>
+    </unit>
+    <unit id="b75fbd919c2aa767">
+      <segment>
+        <source>Look of {block}</source>
+        <target>Look of {block}</target>
+      </segment>
+    </unit>
+    <unit id="8e588cd187741f1c">
+      <segment>
+        <source>Medium</source>
+        <target>Medium</target>
+      </segment>
+    </unit>
+    <unit id="2346f214ad56b180">
+      <segment>
+        <source>Muted</source>
+        <target>Muted</target>
+      </segment>
+    </unit>
+    <unit id="38607384c965f8de">
+      <segment>
+        <source>None (what is behind it)</source>
+        <target>None (what is behind it)</target>
+      </segment>
+    </unit>
+    <unit id="8b854ade2cd01bdc">
+      <segment>
+        <source>Plain</source>
+        <target>Plain</target>
+      </segment>
+    </unit>
+    <unit id="80ed131a45e40732">
+      <segment>
+        <source>Rounded corners</source>
+        <target>Rounded corners</target>
+      </segment>
+    </unit>
+    <unit id="5263293fc202649b">
+      <segment>
+        <source>Small</source>
+        <target>Small</target>
+      </segment>
+    </unit>
+    <unit id="6ba73bb2b04e6e75">
+      <segment>
+        <source>Space above and below</source>
+        <target>Space above and below</target>
+      </segment>
+    </unit>
+    <unit id="49a79baef04a29d3">
+      <segment>
+        <source>Start (left in left-to-right languages)</source>
+        <target>Start (left in left-to-right languages)</target>
+      </segment>
+    </unit>
+    <unit id="0905f7f59021c2a8">
+      <segment>
+        <source>Surface</source>
+        <target>Surface</target>
+      </segment>
+    </unit>
+    <unit id="9a5e5afef6f2cd47">
+      <segment>
+        <source>Text alignment</source>
+        <target>Text alignment</target>
+      </segment>
+    </unit>
+    <unit id="b0556fa6c2042525">
+      <segment>
+        <source>Text width</source>
+        <target>Text width</target>
+      </segment>
+    </unit>
+    <unit id="96dc4aef06bfa103">
+      <segment>
+        <source>This block has no &quot;{choice}&quot; choice.</source>
+        <target>This block has no &quot;{choice}&quot; choice.</target>
+      </segment>
+    </unit>
+    <unit id="147170e793c6e58f">
+      <segment>
+        <source>Wide</source>
+        <target>Wide</target>
+      </segment>
+    </unit>
+    <unit id="3019947b6daf18b0">
+      <segment>
+        <source>Width</source>
+        <target>Width</target>
+      </segment>
+    </unit>
+    <unit id="f82d9ffda488c03d">
+      <segment>
+        <source>With a border</source>
+        <target>With a border</target>
+      </segment>
+    </unit>
+    <unit id="de195db54aaad8c0">
+      <segment>
+        <source>The look of this block must be a set of choices, such as align: center.</source>
+        <target>The look of this block must be a set of choices, such as align: center.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

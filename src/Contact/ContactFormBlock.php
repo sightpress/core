@@ -8,7 +8,10 @@ use SightPress\Core\Block\Contract\HttpBlockContext;
 use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Template\TemplateRenderer;
 use SightPress\Module\Block\BlockContext;
-use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockOption;
+use SightPress\Module\Block\BlockStyles;
+use SightPress\Module\Block\StyledBlockType;
+use SightPress\Module\Block\BlockVariant;
 
 /**
  * A form visitors use to send a message (name, email address, message) to an address the editor chooses. The
@@ -18,7 +21,7 @@ use SightPress\Module\Block\BlockType;
  * The form needs the visitor's request (CSRF token, what the last submission left): without one (Markdown, feeds)
  * the block shows nothing, as it holds no content of its own.
  */
-final readonly class ContactFormBlock implements BlockType
+final readonly class ContactFormBlock implements StyledBlockType
 {
     public function __construct(private TemplateRenderer $templates)
     {
@@ -52,6 +55,11 @@ final readonly class ContactFormBlock implements BlockType
                 'success_text' => ['title' => 'Message after sending', 'type' => 'string', 'minLength' => 1, 'maxLength' => 300],
             ],
         ];
+    }
+
+    public function styles(): BlockStyles
+    {
+        return new BlockStyles([new BlockVariant('plain', 'Plain'), new BlockVariant('card', 'Card')], [BlockOption::Background, BlockOption::Spacing, BlockOption::FormLayout, BlockOption::FormSize, BlockOption::ButtonAlign]);
     }
 
     public function upgradeData(int $fromVersion, array $data): array

@@ -11,7 +11,7 @@ namespace SightPress\Core\Block\Contract;
 interface BlockFinder
 {
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      *
      * @return list<array<string, mixed>> the data of each block of that type, in reading order, at the current version
      */

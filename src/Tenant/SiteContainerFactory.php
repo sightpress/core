@@ -54,6 +54,7 @@ use SightPress\Core\Infrastructure\Sms\SmsProviders;
 use SightPress\Core\Infrastructure\Sms\TextMessages;
 use SightPress\Core\Infrastructure\Search\SearchExtensions;
 use SightPress\Core\Infrastructure\Seo\SeoExtensions;
+use SightPress\Core\Content\BlockIconCatalogue;
 use SightPress\Core\Content\BlockTypeCatalogue;
 use Psr\Log\LoggerInterface;
 use SightPress\Core\Module\SiteModuleStore;
@@ -322,6 +323,9 @@ final class SiteContainerFactory
             BlockTypeCatalogue::class => factory(static fn (ContainerInterface $container): BlockTypeCatalogue => BlockTypeCatalogue::fromRegistry(
                 Services::get($container, ModuleRegistry::class),
                 $container,
+            )),
+            BlockIconCatalogue::class => factory(static fn (ContainerInterface $container): BlockIconCatalogue => BlockIconCatalogue::fromRegistry(
+                Services::get($container, ModuleRegistry::class),
             )),
         ];
     }

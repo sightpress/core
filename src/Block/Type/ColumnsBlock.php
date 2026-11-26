@@ -7,12 +7,15 @@ namespace SightPress\Core\Block\Type;
 use SightPress\Core\Block\ParentBlockType;
 use SightPress\Core\Block\SiteBlockContext;
 use SightPress\Module\Block\BlockContext;
+use SightPress\Module\Block\BlockOption;
+use SightPress\Module\Block\BlockStyles;
+use SightPress\Module\Block\StyledBlockType;
 
 /**
  * Two to four columns side by side, each with its own blocks. On narrow screens and at high zoom they stack in
  * reading order, so nothing scrolls sideways (WCAG 1.4.10).
  */
-final class ColumnsBlock implements ParentBlockType
+final class ColumnsBlock implements ParentBlockType, StyledBlockType
 {
     public const int MAX_BLOCKS_PER_COLUMN = 50;
 
@@ -57,6 +60,11 @@ final class ColumnsBlock implements ParentBlockType
         ];
     }
 
+    public function styles(): BlockStyles
+    {
+        return new BlockStyles([], [BlockOption::Background, BlockOption::Width, BlockOption::Spacing]);
+    }
+
     public function upgradeData(int $fromVersion, array $data): array
     {
         return $data;
@@ -91,7 +99,7 @@ final class ColumnsBlock implements ParentBlockType
         $columns = self::columns($data);
         $html = '';
         foreach ($columns as $blocks) {
-            /** @var list<array{type: string, version: int, data: array<string, mixed>}> $blocks */
+            /** @var list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks */
             $html .= '<div class="block-column">' . $context->renderHtml($blocks) . '</div>';
         }
 
@@ -105,7 +113,7 @@ final class ColumnsBlock implements ParentBlockType
         }
         $parts = [];
         foreach (self::columns($data) as $blocks) {
-            /** @var list<array{type: string, version: int, data: array<string, mixed>}> $blocks */
+            /** @var list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks */
             $parts[] = $context->renderMarkdown($blocks);
         }
 

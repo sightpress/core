@@ -140,7 +140,7 @@ final readonly class PublishChecker
      * Whether the block at the file's place shows the library's alt text (in the page's language, or else the main
      * language's) and that text is the AI assistant's, not checked by a person yet.
      *
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks filled and validated
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks filled and validated
      */
     private static function showsSuggestedAlt(array $blocks, string $pointer, MediaFile $file, string $locale, string $mainLocale): bool
     {
@@ -156,7 +156,7 @@ final readonly class PublishChecker
     /**
      * Whether the block at the file's place shows the library's transcript and the AI assistant tidied it.
      *
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks filled and validated
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks filled and validated
      */
     private static function showsSuggestedTranscript(array $blocks, string $pointer, MediaFile $file, string $locale, string $mainLocale): bool
     {
@@ -172,7 +172,7 @@ final readonly class PublishChecker
     /**
      * What holds the field a JSON pointer ends in.
      *
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      */
     private static function dataAt(array $blocks, string $pointer): mixed
     {

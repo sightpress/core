@@ -64,6 +64,41 @@ final class DefaultBlockValidatorTest extends TestCase
         self::assertCount(2, $result->warnings());
     }
 
+    public function testKeepsTheLooksThatAreNotTheDefault(): void
+    {
+        $result = $this->fixture->validator()->validate([
+            ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Visit us', 'level' => 2], 'styles' => ['align' => 'center', 'spacing' => 'medium']],
+            ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Plain', 'level' => 2], 'styles' => ['align' => 'start']],
+            ['type' => 'acme.badge', 'version' => 2, 'data' => ['label' => 'New'], 'styles' => []],
+        ]);
+
+        self::assertSame(['align' => 'center'], $result->blocks[0]['styles'] ?? null);
+        self::assertArrayNotHasKey('styles', $result->blocks[1]);
+        self::assertArrayNotHasKey('styles', $result->blocks[2]);
+    }
+
+    public function testRefusesLooksTheTypeDoesNotOffer(): void
+    {
+        try {
+            $this->fixture->validator()->validate([
+                ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'A', 'level' => 2], 'styles' => ['align' => 'justify', 'width/x' => 'wide']],
+                ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'B', 'level' => 2], 'styles' => 'center'],
+                ['type' => 'acme.badge', 'version' => 2, 'data' => ['label' => 'C'], 'styles' => ['align' => 'end']],
+            ]);
+            self::fail('Expected the blocks to be refused.');
+        } catch (InvalidBlocks $exception) {
+            self::assertSame(
+                [
+                    ['/0/styles/align', 'Choose one of: start, center, end.'],
+                    ['/0/styles/width~1x', 'This block has no "width/x" choice.'],
+                    ['/1/styles', 'The look of this block must be a set of choices, such as align: center.'],
+                    ['/2/styles/align', 'This block has no "align" choice.'],
+                ],
+                Text::of(array_map(static fn (BlockViolation $violation): array => [$violation->pointer, $violation->message], $exception->violations)),
+            );
+        }
+    }
+
     public function testAcceptsNoBlocks(): void
     {
         $result = $this->fixture->validator()->validate([]);

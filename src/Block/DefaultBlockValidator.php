@@ -6,6 +6,7 @@ namespace SightPress\Core\Block;
 
 use SightPress\Core\Template\Message;
 use SightPress\Core\Block\Contract\BlockIssue;
+use SightPress\Core\Block\Contract\BlockStyleChoices;
 use SightPress\Core\Block\Contract\BlockValidator;
 use SightPress\Core\Block\Contract\BlockViolation;
 use SightPress\Core\Block\Contract\InvalidBlocks;
@@ -20,7 +21,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Checks blocks in this order, per block: shape and known type; upgrade to the current version; the type's schema
- * (with the Symfony validator); rich text sanitised; blocks inside (columns) the same way; then every file used must
+ * (with the Symfony validator); rich text sanitised; blocks inside (columns) the same way; its looks (`styles`) against
+ * what the type offers on this site, keeping only the choices that aren't the default; then every file used must
  * be in the media library and of the kind the field asks for. All problems are collected, so the editor sees them at once.
  */
 final readonly class DefaultBlockValidator implements BlockValidator
@@ -80,7 +82,7 @@ final readonly class DefaultBlockValidator implements BlockValidator
      * @param list<BlockIssue>                         $issues
      * @param list<array{id: int, pointer: string, format: string}>    $media
      *
-     * @return list<array{type: string, version: int, data: array<string, mixed>}>
+     * @return list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}>
      */
     private function list(array $blocks, string $at, bool $topLevel, array &$violations, array &$issues, array &$media): array
     {
@@ -101,7 +103,7 @@ final readonly class DefaultBlockValidator implements BlockValidator
      * @param list<BlockIssue>                      $issues
      * @param list<array{id: int, pointer: string, format: string}> $media
      *
-     * @return array{type: string, version: int, data: array<string, mixed>}|null
+     * @return array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}|null
      */
     private function block(mixed $block, string $pointer, bool $topLevel, array &$violations, array &$issues, array &$media): ?array
     {
@@ -165,7 +167,14 @@ final readonly class DefaultBlockValidator implements BlockValidator
             }
         }
 
-        return ['type' => $type->name(), 'version' => $type->version(), 'data' => $data];
+        $stylesOffered = $this->types->stylesOf($type->name());
+        $problems = BlockStyleChoices::problems($stylesOffered, $block['styles'] ?? null);
+        foreach ($problems as $key => $problem) {
+            $violations[] = new BlockViolation($pointer . '/styles' . ($key === '' ? '' : '/' . str_replace(['~', '/'], ['~0', '~1'], $key)), $problem);
+        }
+        $styles = $problems === [] ? BlockStyleChoices::clean($stylesOffered, $block['styles'] ?? null) : [];
+
+        return ['type' => $type->name(), 'version' => $type->version(), 'data' => $data] + ($styles === [] ? [] : ['styles' => $styles]);
     }
 
     /**

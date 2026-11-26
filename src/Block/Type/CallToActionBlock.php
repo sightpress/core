@@ -9,12 +9,14 @@ use SightPress\Core\Block\Rule\LinkTextRule;
 use SightPress\Core\Block\Schema\SchemaConstraints;
 use SightPress\Core\Block\SiteBlockContext;
 use SightPress\Module\Block\BlockContext;
-use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockOption;
+use SightPress\Module\Block\BlockStyles;
+use SightPress\Module\Block\StyledBlockType;
 
 /**
  * A link styled as a button that tells the reader what to do next ("Book a visit").
  */
-final class CallToActionBlock implements BlockType
+final class CallToActionBlock implements StyledBlockType
 {
     public function name(): string
     {
@@ -43,6 +45,11 @@ final class CallToActionBlock implements BlockType
                 'style' => ['title' => 'Style', 'description' => 'Primary for the main action of the page, secondary for others.', 'enum' => ['primary', 'secondary']],
             ],
         ];
+    }
+
+    public function styles(): BlockStyles
+    {
+        return new BlockStyles([], [BlockOption::Align, BlockOption::Spacing]);
     }
 
     public function upgradeData(int $fromVersion, array $data): array

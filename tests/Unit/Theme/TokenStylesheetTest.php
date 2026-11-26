@@ -54,7 +54,7 @@ final class TokenStylesheetTest extends TestCase
               }
             }
 
-            CSS, $css);
+            CSS . "\n" . file_get_contents(TokenStylesheet::BLOCK_STYLES), $css);
     }
 
     public function testWithoutMoreContrastColoursThoseBlocksAreLeftOut(): void

@@ -10,13 +10,15 @@ use SightPress\Core\Block\Rule\VideoRule;
 use SightPress\Core\Block\Schema\SchemaConstraints;
 use SightPress\Core\Block\SiteBlockContext;
 use SightPress\Module\Block\BlockContext;
-use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockOption;
+use SightPress\Module\Block\BlockStyles;
+use SightPress\Module\Block\StyledBlockType;
 
 /**
  * A video from the media library with a title, a captions track (WebVTT) unless it has no speech, an optional
  * poster picture and a transcript. It never plays by itself; the browser's own controls work by keyboard.
  */
-final class VideoBlock implements BlockType
+final class VideoBlock implements StyledBlockType
 {
     public const int TRANSCRIPT_MAX_LENGTH = 100_000;
 
@@ -53,6 +55,11 @@ final class VideoBlock implements BlockType
                 'transcript' => ['title' => 'Transcript', 'description' => 'Everything said and shown, as text, for people who can\'t watch or hear the video.', 'type' => 'string', 'maxLength' => self::TRANSCRIPT_MAX_LENGTH],
             ],
         ];
+    }
+
+    public function styles(): BlockStyles
+    {
+        return new BlockStyles([], [BlockOption::Width, BlockOption::Spacing]);
     }
 
     public function upgradeData(int $fromVersion, array $data): array

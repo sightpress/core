@@ -157,7 +157,7 @@ final readonly class PageEditorScreen
     }
 
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      * @param array<string, string|Message>                                            $blockErrors pointer => message
      */
     public function render(

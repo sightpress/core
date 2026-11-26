@@ -33,7 +33,7 @@ final class MediaTexts
     /**
      * Looks up the files of many pages in one query, before filling them one by one.
      *
-     * @param list<list<array{type: string, version: int, data: array<string, mixed>}>> $pages
+     * @param list<list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}>> $pages
      */
     public function preload(array $pages): void
     {
@@ -41,9 +41,9 @@ final class MediaTexts
     }
 
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      *
-     * @return list<array{type: string, version: int, data: array<string, mixed>}>
+     * @return list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}>
      */
     public function fill(array $blocks, string $locale): array
     {
@@ -53,7 +53,7 @@ final class MediaTexts
         }
         $this->lookUp($ids);
 
-        /** @var list<array{type: string, version: int, data: array<string, mixed>}> */
+        /** @var list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> */
         return $this->blocks($blocks, array_filter($this->files), $locale);
     }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page\Admin\Editor;
 
+use SightPress\Core\Block\Contract\BlockStyleChoices;
+use SightPress\Core\Block\Contract\BlockStyleLabels;
 use SightPress\Core\Template\Message;
 use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Core\Page\PageContent;
@@ -13,8 +15,8 @@ use SightPress\Module\Block\BlockType;
  * What the page editor shows for a list of blocks: one fieldset per block, with a legend that says where it is
  * ("Block 2 of 5: Image"), a control for each field of its schema, the buttons that move or remove it, and its
  * errors. Lists inside a block (the pictures of a gallery, the columns and their blocks) get fieldsets of their
- * own. Every node has the JSON Pointer of what it shows, its form name and the `id` errors and publish checks
- * link to.
+ * own. A block type with looks (variants and shared options, ADR-0064) also gets a choice for each of them. Every
+ * node has the JSON Pointer of what it shows, its form name and the `id` errors and publish checks link to.
  *
  * Errors are given by pointer; one that isn't about a field shown here goes to the nearest block or list above it.
  */
@@ -27,7 +29,7 @@ final readonly class BlockFormView
     }
 
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      * @param array<string, string|Message>                                            $errors   pointer (`/blocks/2/data/alt`) => message
      * @param array<string, string>                                               $previews pointer of a block => its HTML
      */
@@ -121,10 +123,46 @@ final readonly class BlockFormView
             'short' => new Message('block {index}, {label}', ['index' => $index + 1, 'label' => $label]),
             'moves' => self::moves($index, $count, true),
             'controls' => $type === null ? [] : $this->controls($locale, $pointer . '/data', $type->schema(), $data, $previews),
+            'styles' => $this->styles($locale, $pointer, $name, $block['styles'] ?? null),
             'kept' => $type === null ? json_encode((object) $data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : null,
             'preview' => $previews[$pointer] ?? null,
             'errors' => [],
         ];
+    }
+
+    /**
+     * One choice for each look the block type offers: always set, the default first.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function styles(string $locale, string $pointer, string $type, mixed $stored): array
+    {
+        $styles = $this->types->stylesOf($type);
+        if ($styles === null) {
+            return [];
+        }
+        $chosen = BlockStyleChoices::clean($styles, $stored);
+        $controls = [];
+        foreach (array_keys(BlockStyleChoices::choices($styles)) as $key) {
+            $at = $pointer . '/styles/' . $key;
+            $choices = BlockStyleLabels::values($styles, $key);
+            $controls[] = [
+                'kind' => ControlKind::Select->value,
+                'pointer' => $at,
+                'id' => Pointer::id($locale, $at),
+                'name' => Pointer::name($at),
+                'label' => BlockStyleLabels::choice($key),
+                'hint' => BlockStyleLabels::hint($key),
+                'required' => true,
+                'errors' => [],
+                'value' => $chosen[$key] ?? (string) array_key_first($choices),
+                'checked' => false,
+                'maxlength' => null,
+                'choices' => $choices,
+            ];
+        }
+
+        return $controls;
     }
 
     /**
@@ -294,7 +332,7 @@ final readonly class BlockFormView
         if (is_string($node['pointer'] ?? null)) {
             $known[$node['pointer']] = true;
         }
-        foreach (['blocks', 'controls', 'items'] as $children) {
+        foreach (['blocks', 'controls', 'styles', 'items'] as $children) {
             foreach (is_array($node[$children] ?? null) ? $node[$children] : [] as $child) {
                 if (is_array($child)) {
                     /** @var array<string, mixed> $child */
@@ -322,7 +360,7 @@ final readonly class BlockFormView
         foreach ($node['errors'] as $message) {
             $summary[] = ['id' => $id, 'message' => is_string($about) || $about instanceof Message ? new Message('{about}: {problem}', ['about' => Message::of($about), 'problem' => Message::of($message)]) : $message];
         }
-        foreach (['blocks', 'controls', 'items'] as $children) {
+        foreach (['blocks', 'controls', 'styles', 'items'] as $children) {
             if (is_array($node[$children] ?? null)) {
                 $node[$children] = array_map(
                     static function (mixed $child) use ($assigned, &$summary): mixed {

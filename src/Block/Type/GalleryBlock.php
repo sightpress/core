@@ -8,13 +8,15 @@ use SightPress\Core\Block\Html;
 use SightPress\Core\Block\Rule\GalleryAltRule;
 use SightPress\Core\Block\Schema\SchemaConstraints;
 use SightPress\Module\Block\BlockContext;
-use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockOption;
+use SightPress\Module\Block\BlockStyles;
+use SightPress\Module\Block\StyledBlockType;
 
 /**
  * Several pictures shown together as a list, each with its own alt text (or marked as decorative) and caption, and
  * an optional caption for the whole gallery. The pictures wrap into as many columns as fit, in reading order.
  */
-final class GalleryBlock implements BlockType
+final class GalleryBlock implements StyledBlockType
 {
     public const int MAX_IMAGES = 50;
 
@@ -61,6 +63,11 @@ final class GalleryBlock implements BlockType
                 'caption' => ['title' => 'Caption of the gallery', 'description' => 'Shown under all the pictures.', 'type' => 'string', 'maxLength' => 2000],
             ],
         ];
+    }
+
+    public function styles(): BlockStyles
+    {
+        return new BlockStyles([], [BlockOption::Width, BlockOption::Spacing]);
     }
 
     public function upgradeData(int $fromVersion, array $data): array

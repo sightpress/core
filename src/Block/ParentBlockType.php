@@ -25,7 +25,7 @@ interface ParentBlockType extends BlockType
      * The data with its block lists replaced (after validation changed them).
      *
      * @param array<string, mixed>                                                               $data
-     * @param array<string, list<array{type: string, version: int, data: array<string, mixed>}>> $lists keyed like {@see childLists()}
+     * @param array<string, list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}>> $lists keyed like {@see childLists()}
      *
      * @return array<string, mixed>
      */

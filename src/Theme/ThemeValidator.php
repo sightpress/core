@@ -9,7 +9,9 @@ namespace SightPress\Core\Theme;
  * (4.5:1 for text, 3:1 for interface colours) in light and dark mode, each with and without more contrast, and the
  * base font size is at least 16 px. A theme that declares no pairs fails, because nothing could be checked. Chart
  * colours are always checked, whether the theme lists them or not: chart lines and bars 3:1 and chart text 4.5:1 on
- * the background and the surface (AN-2); a theme without them fails.
+ * the background and the surface (AN-2); a theme without them fails. Block backgrounds editors can choose (ADR-0064)
+ * are always checked too: text and links on `surface` and `muted`, and `on-accent` on `accent`, each falling back to
+ * the colour core draws when the theme doesn't define it ({@see BLOCK_BACKGROUNDS}).
  *
  * Ratios are compared unrounded, so 4.49:1 never passes as 4.5:1; messages show them rounded down.
  */
@@ -25,6 +27,16 @@ final readonly class ThemeValidator
 
     /** Colour of the text in charts: 4.5:1 on the background and the surface. */
     public const string CHART_TEXT = 'chart-text';
+
+    /**
+     * Block background => [the colours core tries for it, in order; the text colours on it, each with fallbacks].
+     * The same fallbacks are in core's block stylesheet ({@see \SightPress\Core\Theme\TokenStylesheet}).
+     */
+    public const array BLOCK_BACKGROUNDS = [
+        'surface' => [['surface', 'background'], [['text'], ['link']]],
+        'muted' => [['muted', 'surface', 'background'], [['text'], ['link']]],
+        'accent' => [['accent', 'primary'], [['on-accent', 'on-primary']]],
+    ];
 
     public function validate(Theme $theme): ThemeValidation
     {
@@ -57,8 +69,23 @@ final readonly class ThemeValidator
             $charts[] = new ContrastPair(self::CHART_TEXT, $background, ContrastUse::Text);
         }
 
+        foreach (self::BLOCK_BACKGROUNDS as [$backgrounds, $texts]) {
+            $background = self::defined($theme, $backgrounds);
+            foreach ($texts as $text) {
+                $foreground = self::defined($theme, $text);
+                if ($background !== null && $foreground !== null) {
+                    $charts[] = new ContrastPair($foreground, $background, ContrastUse::Text);
+                }
+            }
+        }
+
+        $pairs = [];
+        foreach ([...$theme->contrast, ...$charts] as $pair) {
+            $pairs[$pair->foreground . '|' . $pair->background . '|' . $pair->use->name] ??= $pair;
+        }
+
         foreach (ColorMode::cases() as $mode) {
-            foreach ([...$theme->contrast, ...$charts] as $pair) {
+            foreach ($pairs as $pair) {
                 $foreground = $theme->tokens->color($pair->foreground, $mode);
                 $background = $theme->tokens->color($pair->background, $mode);
                 if ($foreground === null || $background === null) {
@@ -98,6 +125,24 @@ final readonly class ThemeValidator
         }
 
         return new ThemeValidation($theme, $issues, $checks);
+    }
+
+    /**
+     * The first of the colours the theme defines.
+     *
+     * @param list<non-empty-string> $names
+     *
+     * @return non-empty-string|null
+     */
+    private static function defined(Theme $theme, array $names): ?string
+    {
+        foreach ($names as $name) {
+            if ($theme->tokens->color($name, ColorMode::Light) !== null) {
+                return $name;
+            }
+        }
+
+        return null;
     }
 
     /**

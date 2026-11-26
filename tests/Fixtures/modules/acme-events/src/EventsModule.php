@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Acme\Events;
 
 use SightPress\Module\Access\Permission;
+use SightPress\Module\Block\BlockIcon;
+use SightPress\Module\Block\BlockVariant;
 use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\Event\PageTransitioned;
 use SightPress\Module\ModuleInterface;
@@ -16,7 +18,7 @@ use SightPress\Module\Setting\SettingType;
 
 /**
  * The "events" feature of the module tutorial, written only against module-interface: a permission, an admin screen
- * with a menu item, a block type, a migration, public pages with `Event` JSON-LD and a Markdown version, sitemap
+ * with a menu item, a block type, a variant of core's image block, an icon, a migration, public pages with `Event` JSON-LD and a Markdown version, sitemap
  * entries, search documents, a scheduled job, translations and a listener on a core event.
  */
 final class EventsModule implements ModuleInterface
@@ -41,6 +43,8 @@ final class EventsModule implements ModuleInterface
         $registrar->routes()->add(new Route('acme.events.show', '/events/{slug}', PublicHandler::class));
         $registrar->adminMenu()->add(new AdminMenuItem('acme.events', 'Events', 'acme.events.admin', permission: 'events.manage', position: 45));
         $registrar->blockTypes()->add(EventCardBlock::class);
+        $registrar->blockTypes()->addVariant('image', new BlockVariant('ticket', 'Ticket'));
+        $registrar->blockTypes()->addIcon(new BlockIcon('acme-tickets', 'Acme Tickets', dirname(__DIR__) . '/icons/ticket.svg', ['tickets.acme.test'], '#6364ff'));
         $registrar->migrations()->add(new Migrations());
         $registrar->views()->add('acme_events', dirname(__DIR__) . '/templates');
         $registrar->translations()->add(dirname(__DIR__) . '/translations');

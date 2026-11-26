@@ -29,6 +29,7 @@ use SightPress\Core\Infrastructure\Mail\MailSender;
 use SightPress\Core\Infrastructure\Mail\TransportMailSender;
 use Symfony\Component\Mailer\Transport;
 use SightPress\Core\Access\PermissionCatalogue;
+use SightPress\Core\Content\BlockIconCatalogue;
 use SightPress\Core\Content\BlockTypeCatalogue;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
 use SightPress\Core\Module\CoreModules;
@@ -149,6 +150,7 @@ final class CoreServices
             BlockTypeCatalogue::class => factory(
                 static fn (ContainerInterface $container): BlockTypeCatalogue => BlockTypeCatalogue::fromRegistry($modules, $container),
             ),
+            BlockIconCatalogue::class => factory(static fn (): BlockIconCatalogue => BlockIconCatalogue::fromRegistry($modules)),
             // Outgoing requests (IndexNow pings, which are off by default) never wait long.
             HttpClientInterface::class => factory(static fn (): HttpClientInterface => HttpClient::create(['timeout' => 5, 'max_redirects' => 0])),
             ServerLimits::class => factory(static fn (): ServerLimits => ServerLimits::current($config)),

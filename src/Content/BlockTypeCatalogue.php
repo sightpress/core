@@ -6,12 +6,16 @@ namespace SightPress\Core\Content;
 
 use Psr\Container\ContainerInterface;
 use SightPress\Core\Module\ModuleRegistry;
+use SightPress\Module\Block\BlockStyles;
 use SightPress\Module\Block\BlockType;
+use SightPress\Module\Block\BlockVariant;
+use SightPress\Module\Block\StyledBlockType;
 use UnexpectedValueException;
 
 /**
- * Every block type the modules that are on registered, built once, with the module that registered each one. The
- * block module validates and renders blocks with it.
+ * Every block type the modules that are on registered, built once, with the module that registered each one, and
+ * the looks each type offers: its own variants and those other modules that are on add to it (ADR-0064). The block
+ * module validates and renders blocks with it.
  */
 final readonly class BlockTypeCatalogue
 {
@@ -20,10 +24,14 @@ final readonly class BlockTypeCatalogue
     /** @var array<string, array{module: string, type: BlockType}> */
     private array $types;
 
+    /** @var array<string, BlockStyles> */
+    private array $styles;
+
     /**
-     * @param list<array{module: string, type: BlockType}> $types
+     * @param list<array{module: string, type: BlockType}>              $types
+     * @param list<array{module: string, type: string, variant: BlockVariant}> $variants added by modules to other modules' types
      */
-    public function __construct(array $types = [])
+    public function __construct(array $types = [], array $variants = [])
     {
         $byName = [];
         foreach ($types as $entry) {
@@ -47,6 +55,7 @@ final readonly class BlockTypeCatalogue
         }
         ksort($byName);
         $this->types = $byName;
+        $this->styles = self::styles($byName, $variants);
     }
 
     /**
@@ -62,8 +71,12 @@ final readonly class BlockTypeCatalogue
             }
             $types[] = ['module' => $registered->module, 'type' => $type];
         }
+        $variants = [];
+        foreach ($registry->blockVariants() as $registered) {
+            $variants[] = ['module' => $registered->module, 'type' => $registered->item['blockType'], 'variant' => $registered->item['variant']];
+        }
 
-        return new self($types);
+        return new self($types, $variants);
     }
 
     public function get(string $name): ?BlockType
@@ -82,5 +95,40 @@ final readonly class BlockTypeCatalogue
     public function moduleOf(string $name): ?string
     {
         return $this->types[$name]['module'] ?? null;
+    }
+
+    /**
+     * The looks and shared options of a block type, with the variants other modules add; null when it has none.
+     */
+    public function stylesOf(string $name): ?BlockStyles
+    {
+        return $this->styles[$name] ?? null;
+    }
+
+    /**
+     * @param array<string, array{module: string, type: BlockType}>              $types
+     * @param list<array{module: string, type: string, variant: BlockVariant}> $variants
+     *
+     * @return array<string, BlockStyles>
+     */
+    private static function styles(array $types, array $variants): array
+    {
+        $styles = [];
+        foreach ($types as $name => $entry) {
+            if ($entry['type'] instanceof StyledBlockType) {
+                $styles[$name] = $entry['type']->styles();
+            }
+        }
+        foreach ($variants as $added) {
+            // A variant for a type that isn't on this site, offers no variants or already has one by that name is
+            // left out, so another module being off never breaks the site.
+            $own = $styles[$added['type']] ?? null;
+            $names = array_map(static fn (BlockVariant $variant): string => $variant->name, $own->variants ?? []);
+            if ($own !== null && $names !== [] && !in_array($added['variant']->name, $names, true)) {
+                $styles[$added['type']] = new BlockStyles([...$own->variants, $added['variant']], $own->options, $own->shortForm);
+            }
+        }
+
+        return $styles;
     }
 }

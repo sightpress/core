@@ -145,7 +145,7 @@ final class SiteBlockContext implements HttpBlockContext
     }
 
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      */
     public function renderHtml(array $blocks): string
     {
@@ -153,7 +153,7 @@ final class SiteBlockContext implements HttpBlockContext
     }
 
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      */
     public function renderMarkdown(array $blocks): string
     {

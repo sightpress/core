@@ -62,12 +62,17 @@ final class PageEditingFlowTest extends TestCase
         self::assertStringContainsString('Added a Heading block. It is block 1 of 1.', (string) $added->getBody());
 
         $blocks = [
-            ['type' => 'heading', 'version' => '1', 'data' => ['text' => 'Every day', 'level' => '2']],
-            ['type' => 'rich_text', 'version' => '1', 'data' => ['html' => '<p>From <strong>9</strong> to 5.</p><script>alert(1)</script>']],
+            ['type' => 'heading', 'version' => '1', 'data' => ['text' => 'Every day', 'level' => '2'], 'styles' => ['align' => 'center', 'spacing' => 'medium']],
+            ['type' => 'rich_text', 'version' => '1', 'data' => ['html' => '<p>From <strong>9</strong> to 5.</p><script>alert(1)</script>'], 'styles' => ['background' => 'muted', 'align' => 'start']],
         ];
         $saved = $cleo->submit($edit, $fields + ['op' => 'save', 'blocks' => $blocks]);
         self::assertSame(303, $saved->getStatusCode(), (string) $saved->getBody());
-        self::assertStringContainsString('Saved “Opening hours”.', (string) $cleo->request('GET', $edit)->getBody());
+        $editor = (string) $cleo->request('GET', $edit)->getBody();
+        self::assertStringContainsString('Saved “Opening hours”.', $editor);
+        self::assertStringContainsString('<legend>Look of block 1, Heading</legend>', $editor);
+        self::assertMatchesRegularExpression('#<select id="en-gb-blocks-0-styles-align" name="blocks\[0\]\[styles\]\[align\]"[^>]*>.*?<option value="center" selected>Centre</option>#s', $editor);
+        $stored = Services::get($this->site->container(), PageRepository::class)->find((int) substr($edit, strlen('/admin/pages/')));
+        self::assertSame([['align' => 'center'], ['background' => 'muted']], array_map(static fn (array $block): mixed => $block['styles'] ?? null, $stored?->translation('en-GB')?->content()->blocks ?? []));
 
         $submitted = $cleo->submit($edit, ['transition' => 'submit', 'comment' => 'Ready'], $edit . '/workflow');
         self::assertSame(303, $submitted->getStatusCode());
@@ -84,8 +89,9 @@ final class PageEditingFlowTest extends TestCase
         // The site's only page is its home page.
         self::assertSame('https://example.org/', $visitor->request('GET', '/hours')->getHeaderLine('Location'));
         $public = (string) $visitor->request('GET', '/')->getBody();
-        self::assertStringContainsString('<h2 class="block-heading">Every day</h2>', $public);
-        self::assertStringContainsString('<p>From <strong>9</strong> to 5.</p>', $public);
+        self::assertStringContainsString('<div class="block-styled has-text-align-center"><h2 class="block-heading">Every day</h2></div>', $public);
+        self::assertStringContainsString('<div class="block-styled block--background-muted"><div class="block-rich-text"><p>From <strong>9</strong> to 5.</p>', $public);
+        self::assertStringContainsString(':where(.block--background-muted)', (string) $visitor->request('GET', '/assets/tokens.css')->getBody());
         self::assertStringNotContainsString('<script>alert', $public);
     }
 

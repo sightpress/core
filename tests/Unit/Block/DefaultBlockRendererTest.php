@@ -51,6 +51,22 @@ final class DefaultBlockRendererTest extends TestCase
         );
     }
 
+    public function testDrawsTheLooksOfABlockAsClassesOnAWrapper(): void
+    {
+        $fixture = new BlockFixture([new VersionedBlockType()]);
+        $blocks = [
+            ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Visit', 'level' => 2], 'styles' => ['align' => 'center', 'spacing' => 'gone']],
+            ['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Plain', 'level' => 2], 'styles' => ['align' => 'start']],
+            ['type' => 'acme.badge', 'version' => 2, 'data' => ['label' => 'New'], 'styles' => ['align' => 'end']],
+        ];
+
+        self::assertSame(
+            "<div class=\"block-styled has-text-align-center\"><h2 class=\"block-heading\">Visit</h2></div>\n<h2 class=\"block-heading\">Plain</h2>\n<span class=\"badge\">New</span>",
+            $fixture->renderer()->html($blocks, $fixture->context()),
+        );
+        self::assertSame("## Visit\n\n## Plain\n\n**New**", $fixture->renderer()->markdown($blocks, $fixture->context()));
+    }
+
     public function testWorksWithAnyContext(): void
     {
         $renderer = new BlockFixture()->renderer();

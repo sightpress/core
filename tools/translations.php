@@ -51,6 +51,7 @@ const TEXT_ARGUMENTS = [
     'RoleChoice' => [2, 'description'],
     'OperationResult' => [1, 'message'],
     'BlockViolation' => [1, 'message'],
+    'BlockVariant' => [1, 'label'],
 ];
 
 /** Methods whose argument is text people read: method => [position, …]. */

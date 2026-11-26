@@ -30,7 +30,7 @@ final readonly class DefaultBlockFinder implements BlockFinder
             }
             if ($blockType instanceof ParentBlockType) {
                 foreach ($blockType->childLists($data) as $children) {
-                    /** @var list<array{type: string, version: int, data: array<string, mixed>}> $children */
+                    /** @var list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $children */
                     $found = [...$found, ...$this->find($children, $type)];
                 }
             }

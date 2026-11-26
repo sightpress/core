@@ -10,7 +10,7 @@ namespace SightPress\Core\Page\Contract;
 final readonly class TranslationSource
 {
     /**
-     * @param list<array{type: string, version: int, data: array<string, mixed>}> $blocks
+     * @param list<array{type: string, version: int, data: array<string, mixed>, styles?: array<string, string>}> $blocks
      */
     public function __construct(
         public string $title,
