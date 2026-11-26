@@ -70,30 +70,12 @@ final class ValidateThemeCommandTest extends TestCase
         self::assertContains('2. The required template templates/master.html.twig is missing.', array_map(static fn (string $line): string => preg_replace('/^\d+\./', '2.', $line) ?? '', $this->output->errors));
     }
 
-    public function testShowsTheWarnings(): void
-    {
-        $theme = new class () implements \SightPress\Theme\ThemeInterface {
-            public function manifest(): \SightPress\Theme\ThemeManifest
-            {
-                return new \SightPress\Theme\ThemeManifest('acme-harbour', 'Harbour', 'Calm blues.', '1.2.0', new \SightPress\Theme\ThemeRequirement('^0.2'));
-            }
-
-            public function paths(): \SightPress\Theme\ThemePaths
-            {
-                return new HarbourTheme()->paths();
-            }
-        };
-
-        self::assertSame(Command::SUCCESS, new ValidateThemeCommand(new ThemeRegistry([$theme]))->run(new ArrayCommandInput(['theme' => 'acme-harbour']), $this->output));
-        self::assertStringStartsWith('Warning for "Harbour": The manifest has no previewDescription', $this->output->lines[0]);
-    }
-
     public function testAThemeForAnotherContractFails(): void
     {
-        $command = new ValidateThemeCommand(new ThemeRegistry([new HarbourTheme()], [], '0.3.0.0'));
+        $command = new ValidateThemeCommand(new ThemeRegistry([new HarbourTheme()], [], '0.4.0.0'));
 
         self::assertSame(Command::FAILURE, $command->run(new ArrayCommandInput(['theme' => 'acme-harbour']), $this->output));
-        self::assertSame(['The theme "Harbour" fails with 1 problem:', '1. It needs sightpress/theme-interface ^0.2, and this SightPress has 0.3.0.0.'], $this->output->errors);
+        self::assertSame(['The theme "Harbour" fails with 1 problem:', '1. It needs sightpress/theme-interface ^0.3, and this SightPress has 0.4.0.0.'], $this->output->errors);
     }
 
     public function testScansThePreviewPageWithAxe(): void

@@ -81,6 +81,16 @@ export default defineConfig({
       stdout: 'ignore',
       stderr: 'ignore',
     },
+    // A copy of the demo site for the M4 blocks (blocks-m4.spec.ts): the embed must load nothing from its provider
+    // before the reader asks, and the list of pages must never show the members-only page.
+    {
+      command: 'SIGHTPRESS_A11Y_SITE=embeds php -S 127.0.0.1:8056 tests/A11y/demo/index.php',
+      url: 'http://127.0.0.1:8056/robots.txt',
+      reuseExistingServer: !process.env.CI,
+      timeout: 180_000,
+      stdout: 'ignore',
+      stderr: 'ignore',
+    },
     // A second copy of the demo site, with its test mailbox, for the journeys from start to finish (journeys.spec.ts).
     {
       command: 'SIGHTPRESS_A11Y_SITE=journeys php -S 127.0.0.1:8086 tests/A11y/demo/index.php',

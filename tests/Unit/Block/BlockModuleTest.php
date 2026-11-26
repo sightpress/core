@@ -56,7 +56,7 @@ final class BlockModuleTest extends TestCase
         self::assertTrue($module->manifest()->required);
         self::assertSame(['site', 'media'], array_map(static fn ($r) => $r->moduleId, $module->manifest()->requires));
         $types = array_values(array_filter($registry->blockTypes(), static fn ($registered): bool => $registered->module === 'block'));
-        self::assertCount(9, $types);
+        self::assertCount(11, $types);
         self::assertSame(HeadingBlock::class, $types[0]->item);
         $services = $registry->services();
         self::assertSame(DefaultBlockValidator::class, $services[BlockValidator::class]->item->class);

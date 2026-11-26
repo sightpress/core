@@ -73,6 +73,9 @@ final class PageModule implements ModuleInterface
         $services->autowire(PageRepository::class, public: true);
         $services->autowire(PageAddresses::class, public: true);
         $services->autowire(PageLinkQuery::class, PageLinks::class, public: true);
+        $services->autowire(PageListQuery::class);
+        // A service of each site, because it reads the site's pages (block types that aren't services are built by the tenant).
+        $services->autowire(PageListBlock::class);
         $services->autowire(PageIndexQuery::class, PageIndex::class, public: true);
         $services->autowire(PageMarkdown::class, MarkdownPages::class, public: true);
         $services->autowire(PageTextQuery::class, PageTexts::class, public: true);
@@ -98,6 +101,7 @@ final class PageModule implements ModuleInterface
         $registrar->search()->addProvider(PageSearchDocuments::class);
 
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/page');
+        $registrar->blockTypes()->add(PageListBlock::class);
         $registrar->subscribers()->listen(PageTransitioned::class, ReviewRequestMailer::class);
         $registrar->subscribers()->listen(PublicPageRendering::class, SectionAside::class);
         $registrar->subscribers()->listen(SiteProvisioning::class, StarterPages::class, SiteProvisioning::CONTENT);

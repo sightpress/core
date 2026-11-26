@@ -29,7 +29,8 @@ use SplFileInfo;
  *   always made from the preview page (D52). Files the package leaves out (`export-ignore` in `.gitattributes`)
  *   don't count.
  *
- * Warnings: a manifest with the deprecated `screenshot`, or without a `previewDescription`.
+ * Since theme-interface 0.3 a manifest can't name a screenshot and must have a `previewDescription`, so the checks
+ * have no warnings any more.
  */
 final readonly class ThemeChecker
 {
@@ -71,15 +72,7 @@ final readonly class ThemeChecker
         }
         array_push($problems, ...self::templates($directory, $manifest), ...self::previewOutput($directory));
 
-        $warnings = [];
-        if ($manifest?->screenshot !== null) {
-            $warnings[] = 'The manifest names a screenshot, which is ignored and no longer allowed from theme-interface 0.3: remove it; screenshots are made from the preview page.';
-        }
-        if ($manifest !== null && $manifest->previewDescription === null) {
-            $warnings[] = 'The manifest has no previewDescription: describe what the top of the preview page looks like, for people who can\'t see its screenshots. It is required from theme-interface 0.3.';
-        }
-
-        return new ThemeCheck($manifest->name ?? $loaded->label, $problems, $warnings, $validation->checks);
+        return new ThemeCheck($manifest->name ?? $loaded->label, $problems, $validation->checks);
     }
 
     /**

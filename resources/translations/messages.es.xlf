@@ -10519,5 +10519,149 @@
         <target>El aspecto de este bloque debe ser un conjunto de opciones, como align: center.</target>
       </segment>
     </unit>
+    <unit id="7d51d65a177619bf">
+      <segment>
+        <source>A WebVTT captions file (.vtt) from the media library, for people who don't sign or use another sign language.</source>
+        <target>Un archivo de subtítulos WebVTT (.vtt) de la biblioteca multimedia, para quien no usa lengua de signos o usa otra.</target>
+      </segment>
+    </unit>
+    <unit id="7d7493a4cedbb8ea">
+      <segment>
+        <source>A YouTube or Vimeo video, or an OpenStreetMap map, for example https://www.youtube.com/watch?v=… Nothing is loaded from it until the reader asks.</source>
+        <target>Un vídeo de YouTube o Vimeo, o un mapa de OpenStreetMap, por ejemplo https://www.youtube.com/watch?v=… No se carga nada hasta que el lector lo pide.</target>
+      </segment>
+    </unit>
+    <unit id="a52fcbbc33644d31">
+      <segment>
+        <source>Cards</source>
+        <target>Tarjetas</target>
+      </segment>
+    </unit>
+    <unit id="8f15152295a46c50">
+      <segment>
+        <source>How many pages, at most</source>
+        <target>Cuántas páginas, como máximo</target>
+      </segment>
+    </unit>
+    <unit id="33571e5007795e3c">
+      <segment>
+        <source>Link to the video or map</source>
+        <target>Enlace al vídeo o mapa</target>
+      </segment>
+    </unit>
+    <unit id="32aae7cd1dc11d40">
+      <segment>
+        <source>List of pages</source>
+        <target>Lista de páginas</target>
+      </segment>
+    </unit>
+    <unit id="9c05878f62d320cd">
+      <segment>
+        <source>Names the video, for example "This page in British Sign Language".</source>
+        <target>Da nombre al vídeo, por ejemplo "Esta página en lengua de signos española".</target>
+      </segment>
+    </unit>
+    <unit id="1cad8c21bcdba7b1">
+      <segment>
+        <source>Open the map on {provider}: {title}</source>
+        <target>Abrir el mapa en {provider}: {title}</target>
+      </segment>
+    </unit>
+    <unit id="d25de6874043c353">
+      <segment>
+        <source>Says what it shows, for screen readers and for the link, for example "Map of the library".</source>
+        <target>Dice lo que muestra, para lectores de pantalla y para el enlace, por ejemplo "Mapa de la biblioteca".</target>
+      </segment>
+    </unit>
+    <unit id="e46ae4344072f84f">
+      <segment>
+        <source>Show each page's summary</source>
+        <target>Mostrar el resumen de cada página</target>
+      </segment>
+    </unit>
+    <unit id="7689afda145fde57">
+      <segment>
+        <source>Show the map: {title}</source>
+        <target>Mostrar el mapa: {title}</target>
+      </segment>
+    </unit>
+    <unit id="106b8bcfd85abc29">
+      <segment>
+        <source>Show the video: {title}</source>
+        <target>Mostrar el vídeo: {title}</target>
+      </segment>
+    </unit>
+    <unit id="3363c90e310143ee">
+      <segment>
+        <source>Sign language</source>
+        <target>Lengua de signos</target>
+      </segment>
+    </unit>
+    <unit id="7456ce44ea2479b2">
+      <segment>
+        <source>Sign language video</source>
+        <target>Vídeo en lengua de signos</target>
+      </segment>
+    </unit>
+    <unit id="badc971499f6948d">
+      <segment>
+        <source>The address of a page of this site, such as /services. Leave it empty for the top-level pages. Only used for the pages under a page.</source>
+        <target>La dirección de una página de este sitio, como /servicios. Déjela vacía para las páginas principales. Solo se usa para las páginas bajo una página.</target>
+      </segment>
+    </unit>
+    <unit id="20a57117d3ddd621">
+      <segment>
+        <source>The sign language the video is in. It is shown under the video.</source>
+        <target>La lengua de signos del vídeo. Se muestra debajo del vídeo.</target>
+      </segment>
+    </unit>
+    <unit id="55d7b4f351c24c56">
+      <segment>
+        <source>This map is on {provider}. Showing it here lets {provider} see that you visited this page.</source>
+        <target>Este mapa está en {provider}. Mostrarlo aquí permite a {provider} ver que ha visitado esta página.</target>
+      </segment>
+    </unit>
+    <unit id="0ad43ea6a6905d2a">
+      <segment>
+        <source>This video is on {provider}. Showing it here lets {provider} see that you visited this page.</source>
+        <target>Este vídeo está en {provider}. Mostrarlo aquí permite a {provider} ver que ha visitado esta página.</target>
+      </segment>
+    </unit>
+    <unit id="f83388c57c22bf69">
+      <segment>
+        <source>Under the page at</source>
+        <target>Bajo la página en</target>
+      </segment>
+    </unit>
+    <unit id="b69c4dd500c716dc">
+      <segment>
+        <source>Video or map from another site</source>
+        <target>Vídeo o mapa de otro sitio</target>
+      </segment>
+    </unit>
+    <unit id="05b7a132d9610746">
+      <segment>
+        <source>Watch on {provider}: {title}</source>
+        <target>Ver en {provider}: {title}</target>
+      </segment>
+    </unit>
+    <unit id="042d6d59690a7b99">
+      <segment>
+        <source>What is signed, as text.</source>
+        <target>Lo que se signa, en texto.</target>
+      </segment>
+    </unit>
+    <unit id="fd0e6412844c8f03">
+      <segment>
+        <source>Which pages</source>
+        <target>Qué páginas</target>
+      </segment>
+    </unit>
+    <unit id="8b26202b81237129">
+      <segment>
+        <source>{provider}’s privacy policy</source>
+        <target>Política de privacidad de {provider}</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

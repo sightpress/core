@@ -13,11 +13,13 @@ use SightPress\Core\Block\Contract\BlockFinder;
 use SightPress\Core\Block\Type\AudioBlock;
 use SightPress\Core\Block\Type\CallToActionBlock;
 use SightPress\Core\Block\Type\ColumnsBlock;
+use SightPress\Core\Block\Type\EmbedBlock;
 use SightPress\Core\Block\Type\FileDownloadBlock;
 use SightPress\Core\Block\Type\GalleryBlock;
 use SightPress\Core\Block\Type\HeadingBlock;
 use SightPress\Core\Block\Type\ImageBlock;
 use SightPress\Core\Block\Type\RichTextBlock;
+use SightPress\Core\Block\Type\SignLanguageVideoBlock;
 use SightPress\Core\Block\Type\VideoBlock;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
@@ -25,7 +27,8 @@ use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\ModuleRequirement;
 
 /**
- * Content blocks (ADR-0005): core's block types (heading, text, image, call to action, columns, gallery, video, audio, file download), the
+ * Content blocks (ADR-0005): core's block types (heading, text, image, call to action, columns, gallery, video, audio,
+ * file download, embed, sign language video), the
  * {@see BlockValidator} that checks blocks against their type's schema before they are stored, and the
  * {@see BlockRenderer} that turns them into HTML, Markdown and schema.org nodes. Other modules add block types
  * through the block type registrar. Always on.
@@ -48,10 +51,13 @@ final class BlockModule implements ModuleInterface
     {
         foreach ([
             HeadingBlock::class, RichTextBlock::class, ImageBlock::class, CallToActionBlock::class, ColumnsBlock::class,
-            GalleryBlock::class, VideoBlock::class, AudioBlock::class, FileDownloadBlock::class,
+            GalleryBlock::class, VideoBlock::class, AudioBlock::class, FileDownloadBlock::class, EmbedBlock::class,
+            SignLanguageVideoBlock::class,
         ] as $type) {
             $registrar->blockTypes()->add($type);
         }
+
+        $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/block');
 
         $services = $registrar->services();
         $services->autowire(RichTextSanitizer::class);

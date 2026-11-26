@@ -28,7 +28,7 @@ final readonly class FolderTheme implements ThemeInterface
             $this->theme->description,
             $this->theme->version,
             new ThemeRequirement('*'),
-            previewDescription: $this->theme->previewDescription,
+            previewDescription: $this->theme->previewDescription ?? $this->theme->description,
         );
     }
 

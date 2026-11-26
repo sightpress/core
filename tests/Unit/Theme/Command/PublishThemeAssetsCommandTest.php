@@ -76,7 +76,7 @@ final class PublishThemeAssetsCommandTest extends TestCase
 
             public function manifest(): ThemeManifest
             {
-                return new ThemeManifest('acme-broken', 'Broken', 'Broken.', '1.0.0', new ThemeRequirement('^0.2'));
+                return new ThemeManifest('acme-broken', 'Broken', 'Broken.', '1.0.0', new ThemeRequirement('^0.3'), previewDescription: 'Broken.');
             }
 
             public function paths(): ThemePaths

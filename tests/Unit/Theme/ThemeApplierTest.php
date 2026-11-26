@@ -67,8 +67,8 @@ final class ThemeApplierTest extends TestCase
 
     public function testRefusesAThemeForAnotherContract(): void
     {
-        $this->expectExceptionObject(new ThemeException('The theme "acme-harbour" can\'t be used: It needs sightpress/theme-interface ^0.2, and this SightPress has 0.3.0.0.'));
-        $this->applier([], '0.3.0.0')->apply('acme-harbour');
+        $this->expectExceptionObject(new ThemeException('The theme "acme-harbour" can\'t be used: It needs sightpress/theme-interface ^0.3, and this SightPress has 0.4.0.0.'));
+        $this->applier([], '0.4.0.0')->apply('acme-harbour');
     }
 
     public function testRefusesAThemeThatFailsItsChecksAndKeepsTheOldOne(): void
@@ -83,7 +83,7 @@ final class ThemeApplierTest extends TestCase
 
                 public function manifest(): ThemeManifest
                 {
-                    return new ThemeManifest('acme-broken', 'Broken', 'Broken.', '1.0.0', new ThemeRequirement('^0.2'));
+                    return new ThemeManifest('acme-broken', 'Broken', 'Broken.', '1.0.0', new ThemeRequirement('^0.3'), previewDescription: 'Broken.');
                 }
 
                 public function paths(): ThemePaths

@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 use SightPress\Core\Auth\Contract\VerificationCodes;
 use SightPress\Core\Auth\Provisioning\DemoAccounts;
 use SightPress\Core\Block\Type\AudioBlock;
+use SightPress\Core\Block\Type\EmbedBlock;
+use SightPress\Core\Block\Type\SignLanguageVideoBlock;
 use SightPress\Core\Block\Type\FileDownloadBlock;
 use SightPress\Core\Block\Type\GalleryBlock;
 use SightPress\Core\Block\Type\VideoBlock;
@@ -33,6 +35,9 @@ use SightPress\Core\Rbac\Contract\RoleGrants;
 use SightPress\Core\Rbac\RoleGrantPolicy;
 use SightPress\Core\Site\Contract\FirstAdmin;
 use SightPress\Core\Site\Contract\SiteProvisioning;
+use SightPress\Core\Page\PageAddresses;
+use SightPress\Core\Page\PageListBlock;
+use SightPress\Core\Page\PageListQuery;
 use SightPress\Core\Tests\Support\AuthFixture;
 use SightPress\Core\Tests\Support\MediaFixture;
 use SightPress\Core\Tests\Support\PageFixture;
@@ -60,7 +65,11 @@ final class DemoContentTest extends TestCase
     {
         $this->auth = new AuthFixture();
         $this->media = new MediaFixture(database: $this->auth->database);
-        $this->pages = new PageFixture($this->auth->database, [new GalleryBlock(), new VideoBlock(), new AudioBlock(), new FileDownloadBlock(), new ContactFormBlock($this->auth->templates)]);
+        $this->pages = new PageFixture($this->auth->database, [
+            new GalleryBlock(), new VideoBlock(), new AudioBlock(), new FileDownloadBlock(), new ContactFormBlock($this->auth->templates),
+            new EmbedBlock($this->auth->templates), new SignLanguageVideoBlock(),
+            new PageListBlock(new PageListQuery($this->auth->database->entityManager, new PageAddresses(PageFixture::site(['en-GB', 'pt-PT']), new PageRepository($this->auth->database->entityManager), $this->auth->database->settings()), $this->auth->database->settings())),
+        ]);
         $this->menus = new MenuEditor($this->auth->database->entityManager, new RecordingEvents());
     }
 
@@ -109,7 +118,7 @@ final class DemoContentTest extends TestCase
         self::assertNotNull($page);
         self::assertSame(PageState::Published, $page->state());
         $types = array_values(array_unique(array_map(static fn (array $block): string => $block['type'], $page->translation('en-GB')?->blocks() ?? [])));
-        self::assertSame(['heading', 'rich_text', 'image', 'call_to_action', 'columns', 'gallery', 'video', 'audio', 'file_download', 'contact_form'], $types);
+        self::assertSame(['heading', 'rich_text', 'image', 'call_to_action', 'columns', 'gallery', 'video', 'audio', 'file_download', 'contact_form', 'page_list', 'embed', 'sign_language_video'], $types);
         $subpage = $this->pages->repository()->find((int) $event->shared('demo.subpage'));
         self::assertSame(['every-block/under', $event->shared('demo.contributor')], [$subpage?->translation('en-GB')?->path(), $subpage?->authorId()]);
 

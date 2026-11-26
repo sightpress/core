@@ -10,6 +10,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SightPress\Core\Tenant\SiteRegistryException;
 use SightPress\Core\Tenant\SiteRepository;
+use SightPress\Core\Block\Contract\EmbedProviders;
 
 /**
  * Adds the security headers to every response: a Content Security Policy with a fresh nonce per request, HSTS over
@@ -95,6 +96,8 @@ final readonly class SecurityHeadersMiddleware implements MiddlewareInterface
             "font-src 'self'{$cdn}",
             "connect-src 'self'{$bucket}",
             "media-src 'self'{$cdn}",
+            // Only the providers an embed block may show, and only once the reader asks (BL-2).
+            "frame-src 'self' " . implode(' ', EmbedProviders::frameOrigins()),
             "object-src 'none'",
             "base-uri 'self'",
             "form-action 'self'",

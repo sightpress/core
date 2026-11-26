@@ -81,7 +81,8 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0061](0061-scheduled-jobs-for-modules.md) | Scheduled jobs for modules | Proposed |
 | [0062](0062-route-permissions-and-critical-routes.md) | Route permissions and critical routes | Proposed |
 | [0063](0063-sms-provider-contract.md) | Text message (SMS) provider contract | Proposed |
-| [0064](0064-block-variants-options-and-icons.md) | Block variants, shared options and icons in the module contract | Proposed |
+| [0064](0064-block-variants-options-and-icons.md) | Block variants, shared options and icons in the module contract | Accepted |
 | [0065](0065-external-module-failures.md) | A broken external module doesn't stop the tenant | Proposed |
+| [0074](0074-embed-page-list-sign-language-video.md) | The embed, page list and sign language video blocks | Accepted |
 
 When an ADR's status changes, update it here too.

@@ -93,7 +93,7 @@ test('with files in a bucket and a CDN, every public page is accessible and its 
   const picture = page.locator('.block-image img').first();
   expect(await picture.getAttribute('src')).toContain(`${CDN}/`);
   expect(await picture.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
-  await expect(page.locator('video track[kind="captions"]')).toHaveCount(1);
+  await expect(page.locator('.block-video:not(.block-sign-language-video) video track[kind="captions"]')).toHaveCount(1);
   await expect(page.locator('.block-audio details')).toContainText('A single tone plays for two seconds.');
   expect(failed).toEqual([]);
 });

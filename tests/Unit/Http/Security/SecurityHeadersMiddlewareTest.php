@@ -25,6 +25,7 @@ use SightPress\Core\Tests\Support\SiteFixture;
 #[UsesClass(\SightPress\Core\Tenant\SiteStorage::class)]
 #[UsesClass(\SightPress\Core\Tenant\SiteS3Storage::class)]
 #[CoversClass(CspNonce::class)]
+#[UsesClass(\SightPress\Core\Block\Contract\EmbedProviders::class)]
 final class SecurityHeadersMiddlewareTest extends TestCase
 {
     public function testEveryResponseGetsTheSecurityHeaders(): void
@@ -43,7 +44,7 @@ final class SecurityHeadersMiddlewareTest extends TestCase
         self::assertMatchesRegularExpression('/^[A-Za-z0-9+\/]{24}$/', $nonce);
         self::assertSame(
             "default-src 'self'; script-src 'self' 'nonce-{$nonce}'; style-src 'self' 'nonce-{$nonce}'; "
-            . "img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; object-src 'none'; "
+            . "img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com https://www.openstreetmap.org; object-src 'none'; "
             . "base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
             $response->getHeaderLine('Content-Security-Policy'),
         );

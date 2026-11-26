@@ -71,3 +71,36 @@
 :where(.form--size-large) :where(.field) { margin-block-end: var(--space-5, 2rem); }
 :where(.form--button-end) :where(form) :where(button[type=submit]) { display: block; margin-inline-start: auto; }
 :where(.form--button-stretch) :where(form) :where(button[type=submit]) { display: block; inline-size: 100%; }
+
+/* Embeds: the frame keeps its shape when the page is narrow or zoomed. The button only works with JavaScript, which
+   unhides it; a theme's button styles must not show it before that. */
+[data-embed-load][hidden] { display: none !important; }
+:where(.block-embed) { margin: 0 0 var(--space-4, 1.5rem); }
+:where(.block-embed__consent) {
+  padding: var(--space-4, 1.5rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium, 0);
+  background: var(--color-surface, var(--color-background));
+}
+:where(.block-embed__frame) { display: block; inline-size: 100%; aspect-ratio: 16 / 9; border: 0; }
+:where(.block-embed--openstreetmap .block-embed__frame) { aspect-ratio: 4 / 3; }
+
+/* Lists of pages: a plain list, or cards where the whole card follows its one link. */
+:where(.block--variant-cards) :where(.block-page-list) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-4, 1.5rem);
+  padding: 0;
+  list-style: none;
+}
+:where(.block--variant-cards) :where(.block-page-list__item) {
+  position: relative;
+  padding: var(--space-4, 1.5rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium, 0.5rem);
+  background: var(--color-surface, var(--color-background));
+}
+:where(.block--variant-cards) :where(.block-page-list__link)::after { content: ""; position: absolute; inset: 0; }
+:where(.block--variant-cards) :where(.block-page-list__item:focus-within) { outline: var(--focus-width, 3px) solid var(--color-focus); outline-offset: var(--focus-offset, 2px); }
+:where(.block-page-list__summary) { margin: var(--space-1, 0.25rem) 0 0; }
+:where(.block-sign-language-video__language) { font-weight: normal; }

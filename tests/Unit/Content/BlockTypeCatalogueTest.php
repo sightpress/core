@@ -21,6 +21,9 @@ use SightPress\Module\Block\BlockOption;
 use SightPress\Module\Block\BlockStyles;
 use SightPress\Module\Block\BlockVariant;
 use SightPress\Module\Block\StyledBlockType;
+use ReflectionClass;
+use SightPress\Core\Block\Type\EmbedBlock;
+use SightPress\Core\Page\PageListBlock;
 use stdClass;
 use UnexpectedValueException;
 
@@ -32,9 +35,9 @@ final class BlockTypeCatalogueTest extends TestCase
     {
         $registry = ModuleRegistry::register(new ModuleLoader('0.2.0')->catalogue(CoreModules::candidates())->resolve(new ModuleSelection()));
 
-        $catalogue = BlockTypeCatalogue::fromRegistry($registry, new ContainerBuilder()->addDefinitions([ContactFormBlock::class => new ContactFormBlock(new AuthFixture()->templates)])->build());
+        $catalogue = BlockTypeCatalogue::fromRegistry($registry, self::container());
 
-        self::assertSame(['audio', 'call_to_action', 'columns', 'contact_form', 'file_download', 'gallery', 'heading', 'image', 'rich_text', 'video'], array_keys($catalogue->all()));
+        self::assertSame(['audio', 'call_to_action', 'columns', 'contact_form', 'embed', 'file_download', 'gallery', 'heading', 'image', 'page_list', 'rich_text', 'sign_language_video', 'video'], array_keys($catalogue->all()));
         self::assertInstanceOf(HeadingBlock::class, $catalogue->get('heading'));
         self::assertNull($catalogue->get('missing'));
         self::assertSame('block', $catalogue->moduleOf('heading'));
@@ -80,7 +83,7 @@ final class BlockTypeCatalogueTest extends TestCase
         $registry->addBlockVariant('acme', 'heading', new BlockVariant('shout', 'Shout'));
         $registry->addBlockVariant('acme', 'acme.missing', new BlockVariant('any', 'Any'));
 
-        $catalogue = BlockTypeCatalogue::fromRegistry($registry, new ContainerBuilder()->addDefinitions([ContactFormBlock::class => new ContactFormBlock(new AuthFixture()->templates)])->build());
+        $catalogue = BlockTypeCatalogue::fromRegistry($registry, self::container());
 
         $image = $catalogue->stylesOf('image');
         self::assertNotNull($image);
@@ -105,5 +108,19 @@ final class BlockTypeCatalogueTest extends TestCase
         self::assertTrue($catalogue->stylesOf('acme.signup')?->shortForm);
         self::assertCount(2, $catalogue->stylesOf('acme.signup')->variants);
         self::assertNull($catalogue->stylesOf('acme.example'));
+    }
+
+    /**
+     * A container that can build the core block types that need more than autowiring.
+     */
+    private static function container(): \Psr\Container\ContainerInterface
+    {
+        $templates = new AuthFixture()->templates;
+
+        return new ContainerBuilder()->addDefinitions([
+            ContactFormBlock::class => new ContactFormBlock($templates),
+            EmbedBlock::class => new EmbedBlock($templates),
+            PageListBlock::class => new ReflectionClass(PageListBlock::class)->newInstanceWithoutConstructor(),
+        ])->build();
     }
 }

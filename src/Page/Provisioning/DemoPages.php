@@ -40,7 +40,7 @@ final readonly class DemoPages
             'Every kind of block',
             'every-block',
             'A demo page with one block of every kind, to try the site out.',
-            'A demo page that shows every kind of block: text, pictures, a gallery, a video with captions, a recording with its transcript, a file and a contact form.',
+            'A demo page that shows every kind of block: text, pictures, a gallery, a video with captions, a recording with its transcript, a file, a contact form, a list of pages, a map and a sign language video.',
             [
                 $heading('Text'),
                 $text('<p>A paragraph with <strong>strong</strong> and <em>emphasised</em> words, and <a href="/">a link to the home page</a>.</p><ul><li>A list</li><li>with two items</li></ul>'),
@@ -66,6 +66,12 @@ final readonly class DemoPages
                 ['type' => 'file_download', 'version' => 1, 'data' => ['media' => $media('document'), 'text' => 'Opening hours']],
                 $heading('A contact form'),
                 ['type' => 'contact_form', 'version' => 1, 'data' => ['recipient' => $event->admin->email, 'subject' => 'Message from the demo page']],
+                $heading('A list of pages'),
+                ['type' => 'page_list', 'version' => 1, 'data' => ['source' => 'pages_under_a_page', 'count' => 12, 'show_summaries' => true], 'styles' => ['variant' => 'cards']],
+                $heading('A map'),
+                ['type' => 'embed', 'version' => 1, 'data' => ['url' => 'https://www.openstreetmap.org/?mlat=51.5072&mlon=-0.1276#map=17/51.5072/-0.1276', 'title' => 'Map of the streets around the demo office']],
+                $heading('A sign language video'),
+                ['type' => 'sign_language_video', 'version' => 1, 'data' => ['media' => $media('video'), 'title' => 'Test pattern, signed', 'sign_language' => 'british', 'captions' => $media('captions'), 'transcript' => 'A test pattern plays for two seconds. Nobody signs yet: this is where a signed version of the page would go.']],
             ],
         ), null, $event->adminId());
         $page->changeState(PageState::Published, $now);

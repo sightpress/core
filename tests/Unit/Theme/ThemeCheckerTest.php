@@ -13,7 +13,6 @@ use SightPress\Core\Tests\Support\TemporaryDirectory;
 use SightPress\Core\Tests\Support\Theme\HarbourTheme;
 use SightPress\Core\Theme\ThemeCheck;
 use SightPress\Core\Theme\ThemeChecker;
-use SightPress\Theme\Screenshot;
 use SightPress\Theme\ThemeInterface;
 use SightPress\Theme\ThemeManifest;
 use SightPress\Theme\ThemePaths;
@@ -43,7 +42,6 @@ final class ThemeCheckerTest extends TestCase
 
         self::assertTrue($check->passes(), implode("\n", $check->problems));
         self::assertSame('SightPress Default', $check->name);
-        self::assertSame([], $check->warnings);
         self::assertGreaterThan(100, $check->checks);
     }
 
@@ -53,7 +51,6 @@ final class ThemeCheckerTest extends TestCase
 
         self::assertTrue($check->passes(), implode("\n", $check->problems));
         self::assertSame('Harbour', $check->name);
-        self::assertSame([], $check->warnings);
     }
 
     public function testReadsTheThemeClassOfAFolder(): void
@@ -127,28 +124,6 @@ final class ThemeCheckerTest extends TestCase
         self::assertSame([
             'Remove screenshot-dark.webp from the theme: a theme ships no screenshot or preview output; they are made from its preview page.',
         ], new ThemeChecker()->check($folder)->problems);
-    }
-
-    public function testWarnsAboutAScreenshotInTheManifestAndAMissingPreviewDescription(): void
-    {
-        $theme = new class () implements ThemeInterface {
-            public function manifest(): ThemeManifest
-            {
-                return new ThemeManifest('acme-harbour', 'Harbour', 'Calm blues.', '1.2.0', new ThemeRequirement('^0.2'), screenshot: new Screenshot('assets/screenshot.png', 'Blue.'));
-            }
-
-            public function paths(): ThemePaths
-            {
-                return new HarbourTheme()->paths();
-            }
-        };
-
-        $check = new ThemeChecker()->check($theme);
-
-        self::assertTrue($check->passes());
-        self::assertCount(2, $check->warnings);
-        self::assertStringStartsWith('The manifest names a screenshot', $check->warnings[0]);
-        self::assertStringStartsWith('The manifest has no previewDescription', $check->warnings[1]);
     }
 
     private function copy(): string

@@ -91,7 +91,7 @@ final class SiteThemeTest extends TestCase
 
     public function testAThemeForAnotherContractFallsBack(): void
     {
-        $theme = $this->theme([SiteTheme::SETTING => 'acme-harbour'], [], '0.3.0.0');
+        $theme = $this->theme([SiteTheme::SETTING => 'acme-harbour'], [], '0.4.0.0');
 
         self::assertSame('default', $theme->theme()->manifest()->id);
         self::assertSame('The theme acme-harbour doesn’t work with this version of SightPress.', (string) $theme->problem());

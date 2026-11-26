@@ -76,9 +76,6 @@ final readonly class ValidateThemeCommand implements Command
     private function validate(ThemeInterface|string $theme, bool $axe, CommandOutput $output): bool
     {
         $check = $this->checker->check($theme);
-        foreach ($check->warnings as $warning) {
-            $output->line(sprintf('Warning for "%s": %s', $check->name, $warning));
-        }
         $unavailable = $theme instanceof ThemeInterface ? $this->registry->unavailable($theme) : null;
         $problems = $unavailable === null ? $check->problems : [$unavailable, ...$check->problems];
         if ($problems !== []) {

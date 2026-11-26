@@ -23,7 +23,7 @@ final class HarbourTheme implements ThemeInterface
             'Harbour',
             'Calm blues with large type.',
             '1.2.0',
-            new ThemeRequirement('^0.2'),
+            new ThemeRequirement('^0.3'),
             layouts: [...LayoutDefinition::required(), LayoutDefinition::standard()[1]],
             previewDescription: 'A dark blue top bar and a large white heading.',
         );

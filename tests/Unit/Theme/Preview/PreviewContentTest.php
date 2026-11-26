@@ -26,14 +26,14 @@ final class PreviewContentTest extends TestCase
         self::assertSame('Riverside Reading Room', $content->siteName);
         self::assertNotSame('', $content->tagline);
         self::assertSame(['label' => 'Download', 'accessible_name' => 'Download Harbour', 'url' => 'https://acme.example/harbour'], $content->button);
-        self::assertSame(['text', 'media', 'layout', 'sound', 'contact'], array_column($content->sections, 'id'));
+        self::assertSame(['text', 'media', 'layout', 'sound', 'contact', 'around'], array_column($content->sections, 'id'));
         self::assertSame(['type' => 'heading', 'version' => 1, 'data' => ['text' => 'Text and buttons', 'level' => 2]], $content->blocks[0]);
         $json = (string) json_encode($content->blocks);
         self::assertStringNotContainsString('{{', $json);
         self::assertStringNotContainsString('"@', $json);
         self::assertStringContainsString('"media":1', $json);
         self::assertStringContainsString('"captions":2', $json);
-        self::assertCount(count($content->sections) + 10, $content->blocks);
+        self::assertCount(count($content->sections) + 13, $content->blocks);
     }
 
     public function testEveryCoreSampleFileIsNeeded(): void

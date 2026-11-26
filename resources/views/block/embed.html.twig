@@ -1,0 +1,19 @@
+{#
+    The embed block (BL-2). Nothing from the provider is loaded until the reader asks for it: the page holds only text,
+    a link to the original and, once embed.js runs, a button. Pressing it puts the provider's frame in place of the
+    notice and moves focus to it. Without JavaScript the link is the way to see it.
+#}
+<figure class="block-embed block-embed--{{ provider }}" data-embed>
+    <div class="block-embed__consent" data-embed-consent>
+        <p>{{ kind == 'map'
+            ? t('This map is on {provider}. Showing it here lets {provider} see that you visited this page.', {provider: label})
+            : t('This video is on {provider}. Showing it here lets {provider} see that you visited this page.', {provider: label}) }}
+            <a href="{{ privacy }}">{{ t('{provider}’s privacy policy', {provider: label}) }}</a></p>
+        <button type="button" class="button" data-embed-load data-embed-src="{{ src }}" data-embed-title="{{ title }}" hidden>
+            {{- kind == 'map' ? t('Show the map: {title}', {title: title}) : t('Show the video: {title}', {title: title}) -}}
+        </button>
+        <p class="block-embed__fallback"><a href="{{ url }}">{{ kind == 'map' ? t('Open the map on {provider}: {title}', {provider: label, title: title}) : t('Watch on {provider}: {title}', {provider: label, title: title}) }}</a></p>
+    </div>
+    <figcaption>{{ title }}</figcaption>
+</figure>
+<script type="module" src="/assets/js/embed.js"></script>

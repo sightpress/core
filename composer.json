@@ -63,7 +63,7 @@
     "psr/event-dispatcher": "^1",
     "sightpress/module-interface": "^0.5",
     "sightpress/theme-default": "^0.3",
-    "sightpress/theme-interface": "^0.2",
+    "sightpress/theme-interface": "^0.3",
     "slim/csrf": "^1",
     "slim/slim": "^4",
     "symfony/cache": "^8",

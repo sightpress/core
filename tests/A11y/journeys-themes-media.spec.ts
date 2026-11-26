@@ -161,8 +161,10 @@ test('a video gets captions in two languages', async ({ page, request }) => {
   }
   await expectNoViolations(page);
   await page.goto(`${SITE}/every-block`);
-  await expect(page.locator('video track[srclang="pt-PT"]')).toHaveCount(1);
-  await expect(page.locator('video track[srclang="en-GB"]')).toHaveCount(1);
+  // The plain video block; the sign language video on the same page uses the demo video too.
+  const player = page.locator('.block-video:not(.block-sign-language-video) video');
+  await expect(player.locator('track[srclang="pt-PT"]')).toHaveCount(1);
+  await expect(player.locator('track[srclang="en-GB"]')).toHaveCount(1);
 });
 
 test('the site moves to a bucket and its files are still served', async ({ page, request }) => {

@@ -13,7 +13,7 @@ import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
-const SECTIONS = ['Text and buttons', 'Pictures and files', 'Side by side', 'Sound and video', 'Contact'];
+const SECTIONS = ['Text and buttons', 'Pictures and files', 'Side by side', 'Sound and video', 'Contact', 'Find your way'];
 let folder = process.env.SIGHTPRESS_THEME_PREVIEW ?? '';
 
 test.beforeAll(() => {
@@ -46,7 +46,7 @@ test('opens offline with every section in order and no request leaving the folde
   const nav = page.getByRole('navigation', { name: 'Main' });
   await expect(nav.getByRole('link')).toHaveText(SECTIONS);
   await expect(page.getByRole('link', { name: 'Download SightPress Default' })).toHaveText('Download');
-  for (const selector of ['.block-call-to-action', '.block-image', '.block-file-download', '.block-columns', '.block-gallery', '.block-audio', '.block-video']) {
+  for (const selector of ['.block-call-to-action', '.block-image', '.block-file-download', '.block-columns', '.block-gallery', '.block-audio', '.block-video', '.block-page-list', '.block-embed', '.block-sign-language-video']) {
     await expect(page.locator(selector).first(), selector).toBeVisible();
   }
   await expect(page.getByText('This is a preview: the form doesn\'t send anything.')).toBeVisible();
@@ -99,7 +99,7 @@ test('works by keyboard: skip link, navbar, Download, then every control', async
     return all.length;
   });
   const reached = new Set<string>();
-  for (let i = 0; i < 80; i++) {
+  for (let i = 0; i < 120; i++) {
     await page.keyboard.press('Tab');
     const index = await page.evaluate(() => document.activeElement?.getAttribute('data-preview-control') ?? '');
     if (index !== '') {

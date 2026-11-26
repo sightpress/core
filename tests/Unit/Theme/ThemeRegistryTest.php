@@ -80,16 +80,16 @@ final class ThemeRegistryTest extends TestCase
     {
         $harbour = new HarbourTheme();
 
-        self::assertNull(new ThemeRegistry([$harbour], [], '0.2.1.0')->unavailable($harbour));
-        self::assertNull(new ThemeRegistry([$harbour], [], '0.2.9999999.9999999-dev')->unavailable($harbour));
+        self::assertNull(new ThemeRegistry([$harbour], [], '0.3.1.0')->unavailable($harbour));
+        self::assertNull(new ThemeRegistry([$harbour], [], '0.3.9999999.9999999-dev')->unavailable($harbour));
         self::assertNull(new ThemeRegistry([$harbour])->unavailable($harbour));
         self::assertSame(
-            'It needs sightpress/theme-interface ^0.2, and this SightPress has 0.3.0.0.',
-            new ThemeRegistry([$harbour], [], '0.3.0.0')->unavailable($harbour),
+            'It needs sightpress/theme-interface ^0.3, and this SightPress has 0.4.0.0.',
+            new ThemeRegistry([$harbour], [], '0.4.0.0')->unavailable($harbour),
         );
         self::assertSame(
-            'It needs sightpress/theme-interface ^0.2, and this SightPress has 0.3.x-dev.',
-            new ThemeRegistry([$harbour], [], '0.3.9999999.9999999-dev')->unavailable($harbour),
+            'It needs sightpress/theme-interface ^0.3, and this SightPress has 0.4.x-dev.',
+            new ThemeRegistry([$harbour], [], '0.4.9999999.9999999-dev')->unavailable($harbour),
         );
         self::assertNotNull(new ThemeRegistry([$harbour], [], 'not a version')->unavailable($harbour));
     }

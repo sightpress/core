@@ -15,7 +15,8 @@
  * site on port 8087, written in en-GB, pt-PT and he; `journeys` on port 8086 for tests/A11y/journeys.spec.ts, in en-GB
  * and pt-PT; `search` on port 8074 for tests/A11y/search.spec.ts; `members` on port 8073, a members-only site for the
  * crawl; `themed` on port 8064, on a second installed theme; `cloud` on port 8063, with its files in MinIO and a CDN
- * address; `mediajourney` on port 8062 for tests/A11y/journeys-themes-media.spec.ts), so specs never reset each
+ * address; `mediajourney` on port 8062 for tests/A11y/journeys-themes-media.spec.ts; `embeds` on port 8056 for
+ * tests/A11y/blocks-m4.spec.ts), so specs never reset each
  * other's site. Sign-up is open on `demo` and `journeys`. Its search index is built after site:create.
  * The site's address uses the port it is served on.
  *
