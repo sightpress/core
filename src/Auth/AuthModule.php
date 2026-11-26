@@ -23,6 +23,17 @@ use SightPress\Core\Auth\Http\ChangePhoneCodeHandler;
 use SightPress\Core\Auth\Http\ChangePhoneHandler;
 use SightPress\Core\Auth\Account\PhoneChange;
 use SightPress\Core\Auth\PhonePrompt;
+use SightPress\Module\Admin\AdminMenuItem;
+use SightPress\Module\Access\Permission;
+use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
+use SightPress\Core\Auth\StepUp\ConfirmHandler;
+use SightPress\Core\Auth\StepUp\ConfirmPaths;
+use SightPress\Core\Auth\StepUp\ContinueHandler;
+use SightPress\Core\Auth\StepUp\CriticalActions;
+use SightPress\Core\Auth\StepUp\SecuritySettingsHandler;
+use SightPress\Core\Auth\StepUp\StepUpGate;
+use SightPress\Core\Auth\StepUp\TwoStep;
+use SightPress\Core\Auth\Command\ResetPhoneCommand;
 use SightPress\Core\Auth\PasswordChangedNotice;
 use SightPress\Core\Auth\SignInIdentifier;
 use SightPress\Core\Auth\Account\EmailChange;
@@ -105,7 +116,7 @@ final class AuthModule implements ModuleInterface
             return $policies->emailDomains === null ? new AnyEmailPolicy() : new DomainsEmailPolicy($policies);
         }, public: true);
         $services->autowire(TenantDomainRegistration::class, DomainRegistration::class, public: true);
-        foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class, SelfRegistration::class, RegistrationMailer::class, RegisterHandler::class, RegisterCodeHandler::class, ForgetUnconfirmedAccounts::class, EmailChange::class, ChangePasswordHandler::class, ChangeEmailHandler::class, ChangeEmailCodeHandler::class, PhoneChange::class, PhonePrompt::class, SignInIdentifier::class, PasswordChangedNotice::class, ChangePhoneHandler::class, ChangePhoneCodeHandler::class] as $class) {
+        foreach ([AuthPages::class, LoginHandler::class, LogoutHandler::class, ForgotPasswordHandler::class, ResetCodeHandler::class, SetupAccountHandler::class, ChoosePasswordHandler::class, SelfRegistration::class, RegistrationMailer::class, RegisterHandler::class, RegisterCodeHandler::class, ForgetUnconfirmedAccounts::class, EmailChange::class, ChangePasswordHandler::class, ChangeEmailHandler::class, ChangeEmailCodeHandler::class, PhoneChange::class, PhonePrompt::class, SignInIdentifier::class, PasswordChangedNotice::class, TwoStep::class, CriticalActions::class, ConfirmHandler::class, ContinueHandler::class, SecuritySettingsHandler::class, ChangePhoneHandler::class, ChangePhoneCodeHandler::class] as $class) {
             $services->autowire($class);
         }
 
@@ -126,6 +137,8 @@ final class AuthModule implements ModuleInterface
         $registrar->subscribers()->listen(SiteProvisioning::class, DemoAccounts::class, DemoAccounts::PRIORITY);
         $registrar->subscribers()->listen(ScheduleDue::class, ForgetUnconfirmedAccounts::class);
         $registrar->commands()->add(CreateAdminCommand::class);
+        $registrar->commands()->add(ResetPhoneCommand::class);
+        $registrar->services()->autowire(StepUpGate::class, public: true);
 
         $routes = $registrar->routes();
         $routes->add(new Route('auth.login', '/login', LoginHandler::class, ['GET', 'POST']));
@@ -141,5 +154,10 @@ final class AuthModule implements ModuleInterface
         $routes->add(new Route('auth.account.email.code', ChangeEmailCodeHandler::PATH, ChangeEmailCodeHandler::class, ['GET', 'POST']));
         $routes->add(new Route('auth.account.phone', ChangePhoneHandler::PATH, ChangePhoneHandler::class, ['GET', 'POST']));
         $routes->add(new Route('auth.account.phone.code', ChangePhoneCodeHandler::PATH, ChangePhoneCodeHandler::class, ['GET', 'POST']));
+        $routes->add(new Route('auth.confirm', ConfirmPaths::CONFIRM, ConfirmHandler::class, ['GET', 'POST']));
+        $routes->add(new Route('auth.confirm.continue', ConfirmPaths::CONTINUE, ContinueHandler::class));
+        $routes->add(new Route('security.settings', SecuritySettingsHandler::PATH, SecuritySettingsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $registrar->adminMenu()->add(new AdminMenuItem('security.settings', 'Security', 'security.settings', SecuritySettingsHandler::PERMISSION, 'admin.settings', 40));
+        $registrar->permissions()->add(new Permission(SecuritySettingsHandler::PERMISSION, 'Manage security', 'Turn two-step confirmation on or off for the site.', ['admin']));
     }
 }

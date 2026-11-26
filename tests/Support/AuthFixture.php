@@ -222,7 +222,13 @@ final class AuthFixture implements MailSender
             $this->identifiers(),
             $this->texts(),
             $this->database->roles(),
+            $this->twoStep(),
         );
+    }
+
+    public function twoStep(): \SightPress\Core\Auth\StepUp\TwoStep
+    {
+        return new \SightPress\Core\Auth\StepUp\TwoStep(\SightPress\Core\Tenant\TenantConfig::fromArray([], '/srv/app'), $this->database->settings(), $this->texts(), new RecordingEvents());
     }
 
     public function passwordChangedNotice(): \SightPress\Core\Auth\PasswordChangedNotice

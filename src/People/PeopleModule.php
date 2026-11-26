@@ -19,6 +19,7 @@ use SightPress\Core\People\Http\InviteHandler;
 use SightPress\Core\People\Http\UserHandler;
 use SightPress\Core\People\Http\UsersHandler;
 use SightPress\Core\People\Http\SignUpSettingsHandler;
+use SightPress\Core\People\Http\UserPhoneHandler;
 use SightPress\Core\People\Http\UserStatusHandler;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Admin\AdminMenuItem;
@@ -60,7 +61,7 @@ final class PeopleModule implements ModuleInterface
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/people');
 
         $services = $registrar->services();
-        foreach ([Invitations::class, InvitationMailer::class, InviteHandler::class, InvitationPages::class, InvitationCodeHandler::class, AcceptInvitationHandler::class, UsersHandler::class, UserHandler::class, UserStatusHandler::class, SignUpSettingsHandler::class, RolesHandler::class, RoleHandler::class, DeleteRoleHandler::class] as $class) {
+        foreach ([Invitations::class, InvitationMailer::class, InviteHandler::class, InvitationPages::class, InvitationCodeHandler::class, AcceptInvitationHandler::class, UsersHandler::class, UserHandler::class, UserStatusHandler::class, UserPhoneHandler::class, SignUpSettingsHandler::class, RolesHandler::class, RoleHandler::class, DeleteRoleHandler::class] as $class) {
             $services->autowire($class);
         }
 
@@ -69,6 +70,7 @@ final class PeopleModule implements ModuleInterface
         $routes->add(new Route('people.users', UsersHandler::PATH, UsersHandler::class, middleware: [AdminAccessMiddleware::class]));
         $routes->add(new Route('people.user', $user, UserHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('people.user.status', $user . '/status', UserStatusHandler::class, ['POST'], [AdminAccessMiddleware::class]));
+        $routes->add(new Route('people.user.phone', $user . '/phone', UserPhoneHandler::class, ['POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('people.invite', InviteHandler::PATH, InviteHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
         $routes->add(new Route('people.invitation', InvitationCodeHandler::PATH, InvitationCodeHandler::class, ['GET', 'POST']));
         $routes->add(new Route('people.invitation.account', AcceptInvitationHandler::PATH, AcceptInvitationHandler::class, ['GET', 'POST']));

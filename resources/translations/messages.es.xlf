@@ -10663,5 +10663,239 @@
         <target>Política de privacidad de {provider}</target>
       </segment>
     </unit>
+    <unit id="50f340d761aca5fb">
+      <segment>
+        <source>Add your own mobile number first, on My account: you need it to confirm changes once this is on.</source>
+        <target>Añade primero tu propio número de móvil, en Mi cuenta: lo necesitarás para confirmar cambios cuando esto esté activado.</target>
+      </segment>
+    </unit>
+    <unit id="a0e627129d0370ba">
+      <segment>
+        <source>Cancel and go to My account</source>
+        <target>Cancelar e ir a Mi cuenta</target>
+      </segment>
+    </unit>
+    <unit id="eebdd24a77d9ad32">
+      <segment>
+        <source>Confirm</source>
+        <target>Confirmar</target>
+      </segment>
+    </unit>
+    <unit id="da81bd0f191a507e">
+      <segment>
+        <source>Confirm it’s you</source>
+        <target>Confirma que eres tú</target>
+      </segment>
+    </unit>
+    <unit id="e9c667a0b5a57e3e">
+      <segment>
+        <source>Everyone who makes such changes needs a confirmed mobile number. There is no way round it by email. Someone who lost their phone asks a person who manages people to remove their number, and then adds the new one.</source>
+        <target>Quien haga estos cambios necesita un número de móvil confirmado. No hay alternativa por correo. Quien pierda el móvil pide a quien gestiona las personas que quite su número, y luego añade el nuevo.</target>
+      </segment>
+    </unit>
+    <unit id="7d325bd14049d38b">
+      <segment>
+        <source>First add your mobile number. We send the code to it, and no other way.</source>
+        <target>Añade primero tu número de móvil. Enviamos el código a él, y de ninguna otra forma.</target>
+      </segment>
+    </unit>
+    <unit id="733a80b7356116d5">
+      <segment>
+        <source>For the next {minutes} minutes you can make important changes without another code.</source>
+        <target>Durante los próximos {minutes} minutos puedes hacer cambios importantes sin otro código.</target>
+      </segment>
+    </unit>
+    <unit id="149e04d667e3838c">
+      <segment>
+        <source>Go back to the form</source>
+        <target>Volver al formulario</target>
+      </segment>
+    </unit>
+    <unit id="fec03e6adc82675a">
+      <segment>
+        <source>If it keeps happening, ask whoever runs your sites. They can make this change for you from the console, or check the text message provider.</source>
+        <target>Si sigue pasando, habla con quien gestiona tus sitios. Pueden hacer este cambio por ti desde la consola, o revisar el proveedor de mensajes de texto.</target>
+      </segment>
+    </unit>
+    <unit id="6449b2d88677bd38">
+      <segment>
+        <source>If {name} lost their phone or changed number, remove it here. They then add their new number on My account. Until then they can’t confirm important changes.</source>
+        <target>Si {name} perdió el móvil o cambió de número, quítalo aquí. Después añade su nuevo número en Mi cuenta. Hasta entonces no puede confirmar cambios importantes.</target>
+      </segment>
+    </unit>
+    <unit id="673fc12090b89cb1">
+      <segment>
+        <source>It is off.</source>
+        <target>Está desactivada.</target>
+      </segment>
+    </unit>
+    <unit id="e0d85f047d233488">
+      <segment>
+        <source>It is on.</source>
+        <target>Está activada.</target>
+      </segment>
+    </unit>
+    <unit id="b57904b95e3216aa">
+      <segment>
+        <source>It needs text messages, which are off for this site. Ask whoever runs your sites to set them up.</source>
+        <target>Necesita mensajes de texto, que están desactivados en este sitio. Pide a quien gestiona tus sitios que los configure.</target>
+      </segment>
+    </unit>
+    <unit id="c317d7b6997be6d5">
+      <segment>
+        <source>Lost your phone? Ask someone who manages people on this site, or whoever runs your sites, to remove your number. Then add your new one.</source>
+        <target>¿Perdiste el móvil? Pide a quien gestiona las personas en este sitio, o a quien gestiona tus sitios, que quite tu número. Luego añade el nuevo.</target>
+      </segment>
+    </unit>
+    <unit id="cc3f10d4326aedfa">
+      <segment>
+        <source>Make the change</source>
+        <target>Hacer el cambio</target>
+      </segment>
+    </unit>
+    <unit id="9292d619672f20d9">
+      <segment>
+        <source>Manage security</source>
+        <target>Gestionar la seguridad</target>
+      </segment>
+    </unit>
+    <unit id="6e1d523f57dc586c">
+      <segment>
+        <source>No text message after a few minutes? You can ask for a new code once a minute. If your number has stopped our texts, reply START to our last message.</source>
+        <target>¿No llega el mensaje después de unos minutos? Puedes pedir un código nuevo una vez por minuto. Si tu número ha parado nuestros mensajes, responde START a nuestro último mensaje.</target>
+      </segment>
+    </unit>
+    <unit id="874ab5c895535572">
+      <segment>
+        <source>Nothing changed.</source>
+        <target>No ha cambiado nada.</target>
+      </segment>
+    </unit>
+    <unit id="95640ae245473c79">
+      <segment>
+        <source>Off: a password is enough</source>
+        <target>Desactivada: basta con la contraseña</target>
+      </segment>
+    </unit>
+    <unit id="4209b043a8d9cdf6">
+      <segment>
+        <source>On: important changes need a code sent by text message</source>
+        <target>Activada: los cambios importantes necesitan un código enviado por mensaje de texto</target>
+      </segment>
+    </unit>
+    <unit id="d03d69e5946dc07f">
+      <segment>
+        <source>Remove mobile number</source>
+        <target>Quitar el número de móvil</target>
+      </segment>
+    </unit>
+    <unit id="a08d0bba7e9de1d9">
+      <segment>
+        <source>Remove the mobile number of {name}</source>
+        <target>Quitar el número de móvil de {name}</target>
+      </segment>
+    </unit>
+    <unit id="15100146689aea15">
+      <segment>
+        <source>Remove your own number on My account.</source>
+        <target>Quita tu propio número en Mi cuenta.</target>
+      </segment>
+    </unit>
+    <unit id="8f6fb4eb7f42c0e2">
+      <segment>
+        <source>Security</source>
+        <target>Seguridad</target>
+      </segment>
+    </unit>
+    <unit id="2f3ac2e4fcf4376b">
+      <segment>
+        <source>Text messages are off for this site, so no code can be sent. Ask whoever runs your sites.</source>
+        <target>Los mensajes de texto están desactivados en este sitio, así que no se puede enviar un código. Habla con quien gestiona tus sitios.</target>
+      </segment>
+    </unit>
+    <unit id="002296d0132d762d">
+      <segment>
+        <source>The mobile number of {effective_name} is removed. They can add a new one on My account.</source>
+        <target>Se ha quitado el número de móvil de {effective_name}. Puede añadir uno nuevo en Mi cuenta.</target>
+      </segment>
+    </unit>
+    <unit id="62a96174770d5a09">
+      <segment>
+        <source>This site asks for a code by text message before important changes, such as your password, who can read the site or who manages it. Nothing has changed yet.</source>
+        <target>Este sitio pide un código por mensaje de texto antes de los cambios importantes, como tu contraseña, quién puede leer el sitio o quién lo gestiona. Todavía no ha cambiado nada.</target>
+      </segment>
+    </unit>
+    <unit id="036cebaa213d10db">
+      <segment>
+        <source>Turn two-step confirmation on or off for the site.</source>
+        <target>Activar o desactivar la confirmación en dos pasos en el sitio.</target>
+      </segment>
+    </unit>
+    <unit id="60e58918674bccb7">
+      <segment>
+        <source>Two-step confirmation</source>
+        <target>Confirmación en dos pasos</target>
+      </segment>
+    </unit>
+    <unit id="dd8437287a77fe76">
+      <segment>
+        <source>Two-step confirmation is off.</source>
+        <target>La confirmación en dos pasos está desactivada.</target>
+      </segment>
+    </unit>
+    <unit id="4d371e46e31613a8">
+      <segment>
+        <source>Two-step confirmation is on. Important changes now need a code sent to your mobile number.</source>
+        <target>La confirmación en dos pasos está activada. Los cambios importantes necesitan ahora un código enviado a tu número de móvil.</target>
+      </segment>
+    </unit>
+    <unit id="5c63185bb5795239">
+      <segment>
+        <source>We can’t send a code right now</source>
+        <target>No podemos enviar un código ahora</target>
+      </segment>
+    </unit>
+    <unit id="238d283f105f9213">
+      <segment>
+        <source>We don’t keep passwords or files. Go back to the form and type or choose them again.</source>
+        <target>No guardamos contraseñas ni archivos. Vuelve al formulario y escríbelos o elígelos otra vez.</target>
+      </segment>
+    </unit>
+    <unit id="ed0c86e372afa6c8">
+      <segment>
+        <source>We will send a 6-digit code to your mobile number {phone}. It works for {duration}, and only once.</source>
+        <target>Enviaremos un código de 6 cifras a tu número de móvil {phone}. Funciona durante {duration}, y solo una vez.</target>
+      </segment>
+    </unit>
+    <unit id="2d63ef5e9df81393">
+      <segment>
+        <source>With two-step confirmation, a password alone can’t make important changes: changing a password, email address or mobile number, inviting an admin or editor, changing roles, turning features on or off, changing keys, who can read the site and who may sign up. Each time, the person types a 6-digit code we send to their mobile number, which then counts for 10 minutes.</source>
+        <target>Con la confirmación en dos pasos, la contraseña sola no basta para los cambios importantes: cambiar una contraseña, dirección de correo o número de móvil, invitar a un administrador o editor, cambiar roles, activar o desactivar funciones, cambiar claves, quién puede leer el sitio y quién puede registrarse. Cada vez, la persona escribe un código de 6 cifras que enviamos a su móvil, que luego cuenta durante 10 minutos.</target>
+      </segment>
+    </unit>
+    <unit id="10a4587ceba1a8c5">
+      <segment>
+        <source>You confirmed it’s you</source>
+        <target>Has confirmado que eres tú</target>
+      </segment>
+    </unit>
+    <unit id="9df325ad5bea824d">
+      <segment>
+        <source>Your organisation requires two-step confirmation on every site.</source>
+        <target>Tu organización exige la confirmación en dos pasos en todos los sitios.</target>
+      </segment>
+    </unit>
+    <unit id="eca0df205f8cf623">
+      <segment>
+        <source>{code} is your code to confirm a change on {site}. It works for {duration}. Never share it.</source>
+        <target>{code} es tu código para confirmar un cambio en {site}. Funciona durante {duration}. No lo compartas nunca.</target>
+      </segment>
+    </unit>
+    <unit id="e2276089d1eadff8">
+      <segment>
+        <source>{effective_name} has no mobile number.</source>
+        <target>{effective_name} no tiene número de móvil.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

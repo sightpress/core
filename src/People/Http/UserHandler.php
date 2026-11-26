@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace SightPress\Core\People\Http;
 
 use SightPress\Core\Template\Message;
+use SightPress\Core\User\Contract\AccountPhones;
+use SightPress\Module\Sms\PhoneNumber;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -35,6 +37,7 @@ final readonly class UserHandler implements RequestHandlerInterface
         private FormValidator $validator,
         private AccountRoster $accounts,
         private RoleGrants $roles,
+        private AccountPhones $phones,
     ) {
     }
 
@@ -106,6 +109,7 @@ final readonly class UserHandler implements RequestHandlerInterface
             'form' => $form,
             'self' => $self,
             'path' => self::path($account->id),
+            'phone' => ($e164 = $this->phones->phoneOf($account->id)?->e164) === null ? null : new PhoneNumber($e164)->masked(),
         ], $status);
     }
 }

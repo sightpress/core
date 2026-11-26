@@ -17,6 +17,7 @@ use Psr\Log\LoggerInterface;
 use SightPress\Core\Cli\ConsoleApplicationFactory;
 use SightPress\Core\Http\AfterResponse;
 use SightPress\Core\Http\Csrf\CsrfMiddleware;
+use SightPress\Core\Http\Security\StepUpMiddleware;
 use SightPress\Core\Http\Error\ErrorCatalogue;
 use SightPress\Core\Http\Error\ErrorHandlingMiddleware;
 use SightPress\Core\Http\Error\HtmlErrorRenderer;
@@ -119,11 +120,13 @@ final readonly class Kernel
 
         /** @var App<ContainerInterface> $app */
         $app = new App($responseFactory, $container);
-        // Middleware added last runs first. The site is resolved from the host before anything else touches the
+        // Middleware added last runs first. Two-step confirmation (N-6) holds critical changes after the CSRF check.
+        // The site is resolved from the host before anything else touches the
         // request. Routing comes before the CSRF check, so an unknown address or method answers 404 or 405 rather
         // than 403. Members-only sites send anonymous visitors to sign in once the visitor is known. A request larger
         // than PHP reads has lost its CSRF token, so it is answered "too large" before the CSRF check. Modules hear
         // about each answered request after the response is sent, once the visitor is known (ADR-0037).
+        $app->add(StepUpMiddleware::class);
         $app->add(CsrfMiddleware::class);
         $app->add(RequestOverflowMiddleware::class);
         $app->add(MembersOnlyMiddleware::class);

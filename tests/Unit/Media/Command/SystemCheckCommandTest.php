@@ -50,6 +50,7 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 #[UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
 #[UsesClass(\SightPress\Core\Tenant\TenantPolicies::class)]
 #[UsesClass(\SightPress\Core\Tenant\TenantSms::class)]
+#[UsesClass(\SightPress\Core\Tenant\TwoStepPolicy::class)]
 #[UsesClass(\SightPress\Core\Tenant\PolicyReport::class)]
 #[UsesClass(\SightPress\Core\Tenant\DomainName::class)]
 #[UsesClass(\SightPress\Core\Tenant\Site::class)]

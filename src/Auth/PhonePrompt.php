@@ -45,6 +45,14 @@ final readonly class PhonePrompt
     }
 
     /**
+     * Sends the person back to a page once they have confirmed a number (two-step confirmation without a number, N-6).
+     */
+    public static function returnAfter(Session $session, string $path): void
+    {
+        $session->set(self::RETURN, $path);
+    }
+
+    /**
      * Where the prompt goes on to, while it is shown after signing in; null when it wasn't.
      */
     public static function returnTo(Session $session): ?string

@@ -33,6 +33,7 @@ use SightPress\Module\Event\TranslationPublished;
 use SightPress\Module\Event\RoleChanged;
 use SightPress\Core\Auth\Contract\SignUp;
 use SightPress\Core\Site\Contract\SiteSettings;
+use SightPress\Core\Auth\Contract\StepUpChecked;
 use SightPress\Core\Sms\Contract\TextMessageOptChanged;
 use SightPress\Core\Sms\Contract\TextMessageTested;
 use SightPress\Core\Rbac\Contract\RoleEdited;
@@ -59,7 +60,7 @@ final readonly class AuditRecorder
         MediaUploaded::class, MediaChanged::class, MediaDeleted::class,
         MenuChanged::class, RoleChanged::class, RoleEdited::class, AccountChanged::class, AccountRegistered::class, SettingsChanged::class,
         SiteModuleChanged::class, AnalyticsDataDeleted::class, AssistantUsed::class, ThemeApplied::class, ThemeColoursChanged::class,
-        TextMessageTested::class, TextMessageOptChanged::class,
+        TextMessageTested::class, TextMessageOptChanged::class, StepUpChecked::class,
     ];
 
     public function __construct(
@@ -148,6 +149,11 @@ final readonly class AuditRecorder
                 $event->model,
                 ...($event->outcome === 'ok' ? [$event->inputTokens + $event->outputTokens] : [str_replace('_', ' ', $event->outcome)]),
             ), ['task' => $event->task, 'provider' => $event->provider, 'model' => $event->model, 'input_tokens' => $event->inputTokens, 'output_tokens' => $event->outputTokens, 'outcome' => $event->outcome]),
+            $event instanceof StepUpChecked => $this->entry($event->actorId, $event->confirmed ? 'security.confirmed' : 'security.confirm_failed', 'user', $event->actorId, sprintf(
+                $event->confirmed ? '%s confirmed it was them with a code sent to %s.' : '%s typed a wrong confirmation code (sent to %s).',
+                $this->person($event->actorId),
+                $event->maskedNumber,
+            ), ['number' => $event->maskedNumber]),
             $event instanceof TextMessageTested => $this->entry($event->actorId, 'sms.tested', 'sms', null, $event->sent
                 ? sprintf('Sent a test text message to %s with %s.', $event->maskedNumber, $event->provider)
                 : sprintf('Tried to send a test text message to %s with %s: %s.', $event->maskedNumber, $event->provider, str_replace('_', ' ', (string) $event->failure)), array_filter(['to' => $event->maskedNumber, 'provider' => $event->provider, 'failure' => $event->failure], static fn (?string $value): bool => $value !== null)),
@@ -219,6 +225,7 @@ final readonly class AuditRecorder
             'sms.sender' => 'Text message sender',
             'sms.region' => 'Text message provider region',
             'sms.monthly_budget' => 'Text message budget',
+            'security.two_step' => 'Two-step confirmation',
             default => $key,
         };
     }

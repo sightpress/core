@@ -8,6 +8,7 @@ use SightPress\Core\User\Contract\AccountPreferences;
 use SightPress\Core\Template\Viewer;
 use SightPress\Core\Template\Translations;
 use SightPress\Core\Infrastructure\Sms\TextMessages;
+use SightPress\Core\Auth\StepUp\TwoStep;
 use SightPress\Core\Rbac\Contract\PermissionLookup;
 use SightPress\Core\Sms\Contract\SmsRefused;
 use SightPress\Core\Template\Message;
@@ -53,6 +54,7 @@ final readonly class PasswordReset
         private SignInIdentifier $identifiers,
         private TextMessages $texts,
         private PermissionLookup $permissions,
+        private TwoStep $twoStep,
     ) {
     }
 
@@ -143,11 +145,14 @@ final readonly class PasswordReset
     }
 
     /**
-     * Whether a code by text may reset this account's password: not for accounts that manage the site (gap 9).
+     * Whether a code by text may reset this account's password: not for accounts that manage the site, and not while
+     * two-step confirmation is on, where the phone is the second step (gap 9).
      */
     public function mayResetByText(Account $account): bool
     {
-        return $account->id() !== null && array_intersect(self::ADMIN_LEVEL, $this->permissions->permissionNamesOf($account->id())) === [];
+        return $account->id() !== null
+            && !$this->twoStep->isOn()
+            && array_intersect(self::ADMIN_LEVEL, $this->permissions->permissionNamesOf($account->id())) === [];
     }
 
     /**

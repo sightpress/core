@@ -78,6 +78,7 @@ test('an admin checks the text messages screen and sends a test by keyboard', as
   await signInAs(page, 'ada@example.org', '/admin/sms');
   await page.getByRole('button', { name: 'Skip for now' }).click();
   await expect(page).toHaveURL(`${SITE}/admin/sms`);
+  expect((await page.request.get(`${SITE}/admin/sms`)).status()).toBe(200);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Text messages');
   await expect(page.getByText('Ready: messages are sent with Test SMS.')).toBeVisible();
   await expect(page.getByText('No text messages have been sent yet.')).toBeVisible();

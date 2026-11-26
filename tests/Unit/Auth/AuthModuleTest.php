@@ -68,6 +68,9 @@ final class AuthModuleTest extends TestCase
             'auth.account.email.code' => '/account/email/code GET,POST',
             'auth.account.phone' => '/account/phone GET,POST',
             'auth.account.phone.code' => '/account/phone/code GET,POST',
+            'auth.confirm' => '/confirm GET,POST',
+            'auth.confirm.continue' => '/confirm/continue GET',
+            'security.settings' => '/admin/settings/security GET,POST',
         ], $routes);
         $views = array_values(array_filter($registry->views(), static fn ($v) => $v->module === 'auth'));
         self::assertSame('auth', $views[0]->item->namespace);
@@ -77,7 +80,7 @@ final class AuthModuleTest extends TestCase
         self::assertSame(\SightPress\Core\Auth\Provisioning\FirstSetupCode::class, $listeners[0]->item->listener);
         self::assertSame(\SightPress\Core\Site\Contract\SiteProvisioning::SIGN_IN, $listeners[0]->item->priority);
         $commands = array_values(array_filter($registry->commands(), static fn ($c) => $c->module === 'auth'));
-        self::assertSame([CreateAdminCommand::class], array_map(static fn ($c) => $c->item, $commands));
+        self::assertSame([CreateAdminCommand::class, \SightPress\Core\Auth\Command\ResetPhoneCommand::class], array_map(static fn ($c) => $c->item, $commands));
         self::assertTrue($registry->services()[VerificationCodes::class]->item->public);
         self::assertTrue($registry->services()[\SightPress\Core\Auth\Contract\EmailPolicy::class]->item->public);
         $scheduled = array_values(array_filter($listeners, static fn ($l) => $l->item->event === \SightPress\Core\Site\Contract\ScheduleDue::class));

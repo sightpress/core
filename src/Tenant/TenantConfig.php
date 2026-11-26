@@ -49,6 +49,8 @@ final readonly class TenantConfig
      * @param TenantPolicies   $policies          `domain_policy` and `email_policy`: the domains sites may use and the
      *                                            email addresses that may join (X-5)
      * @param TenantSms        $sms               `sms`: text messages' tenant default provider, budget and limits (N-2)
+     * @param TwoStepPolicy    $twoStep           `two_step`: whether sites may, must or must not ask for a code before
+     *                                            important changes (N-6)
      */
     public function __construct(
         public string $projectDir,
@@ -77,6 +79,7 @@ final readonly class TenantConfig
         public int $maxChunkedBytes = self::DEFAULT_MAX_CHUNKED_BYTES,
         public TenantPolicies $policies = new TenantPolicies(),
         public TenantSms $sms = new TenantSms(),
+        public TwoStepPolicy $twoStep = TwoStepPolicy::Optional,
     ) {
     }
 
@@ -128,6 +131,7 @@ final readonly class TenantConfig
             maxChunkedBytes: self::maxChunkedBytes($uploads),
             policies: TenantPolicies::fromArray($config),
             sms: TenantSms::fromArray(self::section($config, 'sms'), $environment),
+            twoStep: TwoStepPolicy::fromValue($config['two_step'] ?? null),
         );
     }
 

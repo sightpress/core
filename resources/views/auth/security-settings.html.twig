@@ -1,0 +1,27 @@
+{#
+    Site settings → Security (/admin/settings/security, N-6): two-step confirmation, what it does, and the switch
+    when the site may choose. Context: see SecuritySettingsHandler.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Security') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Security') }}</h1>
+{{ f.error_summary(form) }}
+<section class="admin-panel" aria-labelledby="security-two-step-title">
+    <h2 id="security-two-step-title">{{ t('Two-step confirmation') }}</h2>
+    <p>{{ t('With two-step confirmation, a password alone can’t make important changes: changing a password, email address or mobile number, inviting an admin or editor, changing roles, turning features on or off, changing keys, who can read the site and who may sign up. Each time, the person types a 6-digit code we send to their mobile number, which then counts for 10 minutes.') }}</p>
+    <p>{{ t('Everyone who makes such changes needs a confirmed mobile number. There is no way round it by email. Someone who lost their phone asks a person who manages people to remove their number, and then adds the new one.') }}</p>
+    {%- if not texts_on %}
+    <p>{{ t('It needs text messages, which are off for this site. Ask whoever runs your sites to set them up.') }}</p>
+    {%- elseif required %}
+    <p><strong>{{ t('Your organisation requires two-step confirmation on every site.') }}</strong></p>
+    {%- else %}
+    <p><strong>{{ on ? t('It is on.') : t('It is off.') }}</strong></p>
+    {{ f.start(form, action) }}
+        {{ f.field(form, 'two_step') }}
+        {{ f.submit(t('Save')) }}
+    {{ f.end() }}
+    {%- endif %}
+</section>
+{% endblock %}

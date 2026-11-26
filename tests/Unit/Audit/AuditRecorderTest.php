@@ -186,7 +186,7 @@ final class AuditRecorderTest extends TestCase
         self::assertSame(['assistant.used', 'assistant', 'seo_meta', 4, ['task' => 'seo_meta', 'provider' => 'anthropic', 'model' => 'claude-haiku-5-5', 'input_tokens' => 300, 'output_tokens' => 40, 'outcome' => 'ok']], [$entries[44]->action, $entries[44]->entityType, $entries[44]->entityId, $entries[44]->actorId, $entries[44]->details]);
         self::assertSame(['theme.applied', 'theme', 'acme-harbour', null, ['previous' => null]], [$entries[47]->action, $entries[47]->entityType, $entries[47]->entityId, $entries[47]->actorId, $entries[47]->details]);
         self::assertSame(['theme.colours_changed', ['colours' => ['dark.link']]], [$entries[48]->action, $entries[48]->details]);
-        self::assertCount(27, AuditRecorder::EVENTS);
+        self::assertCount(28, AuditRecorder::EVENTS);
     }
 
     public function testARegistrationWhileSignUpIsOffCameFromTheOrganisationsDomains(): void

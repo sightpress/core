@@ -36,6 +36,7 @@ export const ADMIN_SITES = {
   domains: 'http://127.0.0.1:8060',
   phone: 'http://127.0.0.1:8059',
   phonesignin: 'http://127.0.0.1:8058',
+  twostep: 'http://127.0.0.1:8057',
 } as const;
 
 export async function expectNoViolations(page: Page): Promise<void> {

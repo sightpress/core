@@ -46,6 +46,7 @@ final class PeopleModuleTest extends TestCase
             'people.users' => ['/admin/users', \SightPress\Core\People\Http\UsersHandler::class, [AdminAccessMiddleware::class]],
             'people.user' => ['/admin/users/{id:[0-9]+}', \SightPress\Core\People\Http\UserHandler::class, [AdminAccessMiddleware::class]],
             'people.user.status' => ['/admin/users/{id:[0-9]+}/status', \SightPress\Core\People\Http\UserStatusHandler::class, [AdminAccessMiddleware::class]],
+            'people.user.phone' => ['/admin/users/{id:[0-9]+}/phone', \SightPress\Core\People\Http\UserPhoneHandler::class, [AdminAccessMiddleware::class]],
             'people.invite' => ['/admin/users/invite', InviteHandler::class, [AdminAccessMiddleware::class]],
             'people.invitation' => ['/login/invitation', InvitationCodeHandler::class, []],
             'people.invitation.account' => ['/login/invitation/account', AcceptInvitationHandler::class, []],

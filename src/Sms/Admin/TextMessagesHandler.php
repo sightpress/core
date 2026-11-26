@@ -91,7 +91,7 @@ final readonly class TextMessagesHandler implements RequestHandlerInterface
             'budget' => $this->sender->budget(),
             'log' => array_map(static fn (array $row): array => $row + ['at' => new DateTimeImmutable($row['created_at'], $utc)], $this->log->recent(self::LOG_SIZE)),
             'form' => $form,
-        ], $form->isValid() ? 200 : 422);
+        ], $form->errors() === [] ? 200 : 422);
     }
 
     public static function form(): Form

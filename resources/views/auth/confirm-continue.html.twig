@@ -1,0 +1,23 @@
+{#
+    After the code (/confirm/continue, N-6): the change that was held, ready to send again with "Make the change"
+    (the kept fields as hidden inputs, with a new CSRF token), or go back to the form. Passwords and files were never
+    kept. Never indexed.
+    Context: `title`, `action`, `back`, `fields` (name, value), `left_out`, `minutes`.
+#}
+{% extends '@auth/layout.html.twig' %}
+{% block title %}{{ t(title) }}{% endblock %}
+{% block content %}
+<h1>{{ t(title) }}</h1>
+<p>{{ t('For the next {minutes} minutes you can make important changes without another code.', {minutes: minutes}) }}</p>
+{%- if left_out %}
+<p>{{ t('We don’t keep passwords or files. Go back to the form and type or choose them again.') }}</p>
+{%- endif %}
+<form action="{{ action }}" method="post">
+    {{ csrf_fields() }}
+    {%- for field in fields %}
+    <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+    {%- endfor %}
+    <button type="submit">{{ t('Make the change') }}</button>
+</form>
+<p><a href="{{ back }}">{{ t('Go back to the form') }}</a></p>
+{% endblock %}

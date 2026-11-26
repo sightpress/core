@@ -23,7 +23,7 @@ final class PermissionCatalogueTest extends TestCase
             new ModuleLoader('0.2.0')->catalogue(CoreModules::candidates())->resolve(new ModuleSelection()),
         ));
 
-        self::assertCount(20, $catalogue->all());
+        self::assertCount(21, $catalogue->all());
         self::assertTrue($catalogue->has('page.publish'));
         self::assertSame('Publish pages', $catalogue->get('page.publish')?->label);
         self::assertSame('user', $catalogue->moduleOf('user.manage'));

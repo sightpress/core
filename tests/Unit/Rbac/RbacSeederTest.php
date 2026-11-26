@@ -26,13 +26,13 @@ final class RbacSeederTest extends TestCase
 
         $report = $database->seeder()->seed();
 
-        self::assertCount(20, $report->addedPermissions);
+        self::assertCount(21, $report->addedPermissions);
         self::assertSame(['admin', 'editor', 'contributor', 'member'], $report->addedRoles);
         self::assertSame([], $report->skippedGrants);
         self::assertSame('member', $database->registrationRole()->name());
 
         $roles = $database->roles();
-        self::assertCount(20, $roles->findRole('admin')?->permissionNames() ?? []);
+        self::assertCount(21, $roles->findRole('admin')?->permissionNames() ?? []);
         self::assertSame(
             ['admin.access', 'analytics.view', 'media.publish', 'media.upload', 'menu.manage', 'page.archive', 'page.create',
                 'page.delete', 'page.edit.any', 'page.edit.own', 'page.publish', 'page.submit', 'user.invite'],

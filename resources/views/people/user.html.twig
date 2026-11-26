@@ -1,6 +1,7 @@
 {#
     One person in the admin (/admin/users/{id}): their details, their role and whether they can sign in. On your
-    own account both are read-only. Context: `account`, `role`, `status`, `form`, `self`, `path`.
+    own account both are read-only. Context: `account`, `role`, `status`, `form`, `self`, `path`, `phone` (masked, or
+    null; with "Remove mobile number", N-6).
 #}
 {% extends '@admin/layout.html.twig' %}
 {% import 'form/macros.html.twig' as f %}
@@ -13,6 +14,9 @@
     <dt>{{ t('Email address') }}</dt><dd>{{ account.email }}</dd>
     <dt>{{ t('Role') }}</dt><dd>{{ role ? t(role.label) : t('No role') }}</dd>
     <dt>{{ t('Status') }}</dt><dd>{{ t(status) }}</dd>
+    {%- if phone %}
+    <dt>{{ t('Mobile number') }}</dt><dd>{{ phone }}</dd>
+    {%- endif %}
 </dl>
 {%- if self %}
 <p>{{ t('This is your own account. You can’t change your own role or deactivate yourself; ask another admin.') }} <a href="/account">{{ t('Change your details in My account') }}</a></p>
@@ -38,6 +42,16 @@
     <form action="{{ path }}/status" method="post">
         {{ csrf_fields() }}
         <button type="submit" class="button{{ account.isDeactivated ? '' : ' button--secondary' }}">{{ account.isDeactivated ? t('Reactivate {name}', {name: account.effectiveName}) : t('Deactivate {name}', {name: account.effectiveName}) }}</button>
+    </form>
+</section>
+{%- endif %}
+{%- if phone %}
+<section class="admin-panel" aria-labelledby="people-phone-title">
+    <h2 id="people-phone-title">{{ t('Remove mobile number') }}</h2>
+    <p>{{ t('If {name} lost their phone or changed number, remove it here. They then add their new number on My account. Until then they can’t confirm important changes.', {name: account.effectiveName}) }}</p>
+    <form action="{{ path }}/phone" method="post">
+        {{ csrf_fields() }}
+        <button type="submit" class="button button--secondary">{{ t('Remove the mobile number of {name}', {name: account.effectiveName}) }}</button>
     </form>
 </section>
 {%- endif %}

@@ -28,7 +28,8 @@
  *
  * The `phone`, `phonesignin` and `twostep` copies (N-3 to N-6) have text messages on, with the pretend "Test SMS" service of a test package (nothing
  * leaves the server); `/_test/texts?to=+447…` answers with the latest text to that number as JSON (to, text), or 404,
- * and `/_test/phone?email=…&phone=+447…` gives an account a confirmed number.
+ * `/_test/phone?email=…&phone=+447…` gives an account a confirmed number and `/_test/two-step` turns two-step
+ * confirmation on.
  *
  * Each spec file gets its own copy on its own port (the environment variable SIGHTPRESS_A11Y_SITE names it), so
  * specs running side by side never reset each other's site.
@@ -223,6 +224,15 @@ if ($path === '/_test/phone') {
         return;
     }
     $users->confirmPhone((int) $user->id(), $_GET['phone'], 'mobile GB');
+    http_response_code(204);
+
+    return;
+}
+
+if ($path === '/_test/two-step') {
+    // Turns two-step confirmation on for the site (N-6).
+    $kernel = boot($project, $environment);
+    Services::get(site($kernel), SightPress\Core\Auth\StepUp\TwoStep::class)->choose(true, null);
     http_response_code(204);
 
     return;

@@ -189,7 +189,7 @@ final class UserAdminHandlersTest extends TestCase
     {
         foreach (['999', 'abc', null] as $id) {
             try {
-                new UserHandler($this->admin->shell(), $this->admin->auth->validator(), $this->roster(), $this->roles())
+                new UserHandler($this->admin->shell(), $this->admin->auth->validator(), $this->roster(), $this->roles(), $this->admin->auth->users)
                     ->handle($this->request($this->ada, 'GET', '/admin/users/x', [], $id));
                 self::fail('Found ' . var_export($id, true));
             } catch (HttpNotFoundException) {
@@ -254,7 +254,7 @@ final class UserAdminHandlersTest extends TestCase
      */
     private function user(User $actor, User $target, array $body = [], ?RoleGrants $grants = null): ResponseInterface
     {
-        return new UserHandler($this->admin->shell(), $this->admin->auth->validator(), $this->roster(), $grants ?? $this->roles())
+        return new UserHandler($this->admin->shell(), $this->admin->auth->validator(), $this->roster(), $grants ?? $this->roles(), $this->admin->auth->users)
             ->handle($this->request($actor, $body === [] ? 'GET' : 'POST', UserHandler::path((int) $target->id()), $body, (string) $target->id()));
     }
 

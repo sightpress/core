@@ -62,7 +62,9 @@ final class TextMessagesHandlerTest extends TestCase
         $this->boot(['monthly_budget' => 10, 'reserved_for_codes' => 2]);
         Services::get($this->site->container(), SmsSender::class)->send(new SmsMessage(new PhoneNumber('+447400123456'), 'Hello'));
         $browser = $this->signedIn('ada@example.org', 'admin');
-        $page = (string) $browser->request('GET', '/admin/sms')->getBody();
+        $screen = $browser->request('GET', '/admin/sms');
+        self::assertSame(200, $screen->getStatusCode());
+        $page = (string) $screen->getBody();
 
         self::assertStringContainsString('<h1>Text messages</h1>', $page);
         self::assertStringContainsString('Ready: messages are sent with Twilio. Your organisation set up this provider.', $page);

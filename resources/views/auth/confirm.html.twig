@@ -1,0 +1,47 @@
+{#
+    "Confirm it's you" (/confirm, N-6): a change that needs two-step confirmation waits here. Without a confirmed
+    mobile number, a link to add one first (there is no other way: no email fallback). Otherwise "Send me a code", then
+    the shared code form. When no code can be sent, what to do instead. Never indexed.
+    Context: `title`, `phone` (masked, or null), `form`, `sent`, `action`, `valid_for`, `add_number`, `unavailable`.
+#}
+{% extends '@auth/layout.html.twig' %}
+{% block title %}{{ t(title) }}{% endblock %}
+{% block content %}
+<h1>{{ t(title) }}</h1>
+<p>{{ t('This site asks for a code by text message before important changes, such as your password, who can read the site or who manages it. Nothing has changed yet.') }}</p>
+{%- if unavailable %}
+<section class="error-summary" aria-labelledby="confirm-unavailable-title" tabindex="-1" autofocus>
+    <h2 id="confirm-unavailable-title">{{ t('We can’t send a code right now') }}</h2>
+    <p>{{ t(unavailable) }}</p>
+    <p>{{ t('If it keeps happening, ask whoever runs your sites. They can make this change for you from the console, or check the text message provider.') }}</p>
+</section>
+{%- endif %}
+{%- if phone is null %}
+    {%- if add_number %}
+    <p>{{ t('First add your mobile number. We send the code to it, and no other way.') }}</p>
+    <p><a href="/account/phone">{{ t('Add your mobile number') }}</a></p>
+    {%- else %}
+    <p>{{ t('Text messages are off for this site, so no code can be sent. Ask whoever runs your sites.') }}</p>
+    {%- endif %}
+{%- else %}
+    {%- if not sent %}
+    <p>{{ t('We will send a 6-digit code to your mobile number {phone}. It works for {duration}, and only once.', {phone: phone, duration: valid_for}) }}</p>
+    <form action="{{ action }}" method="post">
+        {{ csrf_fields() }}
+        <input type="hidden" name="op" value="send">
+        <button type="submit">{{ t('Send me a code') }}</button>
+    </form>
+    {%- else %}
+    <p>{{ t('We never send links. Type the code here, on this site.') }}</p>
+    {% include '@auth/code-entry.html.twig' with {'submit': t('Confirm'), 'by_text': true} %}
+    <form action="{{ action }}" method="post" class="code-resend">
+        {{ csrf_fields() }}
+        <input type="hidden" name="op" value="send">
+        <p>{{ t('No text message after a few minutes? You can ask for a new code once a minute. If your number has stopped our texts, reply START to our last message.') }}</p>
+        <button type="submit" class="button button--secondary">{{ t('Send a new code') }}</button>
+    </form>
+    {%- endif %}
+    <p>{{ t('Lost your phone? Ask someone who manages people on this site, or whoever runs your sites, to remove your number. Then add your new one.') }}</p>
+{%- endif %}
+<p><a href="/account">{{ t('Cancel and go to My account') }}</a></p>
+{% endblock %}
