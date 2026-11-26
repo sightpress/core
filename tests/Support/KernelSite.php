@@ -69,6 +69,14 @@ final class KernelSite
             new MigratorConfiguration(),
         );
         Services::get($container, RbacSeeder::class)->seed();
+        // As site:create does, the site stores a choice for each external module it was made with: its default.
+        $policy = Services::get($this->kernel->container(), \SightPress\Core\Module\ModulePolicy::class);
+        foreach ($policy->optional() as $module) {
+            if ($module->external) {
+                Services::get($container, \SightPress\Core\Module\SiteModuleStore::class)->save($module->id(), $policy->defaultFor($module->id()), new \DateTimeImmutable(), null);
+            }
+        }
+        Services::get($this->kernel->container(), SiteContainerFactory::class)->evict('demo');
     }
 
     public function site(): Site

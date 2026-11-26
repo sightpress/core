@@ -36,6 +36,9 @@ A module is a Composer package that requires `sightpress/module-interface` and n
 `module` can also be a list of class names. The class must implement `SightPress\Module\ModuleInterface` and be
 creatable without arguments.
 
+An optional module installed after a site was made starts **off** on that site; an admin turns it on (Features or
+`site:module:enable`), which runs its migrations and seeds its permissions. Sites created afterwards store its default.
+
 ## Rules the loader checks
 
 A problem with one of **core's own** modules stops SightPress from starting, with a message that names the modules

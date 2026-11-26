@@ -151,6 +151,16 @@ final class VerificationCodeStoreTest extends TestCase
         self::assertMatchesRegularExpression('/^\d{6}$/', $this->request('ada@example.org')->code);
     }
 
+    public function testAfterACodeWasUsedANewOneNeedsNoWait(): void
+    {
+        $used = $this->request('ada@example.org');
+        self::assertSame(CodeStatus::Valid, $this->check($used->code)->status);
+
+        // Another change to confirm right away: the minute only holds while the last code still works.
+        $next = $this->request('ada@example.org');
+        self::assertSame(CodeStatus::Valid, $this->check($next->code)->status);
+    }
+
     public function testAtMostFiveCodesAnHourPerAddress(): void
     {
         for ($i = 0; $i < 5; ++$i) {

@@ -20,7 +20,8 @@ Codes are used for:
 
 - A code is 6 random digits. It works **once**, and dies after **5 wrong tries**.
 - There is one live code per purpose and address: asking for a new one makes the old one stop working.
-- "Send a new code" works once a minute; the page says how long to wait, in words. An address gets at most 5 codes
+- "Send a new code" works once a minute while the last code is still unused (after a code was used, a new one can be
+  sent at once); the page says how long to wait, in words. An address gets at most 5 codes
   an hour, and one client at most 20; one client may try at most 10 codes in 15 minutes.
 - The answer, and how long it takes, is the same whether or not the address has an account.
 - Emails (HTML and plain text) name the site by its name, have the code only in the body (never the subject), and

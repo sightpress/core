@@ -79,12 +79,15 @@ final class ModuleSwitchesTest extends TestCase
     public function testSwitchesAModuleOffAndOnAndDeletesItsData(): void
     {
         $modules = Services::get($this->kernel->container(), SiteModules::class);
-        self::assertTrue(Services::get($this->services(), ModuleRegistry::class)->has(EventsModule::ID), 'Events is on by default');
+        // Events is on by default, but it was installed after the site was made: off until someone turns it on (Q-2).
+        self::assertFalse(Services::get($this->services(), ModuleRegistry::class)->has(EventsModule::ID), 'an external module new to the site is off');
+        self::assertSame(404, $this->get('/events'));
         self::assertFalse($this->table('acme_event'), 'its migrations haven\'t run yet');
 
+        self::assertTrue($modules->turnOn($this->site(), EventsModule::ID, null));
+        self::assertTrue($this->table('acme_event'), 'turning on a module runs its migrations');
         self::assertFalse($modules->turnOn($this->site(), EventsModule::ID, null), 'it is already on');
         self::assertTrue($modules->turnOn($this->site(), CalendarModule::ID, 7));
-        self::assertTrue($this->table('acme_event'), 'turning on a module runs the pending migrations of the modules that are on');
         self::assertSame(200, $this->get('/calendar'));
         $this->connection()->insert('acme_event', ['title' => 'Book fair']);
 

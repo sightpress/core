@@ -69,6 +69,21 @@ final class ModulePolicyTest extends TestCase
         self::assertSame($policy->catalogue()->ids(), $this->catalogue()->ids());
     }
 
+    public function testAPackageModuleTheSiteHasNoChoiceForIsOffUntilTurnedOn(): void
+    {
+        // Installed after the site was made: its migrations haven't run and its permissions aren't given yet.
+        $catalogue = new ModuleLoader('0.4.0')->catalogue([
+            new ModuleCandidate(new FakeModule('site', required: true), 'acme/test'),
+            new ModuleCandidate(new FakeModule('acme.events'), 'acme/events', '*'),
+        ]);
+        $policy = ModulePolicy::fromConfig($catalogue, $this->config());
+
+        self::assertTrue($policy->defaultFor('acme.events'), 'what a new site gets');
+        self::assertSame(['site'], $policy->onIds($policy->selection([])));
+        self::assertSame(['site', 'acme.events'], $policy->onIds($policy->selection(['acme.events' => true])));
+        self::assertSame(['site', 'acme.events'], $policy->onIds(ModulePolicy::fromConfig($catalogue, $this->config(locks: ['acme.events' => true]))->selection([])), 'a lock still wins');
+    }
+
     public function testModulesThatNeedAModuleLockedOffAreNotLoaded(): void
     {
         $policy = ModulePolicy::fromConfig($this->catalogue(), $this->config(locks: ['acme.events' => false]));

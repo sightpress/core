@@ -88,4 +88,6 @@ Describe each optional module for the screen in the package's `composer.json`:
 ```
 
 Without it the screen shows the module id. `enabledByDefault` in the manifest says whether new sites start with it
-on. Migrations need a working `down()`: deleting the data runs it.
+on. Sites that already existed when the package was installed have no choice stored for it, so it is **off** there
+until an admin turns it on (Q-2): turning it on is what runs its migrations and gives its permissions to the roles.
+Migrations need a working `down()`: deleting the data runs it.

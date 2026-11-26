@@ -47,8 +47,9 @@
     {%- if log is empty %}
     <p>{{ t('No text messages have been sent yet.') }}</p>
     {%- else %}
+    <div class="table-wrapper" role="region" aria-labelledby="sms-log-caption" tabindex="0">
     <table>
-        <caption>{{ t('The latest messages, newest first. Numbers are partly hidden and the text is never kept.') }}</caption>
+        <caption id="sms-log-caption">{{ t('The latest messages, newest first. Numbers are partly hidden and the text is never kept.') }}</caption>
         <thead>
             <tr><th scope="col">{{ t('When') }}</th><th scope="col">{{ t('What') }}</th><th scope="col">{{ t('To') }}</th><th scope="col">{{ t('Parts') }}</th><th scope="col">{{ t('What happened') }}</th></tr>
         </thead>
@@ -70,6 +71,7 @@
             {%- endfor %}
         </tbody>
     </table>
+    </div>
     {%- endif %}
 </section>
 {% endblock %}

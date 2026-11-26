@@ -91,6 +91,18 @@ export default defineConfig({
       stdout: 'ignore',
       stderr: 'ignore',
     },
+    // Two copies of the demo site for M4 (Q-1, Q-2): a tenant with external modules, a custom role, a members-only
+    // site with domain registration and text messages through a pretend provider. `extended` for the crawl
+    // (crawl-m4.spec.ts), `extjourney` for the journeys (journeys-m4.spec.ts). No opcode cache, because the journey
+    // installs and removes a package.
+    ...Object.entries({ extended: 8055, extjourney: 8054 }).map(([copy, port]) => ({
+      command: `SIGHTPRESS_A11Y_SITE=${copy} php -d opcache.enable_cli=0 -d opcache.enable=0 -S 127.0.0.1:${port} tests/A11y/demo/index.php`,
+      url: `http://127.0.0.1:${port}/robots.txt`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 180_000,
+      stdout: 'ignore' as const,
+      stderr: 'ignore' as const,
+    })),
     // A second copy of the demo site, with its test mailbox, for the journeys from start to finish (journeys.spec.ts).
     {
       command: 'SIGHTPRESS_A11Y_SITE=journeys php -S 127.0.0.1:8086 tests/A11y/demo/index.php',

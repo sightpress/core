@@ -186,7 +186,8 @@ final class KernelTest extends TestCase
     public function testTheKernelBootsThroughTheModuleLoader(): void
     {
         $config = new TenantConfigLoader()->load($this->project(sites: ['demo' => SiteFixture::entry()])->path(), ['APP_SECRET' => SiteFixture::SECRET]);
-        $module = new FakeModule('acme.hello', register: static function (ModuleRegistrar $r): void {
+        // Required, so it is on without a choice stored on the site (an optional package module starts off there).
+        $module = new FakeModule('acme.hello', required: true, register: static function (ModuleRegistrar $r): void {
             $r->routes()->add(new Route('hello.show', '/hello', HelloHandler::class));
             $r->commands()->add(ExampleCommand::class);
         });

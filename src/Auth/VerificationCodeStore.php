@@ -93,7 +93,9 @@ final readonly class VerificationCodeStore implements VerificationCodes
     ): IssuedCode {
         $normalised = VerificationTarget::normalise($channel, $target);
         $row = $this->row($purpose, $normalised);
-        $created = $row === null ? null : $this->date($row['created_at'] ?? null);
+        // The minute between two codes only holds while the last one can still be used: after it was used, a new
+        // one may be needed at once (another change to confirm). The rate limits below still apply.
+        $created = $row === null || ($row['consumed_at'] ?? null) !== null ? null : $this->date($row['created_at'] ?? null);
         if ($created !== null) {
             $wait = $created->getTimestamp() + self::RESEND_AFTER - $this->clock->now()->getTimestamp();
             if ($wait > 0) {

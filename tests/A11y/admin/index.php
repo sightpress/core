@@ -200,6 +200,8 @@ if (!is_file($project . '/config/sites.php')) {
     $editor->create('en-GB', new PageContent('Volunteer with us'), authorId: $people['editor'] ?? null);
     if ($kernel->modules()->has(EventsModule::ID)) {
         Services::get($site, Connection::class)->insert('acme_event', ['title' => 'Book fair']);
+        // The site was made with the package installed, so it stored the module's default (on), as site:create does.
+        Services::get($site, SiteModuleStore::class)->save(EventsModule::ID, true, new DateTimeImmutable(), null);
         // X-1: a module the site had on whose package was removed.
         Services::get($site, SiteModuleStore::class)->save('acme.newsletter', true, new DateTimeImmutable(), null);
     }

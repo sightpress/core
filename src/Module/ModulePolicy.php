@@ -142,7 +142,9 @@ final readonly class ModulePolicy
     }
 
     /**
-     * A site's modules, from its own choices: locks win, then the choices, then the defaults.
+     * A site's modules, from its own choices: locks win, then the choices, then the defaults. An external module the
+     * site has no choice for was installed after the site was made: it is off until someone turns it on, which runs
+     * its migrations and gives its permissions to the roles (Q-2). New sites store a choice for every module.
      *
      * @param array<string, bool> $choices module id => on, from the site's `site_module` table
      */
@@ -150,8 +152,9 @@ final readonly class ModulePolicy
     {
         $states = [];
         foreach ($this->catalogue->ids() as $id) {
-            $states[$id] = $this->catalogue->get($id)->manifest->required
-                || ($this->locks[$id] ?? $choices[$id] ?? $this->defaultFor($id));
+            $module = $this->catalogue->get($id);
+            $states[$id] = $module->manifest->required
+                || ($this->locks[$id] ?? $choices[$id] ?? (!$module->external && $this->defaultFor($id)));
         }
 
         return new ModuleSelection($states);
