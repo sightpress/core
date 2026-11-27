@@ -1,6 +1,6 @@
 # 0066 — Custom roles on the roles screen and the command line
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-24
 
 ## Context

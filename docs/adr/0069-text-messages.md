@@ -1,6 +1,6 @@
 # 0069 — Text messages (SMS module)
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-25
 
 ## Context

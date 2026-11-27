@@ -1,6 +1,6 @@
 # 0065 — A broken external module doesn't stop the tenant
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-24
 
 ## Context

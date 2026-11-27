@@ -1,6 +1,6 @@
 # 0059 — Module screens, the viewer, site information, settings, audit and translations
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-24
 
 ## Context

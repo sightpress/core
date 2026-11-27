@@ -1,6 +1,6 @@
 # 0061 — Scheduled jobs for modules
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-24
 
 ## Context

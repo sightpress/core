@@ -1,6 +1,6 @@
 # 0057 — Module contract audit: what an external module can reach (`module-interface` 0.5 scope)
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-24
 
 ## Context

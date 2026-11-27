@@ -1,6 +1,6 @@
 # 0062 — Route permissions and critical routes
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-24
 
 ## Context

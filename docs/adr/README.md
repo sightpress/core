@@ -74,15 +74,23 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0054](0054-chunked-uploads-to-a-temporary-folder.md) | Chunked uploads to a temporary folder | Accepted |
 | [0055](0055-direct-to-bucket-uploads.md) | Direct-to-bucket uploads | Accepted |
 | [0056](0056-captions-and-transcripts.md) | Captions and transcripts | Accepted |
-| [0057](0057-module-contract-audit.md) | Module contract audit: what an external module can reach (`module-interface` 0.5 scope) | Proposed |
-| [0058](0058-public-events-in-the-module-contract.md) | Public events in the module contract | Proposed |
-| [0059](0059-module-screens-viewer-site-settings-audit.md) | Module screens, the viewer, site information, settings, audit and translations | Proposed |
-| [0060](0060-module-seo-contributions.md) | Module SEO contributions: sitemap, `llms.txt` and JSON-LD | Proposed |
-| [0061](0061-scheduled-jobs-for-modules.md) | Scheduled jobs for modules | Proposed |
-| [0062](0062-route-permissions-and-critical-routes.md) | Route permissions and critical routes | Proposed |
-| [0063](0063-sms-provider-contract.md) | Text message (SMS) provider contract | Proposed |
+| [0057](0057-module-contract-audit.md) | Module contract audit: what an external module can reach (`module-interface` 0.5 scope) | Accepted |
+| [0058](0058-public-events-in-the-module-contract.md) | Public events in the module contract | Accepted |
+| [0059](0059-module-screens-viewer-site-settings-audit.md) | Module screens, the viewer, site information, settings, audit and translations | Accepted |
+| [0060](0060-module-seo-contributions.md) | Module SEO contributions: sitemap, `llms.txt` and JSON-LD | Accepted |
+| [0061](0061-scheduled-jobs-for-modules.md) | Scheduled jobs for modules | Accepted |
+| [0062](0062-route-permissions-and-critical-routes.md) | Route permissions and critical routes | Accepted |
+| [0063](0063-sms-provider-contract.md) | Text message (SMS) provider contract | Accepted |
 | [0064](0064-block-variants-options-and-icons.md) | Block variants, shared options and icons in the module contract | Accepted |
-| [0065](0065-external-module-failures.md) | A broken external module doesn't stop the tenant | Proposed |
+| [0065](0065-external-module-failures.md) | A broken external module doesn't stop the tenant | Accepted |
+| [0066](0066-custom-roles-screen.md) | Custom roles on the roles screen and the command line | Accepted |
+| [0067](0067-tenant-domain-and-email-policies.md) | Tenant domain and email policies | Accepted |
+| [0068](0068-domain-registration.md) | Domain registration on members-only sites | Accepted |
+| [0069](0069-text-messages.md) | Text messages (SMS module) | Accepted |
+| [0070](0070-phone-numbers.md) | Phone numbers on accounts | Accepted |
+| [0071](0071-text-notifications.md) | Text notifications and the outbox | Accepted |
+| [0072](0072-phone-sign-in.md) | Signing in and resetting the password with a mobile number | Accepted |
+| [0073](0073-two-step-confirmation.md) | Two-step confirmation for important changes | Accepted |
 | [0074](0074-embed-page-list-sign-language-video.md) | The embed, page list and sign language video blocks | Accepted |
 
 When an ADR's status changes, update it here too.

@@ -1,6 +1,6 @@
 # 0073 — Two-step confirmation for important changes
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-25
 
 ## Context

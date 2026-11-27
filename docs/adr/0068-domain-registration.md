@@ -1,6 +1,6 @@
 # 0068 — Domain registration on members-only sites
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-24
 
 ## Context
