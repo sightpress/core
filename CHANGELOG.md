@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.5.0](https://github.com/sightpress/core/compare/0.4.0...0.5.0) (2026-11-27)
+
+
+### Features
+
+* add the embed, page list and sign language video blocks (BL-2) ([#123](https://github.com/sightpress/core/issues/123)) ([a3cb42a](https://github.com/sightpress/core/commit/a3cb42aedb1108e557e30b9ba2db8814b78114ab))
+* add the optional text message (SMS) module with Twilio and Vonage (N-2) ([#117](https://github.com/sightpress/core/issues/117)) ([ccd1015](https://github.com/sightpress/core/commit/ccd1015ae379c230e5aa05563fd01ae8ae71ccaa))
+* add the Roles screen and site:role commands for custom roles (X-4) ([#114](https://github.com/sightpress/core/issues/114)) ([a56ad94](https://github.com/sightpress/core/commit/a56ad9432447bceea3fd1fde8efd932c29972da5))
+* add the tenant domain and email policies (X-5) ([#115](https://github.com/sightpress/core/issues/115)) ([bbee37b](https://github.com/sightpress/core/commit/bbee37ba60f6dff12a85c4514749af0871e658b6))
+* ask for a code by text before important changes (two-step confirmation) (N-6) ([#121](https://github.com/sightpress/core/issues/121)) ([375363a](https://github.com/sightpress/core/commit/375363a207fff184ee1a7801b22c1c1bdf0a38e0))
+* finish external module discovery: unavailable modules, discovery cache, module SEO (X-1) ([#113](https://github.com/sightpress/core/issues/113)) ([22655ec](https://github.com/sightpress/core/commit/22655eccbc85c997f06faa95de0ffc6ca06f8b5e))
+* let editors choose each block's style, alignment, background, width, spacing and form layout (BL-1) ([#122](https://github.com/sightpress/core/issues/122)) ([b456313](https://github.com/sightpress/core/commit/b456313deba5a3e7725d36c409dcd92a55f92a94))
+* let people add a confirmed mobile number and choose text messages (N-3) ([#118](https://github.com/sightpress/core/issues/118)) ([fa04f55](https://github.com/sightpress/core/commit/fa04f55606625b2c14948b0125dd4135e40a0d5b))
+* let people at the organisation's domains register on members-only sites (X-7) ([#116](https://github.com/sightpress/core/issues/116)) ([a3d74cd](https://github.com/sightpress/core/commit/a3d74cd59671327591941dbfe0aaaef437b9965b))
+* require module-interface 0.5 and implement its contracts (MI-0.5) ([#112](https://github.com/sightpress/core/issues/112)) ([f99c427](https://github.com/sightpress/core/commit/f99c427ae9f235ddda9fa520b9d1b6e9911c594a))
+* send notifications by text to people who chose them, with an outbox (N-4) ([#119](https://github.com/sightpress/core/issues/119)) ([cb6b1c3](https://github.com/sightpress/core/commit/cb6b1c37bcfa250d38969db6bfcd86eb7f84cf2d))
+* sign in and reset the password with a confirmed mobile number (N-5) ([#120](https://github.com/sightpress/core/issues/120)) ([9a40188](https://github.com/sightpress/core/commit/9a40188beb00fc83d9efb1252adb4150528534de))
+
+
+### Bug fixes
+
+* start module packages off on sites made before they were installed, and add the M4 crawl and journeys (Q-1, Q-2) ([beafa13](https://github.com/sightpress/core/commit/beafa137455c45dc935d557e779120710071b12f))
+* update the assistant's help index from the documentation ([#108](https://github.com/sightpress/core/issues/108)) ([6c5c605](https://github.com/sightpress/core/commit/6c5c60563c50fe9350cefe61f13bfcb3e8d7f92d))
+
+
+### Documentation
+
+* accept ADRs 0045-0056 (M3) ([#109](https://github.com/sightpress/core/issues/109)) ([560035a](https://github.com/sightpress/core/commit/560035a4062cf71ade27e1407d3c5c72aee3f50b))
+* accept the M4 ADRs (0057–0073) and list 0066–0073 in the index ([#125](https://github.com/sightpress/core/issues/125)) ([449695f](https://github.com/sightpress/core/commit/449695f139a01a164b4f83211c49b6450ccd54d0))
+* module contract audit and module-interface 0.5 decisions (X-2) ([#111](https://github.com/sightpress/core/issues/111)) ([a184cee](https://github.com/sightpress/core/commit/a184cee5d7ca1168992874d70c25953461fe3106))
+
 ## [0.4.0](https://github.com/sightpress/core/compare/0.3.0...0.4.0) (2026-11-24)
 
 
