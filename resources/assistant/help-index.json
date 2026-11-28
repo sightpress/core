@@ -121,6 +121,32 @@
             ]
         },
         {
+            "id": "0f21093f72e0",
+            "page": "Getting started",
+            "heading": "Who can do what",
+            "url": "https://docs.sightpress.org/latest/getting-started/#who-can-do-what",
+            "text": "You are the website's first **Admin**: you can do everything. When you invite people, give each one the lowest role\nthat lets them do their work: **Editor** to check and publish pages, **Contributor** to write pages that need approval,\nor **Member** to read members-only pages. If none fits, make your own under **Roles** in the admin menu: see\n[Create a custom role](how-to/create-a-custom-role.md).",
+            "needs": []
+        },
+        {
+            "id": "e6e65a144594",
+            "page": "Getting started",
+            "heading": "Add features",
+            "url": "https://docs.sightpress.org/latest/getting-started/#add-features",
+            "text": "Under **Features**, turn the built-in features on or off for this website. To add a feature that SightPress doesn't\nhave, install a module: see [Add a module](how-to/add-a-module.md). To keep every website and account to your\norganisation's email addresses, see [Keep websites to your organisation](how-to/keep-websites-to-your-organisation.md).",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "a6d4d82634d2",
+            "page": "Getting started",
+            "heading": "Sign in with your phone",
+            "url": "https://docs.sightpress.org/latest/getting-started/#sign-in-with-your-phone",
+            "text": "Text messages are off on your computer, so you sign in with your email address. Once whoever runs SightPress\n[sets up text messages](how-to/set-up-text-messages.md), you can\n[add your mobile number](how-to/add-your-mobile-number.md),\n[sign in with your phone](how-to/sign-in-with-your-phone.md), get\n[notifications by text](how-to/text-message-notifications.md) and\n[confirm important changes](how-to/confirm-important-changes.md) with a code. If you lose your phone, see\n[Lost your phone](how-to/lost-your-phone.md).\n\nThe reference pages explain [roles](reference/roles-and-permissions.md), [blocks](reference/blocks.md),\n[search and AI visibility](reference/search-and-ai.md) and the [command line tool](reference/command-line.md).",
+            "needs": []
+        },
+        {
             "id": "6096a95476ab",
             "page": "Add a language and translate a page",
             "heading": "",
@@ -191,6 +217,91 @@
             ]
         },
         {
+            "id": "cf77da3598ce",
+            "page": "Add a module",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-module/",
+            "text": "A **module** is an extra package that gives SightPress new features, for example events, a shop or a booking form.\nOnce it is installed, each website's admins decide whether to use it: a module is a feature like the others on the\n*Features* screen (see [Turn features on or off](turn-features-on-or-off.md)).\n\nInstalling and removing modules is done by whoever runs your SightPress installation, on the server. Turning a module\non or off for a website is done by one of its **admins**.\n\n!!! note \"No module is installed from the admin panel\"\n\n    For safety, modules are never uploaded through the website. They are installed on the server with Composer, the\n    same way as SightPress itself and its themes.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "ea88fb1fe275",
+            "page": "Add a module",
+            "heading": "Before you start",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-module/#before-you-start",
+            "text": "- You need the name of the module's package, for example `acme/events`.\n- The package must say which versions of `sightpress/module-interface` it works with. SightPress checks that when it\n  starts. A module that doesn't fit your version is listed as unavailable, with the reason, and the websites keep\n  working.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "40b76f7a225c",
+            "page": "Add a module",
+            "heading": "Install a module",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-module/#install-a-module",
+            "text": "Run these in your project folder. With Docker, put `docker compose run --rm --no-deps php` in front of each one, as in\n[Try the command line tool](try-the-command-line-tool.md).\n\n1. Install the package: `composer require acme/events`.\n2. Check that SightPress found it: `bin/sightpress site:module:list demo`, with the short name of one of your\n   websites instead of `demo`. You should see a line for the module, for example `acme.events`, that says it is\n   **off**.\n\nA module you install is **off for every website that already exists**: nothing changes on them until an admin turns it\non. Websites you create afterwards start with the module's own choice, on or off, unless `config/tenant.php` says\notherwise (see [Choose for every website](#choose-for-every-website)).",
+            "needs": [
+                "module.manage",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "a95c2ec0f8b5",
+            "page": "Add a module",
+            "heading": "Turn it on for a website",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-module/#turn-it-on-for-a-website",
+            "text": "An admin of the website does it:\n\n1. Sign in to the admin panel and choose **Features** in the admin menu.\n2. Find the module and choose **Turn on** followed by its name.\n3. The message says it is on. SightPress has prepared the website's database for it, and the roles that should use it\n   can now do so: admins always, and the roles the module names (for example editors).\n4. Check: the module's screens are in the admin menu, and its public pages, if it has any, are on the website and in\n   its sitemap.\n\nOr, in a terminal: `bin/sightpress site:module:enable demo acme.events`.\n\nTo give the module's permissions to other roles, see [Create a custom role](create-a-custom-role.md): a module's\npermissions are listed on the role screens with the others while the module is on.",
+            "needs": [
+                "module.manage",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "8284f13c5080",
+            "page": "Add a module",
+            "heading": "Turn it off",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-module/#turn-it-off",
+            "text": "On the *Features* screen, choose **Turn off** followed by its name, and confirm. Its pages and screens are gone and\nits data is kept, so turning it on again brings everything back. You can also delete its data for good: see\n[Turn features on or off](turn-features-on-or-off.md#delete-a-features-data).\n\nOr: `bin/sightpress site:module:disable demo acme.events` (add `--purge-data` to delete its data too).",
+            "needs": [
+                "module.manage",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "60fa261af456",
+            "page": "Add a module",
+            "heading": "Remove a module",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-module/#remove-a-module",
+            "text": "1. Turn it off on every website that uses it (see above). Delete its data first if you won't need it again: once the\n   package is removed, SightPress can't do that for you.\n2. Remove the package: `composer remove acme/events`.\n3. Check: `bin/sightpress site:module:list demo` no longer shows it.\n\nIf you remove a module that a website still had **on**, that website keeps working without it, and its data stays in\nthe website's database. Its admins see the module under **Features that were removed**, which says to ask whoever runs\nthe server to install it again to bring it back.",
+            "needs": [
+                "module.manage",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "9191538d3ac6",
+            "page": "Add a module",
+            "heading": "When a module can't be used",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-module/#when-a-module-cant-be-used",
+            "text": "SightPress never stops because of a module package. When one can't be used, it is left out: the *Features* screen\nlists it under **Features that can’t be used** and `site:module:list` marks it \"unavailable\", both with the reason,\nfor example:\n\n- it works with another version of `sightpress/module-interface` than the one installed (update the module, or wait\n  for a version that fits);\n- it needs another module that isn't installed or can't be used (install that one too);\n- its class is missing or fails to start (a broken package: reinstall it, or ask its author).\n\nThe reason is also written to the log once.",
+            "needs": [
+                "module.manage",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "3211012a5c60",
+            "page": "Add a module",
+            "heading": "Choose for every website",
+            "url": "https://docs.sightpress.org/latest/how-to/add-a-module/#choose-for-every-website",
+            "text": "In `config/tenant.php`, the `modules` section works for modules as for every other feature: `defaults` chooses what\nnew websites start with, and `locked` turns a module on or off for every website. See\n[Turn features on or off](turn-features-on-or-off.md#for-whoever-runs-the-installation) and the\n[tenant configuration reference](../reference/tenant-config.md).\n\nTo build a module of your own, follow the [Create a module](../tutorials/create-a-module.md) tutorial. The\n[module interface reference](../reference/module-interface.md) lists everything a module can use.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
             "id": "bf5a73d9d50f",
             "page": "Add captions and transcripts",
             "heading": "",
@@ -232,6 +343,38 @@
             "heading": "Privacy",
             "url": "https://docs.sightpress.org/latest/how-to/add-captions-and-transcripts/#privacy",
             "text": "Captions and transcripts can name or quote people. They are deleted with the file.",
+            "needs": []
+        },
+        {
+            "id": "580adf413d86",
+            "page": "Add your mobile number",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/add-your-mobile-number/",
+            "text": "When a website has [text messages](set-up-text-messages.md) on, you can add your mobile number to your account. It is\nup to you: you need it only to get notifications by text, to [sign in with your phone](sign-in-with-your-phone.md)\nand, on websites that ask for it, to [confirm important changes](confirm-important-changes.md).",
+            "needs": []
+        },
+        {
+            "id": "112563d75fce",
+            "page": "Add your mobile number",
+            "heading": "Add it",
+            "url": "https://docs.sightpress.org/latest/how-to/add-your-mobile-number/#add-it",
+            "text": "1. Sign in. If you have no number yet, the website asks **Add your mobile number** straight away. You can choose\n   **Skip for now** and add it later from **My account → Mobile number and text messages**.\n2. Choose your **Country**, then type your **Mobile number** the way you usually write it, for example\n   `07700 900123`. A number that starts with `+` and the country code works too.\n3. Choose **Send the code**. The website checks it is a mobile number, then sends you a text with a 6-digit code.\n   The text never contains a link.\n4. Type the code in **6-digit code** and choose **Confirm my number**. You should see \"Your mobile number is now …\".\n\nIf the website says it isn't a mobile number, check that you didn't type a landline. If the provider didn't answer in\ntime, try again in a minute.",
+            "needs": []
+        },
+        {
+            "id": "7605c5e5cea3",
+            "page": "Add your mobile number",
+            "heading": "Choose your text messages",
+            "url": "https://docs.sightpress.org/latest/how-to/add-your-mobile-number/#choose-your-text-messages",
+            "text": "Having a number signs you up for nothing. On the same page, tick **Send me text messages**, choose which ones you\nwant, and choose **Save my choices**. Untick it to stop them, or reply STOP to any of our texts.",
+            "needs": []
+        },
+        {
+            "id": "ecd86ef610e4",
+            "page": "Add your mobile number",
+            "heading": "Change or remove it",
+            "url": "https://docs.sightpress.org/latest/how-to/add-your-mobile-number/#change-or-remove-it",
+            "text": "On **My account → Mobile number and text messages**, type a new number to change it (the old one stops working at\nonce, also for signing in), or choose **Remove my number**.",
             "needs": []
         },
         {
@@ -383,7 +526,7 @@
             "page": "Codes we send you",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/how-to/codes-we-send-you/",
-            "text": "A SightPress website **never sends you a link** to click. When it needs to check that an e-mail address is yours,\nit sends a **6-digit code** instead, and you type that code on the website yourself.\n\nThis keeps you safe from fake messages. If you ever get a message that claims to come from a SightPress website and\nasks you to click a link, it is not from us. Don't click it.",
+            "text": "A SightPress website **never sends you a link** to click. When it needs to check that an e-mail address or a mobile\nnumber is yours, it sends a **6-digit code** instead, and you type that code on the website yourself.\n\nThis keeps you safe from fake messages. If you ever get a message that claims to come from a SightPress website and\nasks you to click a link, it is not from us. Don't click it.",
             "needs": []
         },
         {
@@ -391,7 +534,7 @@
             "page": "Codes we send you",
             "heading": "When you get a code",
             "url": "https://docs.sightpress.org/latest/how-to/codes-we-send-you/#when-you-get-a-code",
-            "text": "You get a code by e-mail when:\n\n- you **forgot your password** and asked for a new one: the code works for 15 minutes;\n- someone **invited you** to help with a website: the invitation code works for 7 days.\n\nThe person who sets up a new website gets a **setup code** from the command line tool, not by e-mail. They pass it\non to the website's first admin, who uses it to choose a password. A setup code works for 7 days.\n\nEach code works only once.",
+            "text": "You get a code by e-mail when:\n\n- you **forgot your password** and asked for a new one: the code works for 15 minutes;\n- someone **invited you** to help with a website: the invitation code works for 7 days.\n\nOn websites with [text messages](set-up-text-messages.md), you get a code **by text message** when:\n\n- you [add or change your mobile number](add-your-mobile-number.md): the code works for 10 minutes;\n- you [reset your password with your number](sign-in-with-your-phone.md): 10 minutes;\n- the website [asks you to confirm an important change](confirm-important-changes.md): 10 minutes.\n\nA text with a code says which website it is from, for example \"123 456 is your code for Riverside Library. It works\nfor 10 minutes. Never share it.\" It never contains a link or a web address.\n\nThe person who sets up a new website gets a **setup code** from the command line tool, not by e-mail. They pass it\non to the website's first admin, who uses it to choose a password. A setup code works for 7 days.\n\nEach code works only once.",
             "needs": []
         },
         {
@@ -425,6 +568,105 @@
             "url": "https://docs.sightpress.org/latest/how-to/codes-we-send-you/#try-it-on-your-computer",
             "text": "When SightPress runs on your computer, the e-mails with codes go to the test inbox. See\n[Open the test e-mail inbox](open-the-test-email-inbox.md).",
             "needs": []
+        },
+        {
+            "id": "8e9f1b82b509",
+            "page": "Confirm important changes",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/confirm-important-changes/",
+            "text": "A website can ask for a **code by text message** before important changes, so a stolen password alone can't change\nwho runs it. This is called two-step confirmation. It needs [text messages](set-up-text-messages.md).",
+            "needs": []
+        },
+        {
+            "id": "a0b61f733b0c",
+            "page": "Confirm important changes",
+            "heading": "What counts as important",
+            "url": "https://docs.sightpress.org/latest/how-to/confirm-important-changes/#what-counts-as-important",
+            "text": "Changing your password, email address or mobile number; inviting an admin or editor; changing someone's role or\ndeactivating them; editing roles; who can read the website and who may sign up; security settings; turning features\non or off; the AI assistant's key; cloud storage; deleting analytics data.",
+            "needs": []
+        },
+        {
+            "id": "81441eb6258d",
+            "page": "Confirm important changes",
+            "heading": "Turn it on (admins)",
+            "url": "https://docs.sightpress.org/latest/how-to/confirm-important-changes/#turn-it-on-admins",
+            "text": "1. [Add your own mobile number](add-your-mobile-number.md) first. Without it you can't confirm anything.\n2. Go to **Site settings → Security**.\n3. Choose **On: important changes need a code sent by text message** and **Save**.\n4. Choose **Send me a code**, type the code from the text, then **Make the change**. You should see \"Two-step\n   confirmation is on.\"\n\nYour organisation may have decided for every website: then the page says so and has no switch.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "4c09f754942e",
+            "page": "Confirm important changes",
+            "heading": "Make an important change",
+            "url": "https://docs.sightpress.org/latest/how-to/confirm-important-changes/#make-an-important-change",
+            "text": "1. Make the change as usual, for example change your email address.\n2. You see **Confirm it's you**. Nothing has changed yet.\n3. Choose **Send me a code**, type the 6-digit code from the text, and choose **Confirm**.\n4. Choose **Make the change**. For a change that needs your password, choose **Go back to the form** and type it\n   again: passwords are never kept.\n\nFor the next 10 minutes, in the same browser, other important changes don't need another code.\n\nIf you have no mobile number yet, the website asks you to add one first. There is no way round it by email.",
+            "needs": []
+        },
+        {
+            "id": "ab85824a135d",
+            "page": "Confirm important changes",
+            "heading": "If no code comes",
+            "url": "https://docs.sightpress.org/latest/how-to/confirm-important-changes/#if-no-code-comes",
+            "text": "- Wait a minute and choose **Send a new code**.\n- If you replied STOP to our texts before, reply **START** to our last text.\n- If the page says it can't send a code right now, ask whoever runs your websites: they can make the change for you\n  from the command line.\n\nLost your phone? See [Lost your phone](lost-your-phone.md).",
+            "needs": []
+        },
+        {
+            "id": "355b348767ee",
+            "page": "Create a custom role",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-custom-role/",
+            "text": "A **role** is a set of things people may do on your website. Everyone has one role. Every website starts with four:\n**Admin** (everything), **Editor**, **Contributor** and **Member** (reads members-only pages, nothing more). You can\nchange Editor and Contributor, and make your own roles, for example \"Shop staff\" who may upload pictures and change\nthe menus but not publish pages.\n\nYou need to be an **admin**, or have a role that may **Manage roles**.",
+            "needs": []
+        },
+        {
+            "id": "13d793265bd3",
+            "page": "Create a custom role",
+            "heading": "Create a role",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-custom-role/#create-a-role",
+            "text": "1. Choose **Roles** in the admin menu. You see every role, how many permissions it has and how many people have it.\n2. Choose **Create a role**.\n3. In **Name of the role**, type a name people will understand, for example `Shop staff`.\n4. Tick what people with this role may do. The permissions are grouped by area (Pages, Media, Menus, People …), and\n   each one says what it allows. For example, under **Media** tick **Upload media**, and under **Menus** tick\n   **Manage menus**.\n5. Choose **Create role**. You should see \"Created the role “Shop staff”.\"\n\nA role with any permission can also open the admin panel: **Use the admin panel** is added for you.",
+            "needs": [
+                "media.upload",
+                "menu.manage"
+            ]
+        },
+        {
+            "id": "de90c9bae783",
+            "page": "Create a custom role",
+            "heading": "Give the role to someone",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-custom-role/#give-the-role-to-someone",
+            "text": "1. Choose **People** in the admin menu, then the person's name.\n2. Under **Change role**, choose your new role and then **Change role**. You should see, for example, \"Cleo’s role is\n   now Shop staff.\"\n\nThe change applies from their next click.",
+            "needs": [
+                "user.manage"
+            ]
+        },
+        {
+            "id": "e41d7e361aec",
+            "page": "Create a custom role",
+            "heading": "Change or delete a role",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-custom-role/#change-or-delete-a-role",
+            "text": "- Open the role from **Roles**, change its name or the ticked boxes, and choose **Save role**.\n- To delete it, choose **Delete this role** at the bottom of its page. A role that someone still has can't be\n  deleted: give those people another role first.",
+            "needs": []
+        },
+        {
+            "id": "0843fd52908e",
+            "page": "Create a custom role",
+            "heading": "What you can't do",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-custom-role/#what-you-cant-do",
+            "text": "These rules keep your website safe. If you try, the page tells you why, next to the box or name concerned, and keeps\nwhat you ticked:\n\n- **Admin** and **Member** can't be changed, renamed or deleted.\n- The role people get when they [sign up](let-people-sign-up.md) can only have permissions that are safe for people\n  you don't know, such as writing pages and sending them for review.\n- You can't take **Manage roles** away from your own role, so you can't lock yourself out. Ask another admin.\n- Features that are [turned off](turn-features-on-or-off.md) don't show their permissions. A role keeps them, so\n  they come back when you turn the feature on again.\n\nEvery change to a role is written to the **Audit log**, under **Roles**.",
+            "needs": [
+                "audit.view"
+            ]
+        },
+        {
+            "id": "037411ed1721",
+            "page": "Create a custom role",
+            "heading": "On the command line",
+            "url": "https://docs.sightpress.org/latest/how-to/create-a-custom-role/#on-the-command-line",
+            "text": "The same rules apply on the [command line](try-the-command-line-tool.md), where a website is named by its slug:\n\n```bash\ndocker compose run --rm --no-deps php bin/sightpress site:role:list demo\ndocker compose run --rm --no-deps php bin/sightpress site:role:create demo shop_staff --label=\"Shop staff\" --permissions=media.upload,menu.manage\ndocker compose run --rm --no-deps php bin/sightpress site:role:grant demo shop_staff page.create\ndocker compose run --rm --no-deps php bin/sightpress site:role:revoke demo shop_staff page.create\ndocker compose run --rm --no-deps php bin/sightpress site:role:delete demo shop_staff\n```",
+            "needs": [
+                "settings.manage"
+            ]
         },
         {
             "id": "8f42b0ae191b",
@@ -596,7 +838,7 @@
             "page": "How-to guides",
             "heading": "Your website",
             "url": "https://docs.sightpress.org/latest/how-to/#your-website",
-            "text": "- [Plan your website](plan-a-site.md): choose the right options and content for what you need.\n- [Create a website](create-a-site.md) with the command line tool, and give its first admin a setup code.\n- [Write and publish a page](write-and-publish-a-page.md), from a draft through review to the public website.\n- [Schedule a page](schedule-a-page.md) to be published, or taken off the website, at a set time.\n- [Restore an older version of a page](restore-an-older-version.md), and see what changed, word by word.\n- [Move or rename a page without breaking links](move-or-rename-a-page.md), and look after the redirects.\n- [Put a page in the trash and get it back](put-a-page-in-the-trash.md), archive it, copy it or delete it for good.\n- [Add a language and translate a page](add-a-language.md).\n- [Make a website or a page members-only](make-a-site-members-only.md).\n- [Let people sign up](let-people-sign-up.md) for an account, confirmed with an emailed code.\n- [Turn features on or off](turn-features-on-or-off.md) for one website, and delete a feature's data.\n- [Install and change a theme](install-and-change-a-theme.md): install themes on the server, and choose one for each website.\n- [Choose a page layout](choose-a-page-layout.md): home, standard, landing, sidebar or full width.\n- [Add captions and transcripts](add-captions-and-transcripts.md) to videos and recordings, in each language.\n- [Search your website](search-your-website.md) from any page, and leave a page out of the search.\n- ",
+            "text": "- [Plan your website](plan-a-site.md): choose the right options and content for what you need.\n- [Create a website](create-a-site.md) with the command line tool, and give its first admin a setup code.\n- [Write and publish a page](write-and-publish-a-page.md), from a draft through review to the public website.\n- [Schedule a page](schedule-a-page.md) to be published, or taken off the website, at a set time.\n- [Restore an older version of a page](restore-an-older-version.md), and see what changed, word by word.\n- [Move or rename a page without breaking links](move-or-rename-a-page.md), and look after the redirects.\n- [Put a page in the trash and get it back](put-a-page-in-the-trash.md), archive it, copy it or delete it for good.\n- [Add a language and translate a page](add-a-language.md).\n- [Make a website or a page members-only](make-a-site-members-only.md).\n- [Let people sign up](let-people-sign-up.md) for an account, confirmed with an emailed code.\n- [Create a custom role](create-a-custom-role.md), choose what it may do and give it to people.\n- [Keep websites to your organisation](keep-websites-to-your-organisation.md): your domains, your email addresses, and registration with an organisation email.\n- [Turn features on or off](turn-features-on-or-off.md) for one website, and delete a feature's data.\n- [Add a module](add-a-module.md): install a module package on the server, turn it on for a website, and remove it.\n- [Install and change a theme](install-and-change-a-theme.md): i",
             "needs": [
                 "analytics.view"
             ]
@@ -606,7 +848,7 @@
             "page": "How-to guides",
             "heading": "Your account",
             "url": "https://docs.sightpress.org/latest/how-to/#your-account",
-            "text": "- [Change your email address or password](change-your-email-or-password.md) on *My account*.",
+            "text": "- [Change your email address or password](change-your-email-or-password.md) on *My account*.\n- [Add your mobile number](add-your-mobile-number.md) and choose your text messages.\n- [Get notifications by text](text-message-notifications.md), and stop them.\n- [Sign in with your phone](sign-in-with-your-phone.md), and reset your password with a code by text.\n- [Lost your phone](lost-your-phone.md): get your number removed and add the new one.",
             "needs": []
         },
         {
@@ -614,7 +856,7 @@
             "page": "How-to guides",
             "heading": "Running SightPress",
             "url": "https://docs.sightpress.org/latest/how-to/#running-sightpress",
-            "text": "- [Update SightPress](update-sightpress.md) to a newer version, keeping every website.\n\n- [Keep your files in the cloud](keep-files-in-the-cloud.md): AWS, Cloudflare or another service, with a CDN.\n- [Upload large files](upload-large-files.md): send big files in parts, and pause, resume or cancel.\n- [Import files from a folder](import-files.md) on the server, of any size.\n- [Fix upload size limits](fix-upload-size-limits.md): what the admin warning means, and how to let larger files in.\n- [Choose upload limits](choose-upload-limits.md): how large a file each website accepts.\n- [Run SightPress in the background](run-in-the-background.md), so that you can close the terminal.\n- [Change the ports SightPress uses](change-the-ports.md), if another program already uses them.\n- [Start a database server](start-a-database.md): MySQL, MariaDB or PostgreSQL.",
+            "text": "- [Update SightPress](update-sightpress.md) to a newer version, keeping every website.\n- [Set up text messages](set-up-text-messages.md): a provider, the limits that protect you, and the budget.\n\n- [Keep your files in the cloud](keep-files-in-the-cloud.md): AWS, Cloudflare or another service, with a CDN.\n- [Upload large files](upload-large-files.md): send big files in parts, and pause, resume or cancel.\n- [Import files from a folder](import-files.md) on the server, of any size.\n- [Fix upload size limits](fix-upload-size-limits.md): what the admin warning means, and how to let larger files in.\n- [Choose upload limits](choose-upload-limits.md): how large a file each website accepts.\n- [Run SightPress in the background](run-in-the-background.md), so that you can close the terminal.\n- [Change the ports SightPress uses](change-the-ports.md), if another program already uses them.\n- [Start a database server](start-a-database.md): MySQL, MariaDB or PostgreSQL.",
             "needs": []
         },
         {
@@ -816,6 +1058,60 @@
             ]
         },
         {
+            "id": "00072f143ba8",
+            "page": "Keep websites to your organisation",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-websites-to-your-organisation/",
+            "text": "If your organisation runs SightPress for its own teams, you can make sure every website uses one of your domains,\nthat only people with your email addresses join, and let your colleagues register on members-only websites without\nan invitation.\n\nThese settings apply to **every website** of your SightPress installation, so whoever runs it sets them in\n`config/tenant.php`. Nothing changes until you set them. Admins of each website can only turn registration with an\norganisation email address **off** for their own website.",
+            "needs": []
+        },
+        {
+            "id": "3cacbf72a099",
+            "page": "Keep websites to your organisation",
+            "heading": "Websites only on your domain",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-websites-to-your-organisation/#websites-only-on-your-domain",
+            "text": "Add to `config/tenant.php`:\n\n```php\n'domain_policy' => ['subdomain_of' => 'example.org'],\n```\n\nFrom then on, [Create a website](create-a-site.md) only accepts `example.org` or a name under it, such as\n`news.example.org`. A name like `evil-example.org` or `example.org.other.test` is refused, with a message saying\nwhich names are allowed.",
+            "needs": []
+        },
+        {
+            "id": "49493bd984a3",
+            "page": "Keep websites to your organisation",
+            "heading": "Only your email addresses join",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-websites-to-your-organisation/#only-your-email-addresses-join",
+            "text": "```php\n'email_policy' => ['domains' => ['example.org', 'example.com']],\n```\n\nOnly addresses at exactly these domains can be invited, accept an invitation, [sign up](let-people-sign-up.md),\nchange to a new address in **My account**, or be the first admin of a new website. `ada@mail.example.org` only\ncounts if you list `mail.example.org` too. Capital letters don't matter, and international names such as\n`bücher.example` work.",
+            "needs": []
+        },
+        {
+            "id": "07b85dc1dc58",
+            "page": "Keep websites to your organisation",
+            "heading": "Let colleagues register on members-only websites",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-websites-to-your-organisation/#let-colleagues-register-on-members-only-websites",
+            "text": "```php\n'email_policy' => ['domains' => ['example.org', 'example.com']],\n'domain_registration' => 'on',\n```\n\n`'on'` uses every domain of `email_policy`. To use only some, write `['domains' => ['example.org']]` instead.\n\nOn every [members-only website](make-a-site-members-only.md), the sign-in page now shows **Register with your\norganisation email**, even while **Let anyone create an account** is off. To try it:\n\n1. Open a private browser window and go to the sign-in page of a members-only website.\n2. Choose **Register with your organisation email**. The page says which addresses can register.\n3. Fill in the form with an address at one of your domains and choose **Create my account**. An address elsewhere is\n   refused, and the message names your domains.\n4. Type the 6-digit code from the email (see [Codes we send you](codes-we-send-you.md)). The account can't sign in\n   before that.\n5. Sign in. The new account has the website's sign-up role, **Member** unless an admin chose another safe one.\n\nPublic websites, and websites where anyone can already sign up, are not affected. The **Audit log** says these\naccounts registered with an organisation email address.",
+            "needs": [
+                "audit.view"
+            ]
+        },
+        {
+            "id": "c646c1f71df1",
+            "page": "Keep websites to your organisation",
+            "heading": "Turn it off for one website",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-websites-to-your-organisation/#turn-it-off-for-one-website",
+            "text": "Admins of a members-only website choose **Site settings**, then **Change who can sign up**. Under **Registration with\nan organisation email address**, choose **Off for this site**, then **Save sign-up settings**. The link disappears\nfrom the sign-in page. You can also create a website with it off:\n\n```bash\ndocker compose run --rm --no-deps php bin/sightpress site:create … --domain-registration=off\n```",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "836b850114f2",
+            "page": "Keep websites to your organisation",
+            "heading": "After you make a policy stricter",
+            "url": "https://docs.sightpress.org/latest/how-to/keep-websites-to-your-organisation/#after-you-make-a-policy-stricter",
+            "text": "Nothing is removed: websites keep answering on their domains, and people keep signing in with the addresses they\nhave. The policy applies to new websites, new people and changed addresses. To see what is outside it, run:\n\n```bash\ndocker compose exec php bin/sightpress system:check\n```\n\nIt prints a note for each website with a domain outside `domain_policy`, and how many accounts of each website have\nan address outside `email_policy`.\n\nIf a setting is written wrongly, SightPress doesn't start and says what to fix, for example\n`Tenant setting \"domain_registration\" is 'on', which uses the domains of \"email_policy\", but \"email_policy\" is 'any'.`",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
             "id": "41c8884e7898",
             "page": "Let people sign up",
             "heading": "",
@@ -846,10 +1142,45 @@
             "page": "Let people sign up",
             "heading": "What keeps it safe",
             "url": "https://docs.sightpress.org/latest/how-to/let-people-sign-up/#what-keeps-it-safe",
-            "text": "- An account can't sign in until its email address is confirmed. Accounts that are never confirmed are removed after\n  a week.\n- If someone signs up with an address that already has an account, the page looks exactly the same, so nobody can find\n  out who has an account. The owner of the address gets an email saying someone tried, with no link.\n- A hidden field catches most automated sign-ups, and each place can send at most 10 sign-up forms an hour. There are\n  no picture puzzles.\n- Every new account and every change to these settings is written to the **Audit log**.\n\nTo turn sign-up off again, untick **Let anyone create an account**. Accounts that were already made are kept.",
+            "text": "- An account can't sign in until its email address is confirmed. Accounts that are never confirmed are removed after\n  a week.\n- If someone signs up with an address that already has an account, the page looks exactly the same, so nobody can find\n  out who has an account. The owner of the address gets an email saying someone tried, with no link.\n- A hidden field catches most automated sign-ups, and each place can send at most 10 sign-up forms an hour. There are\n  no picture puzzles.\n- Every new account and every change to these settings is written to the **Audit log**.\n\nOn a members-only website, your organisation may also let people with its email addresses register while sign-up is\noff: see [Keep websites to your organisation](keep-websites-to-your-organisation.md).\n\nTo turn sign-up off again, untick **Let anyone create an account**. Accounts that were already made are kept.",
             "needs": [
                 "audit.view"
             ]
+        },
+        {
+            "id": "9563d9eef910",
+            "page": "Lost your phone",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/lost-your-phone/",
+            "text": "If you lost your phone or changed your number, you can't get codes to your old number. Here is how to get going again.",
+            "needs": []
+        },
+        {
+            "id": "1195ef27a06f",
+            "page": "Lost your phone",
+            "heading": "You can still sign in",
+            "url": "https://docs.sightpress.org/latest/how-to/lost-your-phone/#you-can-still-sign-in",
+            "text": "Sign in with your **email address** and password. To reset a forgotten password, choose **Forgot your password?** and\nuse your email address: the code comes by email.",
+            "needs": []
+        },
+        {
+            "id": "f9b8172aecd6",
+            "page": "Lost your phone",
+            "heading": "Ask for your number to be removed",
+            "url": "https://docs.sightpress.org/latest/how-to/lost-your-phone/#ask-for-your-number-to-be-removed",
+            "text": "While the website [asks for a code for important changes](confirm-important-changes.md), you can't change your number\nyourself, because that needs a code to the old one. Ask someone who manages people on the website:\n\n1. They go to **People** and choose you.\n2. They choose **Remove the mobile number of …** (they confirm it's them with their own code).\n\nIf nobody on the website can, whoever runs your websites can do it from the command line:\n\n```sh\nbin/sightpress site:user:phone:reset riverside ada@example.org\n```",
+            "needs": [
+                "settings.manage",
+                "user.manage"
+            ]
+        },
+        {
+            "id": "6de5f8f6f767",
+            "page": "Lost your phone",
+            "heading": "Add your new number",
+            "url": "https://docs.sightpress.org/latest/how-to/lost-your-phone/#add-your-new-number",
+            "text": "On **My account → Mobile number and text messages**, add your new number and type the code we send to it (see\n[Add your mobile number](add-your-mobile-number.md)). Adding a first number never needs a code to an old one.",
+            "needs": []
         },
         {
             "id": "3802b90aac45",
@@ -947,7 +1278,7 @@
             "page": "Plan your website",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/",
-            "text": "This guide helps you decide how to set up a SightPress website before you build it. Answer a few questions about what\nthe website needs. The guide then suggests the settings to choose and the content to write.\n\nYou don't need to be technical to do the planning. Some choices are made by whoever runs your SightPress installation,\nand this guide says which ones.\n\n!!! note \"Which version this guide describes\"\n\n    This guide describes version 0.4. If you run 0.3, update first: it has no cloud storage, other themes, extra page\n    layouts or per-website upload limits. See [Update SightPress](update-sightpress.md).",
+            "text": "This guide helps you decide how to set up a SightPress website before you build it. Answer a few questions about what\nthe website needs. The guide then suggests the settings to choose and the content to write.\n\nYou don't need to be technical to do the planning. Some choices are made by whoever runs your SightPress installation,\nand this guide says which ones.\n\n!!! note \"Which version this guide describes\"\n\n    This guide describes version 0.5. If you run 0.4, update first: it has no modules from others, custom roles,\n    email or domain policies, text messages or two-step confirmation. See [Update SightPress](update-sightpress.md).",
             "needs": []
         },
         {
@@ -955,7 +1286,7 @@
             "page": "Plan your website",
             "heading": "Step 1: Answer these questions",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#step-1-answer-these-questions",
-            "text": "Write down your answers. Each one points to a choice in the next steps.\n\n| Question | Why it matters |\n| --- | --- |\n| Who is the website for, and what must they be able to do? | Decides your pages and calls to action. |\n| Is it public, or only for members? | Decides who can read it and whether search engines can find it. |\n| Who will write, check and publish pages? | Decides the roles you give people. |\n| Which languages do you need? | Decides how much translation to plan for. |\n| Will you publish large videos, audio or many files? | Decides file storage and upload limits. |\n| Do you expect a few visitors or a lot? | Decides the database and whether you need a CDN. |\n| Will you run one website or several? | Decides what to set for every website and what to set for each one. |\n| Do you want visitor figures or an AI assistant? | Decides which optional features to turn on. |",
+            "text": "Write down your answers. Each one points to a choice in the next steps.\n\n| Question | Why it matters |\n| --- | --- |\n| Who is the website for, and what must they be able to do? | Decides your pages and calls to action. |\n| Is it public, or only for members? | Decides who can read it and whether search engines can find it. |\n| Who will write, check and publish pages? | Decides the roles you give people. |\n| Which languages do you need? | Decides how much translation to plan for. |\n| Will you publish large videos, audio or many files? | Decides file storage and upload limits. |\n| Do you expect a few visitors or a lot? | Decides the database and whether you need a CDN. |\n| Will you run one website or several? | Decides what to set for every website and what to set for each one. |\n| Do you want visitor figures, an AI assistant or features from other modules? | Decides which optional features to turn on. |\n| Should only people from your organisation join? | Decides the email policy and whether colleagues can register themselves. |\n| Will people want texts, or to sign in with their phone? | Decides whether to set up text messages, and their cost. |",
             "needs": []
         },
         {
@@ -963,7 +1294,7 @@
             "page": "Plan your website",
             "heading": "Step 2: Start from the closest kind of website",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#step-2-start-from-the-closest-kind-of-website",
-            "text": "Pick the row closest to yours. You can change every choice later.\n\n| Kind of website | Database | Files | Access | People | Features |\n| --- | --- | --- | --- | --- | --- |\n| Personal website or portfolio | SQLite | On the server | Public | One admin | Search off if there are few pages |\n| Small business | SQLite | On the server | Public | One admin, perhaps an editor | Search and analytics |\n| Charity or community group | SQLite or MariaDB | On the server | Public, with some members-only pages | Admin, editor, volunteer contributors | Search and analytics |\n| Podcast or media project | MariaDB or PostgreSQL | Cloud storage and a CDN | Public | Admin and editors | Search and analytics |\n| School, library or museum | MariaDB or PostgreSQL | Server, or cloud storage if there is a lot of media | Public | Web editor, staff as contributors | Search and analytics |\n| Public service or health information | MariaDB or PostgreSQL | Server or cloud storage | Public | Editors approve every page | Search, and analytics if your policy allows it |\n| Private club or staff website | SQLite or MariaDB | On the server | Members-only | Admin, editors, members | Search |\n| Agency or group of websites | MariaDB or PostgreSQL | Cloud storage per website | Set per website | Separate people per website | Defaults set for all websites |",
+            "text": "Pick the row closest to yours. You can change every choice later.\n\n| Kind of website | Database | Files | Access | People | Features |\n| --- | --- | --- | --- | --- | --- |\n| Personal website or portfolio | SQLite | On the server | Public | One admin | Search off if there are few pages |\n| Small business | SQLite | On the server | Public | One admin, perhaps an editor | Search and analytics |\n| Charity or community group | SQLite or MariaDB | On the server | Public, with some members-only pages | Admin, editor, volunteer contributors | Search and analytics |\n| Podcast or media project | MariaDB or PostgreSQL | Cloud storage and a CDN | Public | Admin and editors | Search and analytics |\n| School, library or museum | MariaDB or PostgreSQL | Server, or cloud storage if there is a lot of media | Public | Web editor, staff as contributors | Search and analytics |\n| Public service or health information | MariaDB or PostgreSQL | Server or cloud storage | Public | Editors approve every page | Search, and analytics if your policy allows it |\n| Private club or staff website | SQLite or MariaDB | On the server | Members-only, perhaps with colleagues registering by work email | Admin, editors, members | Search |\n| Agency or group of websites | MariaDB or PostgreSQL | Cloud storage per website | Set per website | Separate people per website | Defaults set for all websites |",
             "needs": []
         },
         {
@@ -1001,7 +1332,7 @@
             "page": "Plan your website",
             "heading": "Who can read and join",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#who-can-read-and-join",
-            "text": "- **Public** is the default. Search engines and AI services can find the pages.\n- **Some pages for members** suits reports or resources for a group. See\n  [Make a website or a page members-only](make-a-site-members-only.md).\n- **The whole website for members** hides every page from search engines and AI services.\n- **Open sign-up** suits communities. Keep new people as **Member**. See [Let people sign up](let-people-sign-up.md).\n- **Invitation only** is the default, and suits most teams and private websites.",
+            "text": "- **Public** is the default. Search engines and AI services can find the pages.\n- **Some pages for members** suits reports or resources for a group. See\n  [Make a website or a page members-only](make-a-site-members-only.md).\n- **The whole website for members** hides every page from search engines and AI services.\n- **Open sign-up** suits communities. Keep new people as **Member**. See [Let people sign up](let-people-sign-up.md).\n- **Invitation only** is the default, and suits most teams and private websites.\n- **Only your organisation's email addresses** can be set for every website by whoever runs the installation. On\n  members-only websites, colleagues can then register with their work email without an invitation. See\n  [Keep websites to your organisation](keep-websites-to-your-organisation.md).",
             "needs": []
         },
         {
@@ -1009,11 +1340,19 @@
             "page": "Plan your website",
             "heading": "Roles",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#roles",
-            "text": "Give each person the lowest role that lets them do their work. Try to have at least two people who can publish, so\nthat someone can cover absences.\n\n| Role | Give it to |\n| --- | --- |\n| **Admin** | The one or two people responsible for the website. |\n| **Editor** | People who check and publish pages. |\n| **Contributor** | People who write, such as volunteers or staff, whose pages need approval. |\n| **Member** | People who only read members-only pages. |\n\nSee [Roles and permissions](../reference/roles-and-permissions.md).",
+            "text": "Give each person the lowest role that lets them do their work. Try to have at least two people who can publish, so\nthat someone can cover absences.\n\n| Role | Give it to |\n| --- | --- |\n| **Admin** | The one or two people responsible for the website. |\n| **Editor** | People who check and publish pages. |\n| **Contributor** | People who write, such as volunteers or staff, whose pages need approval. |\n| **Member** | People who only read members-only pages. |\n\nIf none fits, [create a custom role](create-a-custom-role.md) with exactly the permissions someone needs, such as an\n\"Events editor\". See [Roles and permissions](../reference/roles-and-permissions.md).",
             "needs": []
         },
         {
             "id": "19278e70a09b",
+            "page": "Plan your website",
+            "heading": "Text messages and two-step confirmation",
+            "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#text-messages-and-two-step-confirmation",
+            "text": "Text messages are off until whoever runs the installation sets up a provider (Twilio or Vonage). Each message costs\nmoney, so set a monthly budget.\n\n| Use | Good for | Think about |\n| --- | --- | --- |\n| [Notifications by text](text-message-notifications.md) | Editors who need to know at once when a page waits for review. | People choose it themselves, and can reply STOP. |\n| [Sign in with your phone](sign-in-with-your-phone.md) | People who find a mobile number easier than an email address. | Only verified numbers work. |\n| [Confirm important changes](confirm-important-changes.md) | Any website where a wrong change would do harm, such as giving someone the admin role. | Everyone who makes such changes needs a mobile number. |\n\nA mobile number is personal data: say why you ask for it in your privacy notice. See\n[Set up text messages](set-up-text-messages.md).",
+            "needs": []
+        },
+        {
+            "id": "be15980430bf",
             "page": "Plan your website",
             "heading": "Languages",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#languages",
@@ -1021,7 +1360,7 @@
             "needs": []
         },
         {
-            "id": "be15980430bf",
+            "id": "6040db3464ec",
             "page": "Plan your website",
             "heading": "Look and layout",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#look-and-layout",
@@ -1029,15 +1368,15 @@
             "needs": []
         },
         {
-            "id": "6040db3464ec",
+            "id": "3d44f96f4ba3",
             "page": "Plan your website",
             "heading": "Optional features",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#optional-features",
-            "text": "| Feature | New websites | Turn it on when | Think about |\n| --- | --- | --- | --- |\n| [Site search](search-your-website.md) | On | The website has more than a handful of pages. | Leave private or duplicate pages out of the search. |\n| [Analytics](see-who-visits-your-website.md) | On | You will act on the figures. | You can keep them for 1 to 25 months. |\n| [AI assistant](use-the-ai-assistant.md) | Off | You want help drafting, and have an API key and a budget. | Check where the service processes data. A person checks every suggestion. |\n\nIf you run several websites, set the defaults for all of them in `config/tenant.php`. See\n[Turn features on or off](turn-features-on-or-off.md).",
+            "text": "| Feature | New websites | Turn it on when | Think about |\n| --- | --- | --- | --- |\n| [Site search](search-your-website.md) | On | The website has more than a handful of pages. | Leave private or duplicate pages out of the search. |\n| [Analytics](see-who-visits-your-website.md) | On | You will act on the figures. | You can keep them for 1 to 25 months. |\n| [AI assistant](use-the-ai-assistant.md) | Off | You want help drafting, and have an API key and a budget. | Check where the service processes data. A person checks every suggestion. |\n| [Modules from others](add-a-module.md) | Off | You need a feature SightPress doesn't have, such as events. | Install only modules you trust, and turn each one on only where it is needed. |\n\nIf you run several websites, set the defaults for all of them in `config/tenant.php`. See\n[Turn features on or off](turn-features-on-or-off.md).",
             "needs": []
         },
         {
-            "id": "3d44f96f4ba3",
+            "id": "8c64fcb2d501",
             "page": "Plan your website",
             "heading": "Search engines and AI services",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#search-engines-and-ai-services",
@@ -1047,15 +1386,15 @@
             ]
         },
         {
-            "id": "8c64fcb2d501",
+            "id": "52f677f0b798",
             "page": "Plan your website",
             "heading": "Step 4: Plan your content",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#step-4-plan-your-content",
-            "text": "Every new website starts with a home page, About, Contact, a privacy notice, terms of use and an accessibility\nstatement. These are starting points. **Read and rewrite each one**, especially the privacy notice and terms, so they\nare true for your organisation.\n\n| Kind of website | Suggested pages | Most useful blocks |\n| --- | --- | --- |\n| Personal website | Home, About me, Projects, CV, Contact | Text, Image, File download |\n| Portfolio | Home, Work, one page per project, About, Commissions | Gallery, Columns, Video, Contact form |\n| Small business | Home, What we offer, Prices, About us, Find us, Contact | Call to action, Gallery, Contact form |\n| Charity or community group | Home, What we do, Get involved, Donate or volunteer, Annual reports, Contact | Call to action, Video, File download |\n| Podcast or media project | Home, Episodes, one page per episode, Guests, About | Audio with a transcript, File download |\n| School, library or museum | Home, Visit us, Opening hours, What's on, Accessibility, Policies, Contact | Video, Audio, File download |\n| Public service or health information | Home, one page per service, How to apply, Forms, Accessibility, Contact | Heading, Text, File download |\n| Private club or staff website | Home, News, Guides, Documents, People, Contact | Text, File download |\n\nFor every website, plan to:\n\n- write one clear purpose for each page, and put the most important thing first;\n- use short headings in order, so that screen reader users can move thr",
+            "text": "Every new website starts with a home page, About, Contact, a privacy notice, terms of use and an accessibility\nstatement. These are starting points. **Read and rewrite each one**, especially the privacy notice and terms, so they\nare true for your organisation.\n\n| Kind of website | Suggested pages | Most useful blocks |\n| --- | --- | --- |\n| Personal website | Home, About me, Projects, CV, Contact | Text, Image, File download |\n| Portfolio | Home, Work, one page per project, About, Commissions | Gallery, Columns, Video, Contact form |\n| Small business | Home, What we offer, Prices, About us, Find us, Contact | Call to action, Gallery, Contact form |\n| Charity or community group | Home, What we do, Get involved, Donate or volunteer, Annual reports, Contact | Call to action, Video, File download, List of pages |\n| Podcast or media project | Home, Episodes, one page per episode, Guests, About | Audio with a transcript, File download |\n| School, library or museum | Home, Visit us, Opening hours, What's on, Accessibility, Policies, Contact | Video, Audio, File download, Video or map from another site |\n| Public service or health information | Home, one page per service, How to apply, Forms, Accessibility, Contact | Heading, Text, File download, Sign language video |\n| Private club or staff website | Home, News, Guides, Documents, People, Contact | Text, File download |\n\nFor every website, plan to:\n\n- write one clear purpose for each page, and put the most important thing first;\n- u",
             "needs": []
         },
         {
-            "id": "52f677f0b798",
+            "id": "db94e00a0966",
             "page": "Plan your website",
             "heading": "Step 5: Check before you launch",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#step-5-check-before-you-launch",
@@ -1065,15 +1404,15 @@
             ]
         },
         {
-            "id": "db94e00a0966",
+            "id": "b98e12246a67",
             "page": "Plan your website",
             "heading": "What to plan around today",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#what-to-plan-around-today",
-            "text": "SightPress doesn't do the following yet. If your website depends on one of them, plan another way or wait.\n\n- **A guide for a public server.** Getting started covers your own computer. Have someone experienced set up HTTPS,\n  backups and updates.\n- **Several web servers.** Sign-in sessions are kept in files, so servers must share them, and share the upload folder.\n- **Shops and payments, event booking, or a blog with an RSS feed.** Podcasts can publish episodes as pages, but\n  SightPress doesn't produce a podcast feed.\n- **Custom roles.** Use the four built-in roles.\n- **Sign-in by phone or text message.** Sign-in uses an email address and a password.\n- **Limiting sign-up to one email domain.** Use invitations instead.\n- **Tools to download or delete someone's personal data.** If privacy law applies to you, such as UK or EU GDPR, plan\n  how you will answer these requests.",
+            "text": "SightPress doesn't do the following yet. If your website depends on one of them, plan another way or wait.\n\n- **A guide for a public server.** Getting started covers your own computer. Have someone experienced set up HTTPS,\n  backups and updates.\n- **Several web servers.** Sign-in sessions are kept in files, so servers must share them, and share the upload folder.\n- **Shops and payments, event booking, or a blog with an RSS feed.** Podcasts can publish episodes as pages, but\n  SightPress doesn't produce a podcast feed.\n- **Tools to download or delete someone's personal data.** If privacy law applies to you, such as UK or EU GDPR, plan\n  how you will answer these requests.",
             "needs": []
         },
         {
-            "id": "b98e12246a67",
+            "id": "68b047e0dd09",
             "page": "Plan your website",
             "heading": "Where to go next",
             "url": "https://docs.sightpress.org/latest/how-to/plan-a-site/#where-to-go-next",
@@ -1505,6 +1844,100 @@
             ]
         },
         {
+            "id": "a076ad4f9b06",
+            "page": "Set up text messages",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/set-up-text-messages/",
+            "text": "A website can send text messages (SMS): codes that check a mobile number is yours, notifications people choose, codes\nto sign in or reset a password, and codes for [important changes](confirm-important-changes.md). Text messages are\n**off** on every website until whoever runs your SightPress installation sets them up, because they cost money and\nsend phone numbers to another company.\n\nYou need a text message account at **Twilio** or **Vonage** (other providers can come as modules), and the command\nline tool (see [Try the command line tool](try-the-command-line-tool.md)).",
+            "needs": []
+        },
+        {
+            "id": "d39f0cfdef32",
+            "page": "Set up text messages",
+            "heading": "1. Choose who sends",
+            "url": "https://docs.sightpress.org/latest/how-to/set-up-text-messages/#1-choose-who-sends",
+            "text": "Get these from your provider's dashboard:\n\n| Provider | Account | Key | Sender |\n| --- | --- | --- | --- |\n| Twilio | Account SID (starts with `AC`) | Auth token | A number such as `+447700900123`, or a name of 3 to 11 letters and digits, such as `Riverside` |\n| Vonage | API key | API secret, then `|`, then the signature secret | A number or a name |\n\nNames as senders are not allowed in every country. Check your provider's rules for the countries you send to.",
+            "needs": []
+        },
+        {
+            "id": "c1e510b2c394",
+            "page": "Set up text messages",
+            "heading": "2. Give them to the website",
+            "url": "https://docs.sightpress.org/latest/how-to/set-up-text-messages/#2-give-them-to-the-website",
+            "text": "The key is read from the keyboard, never typed on the command line, so it doesn't end up in your shell history:\n\n```sh\nprintf %s \"$TWILIO_AUTH_TOKEN\" | bin/sightpress site:sms:set riverside --provider=twilio \\\n    --account=AC0123… --sender=Riverside --key-stdin\n```\n\nYou should see `The site \"riverside\" now sends text messages with Twilio.` and `Key: ••••` followed by its last 4\ncharacters. The key is stored encrypted and never shown again.\n\nTo give every website the same provider instead, put it in `config/tenant.php` (see below) and the key in the\n`SMS_API_KEY` environment variable.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "c308e5faf304",
+            "page": "Set up text messages",
+            "heading": "3. Turn them on and test",
+            "url": "https://docs.sightpress.org/latest/how-to/set-up-text-messages/#3-turn-them-on-and-test",
+            "text": "```sh\nbin/sightpress site:sms:enable riverside\nbin/sightpress site:sms:test riverside --to=+447700900123\n```\n\nThe test message arrives within a minute: \"Test message from Riverside Library: text messages work.\" If it doesn't,\nthe command says why in plain words, for example that the key was refused or that the country isn't allowed.\n\nAdmins see **Text messages** under **Site settings** in the admin panel: whether the website can send, how much of\nthis month's budget is used, the latest messages (numbers partly hidden), and **Send a test message**.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "955984784a77",
+            "page": "Set up text messages",
+            "heading": "4. Tell the provider where to report",
+            "url": "https://docs.sightpress.org/latest/how-to/set-up-text-messages/#4-tell-the-provider-where-to-report",
+            "text": "In your provider's dashboard, set the delivery reports and incoming messages address to\n`https://<your website>/_sms/webhook`. Then a STOP reply stops notifications to that number, and the screen shows\nwhich messages were delivered. Every report must be signed by your provider; others are refused.",
+            "needs": []
+        },
+        {
+            "id": "d3d3b68cfaba",
+            "page": "Set up text messages",
+            "heading": "Limits that protect you",
+            "url": "https://docs.sightpress.org/latest/how-to/set-up-text-messages/#limits-that-protect-you",
+            "text": "Anyone can type a number into a sign-up form, and some people do that to make websites send expensive texts. So\nSightPress:\n\n- only sends to **mobile numbers**, never to premium-rate, shared-cost or toll-free numbers, and checks each new\n  number with your provider first;\n- only sends to numbers in **your country** (the country of the website's main language), unless you list others;\n- sends at most a few codes to one number, one computer and one account each hour, and at most 100 texts a website an\n  hour;\n- stops at a **monthly budget** (1,000 message parts a website by default), with a warning at 80 %. A small part of\n  it is kept for security codes, so people can still sign in when notifications have used the rest.\n\nChange them in `config/tenant.php`:\n\n```php\n'sms' => [\n    'monthly_budget' => 1000,\n    'reserved_for_codes' => 50,\n    'countries' => ['GB', 'IE'],\n    'limits' => ['per_number' => 3, 'per_client' => 10, 'per_account' => 5, 'per_site' => 100, 'lookups_per_day' => 100],\n],\n```",
+            "needs": []
+        },
+        {
+            "id": "d67721aab13e",
+            "page": "Set up text messages",
+            "heading": "Turn them off",
+            "url": "https://docs.sightpress.org/latest/how-to/set-up-text-messages/#turn-them-off",
+            "text": "`bin/sightpress site:sms:disable riverside` stops everything: no texts, no phone sign-in, no codes for important\nchanges. Numbers already on accounts and the record of messages are kept. `site:sms:remove riverside` also forgets the\nwebsite's provider and key.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "90f178c074c6",
+            "page": "Set up text messages",
+            "heading": "Next",
+            "url": "https://docs.sightpress.org/latest/how-to/set-up-text-messages/#next",
+            "text": "- [Add your mobile number](add-your-mobile-number.md)\n- [Get notifications by text](text-message-notifications.md)\n- Add a *Text messages* section to your Privacy Policy if your website was made before text messages were on.",
+            "needs": []
+        },
+        {
+            "id": "a2ba33103403",
+            "page": "Sign in with your phone",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/sign-in-with-your-phone/",
+            "text": "On websites with [text messages](set-up-text-messages.md), you can sign in with your confirmed mobile number instead\nof your email address. You still need your password.",
+            "needs": []
+        },
+        {
+            "id": "586dc920adf3",
+            "page": "Sign in with your phone",
+            "heading": "Sign in",
+            "url": "https://docs.sightpress.org/latest/how-to/sign-in-with-your-phone/#sign-in",
+            "text": "1. [Add your mobile number](add-your-mobile-number.md) and confirm it with the code, if you haven't.\n2. On the sign-in page, type your number in **Email address or mobile number**, the way you usually write it\n   (`07700 900123`) or with `+` and the country code.\n3. Type your password and choose **Sign in**.\n\nOnly a confirmed number works. After you change your number, the old one stops working at once. If you get \"Enter a\ncorrect email address or mobile number, and password.\", check both and try again. After 5 wrong tries, wait 15\nminutes: tries with your email address and with your number count together.",
+            "needs": []
+        },
+        {
+            "id": "2d3481d09896",
+            "page": "Sign in with your phone",
+            "heading": "Forgot your password?",
+            "url": "https://docs.sightpress.org/latest/how-to/sign-in-with-your-phone/#forgot-your-password",
+            "text": "1. Choose **Forgot your password?** on the sign-in page.\n2. Type your mobile number and choose **Send me a code**. The code comes by text and works for 10 minutes. It never\n   contains a link.\n3. Type the code, then choose a new password.\n\nWe then send an email to your address saying your password was changed after a code to your phone. If it wasn't you,\nreset your password with your email address straight away and tell the website's admins.\n\nPeople who manage the website (users, roles, settings, features or security) can only reset by email, and so can\neveryone while the website [asks for a code for important changes](confirm-important-changes.md). That way a stolen or\nrecycled phone number is not enough to take over an account.",
+            "needs": []
+        },
+        {
             "id": "deada3c54285",
             "page": "Start a database server",
             "heading": "",
@@ -1575,6 +2008,48 @@
             "url": "https://docs.sightpress.org/latest/how-to/test-with-assistive-technology/#report-what-you-found",
             "text": "For each problem, [report an accessibility barrier](report-a-problem.md): the task, your assistive technology and its\nversion, your browser and operating system, what happened and what you expected. Accessibility barriers are always\ntreated as bugs.\n\nYou never need to explain or prove a disability to take part.",
             "needs": []
+        },
+        {
+            "id": "299001141bfc",
+            "page": "Get notifications by text",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/how-to/text-message-notifications/",
+            "text": "Some notifications that a website sends by email can also come by text message, if you choose. The email always comes\ntoo.\n\n| Notification | When you get it |\n| --- | --- |\n| *When a page is sent to you for review* | Someone sends a page for review and you can publish it. |",
+            "needs": []
+        },
+        {
+            "id": "eeff10816bfc",
+            "page": "Get notifications by text",
+            "heading": "Choose them",
+            "url": "https://docs.sightpress.org/latest/how-to/text-message-notifications/#choose-them",
+            "text": "1. [Add your mobile number](add-your-mobile-number.md) if you haven't.\n2. On **My account → Mobile number and text messages**, tick **Send me text messages**.\n3. Tick the notifications you want, then choose **Save my choices**. You should see \"You will get the text messages\n   you chose.\"",
+            "needs": []
+        },
+        {
+            "id": "16e0be4ad87c",
+            "page": "Get notifications by text",
+            "heading": "What a text looks like",
+            "url": "https://docs.sightpress.org/latest/how-to/text-message-notifications/#what-a-text-looks-like",
+            "text": "> Riverside Library: a page is waiting for your review. Sign in to the admin panel to see it.\n\nTexts are short and in your language. They never contain the page's title or anything else from the page, and never a\nlink: sign in to the website yourself to see what happened.\n\nTexts are sent within a minute or two. If your organisation's monthly budget for texts is used up, notifications stop\nuntil next month, but emails keep coming.",
+            "needs": []
+        },
+        {
+            "id": "ba33a43610cc",
+            "page": "Get notifications by text",
+            "heading": "Stop them",
+            "url": "https://docs.sightpress.org/latest/how-to/text-message-notifications/#stop-them",
+            "text": "Untick **Send me text messages**, remove your number, or reply **STOP** to any of our texts. Reply **START** to get\nthem again.",
+            "needs": []
+        },
+        {
+            "id": "971b60e34dc9",
+            "page": "Get notifications by text",
+            "heading": "For admins",
+            "url": "https://docs.sightpress.org/latest/how-to/text-message-notifications/#for-admins",
+            "text": "**Site settings → Text messages** shows how much of the month's budget is used and the latest messages, with numbers\npartly hidden and without their text. **Send a test message** checks that texts arrive.",
+            "needs": [
+                "settings.manage"
+            ]
         },
         {
             "id": "0ab03baee918",
@@ -1651,7 +2126,7 @@
             "page": "Turn features on or off",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/how-to/turn-features-on-or-off/",
-            "text": "Some parts of SightPress are optional **features**, for example site search or visitor statistics. Each website has\nits own: an admin can turn a feature off for one website and keep it on for the others. Turning a feature off hides\neverything it adds, on the website and in the admin panel, and **keeps its data**, so turning it on again brings it\nback as it was.\n\nYou need to be an **admin** of the website. Editors, contributors and members don't see the *Features* screen.\n\n!!! note \"Optional features in this version\"\n\n    This version of SightPress has three optional features of its own: **Site search** (see\n    [Search your website](search-your-website.md)), **Analytics** (see\n    [See who visits your website](see-who-visits-your-website.md)), both on for new websites, and the\n    **AI assistant** (see [Use the AI assistant](use-the-ai-assistant.md)), off for new websites. Features installed\n    as extra packages show up on the screen too.",
+            "text": "Some parts of SightPress are optional **features**, for example site search or visitor statistics. Each website has\nits own: an admin can turn a feature off for one website and keep it on for the others. Turning a feature off hides\neverything it adds, on the website and in the admin panel, and **keeps its data**, so turning it on again brings it\nback as it was.\n\nYou need to be an **admin** of the website. Editors, contributors and members don't see the *Features* screen.\n\n!!! note \"Optional features in this version\"\n\n    This version of SightPress has three optional features of its own: **Site search** (see\n    [Search your website](search-your-website.md)), **Analytics** (see\n    [See who visits your website](see-who-visits-your-website.md)), both on for new websites, and the\n    **AI assistant** (see [Use the AI assistant](use-the-ai-assistant.md)), off for new websites. Features installed\n    as extra packages (modules) show up on the screen too: see [Add a module](add-a-module.md).",
             "needs": [
                 "analytics.view",
                 "assistant.manage",
@@ -1737,7 +2212,7 @@
             "page": "Update SightPress",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/",
-            "text": "This guide shows you how to move an installation to a newer version of SightPress, keeping every website, page,\naccount, menu and setting. It covers updates up to **0.4**.\n\n!!! warning \"Make a copy first\"\n\n    Before you update, make a copy of the `skeleton` folder, including the `sites` folder and the `.env` file, and of\n    every website's database if it isn't an SQLite file in `sites`. Without the `APP_SECRET` from `.env`, SightPress\n    can't open the websites' databases.",
+            "text": "This guide shows you how to move an installation to a newer version of SightPress, keeping every website, page,\naccount, menu and setting. It covers updates up to **0.5**.\n\n!!! warning \"Make a copy first\"\n\n    Before you update, make a copy of the `skeleton` folder, including the `sites` folder and the `.env` file, and of\n    every website's database if it isn't an SQLite file in `sites`. Without the `APP_SECRET` from `.env`, SightPress\n    can't open the websites' databases.",
             "needs": []
         },
         {
@@ -1784,6 +2259,24 @@
         },
         {
             "id": "18040030a06b",
+            "page": "Update SightPress",
+            "heading": "New in 0.5",
+            "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/#new-in-05",
+            "text": "Follow the same steps, including updating the websites' databases (`site:migrate --all`). After it:\n\n- **Nothing changes for your websites until you choose to.** Text messages are off, so nobody is asked for a mobile\n  number and the sign-in page still says \"Email address\". Two-step confirmation is off. No email or domain policy\n  applies. Custom roles, text messages and two-step confirmation are there to set up when you want them: see\n  [Create a custom role](create-a-custom-role.md), [Set up text messages](set-up-text-messages.md) and\n  [Confirm important changes](confirm-important-changes.md).\n- **Modules you install from now on start off** on the websites that already exist; an admin turns them on. See\n  [Add a module](add-a-module.md).\n\n`config/tenant.php` has new optional settings. Copy them from the new skeleton if Git can't merge them, or leave them\nout to keep the defaults. Each one is described in the [tenant configuration reference](../reference/tenant-config.md):\n\n- `domain_policy`, `email_policy` and `domain_registration`: keep websites and accounts to your organisation's domains\n  (see [Keep websites to your organisation](keep-websites-to-your-organisation.md));\n- `sms`: a text message provider every website may use, the monthly budget and the limits;\n- `two_step`: whether websites may, must or must not ask for a code before important changes.\n\n`.env.example` names `SMS_API_KEY` and `ASSISTANT_API_KEY`, for the keys of providers you set in `config/tenant.php`.",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "3dcc1ae88836",
+            "page": "Update SightPress",
+            "heading": "For module authors",
+            "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/#for-module-authors",
+            "text": "Modules need `sightpress/module-interface` `^0.5`. The events a module listens to moved from core into the contract,\nunder `SightPress\\Module\\Event` (for example `SightPress\\Module\\Event\\PageTransitioned`), and values that were enums\nare strings there. Change the `use` lines of your subscribers and remove any dependency on `sightpress/core` outside\n`require-dev`. The [module interface reference](../reference/module-interface.md) lists every event with its fields.",
+            "needs": []
+        },
+        {
+            "id": "7a2fa2200703",
             "page": "Update SightPress",
             "heading": "If something goes wrong",
             "url": "https://docs.sightpress.org/latest/how-to/update-sightpress/#if-something-goes-wrong",
@@ -2060,7 +2553,7 @@
             "page": "SightPress documentation",
             "heading": "Where to go next",
             "url": "https://docs.sightpress.org/latest/#where-to-go-next",
-            "text": "- To see what SightPress can do, with ideas for websites, read [What you can build](what-you-can-build.md).\n- The source code lives on GitHub in the [SightPress organisation](https://github.com/sightpress).\n- To run SightPress on your own computer, follow [Getting started](getting-started.md).\n- To make a theme of your own, follow the tutorial [Create a theme](tutorials/create-a-theme.md).\n- The [how-to guides](how-to/index.md) show you how to do one task at a time, such as\n  [creating a website](how-to/create-a-site.md) or [writing and publishing a page](how-to/write-and-publish-a-page.md).\n- The reference pages explain [roles and permissions](reference/roles-and-permissions.md), [blocks](reference/blocks.md),\n  [search and AI visibility](reference/search-and-ai.md) and the [command line tool](reference/command-line.md).",
+            "text": "- To see what SightPress can do, with ideas for websites, read [What you can build](what-you-can-build.md).\n- The source code lives on GitHub in the [SightPress organisation](https://github.com/sightpress).\n- To run SightPress on your own computer, follow [Getting started](getting-started.md).\n- To make a theme of your own, follow the tutorial [Create a theme](tutorials/create-a-theme.md).\n- To make a module of your own, follow the tutorial [Create a module](tutorials/create-a-module.md).\n- The [how-to guides](how-to/index.md) show you how to do one task at a time, such as\n  [creating a website](how-to/create-a-site.md) or [writing and publishing a page](how-to/write-and-publish-a-page.md).\n- The reference pages explain [roles and permissions](reference/roles-and-permissions.md), [blocks](reference/blocks.md),\n  [search and AI visibility](reference/search-and-ai.md) and the [command line tool](reference/command-line.md).",
             "needs": []
         },
         {
@@ -2068,7 +2561,7 @@
             "page": "Blocks",
             "heading": "",
             "url": "https://docs.sightpress.org/latest/reference/blocks/",
-            "text": "A page's content is a list of **blocks**, shown one after another. Each kind of block holds one kind of content, such\nas a heading, some text or a picture. SightPress comes with ten kinds. Add-on modules can add more.\n\nThis page lists every kind, its fields and their limits, and what SightPress checks for accessibility. To add, move\nand remove blocks, see [Write and publish a page](../how-to/write-and-publish-a-page.md).",
+            "text": "A page's content is a list of **blocks**, shown one after another. Each kind of block holds one kind of content, such\nas a heading, some text or a picture. SightPress comes with thirteen kinds. Add-on modules can add more.\n\nThis page lists every kind, its fields and their limits, and what SightPress checks for accessibility. To add, move\nand remove blocks, see [Write and publish a page](../how-to/write-and-publish-a-page.md).",
             "needs": []
         },
         {
@@ -2162,6 +2655,38 @@
         {
             "id": "8bb510545863",
             "page": "Blocks",
+            "heading": "Video or map from another site",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#video-or-map-from-another-site",
+            "text": "A YouTube or Vimeo video, or an OpenStreetMap map, shown from its link.\n\n| Field | Limits |\n| --- | --- |\n| **Link to the video or map** (required) | Up to 2,000 characters. Only YouTube, Vimeo and OpenStreetMap links are accepted. |\n| **Title** (required) | Up to 200 characters. Says what it shows, for example \"Map of the library\". |\n\n- Nothing loads from the other site until the reader presses **Show the video** or **Show the map**. Until then the\n  block says who the provider is and links to their privacy policy and to the original. Without JavaScript, the link\n  is there.\n- YouTube videos use YouTube's privacy-enhanced address, and Vimeo is asked not to track.",
+            "needs": []
+        },
+        {
+            "id": "59c306fcf770",
+            "page": "Blocks",
+            "heading": "List of pages",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#list-of-pages",
+            "text": "A list of pages that keeps itself up to date.\n\n| Field | Limits |\n| --- | --- |\n| **Which pages** (required) | The pages under a page, or the pages changed most recently. |\n| **Under the page at** | The address of a page of this website, such as `/services`. Leave it empty for the top-level pages. |\n| **How many pages, at most** | 1 to 12. |\n| **Show each page's summary** | A tick box. |\n\n- Shown as a list or as cards (choose under the block's look). Each page has one link.\n- It only lists pages everyone may read: members-only pages never appear, not even in the Markdown version, `llms.txt`\n  or search results. On a members-only website the list stays empty for now.\n- The home page and the page the list is on are never in the list.",
+            "needs": []
+        },
+        {
+            "id": "2bac0a2efe7c",
+            "page": "Blocks",
+            "heading": "Sign language video",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#sign-language-video",
+            "text": "A video in a sign language, such as British Sign Language (BSL), Irish Sign Language or International Sign.\n\n| Field | Limits |\n| --- | --- |\n| **Video** (required) | A video from the media library. |\n| **Title** (required) | Up to 200 characters, for example \"This page in British Sign Language\". |\n| **Sign language** (required) | The sign language the video is in. It is shown under the video. |\n| **Captions** (required) | A WebVTT captions file (`.vtt`), for people who don't sign or use another sign language. |\n| **Language of the captions** | A language tag such as `en-GB`. Leave it empty for the page's language. |\n| **Poster picture** | A picture shown before the video plays. |\n| **Transcript** | What is signed, as text. |",
+            "needs": []
+        },
+        {
+            "id": "5460e5f1dd67",
+            "page": "Blocks",
+            "heading": "The look of a block",
+            "url": "https://docs.sightpress.org/latest/reference/blocks/#the-look-of-a-block",
+            "text": "Under **Look of block n**, each block can have its own look. A choice changes only that block.\n\n| Choice | Values | Offered on |\n| --- | --- | --- |\n| **Style** | Named looks, for example *Rounded corners* for a picture or *Card* for a form. Modules can add more. | Image, Contact form, List of pages, and module blocks |\n| **Text alignment** | Start (default), Centre, End. Start and End flip in right-to-left languages. | Heading, Text, Call to action |\n| **Background** | None (default), Surface, Muted, Accent, in the theme's colours. | Text, Columns, Contact form |\n| **Width** | Text width (default), Wide, Full width. | Text, Image, Columns, Gallery, Video |\n| **Space above and below** | Medium (default), None, Small, Large. | Every block |\n| **Form layout**, **Form size**, **Button position** | Labels above or beside the fields; small, medium or large; button at the start, the end or full width. | Contact form |\n\n- Text always has enough contrast: backgrounds come from the theme, and SightPress checks every theme's colours.\n- Labels beside the fields go back above them when there isn't room, such as on a phone or when zoomed in.\n- Centred text gets a hint, because it is harder to read over more than a few lines.",
+            "needs": []
+        },
+        {
+            "id": "2030c89dc66f",
+            "page": "Blocks",
             "heading": "For developers",
             "url": "https://docs.sightpress.org/latest/reference/blocks/#for-developers",
             "text": "A module adds a kind of block with `$registrar->blockTypes()->add(MyBlock::class)`, a class that implements\n`SightPress\\Module\\Block\\BlockType`. Names of other modules' kinds need a vendor prefix, such as `acme.event_card`.\n\nThe fields come from the block's JSON Schema (draft 2020-12). Give every field a `title` (its label) and a\n`description` (its hint). Core enforces only these keywords, and refuses a schema with any other, so no rule is ever\nskipped without notice: `type`, `properties`, `required`, `additionalProperties`, `enum`, `minLength`, `maxLength`,\n`pattern`, `minimum`, `maximum`, `items`, `minItems`, `maxItems`, `format` and `contentMediaType: text/html` (rich\ntext, cleaned on save). The formats are `link`, `email`, `media`, `media-image`, `media-video`, `media-audio`,\n`media-document` and `media-captions`.\n\nCore's own kinds are named `heading`, `rich_text`, `image`, `gallery`, `video`, `audio`, `file_download`,\n`call_to_action`, `columns` and `contact_form`.",
@@ -2202,7 +2727,7 @@
             "page": "Command line reference",
             "heading": "site:create",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#sitecreate",
-            "text": "```text\nsite:create [<slug>] [--domain=] [--db= | --db-engine= --db-path= | --db-host= --db-port= --db-name= --db-user= --db-password=]\n            [--owner-type=] [--locale=] [--admin-email=] [--admin-first-name=] [--admin-last-name=]\n            [--name=] [--timezone=] [--url=] [--create-db] [--with-demo-content] [--without=]\n```\n\nCreates a website: its database tables, its roles, its first admin, six starter pages, its menus and its logo, icon\nand share image. It prints the first admin's setup code. Nothing is created if something is wrong.\n[Create a website](../how-to/create-a-site.md) explains every option. `--without=` names optional features (module\nids, separated by commas) the website starts with off.",
+            "text": "```text\nsite:create [<slug>] [--domain=] [--db= | --db-engine= --db-path= | --db-host= --db-port= --db-name= --db-user= --db-password=]\n            [--owner-type=] [--locale=] [--admin-email=] [--admin-first-name=] [--admin-last-name=]\n            [--name=] [--timezone=] [--url=] [--create-db] [--with-demo-content] [--without=]\n            [--domain-registration=tenant|off]\n```\n\nCreates a website: its database tables, its roles, its first admin, six starter pages, its menus and its logo, icon\nand share image. It prints the first admin's setup code. Nothing is created if something is wrong.\n[Create a website](../how-to/create-a-site.md) explains every option. `--without=` names optional features (module\nids, separated by commas) the website starts with off. `--domain-registration=off` turns your organisation's\nregistration with an organisation email address off for this website. When your installation has a `domain_policy`\nor an `email_policy`, the domains and the first admin's address must follow it (see\n[Keep websites to your organisation](../how-to/keep-websites-to-your-organisation.md)).",
             "needs": [
                 "settings.manage"
             ]
@@ -2212,13 +2737,23 @@
             "page": "Command line reference",
             "heading": "site:user:create-admin",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#siteusercreate-admin",
-            "text": "```text\nsite:user:create-admin <slug> --email= --first-name= --last-name= [--url=]\n```\n\nCreates an admin on a website and prints the setup code they choose their password with. For an admin who hasn't\nchosen a password yet, it prints a new code, and the old one stops working. Someone who can already sign in is\nrefused: they use \"Forgot your password?\" instead.",
+            "text": "```text\nsite:user:create-admin <slug> --email= --first-name= --last-name= [--url=] [--phone=]\n```\n\nCreates an admin on a website and prints the setup code they choose their password with. For an admin who hasn't\nchosen a password yet, it prints a new code, and the old one stops working. Someone who can already sign in is\nrefused: they use \"Forgot your password?\" instead. `--phone=` gives them a confirmed mobile number (for text\nmessages and two-step confirmation): you vouch that it is theirs, so no code is sent.",
             "needs": [
                 "settings.manage"
             ]
         },
         {
             "id": "d29cf14344cc",
+            "page": "Command line reference",
+            "heading": "site:user:phone:reset",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#siteuserphonereset",
+            "text": "```text\nsite:user:phone:reset <slug> <email>\n```\n\nRemoves the mobile number of an account, for example after its owner lost their phone, so they can add a new one. It\nworks whatever two-step confirmation says. See [Lost your phone](../how-to/lost-your-phone.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "c8e9e516ebf2",
             "page": "Command line reference",
             "heading": "Turn websites on and off",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#turn-websites-on-and-off",
@@ -2228,17 +2763,17 @@
             ]
         },
         {
-            "id": "c8e9e516ebf2",
+            "id": "1f51a745a1b3",
             "page": "Command line reference",
             "heading": "Look after websites",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#look-after-websites",
-            "text": "| Command | What it does |\n| --- | --- |\n| `site:list` | Lists the websites: status, domains, language, time zone and database (engine, host and name only). |\n| `site:migrate <slug>` or `site:migrate --all` | Updates a website's database tables after an update of SightPress. `--all` updates every website that isn't deleted; one failure doesn't stop the others. |\n| `site:db:change <slug> [--db= or the --db-… parts] [--migrate]` | Points a **disabled** website at another database, asked for in parts like in `site:create`. **Nothing is copied**: move the data first. The new database must be up to date, or add `--migrate`. If anything fails, the website keeps its old database. |\n| `site:seo:check <slug>` | Checks what search engines will find: titles longer than 60 characters, missing or too long descriptions, pages left out of search and why. Ends with an error when two pages have the same title. See [Search and AI visibility](search-and-ai.md). |\n\n| `system:check [--site=<slug>] [--probe-url=<address>] [--recommend]` | Lists the server's upload and input limits, the largest file of each kind that can be uploaded, and the settings to change. Ends with an error when something must be fixed. `--site` checks one website's limits and counts the uploads refused for it. `--probe-url` sends test requests to find the web server's real limit. `--recommend` prints the server values the limits need. Run it with `docker compose exec php` so it reads the same settings as the website. See [Ch",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:list` | Lists the websites: status, domains, language, time zone and database (engine, host and name only). |\n| `site:migrate <slug>` or `site:migrate --all` | Updates a website's database tables after an update of SightPress. `--all` updates every website that isn't deleted; one failure doesn't stop the others. |\n| `site:db:change <slug> [--db= or the --db-… parts] [--migrate]` | Points a **disabled** website at another database, asked for in parts like in `site:create`. **Nothing is copied**: move the data first. The new database must be up to date, or add `--migrate`. If anything fails, the website keeps its old database. |\n| `site:seo:check <slug>` | Checks what search engines will find: titles longer than 60 characters, missing or too long descriptions, pages left out of search and why. Ends with an error when two pages have the same title. See [Search and AI visibility](search-and-ai.md). |\n\n| `system:check [--site=<slug>] [--probe-url=<address>] [--recommend]` | Lists the server's upload and input limits, the largest file of each kind that can be uploaded, and the settings to change. Ends with an error when something must be fixed. `--site` checks one website's limits and counts the uploads refused for it. `--probe-url` sends test requests to find the web server's real limit. `--recommend` prints the server values the limits need. It also notes websites and accounts outside a `domain_policy` or `email_policy` that was ma",
             "needs": [
                 "settings.manage"
             ]
         },
         {
-            "id": "1f51a745a1b3",
+            "id": "599849c8e07e",
             "page": "Command line reference",
             "heading": "Languages",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#languages",
@@ -2248,7 +2783,7 @@
             ]
         },
         {
-            "id": "5559c6a17fe7",
+            "id": "566582011da0",
             "page": "Command line reference",
             "heading": "schedule:run",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#schedulerun",
@@ -2258,7 +2793,7 @@
             ]
         },
         {
-            "id": "566582011da0",
+            "id": "b871576016ee",
             "page": "Command line reference",
             "heading": "Features",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#features",
@@ -2268,7 +2803,17 @@
             ]
         },
         {
-            "id": "b871576016ee",
+            "id": "abe79c1ab945",
+            "page": "Command line reference",
+            "heading": "Roles",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#roles",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:role:list <slug>` | Lists the website's roles: name, label, how many people have each one and its permissions. |\n| `site:role:create <slug> <name> [--label=] [--permissions=a,b]` | Creates a role. The name is lower-case letters, digits and `_`; the label defaults to the name. |\n| `site:role:grant <slug> <role> <permission>` | Gives a role one more permission. |\n| `site:role:revoke <slug> <role> <permission>` | Takes a permission away from a role. |\n| `site:role:delete <slug> <role>` | Deletes a role nobody has. |\n\nThe rules of the **Roles** screen apply: Admin and Member can't be changed, the sign-up role only gets permissions\nthat are safe on sign-up, and only permissions of features that are on can be given. Changes are written to the\naudit log. See [Create a custom role](../how-to/create-a-custom-role.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "7885af705e36",
             "page": "Command line reference",
             "heading": "Site search",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#site-search",
@@ -2278,7 +2823,7 @@
             ]
         },
         {
-            "id": "abe79c1ab945",
+            "id": "bd48f588b3e6",
             "page": "Command line reference",
             "heading": "Analytics",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#analytics",
@@ -2288,7 +2833,7 @@
             ]
         },
         {
-            "id": "7885af705e36",
+            "id": "4c92e481b257",
             "page": "Command line reference",
             "heading": "AI assistant",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#ai-assistant",
@@ -2298,7 +2843,17 @@
             ]
         },
         {
-            "id": "bd48f588b3e6",
+            "id": "013befba9752",
+            "page": "Command line reference",
+            "heading": "Text messages",
+            "url": "https://docs.sightpress.org/latest/reference/command-line/#text-messages",
+            "text": "| Command | What it does |\n| --- | --- |\n| `site:sms:set <slug> --provider=<id> [--account=] [--sender=] [--region=] [--budget=] [--key-stdin]` | Sets up the website's text message provider (`twilio` or `vonage`, or a module's). With `--key-stdin` it reads the key from standard input: `printf %s \"$KEY\" \\| bin/sightpress site:sms:set …`. `--budget` is message parts a month (0 = no limit). |\n| `site:sms:remove <slug>` | Forgets the website's provider and key. |\n| `site:sms:enable <slug>` | Turns text messages on. Refused until a provider is set up. |\n| `site:sms:disable <slug>` | Turns text messages off. Numbers on accounts and the message log are kept. |\n| `site:sms:test <slug> --to=<number>` | Sends a test message and says what happened. The number is only shown partly hidden. |\n\nSee [Set up text messages](../how-to/set-up-text-messages.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "01df99a46768",
             "page": "Command line reference",
             "heading": "Branding",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#branding",
@@ -2308,7 +2863,7 @@
             ]
         },
         {
-            "id": "4c92e481b257",
+            "id": "d75ce85b8132",
             "page": "Command line reference",
             "heading": "The site registry",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#the-site-registry",
@@ -2318,7 +2873,7 @@
             ]
         },
         {
-            "id": "013befba9752",
+            "id": "cc1833133621",
             "page": "Command line reference",
             "heading": "Files and cloud storage",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#files-and-cloud-storage",
@@ -2328,7 +2883,7 @@
             ]
         },
         {
-            "id": "01df99a46768",
+            "id": "312dbf4d5a57",
             "page": "Command line reference",
             "heading": "Themes",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#themes",
@@ -2338,7 +2893,7 @@
             ]
         },
         {
-            "id": "d75ce85b8132",
+            "id": "79e894cb59e4",
             "page": "Command line reference",
             "heading": "theme:list",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#themelist",
@@ -2348,7 +2903,7 @@
             ]
         },
         {
-            "id": "cc1833133621",
+            "id": "1fe64e756e32",
             "page": "Command line reference",
             "heading": "theme:validate",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#themevalidate",
@@ -2358,7 +2913,7 @@
             ]
         },
         {
-            "id": "312dbf4d5a57",
+            "id": "56d1a68a2cb9",
             "page": "Command line reference",
             "heading": "theme:preview",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#themepreview",
@@ -2368,7 +2923,7 @@
             ]
         },
         {
-            "id": "79e894cb59e4",
+            "id": "20767fa0a1d7",
             "page": "Command line reference",
             "heading": "site:theme:apply",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#sitethemeapply",
@@ -2378,7 +2933,7 @@
             ]
         },
         {
-            "id": "1fe64e756e32",
+            "id": "49455add3163",
             "page": "Command line reference",
             "heading": "theme:publish-assets",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#themepublish-assets",
@@ -2388,7 +2943,7 @@
             ]
         },
         {
-            "id": "56d1a68a2cb9",
+            "id": "a11406367e90",
             "page": "Command line reference",
             "heading": "cache:clear",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#cacheclear",
@@ -2398,7 +2953,7 @@
             ]
         },
         {
-            "id": "20767fa0a1d7",
+            "id": "569b7377d9de",
             "page": "Command line reference",
             "heading": "Database addresses",
             "url": "https://docs.sightpress.org/latest/reference/command-line/#database-addresses",
@@ -2406,6 +2961,216 @@
             "needs": [
                 "settings.manage"
             ]
+        },
+        {
+            "id": "40f278e8d328",
+            "page": "Module interface reference",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/",
+            "text": "<!-- Generated by tools/module-interface-reference.php from module-interface. Don't edit by hand. -->\n\nThis page lists what a SightPress module can use: the `sightpress/module-interface` package (0.5.0). A module\ndepends on this package only, never on `sightpress/core`. To install one, see [Add a module](../how-to/add-a-module.md). To build one step by step, follow the\n[Create a module](../tutorials/create-a-module.md) tutorial.",
+            "needs": []
+        },
+        {
+            "id": "20c4d52513c3",
+            "page": "Module interface reference",
+            "heading": "What a module registers",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#what-a-module-registers",
+            "text": "A module implements `ModuleInterface`: `manifest()` says who it is, and `register(ModuleRegistrar $registrar)` adds\nwhat it brings. Each method of the registrar gives one kind of thing:\n\n| Method | What it adds |\n| --- | --- |\n| `services()` | Adds services to the site's service container. |\n| `routes()` | Adds HTTP routes. |\n| `blockTypes()` | Adds block types that editors can use in page content, variants of existing block types, and icons. |\n| `permissions()` | Adds permissions to the site's permission catalogue. |\n| `migrations()` | Adds the module's database migrations. |\n| `adminMenu()` | Adds entries to the admin navigation. |\n| `views()` | Adds a folder of templates under a namespace, so templates can refer to them as `@<namespace>/<file>`. |\n| `subscribers()` | Adds event listeners. |\n| `commands()` | Adds commands to the `bin/sightpress` console. |\n| `settings()` | Adds site settings. |\n| `search()` | Site search: document providers and an optional back-end (since 0.4). |\n| `dashboard()` | Admin dashboard widgets (since 0.4). |\n| `assistant()` | AI assistant providers and tasks (since 0.4). |\n| `seo()` | Public pages for the sitemap and `llms.txt` (since 0.5). |\n| `sms()` | Text message (SMS) providers (since 0.5). |\n| `schedule()` | Background work for `schedule:run` (since 0.5). |\n| `translations()` | Translations of the module's interface text (since 0.5). |",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "2a05e2c01f15",
+            "page": "Module interface reference",
+            "heading": "Events",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#events",
+            "text": "A module listens to an event with `$registrar->subscribers()`. Events are in `SightPress\\Module\\Event`; values that core keeps as enums travel as strings.\n\n| Event | When | Fields |\n| --- | --- | --- |\n| `AccountChanged` | Details of an account changed (by the person or by an admin). | `fields` (array), `userId` (int), `changedBy` (?int) |\n| `AccountRegistered` | Someone signed up and confirmed their email address. | `userId` (int), `role` (string), `refusedRole` (?string) |\n| `AnalyticsDataDeleted` | The site's visit statistics were deleted. | `actorId` (?int) |\n| `AssistantUsed` | The AI assistant answered (or failed to answer) a request. | `actorId` (?int), `task` (string), `provider` (string), `model` (string), `inputTokens` (int), `outputTokens` (int), `outcome` (string) |\n| `LocaleRemoved` | A language was removed from the site. | `locale` (string), `actorId` (?int) |\n| `MediaChanged` | Details of a media item changed. | `fields` (array), `mediaId` (int), `changedBy` (?int) |\n| `MediaDeleted` | A media item and its files were deleted. | `mediaId` (int), `originalName` (string), `deletedBy` (?int) |\n| `MediaUploaded` | A file was added to the media library. | `mediaId` (int), `key` (string), `kind` (string), `uploadedBy` (?int) |\n| `MenuChanged` | An entry of one of the site's menus was added, removed, moved or changed. | `menu` (string), `change` (string), `itemId` (int), `pageId` (?int), `url` (?string), `actorId` (?int) |\n| `PageCloned` | A page was copied as a new dr",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "ccbe44196202",
+            "page": "Module interface reference",
+            "heading": "Every part of the contract",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#every-part-of-the-contract",
+            "text": "By area (namespace under `SightPress\\Module`).",
+            "needs": []
+        },
+        {
+            "id": "ce146a292e25",
+            "page": "Module interface reference",
+            "heading": "Access",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#access",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `Permission` | class | Something a role can be allowed to do, for example `page.publish`. |\n| `Viewer` | class | Who is making the request: their account id and their permissions on this site. |",
+            "needs": []
+        },
+        {
+            "id": "1218240c38e8",
+            "page": "Module interface reference",
+            "heading": "Admin",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#admin",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `AdminMenuItem` | class | One entry in the admin navigation, linking to a named route. |",
+            "needs": []
+        },
+        {
+            "id": "2fd0a473293f",
+            "page": "Module interface reference",
+            "heading": "Assistant",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#assistant",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `AssistantConnection` | class | How a provider reaches its service for one site: the site's (or tenant's) API key and, for custom endpoints, a base URL. |\n| `AssistantContext` | interface | What an assistant task may need to know about the request it answers. |\n| `AssistantFailure` | enum | Why an assistant call failed. |\n| `AssistantImage` | class | An image sent with a message, for providers and models that can see images (alt text suggestions). |\n| `AssistantMessage` | class | One message of an `AssistantRequest`. |\n| `AssistantProvider` | interface | An AI service the optional assistant can use, with the site's own key (bring your own key). |\n| `AssistantRequest` | class | Everything a provider sends to its model for one answer. |\n| `AssistantResponse` | class | A model's answer, as the provider got it. |\n| `AssistantRole` | enum | Who a message in an `AssistantRequest` comes from. |\n| `AssistantSuggestion` | class | A checked answer, ready to show with *Insert*, *Copy*, *Try again* and *Discard*. |\n| `AssistantTask` | interface | One thing the assistant can help with, for example a page summary or alt text for an image. |\n| `ProviderCapabilities` | class | What a provider's model can do besides text. |\n| `StreamingAssistantProvider` | interface | A provider that can also stream an answer as it is written. |\n| `TokenUsage` | class | Tokens a provider counted for one answer, as it reports them. |",
+            "needs": []
+        },
+        {
+            "id": "fd80014dd6e7",
+            "page": "Module interface reference",
+            "heading": "Audit",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#audit",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `AuditRecord` | class | One line of the site's audit log, written by a module through `AuditTrail`. |\n| `AuditTrail` | interface | Writes to the site's audit log, which admins read on the Audit log screen. |",
+            "needs": [
+                "audit.view"
+            ]
+        },
+        {
+            "id": "485e7a23be8b",
+            "page": "Module interface reference",
+            "heading": "Block",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#block",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `A11yIssue` | class | An accessibility problem found in one block's data by an `A11yRule`. |\n| `A11yRule` | interface | An accessibility check on one block's data, for example \"an image needs alt text or must be marked decorative\" or \"a video needs a captions track\". |\n| `A11ySeverity` | enum | How serious an accessibility issue found in block data is. |\n| `BlockContext` | interface | What a block type may need to know about where it is rendered. |\n| `BlockIcon` | class | An icon that blocks with icons can show, such as a brand logo in `social_links`. |\n| `BlockOption` | enum | Shared options a block type can offer editors, stored in each block's own data and drawn by core as classes on the block's wrapper (never inline styles), which the theme styles through its tokens. |\n| `BlockStyles` | class | The looks and shared options a block type offers (`StyledBlockType::styles()`). |\n| `BlockType` | interface | A kind of content block (heading, image, video, call to action …) that editors can put on a page. |\n| `BlockVariant` | class | A named look of a block type, such as `card` for a quote. |\n| `StyledBlockType` | interface | A block type with variants or shared options (since 0.5). |",
+            "needs": []
+        },
+        {
+            "id": "9fdde67acf4c",
+            "page": "Module interface reference",
+            "heading": "Console",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#console",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `Command` | interface | A `bin/sightpress` console command added by a module. |\n| `CommandInput` | interface | The parsed command line, as declared by `Command::parameters()`. |\n| `CommandOutput` | interface | Where a command writes its messages. |\n| `CommandParameter` | class | One argument, option or flag of a console command, shown in the command's help and used as a question when someone runs the command at a terminal. |\n| `CommandParameterType` | enum | How a command parameter is given on the command line. |",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "dd54c5a7bded",
+            "page": "Module interface reference",
+            "heading": "Dashboard",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#dashboard",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `DashboardContext` | interface | What a dashboard widget may need to know about the person looking at the dashboard. |\n| `DashboardWidget` | interface | A box on the admin dashboard, for example \"Last 7 days\" from analytics. |",
+            "needs": []
+        },
+        {
+            "id": "97d42baddef7",
+            "page": "Module interface reference",
+            "heading": "Exception",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#exception",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `AssistantException` | class | Thrown by assistant providers and tasks when a call can't give a usable suggestion. |\n| `InvalidValueException` | class | Thrown when a value object of this package is built with a value that breaks one of its rules. |\n| `SmsException` | class | A text message provider call failed. |",
+            "needs": []
+        },
+        {
+            "id": "579ca8a346cb",
+            "page": "Module interface reference",
+            "heading": "Http",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#http",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `AdminScreen` | class | A module's admin screen, rendered by `Screens::admin()` inside the admin panel: core draws the navigation, skip link, notices and the `<h1>` with the title; the module's template draws only what goes under it. |\n| `PublicScreen` | class | A module's public page, rendered by `Screens::public()` in the site's theme, with its menus, skip link, language links and footer; the module's template draws the main content, starting with its `<h1>`. |\n| `Screens` | interface | Renders a module's screens the way core renders its own, so they share the admin panel or the site's theme, its accessibility features and its security headers. |",
+            "needs": []
+        },
+        {
+            "id": "af6dbb000c76",
+            "page": "Module interface reference",
+            "heading": "Migration",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#migration",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `MigrationProvider` | interface | Tells core where a module's database migrations are. |",
+            "needs": []
+        },
+        {
+            "id": "70e6e696b232",
+            "page": "Module interface reference",
+            "heading": "Module",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#module",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `ModuleInterface` | interface | A SightPress module: core's own features and third-party extensions alike. |\n| `ModuleManifest` | class | What core needs to know about a module before it registers anything: who it is, its version, which modules it needs and whether it can be turned off. |\n| `ModuleRegistrar` | interface | Passed to `ModuleInterface::register()`: one typed sub-registrar per kind of thing a module can add. |\n| `ModuleRequirement` | class | One module that another module needs, with the versions it works with. |",
+            "needs": []
+        },
+        {
+            "id": "308c4f773749",
+            "page": "Module interface reference",
+            "heading": "Notification",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#notification",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `NotificationChannel` | enum | How a notification reaches a person. |",
+            "needs": []
+        },
+        {
+            "id": "e8417b93e122",
+            "page": "Module interface reference",
+            "heading": "Registrar",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#registrar",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `AdminMenuRegistrar` | interface | Adds entries to the admin navigation. |\n| `AssistantRegistrar` | interface | Adds providers and tasks to the optional AI assistant. |\n| `BlockTypeRegistrar` | interface | Adds block types that editors can use in page content, variants of existing block types, and icons. |\n| `CommandRegistrar` | interface | Adds commands to the `bin/sightpress` console. |\n| `DashboardRegistrar` | interface | Adds widgets to the admin dashboard. |\n| `MigrationRegistrar` | interface | Adds the module's database migrations. |\n| `PermissionRegistrar` | interface | Adds permissions to the site's permission catalogue. |\n| `RouteRegistrar` | interface | Adds HTTP routes. |\n| `ScheduleRegistrar` | interface | Adds background work that `schedule:run` does for each site where the module is on (since 0.5). |\n| `SearchRegistrar` | interface | Adds content to site search, or replaces the search back-end. |\n| `SeoRegistrar` | interface | Adds a module's public pages to the sitemap and `llms.txt` (since 0.5). |\n| `ServiceRegistrar` | interface | Adds services to the site's service container. |\n| `SettingRegistrar` | interface | Adds site settings. |\n| `SmsRegistrar` | interface | Adds a text message (SMS) provider that site admins can choose (since 0.5). |\n| `SubscriberRegistrar` | interface | Adds event listeners. |\n| `TranslationRegistrar` | interface | Adds a module's translations of its interface text (since 0.5). |\n| `",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "280e189f1951",
+            "page": "Module interface reference",
+            "heading": "Routing",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#routing",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `Route` | class | One HTTP route: a path, the methods it answers and the PSR-15 handler that answers it. |",
+            "needs": []
+        },
+        {
+            "id": "2b86739e5371",
+            "page": "Module interface reference",
+            "heading": "Schedule",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#schedule",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `ScheduleRun` | class | One run of `schedule:run` for one site, passed to every `ScheduledJob`. |\n| `ScheduledJob` | interface | Work a module does in the background, on every run of `schedule:run` (the operator runs it every minute, from cron or the scheduler container), once per site where the module is on. |",
+            "needs": []
+        },
+        {
+            "id": "b1b33334f51a",
+            "page": "Module interface reference",
+            "heading": "Search",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#search",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `SearchBackend` | interface | Stores the search index of one site and answers queries. |\n| `SearchDocument` | class | One searchable thing in one locale, for example one translation of a page, as plain text. |\n| `SearchDocumentProvider` | interface | Turns a module's content into `SearchDocument`s, so site search can find it. |\n| `SearchHit` | class | One result: the document that matched, how well, and which words in it matched. |\n| `SearchIndexStatus` | class | How many documents a back-end holds in one locale, and when it last indexed one. |\n| `SearchPerformed` | class | Event dispatched by core after each site search, so other modules (analytics) can count searches. |\n| `SearchQuery` | class | What a visitor searched for, in which locale, what they may see, and which page of results they want. |\n| `SearchResults` | class | One page of results for a `SearchQuery`, best first. |\n| `SearchVisibility` | enum | Who may find a document in site search. |",
+            "needs": []
+        },
+        {
+            "id": "5a2befe9aa0e",
+            "page": "Module interface reference",
+            "heading": "Seo",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#seo",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `SeoEntry` | class | One public page of a module, as search engines and AI readers should see it: listed in the sitemap and in `llms.txt`, and, when the module renders it with `\\SightPress\\Module\\Http\\PublicScreen`, described in its `<head>` (description, canonical address, other languages, schema.org JSON-LD). |\n| `SeoProvider` | interface | Lists a module's public pages for the sitemap and `llms.txt`. |",
+            "needs": []
+        },
+        {
+            "id": "2fdf4b48103f",
+            "page": "Module interface reference",
+            "heading": "Setting",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#setting",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `Setting` | class | A per-site setting of a module. |\n| `SettingType` | enum | The kind of value a setting holds; core picks the form control from it. |\n| `SettingValues` | interface | Reads the site's settings, typed as their `SettingType` says, with the registered default when none was saved. |",
+            "needs": []
+        },
+        {
+            "id": "7692ce261b6d",
+            "page": "Module interface reference",
+            "heading": "Site",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#site",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `SiteInfo` | class | The site a request or command works on. |",
+            "needs": []
+        },
+        {
+            "id": "9d92b035a70e",
+            "page": "Module interface reference",
+            "heading": "Sms",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#sms",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `PhoneLineType` | enum | What kind of line a number is, from a provider's lookup. |\n| `PhoneLookupResult` | class | What a provider knows about a number before anything is sent to it. |\n| `PhoneNumber` | class | A phone number in E.164 form (`+447700900123`). |\n| `SmsCapabilities` | class | What a provider can do, so core only offers what works. |\n| `SmsConnection` | class | A site's account with a provider. |\n| `SmsDeliveryStatus` | enum |  |\n| `SmsEncoding` | enum | How a text message is encoded, which sets how many characters fit in one message part. |\n| `SmsFailure` | enum | Why a provider call failed, so core can tell people in plain language what to do. |\n| `SmsMessage` | class | One text message to send. |\n| `SmsOptChange` | class | Someone replied STOP (or START) to the site's messages. |\n| `SmsProvider` | interface | A text message (SMS) service a site can send through. |\n| `SmsPurpose` | enum | Why a text message is sent. |\n| `SmsReceipt` | class | A provider's report that a message was delivered, or that it failed. |\n| `SmsResult` | class | The provider accepted a message for delivery. |\n| `SmsWebhooks` | interface | A provider that tells the site about delivery and replies by calling a webhook. |",
+            "needs": []
+        },
+        {
+            "id": "ba641e0bf90e",
+            "page": "Module interface reference",
+            "heading": "Text",
+            "url": "https://docs.sightpress.org/latest/reference/module-interface/#text",
+            "text": "| Name | Kind | What it is |\n| --- | --- | --- |\n| `Message` | class | Text for a person to read, translated by core into the reader's language when it is shown: screen titles and notices, for example. |",
+            "needs": []
         },
         {
             "id": "37c6ada88ae3",
@@ -2459,6 +3224,14 @@
         },
         {
             "id": "5c4fa00c2570",
+            "page": "Roles and permissions",
+            "heading": "Custom roles",
+            "url": "https://docs.sightpress.org/latest/reference/roles-and-permissions/#custom-roles",
+            "text": "Admins (or anyone whose role may **Manage roles**) make their own roles on the **Roles** screen: a name, then the\npermissions to tick, grouped by area, each with what it allows. Editor and Contributor can be changed too. Admin\nalways has every permission and Member never has one, so those two can't be changed. Permissions of features that\nare off aren't listed, and roles keep them. Nobody can take **Manage roles** away from their own role, and a role\nthat someone has can't be deleted. Step by step: [Create a custom role](../how-to/create-a-custom-role.md).",
+            "needs": []
+        },
+        {
+            "id": "2b5290a0c1cf",
             "page": "Roles and permissions",
             "heading": "For developers",
             "url": "https://docs.sightpress.org/latest/reference/roles-and-permissions/#for-developers",
@@ -2558,6 +3331,92 @@
             ]
         },
         {
+            "id": "e90de9c94c22",
+            "page": "Tenant configuration reference",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/reference/tenant-config/",
+            "text": "`config/tenant.php` holds the settings for **every website** of a SightPress installation. It returns a PHP array.\nEvery key is optional: a missing key gets the default shown here. SightPress checks the file each time it starts, and\na value it can't use stops it with a message that names the key and says what it should be.\n\nKeys and passwords never go in this file. They come from environment variables (in the `skeleton` folder, from\n`.env`), which are listed at the end.",
+            "needs": []
+        },
+        {
+            "id": "33ac0817fcf3",
+            "page": "Tenant configuration reference",
+            "heading": "Where things are",
+            "url": "https://docs.sightpress.org/latest/reference/tenant-config/#where-things-are",
+            "text": "| Key | Default | What it is |\n| --- | --- | --- |\n| `registry.path` | `config/sites.php` | The site registry: every website, its domains and its database. Only `bin/sightpress site:*` commands write it. |\n| `sites_dir` | `sites` | Where websites keep their files, when they are stored locally. |\n| `cache_dir` | `var/cache/<APP_ENV>` | The cache. `bin/sightpress cache:clear` empties it. |\n| `log.path` | `var/log/<APP_ENV>.log` | The log file. A stream such as `php://stderr` also works. |\n| `log.level` | `notice` | The least important messages that are written: `debug`, `info`, `notice`, `warning`, `error` … |\n| `session.path` | `var/sessions` | Where sign-in sessions are kept. |\n| `session.idle_timeout` | `7200` | Seconds without a request after which someone is signed out (at least 60). |",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "020a4b80b29f",
+            "page": "Tenant configuration reference",
+            "heading": "Language, time and email",
+            "url": "https://docs.sightpress.org/latest/reference/tenant-config/#language-time-and-email",
+            "text": "| Key | Default | What it is |\n| --- | --- | --- |\n| `admin.default_locale` | `en-GB` | The language of the admin panel when nobody chose one. |\n| `timezone` | `UTC` | The time zone of new websites, as a name such as `Europe/London`. |\n| `mail.from` | `no-reply@localhost` | The address emails come from. |\n| `mail.from_name` | `SightPress` | The name emails come from. |",
+            "needs": []
+        },
+        {
+            "id": "3cf4df3484f6",
+            "page": "Tenant configuration reference",
+            "heading": "Features and themes",
+            "url": "https://docs.sightpress.org/latest/reference/tenant-config/#features-and-themes",
+            "text": "| Key | Default | What it is |\n| --- | --- | --- |\n| `modules.defaults` | `[]` | Which optional features (modules) new websites start with, for example `['analytics' => false]`. Websites that already exist keep their choice. |\n| `modules.locked` | `[]` | Features turned on (`true`) or off (`false`) for every website; admins see \"Set by your organisation\". An unknown id stops SightPress. |\n| `themes.allowed` | `null` | The theme ids websites may use; `null` means every installed theme. |\n| `themes.default` | `default` | The theme of new websites. It must be allowed. |\n\nSee [Turn features on or off](../how-to/turn-features-on-or-off.md), [Add a module](../how-to/add-a-module.md) and\n[Install and change a theme](../how-to/install-and-change-a-theme.md).",
+            "needs": []
+        },
+        {
+            "id": "79c984c7a367",
+            "page": "Tenant configuration reference",
+            "heading": "Files and uploads",
+            "url": "https://docs.sightpress.org/latest/reference/tenant-config/#files-and-uploads",
+            "text": "| Key | Default | What it is |\n| --- | --- | --- |\n| `uploads.proxy_body_limit` | none | The web server's request size limit, which PHP can't read. `bin/sightpress system:check` compares it with the other limits. |\n| `uploads.temp_path` | `var/uploads` | Where large files wait while their parts arrive. Never under `public/`; several web servers must share it. |\n| `uploads.max_chunked_bytes` | `5G` | The largest file that can be sent in parts. |\n| `media.limits` | `[]` | The largest file of each kind for every website, for example `['image' => '20M']`, and under `max` the most a website's own limit can be. |\n\nSee [Choose upload limits](../how-to/choose-upload-limits.md) and [Upload large files](../how-to/upload-large-files.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "dec40d60f25a",
+            "page": "Tenant configuration reference",
+            "heading": "Your organisation's domains",
+            "url": "https://docs.sightpress.org/latest/reference/tenant-config/#your-organisations-domains",
+            "text": "| Key | Default | What it is |\n| --- | --- | --- |\n| `domain_policy` | `any` | `['subdomain_of' => 'example.org']`: websites must use that domain or a name under it. |\n| `email_policy` | `any` | `['domains' => ['example.org']]`: only addresses at exactly these domains can be invited, sign up or change to a new address. |\n| `domain_registration` | `off` | On members-only websites, people at these domains may make their own account even when sign-up is off: `'on'` (the domains of `email_policy`) or `['domains' => [...]]`. Each website can turn it off. |\n\nMaking a policy stricter removes nothing: `bin/sightpress system:check` lists what is outside it. See\n[Keep websites to your organisation](../how-to/keep-websites-to-your-organisation.md).",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "88c131745abf",
+            "page": "Tenant configuration reference",
+            "heading": "AI assistant",
+            "url": "https://docs.sightpress.org/latest/reference/tenant-config/#ai-assistant",
+            "text": "| Key | Default | What it is |\n| --- | --- | --- |\n| `assistant.provider` | none | A provider every website may use without a key of its own. Its key is `ASSISTANT_API_KEY`. |\n| `assistant.model` | none | The model of that provider. |\n| `assistant.base_url` | none | The address of a provider with a custom endpoint. |\n| `assistant.site_keys` | `true` | Whether a website's admins may enter a key of their own. |\n| `assistant.allow_private_hosts` | `false` | Allow a provider on a private or local network address, such as a model server in the office. |\n| `assistant.monthly_budget` | `0` | Tokens a website may use each month; `0` means no limit. |\n\nSee [Use the AI assistant](../how-to/use-the-ai-assistant.md).",
+            "needs": []
+        },
+        {
+            "id": "87dff35b4c2c",
+            "page": "Tenant configuration reference",
+            "heading": "Text messages",
+            "url": "https://docs.sightpress.org/latest/reference/tenant-config/#text-messages",
+            "text": "| Key | Default | What it is |\n| --- | --- | --- |\n| `sms.provider` | none | A text message provider every website may use: `twilio`, `vonage`, or a module's. Its key is `SMS_API_KEY`. |\n| `sms.account` | none | That provider's account or key id. |\n| `sms.sender` | none | Who messages come from: a number such as `+447700900123`, or a name of 3 to 11 letters and digits. |\n| `sms.region` | none | The provider's region, for providers that have regions. |\n| `sms.site_providers` | `false` | Whether a website's admins may set up a provider of their own. |\n| `sms.require_for_existing` | `false` | Whether people who already have an account must add a mobile number at their next sign-in, instead of being allowed to skip it. |\n| `sms.monthly_budget` | `1000` | Message parts a website may send each month; `0` means no limit. |\n| `sms.reserved_for_codes` | `50` | The part of the budget only security codes may use, so a used-up budget never locks people out. Must be smaller than the budget. |\n| `sms.countries` | the region of each website's main language | The countries numbers may be in, as two-letter codes such as `['GB', 'IE']`. |\n| `sms.limits` | see below | How many codes or messages per hour, per number (`per_number`, 3), per device (`per_client`, 10), per account (`per_account`, 5) and per website (`per_site`, 100), and number checks per day (`lookups_per_day`, 100). |\n| `two_step` | `optional` | Two-step confirmation: `optional` (each website's admins choose), `required` (every we",
+            "needs": []
+        },
+        {
+            "id": "d1b6e654870b",
+            "page": "Tenant configuration reference",
+            "heading": "Environment variables",
+            "url": "https://docs.sightpress.org/latest/reference/tenant-config/#environment-variables",
+            "text": "| Variable | What it is |\n| --- | --- |\n| `APP_ENV` | `production`, `staging`, `test` or `dev`. |\n| `APP_SECRET` | The secret that encrypts database addresses and keys. Keep it safe: without it they can't be read. |\n| `APP_DEBUG` | Show error details. Never in production. |\n| `MAILER_DSN` | How emails are sent, for example `smtp://mail.example.org:25`. Without it no email is sent. |\n| `ASSISTANT_API_KEY` | The key of `assistant.provider`. |\n| `SMS_API_KEY` | The key of `sms.provider`. |",
+            "needs": []
+        },
+        {
+            "id": "c90880d49965",
+            "page": "Tenant configuration reference",
+            "heading": "An example",
+            "url": "https://docs.sightpress.org/latest/reference/tenant-config/#an-example",
+            "text": "```php\n<?php\n\nreturn [\n    'timezone' => 'Europe/London',\n    'mail' => ['from' => 'web@example.org', 'from_name' => 'Riverside Library'],\n    'modules' => ['defaults' => ['analytics' => false], 'locked' => []],\n    'email_policy' => ['domains' => ['example.org']],\n    'domain_registration' => 'on',\n    'sms' => ['provider' => 'twilio', 'account' => 'AC0123…', 'sender' => 'Riverside', 'countries' => ['GB']],\n    'two_step' => 'optional',\n];\n```",
+            "needs": []
+        },
+        {
             "id": "b14803e04685",
             "page": "Theme contract",
             "heading": "",
@@ -2643,6 +3502,125 @@
             "heading": "Twig functions and filters",
             "url": "https://docs.sightpress.org/latest/reference/theme-contract/#twig-functions-and-filters",
             "text": "| Name | Kind | Use | What it does |\n| --- | --- | --- | --- |\n| `asset` | function | `asset(string path): string` | URL of a file in the theme's assets/ folder, with its version in the name so it can be cached. The generated design tokens are at asset('tokens.css'). |\n| `t` | function | `t(string message, array parameters = {}, string domain = 'messages'): string` | The message translated to the page's language; write messages in British English. |\n| `can` | function | `can(string permission): bool` | Whether the person viewing the page has the permission on this site. |\n| `csp_nonce` | function | `csp_nonce(): string` | The Content Security Policy nonce for this response, for the rare inline <script> or <style>. |\n| `csrf_fields` | function | `csrf_fields(): string` | The hidden inputs that protect a POST form against cross-site request forgery (already escaped). |\n| `current_locale` | function | `current_locale(): string` | The BCP 47 tag of the language the page is shown in, for example en-GB. |\n| `text_direction` | function | `text_direction(string locale): string` | The writing direction of a language, \"ltr\" or \"rtl\", for the dir attribute. |\n| `user_datetime` | filter | `user_datetime(?DateTimeInterface value, string style = 'medium'): string` | A date and time in the viewer's language and time zone; an empty string for null. |\n| `user_date` | filter | `user_date(?DateTimeInterface value, string style = 'long'): string` | A date in the viewer's language and time zone; ",
+            "needs": []
+        },
+        {
+            "id": "341b43584eaf",
+            "page": "Create a module",
+            "heading": "",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/",
+            "text": "In this tutorial you make a SightPress module of your own: **Events**. Each event gets a page on the website, with\nstructured data search engines understand and a Markdown version for AI readers. Admins add events on an Events\nscreen, editors can put an event card on any page, and events appear in the sitemap, in `llms.txt` and in site search.\nYou start from the module template, write the module, test it, install it on a website and publish it.\n\nYou need some experience with PHP and the command line, and:\n\n- PHP 8.5 and Composer 2;\n- a SightPress project to try the module in (see [Getting started](../getting-started.md)).\n\nA module only uses `sightpress/module-interface`, the contract between SightPress and its modules. It never depends\non SightPress itself, so it keeps working when SightPress changes inside.",
+            "needs": []
+        },
+        {
+            "id": "44ca751a3fd4",
+            "page": "Create a module",
+            "heading": "1. Create your module from the template",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#1-create-your-module-from-the-template",
+            "text": "```sh\ncomposer create-project sightpress/module-template events\ncd events\ncomposer check\n```\n\n`composer check` runs the code style, static analysis, the unit tests (every line of `src/` must be tested) and an\nintegration test that installs the module in SightPress and turns it off and on. Each check should pass.\n\nOn GitHub, you can instead open the [module template](https://github.com/sightpress/module-template) and choose\n**Use this template**, then clone your new repository and run `composer install`.",
+            "needs": []
+        },
+        {
+            "id": "4df5599bfc95",
+            "page": "Create a module",
+            "heading": "2. Make it yours",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#2-make-it-yours",
+            "text": "A module has an id: lower-case words starting with your vendor name. Ours is `acme.events`. Its templates and texts\nuse a shorter name, `acme_events`.\n\n1. In `composer.json`, change `name` to `acme/events`, write your own `description`, `homepage` and `support`, and\n   change the namespace `Acme\\\\MyModule\\\\` to `Acme\\\\Events\\\\` in `autoload` and `autoload-dev`.\n2. In `src/Migrations.php`, change `Acme\\MyModule` to `Acme\\Events` everywhere it appears.\n3. Rename `translations/my_module.en-GB.xlf` to `translations/acme_events.en-GB.xlf`.\n4. Delete `src/MyModule.php` and the template's tests, `tests/Unit/MyModuleTest.php` and\n   `tests/Integration/InstallTest.php`: you write your own below.\n\nIn `composer.json`, replace `extra` with:\n\n```json\n\"extra\": {\n    \"sightpress\": {\n        \"module\": \"Acme\\\\Events\\\\EventsModule\",\n        \"features\": {\n            \"acme.events\": {\n                \"name\": \"Events\",\n                \"description\": \"A page for each event, with its date and time, and an Events screen to add them.\",\n                \"when-off\": \"Event pages answer “not found”, the Events screen leaves the admin panel and event cards are hidden. Events are kept.\"\n            }\n        }\n    }\n}\n```\n\n`module` names the class SightPress creates. Under `features`, the name, description and \"when it is off\" text are\nwhat site admins read on the **Features** screen, so write them in plain words.",
+            "needs": [
+                "module.manage"
+            ]
+        },
+        {
+            "id": "013b864105cf",
+            "page": "Create a module",
+            "heading": "3. Store events",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#3-store-events",
+            "text": "Events live in the site's database, in a table of the module's own. Add the libraries the module uses:\n\n```sh\ncomposer require doctrine/dbal:^4 doctrine/migrations:^3 psr/http-factory:^1\ncomposer require --dev nyholm/psr7:^1\n```\n\nA migration creates the table. SightPress runs it when a site turns the module on, and undoes it (with `down()`) when\nan admin deletes the module's data. It must work on every database SightPress supports (SQLite, MySQL, MariaDB and\nPostgreSQL), so it describes the table rather than writing SQL.\n\nCreate `migrations/Version20261201000000.php`:\n\n```php\n<?php\n\ndeclare(strict_types=1);\n\nnamespace Acme\\Events\\Migrations;\n\nuse Doctrine\\DBAL\\Platforms\\AbstractMySQLPlatform;\nuse Doctrine\\DBAL\\Schema\\PrimaryKeyConstraint;\nuse Doctrine\\DBAL\\Schema\\Schema;\nuse Doctrine\\Migrations\\AbstractMigration;\n\n/**\n * The events table. Prefix your tables with your module's id, so they never clash with another module's.\n */\nfinal class Version20261201000000 extends AbstractMigration\n{\n    public function getDescription(): string\n    {\n        return 'Events: a table of events.';\n    }\n\n    public function up(Schema $schema): void\n    {\n        $table = $schema->createTable('acme_events_event');\n        $table->addColumn('id', 'integer', ['autoincrement' => true]);\n        $table->addColumn('slug', 'string', ['length' => 100]);\n        $table->addColumn('title', 'string', ['length' => 200]);\n        $table->addColumn('starts_at', 'string', ['length' => 16]);\n        $table->",
+            "needs": []
+        },
+        {
+            "id": "cd768bd9cae8",
+            "page": "Create a module",
+            "heading": "4. A permission, an admin screen and a menu item",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#4-a-permission-an-admin-screen-and-a-menu-item",
+            "text": "The **Events** screen lists the events and has a form to add one. SightPress checks the permission before the\nhandler runs, puts the screen in the admin panel with its heading, and checks the form's security token. Errors are\nshown next to their field, with the field marked as invalid, so screen reader users hear what to fix.\n\nCreate `src/AdminHandler.php`:\n\n```php\n<?php\n\ndeclare(strict_types=1);\n\nnamespace Acme\\Events;\n\nuse Psr\\Http\\Message\\ResponseInterface;\nuse Psr\\Http\\Message\\ServerRequestInterface;\nuse Psr\\Http\\Server\\RequestHandlerInterface;\nuse SightPress\\Module\\Http\\AdminScreen;\nuse SightPress\\Module\\Http\\Screens;\nuse SightPress\\Module\\Text\\Message;\n\n/**\n * `/admin/events`: the list of events and a form to add one. SightPress checks the `events.manage` permission before\n * this runs (see the routes in {@see EventsModule}), draws the admin panel around it and checks the form's CSRF token.\n */\nfinal readonly class AdminHandler implements RequestHandlerInterface\n{\n    public const string PATH = '/admin/events';\n\n    public function __construct(private Screens $screens, private EventStore $events)\n    {\n    }\n\n    public function handle(ServerRequestInterface $request): ResponseInterface\n    {\n        $errors = [];\n        $values = ['title' => '', 'starts_at' => ''];\n        if ($request->getMethod() === 'POST') {\n            $body = (array) $request->getParsedBody();\n            foreach (array_keys($values) as $field) {\n                $values[$field] = is_string($body",
+            "needs": []
+        },
+        {
+            "id": "3f1eb3f00f99",
+            "page": "Create a module",
+            "heading": "5. A public page with structured data and Markdown",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#5-a-public-page-with-structured-data-and-markdown",
+            "text": "Each event has a page at `/events/<address>` in the site's theme. The `SeoEntry` gives it a description, its\ncanonical address and `Event` structured data; adding `.md` to the address gives the same page in Markdown.\n\nCreate `src/PublicHandler.php`:\n\n```php\n<?php\n\ndeclare(strict_types=1);\n\nnamespace Acme\\Events;\n\nuse Psr\\Http\\Message\\ResponseFactoryInterface;\nuse Psr\\Http\\Message\\ResponseInterface;\nuse Psr\\Http\\Message\\ServerRequestInterface;\nuse Psr\\Http\\Server\\RequestHandlerInterface;\nuse SightPress\\Module\\Http\\PublicScreen;\nuse SightPress\\Module\\Http\\Screens;\nuse SightPress\\Module\\Text\\Message;\n\n/**\n * `/events/{slug}`: the event's page in the site's theme, described for search engines by {@see SeoEntries}\n * (description, canonical address and `Event` structured data). `/events/{slug}.md` is the same page in Markdown,\n * for AI readers.\n */\nfinal readonly class PublicHandler implements RequestHandlerInterface\n{\n    public function __construct(\n        private Screens $screens,\n        private EventStore $events,\n        private SeoEntries $seo,\n        private ResponseFactoryInterface $responses,\n    ) {\n    }\n\n    public function handle(ServerRequestInterface $request): ResponseInterface\n    {\n        $slug = $request->getAttribute('slug');\n        $slug = is_string($slug) ? $slug : '';\n        $markdown = str_ends_with($slug, '.md');\n        $event = $this->events->find($markdown ? substr($slug, 0, -3) : $slug);\n        if ($event === null) {\n            return $this->s",
+            "needs": []
+        },
+        {
+            "id": "5c89d41634bb",
+            "page": "Create a module",
+            "heading": "6. The sitemap and site search",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#6-the-sitemap-and-site-search",
+            "text": "The same entries list every event in the sitemap and in `llms.txt`. SightPress leaves them out on websites that\naren't live yet, on members-only websites and where the module is off.\n\nCreate `src/SeoEntries.php`:\n\n```php\n<?php\n\ndeclare(strict_types=1);\n\nnamespace Acme\\Events;\n\nuse SightPress\\Module\\Seo\\SeoEntry;\nuse SightPress\\Module\\Seo\\SeoProvider;\n\n/**\n * Every event in the sitemap and in `llms.txt`, and each event page's description and `Event` structured data. Events\n * are written in one language: the one this provider is asked for first is the site's default.\n */\nfinal readonly class SeoEntries implements SeoProvider\n{\n    public const string LOCALE = 'en-GB';\n\n    public function __construct(private EventStore $events)\n    {\n    }\n\n    public function entries(string $locale): iterable\n    {\n        if ($locale !== self::LOCALE) {\n            return;\n        }\n        foreach ($this->events->all() as $event) {\n            yield $this->entry($event);\n        }\n    }\n\n    public function entry(Event $event): SeoEntry\n    {\n        return new SeoEntry(\n            $event->path(),\n            self::LOCALE,\n            $event->title,\n            $event->updatedAt,\n            sprintf('%s starts on %s.', $event->title, str_replace('T', ' at ', $event->startsAt)),\n            $event->path() . '.md',\n            structuredData: [['@type' => 'Event', 'name' => $event->title, 'startDate' => $event->startsAt]],\n        );\n    }\n}\n```\n\nSite search finds events by their name:\n\nCrea",
+            "needs": [
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "b12dac91b0fc",
+            "page": "Create a module",
+            "heading": "7. A block type",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#7-a-block-type",
+            "text": "Editors can put an **Event card** on any page: a link to an event. SightPress checks the block's data against its\nschema before it saves the page, and asks the block for its HTML, its Markdown and its structured data.\n\nCreate `src/EventCardBlock.php`:\n\n```php\n<?php\n\ndeclare(strict_types=1);\n\nnamespace Acme\\Events;\n\nuse SightPress\\Module\\Block\\BlockContext;\nuse SightPress\\Module\\Block\\BlockType;\n\n/**\n * The \"Event card\" block: editors put a link to an event on any page. Its data is checked against schema() before it\n * is saved; render() makes the HTML, renderMarkdown() the Markdown version, and structuredData() adds the event to\n * the page's structured data.\n */\nfinal class EventCardBlock implements BlockType\n{\n    public function name(): string\n    {\n        return 'acme_events.event_card';\n    }\n\n    public function label(): string\n    {\n        return 'Event card';\n    }\n\n    public function version(): int\n    {\n        return 1;\n    }\n\n    public function schema(): array\n    {\n        return [\n            'type' => 'object',\n            'required' => ['title', 'slug'],\n            'additionalProperties' => false,\n            'properties' => [\n                'title' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 200, 'title' => 'Name of the event'],\n                'slug' => ['type' => 'string', 'pattern' => '^[a-z0-9-]+$', 'maxLength' => 100, 'title' => 'Last part of the event’s address'],\n            ],\n        ];\n    }\n\n    public function upgradeData(int $f",
+            "needs": []
+        },
+        {
+            "id": "9e049f46057a",
+            "page": "Create a module",
+            "heading": "8. Register everything",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#8-register-everything",
+            "text": "The module class tells SightPress what the module adds. `register()` only describes things: SightPress builds the\nservices when a request needs them.\n\nCreate `src/EventsModule.php`:\n\n```php\n<?php\n\ndeclare(strict_types=1);\n\nnamespace Acme\\Events;\n\nuse SightPress\\Module\\Access\\Permission;\nuse SightPress\\Module\\Admin\\AdminMenuItem;\nuse SightPress\\Module\\ModuleInterface;\nuse SightPress\\Module\\ModuleManifest;\nuse SightPress\\Module\\ModuleRegistrar;\nuse SightPress\\Module\\Routing\\Route;\n\n/**\n * Events for SightPress: a page for each event, an Events screen to add them, an event card block, and events in the\n * sitemap, `llms.txt` and site search.\n */\nfinal class EventsModule implements ModuleInterface\n{\n    public const string ID = 'acme.events';\n\n    public const string VERSION = '0.1.0'; // x-release-please-version\n\n    public const string NAMESPACE = 'acme_events';\n\n    public const string PERMISSION = 'events.manage';\n\n    public function manifest(): ModuleManifest\n    {\n        return new ModuleManifest(self::ID, self::VERSION, enabledByDefault: true);\n    }\n\n    public function register(ModuleRegistrar $registrar): void\n    {\n        $root = dirname(__DIR__);\n        $registrar->views()->add(self::NAMESPACE, $root . '/templates');\n        $registrar->translations()->add($root . '/translations');\n        $registrar->migrations()->add(new Migrations());\n\n        // Services: SightPress builds them with what their constructors ask for (the site's database connection,\n        // Sc",
+            "needs": []
+        },
+        {
+            "id": "60ede89373a6",
+            "page": "Create a module",
+            "heading": "9. Texts",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#9-texts",
+            "text": "Every text people read goes in the translations file, in British English first. A translator adds a file per\nlanguage, for example `acme_events.pt-PT.xlf`.\n\nCreate `translations/acme_events.en-GB.xlf`:\n\n```xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<xliff xmlns=\"urn:oasis:names:tc:xliff:document:2.0\" version=\"2.0\" srcLang=\"en-GB\" trgLang=\"en-GB\">\n  <file id=\"acme_events\">\n    <unit id=\"events\"><segment><source>Events</source><target>Events</target></segment></unit>\n    <unit id=\"none\"><segment><source>No events yet. Add the first one below.</source><target>No events yet. Add the first one below.</target></segment></unit>\n    <unit id=\"caption\"><segment><source>Events, soonest first</source><target>Events, soonest first</target></segment></unit>\n    <unit id=\"name\"><segment><source>Name</source><target>Name</target></segment></unit>\n    <unit id=\"starts\"><segment><source>Starts</source><target>Starts</target></segment></unit>\n    <unit id=\"add-heading\"><segment><source>Add an event</source><target>Add an event</target></segment></unit>\n    <unit id=\"add-button\"><segment><source>Add event</source><target>Add event</target></segment></unit>\n    <unit id=\"added\"><segment><source>Added “{title}”.</source><target>Added “{title}”.</target></segment></unit>\n    <unit id=\"title-missing\"><segment><source>Enter the name of the event.</source><target>Enter the name of the event.</target></segment></unit>\n    <unit id=\"start-missing\"><segment><source>Enter the date and time it starts.</so",
+            "needs": []
+        },
+        {
+            "id": "07293e329bcf",
+            "page": "Create a module",
+            "heading": "10. Test it",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#10-test-it",
+            "text": "Unit tests check each class on its own, with a database in memory. They must run every line of `src/`.\n\nCreate `tests/Unit/TestDatabase.php`:\n\n```php\n<?php\n\ndeclare(strict_types=1);\n\nnamespace Acme\\Events\\Tests\\Unit;\n\nuse Acme\\Events\\Migrations\\Version20261201000000;\nuse Doctrine\\DBAL\\Connection;\nuse Doctrine\\DBAL\\DriverManager;\nuse Doctrine\\DBAL\\Schema\\Schema;\nuse Psr\\Log\\NullLogger;\n\n/**\n * An SQLite database in memory with the module's migration applied, for unit tests.\n */\nfinal class TestDatabase\n{\n    public static function connection(): Connection\n    {\n        $connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);\n        $schema = new Schema();\n        new Version20261201000000($connection, new NullLogger())->up($schema);\n        foreach ($schema->toSql($connection->getDatabasePlatform()) as $sql) {\n            $connection->executeStatement($sql);\n        }\n\n        return $connection;\n    }\n}\n```\n\nCreate `tests/Unit/EventStoreTest.php`:\n\n```php\n<?php\n\ndeclare(strict_types=1);\n\nnamespace Acme\\Events\\Tests\\Unit;\n\nuse Acme\\Events\\Event;\nuse Acme\\Events\\EventStore;\nuse PHPUnit\\Framework\\Attributes\\CoversClass;\nuse PHPUnit\\Framework\\TestCase;\n\n#[CoversClass(EventStore::class)]\n#[CoversClass(Event::class)]\nfinal class EventStoreTest extends TestCase\n{\n    public function testAddsAndFindsEventsSoonestFirst(): void\n    {\n        $events = new EventStore(TestDatabase::connection());\n\n        $fair = $events->add('Book fair!', '2026-12-06T10",
+            "needs": []
+        },
+        {
+            "id": "0e27bb8403e8",
+            "page": "Create a module",
+            "heading": "11. Install it on a website",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#11-install-it-on-a-website",
+            "text": "In your SightPress project, add the module as a Composer path repository while you work on it:\n\n```sh\ncomposer config repositories.events '{\"type\": \"path\", \"url\": \"../events\", \"options\": {\"symlink\": true}}'\ncomposer require acme/events:@dev\nbin/sightpress cache:clear\nbin/sightpress site:module:list <site>\n```\n\n`site:module:list` shows `acme.events (Events): on` for new websites. On an existing website, turn it on with\n\n```sh\nbin/sightpress site:module:enable <site> acme.events\n```\n\nor, as an admin, on the **Features** screen (**Turn on Events**). Turning it on runs its migration. Then open\n**Events** in the admin panel and add the first event.\n\nIf something is wrong with the module (a typo in `composer.json`, a class that doesn't load), SightPress keeps\nrunning: the Features screen, `site:module:list` and `system:check` list it as unavailable, with the reason.",
+            "needs": [
+                "module.manage",
+                "settings.manage"
+            ]
+        },
+        {
+            "id": "1c50211c1fd7",
+            "page": "Create a module",
+            "heading": "12. Publish it",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#12-publish-it",
+            "text": "1. Put the module in its own Git repository and push it to GitHub (or any Git host).\n2. Tag a version, for example `0.1.0`. With the template's release workflow, merging the release pull request does it.\n3. Sign in to [Packagist](https://packagist.org/), choose **Submit** and give your repository's address. Keep the\n   `sightpress-module` keyword, so people can find it.\n\nAnyone can then install it with `composer require acme/events`.",
+            "needs": []
+        },
+        {
+            "id": "4863ee06c621",
+            "page": "Create a module",
+            "heading": "Next steps",
+            "url": "https://docs.sightpress.org/latest/tutorials/create-a-module/#next-steps",
+            "text": "- Add a setting with `$registrar->settings()`, a scheduled job with `$registrar->schedule()`, or listen to SightPress\n  events (a page was published, a module was turned on) with `$registrar->subscribers()`.\n- Translate the texts: copy `acme_events.en-GB.xlf` to another language and change each `target`.\n- Read the README of the module template for the rules every module follows: accessible screens, plain words,\n  portable migrations and as little personal data as possible.",
             "needs": []
         },
         {
@@ -2748,7 +3726,7 @@
             "page": "What you can build with SightPress",
             "heading": "What you can do today",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#what-you-can-do-today",
-            "text": "SightPress is still at an early stage, and this page follows the newest documentation. Features marked **next\nrelease** are finished but aren't in version 0.3 yet. SightPress already gives you the following.",
+            "text": "SightPress is still at an early stage, and this page follows the newest documentation. It describes version 0.5.\nSightPress already gives you the following.",
             "needs": []
         },
         {
@@ -2764,7 +3742,7 @@
             "page": "What you can build with SightPress",
             "heading": "Write pages with blocks",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#write-pages-with-blocks",
-            "text": "A page is a list of **blocks**, such as a heading, some text or a picture. There are ten kinds:\n\n| Block | What it is for |\n| --- | --- |\n| Heading | Starting a part of the page. |\n| Text | Paragraphs, lists, links, quotes and more. |\n| Image | One picture, with its alternative text and a caption. |\n| Gallery | A set of up to 50 pictures. |\n| Video | A video with captions and a transcript. It never starts by itself. |\n| Audio | A sound recording, such as a podcast episode, with a transcript. |\n| File download | A file such as a PDF, with its type and size shown in the link. |\n| Call to action | A button that leads somewhere, such as \"Book a visit\". |\n| Columns | Two to four columns side by side on wide screens. |\n| Contact form | A form visitors use to send you a message, without a puzzle to solve. |\n\nEvery block is described in [Blocks](reference/blocks.md).",
+            "text": "A page is a list of **blocks**, such as a heading, some text or a picture. There are thirteen kinds:\n\n| Block | What it is for |\n| --- | --- |\n| Heading | Starting a part of the page. |\n| Text | Paragraphs, lists, links, quotes and more. |\n| Image | One picture, with its alternative text and a caption. |\n| Gallery | A set of up to 50 pictures. |\n| Video | A video with captions and a transcript. It never starts by itself. |\n| Audio | A sound recording, such as a podcast episode, with a transcript. |\n| File download | A file such as a PDF, with its type and size shown in the link. |\n| Call to action | A button that leads somewhere, such as \"Book a visit\". |\n| Columns | Two to four columns side by side on wide screens. |\n| Contact form | A form visitors use to send you a message, without a puzzle to solve. |\n| Video or map from another site | A YouTube or Vimeo video, or an OpenStreetMap map. Nothing loads from the other site until the reader asks. |\n| List of pages | The pages under a page, or the latest changed pages, as a list or as cards. It keeps itself up to date. |\n| Sign language video | A video in a sign language, such as British Sign Language, with captions. |\n\nEach block can also have its own look, such as a background, a width or the space around it. SightPress makes sure\ntext stays readable on every background.\n\nEvery block is described in [Blocks](reference/blocks.md).",
             "needs": []
         },
         {
@@ -2772,7 +3750,7 @@
             "page": "What you can build with SightPress",
             "heading": "Publish with confidence",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#publish-with-confidence",
-            "text": "- **Accessibility checks.** Before a page is published, SightPress checks it. A picture with no alternative text, a\n  video with speech but no captions or text that is too faint to read stops the page from being published until it\n  is fixed. Smaller problems, such as a link that says \"click here\", come up as suggestions.\n- **Review before publishing.** Contributors write pages and send them for review. Editors and admins approve and\n  publish them. See [Write and publish a page](how-to/write-and-publish-a-page.md).\n- **Roles for your team.** Admins, editors, contributors and members each see and do only what they need. See\n  [Roles and permissions](reference/roles-and-permissions.md).\n- **An audit log.** Admins can see who changed what, and when.",
+            "text": "- **Accessibility checks.** Before a page is published, SightPress checks it. A picture with no alternative text, a\n  video with speech but no captions or text that is too faint to read stops the page from being published until it\n  is fixed. Smaller problems, such as a link that says \"click here\", come up as suggestions.\n- **Review before publishing.** Contributors write pages and send them for review. Editors and admins approve and\n  publish them. See [Write and publish a page](how-to/write-and-publish-a-page.md).\n- **Roles for your team.** Admins, editors, contributors and members each see and do only what they need. See\n  [Roles and permissions](reference/roles-and-permissions.md).\n- **Your own roles.** Make a role with exactly the permissions someone needs, such as \"Events editor\". See\n  [Create a custom role](how-to/create-a-custom-role.md).\n- **Confirm important changes.** A website can ask for a code sent by text before changes such as changing someone's\n  role or deleting data. See [Confirm important changes](how-to/confirm-important-changes.md).\n- **An audit log.** Admins can see who changed what, and when.",
             "needs": []
         },
         {
@@ -2780,7 +3758,7 @@
             "page": "What you can build with SightPress",
             "heading": "Look after your files and people",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#look-after-your-files-and-people",
-            "text": "- **A media library** for pictures, videos, sound recordings, captions files and documents. Visitors only see the\n  files you publish.\n- **Invitations.** Invite people by e-mail. They get a 6-digit code, never a link. See\n  [Codes we send you](how-to/codes-we-send-you.md).\n- **Menus.** A main menu and a footer menu, which you change in the admin panel.\n- **Site settings.** The website's name, profile, logo and other details.",
+            "text": "- **A media library** for pictures, videos, sound recordings, captions files and documents. Visitors only see the\n  files you publish.\n- **Invitations.** Invite people by e-mail. They get a 6-digit code, never a link. See\n  [Codes we send you](how-to/codes-we-send-you.md).\n- **Menus.** A main menu and a footer menu, which you change in the admin panel.\n- **Site settings.** The website's name, profile, logo and other details.\n- **Keep websites to your organisation.** Allow only your organisation's email addresses, and let colleagues register\n  on members-only websites with their work email. See\n  [Keep websites to your organisation](how-to/keep-websites-to-your-organisation.md).\n- **Text messages.** Once whoever runs SightPress sets up a text message provider, people can get notifications by\n  text and [sign in with their phone](how-to/sign-in-with-your-phone.md). See\n  [Set up text messages](how-to/set-up-text-messages.md).",
             "needs": [
                 "settings.manage"
             ]
@@ -2820,13 +3798,21 @@
         {
             "id": "1cf7d36c43fa",
             "page": "What you can build with SightPress",
+            "heading": "Add features with modules",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#add-features-with-modules",
+            "text": "Install add-on **modules** made by others, and turn each one on only for the websites that need it. A module that\nis broken or missing never stops your websites. See [Add a module](how-to/add-a-module.md). Developers can build their\nown: see [Create a module](tutorials/create-a-module.md).",
+            "needs": []
+        },
+        {
+            "id": "e44b8a2399d9",
+            "page": "What you can build with SightPress",
             "heading": "Ideas for websites",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#ideas-for-websites",
             "text": "These ideas use only what SightPress can do today. Each one lists the blocks and features that help most.",
             "needs": []
         },
         {
-            "id": "e44b8a2399d9",
+            "id": "7ecbaab49bf0",
             "page": "What you can build with SightPress",
             "heading": "A website for a small business",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-website-for-a-small-business",
@@ -2834,15 +3820,15 @@
             "needs": []
         },
         {
-            "id": "7ecbaab49bf0",
+            "id": "28646942c704",
             "page": "What you can build with SightPress",
             "heading": "A charity or community group",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-charity-or-community-group",
-            "text": "A charity, a residents' association, a sports club or a support group.\n\n- Pages: Who we are, What we do, Get involved, Annual reports, Contact.\n- **File download** blocks for annual reports, minutes and leaflets, with their type and size shown.\n- A **Video** about your work, with captions and a transcript, so that everyone can follow it.\n- **Roles**, so that volunteers write pages as contributors and a trustee publishes them as an editor.",
+            "text": "A charity, a residents' association, a sports club or a support group.\n\n- Pages: Who we are, What we do, Get involved, Annual reports, Contact.\n- **File download** blocks for annual reports, minutes and leaflets, with their type and size shown.\n- A **Video** about your work, with captions and a transcript, so that everyone can follow it.\n- A **List of pages** on the home page that shows your latest news by itself.\n- **Roles**, so that volunteers write pages as contributors and a trustee publishes them as an editor.",
             "needs": []
         },
         {
-            "id": "28646942c704",
+            "id": "06884d1aa47f",
             "page": "What you can build with SightPress",
             "heading": "A podcast or audio project",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-podcast-or-audio-project",
@@ -2850,7 +3836,7 @@
             "needs": []
         },
         {
-            "id": "06884d1aa47f",
+            "id": "4a53271a82d8",
             "page": "What you can build with SightPress",
             "heading": "A portfolio",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-portfolio",
@@ -2858,7 +3844,7 @@
             "needs": []
         },
         {
-            "id": "4a53271a82d8",
+            "id": "dd00911cafaa",
             "page": "What you can build with SightPress",
             "heading": "A school, library or museum",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-school-library-or-museum",
@@ -2866,15 +3852,15 @@
             "needs": []
         },
         {
-            "id": "dd00911cafaa",
+            "id": "976e75e82130",
             "page": "What you can build with SightPress",
             "heading": "An accessibility-first information website",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#an-accessibility-first-information-website",
-            "text": "A council service, a health clinic, a disability organisation or a guide to a local service, where clear,\naccessible information matters most.\n\n- Short pages with clear **Headings**, so that screen reader users can jump from part to part.\n- **File download** blocks for forms and leaflets, plus the same information as a page, so that nobody has to open a\n  PDF.\n- The **accessibility checks** stop common mistakes, such as a missing caption, before they reach the public.",
+            "text": "A council service, a health clinic, a disability organisation or a guide to a local service, where clear,\naccessible information matters most.\n\n- Short pages with clear **Headings**, so that screen reader users can jump from part to part.\n- **File download** blocks for forms and leaflets, plus the same information as a page, so that nobody has to open a\n  PDF.\n- A **Sign language video** of the most important pages, with captions.\n- The **accessibility checks** stop common mistakes, such as a missing caption, before they reach the public.",
             "needs": []
         },
         {
-            "id": "976e75e82130",
+            "id": "c3bc7dae4342",
             "page": "What you can build with SightPress",
             "heading": "A personal website or blog-style journal",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#a-personal-website-or-blog-style-journal",
@@ -2882,23 +3868,23 @@
             "needs": []
         },
         {
-            "id": "c3bc7dae4342",
+            "id": "0778221bfc55",
             "page": "What you can build with SightPress",
             "heading": "Several websites for an agency or organisation",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#several-websites-for-an-agency-or-organisation",
-            "text": "A web agency, a federation of clubs or an organisation with several brands.\n\n- One installation of SightPress with a **website** for each client, club or brand, each with its own domain,\n  language, people and settings.\n- Each website keeps its own **roles**, so that each client or club looks after its own content.\n- The **command line tool** to create and list websites quickly.",
-            "needs": []
-        },
-        {
-            "id": "0778221bfc55",
-            "page": "What you can build with SightPress",
-            "heading": "Coming later",
-            "url": "https://docs.sightpress.org/latest/what-you-can-build/#coming-later",
-            "text": "Later versions of SightPress add more, such as add-on modules and a guide to putting SightPress on a public server.\nThe [Getting started](getting-started.md) guide and the [how-to guides](how-to/index.md) are updated as each feature\narrives.",
+            "text": "A web agency, a federation of clubs or an organisation with several brands.\n\n- One installation of SightPress with a **website** for each client, club or brand, each with its own domain,\n  language, people and settings.\n- Each website keeps its own **roles**, so that each client or club looks after its own content.\n- The **command line tool** to create and list websites quickly.\n- **Domain and email policies**, so that every website and every account stays within your organisation.",
             "needs": []
         },
         {
             "id": "46b91183eb03",
+            "page": "What you can build with SightPress",
+            "heading": "Coming later",
+            "url": "https://docs.sightpress.org/latest/what-you-can-build/#coming-later",
+            "text": "Later versions of SightPress add more, such as tools to download or delete someone's personal data and a guide to\nputting SightPress on a public server.\nThe [Getting started](getting-started.md) guide and the [how-to guides](how-to/index.md) are updated as each feature\narrives.",
+            "needs": []
+        },
+        {
+            "id": "90594775ae74",
             "page": "What you can build with SightPress",
             "heading": "Where to go next",
             "url": "https://docs.sightpress.org/latest/what-you-can-build/#where-to-go-next",
