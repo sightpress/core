@@ -92,5 +92,11 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0072](0072-phone-sign-in.md) | Signing in and resetting the password with a mobile number | Accepted |
 | [0073](0073-two-step-confirmation.md) | Two-step confirmation for important changes | Accepted |
 | [0074](0074-embed-page-list-sign-language-video.md) | The embed, page list and sign language video blocks | Accepted |
+| [0075](0075-privacy-model.md) | Privacy model: roles, inventory, retention, erasure by tombstone, no third parties by default | Proposed |
+| [0076](0076-module-contract-0-6-scope.md) | What `module-interface` 0.6 adds: privacy, placeholders, code languages and locale formats | Proposed |
+| [0077](0077-privacy-contract.md) | Privacy contract for modules: personal data, cookies, processors and consent | Proposed |
+| [0078](0078-placeholders-contract.md) | Placeholders contract for modules | Proposed |
+| [0079](0079-code-languages-contract.md) | Code languages for the `code` block | Proposed |
+| [0080](0080-locale-formats-and-site-languages-contract.md) | Locale formats, money and site languages for modules | Proposed |
 
 When an ADR's status changes, update it here too.
