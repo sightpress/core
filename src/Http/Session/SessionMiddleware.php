@@ -8,9 +8,12 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Tenant\SiteContext;
 
 /**
- * Loads the visitor's {@see Session} from its cookie and saves it after the response.
+ * Loads the visitor's {@see Session} from its cookie and saves it after the response, in the store of the site the
+ * request is for (`session.store`); a request for no site uses the fallback store given here.
  *
  * The cookie is `HttpOnly`, `SameSite=Lax` and, over HTTPS, `Secure` with the `__Host-` prefix (so it is bound to
  * this host and path). It lasts until the browser closes; the store ends idle sessions. A session is only saved
@@ -29,12 +32,16 @@ final readonly class SessionMiddleware implements MiddlewareInterface
 
     private const string ID_PATTERN = '/^[A-Za-z0-9_-]{43}$/';
 
-    public function __construct(private SessionStore $store)
+    public function __construct(private SessionStore $fallback)
     {
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $context = SiteContext::fromRequest($request);
+        $store = $context !== null && $context->container->has(SessionStore::class)
+            ? Services::get($context->container, SessionStore::class)
+            : $this->fallback;
         $secure = $request->getUri()->getScheme() === 'https';
         $name = $secure ? self::SECURE_COOKIE : self::COOKIE;
         $cookie = $request->getCookieParams()[$name] ?? null;
@@ -42,7 +49,7 @@ final readonly class SessionMiddleware implements MiddlewareInterface
         $session = new Session();
         $loaded = null;
         if (is_string($cookie) && preg_match(self::ID_PATTERN, $cookie) === 1) {
-            $loaded = $this->store->read($cookie);
+            $loaded = $store->read($cookie);
             $session = $loaded === null ? new Session() : new Session($cookie, $loaded);
         }
 
@@ -50,12 +57,12 @@ final readonly class SessionMiddleware implements MiddlewareInterface
 
         $previous = $session->previousId();
         if ($previous !== null) {
-            $this->store->delete($previous);
+            $store->delete($previous);
         }
 
         if ($session->all() === []) {
             if ($session->id() !== null) {
-                $this->store->delete($session->id());
+                $store->delete($session->id());
             }
 
             return is_string($cookie) ? $response->withAddedHeader('Set-Cookie', $this->expired($name, $secure)) : $response;
@@ -63,9 +70,9 @@ final readonly class SessionMiddleware implements MiddlewareInterface
 
         $id = $session->idOrNew();
         if ($id === $cookie && $session->all() === $loaded) {
-            $this->store->touch($id);
+            $store->touch($id);
         } else {
-            $this->store->write($id, $session->all());
+            $store->write($id, $session->all());
         }
         // A response that holds no personal data says so with `Cache-Control: public` (theme files, for example);
         // it keeps that header unless a new cookie is being set with it.

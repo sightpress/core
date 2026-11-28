@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Media\Command;
 
 use RuntimeException;
+use SightPress\Core\Http\Session\SessionStoreCheck;
 use SightPress\Core\Http\Upload\ServerLimits;
 use SightPress\Core\Http\Upload\ServerLimitsCheck;
 use SightPress\Core\Http\Upload\ServerRecommendation;
@@ -31,7 +32,8 @@ use SightPress\Module\Console\CommandParameterType;
  * `system:check`: the server's upload and input limits, the largest file of each kind that can be uploaded, and
  * the settings to change ({@see ServerLimitsCheck}), and modules that are unavailable or named in `config/tenant.php`
  * without being installed ({@see SiteModules::problems()}), and sites and accounts outside the tenant's policies
- * ({@see PolicyReport}, as notes). Exits with 1 when something must be fixed, for CI and
+ * ({@see PolicyReport}, as notes), and where sign-ins are kept and whether that store answers
+ * ({@see SessionStoreCheck}). Exits with 1 when something must be fixed, for CI and
  * monitoring.
  *
  * Run it the way the web server runs PHP (in the skeleton: `docker compose exec php bin/sightpress system:check`):
@@ -49,6 +51,7 @@ final readonly class SystemCheckCommand implements Command
         private UploadProbeClient $probe,
         private SiteModules $modules,
         private PolicyReport $policies,
+        private SessionStoreCheck $sessions,
     ) {
     }
 
@@ -150,6 +153,11 @@ final readonly class SystemCheckCommand implements Command
         }
         // Modules that can't be used, and tenant settings naming a module that isn't installed (ADR-0065).
         array_push($problems, ...$this->modules->problems());
+        $output->line('Sessions: ' . $this->sessions->describe());
+        $sessionProblem = $this->sessions->problem();
+        if ($sessionProblem !== null) {
+            $problems[] = $sessionProblem;
+        }
         foreach ($problems as $problem) {
             $output->error($problem);
         }

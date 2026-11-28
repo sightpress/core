@@ -20,6 +20,12 @@ final readonly class TenantConfig
 {
     public const int DEFAULT_MAX_CHUNKED_BYTES = 5 * 1024 * 1024 * 1024;
 
+    public const string SESSION_DATABASE = 'database';
+
+    public const string SESSION_REDIS = 'redis';
+
+    public const string SESSION_FILES = 'files';
+
     /**
      * @param non-empty-string $projectDir
      * @param non-empty-string $registryPath
@@ -30,6 +36,10 @@ final readonly class TenantConfig
      * @param non-empty-string $defaultTimezone
      * @param non-empty-string $sessionPath        folder for session data
      * @param positive-int     $sessionIdleTimeout seconds without a request before a session ends
+     * @param non-empty-string $sessionStore      `session.store`: where sessions are kept: `database` (the site's own
+     *                                            database), `redis`, `files` (one server only) or the name of a class
+     *                                            implementing {@see \SightPress\Core\Http\Session\SessionStore}
+     * @param RedisServer|null $sessionRedis      `SESSION_REDIS_DSN`: the Redis server of `session.store` = `redis`
      * @param non-empty-string|null $secret       `APP_SECRET`: derives the key that encrypts site DSNs; null when unset
      * @param non-empty-string $mailerDsn         `MAILER_DSN`: how email is sent; `null://null` (nothing is sent) when unset
      * @param non-empty-string $mailFrom          sender address of every email
@@ -65,6 +75,8 @@ final readonly class TenantConfig
         public string $defaultTimezone = 'UTC',
         public string $sessionPath = '/tmp/sightpress-sessions',
         public int $sessionIdleTimeout = 7200,
+        public string $sessionStore = self::SESSION_DATABASE,
+        #[SensitiveParameter] public ?RedisServer $sessionRedis = null,
         #[SensitiveParameter] public ?string $secret = null,
         #[SensitiveParameter] public string $mailerDsn = 'null://null',
         public string $mailFrom = 'no-reply@localhost',
@@ -86,8 +98,9 @@ final readonly class TenantConfig
     /**
      * @param array<mixed>          $config      what `config/tenant.php` returns
      * @param array<string, string> $environment environment variables
+     * @param bool|null             $redis       whether PHP's redis extension is installed (null: look)
      */
-    public static function fromArray(array $config, string $projectDir, array $environment = []): self
+    public static function fromArray(array $config, string $projectDir, array $environment = [], ?bool $redis = null): self
     {
         $projectDir = rtrim($projectDir, '/');
         if ($projectDir === '') {
@@ -117,6 +130,8 @@ final readonly class TenantConfig
             defaultTimezone: self::timezone($config),
             sessionPath: self::string($session, 'path', 'session.path', $projectDir . '/var/sessions'),
             sessionIdleTimeout: self::idleTimeout($session),
+            sessionStore: self::sessionStore($session, $environment, $redis),
+            sessionRedis: self::sessionRedis($session, $environment),
             secret: self::secret($environment['APP_SECRET'] ?? null),
             mailerDsn: $dsn === '' ? 'null://null' : $dsn,
             mailFrom: self::email($mail),
@@ -323,6 +338,56 @@ final readonly class TenantConfig
                 $value,
             )),
         };
+    }
+
+    /**
+     * @param array<mixed>          $session
+     * @param array<string, string> $environment
+     *
+     * @return non-empty-string
+     */
+    private static function sessionStore(array $session, array $environment, ?bool $redis): string
+    {
+        $store = self::string($session, 'store', 'session.store', self::SESSION_DATABASE);
+        if (in_array($store, [self::SESSION_DATABASE, self::SESSION_FILES], true)) {
+            return $store;
+        }
+        if ($store === self::SESSION_REDIS) {
+            if (!($redis ?? RedisServer::available())) {
+                throw new TenantConfigException(
+                    'Tenant setting "session.store" is "redis", but PHP\'s redis extension is not installed. Install it (pecl install redis) or choose "database".',
+                );
+            }
+            if (trim($environment['SESSION_REDIS_DSN'] ?? '') === '') {
+                throw new TenantConfigException(
+                    'Tenant setting "session.store" is "redis", but SESSION_REDIS_DSN is not set. Set it to the Redis server, for example redis://redis:6379.',
+                );
+            }
+
+            return $store;
+        }
+        if (!class_exists($store) || !is_subclass_of($store, \SightPress\Core\Http\Session\SessionStore::class)) {
+            throw new TenantConfigException(sprintf(
+                'Tenant setting "session.store" must be "database", "redis", "files" or a class implementing SightPress\Core\Http\Session\SessionStore ("%s" is none of these).',
+                $store,
+            ));
+        }
+
+        return $store;
+    }
+
+    /**
+     * @param array<mixed>          $session
+     * @param array<string, string> $environment
+     */
+    private static function sessionRedis(array $session, array $environment): ?RedisServer
+    {
+        $dsn = trim($environment['SESSION_REDIS_DSN'] ?? '');
+        if ($dsn === '' || ($session['store'] ?? null) !== self::SESSION_REDIS) {
+            return null;
+        }
+
+        return RedisServer::fromDsn($dsn);
     }
 
     /**

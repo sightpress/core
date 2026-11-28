@@ -93,7 +93,8 @@
   },
   "suggest": {
     "aws/aws-sdk-php": "Needed with league/flysystem-aws-s3-v3 to keep a site's files in S3-compatible storage.",
-    "league/flysystem-aws-s3-v3": "Install it to keep a site's files in S3-compatible storage (AWS S3, R2, Spaces, MinIO)."
+    "league/flysystem-aws-s3-v3": "Install it to keep a site's files in S3-compatible storage (AWS S3, R2, Spaces, MinIO).",
+    "ext-redis": "Needed to keep sign-ins in Redis (session.store = redis)."
   },
   "bin": [
     "bin/sightpress-theme"

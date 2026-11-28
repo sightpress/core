@@ -82,6 +82,7 @@ final class CoreServices
             ModulePolicy::class => $policy,
             ModuleCatalogue::class => $policy->catalogue(),
             ClockInterface::class => autowire(SystemClock::class),
+            // Only for requests that belong to no site: each site's own store is in its container (`session.store`).
             SessionStore::class => autowire(FileSessionStore::class)
                 ->constructorParameter('directory', $config->sessionPath)
                 ->constructorParameter('idleTimeout', $config->sessionIdleTimeout),

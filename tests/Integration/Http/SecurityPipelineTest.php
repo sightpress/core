@@ -31,7 +31,8 @@ final class SecurityPipelineTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->project = new TestProject(sites: ['demo' => SiteFixture::entry('demo', ['domains' => ['example.org']])]);
+        // The site has no database, so its sessions are kept in files.
+        $this->project = new TestProject(['session' => ['store' => 'files']], ['demo' => SiteFixture::entry('demo', ['domains' => ['example.org']])]);
         $module = new FakeModule('acme.form', register: static function (ModuleRegistrar $r): void {
             $r->routes()->add(new Route('form.show', '/form', FormHandler::class, ['GET', 'POST']));
         });

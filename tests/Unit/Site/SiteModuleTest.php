@@ -60,7 +60,10 @@ final class SiteModuleTest extends TestCase
             ['site.description', 'site.legal_name', 'site.contact_email', 'site.phone', 'site.address', 'site.same_as'],
             array_map(static fn ($registered) => $registered->item->key, $registry->settings()),
         );
-        self::assertSame([[\SightPress\Module\Event\SettingsChanged::class, \SightPress\Core\Site\DisplayChanged::class]], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $registry->listeners()));
+        self::assertSame([
+            [\SightPress\Module\Event\SettingsChanged::class, \SightPress\Core\Site\DisplayChanged::class],
+            [\SightPress\Core\Site\Contract\ScheduleDue::class, \SightPress\Core\Site\ForgetExpiredSessions::class],
+        ], array_map(static fn ($l) => [$l->item->event, $l->item->listener], $registry->listeners()));
         self::assertTrue($registry->services()[SiteSettings::class]->item->public);
         self::assertTrue($registry->services()[\SightPress\Core\Site\Contract\SiteLanguages::class]->item->public);
         self::assertSame(DbalSiteSettings::class, $registry->services()[SiteSettings::class]->item->class);

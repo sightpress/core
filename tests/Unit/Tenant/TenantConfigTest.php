@@ -21,6 +21,7 @@ use SightPress\Core\Tenant\TenantConfigException;
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TwoStepPolicy::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
 #[CoversClass(TenantConfig::class)]
+#[UsesClass(\SightPress\Core\Tenant\RedisServer::class)]
 #[UsesClass(Environment::class)]
 #[UsesClass(LocaleCode::class)]
 #[UsesClass(IniSize::class)]
@@ -170,6 +171,30 @@ final class TenantConfigTest extends TestCase
             '/srv',
             'Tenant setting "session.idle_timeout" must be a whole number of seconds, at least 60.',
         ];
+        yield 'session store' => [
+            ['session' => ['store' => 'memcached']],
+            [],
+            '/srv',
+            'Tenant setting "session.store" must be "database", "redis", "files" or a class implementing SightPress\\Core\\Http\\Session\\SessionStore ("memcached" is none of these).',
+        ];
+        yield 'session store class' => [
+            ['session' => ['store' => \stdClass::class]],
+            [],
+            '/srv',
+            '("stdClass" is none of these)',
+        ];
+        yield 'redis without its server' => [
+            ['session' => ['store' => 'redis']],
+            [],
+            '/srv',
+            'Tenant setting "session.store" is "redis", but SESSION_REDIS_DSN is not set.',
+        ];
+        yield 'redis server' => [
+            ['session' => ['store' => 'redis']],
+            ['SESSION_REDIS_DSN' => 'http://redis'],
+            '/srv',
+            'SESSION_REDIS_DSN must look like redis://host:6379',
+        ];
         yield 'sender address' => [
             ['mail' => ['from' => 'not an address']],
             [],
@@ -194,6 +219,41 @@ final class TenantConfigTest extends TestCase
             '/srv',
             'Tenant setting "modules.defaults" must list module ids',
         ];
+    }
+
+    public function testSessionsAreKeptInTheSitesDatabaseUnlessAnotherStoreIsChosen(): void
+    {
+        $default = TenantConfig::fromArray([], '/srv/app');
+        self::assertSame(TenantConfig::SESSION_DATABASE, $default->sessionStore);
+        self::assertNull($default->sessionRedis);
+
+        self::assertSame('files', TenantConfig::fromArray(['session' => ['store' => 'files']], '/srv/app')->sessionStore);
+        self::assertSame(
+            \SightPress\Core\Http\Session\FileSessionStore::class,
+            TenantConfig::fromArray(['session' => ['store' => \SightPress\Core\Http\Session\FileSessionStore::class]], '/srv/app')->sessionStore,
+        );
+
+        $redis = TenantConfig::fromArray(
+            ['session' => ['store' => 'redis']],
+            '/srv/app',
+            ['SESSION_REDIS_DSN' => 'redis://:secret@cache:6380/2'],
+            true,
+        );
+        self::assertSame(TenantConfig::SESSION_REDIS, $redis->sessionStore);
+        self::assertSame('cache:6380', $redis->sessionRedis?->address());
+        self::assertSame(2, $redis->sessionRedis->database);
+        self::assertNull(
+            TenantConfig::fromArray([], '/srv/app', ['SESSION_REDIS_DSN' => 'redis://cache'])->sessionRedis,
+            'the Redis server is only read for the redis store',
+        );
+    }
+
+    public function testRedisSessionsNeedPhpsRedisExtension(): void
+    {
+        $this->expectException(TenantConfigException::class);
+        $this->expectExceptionMessage('PHP\'s redis extension is not installed. Install it (pecl install redis) or choose "database".');
+
+        TenantConfig::fromArray(['session' => ['store' => 'redis']], '/srv/app', ['SESSION_REDIS_DSN' => 'redis://cache'], false);
     }
 
     public function testReadsTheModuleDefaultsAndLocks(): void

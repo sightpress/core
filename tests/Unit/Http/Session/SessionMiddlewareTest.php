@@ -18,6 +18,11 @@ use SightPress\Core\Tests\Support\CallbackHandler;
 
 #[CoversClass(SessionMiddleware::class)]
 #[UsesClass(Session::class)]
+#[UsesClass(\SightPress\Core\Http\Session\FileSessionStore::class)]
+#[UsesClass(\SightPress\Core\Tenant\SiteContext::class)]
+#[UsesClass(\SightPress\Core\Infrastructure\Crypto\SecretBox::class)]
+#[UsesClass(\SightPress\Core\Infrastructure\Container\Services::class)]
+#[\PHPUnit\Framework\Attributes\UsesNamespace('SightPress\Core\Tenant')]
 final class SessionMiddlewareTest extends TestCase
 {
     /** @var array<string, array<string, mixed>> */
@@ -176,6 +181,34 @@ final class SessionMiddlewareTest extends TestCase
 
             self::assertNull($seen, $cookie);
         }
+    }
+
+    public function testEachSiteKeepsItsSessionsInItsOwnStore(): void
+    {
+        $site = new \SightPress\Core\Http\Session\FileSessionStore(sys_get_temp_dir() . '/sp-session-' . bin2hex(random_bytes(4)), new \SightPress\Core\Tests\Support\FixedClock(), 120);
+        $context = new \SightPress\Core\Tenant\SiteContext(
+            \SightPress\Core\Tests\Support\SiteFixture::site(),
+            new \SightPress\Core\Tests\Support\ArrayContainer([SessionStore::class => $site]),
+        );
+
+        $response = $this->send(
+            new ServerRequest('GET', 'http://example.org/')->withAttribute(\SightPress\Core\Tenant\SiteContext::class, $context),
+            static fn (Session $s) => $s->set('user', 7),
+        );
+
+        self::assertCount(0, $this->stored, 'not in the fallback store');
+        $id = explode(';', substr($response->getHeaderLine('Set-Cookie'), strlen(SessionMiddleware::COOKIE . '=')))[0];
+        self::assertSame(['user' => 7], $site->read($id));
+        $site->delete($id);
+
+        $this->send(
+            new ServerRequest('GET', 'http://example.org/')->withAttribute(\SightPress\Core\Tenant\SiteContext::class, new \SightPress\Core\Tenant\SiteContext(
+                \SightPress\Core\Tests\Support\SiteFixture::site(),
+                new \SightPress\Core\Tests\Support\ArrayContainer(),
+            )),
+            static fn (Session $s) => $s->set('user', 8),
+        );
+        self::assertContains(['user' => 8], $this->stored, 'a site container without a store uses the fallback');
     }
 
     private function withCookie(ServerRequestInterface $request, string $id, bool $secure = false): ServerRequestInterface

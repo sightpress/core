@@ -77,7 +77,7 @@ jobs:
         with:
           php-version: '8.5'
           coverage: none
-          extensions: pdo_sqlite, pdo_mysql, pdo_pgsql, intl, gd, exif
+          extensions: pdo_sqlite, pdo_mysql, pdo_pgsql, intl, gd, exif, redis
           ini-values: date.timezone=UTC, memory_limit=512M
           tools: composer:v2
 

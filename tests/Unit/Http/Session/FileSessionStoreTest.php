@@ -98,6 +98,30 @@ final class FileSessionStoreTest extends TestCase
         self::assertFileExists($this->directory->path . '/sessions/' . hash('sha256', 'new'));
     }
 
+    public function testTheScheduleRemovesExpiredSessions(): void
+    {
+        self::assertSame(0, $this->store()->forgetExpired($this->clock->now()), 'nothing to do before the first session');
+
+        $this->store()->write('old', ['a' => 1]);
+        $this->clock->advance(100);
+        $this->store()->write('new', ['b' => 2]);
+        $this->clock->advance(100);
+
+        self::assertSame(1, $this->store()->forgetExpired($this->clock->now()));
+        self::assertNull($this->store()->read('old'));
+        self::assertSame(['b' => 2], $this->store()->read('new'));
+    }
+
+    public function testTouchingAnExpiredSessionLeavesItEnded(): void
+    {
+        $store = $this->store();
+        $store->write('abc', ['user' => 1]);
+        $this->clock->advance(200);
+        $store->touch('abc');
+
+        self::assertNull($store->read('abc'));
+    }
+
     public function testDamagedFilesAreIgnored(): void
     {
         $this->directory->write('sessions/' . hash('sha256', 'broken'), '{oops');

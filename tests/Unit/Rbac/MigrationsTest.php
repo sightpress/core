@@ -27,6 +27,7 @@ use SightPress\Core\Media\Migrations\Version20261123150000 as MediaCaptionTracks
 use SightPress\Core\People\Migrations\Version20261116180000 as InvitationsTable;
 use SightPress\Core\Rbac\Migrations\Version20261114120000 as RbacTables;
 use SightPress\Core\Site\Migrations\Version20261114120000 as SiteSettingsTable;
+use SightPress\Core\Site\Migrations\Version20261127100000 as SessionTable;
 use SightPress\Core\Tests\Support\CoreSiteDatabase;
 use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 
@@ -36,6 +37,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(RbacTables::class)]
 #[CoversClass(MediaCaptionTracks::class)]
 #[CoversClass(SiteSettingsTable::class)]
+#[CoversClass(SessionTable::class)]
 #[CoversClass(UsersTable::class)]
 #[CoversClass(MediaTable::class)]
 #[CoversClass(PageTables::class)]
@@ -69,7 +71,7 @@ final class MigrationsTest extends TestCase
         $database = new CoreSiteDatabase();
 
         self::assertSame(
-            ['analytics_daily', 'analytics_hit', 'analytics_salt', 'audit_log', 'auth_remember_tokens', 'invitations', 'media', 'media_upload', 'menu_items', 'migration_versions', 'page_redirects', 'page_revisions', 'page_translations', 'pages', 'permissions', 'role_permission', 'roles', 'search_document', 'search_posting', 'search_word', 'site_module', 'site_settings', 'upload_refusal', 'user_role', 'users', 'verification_code'],
+            ['analytics_daily', 'analytics_hit', 'analytics_salt', 'audit_log', 'auth_remember_tokens', 'invitations', 'media', 'media_upload', 'menu_items', 'migration_versions', 'page_redirects', 'page_revisions', 'page_translations', 'pages', 'permissions', 'role_permission', 'roles', 'search_document', 'search_posting', 'search_word', 'session', 'site_module', 'site_settings', 'upload_refusal', 'user_role', 'users', 'verification_code'],
             $database->tables(),
         );
         $descriptions = array_map(
@@ -80,6 +82,7 @@ final class MigrationsTest extends TestCase
         self::assertContains('Create the media table.', $descriptions);
         self::assertContains('Create the pages, page_translations and page_revisions tables.', $descriptions);
         self::assertContains('Create the site_settings table.', $descriptions);
+        self::assertContains('Create the session table.', $descriptions);
         self::assertContains('Create the invitations table.', $descriptions);
         self::assertContains('Create the menu_items table.', $descriptions);
         self::assertContains('Create the audit_log table.', $descriptions);

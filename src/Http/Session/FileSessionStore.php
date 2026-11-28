@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Http\Session;
 
+use DateTimeImmutable;
 use FilesystemIterator;
 use JsonException;
 use Psr\Clock\ClockInterface;
 use RuntimeException;
 
 /**
- * Keeps each session as a JSON file readable only by the server. File names are hashes, so session ids never appear
- * on disk. A session expires after the idle timeout; expired files are removed now and then while writing.
+ * Keeps each session as a JSON file readable only by the server (`session.store` = `files`, folder `session.path`).
+ * For one web server only: a second server can't see the files unless they share the folder. File names are
+ * hashes, so session ids never appear on disk. A session expires after the idle timeout; expired files are removed
+ * now and then while writing, and by `schedule:run`.
  */
-final readonly class FileSessionStore implements SessionStore
+final readonly class FileSessionStore implements ExpiringSessionStore
 {
     /**
      * @param positive-int $idleTimeout   seconds without a request before a session ends
@@ -69,14 +72,14 @@ final readonly class FileSessionStore implements SessionStore
         rename($temporary, $file);
 
         if (random_int(1, $this->gcProbability) === 1) {
-            $this->collectGarbage();
+            $this->forgetExpired($this->clock->now());
         }
     }
 
     public function touch(string $id): void
     {
         $file = $this->file($id);
-        if (is_file($file)) {
+        if (is_file($file) && !$this->expired($file)) {
             touch($file, $this->clock->now()->getTimestamp());
         }
     }
@@ -89,20 +92,28 @@ final readonly class FileSessionStore implements SessionStore
         }
     }
 
-    private function collectGarbage(): void
+    public function forgetExpired(DateTimeImmutable $now): int
     {
+        if (!is_dir($this->directory)) {
+            return 0;
+        }
+
+        $removed = 0;
         foreach (new FilesystemIterator($this->directory) as $file) {
-            if ($file instanceof \SplFileInfo && $file->isFile() && $this->expired($file->getPathname())) {
+            if ($file instanceof \SplFileInfo && $file->isFile() && $this->expired($file->getPathname(), $now)) {
                 unlink($file->getPathname());
+                ++$removed;
             }
         }
+
+        return $removed;
     }
 
-    private function expired(string $file): bool
+    private function expired(string $file, ?DateTimeImmutable $now = null): bool
     {
         clearstatcache(true, $file);
 
-        return (int) filemtime($file) + $this->idleTimeout < $this->clock->now()->getTimestamp();
+        return (int) filemtime($file) + $this->idleTimeout < ($now ?? $this->clock->now())->getTimestamp();
     }
 
     private function file(string $id): string

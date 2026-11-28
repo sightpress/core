@@ -60,6 +60,8 @@ use Psr\Log\LoggerInterface;
 use SightPress\Core\Module\SiteModuleStore;
 use SightPress\Core\Navigation\AdminNavigation;
 use SightPress\Core\Infrastructure\Settings\SettingCatalogue;
+use SightPress\Core\Http\Session\SessionStore;
+use SightPress\Core\Http\Session\SessionStores;
 use SightPress\Core\Http\Upload\ServerLimits;
 use SightPress\Core\Http\Upload\DirectUploadCheck;
 use SightPress\Core\Http\Upload\ServerNotice;
@@ -100,6 +102,7 @@ final class SiteContainerFactory
         ListenerProviderInterface::class,
         EventDispatcherInterface::class,
         SiteModuleStore::class,
+        SessionStore::class,
     ];
 
 
@@ -159,10 +162,15 @@ final class SiteContainerFactory
         $config = $this->config;
         $entityPaths = $this->entityPaths;
         $tenantModules = $this->modules;
+        $sessions = new SessionStores($config);
+        $customSessions = $sessions->customClass();
 
         return [
             ...$this->moduleServices,
             ...$this->moduleDefinitions(),
+            // Where the site's sessions are kept (`session.store`, H-9): its database unless the tenant chose another.
+            SessionStore::class => factory(static fn (ContainerInterface $container): SessionStore => $sessions->forSite($site, $container)),
+            ...($customSessions === null ? [] : [$customSessions => autowire()]),
             // The name, default language and time zone the site's admins chose win over the registry. A site whose
             // database isn't ready yet (while it is being created) keeps the registry's values.
             Site::class => factory(static function (ContainerInterface $container) use ($site): Site {

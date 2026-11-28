@@ -36,6 +36,7 @@ use stdClass;
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Infrastructure\Sms\PhoneNumbers::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Rbac\Contract\Actor::class)]
 #[CoversClass(SiteContainerFactory::class)]
+#[UsesNamespace('SightPress\Core\Http\Session')]
 #[CoversClass(SiteContext::class)]
 #[CoversClass(SiteContainer::class)]
 #[UsesClass(Services::class)]
@@ -268,12 +269,27 @@ final class SiteContainerFactoryTest extends TestCase
         self::assertSame($context, SiteContext::fromRequest($request->withAttribute(SiteContext::class, $context)));
     }
 
-    private function factory(?Container $tenant = null, bool $debug = true): SiteContainerFactory
+    public function testEachSiteKeepsItsSessionsInTheStoreTheTenantChose(): void
+    {
+        $tenant = new Container([\Psr\Clock\ClockInterface::class => new \SightPress\Core\Tests\Support\FixedClock()]);
+        $database = $this->factory($tenant)->forSite(SiteFixture::site());
+        self::assertInstanceOf(\SightPress\Core\Http\Session\DatabaseSessionStore::class, $database->get(\SightPress\Core\Http\Session\SessionStore::class));
+
+        $own = $this->factory($tenant, session: ['store' => \SightPress\Core\Tests\Support\SiteSessionStore::class])->forSite(SiteFixture::site('blog', ['blog.example']));
+        $store = $own->get(\SightPress\Core\Http\Session\SessionStore::class);
+        self::assertInstanceOf(\SightPress\Core\Tests\Support\SiteSessionStore::class, $store);
+        self::assertSame('blog', $store->site->slug, 'a store of the operator\'s is built with the site\'s services');
+    }
+
+    /**
+     * @param array<string, mixed> $session
+     */
+    private function factory(?Container $tenant = null, bool $debug = true, array $session = []): SiteContainerFactory
     {
         return new SiteContainerFactory(
             $tenant ?? new Container(),
             SiteFixture::secretBox(),
-            TenantConfig::fromArray(['cache_dir' => $this->directory->path], '/srv/app', ['APP_DEBUG' => $debug ? '1' : '0']),
+            TenantConfig::fromArray(['cache_dir' => $this->directory->path, 'session' => $session], '/srv/app', ['APP_DEBUG' => $debug ? '1' : '0']),
         );
     }
 }

@@ -24,6 +24,7 @@ use SightPress\Core\Site\Command\SiteStorageProvisionCommand;
 use SightPress\Core\Site\Command\SiteStorageS3Command;
 use SightPress\Core\Site\Command\UpgradeRegistryCommand;
 use SightPress\Module\Event\SettingsChanged;
+use SightPress\Core\Site\Contract\ScheduleDue;
 use SightPress\Core\Site\Contract\SiteLanguages;
 use SightPress\Core\Site\Contract\SiteProfile;
 use SightPress\Core\Site\Contract\SiteSettings;
@@ -36,7 +37,8 @@ use SightPress\Module\ModuleRegistrar;
 /**
  * Sites of the tenant: the `site:*` console commands that create sites, change their status and look after the
  * site registry (ADR-0002); the {@see Contract\SiteProvisioning} event other modules use to set up a new site; and
- * each site's stored settings ({@see SiteSettings}, public). Always on.
+ * each site's stored settings ({@see SiteSettings}, public); and the `session` table with the `schedule:run` job that
+ * removes ended sessions (H-9). Always on.
  */
 final class SiteModule implements ModuleInterface
 {
@@ -77,6 +79,8 @@ final class SiteModule implements ModuleInterface
         $registrar->services()->autowire(DisplayChanged::class);
         $registrar->services()->autowire(SiteLanguages::class, public: true);
         $registrar->subscribers()->listen(SettingsChanged::class, DisplayChanged::class);
+        $registrar->services()->autowire(ForgetExpiredSessions::class);
+        $registrar->subscribers()->listen(ScheduleDue::class, ForgetExpiredSessions::class);
 
         $settings = $registrar->settings();
         $settings->add(new Setting(SiteProfile::DESCRIPTION, 'About the site', SettingType::LongText, help: 'One or two sentences about the site and who runs it. Search engines and AI search engines show it with the site.'));

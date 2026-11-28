@@ -1,5 +1,6 @@
 # Code style, static analysis, both test suites with the 100% unit coverage gate, and a dependency audit.
-# The integration suite runs on SQLite in memory, so no database service is needed.
+# The integration suite runs on SQLite in memory, so no database service is needed. A Redis server runs beside it
+# for the Redis session store's tests (SIGHTPRESS_TEST_REDIS_DSN).
 name: CI
 
 on:
@@ -18,6 +19,18 @@ jobs:
   check:
     name: composer check
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      SIGHTPRESS_TEST_REDIS_DSN: redis://127.0.0.1:6379
     defaults:
       run:
         working-directory: core
@@ -45,7 +58,7 @@ jobs:
         with:
           php-version: '8.5'
           coverage: pcov
-          extensions: pdo_sqlite, intl, gd, exif
+          extensions: pdo_sqlite, intl, gd, exif, redis
           ini-values: date.timezone=UTC, memory_limit=512M
           tools: composer:v2
 

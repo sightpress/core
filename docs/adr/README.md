@@ -98,5 +98,6 @@ An ADR records one decision: the context, the decision and its consequences. It 
 | [0078](0078-placeholders-contract.md) | Placeholders contract for modules | Proposed |
 | [0079](0079-code-languages-contract.md) | Code languages for the `code` block | Proposed |
 | [0080](0080-locale-formats-and-site-languages-contract.md) | Locale formats, money and site languages for modules | Proposed |
+| [0081](0081-shared-sessions.md) | Shared sessions: the database by default, Redis supported | Proposed |
 
 When an ADR's status changes, update it here too.

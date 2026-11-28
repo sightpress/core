@@ -35,6 +35,8 @@ use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
 #[CoversClass(SystemCheckCommand::class)]
+#[UsesNamespace('SightPress\Core\Http\Session')]
+#[UsesClass(\SightPress\Core\Tenant\RedisServer::class)]
 #[UsesNamespace('SightPress\Core\Http\Upload')]
 #[UsesNamespace('SightPress\Core\Media')]
 #[UsesNamespace('SightPress\Core\Template')]
@@ -88,6 +90,7 @@ final class SystemCheckCommandTest extends TestCase
             '  Folder for files being uploaded: /tmp (10 GB free)',
             'Note: The site accepts audio files up to 200 MB, but the server’s settings limit them to 64 MB. Larger ones will be possible once files can be sent in parts.',
             'Note: The site accepts videos up to 1 GB, but the server’s settings limit them to 64 MB. Larger ones will be possible once files can be sent in parts.',
+            'Sessions: Sign-ins are kept in each site\'s database.',
             'No problems found.',
         ], $output->lines);
         self::assertSame([], $output->errors);
@@ -149,6 +152,16 @@ final class SystemCheckCommandTest extends TestCase
         self::assertContains('Probe: the web server accepted every size tried, up to 66 MB.', $output->lines);
     }
 
+    public function testARedisServerForSessionsThatDoesntAnswerIsAProblem(): void
+    {
+        $output = new RecordingOutput();
+        $command = $this->command(ServerLimitsFixture::standard(), tenant: ['session' => ['store' => 'redis']], environment: ['SESSION_REDIS_DSN' => 'redis://127.0.0.1:1']);
+
+        self::assertSame(Command::FAILURE, $command->run(new ArrayCommandInput(), $output));
+        self::assertContains('Sessions: Sign-ins are kept in Redis at 127.0.0.1:1.', $output->lines);
+        self::assertStringContainsString('could not reach the Redis server at 127.0.0.1:1', $output->errors[0]);
+    }
+
     public function testSitesOutsideATightenedPolicyAreNotesNotProblems(): void
     {
         $output = new RecordingOutput();
@@ -163,12 +176,13 @@ final class SystemCheckCommandTest extends TestCase
     }
 
     /**
-     * @param array<mixed> $tenant
+     * @param array<mixed>          $tenant
+     * @param array<string, string> $environment
      */
-    private function command(ServerLimits $server, int $webServerMegabytes = 65, ?SiteRepository $sites = null, array $tenant = []): SystemCheckCommand
+    private function command(ServerLimits $server, int $webServerMegabytes = 65, ?SiteRepository $sites = null, array $tenant = [], array $environment = []): SystemCheckCommand
     {
         $sites ??= self::createStub(SiteRepository::class);
-        $config = TenantConfig::fromArray($tenant, '/tmp/sightpress-test');
+        $config = TenantConfig::fromArray($tenant, '/tmp/sightpress-test', $environment, true);
         $secretBox = new SecretBox(str_repeat('k', 32));
         $containers = new SiteContainerFactory(new ArrayContainer([]), $secretBox, $config);
 
@@ -180,6 +194,6 @@ final class SystemCheckCommandTest extends TestCase
             return (int) $query['bytes'] <= $webServerMegabytes * ServerLimitsFixture::MB
                 ? new MockResponse('', ['http_code' => 204, 'response_headers' => [UploadProbe::ANSWER_HEADER . ': accepted']])
                 : new MockResponse('', ['http_code' => 413]);
-        }), new UploadProbe(str_repeat('s', 32), new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')))), $modules, new \SightPress\Core\Tenant\PolicyReport($sites, $containers, $config));
+        }), new UploadProbe(str_repeat('s', 32), new FrozenClock(new DateTimeImmutable('2026-11-23T12:00:00Z')))), $modules, new \SightPress\Core\Tenant\PolicyReport($sites, $containers, $config), new \SightPress\Core\Http\Session\SessionStoreCheck($config));
     }
 }

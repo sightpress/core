@@ -263,7 +263,7 @@ final readonly class Kernel
         $variables = getenv();
         foreach ([$_ENV, $_SERVER] as $source) {
             foreach ($source as $name => $value) {
-                if (is_string($name) && is_string($value) && (str_starts_with($name, 'APP_') || $name === 'MAILER_DSN')) {
+                if (is_string($name) && is_string($value) && (str_starts_with($name, 'APP_') || in_array($name, ['MAILER_DSN', 'SESSION_REDIS_DSN'], true))) {
                     $variables[$name] ??= $value;
                 }
             }
