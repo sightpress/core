@@ -19,6 +19,7 @@ use SightPress\Core\Tests\Support\TemporaryDirectory;
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantSms::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TwoStepPolicy::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantRetention::class)]
 #[CoversClass(TenantConfigLoader::class)]
 #[UsesClass(TenantConfig::class)]
 #[UsesClass(Environment::class)]

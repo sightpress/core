@@ -19,6 +19,7 @@ use SightPress\Core\Auth\Contract\VerificationCodes;
 use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Auth\Contract\VerificationTarget;
 use SightPress\Core\Http\RateLimit\RateLimiters;
+use SightPress\Core\Infrastructure\Privacy\BatchedDelete;
 use SightPress\Core\Infrastructure\Privacy\ExportedDate;
 
 /**
@@ -179,6 +180,18 @@ final readonly class VerificationCodeStore implements VerificationCodes
             ->fetchAssociative();
 
         return $row === false ? null : $row;
+    }
+
+    /**
+     * Deletes codes that were used or expired before the moment (GD-2), in batches.
+     *
+     * @return int how many
+     */
+    public function forgetDead(DateTimeImmutable $before): int
+    {
+        return BatchedDelete::run($this->connection, self::TABLE, 'id', static fn (QueryBuilder $query): QueryBuilder => $query
+            ->where('expires_at < :before OR consumed_at < :before')
+            ->setParameter('before', $before, Types::DATETIME_IMMUTABLE));
     }
 
     /**

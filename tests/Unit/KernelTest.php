@@ -31,6 +31,8 @@ use SightPress\Module\Routing\Route;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Privacy\PrivacyModule::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Privacy\Command\PurgeCommand::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Privacy\Command\SitePrivacyCommand::class)]
 #[CoversClass(Kernel::class)]
 #[CoversClass(CoreServices::class)]
 #[UsesClass(Services::class)]

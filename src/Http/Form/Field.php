@@ -20,7 +20,7 @@ final readonly class Field
      * @param string|Message        $label           visible label, in plain words (en-GB; shown translated)
      * @param string|Message|null   $hint            short help shown under the label and read with the field
      * @param list<Constraint>      $constraints     extra checks after the built-in ones for the type
-     * @param array<string, string|Message|array<string, string|Message>> $choices value => label, for select, radios and
+     * @param array<array-key, string|Message|array<string, string|Message>> $choices value => label, for select, radios and
      *                                               checkboxes; a select can group them: group label => [value =>
      *                                               label] becomes an `<optgroup>`
      * @param string|null           $autocomplete    `autocomplete` token, for example `email` or `new-password`

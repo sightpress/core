@@ -7,6 +7,13 @@ namespace SightPress\Core\Audit\Privacy;
 use Doctrine\DBAL\Connection;
 use SightPress\Core\Audit\AuditLog;
 use SightPress\Core\Infrastructure\Privacy\Row;
+use DateTimeImmutable;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Types\Types;
+use SightPress\Core\Infrastructure\Privacy\BatchedDelete;
+use SightPress\Core\Privacy\Contract\ExpiringPersonalData;
+use SightPress\Core\Privacy\Contract\RetentionPolicy;
+use SightPress\Core\Tenant\TenantRetention;
 use SightPress\Module\Privacy\ErasureResult;
 use SightPress\Module\Privacy\ErasureRule;
 use SightPress\Module\Privacy\LawfulBasis;
@@ -24,7 +31,7 @@ use SightPress\Module\Text\Message;
  *
  * Names are read from the account when erasing, so the privacy tools erase the audit log before the account itself.
  */
-final readonly class AuditLogData implements PersonalDataProvider
+final readonly class AuditLogData implements PersonalDataProvider, ExpiringPersonalData
 {
     public const string KEY = 'audit.log';
 
@@ -45,7 +52,7 @@ final readonly class AuditLogData implements PersonalDataProvider
             new Message('To show who changed what on the site, for its security and so changes can be explained.'),
             [PersonalDataCategory::Account, PersonalDataCategory::Usage],
             LawfulBasis::LegitimateInterests,
-            Retention::days(730),
+            Retention::days(730, 'privacy.retention.audit_months'),
             ErasureRule::Pseudonymise,
             new Message('When an account is deleted, its entries stay under “Former user”, without the person’s name or contact details.'),
         );
@@ -143,4 +150,14 @@ final readonly class AuditLogData implements PersonalDataProvider
 
         return $text;
     }
+
+    public function purgeExpired(RetentionPolicy $retention, DateTimeImmutable $now): array
+    {
+        $before = $retention->cutOff(TenantRetention::AUDIT, $now);
+
+        return ['audit entries' => BatchedDelete::run($this->connection, AuditLog::TABLE, 'id', static fn (QueryBuilder $query): QueryBuilder => $query
+            ->where('occurred_at < :before')
+            ->setParameter('before', $before, Types::DATETIME_IMMUTABLE))];
+    }
+
 }

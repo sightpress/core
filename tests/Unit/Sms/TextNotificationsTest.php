@@ -199,7 +199,8 @@ final class TextNotificationsTest extends TestCase
         Services::get($this->site->container(), SmsReports::class)->first('old', new DateTimeImmutable('-40 days'));
         self::assertSame(1, $log->forgetBefore(new DateTimeImmutable('+1 day')), 'a waiting message stays');
         new SmsOutboxJob()(new ScheduleDue($this->site->site(), $this->site->container(), new DateTimeImmutable('+100 days')));
-        self::assertSame([], $log->recent(10), 'sent, then forgotten after 90 days');
+        Services::get($this->site->container(), \SightPress\Core\Privacy\PrivacyPurge::class)->run(new DateTimeImmutable('+100 days'));
+        self::assertSame([], $log->recent(10), 'sent, then forgotten after 90 days by the privacy purge');
         self::assertTrue(Services::get($this->site->container(), SmsReports::class)->first('old', new DateTimeImmutable()));
     }
 

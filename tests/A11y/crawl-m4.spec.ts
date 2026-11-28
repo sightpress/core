@@ -190,7 +190,7 @@ const ADMIN_SCREENS = [
   '/account', '/admin', '/admin/analytics', '/admin/analytics/delete', '/admin/appearance', '/admin/appearance/colours', '/admin/audit', '/admin/events', '/admin/features',
   '/admin/media', '/admin/menus', '/admin/menus/{id}', '/admin/media/{id}', '/admin/media/{id}/delete',
   '/admin/pages', '/admin/pages/new', '/admin/pages/{id}', '/admin/pages/{id}/revisions', '/admin/pages/{id}/revisions/{id}', '/admin/redirects', '/admin/roles', '/admin/roles/new', '/admin/roles/{name}',
-  '/admin/settings', '/admin/settings/branding', '/admin/settings/languages', '/admin/settings/security', '/admin/settings/sign-up', '/admin/settings/storage', '/admin/sms', '/admin/users', '/admin/users/invite', '/admin/users/{id}',
+  '/admin/settings', '/admin/settings/branding', '/admin/settings/languages', '/admin/settings/privacy', '/admin/settings/security', '/admin/settings/sign-up', '/admin/settings/storage', '/admin/sms', '/admin/users', '/admin/users/invite', '/admin/users/{id}',
 ];
 
 async function crawl(page: Page, limit: number): Promise<Set<string>> {

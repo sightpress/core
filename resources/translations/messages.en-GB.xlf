@@ -11233,5 +11233,113 @@
         <target>Your roles</target>
       </segment>
     </unit>
+    <unit id="3e56f781b2744054">
+      <segment>
+        <source>6-digit codes</source>
+        <target>6-digit codes</target>
+      </segment>
+    </unit>
+    <unit id="a8bb609ff1553ce3">
+      <segment>
+        <source>Accounts never confirmed</source>
+        <target>Accounts never confirmed</target>
+      </segment>
+    </unit>
+    <unit id="3bded39f8706118e">
+      <segment>
+        <source>Accounts whose email address was never confirmed are deleted this long after they were made.</source>
+        <target>Accounts whose email address was never confirmed are deleted this long after they were made.</target>
+      </segment>
+    </unit>
+    <unit id="d7e7d63e49a00644">
+      <segment>
+        <source>Choose how long the site keeps each kind of personal data. Records older than what you choose are deleted once a day. The suggested times are a starting point: you decide what your site needs, within the limits whoever runs your sites set. This isn’t legal advice.</source>
+        <target>Choose how long the site keeps each kind of personal data. Records older than what you choose are deleted once a day. The suggested times are a starting point: you decide what your site needs, within the limits whoever runs your sites set. This isn’t legal advice.</target>
+      </segment>
+    </unit>
+    <unit id="dbce07900d265a58">
+      <segment>
+        <source>Entries older than this are deleted. Until then they show who changed what, for the site’s security.</source>
+        <target>Entries older than this are deleted. Until then they show who changed what, for the site’s security.</target>
+      </segment>
+    </unit>
+    <unit id="926307b8ec44e553">
+      <segment>
+        <source>How long personal data is kept</source>
+        <target>How long personal data is kept</target>
+      </segment>
+    </unit>
+    <unit id="7d3e3dd2f452b912">
+      <segment>
+        <source>How long personal data is kept has been saved. Older records are deleted within a day.</source>
+        <target>How long personal data is kept has been saved. Older records are deleted within a day.</target>
+      </segment>
+    </unit>
+    <unit id="e84bbd73240f186f">
+      <segment>
+        <source>Invitations are deleted this long after they expired or were accepted, with the name and email address in them.</source>
+        <target>Invitations are deleted this long after they expired or were accepted, with the name and email address in them.</target>
+      </segment>
+    </unit>
+    <unit id="e32fc8952c87642d">
+      <segment>
+        <source>Other personal data</source>
+        <target>Other personal data</target>
+      </segment>
+    </unit>
+    <unit id="54a57c3147c49f33">
+      <segment>
+        <source>Privacy</source>
+        <target>Privacy</target>
+      </segment>
+    </unit>
+    <unit id="adef4309be794f37">
+      <segment>
+        <source>Records older than this are deleted.</source>
+        <target>Records older than this are deleted.</target>
+      </segment>
+    </unit>
+    <unit id="df343c30ae2190da">
+      <segment>
+        <source>Text messages sent</source>
+        <target>Text messages sent</target>
+      </segment>
+    </unit>
+    <unit id="da18965058af7c51">
+      <segment>
+        <source>The record of each text message, with its text and the masked number, is deleted after this.</source>
+        <target>The record of each text message, with its text and the masked number, is deleted after this.</target>
+      </segment>
+    </unit>
+    <unit id="b0569367982a185c">
+      <segment>
+        <source>The record of what the assistant was used for and how much is deleted after this. A shorter time can’t keep a whole month for the budget.</source>
+        <target>The record of what the assistant was used for and how much is deleted after this. A shorter time can’t keep a whole month for the budget.</target>
+      </segment>
+    </unit>
+    <unit id="af9dfe0e911b6461">
+      <segment>
+        <source>Used and expired codes are deleted after this. Only a scrambled form of each is kept anyway.</source>
+        <target>Used and expired codes are deleted after this. Only a scrambled form of each is kept anyway.</target>
+      </segment>
+    </unit>
+    <unit id="2968ce35de85b92b">
+      <segment>
+        <source>{count, plural, one {# day} other {# days}} (suggested)</source>
+        <target>{count, plural, one {# day} other {# days}} (suggested)</target>
+      </segment>
+    </unit>
+    <unit id="8abb70830c14f16d">
+      <segment>
+        <source>{count, plural, one {# month} other {# months}}</source>
+        <target>{count, plural, one {# month} other {# months}}</target>
+      </segment>
+    </unit>
+    <unit id="0ba03655e2790028">
+      <segment>
+        <source>{count, plural, one {# month} other {# months}} (suggested)</source>
+        <target>{count, plural, one {# month} other {# months}} (suggested)</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

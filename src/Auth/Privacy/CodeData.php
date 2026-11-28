@@ -6,6 +6,10 @@ namespace SightPress\Core\Auth\Privacy;
 
 use SightPress\Core\Auth\Contract\VerificationChannel;
 use SightPress\Core\Auth\VerificationCodeStore;
+use DateTimeImmutable;
+use SightPress\Core\Privacy\Contract\ExpiringPersonalData;
+use SightPress\Core\Privacy\Contract\RetentionPolicy;
+use SightPress\Core\Tenant\TenantRetention;
 use SightPress\Module\Privacy\ErasureResult;
 use SightPress\Module\Privacy\LawfulBasis;
 use SightPress\Module\Privacy\PersonalDataCategory;
@@ -19,7 +23,7 @@ use SightPress\Module\Text\Message;
  * Six-digit codes (`verification_code`, D30, ADR-0075): found by account and by a keyed hash of the email address or
  * number they went to. The code and the address are never kept as they are.
  */
-final readonly class CodeData implements PersonalDataProvider
+final readonly class CodeData implements PersonalDataProvider, ExpiringPersonalData
 {
     public const string KEY = 'auth.codes';
 
@@ -35,7 +39,7 @@ final readonly class CodeData implements PersonalDataProvider
             new Message('To check the 6-digit codes we send by email or text when you sign up, sign in or change something important.'),
             [PersonalDataCategory::Account, PersonalDataCategory::Technical],
             LawfulBasis::Contract,
-            Retention::days(1),
+            Retention::days(1, 'privacy.retention.code_days'),
             notes: new Message('Only a scrambled form of each code and of where it went is kept. Used and expired codes are deleted after a day.'),
         );
     }
@@ -61,5 +65,10 @@ final readonly class CodeData implements PersonalDataProvider
         }
 
         return $targets;
+    }
+
+    public function purgeExpired(RetentionPolicy $retention, DateTimeImmutable $now): array
+    {
+        return ['codes' => $this->codes->forgetDead($retention->cutOff(TenantRetention::CODES, $now))];
     }
 }

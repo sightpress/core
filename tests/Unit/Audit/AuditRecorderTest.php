@@ -202,11 +202,13 @@ final class AuditRecorderTest extends TestCase
 
         $recorder(new AccountRegistered((int) $nia->id(), 'member'));
         $recorder(new SettingsChanged(['people.domain_registration'], 1));
+        $recorder(new SettingsChanged(array_map(static fn (string $key): string => 'privacy.retention.' . $key, array_keys(\SightPress\Core\Tenant\TenantRetention::LIMITS)), 1));
 
         $entries = array_reverse($log->find(new AuditFilter(), 10));
         self::assertSame('Nia registered with their organisation email address and confirmed it, with the “member” role.', $entries[0]->summary);
         self::assertSame(['role' => 'member', 'source' => 'domain'], $entries[0]->details);
         self::assertSame('Changed the site settings: Registration with an organisation email address.', $entries[1]->summary);
+        self::assertSame('Changed the site settings: How long the audit log is kept, How long accounts never confirmed are kept, How long invitations are kept, How long 6-digit codes are kept, How long the record of text messages is kept, How long the record of AI assistant use is kept.', $entries[2]->summary);
     }
 
     public function testWritesASentenceForTextMessagesWithTheNumberMasked(): void

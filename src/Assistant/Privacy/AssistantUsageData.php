@@ -7,6 +7,13 @@ namespace SightPress\Core\Assistant\Privacy;
 use Doctrine\DBAL\Connection;
 use SightPress\Core\Assistant\AssistantUsageStore;
 use SightPress\Core\Infrastructure\Privacy\Row;
+use DateTimeImmutable;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Types\Types;
+use SightPress\Core\Infrastructure\Privacy\BatchedDelete;
+use SightPress\Core\Privacy\Contract\ExpiringPersonalData;
+use SightPress\Core\Privacy\Contract\RetentionPolicy;
+use SightPress\Core\Tenant\TenantRetention;
 use SightPress\Module\Privacy\ErasureResult;
 use SightPress\Module\Privacy\ErasureRule;
 use SightPress\Module\Privacy\LawfulBasis;
@@ -22,7 +29,7 @@ use SightPress\Module\Text\Message;
  * token counts, never the prompt or the answer. The counts stay for the site's budget when the account is erased;
  * they point at the *Former user* tombstone.
  */
-final readonly class AssistantUsageData implements PersonalDataProvider
+final readonly class AssistantUsageData implements PersonalDataProvider, ExpiringPersonalData
 {
     public const string KEY = 'assistant.usage';
 
@@ -38,7 +45,7 @@ final readonly class AssistantUsageData implements PersonalDataProvider
             new Message('To keep to the site’s monthly budget and each person’s limits.'),
             [PersonalDataCategory::Usage],
             LawfulBasis::LegitimateInterests,
-            Retention::days(400),
+            Retention::days(400, 'privacy.retention.assistant_months'),
             ErasureRule::Pseudonymise,
             new Message('Only which task, service and model were used and how much, never what was asked or the answer.'),
         );
@@ -77,4 +84,14 @@ final readonly class AssistantUsageData implements PersonalDataProvider
             ->setParameter('id', $user->userId)
             ->fetchOne()));
     }
+
+    public function purgeExpired(RetentionPolicy $retention, DateTimeImmutable $now): array
+    {
+        $before = $retention->cutOff(TenantRetention::ASSISTANT, $now);
+
+        return ['assistant use records' => BatchedDelete::run($this->connection, AssistantUsageStore::TABLE, 'id', static fn (QueryBuilder $query): QueryBuilder => $query
+            ->where('used_at < :before')
+            ->setParameter('before', $before, Types::DATETIME_IMMUTABLE))];
+    }
+
 }
