@@ -13,10 +13,13 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use SightPress\Core\Http\Session\DatabaseSessionStore;
 use SightPress\Core\Site\Migrations\Version20261127100000;
+use SightPress\Core\Site\Migrations\Version20261128090000;
 use SightPress\Core\Tests\Support\FixedClock;
 
 #[CoversClass(DatabaseSessionStore::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Http\Session\Session::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(Version20261127100000::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(Version20261128090000::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Infrastructure\Migration\PortableMigration::class)]
 final class DatabaseSessionStoreTest extends TestCase
 {
@@ -30,6 +33,7 @@ final class DatabaseSessionStoreTest extends TestCase
         $this->clock = new FixedClock(new DateTimeImmutable('2026-11-27 12:00:00 UTC'));
         $schema = new Schema();
         new Version20261127100000($this->connection, new NullLogger())->up($schema);
+        new Version20261128090000($this->connection, new NullLogger())->up($schema);
         foreach ($schema->toSql($this->connection->getDatabasePlatform()) as $sql) {
             $this->connection->executeStatement($sql);
         }
@@ -44,6 +48,7 @@ final class DatabaseSessionStoreTest extends TestCase
             'data' => '{"user_id":7}',
             'last_seen_at' => '2026-11-27 12:00:00',
             'expires_at' => '2026-11-27 12:02:00',
+            'user_id' => null,
         ]], $this->connection->createQueryBuilder()->select('*')->from(DatabaseSessionStore::TABLE)->fetchAllAssociative());
         self::assertSame(hash('sha256', 'session-id'), DatabaseSessionStore::hash('session-id'));
     }
@@ -82,6 +87,28 @@ final class DatabaseSessionStoreTest extends TestCase
         self::assertNull($store->read('session-id'));
         $store->touch('session-id');
         self::assertNull($store->read('session-id'), 'touching a deleted session leaves it gone');
+    }
+
+    public function testFindsAndEndsAPersonsSessions(): void
+    {
+        $store = $this->store();
+        $store->write('phone', [\SightPress\Core\Http\Session\Session::USER_ID => 7]);
+        $this->clock->advance(10);
+        $store->write('laptop', [\SightPress\Core\Http\Session\Session::USER_ID => 7]);
+        $store->write('visitor', ['csrf' => []]);
+        $store->write('signed-out', [\SightPress\Core\Http\Session\Session::USER_ID => 7]);
+        $store->write('signed-out', []);
+
+        self::assertSame([
+            ['last_seen_at' => '2026-11-27T12:00:00+00:00', 'expires_at' => '2026-11-27T12:02:00+00:00'],
+            ['last_seen_at' => '2026-11-27T12:00:10+00:00', 'expires_at' => '2026-11-27T12:02:10+00:00'],
+        ], $store->forPerson(7), 'oldest first, and a session that signed out is no longer theirs');
+        $this->clock->advance(115);
+        self::assertCount(1, $store->forPerson(7), 'an expired session is left out');
+
+        self::assertSame(2, $store->forgetPerson(7));
+        self::assertSame([], $store->forPerson(7));
+        self::assertNotNull($store->read('visitor'));
     }
 
     public function testDamagedDataIsIgnored(): void

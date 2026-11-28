@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Assistant\Command;
 
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
@@ -61,7 +62,7 @@ final class AssistantCommandsTest extends TestCase
         $this->directory = new TemporaryDirectory();
         $tenant = $this->site->kernel->container();
         self::assertInstanceOf(Container::class, $tenant);
-        $tenant->set(HttpClientInterface::class, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
+        $tenant->set(OutboundHttp::INNER, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
             $headers = is_array($options['headers'] ?? null) ? array_values(array_filter($options['headers'], is_string(...))) : [];
             $this->sent[] = ['url' => $url, 'body' => is_string($options['body'] ?? null) ? $options['body'] : '', 'headers' => $headers];
 

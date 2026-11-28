@@ -6,6 +6,7 @@ namespace SightPress\Core\Assistant\Http;
 
 use Closure;
 use JsonException;
+use SightPress\Core\Infrastructure\Http\OutboundRequestRefused;
 use SightPress\Module\Assistant\AssistantFailure;
 use SightPress\Module\Exception\AssistantException;
 use Symfony\Component\HttpClient\RetryableHttpClient;
@@ -65,6 +66,8 @@ final readonly class AssistantHttp
             ]);
             $status = $response->getStatusCode();
             $content = $response->getContent(false);
+        } catch (OutboundRequestRefused $refused) {
+            throw new AssistantException(AssistantFailure::Unavailable, sprintf('%s: %s', $service, $refused->getMessage()));
         } catch (TimeoutExceptionInterface) {
             throw new AssistantException(AssistantFailure::Timeout, sprintf('%s didn\'t answer in time.', $service));
         } catch (TransportExceptionInterface) {

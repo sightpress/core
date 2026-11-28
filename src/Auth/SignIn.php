@@ -24,7 +24,7 @@ use Symfony\Component\RateLimiter\LimiterInterface;
  */
 final readonly class SignIn
 {
-    public const string SESSION_USER = 'auth.user_id';
+    public const string SESSION_USER = \SightPress\Core\Http\Session\Session::USER_ID;
     public const string SESSION_SITE = 'auth.site_id';
     public const string SESSION_STAMP = 'auth.password_stamp';
 

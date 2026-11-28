@@ -36,6 +36,12 @@ a request to another server. `1.0.0` must work behind several servers without st
   reports it.
 - **Files** stay for one host (`session.path`), now also cleaned by `schedule:run`, and touching an expired file no
   longer brings it back.
+- **A person's sessions** can be found and ended (`PersonSessions`, all three stores): the database keeps the
+  signed-in account in `user_id` (indexed), Redis lists a person's keys in a set `<prefix>user:<id>` (entries that
+  ended are dropped when it is read), and the file store reads its files. The site module's privacy provider
+  (`Site\SessionPersonalData`, data set `site.sessions`, ADR-0077) uses it: *Download your data* gets when each
+  session was last used and when it ends (never the id or contents), and erasure ends every session of the person.
+  The session cookie is declared strictly necessary, under both its names.
 - **Switching** stores signs everyone out once: the new store doesn't know the old ids, so the cookie is cleared and a
   fresh session starts. Nothing is migrated.
 
@@ -44,5 +50,5 @@ a request to another server. `1.0.0` must work behind several servers without st
 - A site works behind several web servers with no sticky sessions, with `database` and no new service.
 - Every request of a signed-in person reads one row; at most one write a minute when nothing changed.
 - Upgrading needs `site:migrate` before serving requests (the `session` table), as for any release with migrations.
-- Erasure (GD-4) deletes a person's sessions in the store of each site. Finding them by person is GD-4's to add.
-- The privacy provider declaring the session cookie and table waits for the privacy contract (MI-0.6, ADR-0077).
+- Erasure (GD-4) ends a person's sessions through the provider, whichever store is used. A store of your own that
+  doesn't implement `PersonSessions` leaves them to end by themselves.

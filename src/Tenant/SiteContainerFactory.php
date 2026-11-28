@@ -24,6 +24,9 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use ReflectionClass;
 use SightPress\Core\Infrastructure\Container\Services;
+use SightPress\Core\Infrastructure\Http\OutboundHosts;
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
+use SightPress\Core\Infrastructure\Privacy\PrivacyExtensions;
 use Composer\InstalledVersions;
 use SightPress\Core\Template\AssetUrls;
 use SightPress\Core\Template\TemplateExtension;
@@ -103,6 +106,8 @@ final class SiteContainerFactory
         EventDispatcherInterface::class,
         SiteModuleStore::class,
         SessionStore::class,
+        HttpClientInterface::class,
+        PrivacyExtensions::class,
     ];
 
 
@@ -243,6 +248,17 @@ final class SiteContainerFactory
                 $container,
                 Services::get($container, ModuleRegistry::class),
                 Services::get($container, LoggerInterface::class),
+            )),
+            PrivacyExtensions::class => factory(static fn (ContainerInterface $container): PrivacyExtensions => new PrivacyExtensions(
+                $container,
+                Services::get($container, ModuleRegistry::class),
+                Services::get($container, LoggerInterface::class),
+            )),
+            // Every outgoing request of the site goes only to the hosts of the third parties it uses right now and of
+            // the operator's own services (GD-1), read when the request is made.
+            HttpClientInterface::class => factory(static fn (ContainerInterface $container): HttpClientInterface => new OutboundHttp(
+                OutboundHttp::inner($container),
+                new OutboundHosts(static fn (): array => [...OutboundHttp::TENANT_HOSTS, ...Services::get($container, PrivacyExtensions::class)->outboundHosts()]),
             )),
             AssistantExtensions::class => factory(static fn (ContainerInterface $container): AssistantExtensions => new AssistantExtensions(
                 $container,

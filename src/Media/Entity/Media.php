@@ -8,6 +8,8 @@ use SightPress\Core\Template\Message;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use SightPress\Core\Media\Privacy\UploadData;
+use SightPress\Module\Privacy\PersonalData;
 use SightPress\Core\Media\Contract\MediaFile;
 use SightPress\Core\Media\Contract\MediaKind;
 use SightPress\Core\Media\MediaException;
@@ -115,6 +117,7 @@ final class Media implements MediaFile
         ?int $height,
         array $variants,
         #[ORM\Column(name: 'uploaded_by', type: Types::INTEGER, nullable: true)]
+        #[PersonalData(UploadData::KEY)]
         private ?int $uploadedBy,
         #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)]
         private DateTimeImmutable $createdAt,

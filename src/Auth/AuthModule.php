@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Auth;
 
+use SightPress\Core\Auth\Privacy\CodeData;
+use SightPress\Core\Auth\Privacy\RememberTokenData;
+use SightPress\Core\Auth\Privacy\ThrottleData;
 use Doctrine\DBAL\Connection;
 use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
@@ -100,13 +103,22 @@ final class AuthModule implements ModuleInterface
         foreach ([PasswordHasher::class, SignIn::class, RememberTokens::class, PasswordReset::class] as $class) {
             $services->autowire($class);
         }
-        $services->factory(VerificationCodes::class, static fn (ContainerInterface $c): VerificationCodes => new VerificationCodeStore(
+        $services->factory(VerificationCodeStore::class, static fn (ContainerInterface $c): VerificationCodeStore => new VerificationCodeStore(
             Services::get($c, Connection::class),
             Services::get($c, ClockInterface::class),
             Services::get($c, RateLimiters::class),
             Services::get($c, TenantConfig::class)->secret
                 ?? throw new \LogicException('Verification codes need APP_SECRET: set it in the environment.'),
-        ), public: true);
+        ));
+        $services->factory(VerificationCodes::class, static fn (ContainerInterface $c): VerificationCodes => Services::get($c, VerificationCodeStore::class), public: true);
+        $privacy = $registrar->privacy();
+        foreach ([RememberTokenData::class, CodeData::class, ThrottleData::class] as $provider) {
+            $services->autowire($provider);
+            $privacy->addProvider($provider);
+        }
+        foreach (RememberTokenData::cookies() as $cookie) {
+            $privacy->addCookie($cookie);
+        }
         $services->autowire(EvenTiming::class, public: true);
         $services->autowire(SessionAuthenticator::class, Authenticator::class);
         $services->autowire(PasswordRules::class, Passwords::class, public: true);

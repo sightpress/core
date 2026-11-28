@@ -23,6 +23,7 @@ use SightPress\Core\Module\ModuleLoader;
 use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Core\Module\ModuleSelection;
 
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Privacy\PrivacyModule::class)]
 #[CoversClass(BlockModule::class)]
 #[UsesNamespace('SightPress\Core\Module')]
 #[UsesNamespace('SightPress\Core\Site')]

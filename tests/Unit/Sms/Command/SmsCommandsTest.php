@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Sms\Command;
 
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
@@ -72,7 +73,7 @@ final class SmsCommandsTest extends TestCase
         $this->site = new KernelSite('sms_commands', tenant: $tenant);
         $container = $this->site->kernel->container();
         self::assertInstanceOf(Container::class, $container);
-        $container->set(HttpClientInterface::class, new MockHttpClient(fn (): MockResponse => array_shift($this->answers) ?? new MockResponse('{"sid":"SM1","num_segments":"1"}', ['http_code' => 201])));
+        $container->set(OutboundHttp::INNER, new MockHttpClient(fn (): MockResponse => array_shift($this->answers) ?? new MockResponse('{"sid":"SM1","num_segments":"1"}', ['http_code' => 201])));
     }
 
     public function testEveryCommandNeedsASite(): void

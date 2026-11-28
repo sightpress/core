@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SightPress\Core\Sms\Http;
 
 use JsonException;
+use SightPress\Core\Infrastructure\Http\OutboundRequestRefused;
 use SightPress\Module\Exception\SmsException;
 use SightPress\Module\Sms\SmsFailure;
 use Symfony\Component\HttpClient\Retry\GenericRetryStrategy;
@@ -52,6 +53,8 @@ final readonly class SmsHttp
             ]);
             $status = $response->getStatusCode();
             $content = $response->getContent(false);
+        } catch (OutboundRequestRefused $refused) {
+            throw new SmsException(SmsFailure::Unavailable, sprintf('%s: %s', $service, $refused->getMessage()));
         } catch (TimeoutExceptionInterface) {
             throw new SmsException(SmsFailure::Timeout, sprintf('%s didn\'t answer in time.', $service));
         } catch (TransportExceptionInterface) {

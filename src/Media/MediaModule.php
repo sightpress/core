@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Media;
 
+use SightPress\Core\Media\Privacy\StorageProcessors;
+use SightPress\Core\Media\Privacy\UploadData;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageManagerInterface;
@@ -57,6 +59,11 @@ final class MediaModule implements ModuleInterface
         $registrar->migrations()->add(new MediaMigrations());
 
         $services = $registrar->services();
+        foreach ([UploadData::class, StorageProcessors::class] as $class) {
+            $services->autowire($class);
+        }
+        $registrar->privacy()->addProvider(UploadData::class);
+        $registrar->privacy()->addProcessors(StorageProcessors::class);
         $services->factory(
             ImageManagerInterface::class,
             static fn (): ImageManagerInterface => new ImageManager(Driver::class, autoOrientation: true, decodeAnimation: true, strip: true),

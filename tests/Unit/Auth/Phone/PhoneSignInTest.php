@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Auth\Phone;
 
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use DateTimeImmutable;
 use DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -75,7 +76,7 @@ final class PhoneSignInTest extends TestCase
         $this->clock = new \SightPress\Core\Tests\Support\FixedClock(new DateTimeImmutable());
         $tenant->set(\Psr\Clock\ClockInterface::class, $this->clock);
         $tenant->set(MailSender::class, $this->mail);
-        $tenant->set(HttpClientInterface::class, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
+        $tenant->set(OutboundHttp::INNER, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
             if ($this->providerDown) {
                 return new MockResponse('', ['http_code' => 503]);
             }

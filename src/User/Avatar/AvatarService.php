@@ -203,14 +203,24 @@ final readonly class AvatarService
      */
     private function files(User $user): array
     {
-        $path = $user->avatarPath();
+        return self::filesOf($user->avatarPath(), $user->avatarKind());
+    }
+
+    /**
+     * The stored files of an avatar, from the `avatar_path` and `avatar_kind` of an account: one SVG when it was
+     * generated, one file per size when it was uploaded.
+     *
+     * @return list<string>
+     */
+    public static function filesOf(?string $path, ?AvatarKind $kind): array
+    {
         if ($path === null) {
             return [];
         }
-        if ($user->avatarKind() !== AvatarKind::Uploaded) {
+        if ($kind !== AvatarKind::Uploaded) {
             return [$path];
         }
-        [$name, $extension] = explode('.', $path, 2);
+        [$name, $extension] = explode('.', $path, 2) + [1 => ''];
 
         return array_map(static fn (int $size): string => sprintf('%s-%d.%s', $name, $size, $extension), self::SIZES);
     }

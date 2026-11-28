@@ -90,7 +90,7 @@ final class AuthModuleTest extends TestCase
     public function testCodesAreKeyedWithTheTenantSecret(): void
     {
         $auth = new AuthFixture();
-        $factory = $auth->database->registry->services()[VerificationCodes::class]->item->factory;
+        $factory = $auth->database->registry->services()[VerificationCodeStore::class]->item->factory;
         self::assertNotNull($factory);
         $container = static fn (?string $secret) => new ContainerBuilder()->addDefinitions([
             Connection::class => $auth->database->connection,

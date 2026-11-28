@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Sms\Admin;
 
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use DateTimeImmutable;
 use DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -50,7 +51,7 @@ final class TextMessagesHandlerTest extends TestCase
         $this->site = new KernelSite('text_messages_screen', tenant: ['sms' => $sms + ['provider' => 'twilio', 'account' => 'AC' . '0123456789abcdef0123456789abcdef', 'sender' => 'SightPress']], variables: ['SMS_API_KEY' => 'canary5f2b9c1d7e4a']);
         $tenant = $this->site->kernel->container();
         self::assertInstanceOf(Container::class, $tenant);
-        $tenant->set(HttpClientInterface::class, new MockHttpClient(static fn (string $method, string $url, array $options): MockResponse => str_contains(is_string($options['body'] ?? null) ? $options['body'] : '', '447400123459')
+        $tenant->set(OutboundHttp::INNER, new MockHttpClient(static fn (string $method, string $url, array $options): MockResponse => str_contains(is_string($options['body'] ?? null) ? $options['body'] : '', '447400123459')
             ? new MockResponse('{"code":21408}', ['http_code' => 400])
             : new MockResponse('{"sid":"SM1"}', ['http_code' => 201])));
         Services::get($tenant, SiteModules::class)->turnOn($this->site->site(), 'sms', null);

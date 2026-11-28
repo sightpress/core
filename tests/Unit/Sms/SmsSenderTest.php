@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Sms;
 
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesNamespace;
@@ -76,7 +77,7 @@ final class SmsSenderTest extends TestCase
         $this->site = new KernelSite('sms_sender', tenant: ['sms' => $sms + ['provider' => 'twilio', 'account' => self::ACCOUNT, 'sender' => 'SightPress']], variables: $tenantKey ? ['SMS_API_KEY' => self::KEY] : []);
         $tenant = $this->site->kernel->container();
         self::assertInstanceOf(Container::class, $tenant);
-        $tenant->set(HttpClientInterface::class, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
+        $tenant->set(OutboundHttp::INNER, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
             $this->sent[] = ['method' => $method, 'url' => $url, 'body' => is_string($options['body'] ?? null) ? $options['body'] : ''];
 
             return array_shift($this->answers) ?? new MockResponse('{"sid":"SM' . count($this->sent) . '"}', ['http_code' => 201]);

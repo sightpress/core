@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Page;
 
+use SightPress\Core\Page\Privacy\PageAuthorData;
 use Psr\Container\ContainerInterface;
 use SightPress\Core\Infrastructure\Container\Services;
 use SightPress\Core\Page\Contract\MarkdownPages;
@@ -68,6 +69,8 @@ final class PageModule implements ModuleInterface
     public function register(ModuleRegistrar $registrar): void
     {
         $registrar->migrations()->add(new PageMigrations());
+        $registrar->services()->autowire(PageAuthorData::class);
+        $registrar->privacy()->addProvider(PageAuthorData::class);
 
         $services = $registrar->services();
         $services->autowire(PageRepository::class, public: true);

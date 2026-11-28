@@ -10897,5 +10897,341 @@
         <target>{effective_name} has no mobile number.</target>
       </segment>
     </unit>
+    <unit id="bab75276d757716f">
+      <segment>
+        <source>Sign-in sessions</source>
+        <target>Sign-in sessions</target>
+      </segment>
+    </unit>
+    <unit id="43422b7b52e0f326">
+      <segment>
+        <source>To keep you signed in, to protect the forms you send and to show you messages about what you just did.</source>
+        <target>To keep you signed in, to protect the forms you send and to show you messages about what you just did.</target>
+      </segment>
+    </unit>
+    <unit id="af5a05db419fe1f3">
+      <segment>
+        <source>A session ends after a time without using the site (2 hours, unless whoever runs the site changed it) or when you sign out, and is then deleted. Only a scrambled form of its code is kept.</source>
+        <target>A session ends after a time without using the site (2 hours, unless whoever runs the site changed it) or when you sign out, and is then deleted. Only a scrambled form of its code is kept.</target>
+      </segment>
+    </unit>
+    <unit id="0ed96f2003c7b218">
+      <segment>
+        <source>Keeps you signed in and protects the forms you send. It is only set once you sign in or fill in a form, and ends when you close the browser.</source>
+        <target>Keeps you signed in and protects the forms you send. It is only set once you sign in or fill in a form, and ends when you close the browser.</target>
+      </segment>
+    </unit>
+    <unit id="b005f89db5098e47">
+      <segment>
+        <source>An invitation that wasn’t accepted is deleted 30 days after it expired.</source>
+        <target>An invitation that wasn’t accepted is deleted 30 days after it expired.</target>
+      </segment>
+    </unit>
+    <unit id="573cd208d56c86f9">
+      <segment>
+        <source>Codes we sent you</source>
+        <target>Codes we sent you</target>
+      </segment>
+    </unit>
+    <unit id="f8109ebc5f3aa017">
+      <segment>
+        <source>Devices that keep you signed in</source>
+        <target>Devices that keep you signed in</target>
+      </segment>
+    </unit>
+    <unit id="4b1e834ed7e1e647">
+      <segment>
+        <source>Email addresses and the text of the emails the site sends: codes, invitations, notifications and contact form messages.</source>
+        <target>Email addresses and the text of the emails the site sends: codes, invitations, notifications and contact form messages.</target>
+      </segment>
+    </unit>
+    <unit id="c430eec9ec24b4db">
+      <segment>
+        <source>Features you turned on or off</source>
+        <target>Features you turned on or off</target>
+      </segment>
+    </unit>
+    <unit id="d7f3630bc0246ac5">
+      <segment>
+        <source>Files you added</source>
+        <target>Files you added</target>
+      </segment>
+    </unit>
+    <unit id="14210e691c877f63">
+      <segment>
+        <source>Invitations</source>
+        <target>Invitations</target>
+      </segment>
+    </unit>
+    <unit id="03efc406f4265033">
+      <segment>
+        <source>Keeps you signed in on this device, only if you ticked “Keep me signed in”.</source>
+        <target>Keeps you signed in on this device, only if you ticked “Keep me signed in”.</target>
+      </segment>
+    </unit>
+    <unit id="d0fa95636f03f1ab">
+      <segment>
+        <source>Kept for 90 days. If you replied STOP, a scrambled form of the number is kept so it gets no more texts.</source>
+        <target>Kept for 90 days. If you replied STOP, a scrambled form of the number is kept so it gets no more texts.</target>
+      </segment>
+    </unit>
+    <unit id="6bf518e6e26f52e8">
+      <segment>
+        <source>Limits on attempts</source>
+        <target>Limits on attempts</target>
+      </segment>
+    </unit>
+    <unit id="3cee044c8d82f712">
+      <segment>
+        <source>Manage privacy</source>
+        <target>Manage privacy</target>
+      </segment>
+    </unit>
+    <unit id="f02d93c70a62ae5f">
+      <segment>
+        <source>Messages sent with a contact form are sent by email and never stored on the site.</source>
+        <target>Messages sent with a contact form are sent by email and never stored on the site.</target>
+      </segment>
+    </unit>
+    <unit id="a795ab7a94a128de">
+      <segment>
+        <source>Mobile numbers and the text of the messages the site sends (sign-in codes and the notifications people chose), to deliver them and to check that a number is a real mobile number.</source>
+        <target>Mobile numbers and the text of the messages the site sends (sign-in codes and the notifications people chose), to deliver them and to check that a number is a real mobile number.</target>
+      </segment>
+    </unit>
+    <unit id="1372826c2325d68e">
+      <segment>
+        <source>Only a scrambled form of each code and of where it went is kept. Used and expired codes are deleted after a day.</source>
+        <target>Only a scrambled form of each code and of where it went is kept. Used and expired codes are deleted after a day.</target>
+      </segment>
+    </unit>
+    <unit id="954968f3d7485f05">
+      <segment>
+        <source>Only counts are kept, under a scrambled form of the email address or account and the internet address that tried, so they can’t be linked back to you or listed. They end by themselves within a day.</source>
+        <target>Only counts are kept, under a scrambled form of the email address or account and the internet address that tried, so they can’t be linked back to you or listed. They end by themselves within a day.</target>
+      </segment>
+    </unit>
+    <unit id="1949ccefe27916d3">
+      <segment>
+        <source>Only if you added a number. Text notifications are sent only while you agree to them, and you can stop them at any time.</source>
+        <target>Only if you added a number. Text notifications are sent only while you agree to them, and you can stop them at any time.</target>
+      </segment>
+    </unit>
+    <unit id="c2ca4a054f1ef78d">
+      <segment>
+        <source>Only which task, service and model were used and how much, never what was asked or the answer.</source>
+        <target>Only which task, service and model were used and how much, never what was asked or the answer.</target>
+      </segment>
+    </unit>
+    <unit id="b00191aff147971f">
+      <segment>
+        <source>Pages belong to the site, so they stay when an account is deleted and show “Former user” as who wrote or changed them.</source>
+        <target>Pages belong to the site, so they stay when an account is deleted and show “Former user” as who wrote or changed them.</target>
+      </segment>
+    </unit>
+    <unit id="bc278b0ea14ce5fa">
+      <segment>
+        <source>Pages you wrote or changed</source>
+        <target>Pages you wrote or changed</target>
+      </segment>
+    </unit>
+    <unit id="3b1f9aa2ac3a531e">
+      <segment>
+        <source>See what personal data the site keeps and who it is shared with, choose how long it is kept, and answer people’s requests for their data.</source>
+        <target>See what personal data the site keeps and who it is shared with, choose how long it is kept, and answer people’s requests for their data.</target>
+      </segment>
+    </unit>
+    <unit id="354efeb57b7664f9">
+      <segment>
+        <source>Site search keeps only the text of published pages, never accounts. What people search for is counted like visits, without anything that identifies them.</source>
+        <target>Site search keeps only the text of published pages, never accounts. What people search for is counted like visits, without anything that identifies them.</target>
+      </segment>
+    </unit>
+    <unit id="a2832775e8a3b5d6">
+      <segment>
+        <source>Text messages we sent you</source>
+        <target>Text messages we sent you</target>
+      </segment>
+    </unit>
+    <unit id="caec73c6cc9a556b">
+      <segment>
+        <source>The addresses of pages when they are published or taken down, so search engines update them sooner. Nothing about the people who use the site.</source>
+        <target>The addresses of pages when they are published or taken down, so search engines update them sooner. Nothing about the people who use the site.</target>
+      </segment>
+    </unit>
+    <unit id="d5ad2b15cbb87f7e">
+      <segment>
+        <source>The audit log</source>
+        <target>The audit log</target>
+      </segment>
+    </unit>
+    <unit id="bee0da5fef446651">
+      <segment>
+        <source>The files added to the media library and the profile pictures of accounts, to keep them and deliver them to visitors.</source>
+        <target>The files added to the media library and the profile pictures of accounts, to keep them and deliver them to visitors.</target>
+      </segment>
+    </unit>
+    <unit id="2ca30214f0fe2de6">
+      <segment>
+        <source>The files belong to the site, so they stay when an account is deleted and show “Former user” as who added them. Uploads that never finished are removed.</source>
+        <target>The files belong to the site, so they stay when an account is deleted and show “Former user” as who added them. Uploads that never finished are removed.</target>
+      </segment>
+    </unit>
+    <unit id="801510f59f9050eb">
+      <segment>
+        <source>The internet address and browser details of visitors, as they download the site’s files, pictures and styles from it.</source>
+        <target>The internet address and browser details of visitors, as they download the site’s files, pictures and styles from it.</target>
+      </segment>
+    </unit>
+    <unit id="d3e8ddb5b36dafa7">
+      <segment>
+        <source>The picture you uploaded, or one made from your initials and a colour if you didn’t.</source>
+        <target>The picture you uploaded, or one made from your initials and a colour if you didn’t.</target>
+      </segment>
+    </unit>
+    <unit id="cd63ccb7e2c2cf19">
+      <segment>
+        <source>The site keeps the choice when an account is deleted, under “Former user”.</source>
+        <target>The site keeps the choice when an account is deleted, under “Former user”.</target>
+      </segment>
+    </unit>
+    <unit id="e5963eace5c2cc2b">
+      <segment>
+        <source>The text, page content and pictures someone asks the assistant about, only when they ask for a suggestion. Not who asked.</source>
+        <target>The text, page content and pictures someone asks the assistant about, only when they ask for a suggestion. Not who asked.</target>
+      </segment>
+    </unit>
+    <unit id="875fe2051ab01227">
+      <segment>
+        <source>They end after 30 days, when you sign out, or when your password changes.</source>
+        <target>They end after 30 days, when you sign out, or when your password changes.</target>
+      </segment>
+    </unit>
+    <unit id="64d99f52eb742dd5">
+      <segment>
+        <source>To check the 6-digit codes we send by email or text when you sign up, sign in or change something important.</source>
+        <target>To check the 6-digit codes we send by email or text when you sign up, sign in or change something important.</target>
+      </segment>
+    </unit>
+    <unit id="506984abeed012ef">
+      <segment>
+        <source>To decide what you may do on the site.</source>
+        <target>To decide what you may do on the site.</target>
+      </segment>
+    </unit>
+    <unit id="efe9b4e62ace9898">
+      <segment>
+        <source>To keep to the site’s monthly budget and each person’s limits.</source>
+        <target>To keep to the site’s monthly budget and each person’s limits.</target>
+      </segment>
+    </unit>
+    <unit id="ba267ac560312337">
+      <segment>
+        <source>To let someone who was invited join the site with the role they were given.</source>
+        <target>To let someone who was invited join the site with the role they were given.</target>
+      </segment>
+    </unit>
+    <unit id="e16d9fa160b7d45d">
+      <segment>
+        <source>To let you sign in and work on the site, and to show your name next to what you do in the admin.</source>
+        <target>To let you sign in and work on the site, and to show your name next to what you do in the admin.</target>
+      </segment>
+    </unit>
+    <unit id="dc930f3db7638555">
+      <segment>
+        <source>To send texts, try again when sending fails and show that they arrived.</source>
+        <target>To send texts, try again when sending fails and show that they arrived.</target>
+      </segment>
+    </unit>
+    <unit id="e9272086b8fcc50c">
+      <segment>
+        <source>To show the history of each page and who to ask about it.</source>
+        <target>To show the history of each page and who to ask about it.</target>
+      </segment>
+    </unit>
+    <unit id="b011677910c3e338">
+      <segment>
+        <source>To show who added a file to the media library, and to finish an upload that arrives in parts.</source>
+        <target>To show who added a file to the media library, and to finish an upload that arrives in parts.</target>
+      </segment>
+    </unit>
+    <unit id="8bac8589b290dacf">
+      <segment>
+        <source>To show who changed what on the site, for its security and so changes can be explained.</source>
+        <target>To show who changed what on the site, for its security and so changes can be explained.</target>
+      </segment>
+    </unit>
+    <unit id="5b6f420a3e7cc566">
+      <segment>
+        <source>To show who did what in the admin.</source>
+        <target>To show who did what in the admin.</target>
+      </segment>
+    </unit>
+    <unit id="7e280b153760af37">
+      <segment>
+        <source>To show who last changed each feature of the site.</source>
+        <target>To show who last changed each feature of the site.</target>
+      </segment>
+    </unit>
+    <unit id="d8e8ea90d1528dfb">
+      <segment>
+        <source>To sign you in again on a device where you ticked “Keep me signed in”.</source>
+        <target>To sign you in again on a device where you ticked “Keep me signed in”.</target>
+      </segment>
+    </unit>
+    <unit id="0865c8446f7a9c8e">
+      <segment>
+        <source>To sign you in with a code by text, to confirm important changes and to send you the text notifications you chose.</source>
+        <target>To sign you in with a code by text, to confirm important changes and to send you the text notifications you chose.</target>
+      </segment>
+    </unit>
+    <unit id="035bbc3903c532f7">
+      <segment>
+        <source>To stop password guessing and the misuse of forms, by counting attempts for a short time.</source>
+        <target>To stop password guessing and the misuse of forms, by counting attempts for a short time.</target>
+      </segment>
+    </unit>
+    <unit id="5151983518f7f183">
+      <segment>
+        <source>Use of the AI assistant</source>
+        <target>Use of the AI assistant</target>
+      </segment>
+    </unit>
+    <unit id="33659860ce77162f">
+      <segment>
+        <source>Visitor statistics keep no internet address, browser details or anything else that identifies a visitor: only a code made with a key that is thrown away every day. People who are signed in, and browsers that ask not to be tracked, are never counted.</source>
+        <target>Visitor statistics keep no internet address, browser details or anything else that identifies a visitor: only a code made with a key that is thrown away every day. People who are signed in, and browsers that ask not to be tracked, are never counted.</target>
+      </segment>
+    </unit>
+    <unit id="470f5d35cc9dfde1">
+      <segment>
+        <source>When an account is deleted, its email address, names, password, time zone and language are removed. What the person wrote stays on the site under “Former user”. Accounts that were never confirmed are removed after 7 days.</source>
+        <target>When an account is deleted, its email address, names, password, time zone and language are removed. What the person wrote stays on the site under “Former user”. Accounts that were never confirmed are removed after 7 days.</target>
+      </segment>
+    </unit>
+    <unit id="4c581f94055ca435">
+      <segment>
+        <source>When an account is deleted, its entries stay under “Former user”, without the person’s name or contact details.</source>
+        <target>When an account is deleted, its entries stay under “Former user”, without the person’s name or contact details.</target>
+      </segment>
+    </unit>
+    <unit id="dbb5f6371b6a2a67">
+      <segment>
+        <source>Your account</source>
+        <target>Your account</target>
+      </segment>
+    </unit>
+    <unit id="fb3aab5ebefdc214">
+      <segment>
+        <source>Your profile picture</source>
+        <target>Your profile picture</target>
+      </segment>
+    </unit>
+    <unit id="0c0e9ba3d7b33a01">
+      <segment>
+        <source>Your roles</source>
+        <target>Your roles</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

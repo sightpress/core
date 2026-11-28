@@ -48,7 +48,7 @@ final class SmsWebhookHandlerTest extends TestCase
         $this->site = new KernelSite('sms_webhook', tenant: ['sms' => ['provider' => 'twilio', 'account' => self::ACCOUNT, 'sender' => 'SightPress']], variables: ['SMS_API_KEY' => self::KEY]);
         $tenant = $this->site->kernel->container();
         self::assertInstanceOf(\DI\Container::class, $tenant);
-        $tenant->set(\Symfony\Contracts\HttpClient\HttpClientInterface::class, new MockHttpClient(new MockResponse('{"sid":"SM1"}', ['http_code' => 201])));
+        $tenant->set(\SightPress\Core\Infrastructure\Http\OutboundHttp::INNER, new MockHttpClient(new MockResponse('{"sid":"SM1"}', ['http_code' => 201])));
         Services::get($tenant, SiteModules::class)->turnOn($this->site->site(), 'sms', null);
         Services::get($tenant, SiteContainerFactory::class)->evict('demo');
     }

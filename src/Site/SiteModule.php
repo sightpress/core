@@ -79,6 +79,11 @@ final class SiteModule implements ModuleInterface
         $registrar->services()->autowire(DisplayChanged::class);
         $registrar->services()->autowire(SiteLanguages::class, public: true);
         $registrar->subscribers()->listen(SettingsChanged::class, DisplayChanged::class);
+        $registrar->services()->autowire(SessionPersonalData::class);
+        $registrar->privacy()->addProvider(SessionPersonalData::class);
+        foreach (SessionPersonalData::cookies() as $cookie) {
+            $registrar->privacy()->addCookie($cookie);
+        }
         $registrar->services()->autowire(ForgetExpiredSessions::class);
         $registrar->subscribers()->listen(ScheduleDue::class, ForgetExpiredSessions::class);
 

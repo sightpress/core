@@ -15,6 +15,9 @@ use Psr\Clock\ClockInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
+use SightPress\Core\Http\Upload\UploadProbeClient;
+use SightPress\Core\Infrastructure\Http\OutboundHosts;
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use SightPress\Core\Http\RateLimit\RateLimiters;
@@ -116,6 +119,7 @@ final class CoreServices
             RateLimiters::class => factory(static fn (): RateLimiters => new RateLimiters(
                 new CacheStorage(new FilesystemAdapter('rate_limits', 0, $config->cacheDir)),
                 RateLimiters::POLICIES + RateLimiters::smsPolicies($config->sms->limits),
+                $config->secret,
             )),
             ListenerProviderInterface::class => autowire(ListenerProvider::class),
             EventDispatcherInterface::class => autowire(EventDispatcher::class),
@@ -152,8 +156,15 @@ final class CoreServices
                 static fn (ContainerInterface $container): BlockTypeCatalogue => BlockTypeCatalogue::fromRegistry($modules, $container),
             ),
             BlockIconCatalogue::class => factory(static fn (): BlockIconCatalogue => BlockIconCatalogue::fromRegistry($modules)),
-            // Outgoing requests (IndexNow pings, which are off by default) never wait long.
-            HttpClientInterface::class => factory(static fn (): HttpClientInterface => HttpClient::create(['timeout' => 5, 'max_redirects' => 0])),
+            // Outgoing requests never wait long, and go only to the hosts a service the tenant or the site uses
+            // declares (GD-1); a site gets its own allow-list (SiteContainerFactory). The client without it is kept
+            // for the server's own checks of itself.
+            OutboundHttp::INNER => factory(static fn (): HttpClientInterface => HttpClient::create(['timeout' => 5, 'max_redirects' => 0])),
+            HttpClientInterface::class => factory(static fn (ContainerInterface $container): HttpClientInterface => new OutboundHttp(
+                OutboundHttp::inner($container),
+                OutboundHosts::of(OutboundHttp::TENANT_HOSTS),
+            )),
+            UploadProbeClient::class => autowire()->constructorParameter('http', get(OutboundHttp::INNER)),
             ServerLimits::class => factory(static fn (): ServerLimits => ServerLimits::current($config)),
             MediaLimits::class => factory(static fn (): MediaLimits => $config->mediaLimits->defaults),
             UploadProbe::class => autowire()->constructorParameter('secret', $config->secret),

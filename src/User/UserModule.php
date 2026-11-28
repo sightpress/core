@@ -14,6 +14,9 @@ use SightPress\Module\Event\LocaleRemoved;
 use SightPress\Core\Site\Contract\SiteProvisioning;
 use SightPress\Core\User\Avatar\AvatarGenerator;
 use SightPress\Core\User\Avatar\AvatarService;
+use SightPress\Core\User\Privacy\AccountData;
+use SightPress\Core\User\Privacy\AvatarData;
+use SightPress\Core\User\Privacy\PhoneData;
 use SightPress\Core\User\Contract\AccountDirectory;
 use SightPress\Core\User\Contract\AccountPhones;
 use SightPress\Core\User\Contract\AccountPreferences;
@@ -74,6 +77,11 @@ final class UserModule implements ModuleInterface
         ));
         foreach ([AccountPages::class, AccountHandler::class, AccountPictureHandler::class, AvatarFileHandler::class, AccountLanguageHandler::class, AccountPreferencesHandler::class] as $class) {
             $registrar->services()->autowire($class);
+        }
+        $privacy = $registrar->privacy();
+        foreach ([AccountData::class, AvatarData::class, PhoneData::class] as $provider) {
+            $registrar->services()->autowire($provider);
+            $privacy->addProvider($provider);
         }
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/user');
         $routes = $registrar->routes();

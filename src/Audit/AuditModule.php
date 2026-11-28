@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Audit;
 
+use SightPress\Core\Audit\Privacy\AuditLogData;
 use SightPress\Core\Audit\Http\AuditLogHandler;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Module\Admin\AdminMenuItem;
@@ -43,6 +44,8 @@ final class AuditModule implements ModuleInterface
     public function register(ModuleRegistrar $registrar): void
     {
         $registrar->migrations()->add(new AuditMigrations());
+        $registrar->services()->autowire(AuditLogData::class);
+        $registrar->privacy()->addProvider(AuditLogData::class);
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/audit');
         $services = $registrar->services();
         foreach ([AuditLog::class, AuditRecorder::class, AuditLogHandler::class] as $class) {

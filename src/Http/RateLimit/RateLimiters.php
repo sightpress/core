@@ -57,12 +57,20 @@ final class RateLimiters
     private array $factories = [];
 
     /**
+     */
+    private readonly string $keySecret;
+
+    /**
      * @param array<string, array{policy: string, limit: positive-int, interval: string}> $policies
+     * @param string|null $secret `APP_SECRET`: keys (an email address and client address, an account id) are kept
+     *                            only as a keyed hash made with it, so the cache holds no one's address (GD-1)
      */
     public function __construct(
         private readonly StorageInterface $storage,
         private readonly array $policies = self::POLICIES,
+        #[\SensitiveParameter] ?string $secret = null,
     ) {
+        $this->keySecret = hash_hkdf('sha256', $secret ?? 'sightpress', 32, 'sightpress rate limits');
     }
 
     public function limiter(string $policy, string $key): LimiterInterface
@@ -74,7 +82,15 @@ final class RateLimiters
 
         $this->factories[$policy] ??= new RateLimiterFactory(['id' => $policy] + $config, $this->storage);
 
-        return $this->factories[$policy]->create($key);
+        return $this->factories[$policy]->create(self::hashedKey($key, $this->keySecret));
+    }
+
+    /**
+     * What the cache keeps in place of a key: a keyed hash, the same every time for the same key.
+     */
+    public static function hashedKey(string $key, string $secret): string
+    {
+        return hash_hmac('sha256', $key, $secret);
     }
 
     /**

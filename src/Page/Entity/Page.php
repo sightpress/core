@@ -10,6 +10,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use SightPress\Core\Page\Privacy\PageAuthorData;
+use SightPress\Module\Privacy\PersonalData;
 use SightPress\Core\Page\PageContent;
 use SightPress\Core\Page\PageException;
 use SightPress\Core\Rbac\Contract\PageState;
@@ -66,6 +68,7 @@ final class Page implements PageSubject
     private ?DateTimeImmutable $unpublishAt = null;
 
     #[ORM\Column(name: 'scheduled_by', type: Types::INTEGER, nullable: true)]
+    #[PersonalData(PageAuthorData::KEY)]
     private ?int $scheduledBy = null;
 
     /** @var Collection<string, PageTranslation> */
@@ -81,6 +84,7 @@ final class Page implements PageSubject
         private ?Page $parent,
         int $position,
         #[ORM\Column(name: 'author_id', type: Types::INTEGER, nullable: true)]
+        #[PersonalData(PageAuthorData::KEY)]
         private ?int $authorId,
         #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)]
         private DateTimeImmutable $createdAt,

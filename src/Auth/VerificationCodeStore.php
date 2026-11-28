@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace SightPress\Core\Auth;
 
 use DateTimeImmutable;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Types\Types;
 use Psr\Clock\ClockInterface;
 use SightPress\Core\Auth\Contract\CodeCheck;
@@ -17,6 +19,7 @@ use SightPress\Core\Auth\Contract\VerificationCodes;
 use SightPress\Core\Auth\Contract\VerificationPurpose;
 use SightPress\Core\Auth\Contract\VerificationTarget;
 use SightPress\Core\Http\RateLimit\RateLimiters;
+use SightPress\Core\Infrastructure\Privacy\ExportedDate;
 
 /**
  * {@see VerificationCodes} in the site's `verification_code` table.
@@ -176,6 +179,66 @@ final readonly class VerificationCodeStore implements VerificationCodes
             ->fetchAssociative();
 
         return $row === false ? null : $row;
+    }
+
+    /**
+     * The codes sent to the person, by account or to their email address or number (*Download your data*): when,
+     * why and how each was sent, never the code or where it went.
+     *
+     * @param list<array{VerificationChannel, string}> $targets the person's email address and number
+     *
+     * @return list<array{purpose: string, channel: string, attempts: int, created_at: string|null, expires_at: string|null, used_at: string|null}>
+     */
+    public function forPerson(int $accountId, array $targets): array
+    {
+        $rows = $this->personQuery($accountId, $targets)
+            ->select('purpose', 'channel', 'attempts', 'created_at', 'expires_at', 'consumed_at')
+            ->orderBy('created_at')
+            ->fetchAllAssociative();
+
+        return array_values(array_map(fn (array $row): array => [
+            'purpose' => is_scalar($row['purpose']) ? (string) $row['purpose'] : '',
+            'channel' => is_scalar($row['channel']) ? (string) $row['channel'] : '',
+            'attempts' => self::int($row['attempts']),
+            'created_at' => ExportedDate::of($this->date($row['created_at'])),
+            'expires_at' => ExportedDate::of($this->date($row['expires_at'])),
+            'used_at' => ExportedDate::of($this->date($row['consumed_at'])),
+        ], $rows));
+    }
+
+    /**
+     * Deletes every code sent to the person (*Delete your account*).
+     *
+     * @param list<array{VerificationChannel, string}> $targets the person's email address and number
+     *
+     * @return int how many were deleted
+     */
+    public function forgetPerson(int $accountId, array $targets): int
+    {
+        $ids = array_map(self::int(...), $this->personQuery($accountId, $targets)->select('id')->fetchFirstColumn());
+        if ($ids === []) {
+            return 0;
+        }
+
+        return (int) $this->connection->createQueryBuilder()
+            ->delete(self::TABLE)
+            ->where('id IN (:ids)')
+            ->setParameter('ids', $ids, ArrayParameterType::INTEGER)
+            ->executeStatement();
+    }
+
+    /**
+     * @param list<array{VerificationChannel, string}> $targets
+     */
+    private function personQuery(int $accountId, array $targets): QueryBuilder
+    {
+        $hashes = array_map(fn (array $target): string => $this->targetHash(VerificationTarget::normalise($target[0], $target[1])), $targets);
+
+        return $this->connection->createQueryBuilder()
+            ->from(self::TABLE)
+            ->where('account_id = :account OR target_hash IN (:hashes)')
+            ->setParameter('account', $accountId)
+            ->setParameter('hashes', $hashes === [] ? [''] : $hashes, ArrayParameterType::STRING);
     }
 
     private function targetHash(string $target): string

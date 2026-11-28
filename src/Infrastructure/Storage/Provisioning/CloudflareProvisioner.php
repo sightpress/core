@@ -9,6 +9,7 @@ use SightPress\Core\Assistant\Http\BackoffStrategy;
 use SightPress\Core\Assistant\Http\EndpointGuard;
 use SightPress\Core\Assistant\Http\EndpointRefused;
 use SightPress\Core\Template\Message;
+use SightPress\Core\Infrastructure\Http\OutboundRequestRefused;
 use Symfony\Component\HttpClient\RetryableHttpClient;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -156,6 +157,8 @@ final readonly class CloudflareProvisioner implements CloudProvisioner
             $response = new RetryableHttpClient($this->client, new BackoffStrategy($this->retryDelayMs), self::RETRIES)->request($method, $url, $options);
             $status = $response->getStatusCode();
             $content = $response->getContent(false);
+        } catch (OutboundRequestRefused $refused) {
+            throw new ProvisioningException($refused->getMessage());
         } catch (EndpointRefused | TransportExceptionInterface) {
             throw new ProvisioningException('Cloudflare can\'t be reached. Check the network and try again.');
         }

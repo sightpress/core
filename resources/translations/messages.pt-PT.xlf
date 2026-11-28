@@ -10897,5 +10897,341 @@
         <target>{effective_name} não tem número de telemóvel.</target>
       </segment>
     </unit>
+    <unit id="bab75276d757716f">
+      <segment state="translated">
+        <source>Sign-in sessions</source>
+        <target>Sessões de início de sessão</target>
+      </segment>
+    </unit>
+    <unit id="43422b7b52e0f326">
+      <segment state="translated">
+        <source>To keep you signed in, to protect the forms you send and to show you messages about what you just did.</source>
+        <target>Para manter a sua sessão iniciada, proteger os formulários que envia e mostrar-lhe mensagens sobre o que acabou de fazer.</target>
+      </segment>
+    </unit>
+    <unit id="af5a05db419fe1f3">
+      <segment state="translated">
+        <source>A session ends after a time without using the site (2 hours, unless whoever runs the site changed it) or when you sign out, and is then deleted. Only a scrambled form of its code is kept.</source>
+        <target>Uma sessão termina após algum tempo sem utilizar o site (2 horas, salvo se quem gere o site o tiver alterado) ou quando termina a sessão, e é então eliminada. Só é guardada uma forma cifrada do seu código.</target>
+      </segment>
+    </unit>
+    <unit id="0ed96f2003c7b218">
+      <segment state="translated">
+        <source>Keeps you signed in and protects the forms you send. It is only set once you sign in or fill in a form, and ends when you close the browser.</source>
+        <target>Mantém a sua sessão iniciada e protege os formulários que envia. Só é definido quando inicia sessão ou preenche um formulário, e termina quando fecha o navegador.</target>
+      </segment>
+    </unit>
+    <unit id="b005f89db5098e47">
+      <segment state="translated">
+        <source>An invitation that wasn’t accepted is deleted 30 days after it expired.</source>
+        <target>Um convite que não foi aceite é apagado 30 dias depois de expirar.</target>
+      </segment>
+    </unit>
+    <unit id="573cd208d56c86f9">
+      <segment state="translated">
+        <source>Codes we sent you</source>
+        <target>Códigos que lhe enviámos</target>
+      </segment>
+    </unit>
+    <unit id="f8109ebc5f3aa017">
+      <segment state="translated">
+        <source>Devices that keep you signed in</source>
+        <target>Dispositivos que mantêm a sua sessão iniciada</target>
+      </segment>
+    </unit>
+    <unit id="4b1e834ed7e1e647">
+      <segment state="translated">
+        <source>Email addresses and the text of the emails the site sends: codes, invitations, notifications and contact form messages.</source>
+        <target>Endereços de email e o texto dos emails que o site envia: códigos, convites, notificações e mensagens de formulários de contacto.</target>
+      </segment>
+    </unit>
+    <unit id="c430eec9ec24b4db">
+      <segment state="translated">
+        <source>Features you turned on or off</source>
+        <target>Funcionalidades que ligou ou desligou</target>
+      </segment>
+    </unit>
+    <unit id="d7f3630bc0246ac5">
+      <segment state="translated">
+        <source>Files you added</source>
+        <target>Ficheiros que adicionou</target>
+      </segment>
+    </unit>
+    <unit id="14210e691c877f63">
+      <segment state="translated">
+        <source>Invitations</source>
+        <target>Convites</target>
+      </segment>
+    </unit>
+    <unit id="03efc406f4265033">
+      <segment state="translated">
+        <source>Keeps you signed in on this device, only if you ticked “Keep me signed in”.</source>
+        <target>Mantém a sua sessão iniciada neste dispositivo, só se marcou “Manter a sessão iniciada”.</target>
+      </segment>
+    </unit>
+    <unit id="d0fa95636f03f1ab">
+      <segment state="translated">
+        <source>Kept for 90 days. If you replied STOP, a scrambled form of the number is kept so it gets no more texts.</source>
+        <target>Guardadas durante 90 dias. Se respondeu STOP, é guardada uma forma baralhada do número para que não receba mais mensagens.</target>
+      </segment>
+    </unit>
+    <unit id="6bf518e6e26f52e8">
+      <segment state="translated">
+        <source>Limits on attempts</source>
+        <target>Limites de tentativas</target>
+      </segment>
+    </unit>
+    <unit id="3cee044c8d82f712">
+      <segment state="translated">
+        <source>Manage privacy</source>
+        <target>Gerir a privacidade</target>
+      </segment>
+    </unit>
+    <unit id="f02d93c70a62ae5f">
+      <segment state="translated">
+        <source>Messages sent with a contact form are sent by email and never stored on the site.</source>
+        <target>As mensagens enviadas por um formulário de contacto seguem por email e nunca são guardadas no site.</target>
+      </segment>
+    </unit>
+    <unit id="a795ab7a94a128de">
+      <segment state="translated">
+        <source>Mobile numbers and the text of the messages the site sends (sign-in codes and the notifications people chose), to deliver them and to check that a number is a real mobile number.</source>
+        <target>Números de telemóvel e o texto das mensagens que o site envia (códigos de início de sessão e as notificações que as pessoas escolheram), para as entregar e para confirmar que um número é mesmo um telemóvel.</target>
+      </segment>
+    </unit>
+    <unit id="1372826c2325d68e">
+      <segment state="translated">
+        <source>Only a scrambled form of each code and of where it went is kept. Used and expired codes are deleted after a day.</source>
+        <target>Só é guardada uma forma baralhada de cada código e do sítio para onde foi. Os códigos usados e expirados são apagados ao fim de um dia.</target>
+      </segment>
+    </unit>
+    <unit id="954968f3d7485f05">
+      <segment state="translated">
+        <source>Only counts are kept, under a scrambled form of the email address or account and the internet address that tried, so they can’t be linked back to you or listed. They end by themselves within a day.</source>
+        <target>Só são guardadas contagens, com uma forma baralhada do endereço de email ou da conta e do endereço de internet que tentou, por isso não podem ser ligadas a si nem listadas. Terminam sozinhas no prazo de um dia.</target>
+      </segment>
+    </unit>
+    <unit id="1949ccefe27916d3">
+      <segment state="translated">
+        <source>Only if you added a number. Text notifications are sent only while you agree to them, and you can stop them at any time.</source>
+        <target>Só se adicionou um número. As notificações por mensagem só são enviadas enquanto concordar, e pode pará-las a qualquer momento.</target>
+      </segment>
+    </unit>
+    <unit id="c2ca4a054f1ef78d">
+      <segment state="translated">
+        <source>Only which task, service and model were used and how much, never what was asked or the answer.</source>
+        <target>Só que tarefa, serviço e modelo foram usados e quanto, nunca o que foi pedido nem a resposta.</target>
+      </segment>
+    </unit>
+    <unit id="b00191aff147971f">
+      <segment state="translated">
+        <source>Pages belong to the site, so they stay when an account is deleted and show “Former user” as who wrote or changed them.</source>
+        <target>As páginas pertencem ao site, por isso ficam quando uma conta é eliminada e mostram “Antigo utilizador” como autor das alterações.</target>
+      </segment>
+    </unit>
+    <unit id="bc278b0ea14ce5fa">
+      <segment state="translated">
+        <source>Pages you wrote or changed</source>
+        <target>Páginas que escreveu ou alterou</target>
+      </segment>
+    </unit>
+    <unit id="3b1f9aa2ac3a531e">
+      <segment state="translated">
+        <source>See what personal data the site keeps and who it is shared with, choose how long it is kept, and answer people’s requests for their data.</source>
+        <target>Ver que dados pessoais o site guarda e com quem são partilhados, escolher durante quanto tempo são guardados e responder aos pedidos das pessoas sobre os seus dados.</target>
+      </segment>
+    </unit>
+    <unit id="354efeb57b7664f9">
+      <segment state="translated">
+        <source>Site search keeps only the text of published pages, never accounts. What people search for is counted like visits, without anything that identifies them.</source>
+        <target>A pesquisa do site só guarda o texto das páginas publicadas, nunca contas. O que as pessoas pesquisam é contado como as visitas, sem nada que as identifique.</target>
+      </segment>
+    </unit>
+    <unit id="a2832775e8a3b5d6">
+      <segment state="translated">
+        <source>Text messages we sent you</source>
+        <target>Mensagens que lhe enviámos</target>
+      </segment>
+    </unit>
+    <unit id="caec73c6cc9a556b">
+      <segment state="translated">
+        <source>The addresses of pages when they are published or taken down, so search engines update them sooner. Nothing about the people who use the site.</source>
+        <target>Os endereços das páginas quando são publicadas ou retiradas, para que os motores de busca as atualizem mais cedo. Nada sobre as pessoas que usam o site.</target>
+      </segment>
+    </unit>
+    <unit id="d5ad2b15cbb87f7e">
+      <segment state="translated">
+        <source>The audit log</source>
+        <target>O registo de auditoria</target>
+      </segment>
+    </unit>
+    <unit id="bee0da5fef446651">
+      <segment state="translated">
+        <source>The files added to the media library and the profile pictures of accounts, to keep them and deliver them to visitors.</source>
+        <target>Os ficheiros adicionados à biblioteca multimédia e as fotografias de perfil das contas, para os guardar e entregar aos visitantes.</target>
+      </segment>
+    </unit>
+    <unit id="2ca30214f0fe2de6">
+      <segment state="translated">
+        <source>The files belong to the site, so they stay when an account is deleted and show “Former user” as who added them. Uploads that never finished are removed.</source>
+        <target>Os ficheiros pertencem ao site, por isso ficam quando uma conta é eliminada e mostram “Antigo utilizador” como quem os adicionou. Os carregamentos que nunca terminaram são removidos.</target>
+      </segment>
+    </unit>
+    <unit id="801510f59f9050eb">
+      <segment state="translated">
+        <source>The internet address and browser details of visitors, as they download the site’s files, pictures and styles from it.</source>
+        <target>O endereço de internet e os dados do navegador dos visitantes, quando descarregam dele os ficheiros, imagens e estilos do site.</target>
+      </segment>
+    </unit>
+    <unit id="d3e8ddb5b36dafa7">
+      <segment state="translated">
+        <source>The picture you uploaded, or one made from your initials and a colour if you didn’t.</source>
+        <target>A imagem que carregou, ou uma feita com as suas iniciais e uma cor se não carregou nenhuma.</target>
+      </segment>
+    </unit>
+    <unit id="cd63ccb7e2c2cf19">
+      <segment state="translated">
+        <source>The site keeps the choice when an account is deleted, under “Former user”.</source>
+        <target>O site mantém a escolha quando uma conta é eliminada, em nome de “Antigo utilizador”.</target>
+      </segment>
+    </unit>
+    <unit id="e5963eace5c2cc2b">
+      <segment state="translated">
+        <source>The text, page content and pictures someone asks the assistant about, only when they ask for a suggestion. Not who asked.</source>
+        <target>O texto, o conteúdo das páginas e as imagens sobre os quais alguém pergunta ao assistente, só quando pede uma sugestão. Não quem perguntou.</target>
+      </segment>
+    </unit>
+    <unit id="875fe2051ab01227">
+      <segment state="translated">
+        <source>They end after 30 days, when you sign out, or when your password changes.</source>
+        <target>Terminam ao fim de 30 dias, quando termina a sessão ou quando a sua palavra-passe muda.</target>
+      </segment>
+    </unit>
+    <unit id="64d99f52eb742dd5">
+      <segment state="translated">
+        <source>To check the 6-digit codes we send by email or text when you sign up, sign in or change something important.</source>
+        <target>Para confirmar os códigos de 6 dígitos que enviamos por email ou mensagem quando se regista, inicia sessão ou altera algo importante.</target>
+      </segment>
+    </unit>
+    <unit id="506984abeed012ef">
+      <segment state="translated">
+        <source>To decide what you may do on the site.</source>
+        <target>Para decidir o que pode fazer no site.</target>
+      </segment>
+    </unit>
+    <unit id="efe9b4e62ace9898">
+      <segment state="translated">
+        <source>To keep to the site’s monthly budget and each person’s limits.</source>
+        <target>Para cumprir o orçamento mensal do site e os limites de cada pessoa.</target>
+      </segment>
+    </unit>
+    <unit id="ba267ac560312337">
+      <segment state="translated">
+        <source>To let someone who was invited join the site with the role they were given.</source>
+        <target>Para que alguém que foi convidado possa juntar-se ao site com a função que lhe foi dada.</target>
+      </segment>
+    </unit>
+    <unit id="e16d9fa160b7d45d">
+      <segment state="translated">
+        <source>To let you sign in and work on the site, and to show your name next to what you do in the admin.</source>
+        <target>Para poder iniciar sessão e trabalhar no site, e para mostrar o seu nome junto do que faz na administração.</target>
+      </segment>
+    </unit>
+    <unit id="dc930f3db7638555">
+      <segment state="translated">
+        <source>To send texts, try again when sending fails and show that they arrived.</source>
+        <target>Para enviar mensagens, tentar de novo quando o envio falha e mostrar que chegaram.</target>
+      </segment>
+    </unit>
+    <unit id="e9272086b8fcc50c">
+      <segment state="translated">
+        <source>To show the history of each page and who to ask about it.</source>
+        <target>Para mostrar o histórico de cada página e a quem perguntar sobre ela.</target>
+      </segment>
+    </unit>
+    <unit id="b011677910c3e338">
+      <segment state="translated">
+        <source>To show who added a file to the media library, and to finish an upload that arrives in parts.</source>
+        <target>Para mostrar quem adicionou um ficheiro à biblioteca multimédia e para terminar um carregamento que chega por partes.</target>
+      </segment>
+    </unit>
+    <unit id="8bac8589b290dacf">
+      <segment state="translated">
+        <source>To show who changed what on the site, for its security and so changes can be explained.</source>
+        <target>Para mostrar quem alterou o quê no site, pela sua segurança e para que as alterações possam ser explicadas.</target>
+      </segment>
+    </unit>
+    <unit id="5b6f420a3e7cc566">
+      <segment state="translated">
+        <source>To show who did what in the admin.</source>
+        <target>Para mostrar quem fez o quê na administração.</target>
+      </segment>
+    </unit>
+    <unit id="7e280b153760af37">
+      <segment state="translated">
+        <source>To show who last changed each feature of the site.</source>
+        <target>Para mostrar quem alterou por último cada funcionalidade do site.</target>
+      </segment>
+    </unit>
+    <unit id="d8e8ea90d1528dfb">
+      <segment state="translated">
+        <source>To sign you in again on a device where you ticked “Keep me signed in”.</source>
+        <target>Para iniciar de novo a sua sessão num dispositivo onde marcou “Manter a sessão iniciada”.</target>
+      </segment>
+    </unit>
+    <unit id="0865c8446f7a9c8e">
+      <segment state="translated">
+        <source>To sign you in with a code by text, to confirm important changes and to send you the text notifications you chose.</source>
+        <target>Para iniciar a sua sessão com um código por mensagem, confirmar alterações importantes e enviar-lhe as notificações por mensagem que escolheu.</target>
+      </segment>
+    </unit>
+    <unit id="035bbc3903c532f7">
+      <segment state="translated">
+        <source>To stop password guessing and the misuse of forms, by counting attempts for a short time.</source>
+        <target>Para impedir que adivinhem palavras-passe e o abuso dos formulários, contando as tentativas durante pouco tempo.</target>
+      </segment>
+    </unit>
+    <unit id="5151983518f7f183">
+      <segment state="translated">
+        <source>Use of the AI assistant</source>
+        <target>Utilização do assistente de IA</target>
+      </segment>
+    </unit>
+    <unit id="33659860ce77162f">
+      <segment state="translated">
+        <source>Visitor statistics keep no internet address, browser details or anything else that identifies a visitor: only a code made with a key that is thrown away every day. People who are signed in, and browsers that ask not to be tracked, are never counted.</source>
+        <target>As estatísticas de visitas não guardam endereços de internet, dados do navegador nem nada que identifique um visitante: só um código feito com uma chave que é deitada fora todos os dias. As pessoas com sessão iniciada e os navegadores que pedem para não ser seguidos nunca são contados.</target>
+      </segment>
+    </unit>
+    <unit id="470f5d35cc9dfde1">
+      <segment state="translated">
+        <source>When an account is deleted, its email address, names, password, time zone and language are removed. What the person wrote stays on the site under “Former user”. Accounts that were never confirmed are removed after 7 days.</source>
+        <target>Quando uma conta é eliminada, o endereço de email, os nomes, a palavra-passe, o fuso horário e o idioma são removidos. O que a pessoa escreveu fica no site em nome de “Antigo utilizador”. As contas que nunca foram confirmadas são removidas ao fim de 7 dias.</target>
+      </segment>
+    </unit>
+    <unit id="4c581f94055ca435">
+      <segment state="translated">
+        <source>When an account is deleted, its entries stay under “Former user”, without the person’s name or contact details.</source>
+        <target>Quando uma conta é eliminada, os seus registos ficam em nome de “Antigo utilizador”, sem o nome nem os contactos da pessoa.</target>
+      </segment>
+    </unit>
+    <unit id="dbb5f6371b6a2a67">
+      <segment state="translated">
+        <source>Your account</source>
+        <target>A sua conta</target>
+      </segment>
+    </unit>
+    <unit id="fb3aab5ebefdc214">
+      <segment state="translated">
+        <source>Your profile picture</source>
+        <target>A sua fotografia de perfil</target>
+      </segment>
+    </unit>
+    <unit id="0c0e9ba3d7b33a01">
+      <segment state="translated">
+        <source>Your roles</source>
+        <target>As suas funções</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

@@ -12,6 +12,7 @@ use SightPress\Core\Tests\Support\FixedClock;
 use SightPress\Core\Tests\Support\TemporaryDirectory;
 
 #[CoversClass(FileSessionStore::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Http\Session\Session::class)]
 final class FileSessionStoreTest extends TestCase
 {
     private TemporaryDirectory $directory;
@@ -120,6 +121,29 @@ final class FileSessionStoreTest extends TestCase
         $store->touch('abc');
 
         self::assertNull($store->read('abc'));
+    }
+
+    public function testFindsAndEndsAPersonsSessions(): void
+    {
+        self::assertSame([], $this->store()->forPerson(7), 'no folder yet');
+        $store = $this->store();
+        $store->write('phone', [\SightPress\Core\Http\Session\Session::USER_ID => 7]);
+        $this->clock->advance(10);
+        $store->write('laptop', [\SightPress\Core\Http\Session\Session::USER_ID => 7]);
+        $store->write('other', [\SightPress\Core\Http\Session\Session::USER_ID => 8]);
+        $this->directory->write('sessions/notes.txt', '{"auth.user_id":7}');
+
+        self::assertSame([
+            ['last_seen_at' => '2026-11-14T12:00:00+00:00', 'expires_at' => '2026-11-14T12:02:00+00:00'],
+            ['last_seen_at' => '2026-11-14T12:00:10+00:00', 'expires_at' => '2026-11-14T12:02:10+00:00'],
+        ], $store->forPerson(7));
+        $this->clock->advance(115);
+        self::assertCount(1, $store->forPerson(7), 'an expired session is left out');
+
+        self::assertSame(1, $store->forgetPerson(7));
+        self::assertNull($store->read('laptop'));
+        self::assertSame([\SightPress\Core\Http\Session\Session::USER_ID => 8], $store->read('other'));
+        self::assertFileExists($this->directory->path . '/sessions/notes.txt', 'only session files are read');
     }
 
     public function testDamagedFilesAreIgnored(): void

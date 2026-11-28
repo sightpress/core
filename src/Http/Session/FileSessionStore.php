@@ -16,7 +16,7 @@ use RuntimeException;
  * hashes, so session ids never appear on disk. A session expires after the idle timeout; expired files are removed
  * now and then while writing, and by `schedule:run`.
  */
-final readonly class FileSessionStore implements ExpiringSessionStore
+final readonly class FileSessionStore implements ExpiringSessionStore, PersonSessions
 {
     /**
      * @param positive-int $idleTimeout   seconds without a request before a session ends
@@ -107,6 +107,56 @@ final readonly class FileSessionStore implements ExpiringSessionStore
         }
 
         return $removed;
+    }
+
+    public function forPerson(int $userId): array
+    {
+        $sessions = [];
+        foreach ($this->filesOf($userId) as $file) {
+            $lastSeen = (int) filemtime($file);
+            $sessions[$lastSeen . "\0" . $file] = [
+                'last_seen_at' => gmdate(DATE_ATOM, $lastSeen),
+                'expires_at' => gmdate(DATE_ATOM, $lastSeen + $this->idleTimeout),
+            ];
+        }
+        ksort($sessions);
+
+        return array_values($sessions);
+    }
+
+    public function forgetPerson(int $userId): int
+    {
+        $files = $this->filesOf($userId);
+        foreach ($files as $file) {
+            unlink($file);
+        }
+
+        return count($files);
+    }
+
+    /**
+     * The files of the person's sessions that haven't expired. Every file is read: this store is for one small server.
+     *
+     * @return list<string>
+     */
+    private function filesOf(int $userId): array
+    {
+        if (!is_dir($this->directory)) {
+            return [];
+        }
+
+        $files = [];
+        foreach (new FilesystemIterator($this->directory) as $file) {
+            if (!$file instanceof \SplFileInfo || !$file->isFile() || preg_match('/^[0-9a-f]{64}$/', $file->getFilename()) !== 1 || $this->expired($file->getPathname())) {
+                continue;
+            }
+            $data = json_decode((string) file_get_contents($file->getPathname()), true);
+            if (is_array($data) && ($data[Session::USER_ID] ?? null) === $userId) {
+                $files[] = $file->getPathname();
+            }
+        }
+
+        return $files;
     }
 
     private function expired(string $file, ?DateTimeImmutable $now = null): bool

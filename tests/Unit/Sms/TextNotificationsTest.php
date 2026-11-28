@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Sms;
 
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use DateTimeImmutable;
 use DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -68,7 +69,7 @@ final class TextNotificationsTest extends TestCase
         $this->site = new KernelSite('text_notifications', tenant: ['sms' => ['provider' => 'twilio', 'account' => self::ACCOUNT, 'sender' => 'SightPress']], variables: ['SMS_API_KEY' => 'canary5f2b9c1d7e4a']);
         $tenant = $this->site->kernel->container();
         self::assertInstanceOf(Container::class, $tenant);
-        $tenant->set(HttpClientInterface::class, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
+        $tenant->set(OutboundHttp::INNER, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
             parse_str(is_string($options['body'] ?? null) ? $options['body'] : '', $form);
             $this->texts[] = ['to' => is_string($form['To'] ?? null) ? $form['To'] : '', 'text' => is_string($form['Body'] ?? null) ? $form['Body'] : ''];
 

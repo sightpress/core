@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Sms;
 
+use SightPress\Core\Sms\Privacy\SmsLogData;
+use SightPress\Core\Sms\Privacy\SmsProcessors;
 use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
 use SightPress\Core\Sms\Admin\TextMessagesHandler;
 use SightPress\Core\Sms\Command\DisableSmsCommand;
@@ -64,6 +66,12 @@ final class SmsModule implements ModuleInterface
         $services->autowire(SmsOutboxJob::class);
         $registrar->subscribers()->listen(ScheduleDue::class, SmsOutboxJob::class);
         $services->autowire(SmsSetup::class, ModuleTurnOnCheck::PREFIX . self::ID);
+
+        foreach ([SmsLogData::class, SmsProcessors::class] as $class) {
+            $services->autowire($class);
+        }
+        $registrar->privacy()->addProvider(SmsLogData::class);
+        $registrar->privacy()->addProcessors(SmsProcessors::class);
 
         $registrar->permissions()->add(new Permission(self::MANAGE, 'Manage text messages', 'See the text messages the site sent and its monthly budget, and send a test message.', ['admin']));
 

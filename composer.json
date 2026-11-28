@@ -128,6 +128,7 @@
     "cs-fix": "php-cs-fixer fix",
     "phpstan": "phpstan analyse --no-progress",
     "translations": "@php tools/translations.php check",
+    "privacy": "@php tools/privacy-check.php",
     "rector": "rector process",
     "test": "phpunit",
     "test:unit": "phpunit --testsuite unit",
@@ -138,6 +139,7 @@
       "@cs-check",
       "@phpstan",
       "@translations",
+      "@privacy",
       "@test:coverage",
       "@test:integration"
     ],

@@ -48,17 +48,17 @@ final readonly class SessionStores
 
         return match ($this->config->sessionStore) {
             TenantConfig::SESSION_DATABASE => new DatabaseSessionStore(Services::get($container, Connection::class), $clock, $timeout),
-            TenantConfig::SESSION_REDIS => $this->redis($site),
+            TenantConfig::SESSION_REDIS => $this->redis($site, $clock),
             TenantConfig::SESSION_FILES => new FileSessionStore($this->config->sessionPath, $clock, $timeout),
             default => Services::get($container, SessionStore::class, $this->config->sessionStore),
         };
     }
 
-    private function redis(Site $site): RedisSessionStore
+    private function redis(Site $site, ClockInterface $clock): RedisSessionStore
     {
         $server = $this->config->sessionRedis
             ?? throw new SessionStoreException('session.store is "redis", but SESSION_REDIS_DSN is not set.');
 
-        return new RedisSessionStore($server->connect(...), RedisSessionStore::prefixFor($site->id), $this->config->sessionIdleTimeout);
+        return new RedisSessionStore($server->connect(...), RedisSessionStore::prefixFor($site->id), $this->config->sessionIdleTimeout, $clock);
     }
 }

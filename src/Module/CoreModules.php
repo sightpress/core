@@ -19,6 +19,7 @@ use SightPress\Core\Menu\MenuModule;
 use SightPress\Core\Page\Admin\PageAdminModule;
 use SightPress\Core\Page\PageModule;
 use SightPress\Core\People\PeopleModule;
+use SightPress\Core\Privacy\PrivacyModule;
 use SightPress\Core\Rbac\RbacModule;
 use SightPress\Core\Search\SearchModule;
 use SightPress\Core\Seo\SeoModule;
@@ -76,6 +77,7 @@ final class CoreModules
                 'Text messages (SMS) through a provider your organisation sets up: people can add a mobile number to their account, get notifications by text if they choose to, and sign in with their number. Numbers are sent to the provider only to deliver messages and to check that they are real mobile numbers.',
                 'No text messages are sent, numbers can’t be added and phone sign-in stops. Numbers already on accounts and the record of messages sent are kept.',
             )]),
+            new ModuleCandidate(new PrivacyModule(), 'sightpress/core'),
             new ModuleCandidate(new AuditModule(), 'sightpress/core'),
         ];
     }

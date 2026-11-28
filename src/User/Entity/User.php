@@ -9,6 +9,11 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use SightPress\Core\User\Privacy\AccountData;
+use SightPress\Core\User\Privacy\AvatarData;
+use SightPress\Core\User\Privacy\PhoneData;
+use SightPress\Module\Privacy\PersonalData;
+use SightPress\Module\Privacy\PersonalDataCategory;
 use SightPress\Core\Tenant\LocaleCode;
 use SightPress\Core\User\AvatarKind;
 use SightPress\Core\User\Contract\Account;
@@ -35,63 +40,81 @@ final class User implements Account
     private ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: self::EMAIL_MAX_LENGTH, unique: true)]
+    #[PersonalData(AccountData::KEY, PersonalDataCategory::Contact)]
     private string $email;
 
     #[ORM\Column(name: 'password_hash', type: Types::STRING, length: 255, nullable: true)]
+    #[PersonalData(AccountData::KEY, PersonalDataCategory::Account)]
     private ?string $passwordHash = null;
 
     #[ORM\Column(type: Types::STRING, length: 20, enumType: UserStatus::class)]
     private UserStatus $status = UserStatus::Pending;
 
     #[ORM\Column(name: 'first_name', type: Types::STRING, length: self::NAME_MAX_LENGTH)]
+    #[PersonalData(AccountData::KEY, PersonalDataCategory::Identity)]
     private string $firstName;
 
     #[ORM\Column(name: 'last_name', type: Types::STRING, length: self::NAME_MAX_LENGTH)]
+    #[PersonalData(AccountData::KEY, PersonalDataCategory::Identity)]
     private string $lastName;
 
     #[ORM\Column(name: 'display_name', type: Types::STRING, length: self::NAME_MAX_LENGTH, nullable: true)]
+    #[PersonalData(AccountData::KEY, PersonalDataCategory::Identity)]
     private ?string $displayName = null;
 
     #[ORM\Column(name: 'avatar_path', type: Types::STRING, length: 255, nullable: true)]
+    #[PersonalData(AvatarData::KEY)]
     private ?string $avatarPath = null;
 
     #[ORM\Column(name: 'avatar_kind', type: Types::STRING, length: 20, nullable: true, enumType: AvatarKind::class)]
+    #[PersonalData(AvatarData::KEY)]
     private ?AvatarKind $avatarKind = null;
 
     #[ORM\Column(name: 'avatar_color', type: Types::STRING, length: 7, nullable: true)]
+    #[PersonalData(AvatarData::KEY)]
     private ?string $avatarColor = null;
 
     #[ORM\Column(type: Types::STRING, length: 64)]
+    #[PersonalData(AccountData::KEY, PersonalDataCategory::Account)]
     private string $timezone;
 
     #[ORM\Column(type: Types::STRING, length: 35, nullable: true)]
+    #[PersonalData(AccountData::KEY, PersonalDataCategory::Account)]
     private ?string $locale = null;
 
     #[ORM\Column(name: 'admin_reduced_motion', type: Types::BOOLEAN, options: ['default' => false])]
+    #[PersonalData(AccountData::KEY, PersonalDataCategory::Account)]
     private bool $adminReducedMotion = false;
 
     #[ORM\Column(name: 'admin_larger_text', type: Types::BOOLEAN, options: ['default' => false])]
+    #[PersonalData(AccountData::KEY, PersonalDataCategory::Account)]
     private bool $adminLargerText = false;
 
     /** Only a number whose code was typed (N-3); unique on the site. */
     #[ORM\Column(name: 'phone_e164', type: Types::STRING, length: 16, unique: true, nullable: true)]
+    #[PersonalData(PhoneData::KEY, PersonalDataCategory::Contact)]
     private ?string $phoneE164 = null;
 
     #[ORM\Column(name: 'phone_verified_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[PersonalData(PhoneData::KEY, PersonalDataCategory::Contact)]
     private ?DateTimeImmutable $phoneVerifiedAt = null;
 
     /** What the provider's lookup said: line type and country, for example `mobile GB`. */
     #[ORM\Column(name: 'phone_lookup', type: Types::STRING, length: 64, nullable: true)]
+    #[PersonalData(PhoneData::KEY, PersonalDataCategory::Contact)]
     private ?string $phoneLookup = null;
 
     #[ORM\Column(name: 'sms_consent_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[PersonalData(PhoneData::KEY, PersonalDataCategory::Consent)]
     private ?DateTimeImmutable $smsConsentAt = null;
 
     #[ORM\Column(name: 'sms_opt_out_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[PersonalData(PhoneData::KEY, PersonalDataCategory::Consent)]
     private ?DateTimeImmutable $smsOptOutAt = null;
 
     /** The notifications that go by text, comma-separated. */
     #[ORM\Column(name: 'sms_notifications', type: Types::STRING, length: 255, nullable: true)]
+    #[PersonalData(PhoneData::KEY, PersonalDataCategory::Consent)]
     private ?string $smsNotifications = null;
 
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)]

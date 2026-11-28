@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Seo;
 
+use SightPress\Core\Seo\Privacy\IndexNowProcessors;
 use SightPress\Module\Event\MediaChanged;
 use SightPress\Module\Event\MediaDeleted;
 use SightPress\Module\Event\PageCreated;
@@ -50,10 +51,11 @@ final class SeoModule implements ModuleInterface
     public function register(ModuleRegistrar $registrar): void
     {
         $services = $registrar->services();
-        foreach ([RobotsPolicy::class, SeoHead::class, SeoFileHandler::class, SeoCachePurger::class, AiCrawlerPolicy::class, SearchConsoles::class, IndexNow::class, IndexNowKeyHandler::class] as $class) {
+        foreach ([RobotsPolicy::class, SeoHead::class, SeoFileHandler::class, SeoCachePurger::class, AiCrawlerPolicy::class, SearchConsoles::class, IndexNow::class, IndexNowKeyHandler::class, IndexNowProcessors::class] as $class) {
             $services->autowire($class);
         }
         $services->autowire(SeoFiles::class, public: true);
+        $registrar->privacy()->addProcessors(IndexNowProcessors::class);
 
         $subscribers = $registrar->subscribers();
         $subscribers->listen(PublicPageRendering::class, SeoHead::class, SeoHead::PRIORITY);

@@ -22,6 +22,7 @@ use SightPress\Core\Tests\Support\TemporaryDirectory;
 use SightPress\Module\ModuleInterface;
 use stdClass;
 
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Privacy\PrivacyModule::class)]
 #[CoversClass(ComposerModuleDiscovery::class)]
 #[CoversClass(CoreModules::class)]
 #[CoversClass(ModuleDiscovery::class)]
@@ -68,7 +69,7 @@ final class ComposerModuleDiscoveryTest extends TestCase
     {
         $candidates = CoreModules::candidates();
 
-        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'search', 'analytics', 'assistant', 'sms', 'audit'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'search', 'analytics', 'assistant', 'sms', 'privacy', 'audit'], array_map(static fn ($candidate) => $candidate->module->manifest()->id, $candidates));
         self::assertSame('sightpress/core', $candidates[0]->source);
         foreach (CoreModules::entityPaths() as $path) {
             self::assertDirectoryExists($path);

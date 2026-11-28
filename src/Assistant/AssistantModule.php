@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Assistant;
 
+use SightPress\Core\Assistant\Privacy\AssistantProcessors;
+use SightPress\Core\Assistant\Privacy\AssistantUsageData;
 use SightPress\Core\Assistant\Admin\AssistantAskHandler;
 use SightPress\Core\Assistant\Admin\AssistantInsertHandler;
 use SightPress\Core\Assistant\Admin\AssistantReplies;
@@ -87,6 +89,12 @@ final class AssistantModule implements ModuleInterface
         foreach ([AssistantSetup::class, Assistant::class] as $class) {
             $services->autowire($class, public: true);
         }
+
+        foreach ([AssistantUsageData::class, AssistantProcessors::class] as $class) {
+            $services->autowire($class);
+        }
+        $registrar->privacy()->addProvider(AssistantUsageData::class);
+        $registrar->privacy()->addProcessors(AssistantProcessors::class);
 
         $permissions = $registrar->permissions();
         $permissions->add(new Permission(self::USE, 'Use the AI assistant', 'Ask the AI assistant for suggestions, which they check before using.', ['admin', 'editor', 'contributor'], allowedOnSignUp: true));

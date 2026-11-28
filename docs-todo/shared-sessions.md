@@ -41,4 +41,6 @@ when the store changes.
 **Tests:** `tests/Integration/Http/Session/` (contract suite against all three stores, two-server flow),
 `tests/Unit/Http/Session/`.
 
-**Still to do:** the privacy provider declaring the session cookie and table (needs the MI-0.6 privacy contract).
+**Privacy:** data set `site.sessions` (`src/Site/SessionPersonalData.php`): *Download your data* lists when each
+session was last used and when it ends; erasure ends every session of the person, in every store. The cookie
+(`__Host-sightpress_session` / `sightpress_session`) is declared strictly necessary.

@@ -14,6 +14,7 @@ use SightPress\Core\Http\Session\SessionStoreException;
 
 #[CoversClass(RedisSessionStore::class)]
 #[UsesClass(SessionStoreException::class)]
+#[UsesClass(\SightPress\Core\Http\Session\Session::class)]
 final class RedisSessionStoreTest extends TestCase
 {
     public function testKeysAreTheSitesPrefixAndAHashOfTheId(): void
@@ -45,6 +46,28 @@ final class RedisSessionStoreTest extends TestCase
         $store->touch('abc');
         $store->delete('abc');
         self::assertSame(1, $connections, 'one connection per request');
+    }
+
+    public function testListsASignedInPersonsSessionsSoTheyCanBeFoundAndEnded(): void
+    {
+        $session = 'p:' . hash('sha256', 'abc');
+        $redis = $this->createMock(Redis::class);
+        $redis->expects(self::exactly(2))->method('set')->willReturn(true);
+        $redis->expects(self::once())->method('sAdd')->with('p:user:7', $session)->willReturn(1);
+        $redis->expects(self::exactly(3))->method('sMembers')->with('p:user:7')->willReturnOnConsecutiveCalls(['p:new', 'p:gone', 'p:old'], ['p:new', 'p:old'], false);
+        $redis->method('ttl')->willReturnMap([['p:new', 900], ['p:gone', -2], ['p:old', 300]]);
+        $redis->expects(self::once())->method('srem')->with('p:user:7', 'p:gone')->willReturn(1);
+        $redis->expects(self::exactly(3))->method('del')->willReturnCallback(static fn (string|array $keys): int|false => $keys === ['p:new', 'p:old'] ? 2 : false);
+        $store = new RedisSessionStore(static fn (): Redis => $redis, 'p:', 900, new \SightPress\Core\Tests\Support\FixedClock(new \DateTimeImmutable('2026-11-27 12:00:00 UTC')));
+
+        $store->write('abc', [\SightPress\Core\Http\Session\Session::USER_ID => 7]);
+        $store->write('visitor', ['csrf' => []]);
+        self::assertSame([
+            ['last_seen_at' => '2026-11-27T11:50:00+00:00', 'expires_at' => '2026-11-27T12:05:00+00:00'],
+            ['last_seen_at' => '2026-11-27T12:00:00+00:00', 'expires_at' => '2026-11-27T12:15:00+00:00'],
+        ], $store->forPerson(7), 'oldest first; keys that ended are dropped from the list');
+        self::assertSame(2, $store->forgetPerson(7));
+        self::assertSame(0, $store->forgetPerson(7), 'nothing listed any more');
     }
 
     public function testAServerThatStopsAnsweringIsAClearErrorAndTheNextCallReconnects(): void

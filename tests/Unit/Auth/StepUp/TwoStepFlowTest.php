@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Auth\StepUp;
 
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use DateTimeImmutable;
 use DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -104,7 +105,7 @@ final class TwoStepFlowTest extends TestCase
         $container->set(ClockInterface::class, $this->clock);
         $this->mail = new RecordingMail();
         $container->set(MailSender::class, $this->mail);
-        $container->set(HttpClientInterface::class, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
+        $container->set(OutboundHttp::INNER, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
             if ($this->providerDown) {
                 return new MockResponse('', ['http_code' => 503]);
             }

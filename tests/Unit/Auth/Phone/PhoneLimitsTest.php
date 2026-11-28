@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Auth\Phone;
 
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use DateTimeImmutable;
 use DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -53,7 +54,7 @@ final class PhoneLimitsTest extends TestCase
         self::assertInstanceOf(Container::class, $tenant);
         $this->clock = new FixedClock(new DateTimeImmutable());
         $tenant->set(ClockInterface::class, $this->clock);
-        $tenant->set(HttpClientInterface::class, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
+        $tenant->set(OutboundHttp::INNER, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
             if (str_contains($url, 'lookups.twilio.com')) {
                 return new MockResponse('{"valid":true,"country_code":"GB","line_type_intelligence":{"type":"mobile"}}');
             }

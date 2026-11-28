@@ -30,6 +30,7 @@ use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\Routing\Route;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Privacy\PrivacyModule::class)]
 #[CoversClass(Kernel::class)]
 #[CoversClass(CoreServices::class)]
 #[UsesClass(Services::class)]
@@ -229,7 +230,7 @@ final class KernelTest extends TestCase
 
         $kernel = Kernel::boot($project->path(), []);
 
-        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'search', 'analytics', 'assistant', 'sms', 'audit', 'acme.example'], $kernel->modules()->modules());
+        self::assertSame(['site', 'user', 'rbac', 'auth', 'theme', 'media', 'block', 'page', 'contact', 'admin', 'media_admin', 'page_admin', 'people', 'menu', 'branding', 'seo', 'features', 'search', 'analytics', 'assistant', 'sms', 'privacy', 'audit', 'acme.example'], $kernel->modules()->modules());
         self::assertTrue($kernel->console()->has('site:registry:check'));
         self::assertNotSame('', Kernel::contractVersion());
     }

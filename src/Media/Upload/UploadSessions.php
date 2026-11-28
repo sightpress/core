@@ -108,6 +108,14 @@ final readonly class UploadSessions
     }
 
     /**
+     * @return list<UploadSession> every upload session of one person, oldest first
+     */
+    public function ofUser(int $userId): array
+    {
+        return array_map(self::session(...), $this->connection->fetchAllAssociative('SELECT * FROM ' . self::TABLE . ' WHERE user_id = ? ORDER BY created_at, id', [$userId]));
+    }
+
+    /**
      * Bytes still to arrive for every unfinished upload of the site.
      */
     public function outstandingBytes(): int

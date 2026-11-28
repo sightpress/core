@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Unit\Auth\Phone;
 
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use DateTimeImmutable;
 use DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -73,7 +74,7 @@ final class PhonePagesTest extends TestCase
         $this->site = new KernelSite('phone_pages', tenant: ['sms' => $sms + ['provider' => 'twilio', 'account' => self::ACCOUNT, 'sender' => 'SightPress']], variables: ['SMS_API_KEY' => 'canary5f2b9c1d7e4a']);
         $tenant = $this->site->kernel->container();
         self::assertInstanceOf(Container::class, $tenant);
-        $tenant->set(HttpClientInterface::class, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
+        $tenant->set(OutboundHttp::INNER, new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
             if (str_contains($url, 'lookups.twilio.com')) {
                 $type = array_shift($this->lookups) ?? 'mobile';
 

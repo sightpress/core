@@ -10,6 +10,7 @@ use Psr\Log\NullLogger;
 use SightPress\Core\Http\Session\DatabaseSessionStore;
 use SightPress\Core\Http\Session\SessionStore;
 use SightPress\Core\Site\Migrations\Version20261127100000;
+use SightPress\Core\Site\Migrations\Version20261128090000;
 use SightPress\Core\Tests\Support\FixedClock;
 use SightPress\Core\Tests\Support\TestDatabases;
 
@@ -29,6 +30,7 @@ final class DatabaseSessionStoreContractTest extends SessionStoreContract
         $this->clock = new FixedClock(new \DateTimeImmutable('2026-11-27 12:00:00 UTC'));
         $schema = new Schema();
         new Version20261127100000($this->connection, new NullLogger())->up($schema);
+        new Version20261128090000($this->connection, new NullLogger())->up($schema);
         foreach ($schema->toSql($this->connection->getDatabasePlatform()) as $sql) {
             $this->connection->executeStatement($sql);
         }

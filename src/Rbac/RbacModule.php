@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Rbac;
 
+use SightPress\Core\Rbac\Privacy\RoleData;
 use SightPress\Core\Rbac\Contract\Authorizer;
 use SightPress\Core\Rbac\Contract\PermissionHolders;
 use SightPress\Core\Rbac\Contract\PermissionLookup;
@@ -42,6 +43,8 @@ final class RbacModule implements ModuleInterface
             $registrar->permissions()->add($permission);
         }
         $registrar->migrations()->add(new RbacMigrations());
+        $registrar->services()->autowire(RoleData::class);
+        $registrar->privacy()->addProvider(RoleData::class);
         $registrar->services()->autowire(RoleRepository::class, public: true);
         $registrar->services()->autowire(RoleRepository::class, PermissionLookup::class, public: true);
         $registrar->services()->autowire(RoleRepository::class, PermissionHolders::class, public: true);

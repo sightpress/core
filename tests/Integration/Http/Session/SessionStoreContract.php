@@ -6,6 +6,8 @@ namespace SightPress\Core\Tests\Integration\Http\Session;
 
 use PHPUnit\Framework\TestCase;
 use SightPress\Core\Http\Session\ExpiringSessionStore;
+use SightPress\Core\Http\Session\PersonSessions;
+use SightPress\Core\Http\Session\Session;
 use SightPress\Core\Http\Session\SessionStore;
 
 /**
@@ -92,6 +94,36 @@ abstract class SessionStoreContract extends TestCase
             self::assertSame(0, $store->forgetExpired(new \DateTimeImmutable('+1 year')));
         }
         self::assertStringNotContainsString(hash('sha256', self::ID), $this->stored(), 'an expired session is removed');
+    }
+
+    public function testFindsAndEndsEverySessionOfOnePerson(): void
+    {
+        $store = $this->store();
+        if (!$store instanceof PersonSessions) {
+            self::markTestSkipped('The store can\'t find a person\'s sessions.');
+        }
+        $store->write('laptop', [Session::USER_ID => 7]);
+        $store->write('phone', [Session::USER_ID => 7, 'flash' => []]);
+        $store->write('other', [Session::USER_ID => 8]);
+        $store->write('visitor', ['csrf' => ['form' => 'token']]);
+        $store->write('signed-out', [Session::USER_ID => 7]);
+        $store->delete('signed-out');
+
+        $sessions = $store->forPerson(7);
+        self::assertCount(2, $sessions);
+        foreach ($sessions as $session) {
+            self::assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00$/', (string) $session['last_seen_at']);
+            self::assertGreaterThan($session['last_seen_at'], $session['expires_at']);
+        }
+        self::assertSame([], $store->forPerson(9));
+
+        self::assertSame(2, $store->forgetPerson(7));
+        self::assertNull($store->read('laptop'));
+        self::assertNull($store->read('phone'));
+        self::assertSame([], $store->forPerson(7));
+        self::assertSame([Session::USER_ID => 8], $store->read('other'), 'other people stay signed in');
+        self::assertNotNull($store->read('visitor'));
+        self::assertSame(0, $store->forgetPerson(7));
     }
 
     public function testNeverKeepsARawSessionId(): void

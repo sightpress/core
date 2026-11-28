@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\People;
 
+use SightPress\Core\People\Privacy\InvitationData;
 use SightPress\Core\People\Command\CreateRoleCommand;
 use SightPress\Core\People\Command\DeleteRoleCommand;
 use SightPress\Core\People\Command\GrantRoleCommand;
@@ -58,6 +59,8 @@ final class PeopleModule implements ModuleInterface
     public function register(ModuleRegistrar $registrar): void
     {
         $registrar->migrations()->add(new PeopleMigrations());
+        $registrar->services()->autowire(InvitationData::class);
+        $registrar->privacy()->addProvider(InvitationData::class);
         $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/people');
 
         $services = $registrar->services();

@@ -16,6 +16,10 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 final class Session
 {
+    /** The key of the signed-in account's id, which stores use to find a person's sessions ({@see PersonSessions}). */
+    public const string USER_ID = 'auth.user_id';
+
+
     private ?string $previousId = null;
 
     /**

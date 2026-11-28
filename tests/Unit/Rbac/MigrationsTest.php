@@ -28,6 +28,7 @@ use SightPress\Core\People\Migrations\Version20261116180000 as InvitationsTable;
 use SightPress\Core\Rbac\Migrations\Version20261114120000 as RbacTables;
 use SightPress\Core\Site\Migrations\Version20261114120000 as SiteSettingsTable;
 use SightPress\Core\Site\Migrations\Version20261127100000 as SessionTable;
+use SightPress\Core\Site\Migrations\Version20261128090000 as SessionAccount;
 use SightPress\Core\Tests\Support\CoreSiteDatabase;
 use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 
@@ -38,6 +39,7 @@ use SightPress\Core\User\Migrations\Version20261114120000 as UsersTable;
 #[CoversClass(MediaCaptionTracks::class)]
 #[CoversClass(SiteSettingsTable::class)]
 #[CoversClass(SessionTable::class)]
+#[CoversClass(SessionAccount::class)]
 #[CoversClass(UsersTable::class)]
 #[CoversClass(MediaTable::class)]
 #[CoversClass(PageTables::class)]
@@ -83,6 +85,7 @@ final class MigrationsTest extends TestCase
         self::assertContains('Create the pages, page_translations and page_revisions tables.', $descriptions);
         self::assertContains('Create the site_settings table.', $descriptions);
         self::assertContains('Create the session table.', $descriptions);
+        self::assertContains('Add the account to the session table.', $descriptions);
         self::assertContains('Create the invitations table.', $descriptions);
         self::assertContains('Create the menu_items table.', $descriptions);
         self::assertContains('Create the audit_log table.', $descriptions);

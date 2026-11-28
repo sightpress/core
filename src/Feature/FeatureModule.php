@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Feature;
 
+use SightPress\Core\Feature\Privacy\ModuleChangeData;
 use SightPress\Core\Feature\Command\DisableSiteModuleCommand;
 use SightPress\Core\Feature\Command\EnableSiteModuleCommand;
 use SightPress\Core\Feature\Command\ListSiteModulesCommand;
@@ -45,6 +46,8 @@ final class FeatureModule implements ModuleInterface
     public function register(ModuleRegistrar $registrar): void
     {
         $registrar->migrations()->add(new FeatureMigrations());
+        $registrar->services()->autowire(ModuleChangeData::class);
+        $registrar->privacy()->addProvider(ModuleChangeData::class);
         $registrar->views()->add('feature', dirname(__DIR__, 2) . '/resources/views/feature');
         $services = $registrar->services();
         foreach ([FeaturesHandler::class, TurnOffFeatureHandler::class, DeleteFeatureDataHandler::class] as $handler) {

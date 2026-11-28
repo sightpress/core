@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Tests\Integration\Sms;
 
+use SightPress\Core\Infrastructure\Http\OutboundHttp;
 use DI\Container;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
@@ -42,7 +43,7 @@ final class SmsWebhookFlowTest extends TestCase
         $this->site = new KernelSite('sms_webhook_flow', tenant: ['sms' => ['provider' => 'twilio', 'account' => self::ACCOUNT, 'sender' => 'SightPress']], variables: ['SMS_API_KEY' => self::KEY]);
         $tenant = $this->site->kernel->container();
         self::assertInstanceOf(Container::class, $tenant);
-        $tenant->set(HttpClientInterface::class, new MockHttpClient(new MockResponse('{"sid":"SM1"}', ['http_code' => 201])));
+        $tenant->set(OutboundHttp::INNER, new MockHttpClient(new MockResponse('{"sid":"SM1"}', ['http_code' => 201])));
     }
 
     protected function tearDown(): void
