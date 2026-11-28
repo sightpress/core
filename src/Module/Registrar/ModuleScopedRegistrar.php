@@ -13,6 +13,8 @@ use SightPress\Module\Registrar\CommandRegistrar;
 use SightPress\Module\Registrar\DashboardRegistrar;
 use SightPress\Module\Registrar\MigrationRegistrar;
 use SightPress\Module\Registrar\PermissionRegistrar;
+use SightPress\Module\Registrar\PlaceholderRegistrar;
+use SightPress\Module\Registrar\PrivacyRegistrar;
 use SightPress\Module\Registrar\RouteRegistrar;
 use SightPress\Module\Registrar\ScheduleRegistrar;
 use SightPress\Module\Registrar\SearchRegistrar;
@@ -122,5 +124,15 @@ final readonly class ModuleScopedRegistrar implements ModuleRegistrar
     public function translations(): TranslationRegistrar
     {
         return new TranslationCollector($this->module, $this->registry);
+    }
+
+    public function privacy(): PrivacyRegistrar
+    {
+        return new PrivacyCollector($this->module, $this->registry);
+    }
+
+    public function placeholders(): PlaceholderRegistrar
+    {
+        return new PlaceholderCollector($this->module, $this->registry);
     }
 }

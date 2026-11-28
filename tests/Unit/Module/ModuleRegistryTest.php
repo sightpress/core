@@ -40,6 +40,16 @@ use SightPress\Core\Tests\Support\Modules\RecordingListener;
 use SightPress\Module\Access\Permission;
 use SightPress\Module\Admin\AdminMenuItem;
 use SightPress\Module\Block\BlockIcon;
+use SightPress\Module\Block\CodeLanguage;
+use SightPress\Module\Placeholder\Placeholder;
+use SightPress\Module\Placeholder\PlaceholderType;
+use SightPress\Module\Privacy\ConsentPurpose;
+use SightPress\Module\Privacy\CookieDeclaration;
+use SightPress\Module\Text\Message;
+use SightPress\Core\Tests\Support\Modules\ExampleCodeHighlighter;
+use SightPress\Core\Tests\Support\Modules\ExamplePersonalDataProvider;
+use SightPress\Core\Tests\Support\Modules\ExamplePlaceholderResolver;
+use SightPress\Core\Tests\Support\Modules\ExampleProcessorSource;
 use SightPress\Module\Block\BlockVariant;
 use SightPress\Module\ModuleRegistrar;
 use SightPress\Module\Routing\Route;
@@ -92,6 +102,13 @@ final class ModuleRegistryTest extends TestCase
                 $r->translations()->add(self::TRANSLATIONS . '/');
                 $r->blockTypes()->addVariant('quote', new BlockVariant('ticket', 'Ticket'));
                 $r->blockTypes()->addIcon(new BlockIcon('eventbrite', 'Eventbrite', '/icons/eventbrite.svg'));
+                $r->blockTypes()->addCodeLanguage(new CodeLanguage('icalendar', 'iCalendar', ['ics'], ExampleCodeHighlighter::class));
+                $r->blockTypes()->addCodeLanguage(new CodeLanguage('twig', 'Twig'));
+                $r->privacy()->addProvider(ExamplePersonalDataProvider::class);
+                $r->privacy()->addCookie(new CookieDeclaration('acme_view', new Message('Remembers the view.'), null, true));
+                $r->privacy()->addProcessors(ExampleProcessorSource::class);
+                $r->privacy()->addConsentPurpose(new ConsentPurpose('acme_events.map', new Message('Maps'), new Message('Shows maps.')));
+                $r->placeholders()->add(new Placeholder('acme_events.venue', new Message('Venue'), new Message('Where it is.'), PlaceholderType::Text, false, ExamplePlaceholderResolver::class));
             }),
         );
 
@@ -130,12 +147,22 @@ final class ModuleRegistryTest extends TestCase
         self::assertSame([self::TRANSLATIONS], $registry->translations());
         self::assertSame(['quote', 'ticket'], [$registry->blockVariants()[0]->item['blockType'], $registry->blockVariants()[0]->item['variant']->name]);
         self::assertSame('eventbrite', $registry->blockIcons()[0]->item->name);
+        self::assertSame(['icalendar', 'twig'], array_map(static fn (Registered $r) => $r->item->id, $registry->codeLanguages()), 'each language once, not once per alias');
+        self::assertSame(ExamplePersonalDataProvider::class, $registry->personalDataProviders()[0]->item);
+        self::assertSame('acme_view', $registry->cookies()[0]->item->name);
+        self::assertSame(ExampleProcessorSource::class, $registry->processorSources()[0]->item);
+        self::assertSame('acme_events.map', $registry->consentPurposes()[0]->item->key);
+        self::assertSame(['acme_events.venue', 'acme.events'], [$registry->placeholders()[0]->item->name, $registry->placeholders()[0]->module]);
 
         self::assertTrue($registry->has('acme.events'));
         self::assertFalse($registry->has('acme.other'));
         $without = $registry->only(['user']);
         self::assertSame(['user'], $without->modules());
         self::assertFalse($without->has('acme.events'));
+        self::assertSame([[], [], [], [], [], []], [
+            $without->personalDataProviders(), $without->cookies(), $without->processorSources(),
+            $without->consentPurposes(), $without->placeholders(), $without->codeLanguages(),
+        ]);
         self::assertSame([[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []], [
             $without->services(), $without->routes(), $without->blockTypes(), $without->permissions(), $without->migrations(),
             $without->adminMenu(), $without->views(), $without->listeners(), $without->commands(), $without->settings(),
@@ -242,6 +269,41 @@ final class ModuleRegistryTest extends TestCase
             static fn (ModuleRegistrar $r) => $r->blockTypes()->addIcon(new BlockIcon('rss', 'RSS', '/rss.svg')),
             'Icon "rss" is registered twice: by module "first" and by module "second".',
         ];
+        yield 'code language' => [
+            static fn (ModuleRegistrar $r) => $r->blockTypes()->addCodeLanguage(new CodeLanguage('yaml', 'YAML', ['yml'])),
+            'Code language "yaml" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'personal data provider' => [
+            static fn (ModuleRegistrar $r) => $r->privacy()->addProvider(ExamplePersonalDataProvider::class),
+            'Personal data provider "' . ExamplePersonalDataProvider::class . '" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'cookie' => [
+            static fn (ModuleRegistrar $r) => $r->privacy()->addCookie(new CookieDeclaration('acme_view', new Message('View.'), null, true)),
+            'Cookie "acme_view" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'processor source' => [
+            static fn (ModuleRegistrar $r) => $r->privacy()->addProcessors(ExampleProcessorSource::class),
+            'Processor source "' . ExampleProcessorSource::class . '" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'consent purpose' => [
+            static fn (ModuleRegistrar $r) => $r->privacy()->addConsentPurpose(new ConsentPurpose('acme.maps', new Message('Maps'), new Message('Maps.'))),
+            'Consent purpose "acme.maps" is registered twice: by module "first" and by module "second".',
+        ];
+        yield 'placeholder' => [
+            static fn (ModuleRegistrar $r) => $r->placeholders()->add(new Placeholder('acme.venue', new Message('Venue'), new Message('Venue.'), PlaceholderType::Text, false, ExamplePlaceholderResolver::class)),
+            'Placeholder "acme.venue" is registered twice: by module "first" and by module "second".',
+        ];
+    }
+
+    public function testACodeLanguageAliasCantTakeAnotherLanguagesId(): void
+    {
+        $this->expectException(ModuleException::class);
+        $this->expectExceptionMessage('Code language "yml" is registered twice: by module "first" and by module "second".');
+
+        $this->registry(
+            new FakeModule('first', register: static fn (ModuleRegistrar $r) => $r->blockTypes()->addCodeLanguage(new CodeLanguage('yml', 'YML'))),
+            new FakeModule('second', register: static fn (ModuleRegistrar $r) => $r->blockTypes()->addCodeLanguage(new CodeLanguage('yaml', 'YAML', ['yml']))),
+        );
     }
 
     /**
@@ -380,6 +442,22 @@ final class ModuleRegistryTest extends TestCase
         yield 'translations without the source' => [
             static fn (ModuleRegistrar $r) => $r->translations()->add(dirname(__DIR__, 2) . '/Fixtures/translations/no-source'),
             'without an en-GB file, the source language.',
+        ];
+        yield 'personal data provider is not a provider' => [
+            static fn (ModuleRegistrar $r) => $r->privacy()->addProvider(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers personal data provider stdClass, which is not a class that implements SightPress\Module\Privacy\PersonalDataProvider.',
+        ];
+        yield 'processor source is not a source' => [
+            static fn (ModuleRegistrar $r) => $r->privacy()->addProcessors(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers processor source stdClass, which is not a class that implements SightPress\Module\Privacy\ProcessorSource.',
+        ];
+        yield 'placeholder resolver is not a resolver' => [
+            static fn (ModuleRegistrar $r) => $r->placeholders()->add(new Placeholder('acme.venue', new Message('Venue'), new Message('Venue.'), PlaceholderType::Text, false, stdClass::class)), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers placeholder "acme.venue" with resolver stdClass, which is not a class that implements SightPress\Module\Placeholder\PlaceholderResolver.',
+        ];
+        yield 'code highlighter is not a highlighter' => [
+            static fn (ModuleRegistrar $r) => $r->blockTypes()->addCodeLanguage(new CodeLanguage('yaml', 'YAML', [], stdClass::class)), // @phpstan-ignore argument.type (deliberately invalid)
+            'Module "acme" registers code language "yaml" with highlighter stdClass, which is not a class that implements SightPress\Module\Block\CodeHighlighter.',
         ];
         yield 'assistant task is not a task' => [
             static fn (ModuleRegistrar $r) => $r->assistant()->addTask(stdClass::class), // @phpstan-ignore argument.type (deliberately invalid)

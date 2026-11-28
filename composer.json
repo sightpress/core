@@ -61,7 +61,7 @@
     "nyholm/psr7-server": "^1",
     "psr/clock": "^1",
     "psr/event-dispatcher": "^1",
-    "sightpress/module-interface": "^0.5",
+    "sightpress/module-interface": "^0.6",
     "sightpress/theme-default": "^0.3",
     "sightpress/theme-interface": "^0.3",
     "slim/csrf": "^1",

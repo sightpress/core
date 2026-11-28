@@ -22,6 +22,12 @@ use SightPress\Module\Schedule\ScheduledJob;
 use SightPress\Module\Search\SearchDocumentProvider;
 use SightPress\Module\Seo\SeoProvider;
 use SightPress\Module\Sms\SmsProvider;
+use SightPress\Module\Block\CodeLanguage;
+use SightPress\Module\Placeholder\Placeholder;
+use SightPress\Module\Privacy\ConsentPurpose;
+use SightPress\Module\Privacy\CookieDeclaration;
+use SightPress\Module\Privacy\PersonalDataProvider;
+use SightPress\Module\Privacy\ProcessorSource;
 use SightPress\Module\Setting\Setting;
 use Throwable;
 
@@ -103,6 +109,24 @@ final class ModuleRegistry
 
     /** @var array<string, Registered<BlockIcon>> */
     private array $blockIcons = [];
+
+    /** @var array<class-string<PersonalDataProvider>, Registered<class-string<PersonalDataProvider>>> */
+    private array $personalDataProviders = [];
+
+    /** @var array<string, Registered<CookieDeclaration>> name → cookie */
+    private array $cookies = [];
+
+    /** @var array<class-string<ProcessorSource>, Registered<class-string<ProcessorSource>>> */
+    private array $processorSources = [];
+
+    /** @var array<string, Registered<ConsentPurpose>> key → purpose */
+    private array $consentPurposes = [];
+
+    /** @var array<string, Registered<Placeholder>> name → placeholder */
+    private array $placeholders = [];
+
+    /** @var array<string, Registered<CodeLanguage>> id or alias → language */
+    private array $codeLanguages = [];
 
     /** @var list<UnavailableModule> */
     private array $failures = [];
@@ -203,6 +227,12 @@ final class ModuleRegistry
         $copy->translations = self::keep($this->translations, $on);
         $copy->blockVariants = self::keep($this->blockVariants, $on);
         $copy->blockIcons = self::keep($this->blockIcons, $on);
+        $copy->personalDataProviders = self::keep($this->personalDataProviders, $on);
+        $copy->cookies = self::keep($this->cookies, $on);
+        $copy->processorSources = self::keep($this->processorSources, $on);
+        $copy->consentPurposes = self::keep($this->consentPurposes, $on);
+        $copy->placeholders = self::keep($this->placeholders, $on);
+        $copy->codeLanguages = self::keep($this->codeLanguages, $on);
 
         return $copy;
     }
@@ -553,6 +583,121 @@ final class ModuleRegistry
     {
         $this->unique($this->blockIcons, $icon->name, 'Icon', $module);
         $this->blockIcons[$icon->name] = new Registered($module, $icon);
+    }
+
+    /**
+     * @param non-empty-string $module
+     * @param class-string<PersonalDataProvider> $provider
+     */
+    public function addPersonalDataProvider(string $module, string $provider): void
+    {
+        $this->unique($this->personalDataProviders, $provider, 'Personal data provider', $module);
+        $this->personalDataProviders[$provider] = new Registered($module, $provider);
+    }
+
+    /**
+     * @param non-empty-string $module
+     */
+    public function addCookie(string $module, CookieDeclaration $cookie): void
+    {
+        $this->unique($this->cookies, $cookie->name, 'Cookie', $module);
+        $this->cookies[$cookie->name] = new Registered($module, $cookie);
+    }
+
+    /**
+     * @param non-empty-string $module
+     * @param class-string<ProcessorSource> $source
+     */
+    public function addProcessorSource(string $module, string $source): void
+    {
+        $this->unique($this->processorSources, $source, 'Processor source', $module);
+        $this->processorSources[$source] = new Registered($module, $source);
+    }
+
+    /**
+     * @param non-empty-string $module
+     */
+    public function addConsentPurpose(string $module, ConsentPurpose $purpose): void
+    {
+        $this->unique($this->consentPurposes, $purpose->key, 'Consent purpose', $module);
+        $this->consentPurposes[$purpose->key] = new Registered($module, $purpose);
+    }
+
+    /**
+     * @param non-empty-string $module
+     */
+    public function addPlaceholder(string $module, Placeholder $placeholder): void
+    {
+        $this->unique($this->placeholders, $placeholder->name, 'Placeholder', $module);
+        $this->placeholders[$placeholder->name] = new Registered($module, $placeholder);
+    }
+
+    /**
+     * @param non-empty-string $module
+     */
+    public function addCodeLanguage(string $module, CodeLanguage $language): void
+    {
+        $ids = [$language->id, ...$language->aliases];
+        foreach ($ids as $id) {
+            $this->unique($this->codeLanguages, $id, 'Code language', $module);
+        }
+        foreach ($ids as $id) {
+            $this->codeLanguages[$id] = new Registered($module, $language);
+        }
+    }
+
+    /**
+     * @return list<Registered<class-string<PersonalDataProvider>>>
+     */
+    public function personalDataProviders(): array
+    {
+        return array_values($this->personalDataProviders);
+    }
+
+    /**
+     * @return list<Registered<CookieDeclaration>>
+     */
+    public function cookies(): array
+    {
+        return array_values($this->cookies);
+    }
+
+    /**
+     * @return list<Registered<class-string<ProcessorSource>>>
+     */
+    public function processorSources(): array
+    {
+        return array_values($this->processorSources);
+    }
+
+    /**
+     * @return list<Registered<ConsentPurpose>>
+     */
+    public function consentPurposes(): array
+    {
+        return array_values($this->consentPurposes);
+    }
+
+    /**
+     * @return list<Registered<Placeholder>>
+     */
+    public function placeholders(): array
+    {
+        return array_values($this->placeholders);
+    }
+
+    /**
+     * Each code language once (not once per alias), in registration order.
+     *
+     * @return list<Registered<CodeLanguage>>
+     */
+    public function codeLanguages(): array
+    {
+        return array_values(array_filter(
+            $this->codeLanguages,
+            static fn (Registered $registered, string $id): bool => $registered->item->id === $id,
+            ARRAY_FILTER_USE_BOTH,
+        ));
     }
 
     /**

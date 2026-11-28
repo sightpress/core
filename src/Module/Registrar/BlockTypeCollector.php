@@ -9,6 +9,8 @@ use SightPress\Core\Module\ModuleRegistry;
 use SightPress\Module\Block\BlockIcon;
 use SightPress\Module\Block\BlockType;
 use SightPress\Module\Block\BlockVariant;
+use SightPress\Module\Block\CodeHighlighter;
+use SightPress\Module\Block\CodeLanguage;
 use SightPress\Module\Registrar\BlockTypeRegistrar;
 
 /**
@@ -47,5 +49,20 @@ final readonly class BlockTypeCollector implements BlockTypeRegistrar
     public function addIcon(BlockIcon $icon): void
     {
         $this->registry->addBlockIcon($this->module, $icon);
+    }
+
+    public function addCodeLanguage(CodeLanguage $language): void
+    {
+        if ($language->highlighter !== null && !is_subclass_of($language->highlighter, CodeHighlighter::class)) {
+            throw new ModuleException(sprintf(
+                'Module "%s" registers code language "%s" with highlighter %s, which is not a class that implements %s.',
+                $this->module,
+                $language->id,
+                $language->highlighter,
+                CodeHighlighter::class,
+            ));
+        }
+
+        $this->registry->addCodeLanguage($this->module, $language);
     }
 }
