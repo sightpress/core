@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.6.0](https://github.com/sightpress/core/compare/0.5.0...0.6.0) (2026-11-28)
+
+
+### Features
+
+* personal data inventory, privacy module and outgoing request allow-list (GD-1) ([#132](https://github.com/sightpress/core/issues/132)) ([5fb2b31](https://github.com/sightpress/core/commit/5fb2b31bfcbc06581716c89a6b8220b859035a69))
+* require module-interface 0.6 and collect privacy, placeholder and code language registrations (MI-0.6) ([#130](https://github.com/sightpress/core/issues/130)) ([904856e](https://github.com/sightpress/core/commit/904856e6715ae309023806421d3a9360a065e21e))
+* shared sessions — database by default, Redis and files as options (H-9) ([#129](https://github.com/sightpress/core/issues/129)) ([4745a6b](https://github.com/sightpress/core/commit/4745a6b4650312bb310ffc49e39b07b4ad767da5))
+
+
+### Bug fixes
+
+* update the assistant's help index from the documentation ([#127](https://github.com/sightpress/core/issues/127)) ([6daeb43](https://github.com/sightpress/core/commit/6daeb4375119f811c58d1071a53684a44e574ba2))
+
+
+### Documentation
+
+* privacy model and module-interface 0.6 contract ADRs (GD-0) ([#128](https://github.com/sightpress/core/issues/128)) ([821ee89](https://github.com/sightpress/core/commit/821ee89274e37f22d6d50837f10614d561c9d748))
+
 ## [0.5.0](https://github.com/sightpress/core/compare/0.4.0...0.5.0) (2026-11-27)
 
 
