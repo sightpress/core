@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Privacy;
 
+use SightPress\Core\Rbac\Contract\AdminAccessMiddleware;
+use SightPress\Core\Privacy\Command\PurgeCommand;
 use SightPress\Core\Privacy\Contract\PersonalDataInventory;
+use SightPress\Core\Privacy\Contract\RetentionPolicy;
+use SightPress\Core\Privacy\Http\PrivacySettingsHandler;
+use SightPress\Core\Site\Contract\ScheduleDue;
+use SightPress\Module\Admin\AdminMenuItem;
+use SightPress\Module\Routing\Route;
 use SightPress\Module\Access\Permission;
 use SightPress\Module\ModuleInterface;
 use SightPress\Module\ModuleManifest;
@@ -26,7 +33,7 @@ final class PrivacyModule implements ModuleInterface
         return new ModuleManifest(
             self::ID,
             '0.1.0',
-            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('rbac', '^0.1')],
+            [new ModuleRequirement('site', '^0.1'), new ModuleRequirement('rbac', '^0.1'), new ModuleRequirement('admin', '^0.1')],
             required: true,
         );
     }
@@ -35,6 +42,15 @@ final class PrivacyModule implements ModuleInterface
     {
         $services = $registrar->services();
         $services->autowire(PersonalDataInventory::class, public: true);
+        $services->autowire(RetentionPolicy::class, public: true);
+        foreach ([PrivacyPurge::class, PrivacyPurgeJob::class, PrivacySettingsHandler::class] as $class) {
+            $services->autowire($class);
+        }
+        $registrar->subscribers()->listen(ScheduleDue::class, PrivacyPurgeJob::class);
+        $registrar->commands()->add(PurgeCommand::class);
+        $registrar->views()->add(self::ID, dirname(__DIR__, 2) . '/resources/views/privacy');
+        $registrar->routes()->add(new Route('privacy.settings', PrivacySettingsHandler::PATH, PrivacySettingsHandler::class, ['GET', 'POST'], [AdminAccessMiddleware::class]));
+        $registrar->adminMenu()->add(new AdminMenuItem('privacy.settings', 'Privacy', 'privacy.settings', self::MANAGE, 'admin.settings', 45));
         $services->autowire(MailerProcessors::class);
         $registrar->privacy()->addProcessors(MailerProcessors::class);
         $registrar->permissions()->add(new Permission(

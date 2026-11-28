@@ -10,7 +10,7 @@ use SightPress\Core\Tenant\EnabledModules;
 
 /**
  * Empties the site's text message outbox on every `schedule:run` (N-4), and forgets webhook reports older than
- * {@see SmsReports::KEEP_DAYS} and messages older than {@see SmsLog::KEEP_DAYS} days.
+ * {@see SmsReports::KEEP_DAYS} (the messages themselves are removed by `privacy:purge`, after the site's retention).
  */
 final readonly class SmsOutboxJob
 {
@@ -22,7 +22,6 @@ final readonly class SmsOutboxJob
         }
         ['sent' => $sent, 'failed' => $failed, 'interrupted' => $interrupted] = Services::get($event->services, SmsOutbox::class)->run($event->now);
         Services::get($event->services, SmsReports::class)->forgetBefore($event->now->modify(sprintf('-%d days', SmsReports::KEEP_DAYS)));
-        Services::get($event->services, SmsLog::class)->forgetBefore($event->now->modify(sprintf('-%d days', SmsLog::KEEP_DAYS)));
         if ($sent + $failed + $interrupted > 0) {
             $event->report(sprintf('Text messages: sent %d, failed %d, %d left by an interrupted run marked failed.', $sent, $failed, $interrupted));
         }

@@ -11233,5 +11233,113 @@
         <target>As suas funções</target>
       </segment>
     </unit>
+    <unit id="3e56f781b2744054">
+      <segment state="translated">
+        <source>6-digit codes</source>
+        <target>Códigos de 6 dígitos</target>
+      </segment>
+    </unit>
+    <unit id="a8bb609ff1553ce3">
+      <segment state="translated">
+        <source>Accounts never confirmed</source>
+        <target>Contas nunca confirmadas</target>
+      </segment>
+    </unit>
+    <unit id="3bded39f8706118e">
+      <segment state="translated">
+        <source>Accounts whose email address was never confirmed are deleted this long after they were made.</source>
+        <target>As contas cujo endereço de email nunca foi confirmado são apagadas este tempo depois de serem criadas.</target>
+      </segment>
+    </unit>
+    <unit id="d7e7d63e49a00644">
+      <segment state="translated">
+        <source>Choose how long the site keeps each kind of personal data. Records older than what you choose are deleted once a day. The suggested times are a starting point: you decide what your site needs, within the limits whoever runs your sites set. This isn’t legal advice.</source>
+        <target>Escolha durante quanto tempo o site guarda cada tipo de dados pessoais. Os registos mais antigos do que escolher são apagados uma vez por dia. Os tempos sugeridos são um ponto de partida: decide aquilo de que o seu site precisa, dentro dos limites definidos por quem gere os seus sites. Isto não é aconselhamento jurídico.</target>
+      </segment>
+    </unit>
+    <unit id="dbce07900d265a58">
+      <segment state="translated">
+        <source>Entries older than this are deleted. Until then they show who changed what, for the site’s security.</source>
+        <target>Os registos mais antigos do que isto são apagados. Até lá mostram quem alterou o quê, pela segurança do site.</target>
+      </segment>
+    </unit>
+    <unit id="926307b8ec44e553">
+      <segment state="translated">
+        <source>How long personal data is kept</source>
+        <target>Durante quanto tempo os dados pessoais são guardados</target>
+      </segment>
+    </unit>
+    <unit id="7d3e3dd2f452b912">
+      <segment state="translated">
+        <source>How long personal data is kept has been saved. Older records are deleted within a day.</source>
+        <target>O tempo durante o qual os dados pessoais são guardados foi gravado. Os registos mais antigos são apagados no prazo de um dia.</target>
+      </segment>
+    </unit>
+    <unit id="e84bbd73240f186f">
+      <segment state="translated">
+        <source>Invitations are deleted this long after they expired or were accepted, with the name and email address in them.</source>
+        <target>Os convites são apagados este tempo depois de expirarem ou serem aceites, com o nome e o endereço de email que têm.</target>
+      </segment>
+    </unit>
+    <unit id="e32fc8952c87642d">
+      <segment state="translated">
+        <source>Other personal data</source>
+        <target>Outros dados pessoais</target>
+      </segment>
+    </unit>
+    <unit id="54a57c3147c49f33">
+      <segment state="translated">
+        <source>Privacy</source>
+        <target>Privacidade</target>
+      </segment>
+    </unit>
+    <unit id="adef4309be794f37">
+      <segment state="translated">
+        <source>Records older than this are deleted.</source>
+        <target>Os registos mais antigos do que isto são apagados.</target>
+      </segment>
+    </unit>
+    <unit id="df343c30ae2190da">
+      <segment state="translated">
+        <source>Text messages sent</source>
+        <target>Mensagens enviadas</target>
+      </segment>
+    </unit>
+    <unit id="da18965058af7c51">
+      <segment state="translated">
+        <source>The record of each text message, with its text and the masked number, is deleted after this.</source>
+        <target>O registo de cada mensagem, com o seu texto e o número mascarado, é apagado depois disto.</target>
+      </segment>
+    </unit>
+    <unit id="b0569367982a185c">
+      <segment state="translated">
+        <source>The record of what the assistant was used for and how much is deleted after this. A shorter time can’t keep a whole month for the budget.</source>
+        <target>O registo de para que foi usado o assistente e quanto é apagado depois disto. Um tempo mais curto não consegue guardar um mês inteiro para o orçamento.</target>
+      </segment>
+    </unit>
+    <unit id="af9dfe0e911b6461">
+      <segment state="translated">
+        <source>Used and expired codes are deleted after this. Only a scrambled form of each is kept anyway.</source>
+        <target>Os códigos usados e expirados são apagados depois disto. De qualquer forma, só é guardada uma forma baralhada de cada um.</target>
+      </segment>
+    </unit>
+    <unit id="2968ce35de85b92b">
+      <segment state="translated">
+        <source>{count, plural, one {# day} other {# days}} (suggested)</source>
+        <target>{count, plural, one {# dia} other {# dias}} (sugerido)</target>
+      </segment>
+    </unit>
+    <unit id="8abb70830c14f16d">
+      <segment state="translated">
+        <source>{count, plural, one {# month} other {# months}}</source>
+        <target>{count, plural, one {# mês} other {# meses}}</target>
+      </segment>
+    </unit>
+    <unit id="0ba03655e2790028">
+      <segment state="translated">
+        <source>{count, plural, one {# month} other {# months}} (suggested)</source>
+        <target>{count, plural, one {# mês} other {# meses}} (sugerido)</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

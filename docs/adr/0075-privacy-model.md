@@ -131,4 +131,9 @@ checks them before `1.0.0`.
 - Audit summaries hold names frozen at the time of writing, so erasure rewrites summaries as well as ids.
 - The record of processing (GD-5) prints the suggested lawful bases with a "suggested — the site owner decides"
   label until the owner changes them.
+- Decided in GD-2: core's providers that can purge also implement `Privacy\Contract\ExpiringPersonalData`; the
+  daily `privacy:purge` (`PrivacyPurge`, once a day per site from `schedule:run`, or `site:privacy:purge`) calls them
+  for the modules that are on, so each module deletes only its own tables. Kinds and limits are in `TenantRetention`
+  (`privacy.retention`); the site's choice is `privacy.retention.<kind>` through `RetentionPolicy`. The unconfirmed
+  account job and the SMS log now follow it; queued texts are never purged.
 - Reviewed by Pedro; the GD-9 reviewer, once found, reviews this table before `1.0.0`.

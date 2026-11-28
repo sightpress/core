@@ -34,6 +34,7 @@ use SightPress\Module\Console\CommandParameter;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantRetention::class)]
 #[CoversClass(SystemCheckCommand::class)]
 #[UsesNamespace('SightPress\Core\Http\Session')]
 #[UsesClass(\SightPress\Core\Tenant\RedisServer::class)]

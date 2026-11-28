@@ -226,6 +226,12 @@ final readonly class AuditRecorder
             'sms.region' => 'Text message provider region',
             'sms.monthly_budget' => 'Text message budget',
             'security.two_step' => 'Two-step confirmation',
+            'privacy.retention.audit_months' => 'How long the audit log is kept',
+            'privacy.retention.unverified_days' => 'How long accounts never confirmed are kept',
+            'privacy.retention.invitation_days' => 'How long invitations are kept',
+            'privacy.retention.code_days' => 'How long 6-digit codes are kept',
+            'privacy.retention.sms_days' => 'How long the record of text messages is kept',
+            'privacy.retention.assistant_months' => 'How long the record of AI assistant use is kept',
             default => $key,
         };
     }

@@ -20,6 +20,7 @@ use SightPress\Core\Tenant\TenantConfigException;
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantSms::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TwoStepPolicy::class)]
 #[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantThemes::class)]
+#[\PHPUnit\Framework\Attributes\UsesClass(\SightPress\Core\Tenant\TenantRetention::class)]
 #[CoversClass(TenantConfig::class)]
 #[UsesClass(\SightPress\Core\Tenant\RedisServer::class)]
 #[UsesClass(Environment::class)]

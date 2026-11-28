@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace SightPress\Core\Sms\Privacy;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use SightPress\Core\Infrastructure\Privacy\Row;
 use SightPress\Core\Sms\SmsLog;
 use SightPress\Core\Sms\SmsNumberHash;
+use DateTimeImmutable;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Types\Types;
+use SightPress\Core\Infrastructure\Privacy\BatchedDelete;
+use SightPress\Core\Privacy\Contract\ExpiringPersonalData;
+use SightPress\Core\Privacy\Contract\RetentionPolicy;
+use SightPress\Core\Tenant\TenantRetention;
 use SightPress\Module\Privacy\ErasureResult;
 use SightPress\Module\Privacy\LawfulBasis;
 use SightPress\Module\Privacy\PersonalDataCategory;
@@ -21,7 +29,7 @@ use SightPress\Module\Text\Message;
  * Text messages sent to the person (`sms_message`, N-2, ADR-0075), by account and by a keyed hash of their number.
  * A number's STOP (`sms_opt_out`) is kept on purpose: it is only a hash, and it is what stops new texts to it.
  */
-final readonly class SmsLogData implements PersonalDataProvider
+final readonly class SmsLogData implements PersonalDataProvider, ExpiringPersonalData
 {
     public const string KEY = 'sms.log';
 
@@ -39,7 +47,7 @@ final readonly class SmsLogData implements PersonalDataProvider
             new Message('To send texts, try again when sending fails and show that they arrived.'),
             [PersonalDataCategory::Contact, PersonalDataCategory::Communications],
             LawfulBasis::Contract,
-            Retention::days(SmsLog::KEEP_DAYS),
+            Retention::days(SmsLog::KEEP_DAYS, 'privacy.retention.sms_days'),
             notes: new Message('Kept for 90 days. If you replied STOP, a scrambled form of the number is kept so it gets no more texts.'),
         );
     }
@@ -87,4 +95,16 @@ final readonly class SmsLogData implements PersonalDataProvider
 
         return $query;
     }
+
+    public function purgeExpired(RetentionPolicy $retention, DateTimeImmutable $now): array
+    {
+        $before = $retention->cutOff(TenantRetention::SMS, $now);
+
+        return ['text messages' => BatchedDelete::run($this->connection, SmsLog::TABLE, 'id', static fn (QueryBuilder $query): QueryBuilder => $query
+            ->where('created_at < :before')
+            ->andWhere('status NOT IN (:waiting)')
+            ->setParameter('before', $before, Types::DATETIME_IMMUTABLE)
+            ->setParameter('waiting', [SmsLog::QUEUED, SmsLog::SENDING], ArrayParameterType::STRING))];
+    }
+
 }

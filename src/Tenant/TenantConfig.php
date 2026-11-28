@@ -92,6 +92,7 @@ final readonly class TenantConfig
         public TenantPolicies $policies = new TenantPolicies(),
         public TenantSms $sms = new TenantSms(),
         public TwoStepPolicy $twoStep = TwoStepPolicy::Optional,
+        public TenantRetention $retention = new TenantRetention(),
     ) {
     }
 
@@ -147,6 +148,7 @@ final readonly class TenantConfig
             policies: TenantPolicies::fromArray($config),
             sms: TenantSms::fromArray(self::section($config, 'sms'), $environment),
             twoStep: TwoStepPolicy::fromValue($config['two_step'] ?? null),
+            retention: TenantRetention::fromArray(self::section(self::section($config, 'privacy'), 'retention')),
         );
     }
 

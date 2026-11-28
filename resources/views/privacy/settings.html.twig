@@ -1,0 +1,21 @@
+{#
+    Site settings → Privacy (/admin/settings/privacy, GD-2): how long each kind of personal data is kept. Context: see
+    PrivacySettingsHandler.
+#}
+{% extends '@admin/layout.html.twig' %}
+{% import 'form/macros.html.twig' as f %}
+{% block title %}{{ t('Privacy') }}{% endblock %}
+{% block content %}
+<h1>{{ t('Privacy') }}</h1>
+{{ f.error_summary(form) }}
+<section class="admin-panel" aria-labelledby="privacy-retention-title">
+    <h2 id="privacy-retention-title">{{ t('How long personal data is kept') }}</h2>
+    <p>{{ t('Choose how long the site keeps each kind of personal data. Records older than what you choose are deleted once a day. The suggested times are a starting point: you decide what your site needs, within the limits whoever runs your sites set. This isn’t legal advice.') }}</p>
+    {{ f.start(form, action) }}
+        {%- for field in form.fields %}
+        {{ f.field(form, field.name) }}
+        {%- endfor %}
+        {{ f.submit(t('Save')) }}
+    {{ f.end() }}
+</section>
+{% endblock %}
